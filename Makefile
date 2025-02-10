@@ -127,12 +127,12 @@ check-prettier:
 	npm run check-prettier
 
 ruff:
-	"${DC}" run --rm server ruff check --fix pontoon/
-	"${DC}" run --rm server ruff format pontoon/
+	"${DC}" run --rm server ruff check --fix
+	"${DC}" run --rm server ruff format
 
 check-ruff:
-	"${DC}" run --rm server ruff check pontoon
-	"${DC}" run --rm server ruff format --check pontoon
+	"${DC}" run --rm server ruff check
+	"${DC}" run --rm server ruff format --check
 
 dropdb:
 	"${DC}" down --volumes postgresql
