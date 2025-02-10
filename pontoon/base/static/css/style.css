@@ -203,8 +203,7 @@ th {
 }
 
 .table-sort th i {
-  margin-left: 5px;
-  position: absolute;
+  pointer-events: none;
 }
 
 .table-sort th.asc i:after,

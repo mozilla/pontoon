@@ -23,12 +23,12 @@ def sync_log_list(request: HttpRequest):
             sync_status=Subquery(sync_events.values("status")[:1]),
         )
         .values(
+            "data_source",
             "name",
             "slug",
             "sync_start_time",
             "sync_end_time",
             "sync_status",
-            "system_project",
         )
     )
     for project in projects:
