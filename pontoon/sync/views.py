@@ -39,7 +39,6 @@ def sync_log_list(request: HttpRequest):
         request,
         "sync/log_list.html",
         {
-            "is_manager": request.user.has_perm("base.can_manage_project"),
             "projects": projects,
             "show_no_changes": show_no_changes,
         },
@@ -103,7 +102,6 @@ def sync_log_errors(request: HttpRequest):
         request,
         "sync/log_errors.html",
         {
-            "is_manager": request.user.has_perm("base.can_manage_project"),
             "sync_page": sync_page,
         },
     )

@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block bottom %}
+{% set is_manager = request.user.has_perm("base.can_manage_project") %}
 <section id="main" class="clearfix">
   <div class="container">
     <menu class="controls">

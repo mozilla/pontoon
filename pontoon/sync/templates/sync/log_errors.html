@@ -32,7 +32,7 @@
               </td>
               <td class="project">
                 <h4>
-                {% if is_manager %}
+                {% if request.user.has_perm("base.can_manage_project") %}
                   <a href="{{ sync.project_sync_url }}">{{ sync.project.name }}</a>
                 {% else %}
                   {{ sync.project.name }}
