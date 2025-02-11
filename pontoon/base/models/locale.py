@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Prefetch, Sum
+from django.db.models import Sum
 
 from pontoon.base.aggregated_stats import AggregatedStats
 
@@ -59,24 +59,6 @@ class LocaleQuerySet(models.QuerySet):
 
         return self.filter(
             pk__in=TranslatedResource.objects.values_list("locale", flat=True)
-        )
-
-    def prefetch_project_locale(self, project):
-        """
-        Prefetch ProjectLocale and latest translation data for given project.
-        """
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return self.prefetch_related(
-            Prefetch(
-                "project_locale",
-                queryset=(
-                    ProjectLocale.objects.filter(project=project).prefetch_related(
-                        "latest_translation__user", "latest_translation__approved_user"
-                    )
-                ),
-                to_attr="fetched_project_locale",
-            )
         )
 
     def stats_data(self, project=None) -> dict[int, dict[str, int]]:
@@ -389,10 +371,10 @@ class Locale(models.Model, AggregatedStats):
         """
         return Locale.cldr_id_to_plural(self.cldr_id_list()[plural_id])
 
-    def get_latest_activity(self, project=None):
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return ProjectLocale.get_latest_activity(self, project)
+    def get_latest_activity(self):
+        return (
+            self.latest_translation.latest_activity if self.latest_translation else None
+        )
 
     def save(self, *args, **kwargs):
         old = Locale.objects.get(pk=self.pk) if self.pk else None

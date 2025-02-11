@@ -13,7 +13,7 @@ from pontoon.base.models.locale import Locale
 
 
 if TYPE_CHECKING:
-    from pontoon.base.models import Resource
+    from pontoon.base.models import ProjectLocale, Resource
 
 
 class Priority(models.IntegerChoices):
@@ -124,6 +124,7 @@ class Project(models.Model, AggregatedStats):
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through="ProjectLocale")
 
+    project_locale: BaseManager["ProjectLocale"]
     resources: BaseManager["Resource"]
 
     class DataSource(models.TextChoices):
