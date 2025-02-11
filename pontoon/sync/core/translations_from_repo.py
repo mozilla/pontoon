@@ -236,6 +236,9 @@ def find_db_updates(
                             del strings[plural_form]
                         else:
                             del translations[key]
+                else:
+                    # The translation has been removed from the repo
+                    translations[key] = ({}, False)
             if paginator.num_pages > 3:
                 log.debug(
                     f"[{project.slug}] Filtering matches from translations... {page_number}/{paginator.num_pages}"
@@ -266,13 +269,13 @@ def find_db_updates(
         .values("id", "key", "string", "resource__path")
         .iterator()
     }
-    res: Updates = {}
+    updates: Updates = {}
     for (db_path, ent_key, locale_id), tx in translations.items():
         entity_id = entities.get((db_path, ent_key), None)
         if entity_id is not None:
-            res[(entity_id, locale_id)] = tx
-    log.debug(f"[{project.slug}] Compiling updates... Found {len(res)}")
-    return res
+            updates[(entity_id, locale_id)] = tx
+    log.debug(f"[{project.slug}] Compiling updates... Found {len(updates)}")
+    return updates
 
 
 def translations_equal(
@@ -309,13 +312,17 @@ def update_db_translations(
     # Approve matching suggestions
     matching_suggestions_q = Q()
     for (entity_id, locale_id), (strings, _) in repo_translations.items():
-        for plural_form, string in strings.items():
-            matching_suggestions_q |= Q(
-                entity_id=entity_id,
-                locale_id=locale_id,
-                plural_form=plural_form,
-                string=string,
-            )
+        if strings:
+            for plural_form, string in strings.items():
+                matching_suggestions_q |= Q(
+                    entity_id=entity_id,
+                    locale_id=locale_id,
+                    plural_form=plural_form,
+                    string=string,
+                )
+        else:
+            # The translation has been removed from the repo
+            translations_to_reject |= Q(entity_id=entity_id, locale_id=locale_id)
     if matching_suggestions_q:
         # (entity_id, locale_id, plural_form) => translation
         suggestions: dict[tuple[int, int, int], Translation] = {
