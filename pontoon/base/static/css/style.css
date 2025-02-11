@@ -197,7 +197,7 @@ th {
   color: var(--white-1);
 }
 
-.table-sort th {
+.table-sort th.no-sort {
   pointer-events: none;
 }
 
