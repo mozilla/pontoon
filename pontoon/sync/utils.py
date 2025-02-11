@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
 from pontoon.base.models.repository import Repository
+from pontoon.messaging.notifications import send_badge_notification
 from pontoon.sync.core.checkout import checkout_repos
 from pontoon.sync.core.paths import UploadPaths, find_paths
 from pontoon.sync.core.stats import update_stats
@@ -96,7 +97,9 @@ def import_uploaded_file(
         )
     if updates:
         now = timezone.now()
-        badge_name, badge_level = write_db_updates(project, updates, user, now)
+        translation_before_level = user.badges_translation_level
+        review_before_level = user.badges_review_level
+        write_db_updates(project, updates, user, now)
         update_stats(project)
         ChangedEntityLocale.objects.bulk_create(
             (
@@ -105,6 +108,17 @@ def import_uploaded_file(
             ),
             ignore_conflicts=True,
         )
+
+        badge_name = ""
+        badge_level = 0
+        if user.badges_translation_level > translation_before_level:
+            badge_name = "Translation Champion"
+            badge_level = user.badges_translation_level
+            send_badge_notification(user, badge_name, badge_level)
+        if user.badges_review_level > review_before_level:
+            badge_name = "Review Master"
+            badge_level = user.badges_review_level
+            send_badge_notification(user, badge_name, badge_level)
         return badge_name, badge_level
     else:
         raise Exception("Upload failed.")
