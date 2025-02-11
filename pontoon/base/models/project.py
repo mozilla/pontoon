@@ -277,7 +277,22 @@ class Project(models.Model, AggregatedStats):
     def get_latest_activity(self, locale=None):
         from pontoon.base.models.project_locale import ProjectLocale
 
-        return ProjectLocale.get_latest_activity(self, locale)
+        if locale is None:
+            return (
+                self.latest_translation.latest_activity
+                if self.latest_translation
+                else None
+            )
+
+        project_locale = (
+            getattr(self, "fetched_project_locale", None)
+            or ProjectLocale.objects.filter(project=self, locale=locale).first()
+        )
+        return (
+            project_locale.latest_translation.latest_activity
+            if project_locale and project_locale.latest_translation
+            else None
+        )
 
     def resource_priority_map(self):
         """
