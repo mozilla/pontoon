@@ -323,19 +323,17 @@ def update_db_translations(
         else:
             # The translation has been removed from the repo
             translations_to_reject |= Q(entity_id=entity_id, locale_id=locale_id)
-    if matching_suggestions_q:
-        # (entity_id, locale_id, plural_form) => translation
-        suggestions: dict[tuple[int, int, int], Translation] = {
+    # (entity_id, locale_id, plural_form) => translation
+    suggestions: dict[tuple[int, int, int], Translation] = (
+        {
             (tx.entity_id, tx.locale_id, tx.plural_form): tx
             for tx in Translation.objects.filter(matching_suggestions_q)
             .filter(approved=False, pretranslated=False)
             .iterator()
         }
-    else:
-        log.warning(
-            f"[{project.slug}] Empty strings in repo_translations!? {repo_translations}"
-        )
-        suggestions = {}
+        if matching_suggestions_q
+        else {}
+    )
     update_fields: set[str] = set()
     approve_count = 0
     for tx in suggestions.values():
