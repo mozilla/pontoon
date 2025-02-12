@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Prefetch, Sum
+from django.db.models import Sum
 from django.db.models.manager import BaseManager
 from django.utils import timezone
 
@@ -67,24 +67,6 @@ class ProjectQuerySet(models.QuerySet):
         Syncable projects are same as force-syncable, but must not have sync disabled.
         """
         return self.force_syncable().filter(sync_disabled=False)
-
-    def prefetch_project_locale(self, locale):
-        """
-        Prefetch ProjectLocale and latest translation data for given locale.
-        """
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return self.prefetch_related(
-            Prefetch(
-                "project_locale",
-                queryset=(
-                    ProjectLocale.objects.filter(locale=locale).prefetch_related(
-                        "latest_translation__user", "latest_translation__approved_user"
-                    )
-                ),
-                to_attr="fetched_project_locale",
-            )
-        )
 
     def stats_data(self, locale=None) -> dict[int, dict[str, int]]:
         """Mapping of project `id` to dict with counts."""
@@ -274,26 +256,9 @@ class Project(models.Model, AggregatedStats):
         """Path where this project's VCS checkouts are located."""
         return join(settings.MEDIA_ROOT, "projects", self.slug)
 
-    def get_latest_activity(self, locale=None):
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        if locale is None:
-            return (
-                self.latest_translation.latest_activity
-                if self.latest_translation
-                else None
-            )
-
-        pl_fetched = getattr(self, "fetched_project_locale", None)
-        project_locale = (
-            pl_fetched[0]
-            if pl_fetched
-            else ProjectLocale.objects.filter(project=self, locale=locale).first()
-        )
+    def get_latest_activity(self):
         return (
-            project_locale.latest_translation.latest_activity
-            if project_locale and project_locale.latest_translation
-            else None
+            self.latest_translation.latest_activity if self.latest_translation else None
         )
 
     def resource_priority_map(self):

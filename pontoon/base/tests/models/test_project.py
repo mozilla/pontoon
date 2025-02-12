@@ -4,7 +4,7 @@ import pytest
 
 from django.contrib.auth.models import AnonymousUser
 
-from pontoon.base.models import Project, ProjectLocale
+from pontoon.base.models import Project
 from pontoon.test.factories import LocaleFactory, ProjectFactory, ProjectLocaleFactory
 
 
@@ -18,29 +18,6 @@ def test_project_latest_activity_with_latest(project_a, translation_a):
 def test_project_latest_activity_without_latest(project_a):
     assert project_a.latest_translation is None
     assert project_a.get_latest_activity() is None
-
-
-@pytest.mark.django_db
-def test_project_latest_activity_doesnt_exist(project_a, locale_a):
-    assert not (
-        ProjectLocale.objects.filter(project=project_a, locale=locale_a).exists()
-    )
-    assert project_a.get_latest_activity(locale_a) is None
-
-
-@pytest.mark.django_db
-def test_project_latest_activity_no_latest(project_a, locale_a):
-    ProjectLocaleFactory.create(project=project_a, locale=locale_a)
-    assert project_a.get_latest_activity(locale_a) is None
-
-
-@pytest.mark.django_db
-def test_project_latest_activity_success(translation_a):
-    latest = translation_a.entity.resource.project.get_latest_activity(
-        translation_a.locale
-    )
-    assert latest
-    assert latest == translation_a.latest_activity
 
 
 @pytest.fixture
