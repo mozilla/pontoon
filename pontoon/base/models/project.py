@@ -284,9 +284,11 @@ class Project(models.Model, AggregatedStats):
                 else None
             )
 
+        pl_fetched = getattr(self, "fetched_project_locale", None)
         project_locale = (
-            getattr(self, "fetched_project_locale", None)
-            or ProjectLocale.objects.filter(project=self, locale=locale).first()
+            pl_fetched[0]
+            if pl_fetched
+            else ProjectLocale.objects.filter(project=self, locale=locale).first()
         )
         return (
             project_locale.latest_translation.latest_activity
