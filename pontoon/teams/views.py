@@ -665,7 +665,7 @@ def request_pretranslation(request, locale):
     locale = get_object_or_404(Locale, code=locale)
 
     # Validate user
-    if locale not in user.can_translate_locales:
+    if not user.has_perm("base.can_translate_locale", locale):
         return HttpResponseBadRequest(
             "Bad Request: Requester is not a translator or manager for the locale"
         )

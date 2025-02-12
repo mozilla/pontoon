@@ -165,19 +165,19 @@ def user_role(self, managers=None, translators=None):
         if self in managers:
             return "Manager for " + ", ".join(managers[self])
     else:
-        if self.can_manage_locales:
-            return "Manager for " + ", ".join(
-                self.can_manage_locales.values_list("code", flat=True)
-            )
+        manager_for_locales = self.can_manage_locales.values_list("code", flat=True)
+        if manager_for_locales:
+            return "Manager for " + ", ".join(manager_for_locales)
 
     if translators is not None:
         if self in translators:
             return "Translator for " + ", ".join(translators[self])
     else:
-        if self.can_translate_locales:
-            return "Translator for " + ", ".join(
-                self.can_translate_locales.values_list("code", flat=True)
-            )
+        translator_for_locales = self.can_translate_locales.values_list(
+            "code", flat=True
+        )
+        if translator_for_locales:
+            return "Translator for " + ", ".join(translator_for_locales)
 
     return "Contributor"
 
@@ -315,7 +315,7 @@ def can_translate(self, locale, project):
     from pontoon.base.models.project_locale import ProjectLocale
 
     # Locale managers can translate all projects
-    if locale in self.can_manage_locales:
+    if self.has_perm("base.can_manage_locale", locale):
         return True
 
     project_locale = ProjectLocale.objects.get(project=project, locale=locale)
