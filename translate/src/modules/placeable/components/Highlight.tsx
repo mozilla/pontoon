@@ -168,29 +168,14 @@ export function Highlight({
   marks.sort((a, b) => a.index - b.index || b.length - a.length);
 
   if (search) {
-    let searchTerms;
+    let regexp: RegExp;
     try {
-      // Older browsers will fail parsing the regular expression, so it needs to
-      // be defined as string
-      const regex = new RegExp(
-        String.raw`(?<!\\)"(?:\\"|[^"])+(?<!\\)"|\S+`,
-        'g',
-      );
-      searchTerms = search.match(regex);
-    } catch (e) {
+      regexp = new RegExp(String.raw`(?<!\\)"(?:\\"|[^"])+(?<!\\)"|\S+`, 'g');
+    } catch {
       // Fallback for older browsers (e.g. iOS 15) not supporting lookbehind.
-      const fallbackRegex = /"((?:\\.|[^"\\])*)"|(\S+)/g;
-
-      let match;
-      searchTerms = [];
-      while ((match = fallbackRegex.exec(search)) !== null) {
-        if (match[1] !== undefined) {
-          searchTerms.push(`"${match[1]}"`);
-        } else {
-          searchTerms.push(match[2]);
-        }
-      }
+      regexp = /"(?:\\"|[^"])+"|\S+/g;
     }
+    const searchTerms = search.match(regexp);
 
     for (let term of searchTerms ?? []) {
       if (term.startsWith('"') && term.length >= 3 && term.endsWith('"')) {
