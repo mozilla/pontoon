@@ -44,7 +44,7 @@
     {% set latest_activity = latest_activities.get(project.id) %}
     {% set chart = project_stats.get(project.id, {'total': 0}) %}
 
-    {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart, class='', allStrings=True, request=True, link_parameter=True) }}
+    {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart, class='', all_strings=True, request=True, link_parameter=True) }}
   {% endfor %}
 
   {{ ProjectList.footer(request=True) }}

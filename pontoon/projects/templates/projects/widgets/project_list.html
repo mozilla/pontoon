@@ -22,7 +22,7 @@
     <tbody>
 {% endmacro %}
 
-{% macro item(project, main_link, chart_link, latest_activity, chart, class='limited', allStrings=False, request=False, link_parameter=False) %}
+{% macro item(project, main_link, chart_link, latest_activity, chart, class='limited', all_strings=False, request=False, link_parameter=False) %}
   <tr class="{{ class }}">
     <td class="name" data-slug="{{ project.slug }}">
       <h4>
@@ -45,7 +45,7 @@
         <span class="not-ready">Not synced yet</span>
       {% endif %}
     </td>
-    {% if allStrings %}
+    {% if all_strings %}
       <td class="all-strings">
         {% if chart.total %}
           <span>{{ (chart.total / project.enabled_locales) | int | intcomma }}</span>
