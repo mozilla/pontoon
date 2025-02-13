@@ -65,17 +65,6 @@ def group_dict_by(list_of_dicts, key):
     return group
 
 
-def get_object_or_none(model, *args, **kwargs):
-    """
-    Get an instance of the given model, returning None instead of
-    raising an error if an instance cannot be found.
-    """
-    try:
-        return model.objects.get(*args, **kwargs)
-    except model.DoesNotExist:
-        return None
-
-
 def is_ajax(request):
     """
     Checks whether the given request is an AJAX request.

@@ -1,13 +1,16 @@
+from typing import cast
+
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
+from django.db.models.manager import BaseManager
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
 from pontoon.base.aggregated_stats import get_top_instances
-from pontoon.base.models import Locale, Project, TranslatedResource
+from pontoon.base.models import Locale, Project, TranslatedResource, Translation
 from pontoon.base.utils import get_project_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
@@ -81,10 +84,13 @@ def project(request, slug):
 def ajax_teams(request, slug):
     """Project Teams tab."""
     project = get_object_or_404(
-        Project.objects.visible_for(request.user).available(), slug=slug
+        cast(
+            BaseManager[Project], Project.objects.visible_for(request.user).available()
+        ),
+        slug=slug,
     )
 
-    locales = Locale.objects.available()
+    locales = cast(BaseManager[Locale], Locale.objects.available()).order_by("name")
 
     # Only include filtered teams if provided
     teams = request.GET.get("teams", "").split(",")
@@ -92,7 +98,15 @@ def ajax_teams(request, slug):
     if filtered_locales.exists():
         locales = locales.filter(pk__in=filtered_locales)
 
-    locales = locales.prefetch_project_locale(project).order_by("name")
+    latest_trans_ids = project.project_locale.values_list(
+        "latest_translation_id", flat=True
+    )
+    latest_activities = {
+        trans.locale_id: trans.latest_activity
+        for trans in Translation.objects.filter(id__in=latest_trans_ids).select_related(
+            "user", "approved_user"
+        )
+    }
 
     return render(
         request,
@@ -101,6 +115,7 @@ def ajax_teams(request, slug):
             "project": project,
             "locales": locales,
             "locale_stats": locales.stats_data(project),
+            "latest_activities": latest_activities,
         },
     )
 

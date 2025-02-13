@@ -3,6 +3,8 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 
+from typing import cast
+
 import bleach
 
 from guardian.decorators import permission_required_or_403
@@ -15,8 +17,9 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Count, Prefetch, Q, TextField
+from django.db.models import Count, F, Prefetch, Q, TextField
 from django.db.models.functions import Cast
+from django.db.models.manager import BaseManager
 from django.http import (
     Http404,
     HttpResponse,
@@ -41,6 +44,8 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
     User,
 )
+from pontoon.base.models.project_locale import ProjectLocale
+from pontoon.base.models.translation import Translation
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
@@ -102,47 +107,64 @@ def ajax_projects(request, locale):
     """Team Projects tab."""
     locale = get_object_or_404(Locale, code=locale)
 
-    projects = (
-        Project.objects.visible()
-        .visible_for(request.user)
-        .filter(Q(locales=locale) | Q(can_be_requested=True))
-        .prefetch_project_locale(locale)
-        .order_by("name")
+    projects = cast(
+        BaseManager[Project],
+        Project.objects.visible().visible_for(request.user),
+    ).order_by("name")
+
+    enabled_projects = list(projects.filter(locales=locale))
+
+    latest_activities = {
+        trans.project_id: trans.latest_activity
+        for trans in Translation.objects.filter(
+            id__in=(project.latest_translation_id for project in enabled_projects)
+        )
+        .select_related("user", "approved_user")
+        .annotate(project_id=F("entity__resource__project__id"))
+    }
+
+    projects_to_request = (
+        projects.exclude(locales=locale)
+        .filter(can_be_requested=True)
         .annotate(enabled_locales=Count("project_locale", distinct=True))
+        if request.user.is_authenticated
+        else []
     )
 
-    enabled_projects = projects.filter(locales=locale)
-    no_visible_projects = enabled_projects.count() == 0
-
-    project_request_enabled = (
-        request.user.is_authenticated and projects.exclude(locales=locale).count() > 0
-    )
-
-    pretranslated_projects = enabled_projects.filter(
-        project_locale__pretranslation_enabled=True, project_locale__locale=locale
-    )
-
-    pretranslation_request_enabled = (
-        request.user.is_authenticated
-        and locale in request.user.can_translate_locales
-        and locale.code in settings.GOOGLE_AUTOML_SUPPORTED_LOCALES
-        and pretranslated_projects.count() < enabled_projects.count()
-    )
-
-    if not projects:
+    if not enabled_projects and not projects_to_request:
         raise Http404
+
+    if (
+        request.user.is_authenticated
+        and locale.code in settings.GOOGLE_AUTOML_SUPPORTED_LOCALES
+    ):
+        pretranslated_project_ids = set(
+            ProjectLocale.objects.filter(
+                locale=locale,
+                pretranslation_enabled=True,
+                project__in=enabled_projects,
+            )
+            .order_by()
+            .values_list("project_id", flat=True)
+        )
+        pretranslation_request_enabled = (
+            len(pretranslated_project_ids) < len(enabled_projects)
+            and request.user.can_translate_locales.filter(id=locale.id).exists()
+        )
+    else:
+        pretranslated_project_ids = set()
+        pretranslation_request_enabled = False
 
     return render(
         request,
         "teams/includes/projects.html",
         {
             "locale": locale,
-            "projects": projects,
             "project_stats": Project.objects.all().stats_data(locale),
+            "latest_activities": latest_activities,
             "enabled_projects": enabled_projects,
-            "no_visible_projects": no_visible_projects,
-            "project_request_enabled": project_request_enabled,
-            "pretranslated_projects": pretranslated_projects,
+            "projects_to_request": projects_to_request,
+            "pretranslated_project_ids": pretranslated_project_ids,
             "pretranslation_request_enabled": pretranslation_request_enabled,
         },
     )
@@ -643,7 +665,7 @@ def request_pretranslation(request, locale):
     locale = get_object_or_404(Locale, code=locale)
 
     # Validate user
-    if locale not in user.can_translate_locales:
+    if not user.has_perm("base.can_translate_locale", locale):
         return HttpResponseBadRequest(
             "Bad Request: Requester is not a translator or manager for the locale"
         )

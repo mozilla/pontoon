@@ -1,8 +1,4 @@
-from unittest.mock import patch
-
 import pytest
-
-from pontoon.base.models import ProjectLocale
 
 
 @pytest.mark.django_db
@@ -22,18 +18,6 @@ def test_locale_latest_activity_without_latest(locale_b):
     is given, return None.
     """
     assert locale_b.get_latest_activity() is None
-
-
-@pytest.mark.django_db
-def test_locale_latest_activity_with_project(locale_a, project_a):
-    """
-    If a locale is given, defer to
-    ProjectLocale.get_latest_activity.
-    """
-    with patch.object(ProjectLocale, "get_latest_activity") as m:
-        m.return_value = "latest"
-        assert locale_a.get_latest_activity(project=project_a) == "latest"
-        assert m.call_args[0] == (locale_a, project_a)
 
 
 @pytest.mark.django_db

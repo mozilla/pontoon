@@ -1,7 +1,6 @@
 from django.contrib.auth.models import Group
 from django.db import models
 
-from pontoon.base import utils
 from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
@@ -79,35 +78,3 @@ class ProjectLocale(models.Model, AggregatedStats):
             project=self.project.name,
             locale=self.locale.code,
         )
-
-    @classmethod
-    def get_latest_activity(cls, self, extra=None):
-        """
-        Get the latest activity within project, locale
-        or combination of both.
-
-        :param self: object to get data for,
-            instance of Project or Locale
-        :param extra: extra filter to be used,
-            instance of Project or Locale
-        """
-        latest_translation = None
-
-        if getattr(self, "fetched_project_locale", None):
-            if self.fetched_project_locale:
-                latest_translation = self.fetched_project_locale[0].latest_translation
-
-        elif extra is None:
-            latest_translation = self.latest_translation
-
-        else:
-            project = self if isinstance(self, Project) else extra
-            locale = self if isinstance(self, Locale) else extra
-            project_locale = utils.get_object_or_none(
-                ProjectLocale, project=project, locale=locale
-            )
-
-            if project_locale is not None:
-                latest_translation = project_locale.latest_translation
-
-        return latest_translation.latest_activity if latest_translation else None

@@ -1,21 +1,15 @@
 import functools
 
-from unittest.mock import patch
-
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
 
-from pontoon.base.models import Project, ProjectLocale
+from pontoon.base.models import Project
 from pontoon.test.factories import LocaleFactory, ProjectFactory, ProjectLocaleFactory
 
 
 @pytest.mark.django_db
 def test_project_latest_activity_with_latest(project_a, translation_a):
-    """
-    If the project has a latest_translation and no locale is given,
-    return it.
-    """
     assert project_a.latest_translation == translation_a
     assert project_a.get_latest_activity() == translation_a.latest_activity
 
@@ -24,14 +18,6 @@ def test_project_latest_activity_with_latest(project_a, translation_a):
 def test_project_latest_activity_without_latest(project_a):
     assert project_a.latest_translation is None
     assert project_a.get_latest_activity() is None
-
-
-@pytest.mark.django_db
-def test_project_latest_activity_with_locale(locale_a, project_a):
-    with patch.object(ProjectLocale, "get_latest_activity") as m:
-        m.return_value = "latest"
-        assert project_a.get_latest_activity(locale=locale_a) == "latest"
-        assert m.call_args[0] == (project_a, locale_a)
 
 
 @pytest.fixture

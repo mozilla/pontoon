@@ -275,7 +275,7 @@
                 title='Run Translate Toolkit checks before submitting translations')
                 }}
 
-                {% if user.can_translate_locales %}
+                {% if user.can_translate_locales.exists() %}
                 {{ Checkbox.checkbox(
                 'Make suggestions',
                 class='force-suggestions',

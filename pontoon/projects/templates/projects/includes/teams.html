@@ -23,7 +23,7 @@
     {% set chart_link = url('pontoon.translate', locale.code, project.slug, 'all-resources') %}
 
     {% if not tag %}
-      {% set latest_activity = locale.get_latest_activity(project) %}
+      {% set latest_activity = latest_activities.get(locale.id) %}
       {% set chart = locale_stats.get(locale.id, {'total': 0}) %}
     {% endif %}
     {% if locale.code in locale_projects %}
