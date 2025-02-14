@@ -219,10 +219,10 @@ def assert_attributes_equal(original, **expected_attrs):
 
     for key, value in expected_attrs.items():
         original_value = getattr(original, key)
-        assert (
-            original_value == value
-        ), "Attribute `{key}` does not match: {original_value} != {value}".format(
-            key=key, original_value=original_value, value=value
+        assert original_value == value, (
+            "Attribute `{key}` does not match: {original_value} != {value}".format(
+                key=key, original_value=original_value, value=value
+            )
         )
 
 

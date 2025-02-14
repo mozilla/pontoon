@@ -162,7 +162,7 @@ def test_view_caighdean_bad(client, entity_a):
     assert response.status_code == 400
     assert response.get("Content-Type") == "application/json"
     assert json.loads(response.content)["message"] == (
-        "Bad Request: invalid literal for int() " "with base 10: 'DOESNOTEXIST'"
+        "Bad Request: invalid literal for int() with base 10: 'DOESNOTEXIST'"
     )
 
     maxid = Entity.objects.values_list("id", flat=True).order_by("-id").first()

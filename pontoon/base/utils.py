@@ -216,7 +216,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             }
         )
 
-    yield ("\n\t</body>" "\n</tmx>\n")
+    yield ("\n\t</body>\n</tmx>\n")
 
 
 def get_m2m_changes(current_qs, new_qs):

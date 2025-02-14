@@ -247,14 +247,14 @@ def send_monthly_activity_summary():
 
     recipient_count = len(users)
 
-    log.info(f"Monthly activity summary emails sent to { recipient_count } users.")
+    log.info(f"Monthly activity summary emails sent to {recipient_count} users.")
 
 
 def send_notification_digest(frequency="Daily"):
     """
     Sends notification email digests to users based on the specified frequency (Daily or Weekly).
     """
-    log.info(f"Start sending { frequency } notification email digests.")
+    log.info(f"Start sending {frequency} notification email digests.")
 
     if frequency == "Daily":
         start_time = timezone.now() - datetime.timedelta(days=1)
@@ -290,7 +290,7 @@ def send_notification_digest(frequency="Daily"):
         if recipient.is_subscribed_to_notification(notification):
             notifications_map[recipient].append(notification)
 
-    subject = f"{ frequency } notifications summary"
+    subject = f"{frequency} notifications summary"
     template = get_template("messaging/emails/notification_digest.html")
 
     # Process and send email for each user
@@ -314,7 +314,7 @@ def send_notification_digest(frequency="Daily"):
 
     recipient_count = len(notifications_map.keys())
 
-    log.info(f"Notification email digests sent to { recipient_count } users.")
+    log.info(f"Notification email digests sent to {recipient_count} users.")
 
 
 def send_onboarding_email_1(user):
@@ -348,7 +348,7 @@ def send_onboarding_email_1(user):
     profile.onboarding_email_status = 1
     profile.save(update_fields=["onboarding_email_status"])
 
-    log.info(f"1st onboarding email sent to { user.contact_email }.")
+    log.info(f"1st onboarding email sent to {user.contact_email}.")
 
 
 def send_onboarding_emails_2(users):
@@ -384,7 +384,7 @@ def send_onboarding_emails_2(users):
     pks = users.values_list("pk", flat=True)
     UserProfile.objects.filter(user__in=pks).update(onboarding_email_status=2)
 
-    log.info(f"2nd onboarding emails sent to { len(users) } users.")
+    log.info(f"2nd onboarding emails sent to {len(users)} users.")
 
 
 def send_onboarding_emails_3(users):
@@ -420,7 +420,7 @@ def send_onboarding_emails_3(users):
     pks = users.values_list("pk", flat=True)
     UserProfile.objects.filter(user__in=pks).update(onboarding_email_status=3)
 
-    log.info(f"3rd onboarding emails sent to { len(users) } users.")
+    log.info(f"3rd onboarding emails sent to {len(users)} users.")
 
 
 def send_inactive_contributor_emails(users):
@@ -458,7 +458,7 @@ def send_inactive_contributor_emails(users):
     now = timezone.now()
     UserProfile.objects.filter(user__in=pks).update(last_inactive_reminder_sent=now)
 
-    log.info(f"Inactive contributor emails sent to { len(users) } users.")
+    log.info(f"Inactive contributor emails sent to {len(users)} users.")
 
 
 def send_inactive_translator_emails(users, translator_map):
@@ -475,7 +475,7 @@ def send_inactive_translator_emails(users, translator_map):
         try:
             locale = list(translator_map[user.pk])[0]
         except IndexError:
-            log.error(f"User { user } is not a translator of any locale.")
+            log.error(f"User {user} is not a translator of any locale.")
             continue
 
         content = jinja_env.from_string(email_content.body).render({"locale": locale})
@@ -501,7 +501,7 @@ def send_inactive_translator_emails(users, translator_map):
     now = timezone.now()
     UserProfile.objects.filter(user__in=pks).update(last_inactive_reminder_sent=now)
 
-    log.info(f"Inactive translator emails sent to { len(users) } users.")
+    log.info(f"Inactive translator emails sent to {len(users)} users.")
 
 
 def send_inactive_manager_emails(users, manager_map):
@@ -518,7 +518,7 @@ def send_inactive_manager_emails(users, manager_map):
         try:
             locale = list(manager_map[user.pk])[0]
         except IndexError:
-            log.error(f"User { user } is not a manager of any locale.")
+            log.error(f"User {user} is not a manager of any locale.")
             continue
 
         content = jinja_env.from_string(email_content.body).render({"locale": locale})
@@ -544,7 +544,7 @@ def send_inactive_manager_emails(users, manager_map):
     now = timezone.now()
     UserProfile.objects.filter(user__in=pks).update(last_inactive_reminder_sent=now)
 
-    log.info(f"Inactive manager emails sent to { len(users) } users.")
+    log.info(f"Inactive manager emails sent to {len(users)} users.")
 
 
 def send_verification_email(user, link):
@@ -572,7 +572,7 @@ def send_verification_email(user, link):
     msg.attach_alternative(body_html, "text/html")
     msg.send()
 
-    log.info(f"Verification email sent to { user.contact_email }.")
+    log.info(f"Verification email sent to {user.contact_email}.")
 
 
 @shared_task(bind=True)

@@ -209,7 +209,7 @@ def test_translation_before_source():
             tgt_root,
             {
                 "de-Test": {
-                    "a.ftl": ("a0 = New translation 0\n" "a1 = New translation 1\n"),
+                    "a.ftl": ("a0 = New translation 0\na1 = New translation 1\n"),
                     "b.ftl": "b0 = Translation 0\n",
                 }
             },
