@@ -32,8 +32,7 @@ def create_tutorial_project(apps, schema_editor):
         sync_disabled=True,
         system_project=True,
         info=(
-            "A tutorial project, used as a testing playground and for the "
-            "guided tour."
+            "A tutorial project, used as a testing playground and for the guided tour."
         ),
         admin_notes=(
             "Do not remove, this is required in code to show the guided tour."

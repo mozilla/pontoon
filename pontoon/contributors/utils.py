@@ -349,7 +349,7 @@ def get_contribution_graph_data(user, contribution_type=None):
 
     return (
         contributions_data,
-        f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
+        f"{intcomma(total)} contribution{pluralize(total)} in the last year",
     )
 
 
@@ -381,11 +381,11 @@ def get_project_locale_contribution_counts(contributions_qs):
         count = item["count"]
 
         if item["action_type"] == "translation:created":
-            action = f"{ intcomma(count) } translation{ pluralize(count) }"
+            action = f"{intcomma(count)} translation{pluralize(count)}"
         elif item["action_type"] == "translation:approved":
-            action = f"{ intcomma(count) } approved"
+            action = f"{intcomma(count)} approved"
         elif item["action_type"] == "translation:rejected":
-            action = f"{ intcomma(count) } rejected"
+            action = f"{intcomma(count)} rejected"
 
         if month not in counts:
             counts[month] = {}
@@ -452,15 +452,15 @@ def get_contribution_timeline_data(
     params_map = {
         "user_translations": {
             "author": user.email,
-            "time": f"{ start_ }-{ end_ }",
+            "time": f"{start_}-{end_}",
         },
         "user_reviews": {
             "reviewer": user.email,
-            "review_time": f"{ start_ }-{ end_ }",
+            "review_time": f"{start_}-{end_}",
         },
         "peer_reviews": {
             "author": user.email,
-            "review_time": f"{ start_ }-{ end_ }",
+            "review_time": f"{start_}-{end_}",
             "exclude_self_reviewed": "",
         },
     }
@@ -476,11 +476,11 @@ def get_contribution_timeline_data(
 
             # Generate title for the localizations belonging to the same contribution type
             if contribution_type == "user_translations":
-                title = f"Submitted { intcomma(total_count) } translation{ pluralize(total_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+                title = f"Submitted {intcomma(total_count)} translation{pluralize(total_count)} in {intcomma(p_count)} project{pluralize(p_count)}"
             elif contribution_type == "user_reviews":
-                title = f"Reviewed { intcomma(total_count) } suggestion{ pluralize(total_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+                title = f"Reviewed {intcomma(total_count)} suggestion{pluralize(total_count)} in {intcomma(p_count)} project{pluralize(p_count)}"
             elif contribution_type == "peer_reviews":
-                title = f"Received review for { intcomma(total_count) } suggestion{ pluralize(total_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+                title = f"Received review for {intcomma(total_count)} suggestion{pluralize(total_count)} in {intcomma(p_count)} project{pluralize(p_count)}"
 
             # Generate localization URL and add it to the data dict
             params = params_map[contribution_type]
