@@ -53,7 +53,7 @@ p.completion {
 <p>{{ settings.EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO }}</p>
 {% endif %}
 
-<h2>You personal activity</h2>
+<h2>Your personal activity</h2>
 {{ actions_item("Translations submitted", user, "submitted") }}
 {{ actions_item("Suggestions reviewed", user, "reviewed") }}
 
@@ -106,7 +106,7 @@ your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 <p class="item {{ cls }}">
     <span class="bullet {{ url_parameter }}"></span>
     {{ label }}:
-    {% if url_parameter %}
+    {% if url_parameter and (locale.month_stats[attribute] or 0) > 0 %}
     <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status={{ url_parameter }}">{{ locale.month_stats[attribute] or 0 }}{{ unit }}</a>
     {% else %}
     {{ locale.month_stats[attribute] or 0 }}{{ unit }}
