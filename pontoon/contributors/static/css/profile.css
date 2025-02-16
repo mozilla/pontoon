@@ -140,6 +140,7 @@ h2 {
 
 .achievements .badge-level {
   position: absolute;
+  user-select: none;
   bottom: 5px;
   left: 2px;
   background: var(--icon-background-1);
