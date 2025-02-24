@@ -1,0 +1,55 @@
+name: Build and Push Pontoon Image
+
+on:
+  push:
+    paths:
+      - ".bumpversion.cfg"
+    branches:
+      - master
+
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "The image tag to build and push"
+        required: true
+        default: latest
+        type: string
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+          cache: "npm"
+
+      - run: npm install
+      - run: make build-translate
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Get current version
+        run: |
+          echo "image_ver=$(make version)" >> $GITHUB_ENV
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.image_tag || env.image_ver || 'latest' }}
+        run: |
+          image=${{ env.REGISTRY }}/pontoon:${{ env.IMAGE_TAG }}
+          docker build -f ./docker/Dockerfile -t "$image" .
+          docker push "$image"

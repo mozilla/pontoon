@@ -36,3 +36,9 @@ docker/config/server.env-e
 
 # Cursor IDE
 .cursorignore
+
+# Re-include the parent directories and the workflow file
+!.github/
+!.github/workflows/
+!.github/workflows/build-docker.yaml
+!docker/config/server.env
