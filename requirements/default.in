@@ -54,6 +54,7 @@ sacrebleu==2.4.3
 sacremoses==0.1.1
 translate-toolkit==3.14.1
 whitenoise==5.2.0
+pyyaml==6.0.2
 
 # Dependencies loaded from outside pypi.
 silme @ https://github.com/mozilla/silme/archive/v0.11.2.zip
