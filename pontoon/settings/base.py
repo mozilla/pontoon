@@ -913,7 +913,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
 # Redirect non-HTTPS requests to HTTPS
-SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
+SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "True") == "True" and (not (DEBUG or os.environ.get("CI", False)))
 
 # Content-Security-Policy headers
 CSP_DEFAULT_SRC = ("'none'",)
