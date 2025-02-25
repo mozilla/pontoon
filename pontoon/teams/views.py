@@ -117,7 +117,13 @@ def ajax_projects(request, locale):
     latest_activities = {
         trans.project_id: trans.latest_activity
         for trans in Translation.objects.filter(
-            id__in=(project.latest_translation_id for project in enabled_projects)
+            id__in=(
+                ProjectLocale.objects.filter(
+                    locale=locale, project__in=enabled_projects
+                )
+                .order_by()
+                .values_list("latest_translation_id", flat=True)
+            ),
         )
         .select_related("user", "approved_user")
         .annotate(project_id=F("entity__resource__project__id"))
