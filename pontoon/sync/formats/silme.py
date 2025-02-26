@@ -16,11 +16,7 @@ from silme.format.properties import FormatParser as PropertiesParser
 
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.formats.exceptions import ParseError, SyncError
-from pontoon.sync.formats.utils import (
-    create_parent_directory,
-    escape_quotes,
-    unescape_quotes,
-)
+from pontoon.sync.formats.utils import create_parent_directory
 from pontoon.sync.vcs.translation import VCSTranslation
 
 
@@ -89,9 +85,6 @@ class SilmeResource(ParsedResource):
         self.source_resource = source_resource
         self.entities = OrderedDict()  # Preserve entity order.
 
-        # Bug 1193860: unescape quotes in some files
-        self.escape_quotes_on = "mobile/android/base" in path and parser is DTDParser
-
         # Copy entities from the source_resource if it's available.
         if source_resource:
             for key, entity in source_resource.entities.items():
@@ -121,9 +114,6 @@ class SilmeResource(ParsedResource):
         current_order = 0
         for obj in self.structure:
             if isinstance(obj, silme.core.entity.Entity):
-                if self.escape_quotes_on:
-                    obj.value = unescape_quotes(obj.value)
-
                 entity = SilmeEntity(obj, comments, current_order)
                 self.entities[entity.key] = entity
                 current_order += 1
@@ -175,10 +165,6 @@ class SilmeResource(ParsedResource):
             translated_entity = self.entities.get(key)
             if translated_entity and None in translated_entity.strings:
                 translation = translated_entity.strings[None]
-
-                if self.escape_quotes_on:
-                    translation = escape_quotes(translation)
-
                 new_structure.modify_entity(key, translation)
             else:
                 # Remove untranslated entity and following newline
