@@ -35,7 +35,7 @@
             <th class="latest-start relative-time">Latest Start<i class="fas"></i></th>
             <th class="duration" data-sort="">Duration<i class="fas"></i></th>
             {% if settings.MANUAL_SYNC and is_manager %}
-            <th class="no-sort"></th>
+            <th class="sync-now no-sort"></th>
             {% endif %}
           </tr>
         </thead>
@@ -61,8 +61,8 @@
                 {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
               </td>
               {% if settings.MANUAL_SYNC and is_manager and project.data_source != "database" %}
-              <td>
-                <button class="button table-button sync" project-slug="{{ project.slug }}" title="Sync now"><i class="fas fa-sync"></i></button>
+              <td class="sync-now">
+                <button class="button sync" project-slug="{{ project.slug }}" title="Sync now"><i class="fas fa-sync"></i></button>
               </td>
               {% endif %}
             </tr>

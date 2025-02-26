@@ -387,17 +387,3 @@ table.table.project-list.hidden {
   color: var(--white-1);
   font-weight: 700;
 }
-
-.table-button {
-  background: var(--button-background-1);
-  border: none;
-  border-radius: 3px;
-  color: var(--light-grey-7);
-  height: auto;
-}
-
-.table-button:hover {
-  background: var(--status-translated);
-  color: var(--black-3);
-  cursor: pointer;
-}
