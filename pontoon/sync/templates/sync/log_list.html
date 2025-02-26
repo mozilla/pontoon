@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block bottom %}
+{% set is_manager = request.user.has_perm("base.can_manage_project") %}
 <section id="main" class="clearfix">
   <div class="container">
     <menu class="controls">
@@ -33,6 +34,9 @@
             <th class="latest-status">Latest Status<i class="fas"></i></th>
             <th class="latest-start relative-time">Latest Start<i class="fas"></i></th>
             <th class="duration" data-sort="">Duration<i class="fas"></i></th>
+            {% if settings.MANUAL_SYNC and is_manager %}
+            <th class="sync-now no-sort"></th>
+            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -56,6 +60,11 @@
               <td class="duration" title='{% if project.sync_end_time %}Latest End: {{ project.sync_end_time|date("Y-m-d H:i:s") }} UTC{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
                 {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
               </td>
+              {% if settings.MANUAL_SYNC and is_manager and project.data_source != "database" %}
+              <td class="sync-now">
+                <button class="button sync" project-slug="{{ project.slug }}" title="Sync now"><i class="fas fa-sync-alt"></i></button>
+              </td>
+              {% endif %}
             </tr>
           {% endfor %}
         </tbody>
