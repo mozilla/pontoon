@@ -58,6 +58,10 @@
   cursor: pointer;
 }
 
+.log-list tr:hover .button {
+    background: var(--button-background-2);
+}
+
 .sync-status-success {
   color: var(--status-translated);
 }
