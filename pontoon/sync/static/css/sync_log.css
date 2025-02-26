@@ -59,7 +59,7 @@
 }
 
 .log-list tr:hover .button {
-    background: var(--button-background-2);
+  background: var(--button-background-2);
 }
 
 .sync-status-success {
