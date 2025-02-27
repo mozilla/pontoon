@@ -814,6 +814,11 @@ STATICFILES_DIRS = [
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")
 ALLOWED_HOSTS = allowed_hosts.split(",") if allowed_hosts else []
 
+csrf_trusted_origins = os.environ.get("CSRF_TRUSTED_ORIGINS")
+
+if csrf_trusted_origins:
+    CSRF_TRUSTED_ORIGINS = csrf_trusted_origins.split(",")
+
 # Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.
