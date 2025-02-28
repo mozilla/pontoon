@@ -13,9 +13,8 @@ from django.db.models import Q
 from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
 from pontoon.base.models.entity import get_word_count
 from pontoon.sync.core.checkout import Checkout
-from pontoon.sync.formats import parse
-from pontoon.sync.formats.exceptions import ParseError
-from pontoon.sync.formats.silme import SilmeEntity, SilmeResource  # Approximate types
+from pontoon.sync.formats import parse_translations
+from pontoon.sync.formats.common import ParseError, VCSTranslation
 
 
 log = logging.getLogger(__name__)
@@ -35,39 +34,34 @@ def sync_entities_from_repo(
         return 0, set(), set()
     log.info(f"[{project.slug}] Syncing entities from repo...")
     # db_path -> parsed_resource
-    updates: dict[str, SilmeResource | None] = {}
+    updates: dict[str, list[VCSTranslation]] = {}
     source_paths = set(paths.ref_paths)
-    source_locale = Locale.objects.get(code="en-US")
     for co_path in checkout.changed:
         path = join(checkout.path, co_path)
         if path in source_paths and exists(path):
             db_path = get_db_path(paths, path)
             try:
-                res = parse(path, locale=source_locale)
+                translations = parse_translations(path)
             except ParseError as error:
                 log.error(
                     f"[{project.slug}:{db_path}] Skipping resource with parse error: {error}"
                 )
-                res = None
+                translations = []
             except ValueError as error:
                 if str(error).startswith("Translation format"):
                     log.warning(
                         f"[{project.slug}:{db_path}] Skipping resource with unsupported format"
                     )
-                    res = None
+                    translations = []
                 else:
                     raise error
-            updates[db_path] = res
+            updates[db_path] = translations
 
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)
         removed_paths = remove_resources(project, paths, checkout)
-        old_res_added_ent_count, changed_paths = update_resources(
-            project, locale_map, paths, updates, now
-        )
-        new_res_added_ent_count, _ = add_resources(
-            project, locale_map, paths, updates, changed_paths, now
-        )
+        old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
+        new_res_added_ent_count, _ = add_resources(project, updates, changed_paths, now)
         update_translated_resources(project, locale_map, paths)
 
     return (
@@ -122,9 +116,7 @@ def remove_resources(
 
 def update_resources(
     project: Project,
-    locale_map: dict[str, Locale],
-    paths: L10nConfigPaths | L10nDiscoverPaths,
-    updates: dict[str, SilmeResource | None],
+    updates: dict[str, list[VCSTranslation]],
     now: datetime,
 ) -> tuple[int, set[str]]:
     changed_resources = (
@@ -147,7 +139,7 @@ def update_resources(
         for path, entity in (
             (cr.path, entity_from_source(cr, now, 0, tx))
             for cr in changed_resources
-            for tx in updates[cr.path].translations
+            for tx in updates[cr.path]
         )
     }
 
@@ -202,16 +194,14 @@ def update_resources(
 
 def add_resources(
     project: Project,
-    locale_map: dict[str, Locale],
-    paths: L10nConfigPaths | L10nDiscoverPaths,
-    updates: dict[str, SilmeResource | None],
+    updates: dict[str, list[VCSTranslation]],
     changed_paths: set[str],
     now: datetime,
 ) -> tuple[int, set[str]]:
     added_resources = [
         Resource(project=project, path=db_path, format=get_path_format(db_path))
-        for db_path, res in updates.items()
-        if res is not None and db_path not in changed_paths
+        for db_path, translations in updates.items()
+        if translations and db_path not in changed_paths
     ]
     if not added_resources:
         return 0, set()
@@ -226,7 +216,7 @@ def add_resources(
         (
             entity_from_source(resource, now, idx, tx)
             for resource in added_resources
-            for idx, tx in enumerate(updates[resource.path].translations)
+            for idx, tx in enumerate(updates[resource.path])
         )
     )
 
@@ -291,16 +281,16 @@ def is_translated_resource(
     if resource.format in BILINGUAL_FORMATS:
         # For bilingual formats, only create TranslatedResource
         # if the resource exists for the locale.
-        target = paths.target(resource.path)  # , locale_code)
+        target, _ = paths.target(resource.path)
         if target is None:
             return False
-        target_path = paths.format_target_path(target[0], locale.code)
+        target_path = paths.format_target_path(target, locale.code)
         return isfile(target_path)
     return True
 
 
 def entity_from_source(
-    resource: Resource, now: datetime, idx: int, tx: SilmeEntity
+    resource: Resource, now: datetime, idx: int, tx: VCSTranslation
 ) -> Entity:
     comments = getattr(tx, "comments", None)
     group_comments = getattr(tx, "group_comments", None)

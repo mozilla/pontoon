@@ -128,22 +128,22 @@ class POTests(FormatTestsMixin, TestCase):
             """
             )
         )
-        path, resource = self.parse_string(test_input)
+        _, translations = self.parse_string(test_input)
 
         assert_attributes_equal(
-            resource.translations[0],
+            translations[0],
             source_string="Source",
             key=self.key("Main context\x04Source"),
         )
 
         assert_attributes_equal(
-            resource.translations[1],
+            translations[1],
             source_string="Source",
             key=self.key("Other context\x04Source"),
         )
 
         assert_attributes_equal(
-            resource.translations[2],
+            translations[2],
             source_string="Source",
             key=self.key("Source"),
         )

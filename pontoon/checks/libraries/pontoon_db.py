@@ -3,8 +3,6 @@ from collections import defaultdict
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
 
-from pontoon.sync.formats.ftl import localizable_entries
-
 
 parser = FluentParser()
 
@@ -64,7 +62,7 @@ def run_checks(entity, original, string):
             checks["pErrors"].append(translation_ast.annotations[0].message)
 
         # Not a localizable entry
-        elif not isinstance(translation_ast, localizable_entries):
+        elif not isinstance(translation_ast, (ast.Message, ast.Term)):
             checks["pErrors"].append(
                 "Translation needs to be a valid localizable entry"
             )
