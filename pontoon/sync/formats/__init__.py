@@ -55,20 +55,16 @@ def are_compatible_files(file_a, file_b):
     return False
 
 
-def parse_translations(path, source_path=None) -> list[VCSTranslation]:
+def parse_translations(path) -> list[VCSTranslation]:
     """
     Parse the resource file at the given path and return a
     list of translations.
 
     :param path:
         Path to the resource file to parse.
-    :param source_path:
-        Path to the corresponding resource file in the source directory
-        for the resource we're parsing. Asymmetric formats need this
-        for saving. Defaults to None.
     """
     filename = basename(path)
     parse_format = _get_format_parser(filename)
     if parse_format is None:
         raise ValueError(f"Translation format {splitext(path)[1]} is not supported.")
-    return parse_format(path, source_path=source_path)
+    return parse_format(path)

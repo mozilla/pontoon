@@ -152,10 +152,7 @@ def find_db_updates(
                 db_path = relpath(ref_path, paths.ref_root)
                 lc_scope = f"[{project.slug}:{db_path}, {locale.code}]"
                 try:
-                    repo_translations = parse_translations(
-                        target_path,
-                        None if isinstance(paths, UploadPaths) else ref_path,
-                    )
+                    repo_translations = parse_translations(target_path)
                 except Exception as error:
                     log.error(f"{lc_scope} Skipping resource with parse error: {error}")
                     continue
