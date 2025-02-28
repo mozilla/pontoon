@@ -7,8 +7,8 @@ from os.path import join, relpath, splitext
 from typing import cast
 
 from fluent.syntax import FluentParser
+from moz.l10n.formats import bilingual_extensions, l10n_extensions
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
-from moz.l10n.resource import bilingual_extensions, l10n_extensions
 
 from django.core.paginator import Paginator
 from django.db import transaction
