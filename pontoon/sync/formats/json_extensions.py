@@ -10,7 +10,6 @@ import copy
 import logging
 
 from pontoon.sync.formats.base_json_file import JSONResource, parse as parseJSONResource
-from pontoon.sync.formats.exceptions import SyncError
 from pontoon.sync.vcs.translation import VCSTranslation
 
 
@@ -81,7 +80,6 @@ class JSONExtensionResource(JSONResource):
     def __init__(self, path, source_resource=None):
         self.path = path
         self.entities = {}
-        self.source_resource = source_resource
 
         # Copy entities from the source_resource if it's available.
         if source_resource:
@@ -105,32 +103,6 @@ class JSONExtensionResource(JSONResource):
                 key,
                 data,
             )
-
-    def save(self, locale):
-        """
-        Load the source resource, modify it with changes made to this
-        Resource instance, and save it over the locale-specific
-        resource.
-        """
-        if not self.source_resource:
-            raise SyncError(
-                "Cannot save JSON resource {}: No source resource given.".format(
-                    self.path
-                )
-            )
-
-        json_file = self.open_json_file(self.source_resource.path, SCHEMA)
-
-        # Iterate over a copy, leaving original free to modify
-        for key, value in json_file.copy().items():
-            entity = self.entities[key]
-
-            if entity.strings:
-                json_file[key]["message"] = entity.strings[None]
-            else:
-                del json_file[key]
-
-        self.save_json_file(json_file)
 
 
 def parse(path, source_path=None, locale=None):

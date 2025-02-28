@@ -2,11 +2,7 @@
 Parser for to pofile translation format.
 """
 
-from datetime import datetime
-
 import polib
-
-from django.utils import timezone
 
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.formats.exceptions import ParseError
@@ -43,21 +39,6 @@ class POEntity(VCSTranslation):
             source=po_entry.occurrences,
         )
 
-    def update_entry(self, locale):
-        """Update the POEntry associated with this translation."""
-        if self.po_entry.msgstr_plural:
-            self.po_entry.msgstr_plural = {
-                plural_form: self.strings.get(plural_form, "")
-                for plural_form in range(locale.nplurals or 1)
-            }
-        else:
-            self.po_entry.msgstr = self.strings.get(None, "")
-
-        if self.fuzzy and "fuzzy" not in self.po_entry.flags:
-            self.po_entry.flags.append("fuzzy")
-        elif not self.fuzzy and "fuzzy" in self.po_entry.flags:
-            self.po_entry.flags.remove("fuzzy")
-
     def __repr__(self):
         return "<POEntity {key}>".format(key=self.key.encode("utf-8"))
 
@@ -76,39 +57,6 @@ class POResource(ParsedResource):
     @property
     def translations(self):
         return self.entities
-
-    def save(self, locale):
-        for entity in self.translations:
-            entity.update_entry(locale)
-
-        metadata = self.pofile.metadata
-        if len(self.translations) > 0:
-            latest_translation = max(
-                self.translations,
-                key=lambda t: t.last_updated or timezone.make_aware(datetime.min),
-            )
-            if latest_translation.last_updated:
-                metadata["PO-Revision-Date"] = latest_translation.last_updated.strftime(
-                    "%Y-%m-%d %H:%M%z"
-                )
-            if latest_translation.last_translator:
-                metadata["Last-Translator"] = (
-                    latest_translation.last_translator.display_name_and_email
-                )
-
-        metadata.update(
-            {
-                "Language": locale.code.replace("-", "_"),
-                "X-Generator": "Pontoon",
-                "Plural-Forms": (
-                    "nplurals={locale.nplurals}; plural={locale.plural_rule};".format(
-                        locale=locale
-                    )
-                ),
-            }
-        )
-
-        self.pofile.save()
 
     def __repr__(self):
         return f"<POResource {self.pofile.fpath}>"

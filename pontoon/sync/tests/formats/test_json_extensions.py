@@ -1,5 +1,3 @@
-from textwrap import dedent
-
 from pontoon.base.tests import TestCase, assert_attributes_equal
 from pontoon.sync.formats import json_extensions
 from pontoon.sync.tests.formats import FormatTestsMixin
@@ -71,55 +69,4 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
             strings={None: "Hello $YOUR_NAME$"},
             fuzzy=False,
             order=translation_index,
-        )
-
-    def test_save_basic(self):
-        input_string = dedent(
-            """
-            {
-              "SourceString": {
-                "message": "Source String",
-                "description": "Comment"
-              }
-            }
-        """
-        )
-        expected_string = dedent(
-            """
-            {
-              "SourceString": {
-                "message": "New Translated String",
-                "description": "Comment"
-              }
-            }
-        """
-        )
-
-        self.run_save_basic(
-            input_string,
-            expected_string,
-            source_string=input_string,
-        )
-
-    def test_save_remove(self):
-        input_string = dedent(
-            """
-            {
-                "SourceString": {
-                    "message": "Source String",
-                    "description": "Comment"
-                }
-            }
-        """
-        )
-        expected_string = dedent(
-            """
-            {}
-        """
-        )
-
-        self.run_save_remove(
-            input_string,
-            expected_string,
-            source_string=input_string,
         )

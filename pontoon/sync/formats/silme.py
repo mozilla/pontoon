@@ -15,8 +15,7 @@ from silme.format.ini import FormatParser as IniParser
 from silme.format.properties import FormatParser as PropertiesParser
 
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.formats.exceptions import ParseError, SyncError
-from pontoon.sync.formats.utils import create_parent_directory
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.vcs.translation import VCSTranslation
 
 
@@ -82,7 +81,6 @@ class SilmeResource(ParsedResource):
     def __init__(self, parser, path, source_resource=None):
         self.parser = parser
         self.path = path
-        self.source_resource = source_resource
         self.entities = OrderedDict()  # Preserve entity order.
 
         # Copy entities from the source_resource if it's available.
@@ -128,65 +126,6 @@ class SilmeResource(ParsedResource):
     @property
     def translations(self):
         return list(self.entities.values())
-
-    def save(self, locale):
-        """
-        Load the source resource, modify it with changes made to this
-        Resource instance, and save it over the locale-specific
-        resource.
-        """
-        if self.source_resource is None:
-            raise SyncError(
-                "Cannot save silme resource {}: No source resource given.".format(
-                    self.path
-                )
-            )
-
-        # Only uncomment MOZ_LANGPACK_CONTRIBUTORS if we have a
-        # translation for it
-        new_structure = self.parser.get_structure(
-            read_file(
-                self.source_resource.path,
-                uncomment_moz_langpack=self.entities.get(
-                    "MOZ_LANGPACK_CONTRIBUTORS", False
-                ),
-            )
-        )
-
-        # Update translations in the copied resource.
-        entities = [
-            SilmeEntity(obj)
-            for obj in new_structure
-            if isinstance(obj, silme.core.entity.Entity)
-        ]
-        for silme_entity in entities:
-            key = silme_entity.key
-
-            translated_entity = self.entities.get(key)
-            if translated_entity and None in translated_entity.strings:
-                translation = translated_entity.strings[None]
-                new_structure.modify_entity(key, translation)
-            else:
-                # Remove untranslated entity and following newline
-                pos = new_structure.entity_pos(key)
-                new_structure.remove_entity(key)
-
-                try:
-                    line = new_structure[pos]
-                except IndexError:
-                    # No newline at end of file
-                    continue
-
-                if isinstance(line, str) and line.startswith("\n"):
-                    line = line[len("\n") :]
-                    new_structure[pos] = line
-                    if len(line) == 0:
-                        new_structure.remove_element(pos)
-
-        create_parent_directory(self.path)
-
-        with codecs.open(self.path, "w", "utf-8") as f:
-            f.write(self.parser.dump_structure(new_structure))
 
 
 def read_file(path, uncomment_moz_langpack=False):

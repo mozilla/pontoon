@@ -7,7 +7,7 @@ import copy
 from lxml import etree
 
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.formats.exceptions import ParseError, SyncError
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.vcs.translation import VCSTranslation
 from translate.storage import xliff
 
@@ -46,9 +46,7 @@ class XLIFFResource(ParsedResource):
     def __init__(self, path, locale, source_resource=None):
         self.path = path
         self.locale = locale
-        self.source_resource = source_resource
         self.entities = {}
-        self.target_language = None
 
         # Copy entities from the source_resource if it's available.
         if source_resource:
@@ -64,13 +62,13 @@ class XLIFFResource(ParsedResource):
 
             try:
                 # Parse the xml content of the file into an XLIFF file object
-                self.xliff_file = xliff.xlifffile(xml)
+                xliff_file = xliff.xlifffile(xml)
             except etree.XMLSyntaxError as err:
                 # If there is an error parsing the file, raise a ParseError
                 raise ParseError(f"Failed to parse {path}: {err}")
 
             # Loop through each unit in the XLIFF file
-            for order, unit in enumerate(self.xliff_file.units):
+            for order, unit in enumerate(xliff_file.units):
                 # Get the unit's ID and source string
                 key = unit.getid()
                 context = unit.xmlelement.get("id")
@@ -99,83 +97,9 @@ class XLIFFResource(ParsedResource):
                 # Add the entity to the entities dictionary using its key as the dictionary key
                 self.entities[entity.key] = entity
 
-            # Store target-language, needed for serialization
-            file_tag = self.xliff_file.namespaced("file")
-            file_nodes = self.xliff_file.document.getroot().iterchildren(file_tag)
-            if file_nodes:
-                self.target_language = next(file_nodes).get("target-language")
-
     @property
     def translations(self):
         return sorted(self.entities.values(), key=lambda e: e.order)
-
-    def save(self, locale):
-        if not self.source_resource:
-            raise SyncError(
-                "Cannot save XLIFF resource {}: No source resource given.".format(
-                    self.path
-                )
-            )
-        # Open the file at the provided path
-        with open(self.source_resource.path) as f:
-            # Read the contents of the file and encode it
-            xml = f.read().encode("utf-8")
-
-            try:
-                # Parse the xml content of the file into an XLIFF file object
-                self.xliff_file = xliff.xlifffile(xml)
-            except etree.XMLSyntaxError as err:
-                # If there is an error parsing the file, raise a ParseError
-                raise ParseError(f"Failed to parse {self.source_resource.path}: {err}")
-
-            # Loop through each unit in the XLIFF file
-            for order, unit in enumerate(self.xliff_file.units):
-                # Apply any changes made to this object to the backing unit in the xliff file.
-                key = unit.getid()
-                entity = self.entities.get(key)
-                if None in entity.strings:
-                    # Store updated nodes
-                    unit.settarget(entity.strings[None])
-                    xml = unit.xmlelement
-                    target = xml.find(unit.namespaced("target"))
-
-                else:
-                    # Read stored nodes
-                    xml = unit.xmlelement
-                    target = xml.find(unit.namespaced("target"))
-                    if target is not None:
-                        xml.remove(target)
-
-                # Clear unused approved tag
-                if "approved" in xml.attrib:
-                    del xml.attrib["approved"]
-
-                # Clear unused state tag
-                if target is not None and "state" in target.attrib:
-                    del target.attrib["state"]
-
-        # Map locale codes for iOS:
-        # http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
-        locale_mapping = {
-            "ga-IE": "ga",
-            "nb-NO": "nb",
-            "nn-NO": "nn",
-            "sat": "sat-Olck",
-            "sv-SE": "sv",
-            "tl": "fil",
-            "zgh": "tzm",
-        }
-
-        locale_code = locale_mapping.get(locale.code, locale.code)
-
-        # Set target-language if not set
-        file_node = self.xliff_file.namespaced("file")
-        for node in self.xliff_file.document.getroot().iterchildren(file_node):
-            node.set("target-language", self.target_language or locale_code)
-
-        # Serialize and save the updated XLIFF file.
-        with open(self.path, "wb") as f:
-            f.write(bytes(self.xliff_file))
 
 
 def parse(path, source_path=None, locale=None):

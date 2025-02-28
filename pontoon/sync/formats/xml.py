@@ -6,15 +6,10 @@ import logging
 
 from collections import OrderedDict
 
-from compare_locales import parser, serializer
+from compare_locales import parser
 
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.formats.exceptions import ParseError, SyncError
-from pontoon.sync.formats.utils import (
-    create_parent_directory,
-    escape_apostrophes,
-    unescape_apostrophes,
-)
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.vcs.translation import VCSTranslation
 
 
@@ -44,14 +39,11 @@ class XMLResource(ParsedResource):
     def __init__(self, path, source_resource=None):
         self.path = path
         self.entities = OrderedDict()  # Preserve entity order.
-        self.source_resource = source_resource
 
         try:
             self.parser = parser.getParser(self.path)
         except UserWarning as err:
             raise ParseError(err)
-
-        self.parsed_objects = []
 
         # A monolingual l10n file might not contain all entities, but the code
         # expects ParsedResource to contain representations of all of them. So
@@ -76,14 +68,12 @@ class XMLResource(ParsedResource):
             else:
                 raise ParseError(err)
 
-        self.parsed_objects = list(self.parser.walk())
         order = 0
-
-        for entity in self.parsed_objects:
+        for entity in self.parser.walk():
             if isinstance(entity, parser.Entity):
                 self.entities[entity.key] = XMLEntity(
                     entity.key,
-                    unescape_apostrophes(entity.unwrap()),
+                    entity.unwrap().replace("\\'", "'"),
                     entity.pre_comment,
                     order,
                 )
@@ -92,32 +82,6 @@ class XMLResource(ParsedResource):
     @property
     def translations(self):
         return sorted(self.entities.values(), key=lambda e: e.order)
-
-    def save(self, locale):
-        if not self.source_resource:
-            raise SyncError(
-                f"Cannot save resource {self.path}: No source resource given."
-            )
-
-        # A dictionary of new translations
-        new_l10n = {
-            key: escape_apostrophes(entity.strings[None]) if entity.strings else None
-            for key, entity in self.entities.items()
-        }
-
-        # Create parent folders if necessary
-        create_parent_directory(self.path)
-
-        with open(self.path, "wb") as output_file:
-            log.debug("Saving file: %s", self.path)
-            output_file.write(
-                serializer.serialize(
-                    self.path,
-                    self.source_resource.parsed_objects,
-                    self.parsed_objects,
-                    new_l10n,
-                )
-            )
 
 
 def parse(path, source_path=None, locale=None):

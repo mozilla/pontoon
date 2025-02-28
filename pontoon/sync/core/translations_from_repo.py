@@ -385,7 +385,6 @@ def update_db_translations(
         # Add new approved translations for the remainder
         for (entity_id, locale_id), (strings, fuzzy) in repo_translations.items():
             for plural_form, string in strings.items():
-                # Note: no tx.entity.resource, which would be required by tx.save()
                 tx = Translation(
                     entity_id=entity_id,
                     locale_id=locale_id,
