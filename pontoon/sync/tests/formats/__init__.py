@@ -1,3 +1,5 @@
+from typing import Any
+
 from pontoon.base.tests import (
     LocaleFactory,
     assert_attributes_equal,
@@ -16,7 +18,7 @@ class FormatTestsMixin:
     test method for that feature and it won't be run.
     """
 
-    maxDiff = None
+    maxDiff: Any = None
 
     # Subclasses should override the following attributes to customize
     # how these tests are run.
@@ -271,142 +273,3 @@ class FormatTestsMixin:
                 expected_content = expected_content.strip()
 
             self.assertMultiLineEqual(actual_content, expected_content)
-
-    # Save tests take in an input and expected string that contain the
-    # state of the translation file before and after the change being
-    # tested is made to the parsed resource and saved.
-
-    def run_save_basic(
-        self,
-        input_string,
-        expected_string,
-        source_string=None,
-        expected_translation=None,
-    ):
-        """
-        Test saving changes to an entity with a single translation.
-        """
-        path, resource = self.parse_string(input_string, source_string=source_string)
-
-        translation = resource.translations[0]
-        translation.strings[None] = expected_translation or "New Translated String"
-        translation.fuzzy = True
-
-        resource.save(self.locale)
-
-        self.assert_file_content(path, expected_string)
-
-    def run_save_remove(
-        self, input_string, expected_string, source_string=None, remove_cb=None
-    ):
-        """Test saving a removed entity with a single translation."""
-        path, resource = self.parse_string(input_string, source_string=source_string)
-
-        def default_remove(res):
-            translation = res.translations[0]
-            translation.strings = {}
-
-        (remove_cb or default_remove)(resource)
-        resource.save(self.locale)
-
-        self.assert_file_content(path, expected_string)
-
-    def run_save_plural(self, input_string, expected_string, source_string=None):
-        path, resource = self.parse_string(input_string, source_string=source_string)
-
-        translation = resource.translations[0]
-        translation.strings[0] = "New Plural"
-        translation.strings[1] = "New Plurals"
-        resource.save(self.locale)
-
-        self.assert_file_content(path, expected_string)
-
-    def run_save_plural_remove(self, input_string, expected_string, source_string=None):
-        """
-        Any missing plurals should be set to an empty string in the
-        pofile.
-        """
-        path, resource = self.parse_string(input_string, source_string=source_string)
-
-        translation = resource.translations[0]
-        translation.strings[0] = "New Plural"
-        del translation.strings[1]
-        resource.save(self.locale)
-
-        self.assert_file_content(path, expected_string)
-
-    def run_save_remove_fuzzy(self, input_string, expected_string, source_string=None):
-        path, resource = self.parse_string(input_string, source_string=source_string)
-
-        resource.translations[0].fuzzy = False
-        resource.save(self.locale)
-
-        self.assert_file_content(path, expected_string)
-
-    # Save tests specifically for asymmetric formats.
-
-    def run_save_translation_missing(
-        self, source_string, input_string, expected_string, expected_translation=None
-    ):
-        """
-        If the source resource has a string but the translated resource
-        doesn't, the returned resource should have an empty translation
-        that can be modified and saved.
-
-        Source Example:
-            String=Source String
-            MissingString=Missing Source String
-
-        Input Example:
-            String=Translated String
-
-        Expected Example:
-            String=Translated String
-            MissingString=Translated Missing String
-        """
-        path, resource = self.parse_string(input_string, source_string=source_string)
-        key = self.key("Missing String")
-        missing_translation = next(
-            trans for trans in resource.translations if getattr(trans, "key") == key
-        )
-        missing_translation.strings = {
-            None: expected_translation or "Translated Missing String"
-        }
-        resource.save(self.locale)
-
-        self.assert_file_content(path, expected_string)
-
-    def run_save_translation_identical(
-        self, source_string, input_string, expected_string, expected_translation=None
-    ):
-        """
-        If the updated translation is identical to the source
-        translation, keep it.
-
-        Source Example:
-            String=Source String
-
-        Input Example:
-            String=Translated String
-
-        Expected Example:
-            String=Source String
-        """
-        path, resource = self.parse_string(input_string, source_string=source_string)
-
-        translation = next(
-            trans
-            for trans in resource.translations
-            if getattr(trans, "key") == "String"
-        )
-        translation.strings = {None: expected_translation or "Source String"}
-        resource.save(self.locale)
-
-        self.assert_file_content(path, expected_string)
-
-    def run_save_no_changes(self, input_string, expected_string, source_string=None):
-        """Test what happens when no changes are made."""
-        path, resource = self.parse_string(input_string, source_string=source_string)
-        resource.save(self.locale)
-
-        self.assert_file_content(path, expected_string)

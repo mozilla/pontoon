@@ -5,8 +5,7 @@ import logging
 from fluent.syntax import FluentParser, FluentSerializer, ast
 
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.formats.exceptions import ParseError, SyncError
-from pontoon.sync.formats.utils import create_parent_directory
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.vcs.translation import VCSTranslation
 
 
@@ -56,7 +55,6 @@ class FTLResource(ParsedResource):
         self.path = path
         self.locale = locale
         self.entities = {}
-        self.source_resource = source_resource
         self.order = 0
 
         # Copy entities from the source_resource if it's available.
@@ -118,44 +116,6 @@ class FTLResource(ParsedResource):
     @property
     def translations(self):
         return sorted(self.entities.values(), key=lambda e: e.order)
-
-    def save(self, locale):
-        """
-        Load the source resource, modify it with changes made to this
-        Resource instance, and save it over the locale-specific
-        resource.
-        """
-        if not self.source_resource:
-            raise SyncError(
-                "Cannot save FTL resource {}: No source resource given.".format(
-                    self.path
-                )
-            )
-
-        with codecs.open(self.source_resource.path, "r", "utf-8") as resource:
-            structure = parser.parse(resource.read())
-
-        entities = structure.body
-
-        # Use list() to iterate over a copy, leaving original free to modify
-        for obj in list(entities):
-            if isinstance(obj, localizable_entries):
-                index = entities.index(obj)
-                key = get_key(obj)
-                entity = self.entities[key]
-
-                if entity.strings:
-                    message = parser.parse_entry(entity.strings[None])
-                    message.comment = obj.comment
-                    entities[index] = message
-                else:
-                    del entities[index]
-
-        create_parent_directory(self.path)
-
-        with codecs.open(self.path, "w+", "utf-8") as f:
-            log.debug("Saving file: %s", self.path)
-            f.write(serializer.serialize(structure))
 
 
 def get_key(obj):

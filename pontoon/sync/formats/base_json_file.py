@@ -9,7 +9,6 @@ from jsonschema.exceptions import ValidationError
 
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.formats.exceptions import ParseError
-from pontoon.sync.formats.utils import create_parent_directory
 
 
 log = logging.getLogger(__name__)
@@ -35,18 +34,6 @@ class JSONResource(ParsedResource):
                 return {}
             else:
                 raise ParseError(err)
-
-    def save_json_file(self, json_file):
-        create_parent_directory(self.path)
-
-        with codecs.open(self.path, "w+", "utf-8") as f:
-            log.debug("Saving file: %s", self.path)
-            f.write(
-                json.dumps(
-                    json_file, ensure_ascii=False, indent=2, separators=(",", ": ")
-                )
-            )
-            f.write("\n")  # Add newline
 
 
 def parse(path, JSONResource, source_path=None, locale=None):
