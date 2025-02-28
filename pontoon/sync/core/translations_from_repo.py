@@ -4,7 +4,6 @@ from collections import defaultdict
 from collections.abc import Iterable, Sized
 from datetime import datetime
 from os.path import join, relpath, splitext
-from typing import cast
 
 from fluent.syntax import FluentParser
 from moz.l10n.formats import bilingual_extensions, l10n_extensions
@@ -31,8 +30,7 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
-from pontoon.sync.formats import parse
-from pontoon.sync.vcs.translation import VCSTranslation
+from pontoon.sync.formats import parse_translations
 
 
 log = logging.getLogger(__name__)
@@ -154,10 +152,9 @@ def find_db_updates(
                 db_path = relpath(ref_path, paths.ref_root)
                 lc_scope = f"[{project.slug}:{db_path}, {locale.code}]"
                 try:
-                    res = parse(
+                    repo_translations = parse_translations(
                         target_path,
                         None if isinstance(paths, UploadPaths) else ref_path,
-                        locale,
                     )
                 except Exception as error:
                     log.error(f"{lc_scope} Skipping resource with parse error: {error}")
@@ -168,7 +165,7 @@ def find_db_updates(
                 translated_resources[db_path].add(locale.pk)
                 translations.update(
                     ((db_path, tx.key, locale.pk), (tx.strings, tx.fuzzy))
-                    for tx in cast(list[VCSTranslation], res.translations)
+                    for tx in repo_translations
                     if tx.strings
                 )
         elif splitext(target_path)[1] in l10n_extensions and not isinstance(

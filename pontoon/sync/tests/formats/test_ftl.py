@@ -10,7 +10,7 @@ from pontoon.base.tests import (
     create_named_tempfile,
 )
 from pontoon.sync.formats import ftl
-from pontoon.sync.formats.exceptions import ParseError
+from pontoon.sync.formats.common import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
@@ -32,15 +32,9 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
             suffix=".ftl",
             directory=self.tempdir,
         )
-        source_resource = ftl.FTLResource(
-            path=source_path, locale=None, source_resource=None
-        )
+        source_resource = ftl.FTLResource(path=source_path, source_resource=None)
 
-        return ftl.FTLResource(
-            path,
-            locale=None,
-            source_resource=source_resource,
-        )
+        return ftl.FTLResource(path, source_resource=source_resource)
 
     def get_nonexistant_file_path(self):
         return os.path.join(self.tempdir, "strings.ftl")
@@ -52,7 +46,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         """
         path = self.get_nonexistant_file_path()
         with pytest.raises(ParseError):
-            ftl.FTLResource(path, locale=None, source_resource=None)
+            ftl.FTLResource(path, source_resource=None)
 
     def test_init_missing_resource_with_source(self):
         """
@@ -62,8 +56,8 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         path = self.get_nonexistant_file_path()
         translated_resource = self.get_nonexistant_file_resource(path)
 
-        assert len(translated_resource.translations) == 1
-        assert translated_resource.translations[0].strings == {}
+        assert len(translated_resource.entities) == 1
+        assert next(iter(translated_resource.entities.values())).strings == {}
 
     def test_parse_with_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
@@ -74,9 +68,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
             directory=self.tempdir,
         )
         path = self.get_nonexistant_file_path()
-        obj = ftl.parse(path, source_path=source_path, locale=None)
-        assert obj.path == path
-        assert obj.locale is None
+        assert ftl.parse(path, source_path=source_path)
 
     def test_parse_with_no_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
@@ -86,8 +78,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
             suffix=".ftl",
             directory=self.tempdir,
         )
-        obj = ftl.parse(path, source_path=None, locale=None)
-        assert obj.path == path
+        assert ftl.parse(path, source_path=None)
 
 
 BASE_FTL_FILE = """
@@ -123,10 +114,10 @@ class FTLTests(FormatTestsMixin, TestCase):
     def test_parse_basic(self):
         input_string = BASE_FTL_FILE
         translation_index = 0
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
 
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=["Sample comment"],
             key=self.key("Source String"),
             strings={None: "SourceString = Translated String\n"},
@@ -137,10 +128,10 @@ class FTLTests(FormatTestsMixin, TestCase):
     def test_parse_multiple_comments(self):
         input_string = BASE_FTL_FILE
         translation_index = 1
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
 
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=["First comment\nSecond comment"],
             source=[],
             key=self.key("Multiple Comments"),
@@ -152,10 +143,10 @@ class FTLTests(FormatTestsMixin, TestCase):
     def test_parse_no_comments_no_sources(self):
         input_string = BASE_FTL_FILE
         translation_index = 2
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
 
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=[],
             source=[],
             key=self.key("No Comments Or Sources"),

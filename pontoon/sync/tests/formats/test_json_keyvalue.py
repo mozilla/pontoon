@@ -22,9 +22,9 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
     supports_source_string = False
 
     def test_parse_no_comments_no_sources(self):
-        path, resource = self.parse_string(BASE_JSON_FILE)
+        _, translations = self.parse_string(BASE_JSON_FILE)
         assert_attributes_equal(
-            resource.translations[0],
+            translations[0],
             comments=[],
             source=[],
             key=self.key('["No Comments or Sources"]'),
@@ -36,9 +36,9 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
 
     # Validate nested values internal key format
     def test_parse_nested(self):
-        path, resource = self.parse_string(BASE_JSON_FILE)
+        _, translations = self.parse_string(BASE_JSON_FILE)
         assert_attributes_equal(
-            resource.translations[1],
+            translations[1],
             comments=[],
             source=[],
             # Nested keys are internally using "\200" as a separator
@@ -59,9 +59,9 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
             }
         """
         )
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[0],
+            translations[0],
             key='["Source", "String"]',
             context="Source.String",
         )
@@ -77,21 +77,21 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
       """
         )
 
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[0],
+            translations[0],
             key='["Source", "String"]',
             context="Source.String",
             strings={None: "foo"},
         )
         assert_attributes_equal(
-            resource.translations[1],
+            translations[1],
             key='["Source.String"]',
             context="Source.String",
             strings={None: "bar"},
         )
         assert_attributes_equal(
-            resource.translations[2],
+            translations[2],
             key='["[\\"Source\\", \\"String\\"]"]',
             context='["Source", "String"]',
             strings={None: "eek"},

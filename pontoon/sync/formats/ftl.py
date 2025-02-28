@@ -1,79 +1,31 @@
+from __future__ import annotations
+
 import codecs
-import copy
-import logging
 
 from fluent.syntax import FluentParser, FluentSerializer, ast
 
-from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.formats.exceptions import ParseError
-from pontoon.sync.vcs.translation import VCSTranslation
-
-
-log = logging.getLogger(__name__)
+from .common import ParseError, VCSTranslation
 
 
 parser = FluentParser()
 serializer = FluentSerializer()
-localizable_entries = (ast.Message, ast.Term)
 
 
-class FTLEntity(VCSTranslation):
-    """
-    Represents entities in FTL (without its attributes).
-    """
+class FTLResource:
+    entities: dict[str, VCSTranslation]
 
-    def __init__(
-        self,
-        key,
-        source_string,
-        source_string_plural,
-        strings,
-        comments=None,
-        group_comments=None,
-        resource_comments=None,
-        order=None,
-    ):
-        super().__init__(
-            key=key,
-            context=key,
-            source_string=source_string,
-            source_string_plural=source_string_plural,
-            strings=strings,
-            comments=comments or [],
-            group_comments=group_comments or [],
-            resource_comments=resource_comments or [],
-            fuzzy=False,
-            order=order,
-        )
-
-    def __repr__(self):
-        return "<FTLEntity {key}>".format(key=self.key.encode("utf-8"))
-
-
-class FTLResource(ParsedResource):
-    def __init__(self, path, locale, source_resource=None):
-        self.path = path
-        self.locale = locale
-        self.entities = {}
-        self.order = 0
-
-        # Copy entities from the source_resource if it's available.
+    def __init__(self, path, source_resource: "FTLResource" | None = None):
+        # Use entities from the source_resource if it's available.
         if source_resource:
-            for key, entity in source_resource.entities.items():
-                self.entities[key] = FTLEntity(
-                    entity.key,
-                    "",
-                    "",
-                    {},
-                    copy.copy(entity.comments),
-                    copy.copy(entity.group_comments),
-                    copy.copy(entity.resource_comments),
-                    entity.order,
-                )
+            self.entities = source_resource.entities
+            for entity in self.entities.values():
+                entity.strings = {}
+        else:
+            self.entities = {}
 
         try:
             with codecs.open(path, "r", "utf-8") as resource:
-                self.structure = parser.parse(resource.read())
+                structure = parser.parse(resource.read())
         # Parse errors are handled gracefully by fluent
         # No need to catch them here
         except OSError as err:
@@ -84,56 +36,40 @@ class FTLResource(ParsedResource):
             else:
                 raise ParseError(err)
 
-        group_comment = []
-        resource_comment = []
-        for obj in self.structure.body:
-            if isinstance(obj, localizable_entries):
-                key = get_key(obj)
-                comment = [obj.comment.content] if obj.comment else []
+        group_comment: list[str] = []
+        resource_comment: list[str] = []
+        order = 0
+        for obj in structure.body:
+            if isinstance(obj, (ast.Message, ast.Term)):
+                key = obj.id.name
+                if isinstance(obj, ast.Term):
+                    key = "-" + key
 
                 # Do not store comments in the string column
+                comment = obj.comment.content if obj.comment else None
                 obj.comment = None
                 translation = serializer.serialize_entry(obj)
 
-                self.entities[key] = FTLEntity(
-                    key,
-                    translation,
-                    "",
-                    {None: translation},
-                    comment,
-                    group_comment,
-                    resource_comment,
-                    self.order,
+                self.entities[key] = VCSTranslation(
+                    key=key,
+                    context=key,
+                    order=order,
+                    strings={None: translation},
+                    source_string=translation,
+                    comments=[comment] if comment else None,
+                    group_comments=group_comment,
+                    resource_comments=resource_comment,
                 )
-                self.order += 1
+                order += 1
 
             elif isinstance(obj, ast.GroupComment):
-                group_comment = [obj.content]
+                group_comment = [obj.content] if obj.content else []
 
-            elif isinstance(obj, ast.ResourceComment):
-                resource_comment += [obj.content]
-
-    @property
-    def translations(self):
-        return sorted(self.entities.values(), key=lambda e: e.order)
+            elif isinstance(obj, ast.ResourceComment) and obj.content:
+                resource_comment.append(obj.content)
 
 
-def get_key(obj):
-    """
-    Get FTL Message/Term key as it appears in the file.
-    In case of a Term, we need to prepend -. See bug 1521523.
-    """
-    key = obj.id.name
-
-    if isinstance(obj, ast.Term):
-        return "-" + key
-
-    return key
-
-
-def parse(path, source_path=None, locale=None):
-    if source_path is not None:
-        source_resource = FTLResource(source_path, locale)
-    else:
-        source_resource = None
-    return FTLResource(path, locale, source_resource)
+def parse(path, source_path=None):
+    source_resource = None if source_path is None else FTLResource(source_path)
+    res = FTLResource(path, source_resource)
+    return sorted(res.entities.values(), key=lambda e: e.order)

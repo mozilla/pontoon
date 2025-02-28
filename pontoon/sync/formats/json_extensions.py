@@ -6,14 +6,15 @@ See also:
 https://www.chromium.org/developers/design-documents/extensions/how-the-extension-system-works/i18n
 """
 
-import copy
-import logging
+from __future__ import annotations
 
-from pontoon.sync.formats.base_json_file import JSONResource, parse as parseJSONResource
-from pontoon.sync.vcs.translation import VCSTranslation
+from json import load
 
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
 
-log = logging.getLogger(__name__)
+from .common import ParseError, VCSTranslation
+
 
 SCHEMA = {
     "type": "object",
@@ -39,73 +40,47 @@ SCHEMA = {
 }
 
 
-class JSONExtensionEntity(VCSTranslation):
-    """
-    Represents an entity in a JSON file.
-    """
+class JSONExtensionResource:
+    entities: dict[str, VCSTranslation]
 
-    def __init__(self, order, key, data):
-        self.key = key
-        self.context = key
-        self.data = data
-        self.order = order
-        self.strings = {None: self.source_string} if self.source_string else {}
-
-    @property
-    def source_string(self):
-        return self.data["message"]
-
-    @property
-    def source_string_plural(self):
-        return ""
-
-    @property
-    def comments(self):
-        return [self.data["description"]] if "description" in self.data else []
-
-    @property
-    def fuzzy(self):
-        return False
-
-    @fuzzy.setter
-    def fuzzy(self, fuzzy):
-        pass  # We don't use fuzzy in JSON
-
-    @property
-    def source(self):
-        return self.data.get("placeholders", [])
-
-
-class JSONExtensionResource(JSONResource):
-    def __init__(self, path, source_resource=None):
-        self.path = path
-        self.entities = {}
-
-        # Copy entities from the source_resource if it's available.
+    def __init__(self, path, source_resource: "JSONExtensionResource" | None = None):
+        # Use entities from the source_resource if it's available.
         if source_resource:
-            for key, entity in source_resource.entities.items():
-                data = copy.copy(entity.data)
-                data["message"] = None
+            self.entities = source_resource.entities
+            for entity in self.entities.values():
+                entity.strings = {}
+        else:
+            self.entities = {}
 
-                self.entities[key] = JSONExtensionEntity(
-                    entity.order,
-                    entity.key,
-                    data,
-                )
+        try:
+            with open(path, "r", encoding="utf-8") as resource:
+                json_file = load(resource)
+                validate(json_file, SCHEMA)
+        except (OSError, ValueError, ValidationError) as err:
+            # If the file doesn't exist or cannot be decoded,
+            # but we have a source resource,
+            # we can keep going, we'll just not have any translations.
+            if source_resource:
+                return
+            else:
+                raise ParseError(err)
 
-        self.json_file = self.open_json_file(
-            path, SCHEMA, source_resource=source_resource
-        )
-
-        for order, (key, data) in enumerate(self.json_file.items()):
-            self.entities[key] = JSONExtensionEntity(
-                order,
-                key,
-                data,
+        for order, (key, data) in enumerate(json_file.items()):
+            string: str = data["message"]
+            self.entities[key] = VCSTranslation(
+                key=key,
+                context=key,
+                order=order,
+                strings={None: string} if string else {},
+                source_string=string,
+                comments=[data["description"]] if "description" in data else None,
+                source=data.get("placeholders", []),
             )
 
 
-def parse(path, source_path=None, locale=None):
-    return parseJSONResource(
-        path, JSONExtensionResource, source_path=source_path, locale=locale
+def parse(path, source_path=None):
+    source_resource = (
+        None if source_path is None else JSONExtensionResource(source_path)
     )
+    res = JSONExtensionResource(path, source_resource)
+    return sorted(res.entities.values(), key=lambda e: e.order)

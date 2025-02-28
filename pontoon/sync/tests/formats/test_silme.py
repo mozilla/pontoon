@@ -13,7 +13,7 @@ from pontoon.base.tests import (
     create_tempfile,
 )
 from pontoon.sync.formats import silme
-from pontoon.sync.formats.exceptions import ParseError
+from pontoon.sync.formats.common import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
@@ -47,8 +47,8 @@ class SilmeResourceTests(TestCase):
         path = os.path.join(tempfile.mkdtemp(), "does", "not", "exist.dtd")
         translated_resource = self.create_nonexistant_resource(path)
 
-        assert len(translated_resource.translations) == 1
-        assert translated_resource.translations[0].strings == {}
+        assert len(translated_resource.entities) == 1
+        assert next(iter(translated_resource.entities.values())).strings == {}
 
 
 BASE_DTD_FILE = """
@@ -214,10 +214,10 @@ class IncTests(FormatTestsMixin, TestCase):
         """
         )
 
-        path, resource = self.parse_string(input_string)
-        assert len(resource.translations) == 2
+        _, translations = self.parse_string(input_string)
+        assert len(translations) == 2
         assert_attributes_equal(
-            resource.translations[1],
+            translations[1],
             key="MOZ_LANGPACK_CONTRIBUTORS",
             strings={None: "Contributor list"},
         )
@@ -242,10 +242,10 @@ class IncTests(FormatTestsMixin, TestCase):
         """
         )
 
-        path, resource = self.parse_string(input_string, source_string=source_string)
-        assert len(resource.translations) == 2
+        _, translations = self.parse_string(input_string, source_string=source_string)
+        assert len(translations) == 2
         assert_attributes_equal(
-            resource.translations[1],
+            translations[1],
             key="MOZ_LANGPACK_CONTRIBUTORS",
             strings={},  # Imported from source == no translations
         )

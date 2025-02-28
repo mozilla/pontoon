@@ -1,10 +1,11 @@
-from typing import Any
+from typing import Any, Callable
 
 from pontoon.base.tests import (
     LocaleFactory,
     assert_attributes_equal,
     create_tempfile,
 )
+from pontoon.sync.formats.common import VCSTranslation
 
 
 class FormatTestsMixin:
@@ -24,7 +25,7 @@ class FormatTestsMixin:
     # how these tests are run.
 
     # Parse function for the format we're testing.
-    parse = None
+    parse: Callable[..., list[VCSTranslation]]
 
     # Supports keys that are separate from source strings.
     supports_keys = False
@@ -51,16 +52,15 @@ class FormatTestsMixin:
         string,
         source_string=None,
         locale=None,
-        path=None,
+        path: str | None = None,
         source_path=None,
     ):
         path = path or create_tempfile(string)
-        locale = locale or self.locale
         if source_string is not None:
             source_path = source_path or create_tempfile(source_string)
-            return path, self.parse(path, source_path=source_path, locale=locale)
+            return path, self.parse(path, source_path=source_path)
         else:
-            return path, self.parse(path, locale=locale)
+            return path, self.parse(path)
 
     def key(self, source_string):
         """
@@ -76,9 +76,9 @@ class FormatTestsMixin:
 
     def run_parse_basic(self, input_string, translation_index):
         """Basic translation with a comment and source."""
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=["Sample comment"],
             key=self.key("Source String"),
             strings={None: "Translated String"},
@@ -87,11 +87,11 @@ class FormatTestsMixin:
         )
 
         if self.supports_source:
-            assert resource.translations[translation_index].source == [("file.py", "1")]
+            assert translations[translation_index].source == [("file.py", "1")]
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="Source String",
                 source_string_plural="",
             )
@@ -102,13 +102,13 @@ class FormatTestsMixin:
         translation_index,
         comments=None,
     ):
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
 
         if comments is None:
             comments = ["First comment", "Second comment"]
 
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=comments,
             source=[],
             key=self.key("Multiple Comments"),
@@ -119,15 +119,15 @@ class FormatTestsMixin:
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="Multiple Comments",
                 source_string_plural="",
             )
 
     def run_parse_multiple_sources(self, input_string, translation_index):
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=[],
             source=[("file.py", "2"), ("file.py", "3")],
             key=self.key("Multiple Sources"),
@@ -138,15 +138,15 @@ class FormatTestsMixin:
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="Multiple Sources",
                 source_string_plural="",
             )
 
     def run_parse_fuzzy(self, input_string, translation_index):
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=[],
             source=[],
             key=self.key("Fuzzy"),
@@ -157,15 +157,15 @@ class FormatTestsMixin:
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="Fuzzy",
                 source_string_plural="",
             )
 
     def run_parse_no_comments_no_sources(self, input_string, translation_index):
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=[],
             source=[],
             key=self.key("No Comments or Sources"),
@@ -176,15 +176,15 @@ class FormatTestsMixin:
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="No Comments or Sources",
                 source_string_plural="",
             )
 
     def run_parse_missing_translation(self, input_string, translation_index):
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=[],
             source=[],
             key=self.key("Missing Translation"),
@@ -195,15 +195,15 @@ class FormatTestsMixin:
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="Missing Translation",
                 source_string_plural="",
             )
 
     def run_parse_plural_translation(self, input_string, translation_index):
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=[],
             source=[],
             key=self.key("Plural %(count)s string"),
@@ -217,15 +217,15 @@ class FormatTestsMixin:
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="Plural %(count)s string",
                 source_string_plural="Plural %(count)s strings",
             )
 
     def run_parse_plural_translation_missing(self, input_string, translation_index):
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=[],
             source=[],
             key=self.key("Plural %(count)s string with missing translations"),
@@ -238,16 +238,16 @@ class FormatTestsMixin:
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="Plural %(count)s string with missing translations",
                 source_string_plural="Plural %(count)s strings with missing translations",
             )
 
     def run_parse_empty_translation(self, input_string, translation_index):
         """Test that empty translations are parsed properly."""
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=[],
             source=[],
             key=self.key("Empty Translation"),
@@ -258,7 +258,7 @@ class FormatTestsMixin:
 
         if self.supports_source_string:
             assert_attributes_equal(
-                resource.translations[translation_index],
+                translations[translation_index],
                 source_string="Empty Translation",
             )
 

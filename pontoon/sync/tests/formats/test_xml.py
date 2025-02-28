@@ -7,13 +7,12 @@ from textwrap import dedent
 import pytest
 
 from pontoon.base.tests import (
-    LocaleFactory,
     TestCase,
     assert_attributes_equal,
     create_named_tempfile,
 )
 from pontoon.sync.formats import xml
-from pontoon.sync.formats.exceptions import ParseError
+from pontoon.sync.formats.common import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
@@ -80,8 +79,8 @@ class XMLResourceTests(TestCase):
         path = self.get_nonexistant_file_path()
         translated_resource = self.get_nonexistant_file_resource(path)
 
-        assert len(translated_resource.translations) == 1
-        assert translated_resource.translations[0].strings == {}
+        assert len(translated_resource.entities) == 1
+        assert next(iter(translated_resource.entities.values())).strings == {}
 
 
 BASE_ANDROID_XML_FILE = """<?xml version="1.0" encoding="utf-8"?>
@@ -171,7 +170,7 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
             directory=tempdir,
         )
 
-        resource = self.parse(path)
+        translations = self.parse(path)
 
         # Unescape quotes when parsing
-        assert_attributes_equal(resource.translations[0], strings={None: "'"})
+        assert_attributes_equal(translations[0], strings={None: "'"})

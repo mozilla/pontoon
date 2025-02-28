@@ -60,9 +60,9 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
     def test_parse_placeholder(self):
         input_string = BASE_JSON_FILE
         translation_index = 3
-        path, resource = self.parse_string(input_string)
+        _, translations = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[translation_index],
+            translations[translation_index],
             comments=["Peer greeting"],
             source={"your_name": {"content": "$1", "example": "Cira"}},
             key=self.key("placeholder"),
