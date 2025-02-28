@@ -32,7 +32,7 @@ def parse_po_entry(po_entry: polib.POEntry, order: int):
     )
 
 
-def parse(path, source_path=None):
+def parse(path: str):
     try:
         pofile = polib.pofile(path, wrapwidth=200)
     except OSError as err:

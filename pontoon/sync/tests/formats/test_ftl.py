@@ -1,16 +1,8 @@
-import os
 import shutil
 import tempfile
 
-import pytest
-
-from pontoon.base.tests import (
-    TestCase,
-    assert_attributes_equal,
-    create_named_tempfile,
-)
+from pontoon.base.tests import TestCase, assert_attributes_equal, create_named_tempfile
 from pontoon.sync.formats import ftl
-from pontoon.sync.formats.common import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
@@ -23,53 +15,6 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         super().tearDown()
         shutil.rmtree(self.tempdir)
 
-    def get_nonexistant_file_resource(self, path):
-        contents = "text = Arise, awake and do not stop until the goal is reached."
-
-        source_path = create_named_tempfile(
-            contents,
-            prefix="strings",
-            suffix=".ftl",
-            directory=self.tempdir,
-        )
-        source_resource = ftl.FTLResource(path=source_path, source_resource=None)
-
-        return ftl.FTLResource(path, source_resource=source_resource)
-
-    def get_nonexistant_file_path(self):
-        return os.path.join(self.tempdir, "strings.ftl")
-
-    def test_init_missing_resource(self):
-        """
-        If the FTLResource file doesn't exist and no source resource is
-        given, raise a ParseError.
-        """
-        path = self.get_nonexistant_file_path()
-        with pytest.raises(ParseError):
-            ftl.FTLResource(path, source_resource=None)
-
-    def test_init_missing_resource_with_source(self):
-        """
-        If the FTLResource doesn't exist but a source resource is
-        given, return a resource with empty translations.
-        """
-        path = self.get_nonexistant_file_path()
-        translated_resource = self.get_nonexistant_file_resource(path)
-
-        assert len(translated_resource.entities) == 1
-        assert next(iter(translated_resource.entities.values())).strings == {}
-
-    def test_parse_with_source_path(self):
-        contents = "text = Arise, awake and do not stop until the goal is reached."
-        source_path = create_named_tempfile(
-            contents,
-            prefix="strings",
-            suffix=".ftl",
-            directory=self.tempdir,
-        )
-        path = self.get_nonexistant_file_path()
-        assert ftl.parse(path, source_path=source_path)
-
     def test_parse_with_no_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
         path = create_named_tempfile(
@@ -78,7 +23,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
             suffix=".ftl",
             directory=self.tempdir,
         )
-        assert ftl.parse(path, source_path=None)
+        assert ftl.parse(path)
 
 
 BASE_FTL_FILE = """

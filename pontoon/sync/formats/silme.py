@@ -16,50 +16,30 @@ from silme.format.properties import FormatParser as PropertiesParser
 from .common import ParseError, VCSTranslation
 
 
-class SilmeResource:
-    entities: dict[str, VCSTranslation]
+def parse(
+    parser: Type[DTDParser | IncParser | IniParser | PropertiesParser], path: str
+):
+    try:
+        # Only uncomment MOZ_LANGPACK_CONTRIBUTORS if this is a .inc
+        # file and a source resource (i.e. it has no source resource
+        # itself).
+        structure = parser.get_structure(
+            read_file(path, uncomment_moz_langpack=parser is IncParser)
+        )
+    # Parse errors are handled gracefully by silme
+    # No need to catch them here
+    except OSError as err:
+        raise ParseError(err)
 
-    def __init__(
-        self,
-        parser: Type[DTDParser | IncParser | IniParser | PropertiesParser],
-        path,
-        source_resource: "SilmeResource" | None = None,
-    ):
-        # Use entities from the source_resource if it's available.
-        if source_resource:
-            self.entities = source_resource.entities
-            for entity in self.entities.values():
-                entity.strings = {}
-        else:
-            self.entities = {}
-
-        try:
-            # Only uncomment MOZ_LANGPACK_CONTRIBUTORS if this is a .inc
-            # file and a source resource (i.e. it has no source resource
-            # itself).
-            structure = parser.get_structure(
-                read_file(
-                    path,
-                    uncomment_moz_langpack=parser is IncParser and not source_resource,
-                )
-            )
-        # Parse errors are handled gracefully by silme
-        # No need to catch them here
-        except OSError as err:
-            # If the file doesn't exist, but we have a source resource,
-            # we can keep going, we'll just not have any translations.
-            if source_resource:
-                return
-            else:
-                raise ParseError(err)
-
-        comments: list[str] = []
-        order = 0
-        for obj in structure:
-            if isinstance(obj, SilmeEntity):
-                key = obj.id
-                string = obj.value
-                self.entities[key] = VCSTranslation(
+    translations: list[VCSTranslation] = []
+    comments: list[str] = []
+    order = 0
+    for obj in structure:
+        if isinstance(obj, SilmeEntity):
+            key = obj.id
+            string = obj.value
+            translations.append(
+                VCSTranslation(
                     key=key,
                     context=key,
                     order=order,
@@ -67,14 +47,16 @@ class SilmeResource:
                     source_string=string,
                     comments=comments,
                 )
-                comments = []
-                order += 1
-            elif isinstance(obj, SilmeComment):
-                for comment in obj:
-                    # Silme groups comments together, so we strip
-                    # whitespace and split them up.
-                    lines = str(comment).strip().split("\n")
-                    comments += [line.strip() for line in lines]
+            )
+            comments = []
+            order += 1
+        elif isinstance(obj, SilmeComment):
+            for comment in obj:
+                # Silme groups comments together, so we strip
+                # whitespace and split them up.
+                lines = str(comment).strip().split("\n")
+                comments += [line.strip() for line in lines]
+    return translations
 
 
 def read_file(path, uncomment_moz_langpack=False):
@@ -96,25 +78,17 @@ def read_file(path, uncomment_moz_langpack=False):
     return content
 
 
-def parse(parser, path, source_path=None):
-    source_resource = (
-        None if source_path is None else SilmeResource(parser, source_path)
-    )
-    res = SilmeResource(parser, path, source_resource=source_resource)
-    return list(res.entities.values())
+def parse_properties(path: str):
+    return parse(PropertiesParser, path)
 
 
-def parse_properties(path, source_path=None):
-    return parse(PropertiesParser, path, source_path)
+def parse_ini(path: str):
+    return parse(IniParser, path)
 
 
-def parse_ini(path, source_path=None):
-    return parse(IniParser, path, source_path)
+def parse_inc(path: str):
+    return parse(IncParser, path)
 
 
-def parse_inc(path, source_path=None):
-    return parse(IncParser, path, source_path)
-
-
-def parse_dtd(path, source_path=None):
-    return parse(DTDParser, path, source_path)
+def parse_dtd(path: str):
+    return parse(DTDParser, path)

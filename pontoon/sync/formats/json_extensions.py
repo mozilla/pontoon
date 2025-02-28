@@ -40,47 +40,23 @@ SCHEMA = {
 }
 
 
-class JSONExtensionResource:
-    entities: dict[str, VCSTranslation]
+def parse(path: str):
+    try:
+        with open(path, "r", encoding="utf-8") as resource:
+            json_file = load(resource)
+            validate(json_file, SCHEMA)
+    except (OSError, ValueError, ValidationError) as err:
+        raise ParseError(err)
 
-    def __init__(self, path, source_resource: "JSONExtensionResource" | None = None):
-        # Use entities from the source_resource if it's available.
-        if source_resource:
-            self.entities = source_resource.entities
-            for entity in self.entities.values():
-                entity.strings = {}
-        else:
-            self.entities = {}
-
-        try:
-            with open(path, "r", encoding="utf-8") as resource:
-                json_file = load(resource)
-                validate(json_file, SCHEMA)
-        except (OSError, ValueError, ValidationError) as err:
-            # If the file doesn't exist or cannot be decoded,
-            # but we have a source resource,
-            # we can keep going, we'll just not have any translations.
-            if source_resource:
-                return
-            else:
-                raise ParseError(err)
-
-        for order, (key, data) in enumerate(json_file.items()):
-            string: str = data["message"]
-            self.entities[key] = VCSTranslation(
-                key=key,
-                context=key,
-                order=order,
-                strings={None: string} if string else {},
-                source_string=string,
-                comments=[data["description"]] if "description" in data else None,
-                source=data.get("placeholders", []),
-            )
-
-
-def parse(path, source_path=None):
-    source_resource = (
-        None if source_path is None else JSONExtensionResource(source_path)
-    )
-    res = JSONExtensionResource(path, source_resource)
-    return sorted(res.entities.values(), key=lambda e: e.order)
+    return [
+        VCSTranslation(
+            key=key,
+            context=key,
+            order=order,
+            strings={None: string} if (string := data["message"]) else {},
+            source_string=string,
+            comments=[data["description"]] if "description" in data else None,
+            source=data.get("placeholders", []),
+        )
+        for order, (key, data) in enumerate(json_file.items())
+    ]

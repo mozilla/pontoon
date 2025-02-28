@@ -1,54 +1,8 @@
-import os.path
-import tempfile
-
 from textwrap import dedent
 
-import pytest
-
-from silme.format.dtd import FormatParser as DTDParser
-
-from pontoon.base.tests import (
-    TestCase,
-    assert_attributes_equal,
-    create_tempfile,
-)
+from pontoon.base.tests import TestCase, assert_attributes_equal
 from pontoon.sync.formats import silme
-from pontoon.sync.formats.common import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
-
-
-class SilmeResourceTests(TestCase):
-    def test_init_missing_resource(self):
-        """
-        If the translated resource doesn't exist and no source resource
-        is given, raise a ParseError.
-        """
-        path = os.path.join(tempfile.mkdtemp(), "does", "not", "exist.dtd")
-        with pytest.raises(ParseError):
-            silme.SilmeResource(DTDParser, path, source_resource=None)
-
-    def create_nonexistant_resource(self, path):
-        source_path = create_tempfile(
-            dedent(
-                """
-            <!ENTITY SourceString "Source String">
-        """
-            )
-        )
-        source_resource = silme.SilmeResource(DTDParser, source_path)
-
-        return silme.SilmeResource(DTDParser, path, source_resource=source_resource)
-
-    def test_init_missing_resource_with_source(self):
-        """
-        If the translated resource doesn't exist but a source resource
-        is given, return a resource with empty translations.
-        """
-        path = os.path.join(tempfile.mkdtemp(), "does", "not", "exist.dtd")
-        translated_resource = self.create_nonexistant_resource(path)
-
-        assert len(translated_resource.entities) == 1
-        assert next(iter(translated_resource.entities.values())).strings == {}
 
 
 BASE_DTD_FILE = """
@@ -222,11 +176,7 @@ class IncTests(FormatTestsMixin, TestCase):
             strings={None: "Contributor list"},
         )
 
-    def test_moz_langpack_contributors_source(self):
-        """
-        If a source resource was provided, meaning that we're parsing a
-        translated resource, do not uncomment MOZ_LANGPACK_CONTRIBUTORS.
-        """
+    def test_moz_langpack_contributors_comment(self):
         input_string = dedent(
             """
             #define String Some String
@@ -234,18 +184,27 @@ class IncTests(FormatTestsMixin, TestCase):
             # #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
         """
         )
-        source_string = dedent(
-            """
-            #define String Translated String
-
-            # #define MOZ_LANGPACK_CONTRIBUTORS Other Contributors
-        """
-        )
-
-        _, translations = self.parse_string(input_string, source_string=source_string)
+        _, translations = self.parse_string(input_string)
         assert len(translations) == 2
         assert_attributes_equal(
             translations[1],
             key="MOZ_LANGPACK_CONTRIBUTORS",
-            strings={},  # Imported from source == no translations
+            strings={None: "Contributor list"},
+        )
+
+    def test_moz_langpack_contributors_actual(self):
+        input_string = dedent(
+            """
+            #define String Translated String
+
+            #define MOZ_LANGPACK_CONTRIBUTORS Contributor list
+        """
+        )
+
+        _, translations = self.parse_string(input_string)
+        assert len(translations) == 2
+        assert_attributes_equal(
+            translations[1],
+            key="MOZ_LANGPACK_CONTRIBUTORS",
+            strings={None: "Contributor list"},
         )
