@@ -100,6 +100,12 @@ you create:
    Maximum number of tasks a Celery worker process can execute before it’s
    replaced with a new one. Defaults to 20 tasks.
 
+
+``DATABASE_SSLMODE``
+   Controls if the database needs a secure connection with the app.
+
+   On `development`` envs it is always `false`. On `production` the default is `true`.
+
 ``DEFAULT_FROM_EMAIL``
    Optional. Default email address to send emails from. Default value:
    ``Pontoon <pontoon@hostname>``.
