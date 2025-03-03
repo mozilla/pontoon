@@ -103,13 +103,14 @@ your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 {% endmacro %}
 
 {% macro status_item(label, locale, attribute, cls="", url_parameter="", unit="") %}
+{% set value = locale.month_stats[attribute] %}
 <p class="item {{ cls }}">
     <span class="bullet {{ url_parameter }}"></span>
     {{ label }}:
-    {% if url_parameter and locale.month_stats[attribute] %}
-    <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status={{ url_parameter }}">{{ locale.month_stats[attribute] or 0 }}{{ unit }}</a>
+    {% if url_parameter and value %}
+    <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status={{ url_parameter }}">{{ value or 0 }}{{ unit }}</a>
     {% else %}
-    {{ locale.month_stats[attribute] or 0 }}{{ unit }}
+    {{ value or 0 }}{{ unit }}
     {% endif %}
     (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} in the previous month)
 </p>
