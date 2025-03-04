@@ -40,7 +40,7 @@ jsonfield==3.1.0
 jsonschema==4.23.0
 lxml==5.3.0
 markupsafe==2.0.1
-moz.l10n[xml]==0.5.6
+moz.l10n[xml]==0.6.0
 newrelic==9.6.0
 openai==1.47.1
 polib==1.2.0

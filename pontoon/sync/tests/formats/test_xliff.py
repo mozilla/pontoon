@@ -5,7 +5,7 @@ import pytest
 
 from pontoon.base.tests import TestCase
 from pontoon.sync.formats import xliff
-from pontoon.sync.formats.exceptions import ParseError
+from pontoon.sync.formats.common import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
@@ -100,110 +100,3 @@ class XLIFFTests(FormatTestsMixin, TestCase):
             """
                 )
             )
-
-    def generate_xliff(self, body, attr=""):
-        return XLIFF_TEMPLATE.format(body=body, attr=attr)
-
-    def test_save_basic(self):
-        """
-        Test saving changes to an entity with a single translation.
-
-        Make sure the target-language attribute is set when not present.
-        """
-        attr = f'target-language="{self.locale.code}"'
-
-        input_string = self.generate_xliff(
-            dedent(
-                """
-            <trans-unit id="Source String Key">
-                <source>Source String</source>
-                <target>Translated String</target>
-                <note>Comment</note>
-            </trans-unit>
-        """
-            )
-        )
-
-        expected_string = self.generate_xliff(
-            dedent(
-                """
-            <trans-unit id="Source String Key" xml:space="preserve">
-                <source>Source String</source>
-                <target>New Translated String</target>
-                <note>Comment</note>
-            </trans-unit>
-        """
-            ),
-            attr=attr,
-        )
-
-        super().run_save_basic(
-            input_string, expected_string, source_string=input_string
-        )
-
-    def test_save_preserve_target_language(self):
-        """
-        Test that the existing target-language attribute is preserved.
-        """
-        attr = 'target-language="locale-code"'
-
-        input_string = self.generate_xliff(
-            dedent(
-                """
-            <trans-unit id="Source String Key">
-                <source>Source String</source>
-                <target>Translated String</target>
-                <note>Comment</note>
-            </trans-unit>
-        """
-            ),
-            attr=attr,
-        )
-
-        expected_string = self.generate_xliff(
-            dedent(
-                """
-            <trans-unit id="Source String Key" xml:space="preserve">
-                <source>Source String</source>
-                <target>New Translated String</target>
-                <note>Comment</note>
-            </trans-unit>
-        """
-            ),
-            attr=attr,
-        )
-
-        super().run_save_basic(
-            input_string, expected_string, source_string=input_string
-        )
-
-    def test_save_remove(self):
-        attr = f'target-language="{self.locale.code}"'
-
-        input_string = self.generate_xliff(
-            dedent(
-                """
-            <trans-unit id="Source String Key">
-                <source>Source String</source>
-                <target>Translated String</target>
-                <note>Comment</note>
-            </trans-unit>
-        """
-            )
-        )
-
-        expected_string = self.generate_xliff(
-            dedent(
-                """
-            <trans-unit id="Source String Key">
-                <source>Source String</source>
-                <note>Comment</note>
-            </trans-unit>
-        """
-            ),
-            attr=attr,
-        )
-
-        super().run_save_remove(
-            input_string, expected_string, source_string=input_string
-        )
