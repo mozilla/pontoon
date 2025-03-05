@@ -1,26 +1,60 @@
 import logging
 
 from collections import defaultdict
-from collections.abc import Container
 from datetime import datetime
+from itertools import groupby
 from os import remove
 from os.path import commonpath, isfile, join, normpath
 
+from moz.l10n.formats import Format
+from moz.l10n.model import (
+    Entry,
+    Id,
+    Metadata,
+    PatternMessage,
+    Resource,
+    Section,
+    SelectMessage,
+)
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
+from moz.l10n.resource import parse_resource, serialize_resource
 
 from django.conf import settings
 from django.db.models import Q
-from django.db.models.manager import BaseManager
+from django.db.models.query import QuerySet
 
 from pontoon.base.models import Locale, Project, Translation, User
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.sync.core.checkout import Checkouts
-from pontoon.sync.formats import parse
-from pontoon.sync.formats.po import POResource
 from pontoon.sync.repositories import CommitToRepositoryException, get_repo
 
 
 log = logging.getLogger(__name__)
+
+# Retaining these in the .po files is unnecessary & misleading,
+# and changes to POT-Creation-Date cause unnecessary churn.
+# Pontoon itself is the appropriate reference.
+gettext_trim_headers = (
+    "Language-Team",
+    "Last-Translator",
+    "PO-Revision-Date",
+    "POT-Creation-Date",
+    "Report-Msgid-Bugs-To",
+    "X-Generator",
+)
+
+# Hacky solution for https://github.com/mozilla-mobile/firefox-ios/issues/9632
+# from https://github.com/mozilla-l10n/firefoxios-l10n/blob/d60eef5ae23fde3f5bcd6d8e5290aab5fd5cc282/.github/scripts/update_other_locales.py#L130-L139
+# TODO: This should almost certainly be handled better
+ios_locale_map = {
+    "ga-IE": "ga",
+    "nb-NO": "nb",
+    "nn-NO": "nn",
+    "sat": "sat-Olck",
+    "sv-SE": "sv",
+    "tl": "fil",
+    "zgh": "tzm",
+}
 
 
 def sync_translations_to_repo(
@@ -29,7 +63,7 @@ def sync_translations_to_repo(
     locale_map: dict[str, Locale],
     checkouts: Checkouts,
     paths: L10nConfigPaths | L10nDiscoverPaths,
-    db_changes: BaseManager[ChangedEntityLocale],
+    db_changes: QuerySet[ChangedEntityLocale],
     changed_source_paths: set[str],
     removed_source_paths: set[str],
     now: datetime,
@@ -89,7 +123,7 @@ def delete_removed_resources(
     project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     locale_map: dict[str, Locale],
-    readonly_locales: BaseManager[Locale],
+    readonly_locales: QuerySet[Locale],
     removed_source_paths: set[str],
 ) -> int:
     count = 0
@@ -97,7 +131,7 @@ def delete_removed_resources(
         log_scope = f"[{project.slug}:{path}]"
         log.info(f"{log_scope} Removing for all locales")
         target, locale_codes = paths.target(path)
-        if target and commonpath((paths.base, target)) == paths.base:
+        if target and paths.base and commonpath((paths.base, target)) == paths.base:
             for lc in locale_codes:
                 if lc not in locale_map or locale_map[lc] in readonly_locales:
                     continue
@@ -116,8 +150,8 @@ def update_changed_resources(
     project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     locale_map: dict[str, Locale],
-    readonly_locales: Container[Locale],
-    db_changes: BaseManager[ChangedEntityLocale],
+    readonly_locales: list[Locale] | QuerySet[Locale],
+    db_changes: QuerySet[ChangedEntityLocale],
     changed_source_paths: set[str],
     now: datetime,
 ) -> tuple[int, set[Locale], dict[User, set[str]]]:
@@ -149,7 +183,7 @@ def update_changed_resources(
         target, locale_codes = paths.target(path)
         if target is None:
             continue
-        if commonpath((paths.base, target)) != paths.base:
+        if commonpath((paths.base or "", target)) != paths.base:
             log.error(f"{log_scope} Invalid resource path")
             continue
         locales = locales_ or {
@@ -192,28 +226,11 @@ def update_changed_resources(
             if not lc_translations and not isfile(target_path):
                 continue
             try:
-                res = parse(target_path, ref_path, locale)
-                if isinstance(res, POResource):
-                    for po_ent in res.entities:
-                        po_tx = [
-                            tx for tx in lc_translations if tx.entity.key == po_ent.key
-                        ]
-                        po_ent.strings = {tx.plural_form: tx.string for tx in po_tx}
-                        po_ent.fuzzy = any(tx.fuzzy for tx in po_tx)
-                    if lc_translations and res.entities:
-                        last_tx = max(lc_translations, key=lambda tx: tx.date)
-                        res.entities[0].last_updated = last_tx.date
-                        res.entities[0].last_translator = last_tx.user
-                else:
-                    for ent in res.translations:
-                        ent.strings = {}
-                    for tx in lc_translations:
-                        key = tx.entity.key
-                        if key in res.entities:
-                            res.entities[key].strings = {None: tx.string}
-                        else:
-                            log.warning(f"{lc_scope} No source entry for {key}")
-                res.save(locale)
+                res = parse_resource(ref_path)
+                set_translations(locale, lc_translations, res)
+                with open(target_path, "w", encoding="utf-8") as file:
+                    for line in serialize_resource(res):
+                        file.write(line)
                 updated_locales.add(locale)
                 for tx in lc_translations:
                     if tx.approved and tx.entity in changed_entities and tx.user:
@@ -223,3 +240,151 @@ def update_changed_resources(
                 log.error(f"{lc_scope} Update failed: {error}")
                 continue
     return count, updated_locales, translators
+
+
+def set_translations(
+    locale: Locale, translations: list[Translation], res: Resource
+) -> None:
+    # Section and Entry are unhashable, so can't use them in a set or as dict keys
+    not_translated: list[tuple[Section, Entry]] = []
+
+    if res.format == Format.fluent:
+        trans_res = parse_resource(
+            Format.fluent, "".join(tx.string for tx in translations)
+        )
+        trans_entries: dict[Id, Entry | None] = {
+            entry.id: entry
+            for section in trans_res.sections
+            for entry in section.entries
+            if isinstance(entry, Entry)
+        }
+        for section in res.sections:
+            for entry in section.entries:
+                if isinstance(entry, Entry):
+                    te = trans_entries.get(entry.id, None)
+                    if te is None:
+                        not_translated.append((section, entry))
+                    else:
+                        entry.value = te.value
+                        trans_entries[entry.id] = None
+
+        # Fluent terms may have translator-defined properties
+        # that need to be included in the result.
+        for term_name, prop_entries in groupby(
+            (
+                e
+                for id, e in trans_entries.items()
+                if e is not None and len(id) == 2 and id[0].startswith("-")
+            ),
+            lambda e: e.id[0],
+        ):
+            for section in res.sections:
+                prev = next(
+                    (
+                        e
+                        for e in reversed(section.entries)
+                        if isinstance(e, Entry) and e.id[0] == term_name
+                    ),
+                    None,
+                )
+                if prev is not None:
+                    idx = section.entries.index(prev) + 1
+                    section.entries[idx:idx] = prop_entries
+                    break
+    else:
+        for section in res.sections:
+            if res.format == Format.xliff and any(
+                m.key == "@source-language" for m in section.meta
+            ):
+                prev_tgt = next(
+                    (m for m in section.meta if m.key == "@target-language"), None
+                )
+                lc = ios_locale_map.get(locale.code, locale.code)
+                if prev_tgt is None:
+                    res.meta.append(Metadata("@target-language", lc))
+                else:
+                    prev_tgt.value = lc
+
+            for entry in section.entries:
+                if isinstance(entry, Entry):
+                    if not set_translation(translations, res, section, entry):
+                        not_translated.append((section, entry))
+                elif res.format == Format.inc:
+                    try:
+                        # HACK support for legacy usage in SeaMonkey defines.inc files
+                        # https://bugzilla.mozilla.org/show_bug.cgi?id=1951101
+                        mlc_start = entry.comment.index(
+                            "\n# #define MOZ_LANGPACK_CONTRIBUTORS"
+                        )
+                        entry.comment = entry.comment[:mlc_start]
+                        section.entries.insert(
+                            section.entries.index(entry) + 1,
+                            Entry(("MOZ_LANGPACK_CONTRIBUTORS",), PatternMessage([])),
+                        )
+                    except ValueError:
+                        pass
+
+    if not_translated and res.format != Format.xliff:
+        section = not_translated[0][0]
+        rm: list[Entry] = []
+        for section_, entry in not_translated:
+            if section_ == section:
+                rm.append(entry)
+            else:
+                section.entries = [e for e in section.entries if e not in rm]
+                section = section_
+                rm = [entry]
+        section.entries = [e for e in section.entries if e not in rm]
+
+    if res.format == Format.po:
+        header = {m.key: m.value for m in res.meta}
+        header["Language"] = locale.code.replace("-", "_")
+        header["Plural-Forms"] = (
+            f"nplurals={locale.nplurals}; plural={locale.plural_rule};"
+        )
+        header["Generated-By"] = "Pontoon"
+        res.meta = [
+            Metadata(key, value)
+            for key, value in header.items()
+            if key not in gettext_trim_headers
+        ]
+
+
+def set_translation(
+    translations: list[Translation],
+    res: Resource,
+    section: Section,
+    entry: Entry,
+) -> bool:
+    match res.format:
+        case Format.plain_json:
+            key = ".".join(entry.id)
+        case Format.xliff:
+            key = f"{section.id[0]}\x04{entry.id[0]}"
+        case Format.po if len(entry.id) == 2:
+            key = f"{entry.id[1]}\x04{entry.id[0]}"
+        case _:
+            key = entry.id[0]
+
+    match res.format:
+        case Format.po:
+            po_tx = [tx for tx in translations if tx.entity.key == key]
+            if isinstance(entry.value, SelectMessage):
+                entry.value.variants = {
+                    (str(tx.plural_form),): [tx.string] for tx in po_tx
+                }
+            else:
+                entry.value = po_tx[0].string if po_tx else ""
+            fuzzy_flag = Metadata("flag", "fuzzy")
+            if any(tx.fuzzy for tx in po_tx):
+                if fuzzy_flag not in entry.meta:
+                    entry.meta.insert(0, fuzzy_flag)
+            elif fuzzy_flag in entry.meta:
+                entry.meta = [m for m in entry.meta if m != fuzzy_flag]
+            return True
+        case _:
+            for tx in translations:
+                if tx.entity.key == key:
+                    entry.value = tx.string
+                    return True
+            return False
