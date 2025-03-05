@@ -666,7 +666,7 @@ header nav .right .sign-in-header button {
   background: transparent;
   border: 1.5px solid var(--status-translated);
   border-radius: 2px;
-  color: white;
+  color: var(--white-1);
   font-size: 14px;
   font-weight: 300;
   height: 40px;
