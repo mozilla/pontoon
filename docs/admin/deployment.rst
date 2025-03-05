@@ -69,19 +69,19 @@ you create:
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
 ``BADGES_PROMOTION_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Community Builder badge.
 
 ``BADGES_REVIEW_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Review Master badge.
 
 ``BADGES_START_DATE``
-   Optional. Specifies the start date from which user activities count towards badge achievements. 
+   Optional. Specifies the start date from which user activities count towards badge achievements.
    This variable should be in YYYY-MM-DD format.
 
 ``BADGES_TRANSLATION_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Translation Champion badge.
 
 ``BLOCKED_IPS``
@@ -274,6 +274,10 @@ you create:
 ``ALLOWED_HOSTS``
    A list of strings representing the host/domain names the site can serve.
    Defaults to ``.localhost, 127.0.0.1, [::1]``, should always be set in production.
+
+``SECURE_SSL_REDIRECT``
+   Tells Django to not respond with a redirect when the app is accessed using the `http`
+   protocol. Read more at: https://docs.djangoproject.com/en/5.1/ref/settings/#secure-ssl-redirect
 
 ``SSH_CONFIG``
    Contents of the ``~/.ssh/config`` file used when Pontoon connects to VCS
