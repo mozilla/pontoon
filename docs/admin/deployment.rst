@@ -69,19 +69,19 @@ you create:
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
 ``BADGES_PROMOTION_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Community Builder badge.
 
 ``BADGES_REVIEW_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Review Master badge.
 
 ``BADGES_START_DATE``
-   Optional. Specifies the start date from which user activities count towards badge achievements. 
+   Optional. Specifies the start date from which user activities count towards badge achievements.
    This variable should be in YYYY-MM-DD format.
 
 ``BADGES_TRANSLATION_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Translation Champion badge.
 
 ``BLOCKED_IPS``
@@ -274,6 +274,15 @@ you create:
 ``ALLOWED_HOSTS``
    A list of strings representing the host/domain names the site can serve.
    Defaults to ``.localhost, 127.0.0.1, [::1]``, should always be set in production.
+
+``CSRF_TRUSTED_ORIGINS``
+   A list of strings used by Django's CSRF protection. It should contain the domains
+   where the app is available. The setting also supports subdomains, so you could
+   add `https://*.example.com`, for example, to allow access from all
+   subdomains of `example.com`.
+
+   more details at:
+   https://docs.djangoproject.com/en/5.1/ref/settings/#csrf-trusted-origins
 
 ``SSH_CONFIG``
    Contents of the ``~/.ssh/config`` file used when Pontoon connects to VCS
