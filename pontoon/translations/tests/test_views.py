@@ -434,6 +434,24 @@ def test_unapprove_translation(approved_translation, member):
     assert approved_translation.approved is False
     assert approved_translation.unapproved_user == response.wsgi_request.user
 
+    # Regular users can unapprove their own translations
+    approved_translation.approved = True
+    approved_translation.save()
+    approved_translation.refresh_from_db()
+
+    member.user = approved_translation.user
+    member.user.save()
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 200
+    approved_translation.refresh_from_db()
+    assert approved_translation.approved is False
+    assert approved_translation.unapproved_user == response.wsgi_request.user
+
 
 @pytest.mark.django_db
 def test_unreject_translation(member, rejected_translation):
@@ -465,6 +483,24 @@ def test_unreject_translation(member, rejected_translation):
     )
     assert response.status_code == 200
 
+    rejected_translation.refresh_from_db()
+    assert rejected_translation.rejected is False
+    assert rejected_translation.unrejected_user == response.wsgi_request.user
+
+    # Regular users can unreject their own translations
+    rejected_translation.rejected = True
+    rejected_translation.save()
+    rejected_translation.refresh_from_db()
+
+    member.user = rejected_translation.user
+    member.user.save()
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 200
     rejected_translation.refresh_from_db()
     assert rejected_translation.rejected is False
     assert rejected_translation.unrejected_user == response.wsgi_request.user
