@@ -281,20 +281,20 @@ def test_notify_managers_on_first_contribution(
 
 
 @pytest.fixture
-def approved_translation(locale_a, project_locale_a, entity_a, user_a):
+def approved_translation(locale_a, project_locale_a, entity_a, user_b):
     return TranslationFactory(
         entity=entity_a,
         locale=locale_a,
-        user=user_a,
+        user=user_b,
         approved=True,
         active=True,
     )
 
 
 @pytest.fixture
-def rejected_translation(locale_a, project_locale_a, entity_a, user_a):
+def rejected_translation(locale_a, project_locale_a, entity_a, user_b):
     return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a, rejected=True
+        entity=entity_a, locale=locale_a, user=user_b, rejected=True
     )
 
 
@@ -310,7 +310,16 @@ def test_view_translation_delete(approved_translation, rejected_translation, mem
     assert response.status_code == 400
     assert response.content == b"Bad Request: Request must be AJAX"
 
-    # Rejected translation gets deleted
+    # Regular users cannot delete translations
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 403
+
+    # Translators can delete translations
+    rejected_translation.locale.translators_group.user_set.add(member.user)
     response = member.client.post(
         url,
         params,
@@ -404,6 +413,16 @@ def test_unapprove_translation(approved_translation, member):
     assert response.status_code == 400
     assert response.content == b"Bad Request: Request must be AJAX"
 
+    # Regular users cannot unapprove translations
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 403
+
+    # Translators can unapprove translations
+    approved_translation.locale.translators_group.user_set.add(member.user)
     response = member.client.post(
         url,
         params,
@@ -414,3 +433,38 @@ def test_unapprove_translation(approved_translation, member):
     approved_translation.refresh_from_db()
     assert approved_translation.approved is False
     assert approved_translation.unapproved_user == response.wsgi_request.user
+
+
+@pytest.mark.django_db
+def test_unreject_translation(member, rejected_translation):
+    """Check if unreject view works properly."""
+    url = reverse("pontoon.translations.unreject")
+    params = {
+        "translation": rejected_translation.pk,
+        "paths": [],
+    }
+
+    response = member.client.post(url, params)
+    assert response.status_code == 400
+    assert response.content == b"Bad Request: Request must be AJAX"
+
+    # Regular users cannot unreject translations
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 403
+
+    # Translators can unreject translations
+    rejected_translation.locale.translators_group.user_set.add(member.user)
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 200
+
+    rejected_translation.refresh_from_db()
+    assert rejected_translation.rejected is False
+    assert rejected_translation.unrejected_user == response.wsgi_request.user

@@ -492,7 +492,7 @@ def unreject_translation(request):
         )
 
     # Only privileged users or authors can un-reject translations
-    if not translation.approved or not (
+    if not translation.rejected or not (
         request.user.can_translate(locale, project) or request.user == translation.user
     ):
         return JsonResponse(
