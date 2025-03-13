@@ -214,9 +214,7 @@ def delete_translation(request):
 
     # Only privileged users or authors can delete translations
     if not translation.rejected or not (
-        request.user.can_translate(locale, project)
-        or request.user == translation.user
-        or translation.approved
+        request.user.can_translate(locale, project) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -359,10 +357,8 @@ def unapprove_translation(request):
         )
 
     # Only privileged users or authors can un-approve translations
-    if not (
-        request.user.can_translate(locale, project)
-        or request.user == translation.user
-        or translation.approved
+    if not translation.approved or not (
+        request.user.can_translate(locale, project) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -496,10 +492,8 @@ def unreject_translation(request):
         )
 
     # Only privileged users or authors can un-reject translations
-    if not (
-        request.user.can_translate(locale, project)
-        or request.user == translation.user
-        or translation.approved
+    if not translation.rejected or not (
+        request.user.can_translate(locale, project) or request.user == translation.user
     ):
         return JsonResponse(
             {
