@@ -340,6 +340,23 @@ def test_view_translation_delete(approved_translation, rejected_translation, mem
     assert response.status_code == 403
     assert Translation.objects.filter(pk=approved_translation.pk).exists() is True
 
+    # Regular users can delete their own translations
+    rejected_translation = Translation.objects.create(
+        entity=approved_translation.entity,
+        locale=approved_translation.locale,
+        user=member.user,
+        rejected=True,
+    )
+    params = {"translation": rejected_translation.pk}
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 200
+    assert Translation.objects.filter(pk=rejected_translation.pk).exists() is False
+
 
 @pytest.mark.django_db
 def test_approve_translation_basic(translation_a, client_superuser):
