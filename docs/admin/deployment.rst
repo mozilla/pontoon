@@ -69,19 +69,19 @@ you create:
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
 ``BADGES_PROMOTION_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Community Builder badge.
 
 ``BADGES_REVIEW_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Review Master badge.
 
 ``BADGES_START_DATE``
-   Optional. Specifies the start date from which user activities count towards badge achievements. 
+   Optional. Specifies the start date from which user activities count towards badge achievements.
    This variable should be in YYYY-MM-DD format.
 
 ``BADGES_TRANSLATION_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Translation Champion badge.
 
 ``BLOCKED_IPS``
@@ -99,6 +99,12 @@ you create:
 ``CELERYD_MAX_TASKS_PER_CHILD``
    Maximum number of tasks a Celery worker process can execute before it’s
    replaced with a new one. Defaults to 20 tasks.
+
+
+``DATABASE_SSLMODE``
+   Controls if the database needs a secure connection with the app.
+
+   On `development`` envs it is always `false`. On `production` the default is `true`.
 
 ``DEFAULT_FROM_EMAIL``
    Optional. Default email address to send emails from. Default value:

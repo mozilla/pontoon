@@ -52,12 +52,15 @@ VCS_SYNC_EMAIL = os.environ.get("VCS_SYNC_EMAIL", "pontoon@example.com")
 DATABASES = {
     "default": dj_database_url.config(default="mysql://root@localhost/pontoon")
 }
+DATABASE_SSLMODE = os.environ.get("DATABASE_SSLMODE", "True") != "False"
 
 # Ensure that psycopg2 uses a secure SSL connection.
 if not DEV and not DEBUG:
     if "OPTIONS" not in DATABASES["default"]:
         DATABASES["default"]["OPTIONS"] = {}
-    DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
+
+    if DATABASE_SSLMODE:
+        DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
 TRANSLATE_DIR = os.path.join(ROOT, "translate")
 
