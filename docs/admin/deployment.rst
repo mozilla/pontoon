@@ -102,9 +102,7 @@ you create:
 
 
 ``DATABASE_SSLMODE``
-   Controls if the database needs a secure connection with the app.
-
-   On `development`` envs it is always `false`. On `production` the default is `true`.
+   Optional. Controls if the database needs a secure connection with the app. Default value is `False`.
 
 ``DEFAULT_FROM_EMAIL``
    Optional. Default email address to send emails from. Default value:
