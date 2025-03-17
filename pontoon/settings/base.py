@@ -52,12 +52,15 @@ VCS_SYNC_EMAIL = os.environ.get("VCS_SYNC_EMAIL", "pontoon@example.com")
 DATABASES = {
     "default": dj_database_url.config(default="mysql://root@localhost/pontoon")
 }
+DATABASE_SSLMODE = os.environ.get("DATABASE_SSLMODE", "True") != "False"
 
 # Ensure that psycopg2 uses a secure SSL connection.
 if not DEV and not DEBUG:
     if "OPTIONS" not in DATABASES["default"]:
         DATABASES["default"]["OPTIONS"] = {}
-    DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
+
+    if DATABASE_SSLMODE:
+        DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
 TRANSLATE_DIR = os.path.join(ROOT, "translate")
 
@@ -686,7 +689,10 @@ PIPELINE_JS = {
         "output_filename": "js/teams.min.js",
     },
     "sync_log": {
-        "source_filenames": ("js/table.js",),
+        "source_filenames": (
+            "js/sync_log.js",
+            "js/table.js",
+        ),
         "output_filename": "css/sync_log.min.js",
     },
     "profile": {
@@ -913,7 +919,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
 # Redirect non-HTTPS requests to HTTPS
-SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
+SECURE_SSL_REDIRECT = (
+    os.environ.get("SECURE_SSL_REDIRECT", "True") != "False" and not DEV
+)
 
 # Content-Security-Policy headers
 CSP_DEFAULT_SRC = ("'none'",)

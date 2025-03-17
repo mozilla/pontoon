@@ -9,8 +9,6 @@ from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
 from compare_locales.paths import File
 
-from pontoon.sync.formats.utils import escape_apostrophes
-
 
 CommentEntity = namedtuple("Comment", ("all",))
 
@@ -141,8 +139,8 @@ def cast_to_compare_locales(resource_ext, entity, string):
             </resources>
         """.format(
             key=entity.key,
-            original=escape_apostrophes(entity.string),
-            translation=escape_apostrophes(string),
+            original=entity.string.replace("'", "\\'"),
+            translation=string.replace("'", "\\'"),
         )
 
         parser.readUnicode(content)

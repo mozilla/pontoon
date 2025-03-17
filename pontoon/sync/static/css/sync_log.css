@@ -44,6 +44,24 @@
   text-align: left;
 }
 
+.log-list .sync-now .button {
+  background: var(--button-background-1);
+  border: none;
+  border-radius: 3px;
+  color: var(--light-grey-7);
+  height: auto;
+}
+
+.log-list .sync-now .button:hover {
+  background: var(--status-translated);
+  color: var(--black-3);
+  cursor: pointer;
+}
+
+.log-list tr:hover .button {
+  background: var(--button-background-2);
+}
+
 .sync-status-success {
   color: var(--status-translated);
 }

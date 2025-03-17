@@ -255,7 +255,7 @@ export function UserMenuDialog({
           <li>
             <Localized
               id='user-UserMenu--sync-log'
-              elems={{ glyph: <i className='fas fa-sync fa-fw' /> }}
+              elems={{ glyph: <i className='fas fa-sync-alt fa-fw' /> }}
             >
               <a href='/sync/'>{'<glyph></glyph>Sync Log'}</a>
             </Localized>

@@ -188,4 +188,15 @@ def tag_a(resource_a, project_a, locale_a):
         project=project_a,
     )
     tag.resources.add(resource_a)
+
     return tag
+
+
+@pytest.fixture
+def comment_a():
+    return factories.TranslationCommentFactory()
+
+
+@pytest.fixture
+def team_comment_a():
+    return factories.TeamCommentFactory()

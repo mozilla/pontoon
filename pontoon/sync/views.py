@@ -22,7 +22,14 @@ def sync_log_list(request: HttpRequest):
             sync_end_time=Subquery(sync_events.values("end_time")[:1]),
             sync_status=Subquery(sync_events.values("status")[:1]),
         )
-        .values("name", "slug", "sync_start_time", "sync_end_time", "sync_status")
+        .values(
+            "data_source",
+            "name",
+            "slug",
+            "sync_start_time",
+            "sync_end_time",
+            "sync_status",
+        )
     )
     for project in projects:
         project["sync_url"] = reverse(
@@ -32,7 +39,6 @@ def sync_log_list(request: HttpRequest):
         request,
         "sync/log_list.html",
         {
-            "is_manager": request.user.has_perm("base.can_manage_project"),
             "projects": projects,
             "show_no_changes": show_no_changes,
         },
@@ -96,7 +102,6 @@ def sync_log_errors(request: HttpRequest):
         request,
         "sync/log_errors.html",
         {
-            "is_manager": request.user.has_perm("base.can_manage_project"),
             "sync_page": sync_page,
         },
     )

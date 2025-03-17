@@ -684,6 +684,12 @@ def add_comment(request):
 @transaction.atomic
 def pin_comment(request):
     """Update a comment as pinned"""
+    if not request.user.has_perm("base.can_manage_project"):
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: You can't pin comments."},
+            status=403,
+        )
+
     comment_id = request.POST.get("comment_id", None)
     if not comment_id:
         return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
@@ -703,6 +709,12 @@ def pin_comment(request):
 @transaction.atomic
 def unpin_comment(request):
     """Update a comment as unpinned"""
+    if not request.user.has_perm("base.can_manage_project"):
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: You can't unpin comments."},
+            status=403,
+        )
+
     comment_id = request.POST.get("comment_id", None)
     if not comment_id:
         return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
