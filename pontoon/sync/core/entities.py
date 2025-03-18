@@ -21,6 +21,13 @@ log = logging.getLogger(__name__)
 
 BILINGUAL_FORMATS = {"po", "xliff"}
 
+def select_source_locale_code(locale_map: dict[str, Locale], paths: set[str]) -> str:
+    for locale in locale_map.values():
+        for path in paths:
+            if path.find(locale.code) != -1:
+                return locale.code
+
+    return "en-US"
 
 def sync_entities_from_repo(
     project: Project,
@@ -36,6 +43,10 @@ def sync_entities_from_repo(
     # db_path -> parsed_resource
     updates: dict[str, list[VCSTranslation]] = {}
     source_paths = set(paths.ref_paths)
+
+    source_locale_code = select_source_locale_code(locale_map, source_paths)
+    source_locale = Locale.objects.get(code=source_locale_code)
+
     for co_path in checkout.changed:
         path = join(checkout.path, co_path)
         if path in source_paths and exists(path):
