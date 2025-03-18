@@ -52,12 +52,15 @@ VCS_SYNC_EMAIL = os.environ.get("VCS_SYNC_EMAIL", "pontoon@example.com")
 DATABASES = {
     "default": dj_database_url.config(default="mysql://root@localhost/pontoon")
 }
+DATABASE_SSLMODE = os.environ.get("DATABASE_SSLMODE", "True") != "False"
 
 # Ensure that psycopg2 uses a secure SSL connection.
 if not DEV and not DEBUG:
     if "OPTIONS" not in DATABASES["default"]:
         DATABASES["default"]["OPTIONS"] = {}
-    DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
+
+    if DATABASE_SSLMODE:
+        DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
 TRANSLATE_DIR = os.path.join(ROOT, "translate")
 
@@ -814,6 +817,9 @@ STATICFILES_DIRS = [
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")
 ALLOWED_HOSTS = allowed_hosts.split(",") if allowed_hosts else []
 
+csrf_trusted_origins = os.environ.get("CSRF_TRUSTED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = csrf_trusted_origins.split(",") if csrf_trusted_origins else []
+
 # Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.
@@ -916,7 +922,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
 # Redirect non-HTTPS requests to HTTPS
-SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
+SECURE_SSL_REDIRECT = (
+    os.environ.get("SECURE_SSL_REDIRECT", "True") != "False" and not DEV
+)
 
 # Content-Security-Policy headers
 CSP_DEFAULT_SRC = ("'none'",)

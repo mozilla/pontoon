@@ -3,8 +3,8 @@ import logging
 from collections import defaultdict
 from datetime import datetime
 from itertools import groupby
-from os import remove
-from os.path import commonpath, isfile, join, normpath
+from os import makedirs, remove
+from os.path import commonpath, dirname, isfile, join, normpath
 
 from moz.l10n.formats import Format
 from moz.l10n.model import (
@@ -228,6 +228,7 @@ def update_changed_resources(
             try:
                 res = parse_resource(ref_path)
                 set_translations(locale, lc_translations, res)
+                makedirs(dirname(target_path), exist_ok=True)
                 with open(target_path, "w", encoding="utf-8") as file:
                     for line in serialize_resource(res):
                         file.write(line)
