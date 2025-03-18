@@ -69,19 +69,19 @@ you create:
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
 ``BADGES_PROMOTION_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Community Builder badge.
 
 ``BADGES_REVIEW_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Review Master badge.
 
 ``BADGES_START_DATE``
-   Optional. Specifies the start date from which user activities count towards badge achievements. 
+   Optional. Specifies the start date from which user activities count towards badge achievements.
    This variable should be in YYYY-MM-DD format.
 
 ``BADGES_TRANSLATION_THRESHOLDS``
-   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the
    Translation Champion badge.
 
 ``BLOCKED_IPS``
@@ -99,7 +99,6 @@ you create:
 ``CELERYD_MAX_TASKS_PER_CHILD``
    Maximum number of tasks a Celery worker process can execute before it’s
    replaced with a new one. Defaults to 20 tasks.
-
 
 ``DATABASE_SSLMODE``
    Optional. Controls if the database needs a secure connection with the app. Default value is `False`.
@@ -281,8 +280,14 @@ you create:
 
 ``SECURE_SSL_REDIRECT``
    Optional. If True, redirects all non-HTTPS requests to HTTPS. Default value is `True`.
+   Learn more in the `Django documentation <https://docs.djangoproject.com/en/5.1/ref/settings/#secure-ssl-redirect>`_.
 
-   Learn more at: https://docs.djangoproject.com/en/5.1/ref/settings/#secure-ssl-redirect
+``CSRF_TRUSTED_ORIGINS``
+   Optional. A list of trusted origins for unsafe requests. It should contain the domains
+   where the app is available. The setting also supports subdomains, so you could
+   add `https://*.example.com`, for example, to allow access from all
+   subdomains of `example.com`. Default value is `[]`.
+   Learn more in the `Django documentation <https://docs.djangoproject.com/en/5.1/ref/settings/#csrf-trusted-origins>`_.
 
 ``SSH_CONFIG``
    Contents of the ``~/.ssh/config`` file used when Pontoon connects to VCS
