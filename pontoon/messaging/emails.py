@@ -149,16 +149,11 @@ def _get_monthly_locale_contributors(locales, months_ago):
                 # Exclude staff users from new contributors
                 if not user.is_staff:
                     new_contributors.append(user)
-       
-            #if user is in managers group
-            if user in locale.managers_group.fetched_managers:
-              active_managers.append(user)   
-            
-            #if user is in translators group
-            elif user in locale.translators_group.fetched_translators:
-               active_translators.append(user)   
-               
-            #if user is in neither of the groups i.e. normal contributor  
+
+            if locale.managers_group and user in locale.managers_group.fetched_managers:
+                active_managers.append(user)
+            elif locale.translators_group and user in locale.translators_group.fetched_translators:
+                active_translators.append(user)
             else:
                 active_contributors.append(user)
 
