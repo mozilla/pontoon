@@ -1,0 +1,31 @@
+<div id="django-pipeline-error-{{package_name}}" class="django-pipeline-error"
+     style="display: none; border: 2px #DD0000 solid; margin: 1em; padding: 1em; background: white;">
+ <h1>Error compiling {{package_type}} package "{{package_name}}"</h1>
+ <p><strong>Command:</strong></p>
+ <pre style="white-space: pre-wrap;">{{command}}</pre>
+ <p><strong>Errors:</strong></p>
+ <pre style="white-space: pre-wrap;">{{errors}}</pre>
+</div>
+
+<script>
+document.addEventListener('readystatechange', function() {
+    var el,
+        container;
+
+    if (document.readyState !== 'interactive') {
+        return;
+    }
+
+    el = document.getElementById('django-pipeline-error-{{package_name}}');
+    container = document.getElementById('django-pipeline-errors');
+
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'django-pipeline-errors';
+        document.body.insertBefore(container, document.body.firstChild);
+    }
+
+    container.appendChild(el);
+    el.style.display = 'block';
+});
+</script>

@@ -1,0 +1,64 @@
+Metadata-Version: 2.1
+Name: django_csp
+Version: 3.8
+Summary: Django Content Security Policy support.
+Author-email: James Socol <me@jamessocol.com>
+Maintainer-email: Mozilla MEAO team <meao-backend@mozilla.com>
+License: BSD
+Project-URL: Homepage, http://github.com/mozilla/django-csp
+Project-URL: Documentation, http://django-csp.readthedocs.org/
+Project-URL: Changelog, https://github.com/mozilla/django-csp/blob/main/CHANGES
+Project-URL: Bug Tracker, https://github.com/mozilla/django-csp/issues
+Project-URL: Source Code, https://github.com/mozilla/django-csp
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Web Environment
+Classifier: Environment :: Web Environment :: Mozilla
+Classifier: Programming Language :: Python
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Framework :: Django :: 3.2
+Classifier: Framework :: Django :: 4.2
+Classifier: Framework :: Django :: 5.0
+Description-Content-Type: text/x-rst
+License-File: LICENSE
+Requires-Dist: Django >=3.2
+Provides-Extra: jinja2
+Requires-Dist: jinja2 >=2.9.6 ; extra == 'jinja2'
+Provides-Extra: tests
+Requires-Dist: pytest ; extra == 'tests'
+Requires-Dist: pytest-cov ; extra == 'tests'
+Requires-Dist: pytest-django ; extra == 'tests'
+Requires-Dist: pytest-ruff ; extra == 'tests'
+Requires-Dist: jinja2 >=2.9.6 ; extra == 'tests'
+
+.. image:: https://badge.fury.io/py/django-csp.svg
+   :target: https://pypi.python.org/pypi/django_csp
+
+.. image:: https://github.com/mozilla/django-csp/actions/workflows/ci.yaml/badge.svg
+   :target: https://github.com/mozilla/django-csp/actions/workflows/ci.yaml
+
+==========
+Django-CSP
+==========
+
+Django-CSP adds Content-Security-Policy_ headers to Django.
+
+The code lives on GitHub_, where you can report Issues_. 
+
+The full documentation is available on ReadTheDocs_.
+
+.. _Content-Security-Policy: http://www.w3.org/TR/CSP/
+.. _GitHub: https://github.com/mozilla/django-csp
+.. _Issues: https://github.com/mozilla/django-csp/issues
+.. _ReadTheDocs: http://django-csp.readthedocs.org/

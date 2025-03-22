@@ -1,0 +1,60 @@
+#!/bin/bash
+
+enpodir=en-po
+gsidir=.gsi
+
+mkdir -p $gsidir
+
+which oo2po
+if [ $? -ne 0 ]; then
+	echo "Please install oo2po and friends"
+	exit 1
+fi
+
+cd $gsidir
+
+# Get files from Pavel
+if [ "$1" != "--no-download" ]; then
+	echo "Downloading files:"
+	curl --remote-time --remote-name ftp://ftp.linux.cz/pub/localization/OpenOffice.org/devel/POT/OpenOffice.org-POT-stable-latest.tar.gz 
+	curl --remote-time --remote-name ftp://ftp.linux.cz/pub/localization/OpenOffice.org/devel/POT/OpenOffice.org-POT-latest.tar.gz 
+fi
+
+for gsi in $(ls OpenOffice.org*POT*.tar.gz)
+do
+        gsiroot=$(echo $gsi | sed "s/\.tar\.gz//")
+        echo "### Checking $gsi ###"
+        echo "Untarring"
+	tar xzf $gsi || break
+	rm -rf pot
+
+	echo "Convert GSI to POT and XLIFF:"
+        potdir=$gsiroot.pot
+        xlfdir=$gsiroot.xlf
+        mkdir -p $potdir $xlfdir
+	oo2po -P en-US.sdf $potdir
+	oo2xliff -l en-XX en-US.sdf $xlfdir
+	
+        enpodir=$gsiroot.en.po
+        enxlfdir=$gsiroot.en.xlf
+	echo "Create English 'translations':"
+        rm -rf $enpodir $enxlfdir
+        mkdir -p $enpodir $enxlfdir
+	podebug -f "" --rewrite=en $potdir $enpodir
+	podebug -f "" --rewrite=en $xlfdir $enxlfdir
+
+	
+        targetposdf=$gsiroot.po.sdf
+        targetxlfsdf=$gsiroot.xlf.sdf
+	echo "Create $targetposdf and $targetxlfsdf:"
+	po2oo -l en-XX -t en-US.sdf $enpodir $targetposdf
+	xliff2oo -l en-XX -t en-US.sdf $enpodir $targetxlfsdf
+	
+	# Check for lines that are not duplicated
+	echo "Analysing (you should see nothing between START and END, anything else is a roundtrip issue):"
+        echo "---START - Gettext PO---"
+	cut -f11,13,14 $targetposdf | uniq -u
+        echo "---START - XLIFF---"
+	cut -f11,13,14 $targetxlfsdf | uniq -u
+        echo "----END----"
+done

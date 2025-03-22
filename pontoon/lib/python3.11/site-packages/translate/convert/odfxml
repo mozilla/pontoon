@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Uncompresses the supplied ODF file, reflows it for easy viewing and displays 
+# the bits needed for understanding the localisable bits.
+
+dest=.odf
+
+mkdir -p $dest
+unzip -q -o "$1" -d $dest
+tidy -raw -indent -modify -quiet -xml $dest/content.xml
+tidy -raw -indent -modify -quiet -xml $dest/styles.xml
+vim -o $dest/content.xml $dest/styles.xml

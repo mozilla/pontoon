@@ -1,0 +1,12 @@
+newrelic
+newrelic/packages
+newrelic/packages/isort
+newrelic/packages/isort/stdlibs
+newrelic/packages/opentelemetry_proto
+newrelic/packages/urllib3
+newrelic/packages/urllib3/contrib
+newrelic/packages/urllib3/contrib/_securetransport
+newrelic/packages/urllib3/packages
+newrelic/packages/urllib3/packages/backports
+newrelic/packages/urllib3/util
+newrelic/packages/wrapt

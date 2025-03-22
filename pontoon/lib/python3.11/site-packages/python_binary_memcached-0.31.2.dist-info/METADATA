@@ -1,0 +1,202 @@
+Metadata-Version: 2.1
+Name: python-binary-memcached
+Version: 0.31.2
+Summary: A pure python module to access memcached via its binary protocol with SASL auth support
+Home-page: https://github.com/jaysonsantos/python-binary-memcached
+Author: Jayson Reis
+Author-email: santosdosreis@gmail.com
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+License-File: LICENSE
+Requires-Dist: six
+Requires-Dist: uhashring
+
+Introduction to bmemcached
+==========================
+
+A pure python module (thread safe) to access memcached via it's binary with SASL auth support.
+
+The main purpose of this module it to be able to communicate with memcached using binary protocol and support authentication, so it can work with Heroku for example.
+
+Latest compiled docs on Read The Docs `here <https://python-binary-memcached.readthedocs.org>`_.
+
+Installing
+----------
+Use pip or easy_install.
+
+.. code-block:: bash
+
+    pip install python-binary-memcached
+
+Using
+-----
+
+.. code-block:: python
+
+    import bmemcached
+    client = bmemcached.Client(('127.0.0.1:11211', ), 'user',
+                                'password')
+    client.set('key', 'value')
+    print(client.get('key'))
+
+
+Using it with distributed keys
+
+.. code-block:: python
+
+    import bmemcached
+    client = bmemcached.DistributedClient(
+        ('127.0.0.1:11211', ), 'user', 'password'
+    )
+    client.set('key', 'value')
+    print(client.get('key'))
+
+Testing
+-------
+
+``python-binary-memcached`` unit tests are found in the ``test/`` directory
+and are designed to be run using `pytest`_. `pytest`_ will discover the tests
+automatically, so all you have to do is:
+
+.. code-block:: console
+
+    $ pytest
+    ...
+    170 passed in 4.43 seconds
+
+This runs the tests with the default Python interpreter.
+
+You can also verify that the tests pass on other supported Python interpreters.
+For this we use ``tox``, which will automatically create a ``virtualenv`` for
+each supported Python version and run the tests. For example:
+
+.. code-block:: console
+
+    $ tox
+    ...
+    py27: commands succeeded
+    ERROR:  py34: InterpreterNotFound: python3.4
+    py35: commands succeeded
+    py36: commands succeeded
+    py37: commands succeeded
+    py38: commands succeeded
+
+You may not have all the required Python versions installed, in which case you
+will see one or more ``InterpreterNotFound`` errors.
+
+Using with Django
+-----------------
+If you want to use it with Django, go to `django-bmemcached <https://github.com/jaysonsantos/django-bmemcached>`_ to get a Django backend.
+
+Tests Status
+------------
+.. image:: https://travis-ci.org/jaysonsantos/python-binary-memcached.png?branch=master
+    :target: https://travis-ci.org/jaysonsantos/python-binary-memcached
+
+.. _`pytest`: https://pypi.org/project/pytest/
+.. _`tox`: https://pypi.org/project/tox/
+
+v0.31.2 (2022-12-14)
+====================
+
+Fix
+---
+
+-  Remove setup’s.py dependency on m2r
+
+v0.31.1 (2021-12-29)
+====================
+
+v0.31.0 (2021-12-28)
+====================
+
+Refactor
+--------
+
+-  Use bytearrays for building up bytes for I/O. (#245)
+
+Feat
+----
+
+-  Expose incr/decr ``default`` and ``time`` protocol arguments in
+   client class (#243)
+
+v0.30.1 (2020-10-11)
+====================
+
+v0.30.0 (2020-08-18)
+====================
+
+-  Add ability to return default value on get but breaking get’s API
+-  Support an arbitrary collection of keys, not just a list
+
+v0.30 (2020-06-10)
+==================
+
+v0.29.0 (2020-01-29)
+====================
+
+-  added TLS support on #211 thanks to @moisesguimaraes!
+
+v0.28.0 (2018-10-02)
+====================
+
+-  moved bmemcached.Client to bmemcached.ReplicantClient *but keeps
+   backward compatibility*
+-  added DistributedClient to distribute keys over servers using
+   consistent hashing
+
+v0.27.0 (2018-08-10)
+====================
+
+0.26.1 (2017-07-18)
+===================
+
+.. _section-1:
+
+0.26.0 (2017-01-13)
+===================
+
+.. _section-2:
+
+0.25.0 (2016-12-15)
+===================
+
+.. _section-3:
+
+0.24.7 (2016-11-08)
+===================
+
+.. _section-4:
+
+0.24.2 (2014-05-27)
+===================
+
+.. _section-5:
+
+0.24.1 (2014-05-20)
+===================
+
+.. _section-6:
+
+0.24 (2014-04-28)
+=================
+
+.. _section-7:
+
+0.23 (2014-04-18)
+=================
+
+v0.18 (2013-05-06)
+==================
+
+v0.17 (2013-04-15)
+==================
