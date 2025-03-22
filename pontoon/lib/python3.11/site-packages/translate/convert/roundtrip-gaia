@@ -1,0 +1,58 @@
+#!/bin/bash
+# Script for getting a diff between real Mozilla translation files and the ones
+# obtained after a roundtrip conversion of those.
+
+# Check if necessary commands are installed.
+check_if_is_installed () {
+    if [ ! `command -v $1` ]
+    then
+        echo >&2
+        echo >&2 "Error: $1 is not installed. Aborting."
+        echo >&2
+        exit 1
+    fi
+}
+check_if_is_installed git
+check_if_is_installed mkdir
+check_if_is_installed rm
+check_if_is_installed moz2po
+check_if_is_installed podebug
+check_if_is_installed po2moz
+check_if_is_installed diff
+check_if_is_installed date
+
+# Get or update the Mozilla translation template files.
+GIT_REPO="mozilla-gaia"
+if [ -d "$GIT_REPO/.git" ]
+then
+    # If repo is already cloned, then just pull the latest changes.
+    cd $GIT_REPO
+    git pull origin master
+    cd ../
+else
+    # If repo is missing, then clone it.
+    git clone git://github.com/translate/$GIT_REPO.git $GIT_REPO
+fi
+echo
+
+# Set the variables.
+TEMPLATES_DIR="$GIT_REPO/build/locales/en-US/"
+PO_DIR="po/"
+REWRITTEN_DIR="rewritten-po/"
+RESULTS_DIR="templates-recreated/"
+
+# Prepare the working directories.
+mkdir -p $PO_DIR
+mkdir -p $REWRITTEN_DIR
+mkdir -p $RESULTS_DIR
+rm -rf $PO_DIR*
+rm -rf $REWRITTEN_DIR*
+rm -rf $RESULTS_DIR*
+
+# Run the tools for the roundtrip.
+prop2po --personality=gaia --progress=none $TEMPLATES_DIR $PO_DIR
+podebug --progress=none --rewrite=en $PO_DIR $REWRITTEN_DIR
+po2prop --personality=gaia --progress=none -t $TEMPLATES_DIR $REWRITTEN_DIR $RESULTS_DIR
+
+# Diff the resulting templates against the original ones.
+diff -u -r $TEMPLATES_DIR $RESULTS_DIR > diff_$(date -u +%F_%T).diff

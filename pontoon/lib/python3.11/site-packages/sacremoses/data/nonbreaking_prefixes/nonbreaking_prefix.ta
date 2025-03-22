@@ -1,0 +1,71 @@
+#Anything in this file, followed by a period (and an upper-case word), does NOT indicate an end-of-sentence marker.
+
+#common exceptions
+# Rs
+ர
+# Rs
+ூ
+# Mr
+திரு
+
+#others
+
+
+#phonetics
+# A
+ஏ
+# B
+பீ
+# C
+சீ
+# D
+டீ
+# E
+ஈ
+# F
+எஃப்
+# G
+ஜீ
+# H
+எச்
+ஹெச்
+# I
+ஐ
+# J
+ஜே
+ஜை
+# K
+கே
+# L
+எல்
+# M
+எம்
+# N
+என்
+# O
+ஓ
+# P
+ப்பீ
+# Q
+கியூ
+# R
+ஆர்
+# S
+எஸ்
+# T
+ட்டீ
+# U
+யூ
+# V
+வீ
+# W
+டபிள்-யூ
+# X
+எக்ஸ்
+# Y
+வை
+# Z
+செட்
+
+#consonants
+

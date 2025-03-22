@@ -1,0 +1,102 @@
+#Anything in this file, followed by a period (and an upper-case word), does NOT indicate an end-of-sentence marker.
+
+#common exceptions
+# Dr
+ਡਾ
+# Dr
+ਪ੍ਰੋ
+# Mr
+ਸ੍ਰੀ
+
+#others
+
+
+#phonetics
+# A
+ਏ
+# B
+ਬੀ
+# C
+ਸੀ
+# D
+ਡੀ
+# E
+ਈ
+# F
+ਐੱਫ
+# G
+ਜੀ
+# H
+ਐਚ
+# I
+ਆਈ
+# J
+ਜੇ
+# K
+ਕੇ
+# L
+ਐਲ
+# M
+ਐੱਮ
+# N
+ਐੱਨ
+# O
+ਓ
+# P
+ਪੀ
+# Q
+ਕੀਓ
+# R
+ਆਰ
+# S
+ਐੱਸ
+ਸ
+# T
+ਟੀ
+# U
+ਯੂ
+# V
+ਵੀ
+# W
+ਡਬਲਿਊ
+# X
+ਐਕ੍ਸ
+# Y
+ਵਾਈ
+# Z
+ਜ਼ੈਡ
+
+#consonants
+ਕ
+ਖ
+ਗ
+ਘ
+ਙ
+ਚ
+ਛ
+ਜ
+ਝ
+ਞ
+ਟ
+ਠ
+ਡ
+ਢ
+ਣ
+ਤ
+ਥ
+ਦ
+ਧ
+ਨ
+ਪ
+ਫ
+ਬ
+ਭ
+ਮ
+ਯ
+ਰ
+ਲ
+ਵ
+ੜ
+ਸ
+ਹ
+
