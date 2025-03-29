@@ -150,9 +150,9 @@ def _get_monthly_locale_contributors(locales, months_ago):
                 if not user.is_staff:
                     new_contributors.append(user)
 
-            if locale.managers_group.fetched_managers:
+            if user in locale.managers_group.fetched_managers:
                 active_managers.append(user)
-            elif locale.translators_group.fetched_translators:
+            elif user in locale.translators_group.fetched_translators:
                 active_translators.append(user)
             else:
                 active_contributors.append(user)
