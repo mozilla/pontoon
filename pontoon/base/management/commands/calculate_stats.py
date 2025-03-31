@@ -26,14 +26,29 @@ class Command(BaseCommand):
         See bug 1470337 for more details.
         """
 
-    def handle(self, *args, **options):
-        # Start with enabled projects in ascending order of resource count
-        projects = Project.objects.annotate(resource_count=Count("resources")).order_by(
-            "disabled", "resource_count"
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--all",
+            action="store_true",
+            help="Run on all projects, including disabled",
         )
 
-        log.info(f"Calculating stats for {len(projects)} projects...")
+    def handle(self, *args, **options):
+        action_txt = "enabled projects"
+        if options["all"]:
+            projects = Project.objects.annotate(
+                resource_count=Count("resources")
+            ).order_by("disabled", "resource_count")
+            action_txt = "all projects"
+        else:
+            projects = (
+                Project.objects.filter(disabled=False)
+                .annotate(resource_count=Count("resources"))
+                .order_by("resource_count")
+            )
+        log.info(f"Calculating stats for {action_txt} ({len(projects)})...")
+
         for project in projects:
             update_stats(project)
 
-        log.info("Calculating stats complete for all projects.")
+        log.info("Calculating stats complete.")
