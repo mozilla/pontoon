@@ -34,18 +34,15 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        action_txt = "enabled projects"
         if options["all"]:
-            projects = Project.objects.annotate(
-                resource_count=Count("resources")
-            ).order_by("disabled", "resource_count")
+            projects = Project.objects.all()
             action_txt = "all projects"
         else:
-            projects = (
-                Project.objects.filter(disabled=False)
-                .annotate(resource_count=Count("resources"))
-                .order_by("resource_count")
-            )
+            projects = Project.objects.filter(disabled=False)
+            action_txt = "enabled projects"
+        projects = projects.annotate(resource_count=Count("resources")).order_by(
+            "disabled", "resource_count"
+        )
         log.info(f"Calculating stats for {action_txt} ({len(projects)})...")
 
         for project in projects:
