@@ -222,7 +222,6 @@ def update_changed_resources(
             )
             .exclude(approved_date__gt=now)  # includes approved_date = None
             .select_related("entity")
-            .distinct()
         )
         for locale in locales:
             lc_scope = f"[{project.slug}:{path}, {locale.code}]"
