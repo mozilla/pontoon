@@ -54,7 +54,7 @@ build-translate: node_modules
 	npm run build -w translate
 
 build-server: server-env translate/dist
-	"${DC}" build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) server
+	docker compose build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) server
 	touch .server-build
 
 server-env:
@@ -67,12 +67,12 @@ server-env:
 	fi
 
 setup: .server-build
-	"${DC}" run server //app/docker/server_setup.sh
+	docker compose run server //app/docker/server_setup.sh
 
 run: translate/dist .server-build
-	"${DC}" up --detach
+	docker compose up --detach
 	bash -c 'set -m; bash ./bin/watch.sh'
-	"${DC}" stop
+	docker compose stop
 
 clean:
 	rm -rf translate/dist .server-build
@@ -81,7 +81,7 @@ clean:
 	@container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
 	if [ -z "$$container" ]; then \
   		echo "Trying to start the container" >&2; \
-		"${DC}" up --detach; \
+		docker compose up --detach; \
   		container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
 		if [ -z "$$container" ]; then \
 			echo "Error: No container running based on local/pontoon. Try running 'make build'." >&2; \
@@ -108,7 +108,7 @@ jest:
 
 test-server: pytest
 pytest:
-	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
+	docker compose run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
 format: prettier ruff
 
@@ -127,35 +127,35 @@ check-prettier:
 	npm run check-prettier
 
 ruff:
-	"${DC}" run --rm server ruff check --fix
-	"${DC}" run --rm server ruff format
+	docker compose run --rm server ruff check --fix
+	docker compose run --rm server ruff format
 
 check-ruff:
-	"${DC}" run --rm server ruff check
-	"${DC}" run --rm server ruff format --check
+	docker compose run --rm server ruff check
+	docker compose run --rm server ruff format --check
 
 dropdb:
-	"${DC}" down --volumes postgresql
+	docker compose down --volumes postgresql
 
 dumpdb:
-	"${DOCKER}" exec -t `"${DC}" ps -q postgresql` pg_dumpall -c -U pontoon > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
+	"${DOCKER}" exec -t `docker compose ps -q postgresql` pg_dumpall -c -U pontoon > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
 
 loaddb:
 	# Stop connections to the database so we can drop it.
-	-"${DC}" stop server
+	-docker compose stop server
 	# Make sure the postgresql container is running.
-	-"${DC}" start postgresql
-	-"${DC}" exec postgresql dropdb -U pontoon pontoon
-	"${DC}" exec postgresql createdb -U pontoon pontoon
+	-docker compose start postgresql
+	-docker compose exec postgresql dropdb -U pontoon pontoon
+	docker compose exec postgresql createdb -U pontoon pontoon
 	# Note: docker-compose doesn't support the `-i` (--interactive) argument
 	# that we need to send the dump file through STDIN. We thus are forced to
 	# use docker here instead.
-	"${DOCKER}" exec -i `"${DC}" ps -q postgresql` pg_restore -U pontoon -d pontoon -O < "${DB_DUMP_FILE}"
+	"${DOCKER}" exec -i `docker compose ps -q postgresql` pg_restore -U pontoon -d pontoon -O < "${DB_DUMP_FILE}"
 
 sync-projects:
-	"${DC}" run --rm server .//manage.py sync_projects $(opts)
+	docker compose run --rm server .//manage.py sync_projects $(opts)
 
 requirements:
 	# Pass --upgrade to upgrade all dependencies
 	# The arguments are passed through to `uv pip compile`
-	"${DC}" run --rm server //app/docker/compile_requirements.sh ${opts}
+	docker compose run --rm server //app/docker/compile_requirements.sh ${opts}
