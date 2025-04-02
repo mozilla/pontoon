@@ -1,72 +1,58 @@
-from pontoon.base.tests import TestCase, assert_attributes_equal
-from pontoon.sync.formats import json_extensions
-from pontoon.sync.tests.formats import FormatTestsMixin
+from os.path import join
+from tempfile import TemporaryDirectory
+from textwrap import dedent
+from unittest import TestCase
+
+from pontoon.sync.formats import parse_translations
 
 
-BASE_JSON_FILE = """
-{
-  "SourceString": {
-    "message": "Translated String",
-    "description": "Sample comment"
-  },
+class JsonExtensionsTests(TestCase):
+    def test_webext(self):
+        src = dedent("""
+            {
+              "SourceString": {
+                "message": "Translated String",
+                "description": "Sample comment"
+              },
 
-  "MultipleComments": {
-    "message": "Translated Multiple Comments",
-    "description": "First comment",
-    "description": "Second comment"
-  },
+              "MultipleComments": {
+                "message": "Translated Multiple Comments",
+                "description": "First comment",
+                "description": "Second comment"
+              },
 
-  "NoCommentsorSources": {
-    "message": "Translated No Comments or Sources"
-  },
+              "NoCommentsorSources": {
+                "message": "Translated No Comments or Sources"
+              },
 
-  "placeholder": {
-    "message": "Hello $YOUR_NAME$",
-    "description": "Peer greeting",
-    "placeholders": {
-      "your_name": {
-        "content": "$1",
-        "example": "Cira"
-      }
-    }
-  }
-}
-"""
+              "placeholder": {
+                "message": "Hello $YOUR_NAME$",
+                "description": "Peer greeting",
+                "placeholders": {
+                  "your_name": {
+                    "content": "$1",
+                    "example": "Cira"
+                  }
+                }
+              }
+            }
+            """)
 
+        with TemporaryDirectory() as dir:
+            path = join(dir, "messages.json")
+            with open(path, "x") as file:
+                file.write(src)
+            t0, t1, t2, t3 = parse_translations(path)
 
-class JsonExtensionsTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(json_extensions.parse)
-    supports_keys = False
-    supports_source = False
-    supports_source_string = False
+        assert t0.strings == {None: "Translated String"}
+        assert t0.comments == ["Sample comment"]
 
-    def key(self, source_string):
-        """JSON keys can't contain spaces."""
-        return super().key(source_string).replace(" ", "")
+        assert t1.comments == ["Second comment"]
 
-    def test_parse_basic(self):
-        self.run_parse_basic(BASE_JSON_FILE, 0)
+        assert t2.strings == {None: "Translated No Comments or Sources"}
 
-    def test_parse_multiple_comments(self):
-        self.run_parse_multiple_comments(
-            BASE_JSON_FILE,
-            1,
-            comments=["Second comment"],
-        )
-
-    def test_parse_no_comments_no_sources(self):
-        self.run_parse_no_comments_no_sources(BASE_JSON_FILE, 2)
-
-    def test_parse_placeholder(self):
-        input_string = BASE_JSON_FILE
-        translation_index = 3
-        _, translations = self.parse_string(input_string)
-        assert_attributes_equal(
-            translations[translation_index],
-            comments=["Peer greeting"],
-            source={"your_name": {"content": "$1", "example": "Cira"}},
-            key=self.key("placeholder"),
-            strings={None: "Hello $YOUR_NAME$"},
-            fuzzy=False,
-            order=translation_index,
-        )
+        assert t3.key == "placeholder"
+        assert t3.strings == {None: "Hello $YOUR_NAME$"}
+        assert t3.comments == ["Peer greeting"]
+        assert t3.source == {"YOUR_NAME": {"content": "$1", "example": "Cira"}}
+        assert t3.order == 3
