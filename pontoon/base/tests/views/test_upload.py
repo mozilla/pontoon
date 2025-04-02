@@ -1,7 +1,8 @@
+from tempfile import NamedTemporaryFile
+
 import pytest
 
 from pontoon.base.models import Translation
-from pontoon.base.tests import po_file
 
 
 @pytest.fixture
@@ -151,21 +152,25 @@ def test_upload_file(
     """
     Test a positive upload which changes the translation.
     """
-    with po_file(test_key="new translation") as fp:
+    po_contents = 'msgid "test_key"\nmsgstr "new translation"'
+    with NamedTemporaryFile("w+", suffix=".po") as fp:
+        fp.write(po_contents)
+        fp.flush()
         response = upload(
             translator_a.client,
             slug=project_locale_a.project.slug,
             code=project_locale_a.locale.code,
             part=po_translation.entity.resource.path,
-            uploadfile=fp,
+            uploadfile=open(fp.name),
         )
-        assert response.status_code == 303
 
-        translation = Translation.objects.get(string="new translation")
+    assert response.status_code == 303
 
-        assert translation.entity.key == "test_key"
-        assert translation.entity.resource.path == "resource_a.po"
-        assert translation.approved
-        assert translation.user
-        assert not translation.warnings.exists()
-        assert not translation.errors.exists()
+    translation = Translation.objects.get(string="new translation")
+
+    assert translation.entity.key == "test_key"
+    assert translation.entity.resource.path == "resource_a.po"
+    assert translation.approved
+    assert translation.user
+    assert not translation.warnings.exists()
+    assert not translation.errors.exists()

@@ -2,45 +2,23 @@
 Parsing resource files.
 """
 
-from fnmatch import fnmatch
-from os.path import basename, splitext
+from os.path import splitext
+
+from moz.l10n.formats import Format, detect_format, l10n_extensions
+from moz.l10n.message import serialize_message
+from moz.l10n.resource import parse_resource
 
 from pontoon.sync.formats import (
     ftl,
     json_extensions,
     json_keyvalue,
     po,
-    silme,
+    properties,
     xliff,
     xml,
 )
-from pontoon.sync.formats.common import VCSTranslation
 
-
-# To add support for a new resource format, add an entry to this dict
-# where the key is the extension you're parsing and the value is a
-# callable returning a list of VCSTranslation.
-_SUPPORTED_FORMAT_PARSERS = {
-    "*.dtd": silme.parse_dtd,
-    "*.ftl": ftl.parse,
-    "*.inc": silme.parse_inc,
-    "*.ini": silme.parse_ini,
-    "*messages.json": json_extensions.parse,
-    "*.json": json_keyvalue.parse,
-    "*.po": po.parse,
-    "*.pot": po.parse,
-    "*.properties": silme.parse_properties,
-    "*.xlf": xliff.parse,
-    "*.xliff": xliff.parse,
-    "*.xml": xml.parse,
-}
-
-
-def _get_format_parser(file_name):
-    for format, parser in _SUPPORTED_FORMAT_PARSERS.items():
-        if fnmatch(file_name, format):
-            return parser
-    return None
+from .common import ParseError, VCSTranslation
 
 
 def are_compatible_files(file_a, file_b):
@@ -48,23 +26,62 @@ def are_compatible_files(file_a, file_b):
     Return True if the given file names correspond to the same file format.
     Note that some formats (e.g. Gettext, XLIFF) use multiple file name patterns.
     """
-    parser_a = _get_format_parser(file_a)
-    parser_b = _get_format_parser(file_b)
-    if parser_a:
-        return parser_a == parser_b
+    _, ext_a = splitext(file_a)
+    _, ext_b = splitext(file_b)
+    if ext_a in l10n_extensions and ext_b in l10n_extensions:
+        if ext_a == ext_b:
+            return True
+        fmt_a = detect_format(file_a)
+        fmt_b = detect_format(file_b)
+        return fmt_a is not None and fmt_a == fmt_b
     return False
 
 
-def parse_translations(path) -> list[VCSTranslation]:
+def parse_translations(path: str) -> list[VCSTranslation]:
     """
     Parse the resource file at the given path and return a
     list of translations.
 
+    To add support for a new resource format,
+    add it to moz.l10n: https://github.com/mozilla/moz-l10n
+
     :param path:
         Path to the resource file to parse.
     """
-    filename = basename(path)
-    parse_format = _get_format_parser(filename)
-    if parse_format is None:
-        raise ValueError(f"Translation format {splitext(path)[1]} is not supported.")
-    return parse_format(path)
+    if path.endswith(".ftl"):
+        return ftl.parse(path)
+    try:
+        # TODO: android_ascii_spaces and android_literal_quotes
+        # should be dropped after data migration
+        res = parse_resource(
+            path, android_ascii_spaces=True, android_literal_quotes=True
+        )
+    except Exception as err:
+        raise ParseError(f"Could not parse {path}") from err
+    match res.format:
+        case Format.po:
+            return po.parse(res)
+        case Format.properties:
+            return properties.parse(res)
+        case Format.android:
+            return xml.parse(res)
+        case Format.xliff:
+            return xliff.parse(res)
+        case Format.webext:
+            return json_extensions.parse(res)
+        case Format.plain_json:
+            return json_keyvalue.parse(res)
+        case _:
+            return [
+                VCSTranslation(
+                    key=entry.id[0],
+                    context=entry.id[0],
+                    order=order,
+                    strings={
+                        None: (string := serialize_message(res.format, entry.value))
+                    },
+                    source_string=string,
+                    comments=entry.comment.split("\n") if entry.comment else None,
+                )
+                for order, entry in enumerate(res.all_entries())
+            ]

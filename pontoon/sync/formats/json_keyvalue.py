@@ -11,55 +11,27 @@ Nested keys are internally stored as a JSON array.
 
 from __future__ import annotations
 
-from json import dumps, load
-from typing import Any
+from json import dumps
 
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError
+from moz.l10n.formats import Format
+from moz.l10n.message import serialize_message
+from moz.l10n.model import Entry, Message, Resource
 
-from .common import ParseError, VCSTranslation
-
-
-SCHEMA = {
-    "type": "object",
-    "patternProperties": {
-        ".+": {"anyOf": [{"type": "string"}, {"type": "object", "$ref": "#"}]}
-    },
-    "additionalProperties": False,
-}
+from .common import VCSTranslation
 
 
-def parse(path: str):
-    try:
-        with open(path, "r", encoding="utf-8") as resource:
-            json_file = load(resource)
-            validate(json_file, SCHEMA)
-    except (OSError, ValueError, ValidationError) as err:
-        raise ParseError(err)
+def parse(res: Resource[Message]):
+    return [
+        as_translation(order, entry) for order, entry in enumerate(res.all_entries())
+    ]
 
-    translations: list[VCSTranslation] = []
-    order = 0
 
-    def traverse_json(data: dict[str, Any], keys: list[str]):
-        nonlocal order
-        for key, value in data.items():
-            currentKey = [*keys, key]
-            if isinstance(value, dict):
-                traverse_json(value, keys=currentKey)
-            elif isinstance(value, str):
-                key_ = dumps(currentKey)
-                translations.append(
-                    VCSTranslation(
-                        key=key_,
-                        context=".".join(currentKey),
-                        order=order,
-                        strings={None: value} if value else {},
-                        source_string=value,
-                    )
-                )
-                order += 1
-
-    # Read all nested values
-    traverse_json(json_file, [])
-
-    return translations
+def as_translation(order: int, entry: Entry):
+    string = serialize_message(Format.plain_json, entry.value)
+    return VCSTranslation(
+        key=dumps(entry.id),
+        context=".".join(entry.id),
+        order=order,
+        strings={None: string} if (string) else {},
+        source_string=string,
+    )
