@@ -365,3 +365,108 @@ def test_fuzzy():
                 msgstr "Made Fuzzy 4"
                 """
             )
+
+
+@pytest.mark.django_db
+def test_webext():
+    mock_vcs = MockVersionControl(changes=None)
+    with (
+        TemporaryDirectory() as root,
+        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
+        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
+    ):
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="de-Test", name="Test German")
+        repo_src = RepositoryFactory(
+            url="http://example.com/src-repo", source_repo=True
+        )
+        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
+        project = ProjectFactory.create(
+            name="test-webext",
+            locales=[locale],
+            repositories=[repo_src, repo_tgt],
+        )
+        res = ResourceFactory.create(
+            project=project, path="messages.json", format="json"
+        )
+
+        entity = EntityFactory.create(resource=res, key="plain", string="Entity")
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="Translation",
+            active=True,
+            approved=True,
+        )
+
+        entity = EntityFactory.create(
+            resource=res, key="number", string="Entity for $1"
+        )
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="Translation for $1",
+            active=True,
+            approved=True,
+        )
+
+        entity = EntityFactory.create(
+            resource=res,
+            key="name",
+            string="Entity for $ORIGIN$",
+            source='{"ORIGIN": {"content": "$1", "example": "developer.mozilla.org"}}',
+        )
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="Translation for $ORIGIN$",
+            active=True,
+            approved=True,
+        )
+
+        # Filesystem setup
+        src_root = repo_src.checkout_path
+        src_messages_json = dedent("""\
+          {
+            "plain": { "message": "Entity" },
+            "number": { "message": "Entity for $1" },
+            "name": {
+              "message": "Entity for $ORIGIN$",
+              "placeholders": {
+                "origin": {
+                  "content": "$1",
+                  "example": "developer.mozilla.org"
+                }
+              }
+            }
+          }""")
+        makedirs(src_root)
+        build_file_tree(src_root, {"en-US": {"messages.json": src_messages_json}})
+
+        tgt_root = repo_tgt.checkout_path
+        makedirs(tgt_root)
+        build_file_tree(tgt_root, {"de-Test": {"messages.json": "{}"}})
+
+        # Test
+        sync_project_task(project.pk)
+        with open(join(repo_tgt.checkout_path, "de-Test", "messages.json")) as file:
+            assert file.read() == dedent("""\
+            {
+              "plain": {
+                "message": "Translation"
+              },
+              "number": {
+                "message": "Translation for $1"
+              },
+              "name": {
+                "message": "Translation for $ORIGIN$",
+                "placeholders": {
+                  "ORIGIN": {
+                    "content": "$1",
+                    "example": "developer.mozilla.org"
+                  }
+                }
+              }
+            }
+            """)
