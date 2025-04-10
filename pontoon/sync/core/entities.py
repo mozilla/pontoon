@@ -240,8 +240,8 @@ def update_translated_resources(
         .iterator()
     )
     add_tr: list[TranslatedResource] = []
+    locales = project.locales.values_list("code", flat=True)
     for resource in Resource.objects.filter(project=project).iterator():
-        _, locales = paths.target(resource.path)
         for lc in locales:
             locale = locale_map.get(lc, None)
             if is_translated_resource(paths, resource, locale):
