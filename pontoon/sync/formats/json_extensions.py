@@ -8,55 +8,28 @@ https://www.chromium.org/developers/design-documents/extensions/how-the-extensio
 
 from __future__ import annotations
 
-from json import load
+from moz.l10n.formats.webext import webext_serialize_message
+from moz.l10n.model import Entry, Message, Resource
 
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError
-
-from .common import ParseError, VCSTranslation
+from .common import VCSTranslation
 
 
-SCHEMA = {
-    "type": "object",
-    "additionalProperties": {
-        "type": "object",
-        "properties": {
-            "message": {"type": "string"},
-            "description": {"type": "string"},
-            "placeholders": {
-                "type": "object",
-                "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                        "content": {"type": "string"},
-                        "example": {"type": "string"},
-                    },
-                    "required": ["content"],
-                },
-            },
-        },
-        "required": ["message"],
-    },
-}
-
-
-def parse(path: str):
-    try:
-        with open(path, "r", encoding="utf-8") as resource:
-            json_file = load(resource)
-            validate(json_file, SCHEMA)
-    except (OSError, ValueError, ValidationError) as err:
-        raise ParseError(err)
-
+def parse(res: Resource[Message]):
     return [
-        VCSTranslation(
-            key=key,
-            context=key,
-            order=order,
-            strings={None: string} if (string := data["message"]) else {},
-            source_string=string,
-            comments=[data["description"]] if "description" in data else None,
-            source=data.get("placeholders", []),
-        )
-        for order, (key, data) in enumerate(json_file.items())
+        as_translation(order, entry) for order, entry in enumerate(res.all_entries())
     ]
+
+
+def as_translation(order: int, entry: Entry):
+    assert len(entry.id) == 1
+    key = entry.id[0]
+    string, placeholders = webext_serialize_message(entry.value)
+    return VCSTranslation(
+        key=key,
+        context=key,
+        order=order,
+        strings={None: string} if (string) else {},
+        source_string=string,
+        comments=[entry.comment] if entry.comment else None,
+        source=placeholders,
+    )
