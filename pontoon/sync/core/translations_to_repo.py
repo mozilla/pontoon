@@ -5,16 +5,19 @@ from datetime import datetime
 from itertools import groupby
 from os import makedirs, remove
 from os.path import commonpath, dirname, isfile, join, normpath
+from re import finditer
 
 from moz.l10n.formats import Format
 from moz.l10n.model import (
     Entry,
+    Expression,
     Id,
     Metadata,
     PatternMessage,
     Resource,
     Section,
     SelectMessage,
+    VariableRef,
 )
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 from moz.l10n.resource import parse_resource, serialize_resource
@@ -215,7 +218,11 @@ def update_changed_resources(
                 locale__in=[locale.pk for locale in locales],
                 active=True,
             )
-            .filter(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+            .filter(
+                Q(approved=True)
+                | Q(pretranslated=True, warnings__isnull=True)
+                | Q(fuzzy=True)
+            )
             .exclude(approved_date__gt=now)  # includes approved_date = None
             .select_related("entity")
         )
@@ -383,6 +390,50 @@ def set_translation(
             elif fuzzy_flag in entry.meta:
                 entry.meta = [m for m in entry.meta if m != fuzzy_flag]
             return True
+        case Format.webext:
+            for tx in translations:
+                if tx.entity.key == key:
+                    if (
+                        isinstance(entry.value, PatternMessage)
+                        and entry.value.declarations
+                    ):
+                        # With a message value, placeholders in string parts would have their
+                        # $ characters doubled to escape them.
+                        entry.value.pattern = []
+                        pos = 0
+                        for m in finditer(
+                            r"\$([a-zA-Z0-9_@]+)\$|(\$[1-9])|\$(\$+)", tx.string
+                        ):
+                            start = m.start()
+                            if start > pos:
+                                entry.value.pattern.append(tx.string[pos:start])
+                            if m[1]:
+                                ph_name = m[1].replace("@", "_")
+                                if ph_name[0].isdigit():
+                                    ph_name = f"_{ph_name}"
+                                ph_name = next(
+                                    (
+                                        name
+                                        for name in entry.value.declarations
+                                        if name.lower() == ph_name.lower()
+                                    ),
+                                    ph_name,
+                                )
+                                pass
+                            else:
+                                ph_name = m[0]
+                            entry.value.pattern.append(
+                                Expression(
+                                    VariableRef(ph_name), attributes={"source": m[0]}
+                                )
+                            )
+                            pos = m.end()
+                        if pos < len(tx.string):
+                            entry.value.pattern.append(tx.string[pos:])
+                    else:
+                        entry.value = tx.string
+                    return True
+            return False
         case _:
             for tx in translations:
                 if tx.entity.key == key:
