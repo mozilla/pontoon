@@ -7,12 +7,12 @@ type Props = {
   username: string;
   title?: string;
   imageUrl: string;
-  userStatus: string[];
+  userBanner: string[];
 };
 
 export function UserAvatar(props: Props): React.ReactElement<'div'> {
-  const { username, title, imageUrl, userStatus } = props;
-  const [status, tooltip] = userStatus;
+  const { username, title, imageUrl, userBanner } = props;
+  const [status, tooltip] = userBanner;
 
   return (
     <div className='user-avatar'>
@@ -28,7 +28,7 @@ export function UserAvatar(props: Props): React.ReactElement<'div'> {
             <img src={imageUrl} alt='User Profile' height='44' width='44' />
           </Localized>
           {status && (
-            <span className={`user-status-banner ${status}`} title={tooltip}>
+            <span className={`user-banner ${status}`} title={tooltip}>
               {status}
             </span>
           )}

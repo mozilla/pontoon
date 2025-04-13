@@ -7,9 +7,9 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import F, Prefetch
+from django.db.models import Sum
 
-from pontoon.base.models.aggregated_stats import AggregatedStats
+from pontoon.base.aggregated_stats import AggregatedStats
 
 
 log = logging.getLogger(__name__)
@@ -61,38 +61,47 @@ class LocaleQuerySet(models.QuerySet):
             pk__in=TranslatedResource.objects.values_list("locale", flat=True)
         )
 
-    def prefetch_project_locale(self, project):
-        """
-        Prefetch ProjectLocale and latest translation data for given project.
-        """
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return self.prefetch_related(
-            Prefetch(
-                "project_locale",
-                queryset=(
-                    ProjectLocale.objects.filter(project=project).prefetch_related(
-                        "latest_translation__user", "latest_translation__approved_user"
-                    )
-                ),
-                to_attr="fetched_project_locale",
+    def stats_data(self, project=None) -> dict[int, dict[str, int]]:
+        """Mapping of locale `id` to dict with counts."""
+        if project is not None:
+            query = self.filter(translatedresources__resource__project=project)
+        else:
+            query = self.filter(
+                translatedresources__resource__project__disabled=False,
+                translatedresources__resource__project__system_project=False,
+                translatedresources__resource__project__visibility="public",
             )
+        data = query.annotate(
+            total=Sum("translatedresources__total_strings", default=0),
+            approved=Sum("translatedresources__approved_strings", default=0),
+            pretranslated=Sum("translatedresources__pretranslated_strings", default=0),
+            errors=Sum("translatedresources__strings_with_errors", default=0),
+            warnings=Sum("translatedresources__strings_with_warnings", default=0),
+            unreviewed=Sum("translatedresources__unreviewed_strings", default=0),
+        ).values(
+            "id",
+            "total",
+            "approved",
+            "pretranslated",
+            "errors",
+            "warnings",
+            "unreviewed",
+        )
+        return {row["id"]: row for row in data if row["total"]}
+
+
+class Locale(models.Model, AggregatedStats):
+    @property
+    def aggregated_stats_query(self):
+        from pontoon.base.models.translated_resource import TranslatedResource
+
+        return TranslatedResource.objects.filter(
+            locale=self,
+            resource__project__disabled=False,
+            resource__project__system_project=False,
+            resource__project__visibility="public",
         )
 
-    def get_stats_sum(self):
-        """
-        Get sum of stats for all items in the queryset.
-        """
-        return AggregatedStats.get_stats_sum(self)
-
-    def get_top_instances(self):
-        """
-        Get top instances in the queryset.
-        """
-        return AggregatedStats.get_top_instances(self)
-
-
-class Locale(AggregatedStats):
     code = models.CharField(max_length=20, unique=True)
 
     google_translate_code = models.CharField(
@@ -362,92 +371,10 @@ class Locale(AggregatedStats):
         """
         return Locale.cldr_id_to_plural(self.cldr_id_list()[plural_id])
 
-    def get_latest_activity(self, project=None):
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return ProjectLocale.get_latest_activity(self, project)
-
-    def get_chart(self, project=None):
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return ProjectLocale.get_chart(self, project)
-
-    def aggregate_stats(self):
-        from pontoon.base.models.project import Project
-        from pontoon.base.models.translated_resource import TranslatedResource
-
-        TranslatedResource.objects.filter(
-            resource__project__disabled=False,
-            resource__project__system_project=False,
-            resource__project__visibility=Project.Visibility.PUBLIC,
-            resource__entities__obsolete=False,
-            locale=self,
-        ).distinct().aggregate_stats(self)
-
-    def stats(self):
-        """Get locale stats used in All Resources part."""
-        return [
-            {
-                "title": "all-resources",
-                "resource__path": [],
-                # FIXME rename as total_strings
-                "resource__total_strings": self.total_strings,
-                "pretranslated_strings": self.pretranslated_strings,
-                "strings_with_errors": self.strings_with_errors,
-                "strings_with_warnings": self.strings_with_warnings,
-                "unreviewed_strings": self.unreviewed_strings,
-                "approved_strings": self.approved_strings,
-            }
-        ]
-
-    def parts_stats(self, project):
-        """Get locale-project paths with stats."""
-        from pontoon.base.models.project_locale import ProjectLocale
-        from pontoon.base.models.translated_resource import TranslatedResource
-
-        def get_details(parts):
-            return parts.order_by("title").values(
-                "title",
-                "resource__path",
-                "resource__deadline",
-                # FIXME rename as total_strings
-                "resource__total_strings",
-                "pretranslated_strings",
-                "strings_with_errors",
-                "strings_with_warnings",
-                "unreviewed_strings",
-                "approved_strings",
-            )
-
-        translatedresources = TranslatedResource.objects.filter(
-            resource__project=project, resource__entities__obsolete=False, locale=self
-        ).distinct()
-        details = list(
-            get_details(
-                translatedresources.annotate(
-                    resource__total_strings=F("total_strings"),
-                    title=F("resource__path"),
-                )
-            )
+    def get_latest_activity(self):
+        return (
+            self.latest_translation.latest_activity if self.latest_translation else None
         )
-
-        all_resources = ProjectLocale.objects.get(project=project, locale=self)
-        details.append(
-            {
-                "title": "all-resources",
-                "resource__path": [],
-                "resource__deadline": [],
-                # FIXME rename as total_strings
-                "resource__total_strings": all_resources.total_strings,
-                "pretranslated_strings": all_resources.pretranslated_strings,
-                "strings_with_errors": all_resources.strings_with_errors,
-                "strings_with_warnings": all_resources.strings_with_warnings,
-                "unreviewed_strings": all_resources.unreviewed_strings,
-                "approved_strings": all_resources.approved_strings,
-            }
-        )
-
-        return details
 
     def save(self, *args, **kwargs):
         old = Locale.objects.get(pk=self.pk) if self.pk else None

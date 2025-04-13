@@ -36,20 +36,10 @@ def localization(request, code, slug):
     if isinstance(project, HttpResponseRedirect):
         return project
 
-    project_locale = get_object_or_404(
-        ProjectLocale,
-        locale=locale,
-        project=project,
-    )
+    get_object_or_404(ProjectLocale, locale=locale, project=project)
 
-    resource_count = (
-        TranslatedResource.objects.filter(
-            resource__project=project,
-            locale=locale,
-            resource__entities__obsolete=False,
-        )
-        .distinct()
-        .count()
+    trans_res = TranslatedResource.objects.filter(
+        locale=locale, resource__project=project
     )
 
     return render(
@@ -58,8 +48,10 @@ def localization(request, code, slug):
         {
             "locale": locale,
             "project": project,
-            "project_locale": project_locale,
-            "resource_count": resource_count,
+            "project_locale_stats": trans_res.string_stats(count_system_projects=True),
+            "resource_count": trans_res.filter(resource__entities__obsolete=False)
+            .distinct()
+            .count(),
             "tags_count": (
                 project.tag_set.filter(resources__isnull=False).distinct().count()
                 if project.tags_enabled
@@ -107,7 +99,7 @@ def ajax_resources(request, code, slug):
         tr.latest_activity = (
             tr.latest_translation.latest_activity if tr.latest_translation else None
         )
-        tr.chart = TranslatedResource.get_chart_dict(tr)
+        tr.chart = tr.stats_data()
 
     return render(
         request,

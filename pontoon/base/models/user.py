@@ -165,19 +165,19 @@ def user_role(self, managers=None, translators=None):
         if self in managers:
             return "Manager for " + ", ".join(managers[self])
     else:
-        if self.can_manage_locales:
-            return "Manager for " + ", ".join(
-                self.can_manage_locales.values_list("code", flat=True)
-            )
+        manager_for_locales = self.can_manage_locales.values_list("code", flat=True)
+        if manager_for_locales:
+            return "Manager for " + ", ".join(manager_for_locales)
 
     if translators is not None:
         if self in translators:
             return "Translator for " + ", ".join(translators[self])
     else:
-        if self.can_translate_locales:
-            return "Translator for " + ", ".join(
-                self.can_translate_locales.values_list("code", flat=True)
-            )
+        translator_for_locales = self.can_translate_locales.values_list(
+            "code", flat=True
+        )
+        if translator_for_locales:
+            return "Translator for " + ", ".join(translator_for_locales)
 
     return "Contributor"
 
@@ -195,7 +195,7 @@ def user_locale_role(self, locale):
         return "Contributor"
 
 
-def user_status(self, locale, project_contact):
+def user_banner(self, locale, project_contact):
     if self.pk is None or self.profile.system_user:
         return ("", "")
     if self in locale.managers_group.user_set.all():
@@ -315,7 +315,7 @@ def can_translate(self, locale, project):
     from pontoon.base.models.project_locale import ProjectLocale
 
     # Locale managers can translate all projects
-    if locale in self.can_manage_locales:
+    if self.has_perm("base.can_manage_locale", locale):
         return True
 
     project_locale = ProjectLocale.objects.get(project=project, locale=locale)
@@ -536,7 +536,7 @@ User.add_to_class("can_manage_locales", user_can_manage_locales)
 User.add_to_class("translated_projects", user_translated_projects)
 User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
-User.add_to_class("status", user_status)
+User.add_to_class("banner", user_banner)
 User.add_to_class("contributed_translations", contributed_translations)
 User.add_to_class("badges_translation_count", badges_translation_count)
 User.add_to_class("badges_review_count", badges_review_count)

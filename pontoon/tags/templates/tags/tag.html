@@ -33,7 +33,7 @@
       {{ HeadingInfo.details_item_priority(project.priority, title='Project priority') }}
       {{ HeadingInfo.details_item_priority(tag.priority, title='Tag priority') }}
 
-      {{ HeadingInfo.details_item_deadline(project.deadline, project.approved_strings == project.total_strings) }}
+      {{ HeadingInfo.details_item_deadline(project.deadline, tag.chart.approved == tag.chart.total) }}
 
       {{ HeadingInfo.details_item_url(
         title='Repository',

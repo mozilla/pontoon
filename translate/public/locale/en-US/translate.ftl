@@ -744,6 +744,7 @@ user-UserMenu--help = <glyph></glyph>Help
 
 user-UserMenu--admin = <glyph></glyph>Admin
 user-UserMenu--admin-project = <glyph></glyph>Admin · Current Project
+user-UserMenu--sync-log = <glyph></glyph>Sync Log
 
 user-UserMenu--settings = <glyph></glyph>Settings
 

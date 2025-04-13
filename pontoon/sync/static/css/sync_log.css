@@ -1,0 +1,115 @@
+.controls .no-changes-toggle {
+  float: right;
+}
+
+.controls .view-toggle {
+  float: right;
+  margin-left: 20px;
+}
+
+.log-list .project {
+  text-align: left;
+  width: 220px;
+}
+
+.log-list .project h4 {
+  line-height: 47px;
+  font-size: 15px;
+  font-weight: 100;
+  color: var(--white-1);
+  width: 219px;
+}
+
+.log-list .status,
+.log-list .latest-status {
+  width: 160px;
+}
+
+.log-list.project-sync-log tbody .status {
+  line-height: 47px;
+  text-align: left;
+}
+
+.log-list .start,
+.log-list .latest-start {
+  width: 260px;
+}
+
+.log-list .duration {
+  text-align: right;
+  width: 260px;
+}
+
+.log-list .start {
+  text-align: left;
+}
+
+.log-list .sync-now .button {
+  background: var(--button-background-1);
+  border: none;
+  border-radius: 3px;
+  color: var(--light-grey-7);
+  height: auto;
+}
+
+.log-list .sync-now .button:hover {
+  background: var(--status-translated);
+  color: var(--black-3);
+  cursor: pointer;
+}
+
+.log-list tr:hover .button {
+  background: var(--button-background-2);
+}
+
+.sync-status-success {
+  color: var(--status-translated);
+}
+
+.sync-status-warn {
+  color: var(--status-warning);
+}
+
+.sync-status-fail {
+  color: var(--status-error);
+}
+
+.sync-error-message td {
+  color: var(--input-color-2);
+  font-size: 14px;
+  padding: 0 0.4em 0.4em 1.2em;
+}
+
+.pagination {
+  font-size: 14px;
+  padding: 3em 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pagination .first,
+.pagination .previous {
+  float: left;
+}
+
+.pagination .first {
+  margin-right: 10px;
+}
+
+.pagination .last,
+.pagination .next {
+  float: right;
+}
+
+.pagination .last {
+  margin-left: 10px;
+}
+
+.pagination .page {
+  color: var(--light-grey-2);
+  line-height: 28px;
+}
+
+.pagination .page .current {
+  color: var(--status-translated);
+}

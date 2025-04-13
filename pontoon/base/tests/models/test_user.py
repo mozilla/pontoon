@@ -66,34 +66,34 @@ def test_user_locale_role(user_a, user_b, user_c, locale_a):
 
 
 @pytest.mark.django_db
-def test_user_status(user_a, user_b, user_c, user_d, gt_user, locale_a, project_a):
+def test_user_banner(user_a, user_b, user_c, user_d, gt_user, locale_a, project_a):
     project_contact = user_d
 
     # New User
-    assert user_a.status(locale_a, project_contact)[1] == "New User"
+    assert user_a.banner(locale_a, project_contact)[1] == "New User"
 
     # Fake user object
     imported = User(username="Imported")
-    assert imported.status(locale_a, project_contact)[1] == ""
+    assert imported.banner(locale_a, project_contact)[1] == ""
 
     # Admin
     user_a.is_superuser = True
-    assert user_a.status(locale_a, project_contact)[1] == "Admin"
+    assert user_a.banner(locale_a, project_contact)[1] == "Admin"
 
     # Manager
     locale_a.managers_group.user_set.add(user_b)
-    assert user_b.status(locale_a, project_contact)[1] == "Team Manager"
+    assert user_b.banner(locale_a, project_contact)[1] == "Team Manager"
 
     # Translator
     locale_a.translators_group.user_set.add(user_c)
-    assert user_c.status(locale_a, project_contact)[1] == "Translator"
+    assert user_c.banner(locale_a, project_contact)[1] == "Translator"
 
     # PM
-    assert user_d.status(locale_a, project_contact)[1] == "Project Manager"
+    assert user_d.banner(locale_a, project_contact)[1] == "Project Manager"
 
     # System user (Google Translate)
     project_contact = gt_user
-    assert gt_user.status(locale_a, project_contact)[1] == ""
+    assert gt_user.banner(locale_a, project_contact)[1] == ""
 
 
 @pytest.fixture

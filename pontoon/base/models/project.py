@@ -4,16 +4,16 @@ from typing import TYPE_CHECKING
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Prefetch
+from django.db.models import Sum
 from django.db.models.manager import BaseManager
 from django.utils import timezone
 
-from pontoon.base.models.aggregated_stats import AggregatedStats
+from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
 
 
 if TYPE_CHECKING:
-    from pontoon.base.models import Resource
+    from pontoon.base.models import ProjectLocale, Resource
 
 
 class Priority(models.IntegerChoices):
@@ -68,42 +68,45 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.force_syncable().filter(sync_disabled=False)
 
-    def prefetch_project_locale(self, locale):
-        """
-        Prefetch ProjectLocale and latest translation data for given locale.
-        """
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return self.prefetch_related(
-            Prefetch(
-                "project_locale",
-                queryset=(
-                    ProjectLocale.objects.filter(locale=locale).prefetch_related(
-                        "latest_translation__user", "latest_translation__approved_user"
-                    )
-                ),
-                to_attr="fetched_project_locale",
-            )
+    def stats_data(self, locale=None) -> dict[int, dict[str, int]]:
+        """Mapping of project `id` to dict with counts."""
+        query = (
+            self
+            if locale is None
+            else self.filter(resources__translatedresources__locale=locale)
         )
+        tr = "resources__translatedresources"
+        data = query.annotate(
+            total=Sum(f"{tr}__total_strings", default=0),
+            approved=Sum(f"{tr}__approved_strings", default=0),
+            pretranslated=Sum(f"{tr}__pretranslated_strings", default=0),
+            errors=Sum(f"{tr}__strings_with_errors", default=0),
+            warnings=Sum(f"{tr}__strings_with_warnings", default=0),
+            unreviewed=Sum(f"{tr}__unreviewed_strings", default=0),
+        ).values(
+            "id",
+            "total",
+            "approved",
+            "pretranslated",
+            "errors",
+            "warnings",
+            "unreviewed",
+        )
+        return {row["id"]: row for row in data if row["total"]}
 
-    def get_stats_sum(self):
-        """
-        Get sum of stats for all items in the queryset.
-        """
-        return AggregatedStats.get_stats_sum(self)
 
-    def get_top_instances(self):
-        """
-        Get top instances in the queryset.
-        """
-        return AggregatedStats.get_top_instances(self)
+class Project(models.Model, AggregatedStats):
+    @property
+    def aggregated_stats_query(self):
+        from pontoon.base.models.translated_resource import TranslatedResource
 
+        return TranslatedResource.objects.filter(resource__project=self)
 
-class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through="ProjectLocale")
 
+    project_locale: BaseManager["ProjectLocale"]
     resources: BaseManager["Resource"]
 
     class DataSource(models.TextChoices):
@@ -239,58 +242,24 @@ class Project(AggregatedStats):
         }
 
     def save(self, *args, **kwargs):
-        """
-        When project disabled status changes, update denormalized stats
-        for all project locales.
-        """
-        disabled_changed = False
-        visibility_changed = False
-
         if self.pk is not None:
             try:
-                original = Project.objects.get(pk=self.pk)
-                if self.visibility != original.visibility:
-                    visibility_changed = True
-                if self.disabled != original.disabled:
-                    disabled_changed = True
-                    if self.disabled:
-                        self.date_disabled = timezone.now()
-                    else:
-                        self.date_disabled = None
+                if self.disabled != Project.objects.get(pk=self.pk).disabled:
+                    self.date_disabled = timezone.now() if self.disabled else None
             except Project.DoesNotExist:
                 pass
 
         super().save(*args, **kwargs)
-
-        if disabled_changed or visibility_changed:
-            for locale in self.locales.all():
-                locale.aggregate_stats()
 
     @property
     def checkout_path(self):
         """Path where this project's VCS checkouts are located."""
         return join(settings.MEDIA_ROOT, "projects", self.slug)
 
-    def get_latest_activity(self, locale=None):
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return ProjectLocale.get_latest_activity(self, locale)
-
-    def get_chart(self, locale=None):
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return ProjectLocale.get_chart(self, locale)
-
-    def aggregate_stats(self):
-        from pontoon.base.models.translated_resource import TranslatedResource
-
-        TranslatedResource.objects.filter(
-            resource__project=self, resource__entities__obsolete=False
-        ).distinct().aggregate_stats(self)
-
-    @property
-    def avg_string_count(self):
-        return int(self.total_strings / self.enabled_locales)
+    def get_latest_activity(self):
+        return (
+            self.latest_translation.latest_activity if self.latest_translation else None
+        )
 
     def resource_priority_map(self):
         """

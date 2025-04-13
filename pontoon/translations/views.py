@@ -169,7 +169,7 @@ def create_translation(request):
     response_data = {
         "status": True,
         "translation": translation.serialize(),
-        "stats": TranslatedResource.objects.stats(project, paths, locale),
+        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
     }
 
     # Send Translation Champion Badge notification information
@@ -214,9 +214,7 @@ def delete_translation(request):
 
     # Only privileged users or authors can delete translations
     if not translation.rejected or not (
-        request.user.can_translate(locale, project)
-        or request.user == translation.user
-        or translation.approved
+        request.user.can_translate(locale, project) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -317,7 +315,7 @@ def approve_translation(request):
 
     response_data = {
         "translation": active_translation.serialize(),
-        "stats": TranslatedResource.objects.stats(project, paths, locale),
+        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
     }
 
     # Send Review Master Badge notification information
@@ -359,10 +357,8 @@ def unapprove_translation(request):
         )
 
     # Only privileged users or authors can un-approve translations
-    if not (
-        request.user.can_translate(locale, project)
-        or request.user == translation.user
-        or translation.approved
+    if not translation.approved or not (
+        request.user.can_translate(locale, project) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -388,7 +384,7 @@ def unapprove_translation(request):
     return JsonResponse(
         {
             "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
+            "stats": TranslatedResource.objects.query_stats(project, paths, locale),
         }
     )
 
@@ -454,7 +450,7 @@ def reject_translation(request):
 
     response_data = {
         "translation": active_translation.serialize(),
-        "stats": TranslatedResource.objects.stats(project, paths, locale),
+        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
     }
 
     # Send Review Master Badge notification information
@@ -496,10 +492,8 @@ def unreject_translation(request):
         )
 
     # Only privileged users or authors can un-reject translations
-    if not (
-        request.user.can_translate(locale, project)
-        or request.user == translation.user
-        or translation.approved
+    if not translation.rejected or not (
+        request.user.can_translate(locale, project) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -525,6 +519,6 @@ def unreject_translation(request):
     return JsonResponse(
         {
             "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
+            "stats": TranslatedResource.objects.query_stats(project, paths, locale),
         }
     )

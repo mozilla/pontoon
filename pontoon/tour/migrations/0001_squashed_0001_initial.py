@@ -32,8 +32,7 @@ def create_tutorial_project(apps, schema_editor):
         sync_disabled=True,
         system_project=True,
         info=(
-            "A tutorial project, used as a testing playground and for the "
-            "guided tour."
+            "A tutorial project, used as a testing playground and for the guided tour."
         ),
         admin_notes=(
             "Do not remove, this is required in code to show the guided tour."
@@ -62,12 +61,7 @@ def create_tutorial_project(apps, schema_editor):
     ProjectLocale = apps.get_model("base", "ProjectLocale")
     locales = Locale.objects.exclude(code__in=["en-US", "en"])
     project_locales = [
-        ProjectLocale(
-            project=project,
-            locale=locale,
-            total_strings=len(new_strings),
-        )
-        for locale in locales
+        ProjectLocale(project=project, locale=locale) for locale in locales
     ]
     ProjectLocale.objects.bulk_create(project_locales)
 
@@ -82,9 +76,6 @@ def create_tutorial_project(apps, schema_editor):
         for locale in locales
     ]
     TranslatedResource.objects.bulk_create(translated_resources)
-
-    project.total_strings = len(new_strings) * len(locales)
-    project.save(update_fields=["total_strings"])
 
 
 def remove_tutorial_project(apps, schema_editor):

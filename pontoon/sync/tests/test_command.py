@@ -1,16 +1,12 @@
 import io
 
-from unittest.mock import ANY, patch
-
 import pytest
 
 from django.core.management.base import CommandError
 
 from pontoon.base.models import Project
 from pontoon.base.tests import ProjectFactory, TestCase
-from pontoon.base.utils import aware_datetime
 from pontoon.sync.management.commands import sync_projects
-from pontoon.sync.models import SyncLog
 
 
 class CommandTests(TestCase):
@@ -51,7 +47,7 @@ class CommandTests(TestCase):
 
         self.execute_command()
         self.mock_sync_project_task.delay.assert_called_with(
-            active_project.pk, ANY, pull=True, commit=True, force=False
+            active_project.pk, pull=True, commit=True, force=False
         )
 
     def test_non_repository_projects(self):
@@ -61,7 +57,7 @@ class CommandTests(TestCase):
 
         self.execute_command()
         self.mock_sync_project_task.delay.assert_called_with(
-            repo_project.pk, ANY, pull=True, commit=True, force=False
+            repo_project.pk, pull=True, commit=True, force=False
         )
 
     def test_project_slugs(self):
@@ -73,7 +69,7 @@ class CommandTests(TestCase):
 
         self.execute_command(projects=handle_project.slug)
         self.mock_sync_project_task.delay.assert_called_with(
-            handle_project.pk, ANY, pull=True, commit=True, force=False
+            handle_project.pk, pull=True, commit=True, force=False
         )
 
     def test_no_matching_projects(self):
@@ -93,7 +89,7 @@ class CommandTests(TestCase):
         self.execute_command(projects=handle_project.slug + ",aaa,bbb")
 
         self.mock_sync_project_task.delay.assert_called_with(
-            handle_project.pk, ANY, pull=True, commit=True, force=False
+            handle_project.pk, pull=True, commit=True, force=False
         )
 
         assert (
@@ -105,17 +101,5 @@ class CommandTests(TestCase):
         project = ProjectFactory.create()
         self.execute_command(no_pull=True, no_commit=True)
         self.mock_sync_project_task.delay.assert_called_with(
-            project.pk, ANY, pull=False, commit=False, force=False
+            project.pk, pull=False, commit=False, force=False
         )
-
-    def test_sync_log(self):
-        """Create a new sync log when command is run."""
-        assert not SyncLog.objects.exists()
-
-        ProjectFactory.create()
-        with patch.object(sync_projects, "timezone") as mock_timezone:
-            mock_timezone.now.return_value = aware_datetime(2015, 1, 1)
-            self.execute_command()
-
-        sync_log = SyncLog.objects.all()[0]
-        assert sync_log.start_time == aware_datetime(2015, 1, 1)

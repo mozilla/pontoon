@@ -5,11 +5,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 
-from pontoon.base.models import Project
 from pontoon.base.utils import (
     aware_datetime,
     get_m2m_changes,
-    get_object_or_none,
     get_search_phrases,
     is_email,
     latest_datetime,
@@ -575,12 +573,6 @@ def test_get_m2m_mixed(user_a, user_b, user_c):
     assert user_a in changes[0]
     assert user_c in changes[0]
     assert [user_b] == changes[1]
-
-
-@pytest.mark.django_db
-def test_util_base_get_object_or_none(project_a):
-    assert get_object_or_none(Project, slug="does-not-exist") is None
-    assert get_object_or_none(Project, slug=project_a.slug) == project_a
 
 
 def test_util_base_latest_datetime():

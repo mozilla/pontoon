@@ -168,7 +168,15 @@ export function Highlight({
   marks.sort((a, b) => a.index - b.index || b.length - a.length);
 
   if (search) {
-    const searchTerms = search.match(/(?<!\\)"(?:\\"|[^"])+(?<!\\)"|\S+/g);
+    let regexp: RegExp;
+    try {
+      regexp = new RegExp(String.raw`(?<!\\)"(?:\\"|[^"])+(?<!\\)"|\S+`, 'g');
+    } catch {
+      // Fallback for older browsers (e.g. iOS 15) not supporting lookbehind.
+      regexp = /"(?:\\"|[^"])+"|\S+/g;
+    }
+    const searchTerms = search.match(regexp);
+
     for (let term of searchTerms ?? []) {
       if (term.startsWith('"') && term.length >= 3 && term.endsWith('"')) {
         term = term.slice(1, -1);

@@ -12,7 +12,6 @@ from pontoon.sync.core.paths import find_paths
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
 from pontoon.sync.core.translations_to_repo import sync_translations_to_repo
-from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 
 
 log = logging.getLogger(__name__)
@@ -20,28 +19,24 @@ log = logging.getLogger(__name__)
 
 def sync_project(
     project: Project,
-    sync_log: SyncLog,
     *,
     pull: bool = True,
     commit: bool = True,
     force: bool = False,
-):
+) -> tuple[bool, bool]:
+    """`(db_changed, repo_changed)`"""
     # Mark "now" at the start of sync to avoid messing with
     # translations submitted during sync.
     now = timezone.now()
 
     log_prefix = f"[{project.slug}]"
     log.info(f"{log_prefix} Sync start")
-    project_sync_log = ProjectSyncLog.objects.create(
-        sync_log=sync_log, project=project, start_time=now
-    )
 
     try:
         checkouts = checkout_repos(project, force=force, pull=pull)
         paths = find_paths(project, checkouts)
     except Exception as e:
         log.error(f"{log_prefix} {e}")
-        project_sync_log.skip()
         raise e
 
     locale_map: dict[str, Locale] = {
@@ -52,21 +47,22 @@ def sync_project(
         project, locale_map, checkouts.source, paths, now
     )
 
-    repo_sync_log = RepositorySyncLog.objects.create(
-        project_sync_log=project_sync_log,
-        repository=checkouts.target.repo,
-        start_time=timezone.now(),
-    )
-
     db_changes = ChangedEntityLocale.objects.filter(
         entity__resource__project=project, when__lte=now
     ).select_related("entity__resource", "locale")
     del_trans_count, updated_trans_count = sync_translations_from_repo(
         project, locale_map, checkouts, paths, db_changes, now
     )
+    db_changed = bool(
+        added_entities_count
+        or changed_paths
+        or removed_paths
+        or del_trans_count
+        or updated_trans_count
+    )
     if added_entities_count > 0:
         notify_users(project, added_entities_count)
-    sync_translations_to_repo(
+    repo_changed = sync_translations_to_repo(
         project,
         commit,
         locale_map,
@@ -77,25 +73,21 @@ def sync_project(
         removed_paths,
         now,
     )
+    if commit:
+        db_changes.delete()
 
-    db_changes.delete()
     checkouts.source.repo.last_synced_revision = checkouts.source.commit
     if checkouts.target != checkouts.source:
         checkouts.target.repo.last_synced_revision = checkouts.target.commit
-    if (
-        added_entities_count
-        or changed_paths
-        or removed_paths
-        or del_trans_count
-        or updated_trans_count
-    ):
+    if db_changed:
         update_stats(project)
-    repo_sync_log.end()
     log.info(f"{log_prefix} Sync done")
 
     if project.pretranslation_enabled and changed_paths:
         # Pretranslate changed and added resources for all locales
         pretranslate(project, changed_paths)
+
+    return db_changed, repo_changed
 
 
 def notify_users(project: Project, count: int) -> None:

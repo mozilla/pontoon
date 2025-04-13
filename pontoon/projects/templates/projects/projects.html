@@ -22,34 +22,36 @@
         class='projects-count',
         value=projects|length)
       }}
-      {{ HeadingInfo.details_item(
-        title='Most translations',
-        class='most-translations',
-        value=top_instances['most_translations'],
-        value_link=url('pontoon.projects.project', top_instances['most_translations'].slug))
-      }}
-      {{ HeadingInfo.details_item(
-        title='Most unreviewed',
-        class='most-suggestions',
-        value=top_instances['most_suggestions'],
-        value_link=url('pontoon.projects.project', top_instances['most_suggestions'].slug))
-      }}
-      {{ HeadingInfo.details_item(
-        title='Most missing strings',
-        class='missing-strings',
-        value=top_instances['most_missing'],
-        value_link=url('pontoon.projects.project', top_instances['most_missing'].slug))
-      }}
-      {{ HeadingInfo.details_item(
-        title='Most enabled strings',
-        class='most-strings',
-        value=top_instances['most_strings'],
-        value_link=url('pontoon.projects.project', top_instances['most_strings'].slug))
-      }}
+      {% if top_instances %}
+        {{ HeadingInfo.details_item(
+          title='Most translations',
+          class='most-translations',
+          value=top_instances['most_translations'],
+          value_link=url('pontoon.projects.project', top_instances['most_translations'].slug))
+        }}
+        {{ HeadingInfo.details_item(
+          title='Most unreviewed',
+          class='most-suggestions',
+          value=top_instances['most_suggestions'],
+          value_link=url('pontoon.projects.project', top_instances['most_suggestions'].slug))
+        }}
+        {{ HeadingInfo.details_item(
+          title='Most missing strings',
+          class='missing-strings',
+          value=top_instances['most_missing'],
+          value_link=url('pontoon.projects.project', top_instances['most_missing'].slug))
+        }}
+        {{ HeadingInfo.details_item(
+          title='Most enabled strings',
+          class='most-strings',
+          value=top_instances['most_strings'],
+          value_link=url('pontoon.projects.project', top_instances['most_strings'].slug))
+        }}
+      {% endif %}
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(projects.get_stats_sum()) }}
+    {{ HeadingInfo.progress_chart_legend(all_projects_stats) }}
   </div>
 </section>
 {% endblock %}
@@ -70,7 +72,7 @@
       {% set main_link = url('pontoon.projects.project', project.slug) %}
       {% set chart_link = url('pontoon.projects.project', project.slug) %}
       {% set latest_activity = project.get_latest_activity() %}
-      {% set chart = project.get_chart() %}
+      {% set chart = project_stats.get(project.id, {'total': 0}) %}
 
       {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart) }}
     {% endfor %}

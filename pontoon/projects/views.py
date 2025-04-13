@@ -1,12 +1,16 @@
+from typing import cast
+
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
+from django.db.models.manager import BaseManager
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
-from pontoon.base.models import Locale, Project
+from pontoon.base.aggregated_stats import get_top_instances
+from pontoon.base.models import Locale, Project, TranslatedResource, Translation
 from pontoon.base.utils import get_project_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
@@ -27,10 +31,18 @@ def projects(request):
     if not projects:
         return render(request, "no_projects.html", {"title": "Projects"})
 
+    project_stats = projects.stats_data()
     return render(
         request,
         "projects/projects.html",
-        {"projects": projects, "top_instances": projects.get_top_instances()},
+        {
+            "projects": projects,
+            "all_projects_stats": TranslatedResource.objects.all().string_stats(
+                request.user
+            ),
+            "project_stats": project_stats,
+            "top_instances": get_top_instances(projects, project_stats),
+        },
     )
 
 
@@ -43,20 +55,20 @@ def project(request, slug):
         return project
 
     project_locales = project.project_locale
-    chart = project
+    project_tr = TranslatedResource.objects.filter(resource__project=project)
 
     # Only include filtered teams if provided
     teams = request.GET.get("teams", "").split(",")
     filtered_locales = Locale.objects.filter(code__in=teams)
     if filtered_locales.exists():
         project_locales = project_locales.filter(locale__in=filtered_locales)
-        chart = project_locales.aggregated_stats()
+        project_tr = project_tr.filter(locale__in=filtered_locales)
 
     return render(
         request,
         "projects/project.html",
         {
-            "chart": chart,
+            "project_stats": project_tr.string_stats(count_system_projects=True),
             "count": project_locales.count(),
             "project": project,
             "tags_count": (
@@ -70,12 +82,15 @@ def project(request, slug):
 
 @require_AJAX
 def ajax_teams(request, slug):
-    """Teams tab."""
+    """Project Teams tab."""
     project = get_object_or_404(
-        Project.objects.visible_for(request.user).available(), slug=slug
+        cast(
+            BaseManager[Project], Project.objects.visible_for(request.user).available()
+        ),
+        slug=slug,
     )
 
-    locales = Locale.objects.available()
+    locales = cast(BaseManager[Locale], Locale.objects.available()).order_by("name")
 
     # Only include filtered teams if provided
     teams = request.GET.get("teams", "").split(",")
@@ -83,18 +98,31 @@ def ajax_teams(request, slug):
     if filtered_locales.exists():
         locales = locales.filter(pk__in=filtered_locales)
 
-    locales = locales.prefetch_project_locale(project).order_by("name")
+    latest_trans_ids = project.project_locale.values_list(
+        "latest_translation_id", flat=True
+    )
+    latest_activities = {
+        trans.locale_id: trans.latest_activity
+        for trans in Translation.objects.filter(id__in=latest_trans_ids).select_related(
+            "user", "approved_user"
+        )
+    }
 
     return render(
         request,
         "projects/includes/teams.html",
-        {"project": project, "locales": locales},
+        {
+            "project": project,
+            "locales": locales,
+            "locale_stats": locales.stats_data(project),
+            "latest_activities": latest_activities,
+        },
     )
 
 
 @require_AJAX
 def ajax_tags(request, slug):
-    """Tags tab."""
+    """Project Tags tab."""
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
 
     if not project.tags_enabled:
@@ -111,7 +139,7 @@ def ajax_tags(request, slug):
 
 @require_AJAX
 def ajax_insights(request, slug):
-    """Insights tab."""
+    """Project Insights tab."""
     if not settings.ENABLE_INSIGHTS:
         raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 
@@ -132,7 +160,7 @@ def ajax_insights(request, slug):
 
 @require_AJAX
 def ajax_info(request, slug):
-    """Info tab."""
+    """Project Info tab."""
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )

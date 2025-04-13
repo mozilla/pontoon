@@ -52,12 +52,15 @@ VCS_SYNC_EMAIL = os.environ.get("VCS_SYNC_EMAIL", "pontoon@example.com")
 DATABASES = {
     "default": dj_database_url.config(default="mysql://root@localhost/pontoon")
 }
+DATABASE_SSLMODE = os.environ.get("DATABASE_SSLMODE", "True") != "False"
 
 # Ensure that psycopg2 uses a secure SSL connection.
 if not DEV and not DEBUG:
     if "OPTIONS" not in DATABASES["default"]:
         DATABASES["default"]["OPTIONS"] = {}
-    DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
+
+    if DATABASE_SSLMODE:
+        DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
 TRANSLATE_DIR = os.path.join(ROOT, "translate")
 
@@ -511,9 +514,12 @@ PIPELINE_CSS = {
         ),
         "output_filename": "css/teams.min.css",
     },
-    "sync_logs": {
-        "source_filenames": ("css/sync_logs.css",),
-        "output_filename": "css/sync_logs.min.css",
+    "sync_log": {
+        "source_filenames": (
+            "css/table.css",
+            "css/sync_log.css",
+        ),
+        "output_filename": "css/sync_log.min.css",
     },
     "profile": {
         "source_filenames": (
@@ -683,6 +689,13 @@ PIPELINE_JS = {
         ),
         "output_filename": "js/teams.min.js",
     },
+    "sync_log": {
+        "source_filenames": (
+            "js/sync_log.js",
+            "js/table.js",
+        ),
+        "output_filename": "css/sync_log.min.js",
+    },
     "profile": {
         "source_filenames": (
             "js/lib/chart.umd.min.js",
@@ -805,6 +818,9 @@ STATICFILES_DIRS = [
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")
 ALLOWED_HOSTS = allowed_hosts.split(",") if allowed_hosts else []
 
+csrf_trusted_origins = os.environ.get("CSRF_TRUSTED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = csrf_trusted_origins.split(",") if csrf_trusted_origins else []
+
 # Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.
@@ -907,19 +923,28 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
 # Redirect non-HTTPS requests to HTTPS
-SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
+SECURE_SSL_REDIRECT = (
+    os.environ.get("SECURE_SSL_REDIRECT", "True") != "False" and not DEV
+)
 
 # Content-Security-Policy headers
-# 'blob:' is needed for confetti.browser.js
 CSP_DEFAULT_SRC = ("'none'",)
 CSP_FRAME_SRC = ("https:",)
-CSP_WORKER_SRC = ("https:",) + ("blob:",)
+CSP_WORKER_SRC = (
+    "https:",
+    # Needed for confetti.browser.js
+    "blob:",
+)
 CSP_CONNECT_SRC = (
     "'self'",
     "https://bugzilla.mozilla.org/rest/bug",
     "https://region1.google-analytics.com/g/collect",
 )
-CSP_FONT_SRC = ("'self'",)
+CSP_FONT_SRC = (
+    "'self'",
+    # Needed for GraphiQL
+    "data:",
+)
 CSP_IMG_SRC = (
     "'self'",
     "https:",
@@ -933,13 +958,18 @@ CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-eval'",
     "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
-    # Rules related to Google Analytics
+    # Needed for Google Analytics
     "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
     "https://www.googletagmanager.com/gtag/js",
+    # Needed for GraphiQL
+    "'sha256-HHh/PGb5Jp8ck+QB/v7zeWzuHf3vYssM0CBPvYgEHR4='",
+    "https://cdn.jsdelivr.net",
 )
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
+    # Needed for GraphiQL
+    "https://cdn.jsdelivr.net",
 )
 
 # Needed if site not hosted on HTTPS domains (like local setup)

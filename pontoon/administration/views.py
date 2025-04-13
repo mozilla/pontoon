@@ -9,7 +9,6 @@ from django.db.models import Max
 from django.http import Http404, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
-from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.administration.forms import (
@@ -31,7 +30,6 @@ from pontoon.base.models import (
 )
 from pontoon.base.utils import require_AJAX
 from pontoon.pretranslation.tasks import pretranslate_task
-from pontoon.sync.models import SyncLog
 from pontoon.sync.tasks import sync_project_task
 
 
@@ -51,7 +49,15 @@ def admin(request):
         .order_by("name")
     )
 
-    return render(request, "admin.html", {"admin": True, "projects": projects})
+    return render(
+        request,
+        "admin.html",
+        {
+            "admin": True,
+            "projects": projects,
+            "project_stats": projects.stats_data(),
+        },
+    )
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -543,8 +549,7 @@ def manually_sync_project(request, slug):
         )
 
     project = Project.objects.get(slug=slug)
-    sync_log = SyncLog.objects.create(start_time=timezone.now())
-    sync_project_task.delay(project.pk, sync_log.pk)
+    sync_project_task.delay(project.pk)
 
     return HttpResponse("ok")
 

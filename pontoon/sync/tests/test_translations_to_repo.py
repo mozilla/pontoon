@@ -1,5 +1,5 @@
 from os import makedirs
-from os.path import exists, join
+from os.path import dirname, exists, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest.mock import Mock
@@ -33,14 +33,13 @@ def test_remove_resource():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
             name="test-rm-res",
             locales=[locale],
             repositories=[repo],
-            total_strings=10,
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")
@@ -82,14 +81,13 @@ def test_remove_entity():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
             name="test-rm-ent",
             locales=[locale],
             repositories=[repo],
-            total_strings=10,
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")
@@ -161,14 +159,13 @@ def test_add_translation():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
             name="test-add-trans",
             locales=[locale],
             repositories=[repo],
-            total_strings=10,
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")
@@ -236,3 +233,76 @@ def test_add_translation():
                 key-2 = Translation 2
                 """
             )
+
+
+@pytest.mark.django_db
+def test_directory_creation_on_translation_update():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-dir-update",
+            locales=[locale],
+            repositories=[repo],
+        )
+        res_c = ResourceFactory.create(
+            project=project, path="nested_dir/deeper_dir/c.ftl", format="ftl"
+        )
+        TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=1)
+        entity = EntityFactory.create(
+            resource=res_c, key="key-0", string="key-0 = Message 0\n"
+        )
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="key-0 = Translation 0\n",
+            active=True,
+            approved=True,
+        )
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {
+                    "nested_dir": {"deeper_dir": {"c.ftl": "key-0 = Message 0\n"}}
+                },
+                "fr-Test": {},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("en-US", "nested_dir", "deeper_dir", "c.ftl")],
+            removed=[],
+        )
+        checkouts = Checkouts(mock_checkout, mock_checkout)
+        paths = find_paths(project, checkouts)
+
+        # Test
+        sync_translations_to_repo(
+            project,
+            False,
+            locale_map,
+            checkouts,
+            paths,
+            [],
+            {"nested_dir/deeper_dir/c.ftl"},
+            set(),
+            now,
+        )
+        target_path = join(
+            repo.checkout_path, "fr-Test", "nested_dir", "deeper_dir", "c.ftl"
+        )
+        assert exists(dirname(target_path)), (
+            "Expected nested directories to be created."
+        )
+        assert exists(target_path), (
+            "Expected translated file to be created in nested directories."
+        )

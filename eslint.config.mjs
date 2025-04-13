@@ -20,8 +20,6 @@ export default [
       'translate/public/translate.html',
       '**/templates/**/*.html',
       // Vendored code
-      'error_pages/css/blockrain.css',
-      'error_pages/js/',
       'pontoon/base/static/css/boilerplate.css',
       'pontoon/base/static/css/fontawesome-all.css',
       'pontoon/base/static/css/nprogress.css',

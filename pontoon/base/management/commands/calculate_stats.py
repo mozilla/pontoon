@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django.db.models import Count
 
 from pontoon.base.models import Project
-from pontoon.sync.core.stats import update_locale_stats, update_stats
+from pontoon.sync.core.stats import update_stats
 
 
 log = logging.getLogger(__name__)
@@ -26,15 +26,26 @@ class Command(BaseCommand):
         See bug 1470337 for more details.
         """
 
-    def handle(self, *args, **options):
-        # Start with enabled projects in ascending order of resource count
-        projects = Project.objects.annotate(resource_count=Count("resources")).order_by(
-            "disabled", "resource_count"
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--all",
+            action="store_true",
+            help="Run on all projects, including disabled",
         )
 
-        log.info(f"Calculating stats for {len(projects)} projects...")
-        for project in projects:
-            update_stats(project, update_locales=False)
-        update_locale_stats()
+    def handle(self, *args, **options):
+        if options["all"]:
+            projects = Project.objects.all()
+            action_txt = "all projects"
+        else:
+            projects = Project.objects.filter(disabled=False)
+            action_txt = "enabled projects"
+        projects = projects.annotate(resource_count=Count("resources")).order_by(
+            "disabled", "resource_count"
+        )
+        log.info(f"Calculating stats for {action_txt} ({len(projects)})...")
 
-        log.info("Calculating stats complete for all projects.")
+        for project in projects:
+            update_stats(project)
+
+        log.info("Calculating stats complete.")

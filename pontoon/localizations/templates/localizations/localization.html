@@ -33,7 +33,7 @@
     <ul class="details">
       {{ HeadingInfo.details_item_priority(project.priority) }}
 
-      {{ HeadingInfo.details_item_deadline(project.deadline, project_locale.approved_strings == project_locale.total_strings) }}
+      {{ HeadingInfo.details_item_deadline(project.deadline, project_locale_stats.approved == project_locale_stats.total) }}
 
       {{ HeadingInfo.details_item_url(
         title='Repository',
@@ -54,7 +54,7 @@
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(project_locale, url('pontoon.translate', locale.code, project.slug, 'all-resources')) }}
+    {{ HeadingInfo.progress_chart_legend(project_locale_stats, url('pontoon.translate', locale.code, project.slug, 'all-resources')) }}
   </div>
 </section>
 {% endblock %}

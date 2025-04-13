@@ -4,11 +4,10 @@ from collections import defaultdict
 from collections.abc import Iterable, Sized
 from datetime import datetime
 from os.path import join, relpath, splitext
-from typing import cast
 
 from fluent.syntax import FluentParser
+from moz.l10n.formats import bilingual_extensions, l10n_extensions
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
-from moz.l10n.resource import bilingual_extensions, l10n_extensions
 
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -29,11 +28,9 @@ from pontoon.base.models import (
 )
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
-from pontoon.messaging.notifications import send_badge_notification
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
-from pontoon.sync.formats import parse
-from pontoon.sync.vcs.translation import VCSTranslation
+from pontoon.sync.formats import parse_translations
 
 
 log = logging.getLogger(__name__)
@@ -77,13 +74,12 @@ def sync_translations_from_repo(
 
 def write_db_updates(
     project: Project, updates: Updates, user: User | None, now: datetime
-) -> tuple[str, int]:
-    badge_name, badge_level, updated_translations, new_translations = (
-        update_db_translations(project, updates, user, now)
+) -> None:
+    updated_translations, new_translations = update_db_translations(
+        project, updates, user, now
     )
     add_failed_checks(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
-    return badge_name, badge_level
 
 
 def delete_removed_bilingual_resources(
@@ -156,11 +152,7 @@ def find_db_updates(
                 db_path = relpath(ref_path, paths.ref_root)
                 lc_scope = f"[{project.slug}:{db_path}, {locale.code}]"
                 try:
-                    res = parse(
-                        target_path,
-                        None if isinstance(paths, UploadPaths) else ref_path,
-                        locale,
-                    )
+                    repo_translations = parse_translations(target_path)
                 except Exception as error:
                     log.error(f"{lc_scope} Skipping resource with parse error: {error}")
                     continue
@@ -170,7 +162,7 @@ def find_db_updates(
                 translated_resources[db_path].add(locale.pk)
                 translations.update(
                     ((db_path, tx.key, locale.pk), (tx.strings, tx.fuzzy))
-                    for tx in cast(list[VCSTranslation], res.translations)
+                    for tx in repo_translations
                     if tx.strings
                 )
         elif splitext(target_path)[1] in l10n_extensions and not isinstance(
@@ -236,6 +228,9 @@ def find_db_updates(
                             del strings[plural_form]
                         else:
                             del translations[key]
+                else:
+                    # The translation has been removed from the repo
+                    translations[key] = ({}, False)
             if paginator.num_pages > 3:
                 log.debug(
                     f"[{project.slug}] Filtering matches from translations... {page_number}/{paginator.num_pages}"
@@ -257,20 +252,22 @@ def find_db_updates(
         return None
 
     log.debug(f"[{project.slug}] Compiling updates...")
-    trans_res = {resources[db_path] for db_path, _, _ in translations}
+    trans_res = {
+        resources[db_path] for db_path, _, _ in translations if db_path in resources
+    }
     entities: dict[tuple[str, str], int] = {
         (e["resource__path"], e["key"] or e["string"]): e["id"]
         for e in Entity.objects.filter(resource__in=trans_res, obsolete=False)
         .values("id", "key", "string", "resource__path")
         .iterator()
     }
-    res: Updates = {}
+    updates: Updates = {}
     for (db_path, ent_key, locale_id), tx in translations.items():
         entity_id = entities.get((db_path, ent_key), None)
         if entity_id is not None:
-            res[(entity_id, locale_id)] = tx
-    log.debug(f"[{project.slug}] Compiling updates... Found {len(res)}")
-    return res
+            updates[(entity_id, locale_id)] = tx
+    log.debug(f"[{project.slug}] Compiling updates... Found {len(updates)}")
+    return updates
 
 
 def translations_equal(
@@ -307,26 +304,28 @@ def update_db_translations(
     # Approve matching suggestions
     matching_suggestions_q = Q()
     for (entity_id, locale_id), (strings, _) in repo_translations.items():
-        for plural_form, string in strings.items():
-            matching_suggestions_q |= Q(
-                entity_id=entity_id,
-                locale_id=locale_id,
-                plural_form=plural_form,
-                string=string,
-            )
-    if matching_suggestions_q:
-        # (entity_id, locale_id, plural_form) => translation
-        suggestions: dict[tuple[int, int, int], Translation] = {
+        if strings:
+            for plural_form, string in strings.items():
+                matching_suggestions_q |= Q(
+                    entity_id=entity_id,
+                    locale_id=locale_id,
+                    plural_form=plural_form,
+                    string=string,
+                )
+        else:
+            # The translation has been removed from the repo
+            translations_to_reject |= Q(entity_id=entity_id, locale_id=locale_id)
+    # (entity_id, locale_id, plural_form) => translation
+    suggestions: dict[tuple[int, int, int], Translation] = (
+        {
             (tx.entity_id, tx.locale_id, tx.plural_form): tx
             for tx in Translation.objects.filter(matching_suggestions_q)
             .filter(approved=False, pretranslated=False)
             .iterator()
         }
-    else:
-        log.warning(
-            f"[{project.slug}] Empty strings in repo_translations!? {repo_translations}"
-        )
-        suggestions = {}
+        if matching_suggestions_q
+        else {}
+    )
     update_fields: set[str] = set()
     approve_count = 0
     for tx in suggestions.values():
@@ -380,7 +379,6 @@ def update_db_translations(
         # Add new approved translations for the remainder
         for (entity_id, locale_id), (strings, fuzzy) in repo_translations.items():
             for plural_form, string in strings.items():
-                # Note: no tx.entity.resource, which would be required by tx.save()
                 tx = Translation(
                     entity_id=entity_id,
                     locale_id=locale_id,
@@ -462,24 +460,10 @@ def update_db_translations(
             f"[{project.slug}] Created {str_n_translations(created)} from repo changes"
         )
 
-    badge_name = ""
-    badge_level = 0
     if actions:
-        translation_before_level = log_user.badges_translation_level
-        review_before_level = log_user.badges_review_level
-
         ActionLog.objects.bulk_create(actions)
-        if log_user.username != "pontoon-sync":
-            if log_user.badges_translation_level > translation_before_level:
-                badge_name = "Translation Champion"
-                badge_level = log_user.badges_translation_level
-                send_badge_notification(log_user, badge_name, badge_level)
-            if log_user.badges_review_level > review_before_level:
-                badge_name = "Review Master"
-                badge_level = log_user.badges_review_level
-                send_badge_notification(log_user, badge_name, badge_level)
 
-    return badge_name, badge_level, created, list(suggestions.values())
+    return created, list(suggestions.values())
 
 
 def str_n_translations(n: int | Sized) -> str:

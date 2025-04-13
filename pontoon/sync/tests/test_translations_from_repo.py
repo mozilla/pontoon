@@ -36,7 +36,7 @@ now = timezone.now()
 
 
 @pytest.mark.django_db
-def test_add_ftl_translation():
+def test_update_ftl_translations():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
@@ -44,10 +44,10 @@ def test_add_ftl_translation():
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-add-ftl",
+            name="test-update-trans",
             locales=[locale],
             repositories=[repo],
-            total_strings=9,
+            visibility="public",
         )
         res = {}
         for id in ["a", "b", "c"]:
@@ -61,7 +61,7 @@ def test_add_ftl_translation():
                 key = f"key-{id}-{i}"
                 string = f"{key} = Message {id} {i}\n"
                 entity = EntityFactory.create(resource=res[id], string=string, key=key)
-                if id != "c" or i != 2:
+                if not (id == "c" and i == 2):
                     TranslationFactory.create(
                         entity=entity,
                         locale=locale,
@@ -82,7 +82,8 @@ def test_add_ftl_translation():
         # Filesystem setup
         c_ftl = dedent(
             """
-            key-c-0 = Translation c 0
+            # key-c-0 = Translation c 0
+
             key-c-1 = New translation c 1
             key-c-2 = New translation c 2
             """
@@ -110,14 +111,15 @@ def test_add_ftl_translation():
         removed_resources, updated_translations = sync_translations_from_repo(
             project, locale_map, checkouts, paths, [], now
         )
-        assert (removed_resources, updated_translations) == (0, 2)
+        assert (removed_resources, updated_translations) == (0, 3)
         translations = Translation.objects.filter(
             entity__resource=res["c"], locale=locale
         )
-        assert set(trans.entity.key for trans in translations) == {
-            "key-c-0",
-            "key-c-1",
-            "key-c-2",
+        assert set((trans.entity.key, trans.approved) for trans in translations) == {
+            ("key-c-0", False),
+            ("key-c-1", False),
+            ("key-c-1", True),
+            ("key-c-2", True),
         }
         tr_c2 = next(trans for trans in translations if trans.entity.key == "key-c-2")
         assert not tr_c2.user
@@ -127,6 +129,7 @@ def test_add_ftl_translation():
             (action.translation.string, action.action_type)
             for action in ActionLog.objects.filter(translation__in=translations)
         } == {
+            ("key-c-0 =Translation c 0\n", "translation:rejected"),
             ("key-c-1 =Translation c 1\n", "translation:rejected"),
             ("key-c-1 = New translation c 1\n", "translation:approved"),
             ("key-c-2 = New translation c 2\n", "translation:created"),
@@ -136,7 +139,7 @@ def test_add_ftl_translation():
         update_stats(project)
         project.refresh_from_db()
         assert project.total_strings == 9
-        assert project.approved_strings == 9
+        assert project.approved_strings == 8
         tm = TranslationMemoryEntry.objects.filter(
             entity__resource=res["c"], translation__isnull=False
         ).values_list("target", flat=True)
@@ -157,7 +160,10 @@ def test_remove_po_target_resource():
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-rm-po", locales=[locale], repositories=[repo]
+            name="test-rm-po",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
         )
         res = {}
         for id in ["a", "b", "c"]:

@@ -2,40 +2,16 @@ import re
 
 from django.db import models
 
-from pontoon.base.models import Entity, ProjectLocale, Resource, TranslatedResource
+from pontoon.base.models import Entity, Resource, TranslatedResource
 
 
 def update_terminology_project_stats():
     resource = Resource.objects.get(project__slug="terminology")
-    project = resource.project
-    total_strings = Entity.objects.filter(resource=resource, obsolete=False).count()
-    resource.total_strings = total_strings
+    resource.total_strings = Entity.objects.filter(
+        resource=resource, obsolete=False
+    ).count()
     resource.save(update_fields=["total_strings"])
-
-    translated_resources = list(TranslatedResource.objects.filter(resource=resource))
-
-    for translated_resource in translated_resources:
-        translated_resource.calculate_stats(save=False)
-
-    TranslatedResource.objects.bulk_update(
-        translated_resources,
-        [
-            "total_strings",
-            "approved_strings",
-            "pretranslated_strings",
-            "strings_with_errors",
-            "strings_with_warnings",
-            "unreviewed_strings",
-        ],
-    )
-
-    project.aggregate_stats()
-
-    for locale in project.locales.all():
-        locale.aggregate_stats()
-
-    for projectlocale in ProjectLocale.objects.filter(project=project):
-        projectlocale.aggregate_stats()
+    TranslatedResource.objects.filter(resource=resource).calculate_stats()
 
 
 class TermQuerySet(models.QuerySet):

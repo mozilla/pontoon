@@ -3,7 +3,7 @@ from guardian.models import GroupObjectPermission
 from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
 from pontoon.base import errors
@@ -21,42 +21,11 @@ from pontoon.messaging.emails import send_onboarding_email_1
 
 @receiver(post_delete, sender=ProjectLocale)
 def project_locale_removed(sender, **kwargs):
-    """
-    When locale is removed from a project, delete TranslatedResources
-    and aggregate project and locale stats.
-    """
     project_locale = kwargs.get("instance", None)
     if project_locale is not None:
-        project = project_locale.project
-        locale = project_locale.locale
-
         TranslatedResource.objects.filter(
-            resource__project=project, locale=locale
+            resource__project=project_locale.project, locale=project_locale.locale
         ).delete()
-        project.aggregate_stats()
-        locale.aggregate_stats()
-
-
-@receiver(pre_delete, sender=Locale)
-def locale_deleted(sender, **kwargs):
-    """
-    Before locale is deleted, aggregate stats for all locale projects.
-    """
-    locale = kwargs.get("instance", None)
-    if locale is not None:
-        for project in locale.project_set.all():
-            project.aggregate_stats()
-
-
-@receiver(pre_delete, sender=Project)
-def project_deleted(sender, **kwargs):
-    """
-    Before project is deleted, aggregate stats for all project locales.
-    """
-    project = kwargs.get("instance", None)
-    if project is not None:
-        for locale in project.locales.all():
-            locale.aggregate_stats()
 
 
 def create_group(instance, group_name, perms, name_prefix):

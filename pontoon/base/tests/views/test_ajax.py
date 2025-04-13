@@ -6,7 +6,22 @@ import pytest
 
 from django.http import Http404
 
-from pontoon.base.views import AjaxFormPostView, AjaxFormView
+from pontoon.base.views import AjaxFormPostView, AjaxFormView, locale_project_parts
+from pontoon.test.factories import (
+    EntityFactory,
+    LocaleFactory,
+    ResourceFactory,
+    TranslatedResourceFactory,
+    UserFactory,
+)
+
+
+@pytest.fixture
+def locale_c():
+    return LocaleFactory(
+        code="nv",
+        name="Na'vi",
+    )
 
 
 def test_view_ajax_form(rf):
@@ -97,3 +112,76 @@ def test_view_ajax_form_submit_success(rf):
         )
         assert response.status_code == 200
         assert json.loads(response.content) == {"data": 23}
+
+
+@pytest.mark.django_db
+def test_locale_parts_stats_no_page_one_resource(rf, locale_parts):
+    """
+    Return resource paths and stats if one resource defined.
+    """
+    locale_c, _, entityX = locale_parts
+    project = entityX.resource.project
+    request = rf.get(
+        f"/{locale_c.code}/{project.slug}/parts", HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+    )
+    request.user = UserFactory()
+    response = locale_project_parts(request, locale_c.code, project.slug)
+    assert response.status_code == 200
+    assert json.loads(response.content) == [
+        {
+            "title": "resourceX.po",
+            "approved": 0,
+            "pretranslated": 0,
+            "errors": 0,
+            "warnings": 0,
+            "total": 0,
+            "unreviewed": 0,
+        },
+        {
+            "title": "all-resources",
+            "approved": 0,
+            "pretranslated": 0,
+            "errors": 0,
+            "warnings": 0,
+            "total": 0,
+            "unreviewed": 0,
+        },
+    ]
+
+
+@pytest.mark.django_db
+def test_locale_parts_stats_no_page_multiple_resources(rf, locale_parts):
+    """
+    Return resource paths and stats for locales resources are available for.
+    """
+    locale_c, locale_b, entityX = locale_parts
+    project = entityX.resource.project
+    resourceY = ResourceFactory.create(
+        total_strings=1, project=project, path="/other/path.po"
+    )
+    EntityFactory.create(resource=resourceY, string="Entity Y")
+    TranslatedResourceFactory.create(resource=resourceY, locale=locale_b)
+    TranslatedResourceFactory.create(resource=resourceY, locale=locale_c)
+
+    request_b = rf.get(
+        f"/{locale_b.code}/{project.slug}/parts", HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+    )
+    request_b.user = UserFactory()
+    response = locale_project_parts(request_b, locale_b.code, project.slug)
+    assert response.status_code == 200
+    assert set(data["title"] for data in json.loads(response.content)) == {
+        "/other/path.po",
+        "all-resources",
+    }
+
+    request_c = rf.get(
+        f"/{locale_c.code}/{project.slug}/parts", HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+    )
+    request_c.user = UserFactory()
+    response = locale_project_parts(request_c, locale_c.code, project.slug)
+    assert response.status_code == 200
+    assert set(data["title"] for data in json.loads(response.content)) == {
+        entityX.resource.path,
+        "/other/path.po",
+        "all-resources",
+    }

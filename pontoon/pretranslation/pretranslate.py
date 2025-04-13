@@ -111,8 +111,7 @@ def get_pretranslated_data(source, locale, preserve_placeables):
 
 def update_changed_instances(tr_filter, tr_dict, translations):
     """
-    Update the latest activity and stats for changed Locales, ProjectLocales
-    & TranslatedResources
+    Update the latest activity and stats for changed TranslatedResources
     """
     tr_filter = tuple(tr_filter)
     # Combine all generated filters with an OK operator.
@@ -126,7 +125,7 @@ def update_changed_instances(tr_filter, tr_dict, translations):
         )
     )
 
-    translatedresources.update_stats()
+    translatedresources.calculate_stats()
 
     for tr in translatedresources:
         index = tr_dict[tr.locale_resource]

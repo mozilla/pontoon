@@ -3,13 +3,20 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.debug import DjangoDebug
 
+from django.db.models import Prefetch, Q
+
 from pontoon.api.util import get_fields
 from pontoon.base.models import (
     Locale as LocaleModel,
     Project as ProjectModel,
     ProjectLocale as ProjectLocaleModel,
+    TranslationMemoryEntry as TranslationMemoryEntryModel,
 )
 from pontoon.tags.models import Tag as TagModel
+from pontoon.terminology.models import (
+    Term as TermModel,
+    TermTranslation as TermTranslationModel,
+)
 
 
 class Stats:
@@ -29,6 +36,13 @@ class Tag(DjangoObjectType):
 
 
 class ProjectLocale(DjangoObjectType, Stats):
+    total_strings = graphene.Int()
+    approved_strings = graphene.Int()
+    pretranslated_strings = graphene.Int()
+    strings_with_errors = graphene.Int()
+    strings_with_warnings = graphene.Int()
+    unreviewed_strings = graphene.Int()
+
     class Meta:
         model = ProjectLocaleModel
         fields = (
@@ -44,6 +58,13 @@ class ProjectLocale(DjangoObjectType, Stats):
 
 
 class Project(DjangoObjectType, Stats):
+    total_strings = graphene.Int()
+    approved_strings = graphene.Int()
+    pretranslated_strings = graphene.Int()
+    strings_with_errors = graphene.Int()
+    strings_with_warnings = graphene.Int()
+    unreviewed_strings = graphene.Int()
+
     class Meta:
         convert_choices_to_enum = False
         model = ProjectModel
@@ -78,6 +99,13 @@ class Project(DjangoObjectType, Stats):
 
 
 class Locale(DjangoObjectType, Stats):
+    total_strings = graphene.Int()
+    approved_strings = graphene.Int()
+    pretranslated_strings = graphene.Int()
+    strings_with_errors = graphene.Int()
+    strings_with_warnings = graphene.Int()
+    unreviewed_strings = graphene.Int()
+
     class Meta:
         model = LocaleModel
         fields = (
@@ -123,6 +151,46 @@ class Locale(DjangoObjectType, Stats):
         return records.distinct()
 
 
+class TermTranslation(DjangoObjectType):
+    class Meta:
+        model = TermTranslationModel
+        fields = ("text", "locale")
+
+
+class Term(DjangoObjectType):
+    class Meta:
+        model = TermModel
+        fields = (
+            "text",
+            "part_of_speech",
+            "definition",
+            "usage",
+        )
+
+    translations = graphene.List(TermTranslation)
+    translation_text = graphene.String()
+
+    def resolve_translations(self, info):
+        return self.translations.all()
+
+    def resolve_translation_text(self, info):
+        # Returns the text of the translation for the specified locale, if available.
+        if hasattr(self, "locale_translations") and self.locale_translations:
+            return self.locale_translations[0].text
+        return None
+
+
+class TranslationMemoryEntry(DjangoObjectType):
+    class Meta:
+        model = TranslationMemoryEntryModel
+        fields = (
+            "source",
+            "target",
+            "locale",
+            "project",
+        )
+
+
 class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name="_debug")
 
@@ -137,6 +205,18 @@ class Query(graphene.ObjectType):
 
     locales = graphene.List(Locale)
     locale = graphene.Field(Locale, code=graphene.String())
+
+    term_search = graphene.List(
+        Term,
+        search=graphene.String(required=True),
+        locale=graphene.String(required=True),
+    )
+
+    tm_search = graphene.List(
+        TranslationMemoryEntry,
+        search=graphene.String(required=True),
+        locale=graphene.String(required=True),
+    )
 
     def resolve_projects(obj, info, include_disabled, include_system):
         fields = get_fields(info)
@@ -196,6 +276,37 @@ class Query(graphene.ObjectType):
             raise Exception("Cyclic queries are forbidden")
 
         return qs.get(code=code)
+
+    def resolve_term_search(self, info, search, locale):
+        term_query = Q(text__icontains=search)
+
+        translation_query = Q(translations__text__icontains=search) & Q(
+            translations__locale__code=locale
+        )
+
+        # Prefetch translations for the specified locale
+        prefetch_translations = Prefetch(
+            "translations",
+            queryset=TermTranslationModel.objects.filter(locale__code=locale),
+            to_attr="locale_translations",
+        )
+
+        # Perform the query on the Term model and prefetch translations
+        return (
+            TermModel.objects.filter(term_query | translation_query)
+            .prefetch_related(prefetch_translations)
+            .distinct()
+        )
+
+    def resolve_tm_search(self, info, search, locale):
+        return (
+            TranslationMemoryEntryModel.objects.filter(
+                Q(Q(source__icontains=search) | Q(target__icontains=search)),
+                locale__code=locale,
+            )
+            .prefetch_related("project")
+            .distinct()
+        )
 
 
 schema = graphene.Schema(query=Query)

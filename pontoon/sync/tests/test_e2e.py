@@ -20,8 +20,8 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
+from pontoon.sync.models import Sync
 from pontoon.sync.tasks import sync_project_task
-from pontoon.sync.tests import SyncLogFactory
 from pontoon.sync.tests.test_checkouts import MockVersionControl
 from pontoon.sync.tests.utils import build_file_tree
 
@@ -36,13 +36,8 @@ def test_end_to_end():
     ):
         # Database setup
         settings.MEDIA_ROOT = root
-        synclog = SyncLogFactory.create()
-        locale_de = LocaleFactory.create(
-            code="de-Test", name="Test German", total_strings=100
-        )
-        locale_fr = LocaleFactory.create(
-            code="fr-Test", name="Test French", total_strings=100
-        )
+        locale_de = LocaleFactory.create(code="de-Test", name="Test German")
+        locale_fr = LocaleFactory.create(code="fr-Test", name="Test French")
         repo_src = RepositoryFactory(
             url="http://example.com/src-repo", source_repo=True
         )
@@ -51,7 +46,6 @@ def test_end_to_end():
             name="test-project",
             locales=[locale_de, locale_fr],
             repositories=[repo_src, repo_tgt],
-            total_strings=10,
         )
         ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         ResourceFactory.create(project=project, path="b.po", format="po")
@@ -110,7 +104,7 @@ def test_end_to_end():
 
         # Test
         assert len(ChangedEntityLocale.objects.filter(entity__resource=res_c)) == 6
-        sync_project_task(project.id, synclog.id)
+        sync_project_task(project.pk)
         assert len(ChangedEntityLocale.objects.filter(entity__resource=res_c)) == 0
         with open(join(repo_tgt.checkout_path, "de-Test", "c.ftl")) as file:
             assert (
@@ -154,6 +148,7 @@ def test_end_to_end():
             commit_msg,
         )
         assert TranslatedResource.objects.filter(resource__project=project).count() == 6
+        assert Sync.objects.get(project=project).status == Sync.Status.DONE
 
 
 @pytest.mark.django_db
@@ -161,7 +156,6 @@ def test_translation_before_source():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        synclog = SyncLogFactory.create()
         locale_de = LocaleFactory.create(code="de-Test", name="Test German")
         repo_src = RepositoryFactory(
             url="http://example.com/src-repo", source_repo=True
@@ -215,7 +209,7 @@ def test_translation_before_source():
             tgt_root,
             {
                 "de-Test": {
-                    "a.ftl": ("a0 = New translation 0\n" "a1 = New translation 1\n"),
+                    "a.ftl": ("a0 = New translation 0\na1 = New translation 1\n"),
                     "b.ftl": "b0 = Translation 0\n",
                 }
             },
@@ -230,7 +224,7 @@ def test_translation_before_source():
                 return_value=mock_vcs,
             ),
         ):
-            sync_project_task(project.id, synclog.id)
+            sync_project_task(project.pk)
 
         # Test -- New a0 translation is picked up, added a1 is dropped
         with open(join(repo_tgt.checkout_path, "de-Test", "a.ftl")) as file:
@@ -242,7 +236,6 @@ def test_fuzzy():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        synclog = SyncLogFactory.create()
         locale = LocaleFactory.create(code="fr-Test", name="Test French")
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
@@ -324,7 +317,7 @@ def test_fuzzy():
                 return_value=mock_vcs,
             ),
         ):
-            sync_project_task(project.id, synclog.id)
+            sync_project_task(project.pk)
 
         # Test
         trans = Translation.objects.filter(
@@ -372,3 +365,108 @@ def test_fuzzy():
                 msgstr "Made Fuzzy 4"
                 """
             )
+
+
+@pytest.mark.django_db
+def test_webext():
+    mock_vcs = MockVersionControl(changes=None)
+    with (
+        TemporaryDirectory() as root,
+        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
+        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
+    ):
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="de-Test", name="Test German")
+        repo_src = RepositoryFactory(
+            url="http://example.com/src-repo", source_repo=True
+        )
+        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
+        project = ProjectFactory.create(
+            name="test-webext",
+            locales=[locale],
+            repositories=[repo_src, repo_tgt],
+        )
+        res = ResourceFactory.create(
+            project=project, path="messages.json", format="json"
+        )
+
+        entity = EntityFactory.create(resource=res, key="plain", string="Entity")
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="Translation",
+            active=True,
+            approved=True,
+        )
+
+        entity = EntityFactory.create(
+            resource=res, key="number", string="Entity for $1"
+        )
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="Translation for $1",
+            active=True,
+            approved=True,
+        )
+
+        entity = EntityFactory.create(
+            resource=res,
+            key="name",
+            string="Entity for $ORIGIN$",
+            source='{"ORIGIN": {"content": "$1", "example": "developer.mozilla.org"}}',
+        )
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="Translation for $ORIGIN$",
+            active=True,
+            approved=True,
+        )
+
+        # Filesystem setup
+        src_root = repo_src.checkout_path
+        src_messages_json = dedent("""\
+          {
+            "plain": { "message": "Entity" },
+            "number": { "message": "Entity for $1" },
+            "name": {
+              "message": "Entity for $ORIGIN$",
+              "placeholders": {
+                "origin": {
+                  "content": "$1",
+                  "example": "developer.mozilla.org"
+                }
+              }
+            }
+          }""")
+        makedirs(src_root)
+        build_file_tree(src_root, {"en-US": {"messages.json": src_messages_json}})
+
+        tgt_root = repo_tgt.checkout_path
+        makedirs(tgt_root)
+        build_file_tree(tgt_root, {"de-Test": {"messages.json": "{}"}})
+
+        # Test
+        sync_project_task(project.pk)
+        with open(join(repo_tgt.checkout_path, "de-Test", "messages.json")) as file:
+            assert file.read() == dedent("""\
+            {
+              "plain": {
+                "message": "Translation"
+              },
+              "number": {
+                "message": "Translation for $1"
+              },
+              "name": {
+                "message": "Translation for $ORIGIN$",
+                "placeholders": {
+                  "ORIGIN": {
+                    "content": "$1",
+                    "example": "developer.mozilla.org"
+                  }
+                }
+              }
+            }
+            """)

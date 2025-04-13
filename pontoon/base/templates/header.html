@@ -63,6 +63,7 @@
                 {% if project %}
                 <li><a href="{{ url('pontoon.admin.project', project.slug) }}"><i class="fas fa-wrench fa-fw"></i>Admin &middot; Current Project</a></li>
                 {% endif %}
+              <li><a href="{{ url('pontoon.sync.log') }}"><i class="fas fa-sync-alt fa-fw"></i>Sync Log</a></li>
               {% endif %}
 
               {% if user.is_authenticated %}

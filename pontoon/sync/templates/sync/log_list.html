@@ -1,59 +1,82 @@
 {% extends "base.html" %}
 {% import 'heading.html' as Heading %}
 
-{% block title %}Sync Logs{% endblock %}
+{% block title %}Sync Log{% endblock %}
 
 {% block heading %}
-  {{ Heading.heading(title='Sync Logs') }}
+  {{ Heading.heading(title='Sync Log', subtitle='Synchronization history and details') }}
 {% endblock %}
 
 {% block bottom %}
-<section id="main">
+{% set is_manager = request.user.has_perm("base.can_manage_project") %}
+<section id="main" class="clearfix">
   <div class="container">
-    <table class="log-list">
-      <tr class="log-list-header">
-        <th class="log-list-column">Start Time</th>
-        <th class="log-list-column">Start Date</th>
-        <th class="log-list-column">Duration</th>
-      </tr>
-      {% for log in sync_logs %}
-        <tr class="sync-log">
-          <td class="start-time">
-            <a href="{{ log.get_absolute_url() }}">
-              {{ log.start_time|format_datetime('time') }}
-            </a>
-          </td>
-          <td class="start-date">
-            {{ log.start_time|format_datetime('date') }}
-          </td>
-          <td class="duration">{{ log.duration|format_timedelta }}</td>
-        </tr>
-      {% endfor %}
+    <menu class="controls">
+      <div class="search-wrapper small clearfix">
+        <div class="icon fas fa-search"></div>
+        <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
+      </div>
+        {% if show_no_changes %}
+          {% set no_changes = 0 %}
+          {% set button_title = "Hide syncs with no changes" %}
+        {% else %}
+          {% set no_changes = 1 %}
+          {% set button_title = "Show syncs with no changes" %}
+        {% endif %}
+        <a class="button small view-toggle" href="{{ url('pontoon.sync.log.errors') }}">Sync Log Errors <span class="fas fa-chevron-right"></span></a>
+        <a class="button small no-changes-toggle" href="?no_changes={{ no_changes }}">{{ button_title }}</a>
+    </menu>
+
+    <table class="table table-sort log-list item-list">
+        <thead>
+          <tr>
+            <th class="project asc">Project<i class="fas"></i></th>
+            <th class="latest-status">Latest Status<i class="fas"></i></th>
+            <th class="latest-start relative-time">Latest Start<i class="fas"></i></th>
+            <th class="duration" data-sort="">Duration<i class="fas"></i></th>
+            {% if settings.MANUAL_SYNC and is_manager %}
+            <th class="sync-now no-sort"></th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr class="limited">
+              <td class="project">
+                <h4>
+                {% if is_manager %}
+                  <a href="{{ project.sync_url }}">{{ project.name }}</a>
+                {% else %}
+                  {{ project.name }}
+                {% endif %}
+                </h4>
+              </td>
+              <td class="latest-status {{ format_sync_status_class(project.sync_status) }}">
+                {{ format_sync_status_label(project.sync_status) }}
+              </td>
+              <td class="latest-start">
+                <time {% if project.sync_start_time %}datetime="{{ project.sync_start_time.isoformat() }}" title='{{ project.sync_start_time|date("Y-m-d H:i:s") }} UTC'{% endif %}>{{ project.sync_start_time|naturaltime or "―" }}</time>
+              </td>
+              <td class="duration" title='{% if project.sync_end_time %}Latest End: {{ project.sync_end_time|date("Y-m-d H:i:s") }} UTC{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
+                {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
+              </td>
+              {% if settings.MANUAL_SYNC and is_manager and project.data_source != "database" %}
+              <td class="sync-now">
+                <button class="button sync" project-slug="{{ project.slug }}" title="Sync now"><i class="fas fa-sync-alt"></i></button>
+              </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
     </table>
-
-    <div class="pagination">
-      {% if sync_logs.has_previous() %}
-        <a class="previous" href="?page={{ sync_logs.previous_page_number() }}">
-          <span class="fas fa-chevron-left"></span>
-          Previous
-        </a>
-      {% endif %}
-
-      <span class="current">
-        Page {{ sync_logs.number }} of {{ sync_logs.paginator.num_pages }}
-      </span>
-
-      {% if sync_logs.has_next() %}
-        <a class="next" href="?page={{ sync_logs.next_page_number() }}">
-          Next
-          <span class="fas fa-chevron-right"></span>
-        </a>
-      {% endif %}
-    </div>
   </div>
 </section>
 {% endblock %}
 
 {% block extend_css %}
-  {% stylesheet 'sync_logs' %}
+  {% stylesheet 'sync_log' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'sync_log' %}
 {% endblock %}

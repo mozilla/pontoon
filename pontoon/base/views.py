@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-from django.db.models import Prefetch, Q
+from django.db.models import F, Prefetch, Q
 from django.http import (
     Http404,
     HttpResponse,
@@ -103,30 +103,51 @@ def locale_projects(request, locale):
 def locale_stats(request, locale):
     """Get locale stats used in All Resources part."""
     locale = get_object_or_404(Locale, code=locale)
-    return JsonResponse(locale.stats(), safe=False)
+    stats = TranslatedResource.objects.filter(locale=locale).string_stats(request.user)
+    stats["title"] = "all-resources"
+    return JsonResponse([stats], safe=False)
 
 
 @utils.require_AJAX
 def locale_project_parts(request, locale, slug):
     """Get locale-project pages/paths with stats."""
+
     try:
         locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": f"Not Found: {e}"},
-            status=404,
-        )
-
-    try:
         project = Project.objects.visible_for(request.user).get(slug=slug)
-    except Project.DoesNotExist as e:
+        tr = TranslatedResource.objects.filter(
+            locale=locale, resource__project=project
+        ).distinct()
+        details = list(
+            tr.annotate(
+                title=F("resource__path"),
+                total=F("total_strings"),
+                pretranslated=F("pretranslated_strings"),
+                errors=F("strings_with_errors"),
+                warnings=F("strings_with_warnings"),
+                unreviewed=F("unreviewed_strings"),
+                approved=F("approved_strings"),
+            )
+            .order_by("title")
+            .values(
+                "title",
+                "total",
+                "pretranslated",
+                "errors",
+                "warnings",
+                "unreviewed",
+                "approved",
+            )
+        )
+        all_res_stats = tr.string_stats(request.user, count_system_projects=True)
+        all_res_stats["title"] = "all-resources"
+        details.append(all_res_stats)
+        return JsonResponse(details, safe=False)
+    except (Locale.DoesNotExist, Project.DoesNotExist) as e:
         return JsonResponse(
             {"status": False, "message": f"Not Found: {e}"},
             status=404,
         )
-
-    try:
-        return JsonResponse(locale.parts_stats(project), safe=False)
     except ProjectLocale.DoesNotExist:
         return JsonResponse(
             {"status": False, "message": "Locale not enabled for selected project."},
@@ -167,7 +188,7 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     return JsonResponse(
         {
             "entities": Entity.map_entities(locale, preferred_source_locale, entities),
-            "stats": TranslatedResource.objects.stats(
+            "stats": TranslatedResource.objects.query_stats(
                 project, form.cleaned_data["paths"], locale
             ),
         },
@@ -200,7 +221,7 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
                 requested_entity=requested_entity,
             ),
             "has_next": entities_page.has_next(),
-            "stats": TranslatedResource.objects.stats(
+            "stats": TranslatedResource.objects.query_stats(
                 project, form.cleaned_data["paths"], locale
             ),
         },
@@ -434,7 +455,7 @@ def get_translation_history(request):
                 "uid": u.id,
                 "username": u.username,
                 "user_gravatar_url_small": u.gravatar_url(88),
-                "user_status": u.status(locale, project_contact),
+                "user_banner": u.banner(locale, project_contact),
                 "date": t.date,
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "approved_date": t.approved_date,
@@ -478,6 +499,8 @@ def get_team_comments(request):
 
 def _send_add_comment_notifications(user, comment, entity, locale, translation):
     # On translation comment, notify:
+    #   - project-locale translators or locale translators
+    #   - locale managers
     #   - authors of other translation comments in the thread
     #   - translation author
     #   - translation reviewers
@@ -504,26 +527,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     #   - translation reviewers
     else:
         recipients = set()
-        project_locale = ProjectLocale.objects.get(
-            project=entity.resource.project,
-            locale=locale,
-        )
         translations = Translation.objects.filter(entity=entity, locale=locale)
-
-        translators = []
-        # Some projects (e.g. system projects) don't have translators group
-        if project_locale.translators_group:
-            # Only notify translators of the project if defined
-            translators = project_locale.translators_group.user_set.values_list(
-                "pk", flat=True
-            )
-        if not translators:
-            translators = locale.translators_group.user_set.values_list("pk", flat=True)
-
-        recipients = recipients.union(translators)
-        recipients = recipients.union(
-            locale.managers_group.user_set.values_list("pk", flat=True)
-        )
 
         recipients = recipients.union(
             Comment.objects.filter(entity=entity, locale=locale).values_list(
@@ -550,6 +554,26 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         recipients = recipients.union(
             translations.values_list("unrejected_user__pk", flat=True)
         )
+
+    # In both cases, notify locale managers and translators
+    project_locale = ProjectLocale.objects.get(
+        project=entity.resource.project,
+        locale=locale,
+    )
+    translators = []
+    # Some projects (e.g. system projects) don't have translators group
+    if project_locale.translators_group:
+        # Only notify translators of the project if defined
+        translators = project_locale.translators_group.user_set.values_list(
+            "pk", flat=True
+        )
+    if not translators:
+        translators = locale.translators_group.user_set.values_list("pk", flat=True)
+
+    recipients = recipients.union(translators)
+    recipients = recipients.union(
+        locale.managers_group.user_set.values_list("pk", flat=True)
+    )
 
     # Notify users, mentioned in a comment
     usernames = re.findall(r"<a href=\"\/contributors/([\w.@+-]+)/\">.+</a>", comment)
@@ -660,6 +684,12 @@ def add_comment(request):
 @transaction.atomic
 def pin_comment(request):
     """Update a comment as pinned"""
+    if not request.user.has_perm("base.can_manage_project"):
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: You can't pin comments."},
+            status=403,
+        )
+
     comment_id = request.POST.get("comment_id", None)
     if not comment_id:
         return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
@@ -679,6 +709,12 @@ def pin_comment(request):
 @transaction.atomic
 def unpin_comment(request):
     """Update a comment as unpinned"""
+    if not request.user.has_perm("base.can_manage_project"):
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: You can't unpin comments."},
+            status=403,
+        )
+
     comment_id = request.POST.get("comment_id", None)
     if not comment_id:
         return JsonResponse({"status": False, "message": "Bad Request"}, status=400)

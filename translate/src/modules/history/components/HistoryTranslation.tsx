@@ -270,7 +270,7 @@ export function HistoryTranslationBase({
                 username={translation.username}
                 title=''
                 imageUrl={translation.userGravatarUrlSmall}
-                userStatus={translation.userStatus}
+                userBanner={translation.userBanner}
               />
             </Localized>
             {translation.machinerySources ? (

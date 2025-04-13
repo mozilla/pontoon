@@ -57,21 +57,16 @@ class Tags:
             self.translated_resources.filter(query)
             .values(group_by)
             .annotate(
-                total_strings=Sum("resource__total_strings"),
-                approved_strings=Sum("approved_strings"),
-                pretranslated_strings=Sum("pretranslated_strings"),
-                strings_with_errors=Sum("strings_with_errors"),
-                strings_with_warnings=Sum("strings_with_warnings"),
-                unreviewed_strings=Sum("unreviewed_strings"),
+                # should be Sum("total_strings"), but tests fail with it
+                total=Sum("resource__total_strings"),
+                approved=Sum("approved_strings"),
+                pretranslated=Sum("pretranslated_strings"),
+                errors=Sum("strings_with_errors"),
+                warnings=Sum("strings_with_warnings"),
+                unreviewed=Sum("unreviewed_strings"),
             )
         )
-
-        return {
-            tr[group_by]: TranslatedResource.get_chart_dict(
-                TranslatedResource(**{key: tr[key] for key in list(tr.keys())[1:]})
-            )
-            for tr in trs
-        }
+        return {tr[group_by]: tr for tr in trs}
 
     def latest_activity(self, query, group_by):
         latest_activity = {}
