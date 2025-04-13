@@ -331,7 +331,6 @@ MIDDLEWARE = (
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "pontoon.base.middleware.AccountDisabledMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "pontoon.base.middleware.ThrottleIpMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

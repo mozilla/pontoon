@@ -6,8 +6,6 @@ from ipaddress import ip_address
 from raygun4py.middleware.django import Provider
 
 from django.conf import settings
-from django.contrib.auth.middleware import get_user
-from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseForbidden
@@ -150,41 +148,4 @@ class ThrottleIpMiddleware:
             # Reset the count and timestamp if first request in the period
             cache.set(observed_key, (1, now), self.observation_period)
 
-        return response
-
-
-class AccountDisabledMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        # Manually fetch user from the session
-        request.user = get_user(request)
-        user = request.user
-
-        # If user is authenticated, check if they are inactive
-        if user.is_authenticated:
-            if not user.is_active:
-                return render(
-                    request,
-                    "account_disabled.html",
-                    status=403,
-                )
-        else:
-            # For non-authenticated users, check the session manually
-            user_id = request.session.get("_auth_user_id")
-            if user_id:
-                try:
-                    user = User.objects.get(pk=user_id)
-                    if not user.is_active:
-                        return render(
-                            request,
-                            "account_disabled.html",
-                            status=403,
-                        )
-                except User.DoesNotExist:
-                    pass  # If the user ID is invalid, ignore it
-
-        # Continue processing the request
-        response = self.get_response(request)
         return response

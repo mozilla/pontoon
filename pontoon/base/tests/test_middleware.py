@@ -67,20 +67,3 @@ def test_throttle(client, settings):
     # Make another request after block duration
     response = client.get(url, REMOTE_ADDR=ip_address)
     assert response.status_code == 200
-
-
-@pytest.mark.django_db
-def test_AccountDisabledMiddleware(client, member, settings):
-    member.user.is_active = False
-    member.user.save()
-
-    response = member.client.get("/")
-    assert response.status_code == 403
-    assert "account_disabled.html" in [t.name for t in response.templates]
-
-    # Ensure the user is authenticated and active
-    member.user.is_active = True
-    member.user.save()
-
-    response = member.client.get("/")
-    assert response.status_code == 200
