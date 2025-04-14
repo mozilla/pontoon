@@ -10,6 +10,10 @@ body > header.menu-opened {
   border-color: var(--main-border-1);
 }
 
+#error {
+  background: transparent;
+}
+
 #main {
   padding: 0;
 }
@@ -42,7 +46,6 @@ body > header.menu-opened {
   font-size: 22px;
   font-weight: 300;
   line-height: 36px;
-  width: 900px;
 }
 
 #main p a {
