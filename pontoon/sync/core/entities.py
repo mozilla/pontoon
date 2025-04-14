@@ -153,7 +153,8 @@ def update_resources(
             prev_ent.obsolete = True
             prev_ent.date_obsoleted = now
             obsolete_entities.append(prev_ent)
-            log_rm[key[0]].append(key[1].replace("\n", "\\n"))
+            key_path, key_entity = key
+            log_rm[key_path].append(key_entity)
     Entity.objects.bulk_update(obsolete_entities, ["obsolete", "date_obsoleted"])
 
     mod_fields = [
@@ -170,14 +171,15 @@ def update_resources(
     log_mod: dict[str, list[str]] = defaultdict(list)
     log_add: dict[str, list[str]] = defaultdict(list)
     for key, next_ent in next_entities.items():
+        key_path, key_entity = key
         if key in prev_and_next:
             mod_ent = entity_update(prev_entities[key], next_ent, mod_fields)
             if mod_ent is not None:
                 mod_entities.append(mod_ent)
-                log_mod[key[0]].append(key[1].replace("\n", "\\n"))
+                log_mod[key_path].append(key_entity)
         elif key in next_not_prev:
             added_entities.append(next_ent)
-            log_add[key[0]].append(key[1].replace("\n", "\\n"))
+            log_add[key_path].append(key_entity)
     Entity.objects.bulk_update(mod_entities, mod_fields)
 
     # FIXME: Entity order should be updated on insertion
@@ -187,16 +189,16 @@ def update_resources(
 
     if log_rm or log_add or log_mod:
         for path in sorted(list(log_rm.keys() | log_add.keys() | log_mod.keys())):
-            scope = f"[{project.slug}:{path}]"
-            if path in log_rm:
-                ls = log_rm[path]
-                log.info(f"{scope} Obsolete entities ({len(ls)}): {', '.join(ls)}")
-            if path in log_mod:
-                ls = log_mod[path]
-                log.info(f"{scope} Changed entities ({len(ls)}): {', '.join(ls)}")
-            if path in log_add:
-                ls = log_add[path]
-                log.info(f"{scope} New entities ({len(ls)}): {', '.join(ls)}")
+            for desc, log_data in (
+                ("Obsolete", log_rm),
+                ("Changed", log_mod),
+                ("New", log_add),
+            ):
+                ls = log_data.get(path, None)
+                if ls:
+                    scope = f"[{project.slug}:{path}]"
+                    names = ", ".join(ls).replace("\n", "¶")
+                    log.info(f"{scope} {desc} entities ({len(ls)}): {names}")
     return add_count, set(res.path for res in changed_resources)
 
 
