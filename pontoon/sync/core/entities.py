@@ -128,13 +128,13 @@ def update_resources(
         f"[{project.slug}] Changed source files: {', '.join(res.path for res in changed_resources)}"
     )
 
-    prev_entities = {
+    prev_entities: dict[tuple[str, str], Entity] = {
         (e.resource.path, e.key or e.string): e
         for e in Entity.objects.filter(resource__in=changed_resources, obsolete=False)
         .select_related("resource")
         .iterator()
     }
-    next_entities = {
+    next_entities: dict[tuple[str, str], Entity] = {
         (path, entity.key or entity.string): entity
         for path, entity in (
             (cr.path, entity_from_source(cr, now, 0, tx))
@@ -142,18 +142,20 @@ def update_resources(
             for tx in updates[cr.path]
         )
     }
+    prev_not_next = prev_entities.keys() - next_entities.keys()
+    prev_and_next = prev_entities.keys() & next_entities.keys()
+    next_not_prev = next_entities.keys() - prev_entities.keys()
 
-    obsolete_entities = [
-        ent
-        for key, ent in prev_entities.items()
-        if key in prev_entities.keys() - next_entities.keys()
-    ]
-    for ent in obsolete_entities:
-        ent.obsolete = True
-        ent.date_obsoleted = now
-    obs_count = Entity.objects.bulk_update(
-        obsolete_entities, ["obsolete", "date_obsoleted"]
-    )
+    obsolete_entities: list[Entity] = []
+    log_rm: dict[str, list[str]] = defaultdict(list)
+    for key, prev_ent in prev_entities.items():
+        if key in prev_not_next:
+            prev_ent.obsolete = True
+            prev_ent.date_obsoleted = now
+            obsolete_entities.append(prev_ent)
+            key_path, key_entity = key
+            log_rm[key_path].append(key_entity)
+    Entity.objects.bulk_update(obsolete_entities, ["obsolete", "date_obsoleted"])
 
     mod_fields = [
         "string",
@@ -164,31 +166,39 @@ def update_resources(
         "resource_comment",
         "context",
     ]
-    mod_entities = [
-        ent
-        for key, next_ent in next_entities.items()
-        if key in prev_entities.keys() & next_entities.keys()
-        and (ent := entity_update(prev_entities[key], next_ent, mod_fields))
-    ]
-    mod_count = Entity.objects.bulk_update(mod_entities, mod_fields)
+    mod_entities: list[Entity] = []
+    added_entities: list[Entity] = []
+    log_mod: dict[str, list[str]] = defaultdict(list)
+    log_add: dict[str, list[str]] = defaultdict(list)
+    for key, next_ent in next_entities.items():
+        key_path, key_entity = key
+        if key in prev_and_next:
+            mod_ent = entity_update(prev_entities[key], next_ent, mod_fields)
+            if mod_ent is not None:
+                mod_entities.append(mod_ent)
+                log_mod[key_path].append(key_entity)
+        elif key in next_not_prev:
+            added_entities.append(next_ent)
+            log_add[key_path].append(key_entity)
+    Entity.objects.bulk_update(mod_entities, mod_fields)
 
     # FIXME: Entity order should be updated on insertion
     # https://github.com/mozilla/pontoon/issues/2115
-    added_entities = Entity.objects.bulk_create(
-        ent
-        for key, ent in next_entities.items()
-        if key in next_entities.keys() - prev_entities.keys()
-    )
+    added_entities = Entity.objects.bulk_create(added_entities)
     add_count = len(added_entities)
 
-    delta = [
-        f"added {add_count}" if add_count else "",
-        f"changed {mod_count}" if mod_count else "",
-        f"obsoleted {obs_count}" if obs_count else "",
-    ]
-    if any(delta):
-        ds = ", ".join(d for d in delta if d)
-        log.info(f"[{project.slug}] Source entity updates: {ds}")
+    if log_rm or log_add or log_mod:
+        for path in sorted(list(log_rm.keys() | log_add.keys() | log_mod.keys())):
+            for desc, log_data in (
+                ("Obsolete", log_rm),
+                ("Changed", log_mod),
+                ("New", log_add),
+            ):
+                ls = log_data.get(path, None)
+                if ls:
+                    scope = f"[{project.slug}:{path}]"
+                    names = ", ".join(ls).replace("\n", "¶")
+                    log.info(f"{scope} {desc} entities ({len(ls)}): {names}")
     return add_count, set(res.path for res in changed_resources)
 
 

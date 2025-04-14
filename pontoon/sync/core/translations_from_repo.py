@@ -12,7 +12,7 @@ from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_loc
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q
-from django.db.models.manager import BaseManager
+from django.db.models.query import QuerySet
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
@@ -44,7 +44,7 @@ def sync_translations_from_repo(
     locale_map: dict[str, Locale],
     checkouts: Checkouts,
     paths: L10nConfigPaths | L10nDiscoverPaths,
-    db_changes: BaseManager[ChangedEntityLocale],
+    db_changes: QuerySet[ChangedEntityLocale, ChangedEntityLocale],
     now: datetime,
 ) -> tuple[int, int]:
     """(removed_resource_count, updated_translation_count)"""
@@ -60,9 +60,7 @@ def sync_translations_from_repo(
     if changed_target_paths:
         n = len(changed_target_paths)
         str_files = "file" if n == 1 else "files"
-        log.info(
-            f"[{project.slug}] Reading changes from {n} changed target {str_files}"
-        )
+        log.info(f"[{project.slug}] Reading changes from {n} target {str_files}")
     updates = find_db_updates(
         project, locale_map, changed_target_paths, paths, db_changes
     )
@@ -150,11 +148,11 @@ def find_db_updates(
             if lc in locale_map:
                 locale = locale_map[lc]
                 db_path = relpath(ref_path, paths.ref_root)
-                lc_scope = f"[{project.slug}:{db_path}, {locale.code}]"
                 try:
                     repo_translations = parse_translations(target_path)
                 except Exception as error:
-                    log.error(f"{lc_scope} Skipping resource with parse error: {error}")
+                    scope = f"[{project.slug}:{db_path}, {locale.code}]"
+                    log.warning(f"{scope} Skipping resource with parse error: {error}")
                     continue
                 if not project.configuration_file and db_path.endswith(".pot"):
                     db_path = db_path[:-1]
@@ -295,7 +293,8 @@ def update_db_translations(
 ) -> tuple[list[Translation], list[Translation]]:
     if not repo_translations:
         return [], []
-    log.debug(f"[{project.slug}] Syncing translations from repo...")
+    scope = f"[{project.slug}]"
+    log.debug(f"{scope} Syncing translations from repo...")
 
     log_user = user or User.objects.get(username="pontoon-sync")
     translations_to_reject = Q()
@@ -303,6 +302,7 @@ def update_db_translations(
 
     # Approve matching suggestions
     matching_suggestions_q = Q()
+    repo_rm_count = 0
     for (entity_id, locale_id), (strings, _) in repo_translations.items():
         if strings:
             for plural_form, string in strings.items():
@@ -315,6 +315,7 @@ def update_db_translations(
         else:
             # The translation has been removed from the repo
             translations_to_reject |= Q(entity_id=entity_id, locale_id=locale_id)
+            repo_rm_count += 1
     # (entity_id, locale_id, plural_form) => translation
     suggestions: dict[tuple[int, int, int], Translation] = (
         {
@@ -435,9 +436,13 @@ def update_db_translations(
             TranslationMemoryEntry.objects.filter(
                 translation__in=[tx.pk for tx in rejected]
             ).delete()
-            log.info(
-                f"[{project.slug}] Rejected {str_n_translations(reject_count)} from repo changes"
-            )
+        if repo_rm_count:
+            nt = str_n_translations(repo_rm_count)
+            log.info(f"{scope} Rejected {nt} removed from repo")
+            reject_count -= repo_rm_count
+        if reject_count > 0:
+            nt = str_n_translations(reject_count)
+            log.info(f"{scope} Replaced {nt} from repo changes")
 
     update_count = (
         Translation.objects.bulk_update(suggestions.values(), list(update_fields))
@@ -450,15 +455,11 @@ def update_db_translations(
             if approve_count == update_count
             else f"{approve_count}/{update_count}"
         )
-        log.info(
-            f"[{project.slug}] Approved {str_n_translations(count)} from repo changes"
-        )
+        log.info(f"{scope} Approved {str_n_translations(count)} from repo changes")
 
     created = Translation.objects.bulk_create(new_translations)
     if created:
-        log.info(
-            f"[{project.slug}] Created {str_n_translations(created)} from repo changes"
-        )
+        log.info(f"{scope} Created {str_n_translations(created)} from repo changes")
 
     if actions:
         ActionLog.objects.bulk_create(actions)
