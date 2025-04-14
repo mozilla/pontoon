@@ -571,9 +571,9 @@ PIPELINE_CSS = {
         "source_filenames": ("css/email_consent.css",),
         "output_filename": "css/email_consent.min.css",
     },
-    "unsubscribe": {
-        "source_filenames": ("css/unsubscribe.css",),
-        "output_filename": "css/unsubscribe.min.css",
+    "standalone": {
+        "source_filenames": ("css/standalone.css",),
+        "output_filename": "css/standalone.min.css",
     },
     "messaging": {
         "source_filenames": (
