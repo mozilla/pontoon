@@ -48,7 +48,7 @@ h2 {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
   background: var(--dark-grey-1);
-  color: var(--light-grey-6);
+  color: var(--user-admin);
 }
 
 .avatar .status span {
