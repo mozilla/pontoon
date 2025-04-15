@@ -39,16 +39,13 @@
                 {% endif %}
                 </h4>
               </td>
-              <td class="status {{ format_sync_status_class(sync.status) }}">
+	      <td class="status {{ format_sync_status_class(sync.status) }}" {% if sync.error %}title="{{ sync.error }}"{% endif %}>
                 {{ format_sync_status_label(sync.status) }}
               </td>
               <td class="duration" title='{% if sync.end_time %}End: {{ sync.end_time|date("Y-m-d H:i:s") }} UTC{% endif %}' data-sort="{{ format_sync_duration(sync.start_time, sync.end_time, ms=True) }}">
                 {{ format_sync_duration(sync.start_time, sync.end_time) }}
               </td>
             </tr>
-            {% if sync.error %}
-              <tr class="sync-error-message"><td colspan="4">{{ sync.error }}</td></tr>
-            {% endif %}
           {% endfor %}
         </tbody>
     </table>
