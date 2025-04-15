@@ -25,6 +25,10 @@
   width: 160px;
 }
 
+.log-list .status[title] {
+  cursor: help;
+}
+
 .log-list.project-sync-log tbody .status {
   line-height: 47px;
   text-align: left;
