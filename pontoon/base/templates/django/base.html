@@ -1,6 +1,7 @@
 {% load static %}
 {% load socialaccount %}
 {% load helpers %}
+{% load django_helpers %}
 <!doctype html>
 <html lang="en" dir="ltr">
   <head>
@@ -24,22 +25,14 @@
     <link rel="stylesheet" href="{% static 'css/boilerplate.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/dark-theme.css' %}" title="" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/light-theme.css' %}" title="" type="text/css" />
 
     {% include "tracker.html" %}
-
-    {% block extend_css %}
-    <!-- Inlining CSS mitigates/prevents fouc. -->
-    <style>
-      body {
-         background: #333941;
-      }
-    </style>
-    {% endblock %}
     {% block extend_js %}
     {% endblock extend_js %}
   </head>
 
-  <body class="{% block class %}{% endblock %} dark-theme">
+  <body class="{% block class %}{% endblock %} {{ request|theme_class }}" data-theme="{{ user|user_theme }}">
     <header>
       <ul class="notification">
         {% for message in messages %}
