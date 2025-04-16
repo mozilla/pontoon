@@ -163,4 +163,3 @@ requirements:
 
 version:
 	@echo "${CURRENT_VERSION}"
-

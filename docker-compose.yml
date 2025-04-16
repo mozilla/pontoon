@@ -3,32 +3,17 @@
 # Note: Requires docker-compose 1.27+.
 services:
   server:
-    image: 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:1.1.5
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    image: 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${VERSION}
     env_file:
-      - docker/config/server.env
-    depends_on:
-      - postgresql
+      - .env
     ports:
       - '8000:8000'
     volumes:
       - ./pontoon:/app/pontoon
       - ./requirements:/app/requirements
       - ./translate:/app/translate
-      - ~/.ssh:/home/pontoon/.ssh
-
-  # Database
-  postgresql:
-    image: postgres:13
-    environment:
-      # Create the superuser account
-      - POSTGRES_USER=pontoon
-      - POSTGRES_PASSWORD=asdf
-      - POSTGRES_DB=pontoon
-    ports:
-      - '5555:5432'
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-# Persist database
-volumes:
-  pgdata: null
