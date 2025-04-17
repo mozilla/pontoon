@@ -41,8 +41,9 @@ def admin(request):
     if not request.user.has_perm("base.can_manage_project"):
         raise PermissionDenied
 
+    show_disabled = request.GET.get("show_disabled") == "true"
     projects = (
-        Project.objects.all()
+        Project.objects.filter(disabled=show_disabled)
         .prefetch_related(
             "latest_translation__user", "latest_translation__approved_user"
         )
@@ -56,6 +57,7 @@ def admin(request):
             "admin": True,
             "projects": projects,
             "project_stats": projects.stats_data(),
+            "show_disabled": show_disabled,
         },
     )
 
