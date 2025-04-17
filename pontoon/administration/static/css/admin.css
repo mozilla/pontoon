@@ -1,3 +1,9 @@
 .add {
   float: right;
 }
+
+menu.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
