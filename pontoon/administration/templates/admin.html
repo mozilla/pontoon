@@ -20,25 +20,37 @@
       </div>
       <a class="add button small" href="{{ url('pontoon.admin.project.new') }}">Add new
         project</a>
-      <button class="button small toggle-projects" id="toggle-projects"
-        data-show-disabled="{{ 'true' if show_disabled else 'false' }}">
-        {{ 'Enabled projects >' if show_disabled else 'Disabled projects >' }}
+      <button class="button small request-toggle"
+                    id="toggle-projects"
+                    data-show-disabled="{{ 'true' if show_disabled else 'false' }}"
+                    data-text-show-disabled="Disabled projects >"
+                    data-text-show-enabled="< Enabled projects">
       </button>
+
     </menu>
-
-    {{ ProjectList.header() }}
-
-    {% for project in projects %}
-      {% set main_link = url('pontoon.admin.project', project.slug) %}
-      {% set chart_link = url('pontoon.admin.project', project.slug) %}
-      {% set latest_activity = project.get_latest_activity() %}
-      {% set chart = project_stats.get(project.id, {'total': 0}) %}
-
-      {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart) }}
-    {% endfor %}
-
-    {{ ProjectList.footer() }}
-  </div>
+        <div class="project-list enabled-projects">
+            {{ ProjectList.header() }}
+            {% for project in enabled_projects %}
+                {% set main_link = url('pontoon.admin.project', project.slug) %}
+                {% set chart_link = url('pontoon.admin.project', project.slug) %}
+                {% set latest_activity = project.get_latest_activity() %}
+                {% set chart = project_stats.get(project.id, {'total': 0}) %}
+                {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart) }}
+            {% endfor %}
+            {{ ProjectList.footer() }}
+        </div>
+        <div class="project-list disabled-projects">
+            {{ ProjectList.header() }}
+            {% for project in disabled_projects %}
+                {% set main_link = url('pontoon.admin.project', project.slug) %}
+                {% set chart_link = url('pontoon.admin.project', project.slug) %}
+                {% set latest_activity = project.get_latest_activity() %}
+                {% set chart = project_stats.get(project.id, {'total': 0}) %}
+                {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart) }}
+            {% endfor %}
+            {{ ProjectList.footer() }}
+        </div>
+    </div>
 </section>
 {% endblock %}
 

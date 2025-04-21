@@ -1,20 +1,25 @@
-$(function () {
-  console.log('Admin JS loaded');
-  $('#toggle-projects').click(function () {
-    console.log('Button is clicked');
-    const button = $(this);
-    const currentShowDisabled = button.data('show-disabled') === true;
-    const nextShowDisabled = !currentShowDisabled;
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('toggle-projects');
+  const enabledSection = document.querySelector('.enabled-projects');
+  const disabledSection = document.querySelector('.disabled-projects');
 
-    // Update button text and data attribute
-    button.data('show-disabled', nextShowDisabled);
-    button.text(
-      nextShowDisabled ? 'Enabled projects >' : 'Disabled projects >',
-    );
+  const showingDisabled = toggleBtn.dataset.showDisabled === 'true';
 
-    // Reload the page with the appropriate query param
-    const url = new URL(window.location.href);
-    url.searchParams.set('show_disabled', nextShowDisabled);
-    window.location.href = url.toString();
+  // Set initial text based on data attribute
+  toggleBtn.textContent = showingDisabled
+    ? toggleBtn.dataset.textShowEnabled
+    : toggleBtn.dataset.textShowDisabled;
+
+  toggleBtn.addEventListener('click', () => {
+    const showingDisabled = toggleBtn.dataset.showDisabled === 'true';
+
+    enabledSection.style.display = showingDisabled ? 'block' : 'none';
+    disabledSection.style.display = showingDisabled ? 'none' : 'block';
+
+    toggleBtn.textContent = showingDisabled
+      ? toggleBtn.dataset.textShowDisabled
+      : toggleBtn.dataset.textShowEnabled;
+
+    toggleBtn.dataset.showDisabled = (!showingDisabled).toString();
   });
 });

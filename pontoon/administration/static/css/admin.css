@@ -7,3 +7,11 @@ menu.controls {
   align-items: center;
   gap: 10px;
 }
+
+.disabled-projects {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
