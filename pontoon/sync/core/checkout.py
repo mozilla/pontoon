@@ -99,6 +99,10 @@ def checkout_repos(
     """
     source: Checkout | None = None
     target: Checkout | None = None
+
+    # If the project has unsynced locales, perform forced sync
+    force = force or project.unsynced_locales
+
     for repo in cast(BaseManager[Repository], project.repositories).all():
         if repo.source_repo:
             if source:
