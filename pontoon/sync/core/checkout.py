@@ -101,8 +101,8 @@ def checkout_repos(
     target: Checkout | None = None
 
     # If the project using configuration file has unsynced locales, perform forced sync
-    if project.configuration_file:
-        force = force or project.unsynced_locales
+    if not force and project.configuration_file and project.unsynced_locales:
+        force = True
 
     for repo in cast(BaseManager[Repository], project.repositories).all():
         if repo.source_repo:
