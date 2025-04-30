@@ -22,7 +22,7 @@ function mountOriginalString(spy) {
   const store = createReduxStore({ user: { isAuthenticated: true } });
   return mountComponentWithStore(
     () => (
-      <EntityView.Provider value={{ entity: ENTITY, hasPluralForms: false }}>
+      <EntityView.Provider value={{ entity: ENTITY }}>
         <EditorActions.Provider value={{ setEditorSelection: spy }}>
           <OriginalString terms={{}} />
         </EditorActions.Provider>

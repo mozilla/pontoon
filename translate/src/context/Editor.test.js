@@ -29,20 +29,22 @@ function mountSpy(Spy, format, translation) {
           format,
           key: 'key',
           original: 'key = test',
-          translation: [{ string: translation, errors: [], warnings: [] }],
+          translation: { string: translation, errors: [], warnings: [] },
           project: { contact: '' },
           comment: '',
         },
         {
           pk: 13,
-          format: 'simple',
+          format: 'po',
           key: 'plural',
-          original: 'original',
-          original_plural: 'original plural',
-          translation: [
-            { string: 'one', errors: [], warnings: [] },
-            { string: 'other', errors: [], warnings: [] },
-          ],
+          original:
+            '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}',
+          translation: {
+            string:
+              '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}',
+            errors: [],
+            warnings: [],
+          },
           project: { contact: '' },
           comment: '',
         },
@@ -184,7 +186,7 @@ describe('<EditorProvider>', () => {
     expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
   });
 
-  it('updates state on entity and plural form changes', () => {
+  it('updates state on entity change', () => {
     let editor, result, location, entity;
     const Spy = () => {
       editor = useContext(EditorData);
@@ -198,6 +200,7 @@ describe('<EditorProvider>', () => {
     act(() => location.push({ entity: 13 }));
     wrapper.update();
 
+    // TODO: FIXME
     expect(editor).toMatchObject({
       initial: {
         value: { pattern: { body: [{ type: 'text', value: 'one' }] } },
@@ -205,17 +208,6 @@ describe('<EditorProvider>', () => {
       fields: [{ handle: { current: { value: 'one' } } }],
     });
     expect(result).toMatchObject([{ value: 'one' }]);
-
-    act(() => entity.setPluralForm(1));
-    wrapper.update();
-
-    expect(editor).toMatchObject({
-      initial: {
-        value: { pattern: { body: [{ type: 'text', value: 'other' }] } },
-      },
-      fields: [{ handle: { current: { value: 'other' } } }],
-    });
-    expect(result).toMatchObject([{ value: 'other' }]);
   });
 
   it('clears a rich Fluent value', () => {
