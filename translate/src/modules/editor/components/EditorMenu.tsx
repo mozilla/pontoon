@@ -101,9 +101,7 @@ function MenuContent() {
         </Localized>
         <EditorMainAction />
       </div>
-      <div>
-        <WarningFailedChecks />
-      </div>
+      <WarningFailedChecks />
     </>
   );
 }
