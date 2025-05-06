@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Sum
 from django.db.models.manager import BaseManager
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
@@ -230,6 +231,17 @@ class Project(models.Model, AggregatedStats):
 
     def __str__(self):
         return self.name
+
+    @cached_property
+    def unsynced_locales(self):
+        """
+        Project Locales that haven't been synchronized yet.
+        """
+        return self.locales.exclude(
+            pk__in=Locale.objects.filter(
+                translatedresources__resource__project=self
+            ).values_list("pk", flat=True)
+        )
 
     def serialize(self):
         return {
