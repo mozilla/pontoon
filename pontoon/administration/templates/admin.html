@@ -2,6 +2,18 @@
 {% import 'heading.html' as Heading %}
 {% import 'projects/widgets/project_list.html' as ProjectList %}
 
+{% macro render_project_list(projects, project_stats) %}
+  {{ ProjectList.header() }}
+  {% for project in projects %}
+    {% set main_link = url('pontoon.admin.project', project.slug) %}
+    {% set chart_link = url('pontoon.admin.project', project.slug) %}
+    {% set latest_activity = project.get_latest_activity() %}
+    {% set chart = project_stats.get(project.id, {'total': 0}) %}
+    {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart) }}
+  {% endfor %}
+  {{ ProjectList.footer() }}
+{% endmacro %}
+
 {% block title %}Admin{% endblock %}
 
 {% block class %}admin{% endblock %}
@@ -18,35 +30,21 @@
         <div class="icon fas fa-search"></div>
         <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
       </div>
-      <a class="add button small" href="{{ url('pontoon.admin.project.new') }}">Add new
-        project</a>
+      <a class="add button small" href="{{ url('pontoon.admin.project.new') }}">Add new project</a>
       <button class="button small request-toggle"
-                    id="toggle-projects"
-                    data-show-disabled="{{ 'true' if show_disabled else 'false' }}"
-                    data-text-show-disabled="Disabled projects "
-                    data-text-show-enabled=" Enabled projects">
+              id="toggle-projects"
+              data-show-disabled="false">
+        <span class="fas fa-chevron-right"></span>
       </button>
-
     </menu>
-        {% macro render_project_list(projects, project_stats) %}
-            {{ ProjectList.header() }}
-            {% for project in projects %}
-          {% set main_link = url('pontoon.admin.project', project.slug) %}
-          {% set chart_link = url('pontoon.admin.project', project.slug) %}
-          {% set latest_activity = project.get_latest_activity() %}
-          {% set chart = project_stats.get(project.id, {'total': 0}) %}
-          {{ ProjectList.item(project, main_link, chart_link, latest_activity, chart) }}
-            {% endfor %}
-            {{ ProjectList.footer() }}
-        {% endmacro %}
 
-        <div class="project-list enabled-projects">
-            {{ render_project_list(enabled_projects, project_stats) }}
-        </div>
-        <div class="project-list disabled-projects">
-            {{ render_project_list(disabled_projects, project_stats) }}
-        </div>
+    <div class="project-list enabled-projects">
+      {{ render_project_list(enabled_projects, project_stats) }}
     </div>
+    <div class="project-list disabled-projects">
+      {{ render_project_list(disabled_projects, project_stats) }}
+    </div>
+ </div>
 </section>
 {% endblock %}
 
