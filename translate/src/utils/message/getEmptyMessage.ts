@@ -1,12 +1,4 @@
-import type {
-  CatchallKey,
-  Message,
-  Pattern,
-  PatternElement,
-  PatternMessage,
-  SelectMessage,
-  Variant,
-} from 'messageformat';
+import type { Model } from 'messageformat';
 
 import type { Locale } from '~/context/Locale';
 import { pojoCopy } from '../pojo';
@@ -33,7 +25,7 @@ export function getEmptyMessageEntry(
 ): MessageEntry {
   if (source.attributes) {
     const value = source.value ? getEmptyMessage(source.value, locale) : null;
-    const attributes = new Map<string, Message>();
+    const attributes = new Map<string, Model.Message>();
     for (const [key, message] of source.attributes) {
       attributes.set(key, getEmptyMessage(message, locale));
     }
@@ -42,34 +34,24 @@ export function getEmptyMessageEntry(
   return { id: source.id, value: getEmptyMessage(source.value, locale) };
 }
 
-const getEmptyPattern = (): Pattern => ({
-  body: [{ type: 'text', value: '' }],
-});
-
 function getEmptyMessage(
-  source: Message,
+  source: Model.Message,
   { code }: Locale,
-): PatternMessage | SelectMessage {
+): Model.Message {
   const declarations = pojoCopy(source.declarations);
 
-  if (source.type === 'message' || source.type === 'junk') {
-    return { type: 'message', declarations, pattern: getEmptyPattern() };
+  if (source.type === 'message') {
+    return { type: 'message', declarations, pattern: [''] };
   }
 
   const plurals = findPluralSelectors(source);
-  const selectors: PatternElement[] = [];
-  let variantKeys: Array<Variant['keys']> = [];
+  const selectors: Model.VariableRef[] = [];
+  let variantKeys: Array<Model.Variant['keys']> = [];
   for (let i = 0; i < source.selectors.length; ++i) {
     let sel = source.selectors[i];
-    while (sel.type === 'placeholder') {
-      sel = sel.body;
-    }
-    if (sel.type !== 'expression' && sel.type !== 'variable') {
-      continue;
-    }
 
-    const keys: Variant['keys'] = [];
-    let catchall: CatchallKey | null = null;
+    const keys: Model.Variant['keys'] = [];
+    let catchall: Model.CatchallKey | null = null;
     if (plurals.includes(i)) {
       const exactKeys = new Set<string>();
       for (const v of source.variants) {
@@ -81,13 +63,13 @@ function getEmptyMessage(
         }
       }
       for (const key of exactKeys) {
-        keys.push({ type: 'nmtoken', value: key });
+        keys.push({ type: 'literal', value: key });
       }
 
       const pc = getPluralCategories(code);
-      catchall = { type: '*', value: pc.pop() } as CatchallKey;
+      catchall = { type: '*', value: pc.pop() };
       for (const cat of pc) {
-        keys.push({ type: 'nmtoken', value: cat });
+        keys.push({ type: 'literal', value: cat });
       }
     } else {
       const keyValues = new Set<string>();
@@ -103,12 +85,13 @@ function getEmptyMessage(
     }
 
     if (keys.length > 0) {
-      selectors.push(pojoCopy(sel));
+      const sel = source.selectors[i];
+      selectors.push({ type: 'variable', name: sel.name });
       keys.push(catchall ?? { type: '*' });
       if (variantKeys.length === 0) {
         variantKeys = keys.map((key) => [key]);
       } else {
-        const next: Array<Variant['keys']> = [];
+        const next: typeof variantKeys = [];
         for (const vk of variantKeys) {
           for (const k of keys) {
             next.push([...vk, k]);
@@ -120,12 +103,9 @@ function getEmptyMessage(
   }
 
   if (selectors.length === 0) {
-    return { type: 'message', declarations, pattern: getEmptyPattern() };
+    return { type: 'message', declarations, pattern: [''] };
   }
 
-  const variants = variantKeys.map((keys) => ({
-    keys,
-    value: getEmptyPattern(),
-  }));
+  const variants = variantKeys.map((keys) => ({ keys, value: [''] }));
   return { type: 'select', declarations, selectors, variants };
 }
