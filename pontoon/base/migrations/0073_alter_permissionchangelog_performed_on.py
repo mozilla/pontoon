@@ -7,16 +7,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('base', '0072_remove_locale_approved_strings_and_more'),
+        ("base", "0072_remove_locale_approved_strings_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='permissionchangelog',
-            name='performed_on',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='permissions_log', to=settings.AUTH_USER_MODEL),
+            model_name="permissionchangelog",
+            name="performed_on",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="permissions_log",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
