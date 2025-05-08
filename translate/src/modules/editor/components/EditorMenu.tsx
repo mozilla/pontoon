@@ -17,7 +17,6 @@ import { FailedChecks } from './FailedChecks';
 import { FtlSwitch } from './FtlSwitch';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
 import { TranslationLength } from './TranslationLength';
-import { WarningFailedChecks } from './WarningFailedChecks';
 
 /**
  * Shows a menu bar used to control the Editor.
@@ -101,7 +100,6 @@ function MenuContent() {
         </Localized>
         <EditorMainAction />
       </div>
-      <WarningFailedChecks />
     </>
   );
 }
