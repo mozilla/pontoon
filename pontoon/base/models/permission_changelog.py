@@ -19,7 +19,7 @@ class PermissionChangelog(models.Model):
         User, models.SET_NULL, null=True, related_name="changed_permissions_log"
     )
     performed_on = models.ForeignKey(
-        User, models.SET_NULL, null=True, related_name="permisions_log"
+        User, models.SET_NULL, null=True, related_name="permissions_log"
     )
     group = models.ForeignKey(Group, models.CASCADE)
 

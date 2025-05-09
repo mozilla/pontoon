@@ -41,21 +41,22 @@ def admin(request):
     if not request.user.has_perm("base.can_manage_project"):
         raise PermissionDenied
 
-    projects = (
-        Project.objects.all()
-        .prefetch_related(
-            "latest_translation__user", "latest_translation__approved_user"
-        )
-        .order_by("name")
-    )
+    projects = Project.objects.prefetch_related(
+        "latest_translation__user", "latest_translation__approved_user"
+    ).order_by("name")
+
+    enabled_projects = projects.filter(disabled=False)
+    disabled_projects = projects.filter(disabled=True)
+    project_stats = projects.stats_data()
 
     return render(
         request,
         "admin.html",
         {
             "admin": True,
-            "projects": projects,
-            "project_stats": projects.stats_data(),
+            "enabled_projects": enabled_projects,
+            "disabled_projects": disabled_projects,
+            "project_stats": project_stats,
         },
     )
 

@@ -604,7 +604,10 @@ PIPELINE_JS = {
         "output_filename": "js/translate.min.js",
     },
     "admin": {
-        "source_filenames": ("js/table.js",),
+        "source_filenames": (
+            "js/table.js",
+            "js/admin.js",
+        ),
         "output_filename": "js/admin.min.js",
     },
     "admin_project": {
