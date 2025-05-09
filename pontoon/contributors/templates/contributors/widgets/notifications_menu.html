@@ -23,6 +23,18 @@
 {% endif %}
 {% endmacro %}
 
+{% macro notification_time(notification) %}
+
+{% if not notification.is_old %}
+  <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }}</time>
+{% else %}
+  <time class="old-notification" datetime="{{ notification.timestamp }}">
+    {{ notification.timestamp|format_datetime("date") }}
+  </time>
+
+{% endif %}
+
+{% endmacro %}
 
 {% macro list(notifications, no_title="No new notifications.", no_description="Here you’ll see updates for localizations you contribute to.") %}
 <ul class="notification-list">
@@ -48,15 +60,7 @@
         {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
           <span class="description">{{ description|safe }}</span>
 
-
-          {% if not notification.is_old %}
-            <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }}</time>
-          {% else %}
-            <time class="older-timeago" datetime="{{ notification.timestamp }}">
-              {{ notification.timestamp.strftime('%B') }} {{ notification.timestamp.day }}, {{ notification.timestamp.year }}
-            </time>
-          
-          {% endif %}
+          {{ notification_time(notification) }}
 
         {% elif target and target.resource %}
 
@@ -75,14 +79,7 @@
           
           <div class="message trim">{{ description|linkify|safe }}</div>
 
-          {% if not notification.is_old %}
-            <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
-          {% else %}
-            <time class="older-timeago" datetime="{{ notification.timestamp }}">
-              {{ notification.timestamp.strftime('%B') }} {{ notification.timestamp.day }}, {{ notification.timestamp.year }}
-            </time>
-          
-          {% endif %}
+          {{ notification_time(notification) }}
 
         {% else %}
 
@@ -105,14 +102,7 @@
             <div class="message">{{ description|safe }}</div>
           {% endif %}
 
-          {% if not notification.is_old %}
-            <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
-          {% else %}
-            <time class="older-timeago" datetime="{{ notification.timestamp }}">
-              {{ notification.timestamp.strftime('%B') }} {{ notification.timestamp.day }}, {{ notification.timestamp.year }}
-            </time>
-          
-          {% endif %}
+          {{ notification_time(notification )}}
 
         {% endif%}
       </div>
