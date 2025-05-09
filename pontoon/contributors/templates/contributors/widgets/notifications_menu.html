@@ -50,10 +50,12 @@
 
 
           {% if not notification.is_old %}
-          {{ notification }}
             <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }}</time>
           {% else %}
-            <time class="older-timeago" datetime="{{ notification.timestamp }}">{{ notification.timestamp.strftime('%Y-%m-%d') }}</time>
+            <time class="older-timeago" datetime="{{ notification.timestamp }}">
+              {{ notification.timestamp.strftime('%B') }} {{ notification.timestamp.day }}, {{ notification.timestamp.year }}
+            </time>
+          
           {% endif %}
 
         {% elif target and target.resource %}
@@ -76,7 +78,10 @@
           {% if not notification.is_old %}
             <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
           {% else %}
-            <time class="older-timeago" datetime="{{ notification.timestamp }}">{{ notification.timestamp.strftime('%Y-%m-%d') }}</time>
+            <time class="older-timeago" datetime="{{ notification.timestamp }}">
+              {{ notification.timestamp.strftime('%B') }} {{ notification.timestamp.day }}, {{ notification.timestamp.year }}
+            </time>
+          
           {% endif %}
 
         {% else %}
@@ -103,7 +108,10 @@
           {% if not notification.is_old %}
             <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
           {% else %}
-            <time class="older-timeago" datetime="{{ notification.timestamp }}">{{ notification.timestamp.strftime('%Y-%m-%d') }}</time>
+            <time class="older-timeago" datetime="{{ notification.timestamp }}">
+              {{ notification.timestamp.strftime('%B') }} {{ notification.timestamp.day }}, {{ notification.timestamp.year }}
+            </time>
+          
           {% endif %}
 
         {% endif%}
