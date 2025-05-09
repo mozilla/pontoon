@@ -501,7 +501,6 @@ def ajax_notifications(request):
     notifications = request.user.notification_list
 
     for notification in notifications:
-        
         # checks if notification is older than 7 days and displays
         notification.is_old = notification.timestamp < timezone.now() - timedelta(
             days=7
