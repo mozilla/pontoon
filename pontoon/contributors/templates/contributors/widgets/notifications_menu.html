@@ -48,7 +48,13 @@
         {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
           <span class="description">{{ description|safe }}</span>
 
-          <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
+
+          {% if not notification.is_old %}
+          {{ notification }}
+            <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }}</time>
+          {% else %}
+            <time class="older-timeago" datetime="{{ notification.timestamp }}">{{ notification.timestamp.strftime('%Y-%m-%d') }}</time>
+          {% endif %}
 
         {% elif target and target.resource %}
 
@@ -64,10 +70,14 @@
           <span class="target">
             {{ target.resource.project.name }}
           </span>
-
-          <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
-
+          
           <div class="message trim">{{ description|linkify|safe }}</div>
+
+          {% if not notification.is_old %}
+            <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
+          {% else %}
+            <time class="older-timeago" datetime="{{ notification.timestamp }}">{{ notification.timestamp.strftime('%Y-%m-%d') }}</time>
+          {% endif %}
 
         {% else %}
 
@@ -84,12 +94,16 @@
               <a href="{{ full_url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
             </span>
           {% endif %}
-
-          <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
-
+          
           {% set description = notification.description %}
           {% if description %}
             <div class="message">{{ description|safe }}</div>
+          {% endif %}
+
+          {% if not notification.is_old %}
+            <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
+          {% else %}
+            <time class="older-timeago" datetime="{{ notification.timestamp }}">{{ notification.timestamp.strftime('%Y-%m-%d') }}</time>
           {% endif %}
 
         {% endif%}

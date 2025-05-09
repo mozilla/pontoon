@@ -851,7 +851,8 @@ header .right .select .menu {
 
 /* End message styling */
 
-.notifications .menu li.notification-item .timeago {
+.notifications .menu li.notification-item .timeago,
+.notifications .menu li.notification-item .older-timeago {
   color: var(--light-grey-2);
   font-size: 11px;
   font-weight: normal;
