@@ -94,7 +94,7 @@ can start just the postgresql container by running:
 
 .. code-block:: shell
 
-    $ docker-compose run postgresql -d
+    $ docker-compose up -d postgresql
 
 
 Interactive shell
