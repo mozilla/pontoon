@@ -1,4 +1,4 @@
-import type { Variant } from 'messageformat';
+import type { Model } from 'messageformat';
 import React, {
   createContext,
   useContext,
@@ -43,7 +43,7 @@ export type EditorField = {
   name: string;
 
   /** Selector keys, or empty array for single-pattern messages */
-  keys: Variant['keys'];
+  keys: Model.Variant['keys'];
 
   labels: Array<{ label: string; plural: boolean }>;
 
@@ -89,7 +89,7 @@ export type EditorResult = Array<{
   name: string;
 
   /** Selector keys, or empty array for single-pattern messages */
-  keys: Variant['keys'];
+  keys: Model.Variant['keys'];
 
   /**
    * A flattened representation of a single message pattern,
@@ -135,11 +135,7 @@ function parseEntryFromFluentSource(base: MessageEntry, source: string) {
  */
 const createSimpleMessageEntry = (id: string, value: string): MessageEntry => ({
   id,
-  value: {
-    type: 'message',
-    declarations: [],
-    pattern: { body: [{ type: 'text', value }] },
-  },
+  value: { type: 'message', declarations: [], pattern: [value] },
 });
 
 const initEditorData: EditorData = {

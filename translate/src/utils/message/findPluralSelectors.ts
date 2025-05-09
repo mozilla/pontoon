@@ -1,4 +1,4 @@
-import type { Message } from 'messageformat';
+import type { Model } from 'messageformat';
 
 import { CLDR_PLURALS } from '../constants';
 
@@ -6,7 +6,7 @@ import { CLDR_PLURALS } from '../constants';
  * Returns an array of selector indices for which the message
  * appears to contain a plural selector.
  */
-export function findPluralSelectors(message: Message): number[] {
+export function findPluralSelectors(message: Model.Message): number[] {
   const res: number[] = [];
   if (message.type === 'select') {
     const { selectors, variants } = message;

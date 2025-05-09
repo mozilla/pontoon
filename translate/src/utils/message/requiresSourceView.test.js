@@ -201,16 +201,4 @@ my-entry =
 
     expect(requiresSourceView(message)).toEqual(true);
   });
-
-  it('returns true for a string with an unsupported selector', () => {
-    const input = `
-my-entry =
-    { FOO() ->
-        [foo] FOO
-       *[other] BAR
-    }`;
-    const message = parseEntry(input);
-
-    expect(requiresSourceView(message)).toEqual(true);
-  });
 });

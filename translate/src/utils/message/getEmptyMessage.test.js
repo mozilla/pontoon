@@ -112,23 +112,23 @@ describe('getEmptyMessage', () => {
           { $num ->
               [one]
                   { $gender ->
-                      [feminine] { "" }
                      *[masculine] { "" }
+                      [feminine] { "" }
                   }
               [two]
                   { $gender ->
-                      [feminine] { "" }
                      *[masculine] { "" }
+                      [feminine] { "" }
                   }
               [few]
                   { $gender ->
-                      [feminine] { "" }
                      *[masculine] { "" }
+                      [feminine] { "" }
                   }
              *[other]
                   { $gender ->
-                      [feminine] { "" }
                      *[masculine] { "" }
+                      [feminine] { "" }
                   }
           }
 

@@ -57,11 +57,7 @@ function mountSpy(format, history, editor) {
 
 const mockMessageEntry = (value) => ({
   id: 'msg',
-  value: {
-    type: 'message',
-    declarations: [],
-    pattern: { body: [{ type: 'text', value }] },
-  },
+  value: { type: 'message', declarations: [], pattern: [value] },
 });
 
 const mockEditorMessage = (value) => [
