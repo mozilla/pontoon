@@ -48,46 +48,41 @@ function getEmptyMessage(
   const selectors: Model.VariableRef[] = [];
   let variantKeys: Array<Model.Variant['keys']> = [];
   for (let i = 0; i < source.selectors.length; ++i) {
-    let sel = source.selectors[i];
-
-    const keys: Model.Variant['keys'] = [];
-    let catchall: Model.CatchallKey | null = null;
+    let keys: Model.Variant['keys'];
     if (plurals.includes(i)) {
-      const exactKeys = new Set<string>();
-      for (const v of source.variants) {
-        const k = v.keys[i];
-        if (k.type === '*') {
-          catchall = { ...k };
-        } else if (/^[0-9]+$/.test(k.value)) {
-          exactKeys.add(k.value);
-        }
-      }
-      for (const key of exactKeys) {
-        keys.push({ type: 'literal', value: key });
-      }
-
-      const pc = getPluralCategories(code);
-      catchall = { type: '*', value: pc.pop() };
-      for (const cat of pc) {
-        keys.push({ type: 'literal', value: cat });
-      }
+      const keyValues = source.variants
+        .map((v) => v.keys[i].value as string)
+        .filter((value) => value && /^[0-9]+$/.test(value))
+        .concat(getPluralCategories(code));
+      keys = Array.from(new Set(keyValues), (value) => ({
+        type: 'literal',
+        value,
+      }));
+      keys.at(-1)!.type = '*';
     } else {
       const keyValues = new Set<string>();
+      let catchall: string | undefined;
       for (const v of source.variants) {
         const k = v.keys[i];
         if (k.type === '*') {
-          catchall = { ...k };
-        } else if (!keyValues.has(k.value)) {
+          catchall = k.value || 'other';
+          keyValues.add(catchall);
+        } else {
           keyValues.add(k.value);
-          keys.push({ ...k });
         }
+      }
+      keys = Array.from(keyValues, (value) => ({
+        type: value === catchall ? '*' : 'literal',
+        value,
+      }));
+      if (catchall === undefined) {
+        keys.push({ type: '*' });
       }
     }
 
-    if (keys.length > 0) {
+    if (keys.length > 1) {
       const sel = source.selectors[i];
       selectors.push({ type: 'variable', name: sel.name });
-      keys.push(catchall ?? { type: '*' });
       if (variantKeys.length === 0) {
         variantKeys = keys.map((key) => [key]);
       } else {
