@@ -25,12 +25,12 @@
 
 {% macro notification_time(notification) %}
 
-{% if not notification.is_old %}
-  <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }}</time>
-{% else %}
+{% if notification|is_old_notification %}
   <time class="old-notification" datetime="{{ notification.timestamp }}">
     {{ notification.timestamp|format_datetime("date") }}
   </time>
+{% else %}
+  <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }}</time>
 
 {% endif %}
 

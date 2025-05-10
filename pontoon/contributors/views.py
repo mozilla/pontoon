@@ -1,8 +1,6 @@
 import json
 import logging
 
-from datetime import timedelta
-
 from dateutil.relativedelta import relativedelta
 
 from django.contrib import messages
@@ -461,10 +459,6 @@ def notifications(request):
                     "notifications": [notification.id],
                 }
 
-        # checks if notification is older than 7 days and displays
-        notification.is_old = notification.timestamp < timezone.now() - timedelta(
-            days=7
-        )
     # Sort projects by the number of notifications
     ordered_projects = []
     for slug in sorted(
@@ -499,12 +493,6 @@ def ajax_notifications(request):
     this AJAX view.
     """
     notifications = request.user.notification_list
-
-    for notification in notifications:
-        # checks if notification is older than 7 days and displays
-        notification.is_old = notification.timestamp < timezone.now() - timedelta(
-            days=7
-        )
 
     return render(
         request,
