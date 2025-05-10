@@ -313,3 +313,10 @@ def default_if_empty(value, default=""):
 
     # Mark as safe to include HTML tags
     return value if value else mark_safe(default)
+
+
+@library.filter
+def is_old_notification(notification):
+    """Return the"""
+
+    return notification.timestamp < timezone.now() - timedelta(days=7)
