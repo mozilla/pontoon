@@ -15,7 +15,6 @@ import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { parseEntry, requiresSourceView } from '~/utils/message';
 import { editMessageEntry } from '~/utils/message/editMessageEntry';
 
-import { PluralString } from './PluralString';
 import { RichString } from './RichString';
 import { TermsPopup } from './TermsPopup';
 
@@ -97,7 +96,7 @@ function InnerOriginalString({
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   terms: TermState;
 }): React.ReactElement {
-  const { entity, hasPluralForms } = useContext(EntityView);
+  const { entity } = useContext(EntityView);
   const isFluent = entity.format === 'ftl';
   let source = entity.original;
 
@@ -112,8 +111,18 @@ function InnerOriginalString({
         return <RichString message={msg} onClick={onClick} terms={terms} />;
       }
     }
-  } else if (hasPluralForms) {
-    return <PluralString onClick={onClick} terms={terms} />;
+  } else if (entity.format === 'po') {
+    // FIXME, TODO
+    const entry = parseEntry(source);
+    if (entry) {
+      const msg = editMessageEntry(entry);
+      if (msg.length === 1) {
+        source = msg[0].handle.current.value;
+        // fallthrough
+      } else {
+        return <RichString message={msg} onClick={onClick} terms={terms} />;
+      }
+    }
   }
 
   return (

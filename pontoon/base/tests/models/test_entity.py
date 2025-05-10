@@ -13,8 +13,8 @@ from pontoon.test.factories import (
 def entity_test_models(translation_a, locale_b):
     """This fixture provides:
 
-    - 2 translations of a plural entity
-    - 1 translation of a non-plural entity
+    - 2 translations of one entity
+    - 1 translation of another entity
     """
 
     entity_a = translation_a.entity
@@ -23,7 +23,6 @@ def entity_test_models(translation_a, locale_b):
 
     locale_a.cldr_plurals = "0,1"
     locale_a.save()
-    translation_a.plural_form = 0
     translation_a.active = True
     translation_a.save()
     resourceX = ResourceFactory(
@@ -33,7 +32,6 @@ def entity_test_models(translation_a, locale_b):
     )
     entity_a.string = "Entity zero"
     entity_a.key = entity_a.string
-    entity_a.string_plural = "Plural %s" % entity_a.string
     entity_a.order = 0
     entity_a.save()
     entity_b = EntityFactory(
@@ -42,12 +40,11 @@ def entity_test_models(translation_a, locale_b):
         key="Key\x04entity_b",
         order=0,
     )
-    translation_a_pl = TranslationFactory(
+    translation_a_alt = TranslationFactory(
         entity=entity_a,
         locale=locale_a,
-        plural_form=1,
-        active=True,
-        string="Plural %s" % translation_a.string,
+        active=False,
+        string="Alternative %s" % translation_a.string,
     )
     translationX = TranslationFactory(
         entity=entity_b,
@@ -55,7 +52,7 @@ def entity_test_models(translation_a, locale_b):
         active=True,
         string="Translation %s" % entity_b.string,
     )
-    return translation_a, translation_a_pl, translationX
+    return translation_a, translation_a_alt, translationX
 
 
 @pytest.fixture
@@ -242,7 +239,7 @@ def test_entity_project_locale_filter(admin, entity_test_models, locale_b, proje
     """
     Evaluate entities filtering by locale, project, obsolete.
     """
-    tr0, tr0pl, trX = entity_test_models
+    tr0, tr0alt, trX = entity_test_models
     locale_a = tr0.locale
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
@@ -267,7 +264,7 @@ def test_entity_project_locale_no_paths(
     If paths not specified, return all project entities along with their
     translations for locale.
     """
-    tr0, tr0pl, trX = entity_test_models
+    tr0, tr0alt, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     entity_a = tr0.entity
@@ -281,10 +278,10 @@ def test_entity_project_locale_no_paths(
     assert len(entities) == 2
     assert entities[0]["path"] == resource0.path
     assert entities[0]["original"] == entity_a.string
-    assert entities[0]["translation"][0]["string"] == tr0.string
+    assert entities[0]["translation"]["string"] == tr0.string
     assert entities[1]["path"] == trX.entity.resource.path
     assert entities[1]["original"] == trX.entity.string
-    assert entities[1]["translation"][0]["string"] == trX.string
+    assert entities[1]["translation"]["string"] == trX.string
 
     # Ensure all attributes are assigned correctly
     expected = {
@@ -297,31 +294,18 @@ def test_entity_project_locale_no_paths(
         "context": "",
         "path": str(resource0.path),
         "project": project_a.serialize(),
-        "translation": [
-            {
-                "pk": tr0.pk,
-                "pretranslated": False,
-                "fuzzy": False,
-                "string": str(tr0.string),
-                "approved": False,
-                "rejected": False,
-                "warnings": [],
-                "errors": [],
-            },
-            {
-                "pk": tr0pl.pk,
-                "pretranslated": False,
-                "fuzzy": False,
-                "string": str(tr0pl.string),
-                "approved": False,
-                "rejected": False,
-                "warnings": [],
-                "errors": [],
-            },
-        ],
+        "translation": {
+            "pk": tr0.pk,
+            "pretranslated": False,
+            "fuzzy": False,
+            "string": str(tr0.string),
+            "approved": False,
+            "rejected": False,
+            "warnings": [],
+            "errors": [],
+        },
         "order": 0,
         "source": [],
-        "original_plural": str(entity_a.string_plural),
         "pk": entity_a.pk,
         "original": str(entity_a.string),
         "machinery_original": str(entity_a.string),
@@ -338,7 +322,7 @@ def test_entity_project_locale_paths(admin, entity_test_models):
     If paths specified, return project entities from these paths only along
     with their translations for locale.
     """
-    tr0, tr0pl, trX = entity_test_models
+    tr0, tr0alt, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     project_a = tr0.entity.resource.project
@@ -356,20 +340,17 @@ def test_entity_project_locale_paths(admin, entity_test_models):
     assert len(entities) == 1
     assert entities[0]["path"] == trX.entity.resource.path
     assert entities[0]["original"] == trX.entity.string
-    assert entities[0]["translation"][0]["string"] == trX.string
+    assert entities[0]["translation"]["string"] == trX.string
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_plurals(
+def test_entity_project_locale_multiple_translations(
     admin,
     entity_test_models,
     locale_b,
     project_b,
 ):
-    """
-    For pluralized strings, return all available plural forms.
-    """
-    tr0, tr0pl, trX = entity_test_models
+    tr0, tr0alt, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     entity_a = tr0.entity
@@ -384,9 +365,7 @@ def test_entity_project_locale_plurals(
         ),
     )
     assert entities[0]["original"] == entity_a.string
-    assert entities[0]["original_plural"] == entity_a.string_plural
-    assert entities[0]["translation"][0]["string"] == tr0.string
-    assert entities[0]["translation"][1]["string"] == tr0pl.string
+    assert entities[0]["translation"]["string"] == tr0.string
 
 
 @pytest.mark.django_db
