@@ -317,6 +317,6 @@ def default_if_empty(value, default=""):
 
 @library.filter
 def is_old_notification(notification):
-    """Return the"""
+    """Return boolean indicating whether a notification is older than 7 days"""
 
     return notification.timestamp < timezone.now() - timedelta(days=7)
