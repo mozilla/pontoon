@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('base', '0073_alter_permissionchangelog_performed_on'),
+        ("base", "0073_alter_permissionchangelog_performed_on"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='repository',
-            name='permalink_prefix',
+            model_name="repository",
+            name="permalink_prefix",
         ),
     ]
