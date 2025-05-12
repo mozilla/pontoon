@@ -20,7 +20,7 @@ from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.pretranslation import AUTHORS
 from pontoon.pretranslation.pretranslate import (
-    get_pretranslations,
+    get_pretranslation,
     update_changed_instances,
 )
 
@@ -112,34 +112,33 @@ def pretranslate(project: Project, paths: set[str] | None):
             if locale_entity in translated_entities or locale_resource not in tr_pairs:
                 continue
 
-            pretranslations = get_pretranslations(entity, locale)
+            pretranslation = get_pretranslation(entity, locale)
 
-            if not pretranslations:
+            if pretranslation is None:
                 continue
 
             failed_checks = run_checks(
                 entity,
                 locale.code,
                 entity.string,
-                pretranslations[0][0],
+                pretranslation[0],
                 use_tt_checks=False,
             )
 
             if failed_checks:
-                pretranslations = get_pretranslations(
+                pretranslation = get_pretranslation(
                     entity, locale, preserve_placeables=True
                 )
 
-            for string, plural_form, user in pretranslations:
+            if pretranslation is not None:
                 t = Translation(
                     entity=entity,
                     locale=locale,
-                    string=string,
-                    user=user,
+                    string=pretranslation[0],
+                    user=pretranslation[1],
                     approved=False,
                     pretranslated=True,
                     active=True,
-                    plural_form=plural_form,
                 )
 
                 index += 1

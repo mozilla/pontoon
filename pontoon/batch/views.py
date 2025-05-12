@@ -92,7 +92,6 @@ def batch_edit_translations(request):
                 status=403,
             )
 
-    # Find all impacted active translations, including plural forms.
     active_translations = Translation.objects.filter(
         active=True,
         locale=locale,
