@@ -15,7 +15,7 @@ import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
 const ENTITY = {
   pk: 42,
   original: 'le test',
-  translation: [{ string: 'test', errors: [], warnings: [] }],
+  translation: { string: 'test', errors: [], warnings: [] },
   project: { contact: '' },
   comment: '',
 };
@@ -39,14 +39,7 @@ function mountWrapper({ setFailedChecks, ...props }) {
   const store = createReduxStore(initialState);
   const wrapper = mountComponentWithStore(
     () => (
-      <EntityView.Provider
-        value={{
-          entity: ENTITY,
-          hasPluralForms: false,
-          pluralForm: 0,
-          setPluralForm: () => {},
-        }}
-      >
+      <EntityView.Provider value={{ entity: ENTITY }}>
         <FailedChecksData.Provider value={{ setFailedChecks }}>
           <Wrapper {...props} />
         </FailedChecksData.Provider>

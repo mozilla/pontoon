@@ -12,79 +12,51 @@ afterAll(() => hookModule.useTranslator.restore());
 describe('<Entity>', () => {
   const ENTITY_A = {
     original: 'string a',
-    translation: [
-      {
-        string: 'chaine a',
-        approved: true,
-        errors: [],
-        warnings: [],
-      },
-    ],
+    translation: {
+      string: 'chaine a',
+      approved: true,
+      errors: [],
+      warnings: [],
+    },
   };
 
   const ENTITY_B = {
     original: 'string b',
-    translation: [
-      {
-        string: 'chaine b',
-        pretranslated: true,
-        errors: [],
-        warnings: [],
-      },
-    ],
+    translation: {
+      string: 'chaine b',
+      pretranslated: true,
+      errors: [],
+      warnings: [],
+    },
   };
 
   const ENTITY_C = {
     original: 'string c',
-    translation: [
-      {
-        string: 'chaine c',
-        errors: [],
-        warnings: [],
-      },
-    ],
+    translation: {
+      string: 'chaine c',
+      errors: [],
+      warnings: [],
+    },
   };
 
   const ENTITY_D = {
     original: 'string d',
-    translation: [
-      {
-        string: 'chaine d',
-        approved: true,
-        errors: ['error'],
-        warnings: [],
-      },
-    ],
+    translation: {
+      string: 'chaine d',
+      approved: true,
+      errors: ['error'],
+      warnings: [],
+    },
   };
 
   const ENTITY_E = {
     original: 'string e',
-    translation: [
-      {
-        string: 'chaine e',
-        pretranslated: true,
-        errors: [],
-        warnings: ['warning'],
-      },
-    ],
-  };
-
-  const ENTITY_F = {
-    original: 'string f',
-    translation: [
-      {
-        string: 'chaine f1',
-        approved: true,
-        errors: [],
-        warnings: [],
-      },
-      {
-        string: 'chaine f2',
-        pretranslated: true,
-        errors: [],
-        warnings: [],
-      },
-    ],
+    translation: {
+      string: 'chaine e',
+      pretranslated: true,
+      errors: [],
+      warnings: ['warning'],
+    },
   };
 
   it('renders the source string and the first translation', () => {
@@ -93,7 +65,7 @@ describe('<Entity>', () => {
     const contents = wrapper.find('Translation');
     expect(contents.first().props().content).toContain(ENTITY_A.original);
     expect(contents.last().props().content).toContain(
-      ENTITY_A.translation[0].string,
+      ENTITY_A.translation.string,
     );
   });
 
@@ -112,9 +84,6 @@ describe('<Entity>', () => {
 
     wrapper = shallow(<Entity entity={ENTITY_E} parameters={{}} />);
     expect(wrapper.find('.warnings')).toHaveLength(1);
-
-    wrapper = shallow(<Entity entity={ENTITY_F} parameters={{}} />);
-    expect(wrapper.find('.partial')).toHaveLength(1);
   });
 
   it('calls the selectEntity function on click on li', () => {

@@ -13,9 +13,6 @@ def test_create_translation_form_required_fields():
     assert form.errors["locale"]
     assert form.errors["locale"][0] == "This field is required."
 
-    assert form.errors["plural_form"]
-    assert form.errors["plural_form"][0] == "This field is required."
-
     assert "ignore_warnings" not in form.errors
     assert "approve" not in form.errors
     assert "force_suggestions" not in form.errors
@@ -29,7 +26,6 @@ def test_create_translation_form_clean_entity(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": locale_a.code,
-            "plural_form": "-1",
             "original": "hello",
         }
     )
@@ -44,7 +40,6 @@ def test_create_translation_form_clean_entity_invalid(locale_a):
             "entity": 42,
             "translation": "salut",
             "locale": locale_a.code,
-            "plural_form": "-1",
             "original": "hello",
         }
     )
@@ -59,7 +54,6 @@ def test_create_translation_form_clean_locale_invalid(entity_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": "invalid",
-            "plural_form": "-1",
             "original": "hello",
         }
     )
@@ -74,39 +68,11 @@ def test_create_translation_form_clean_locale(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": locale_a.code,
-            "plural_form": "-1",
             "original": "hello",
         }
     )
     assert form.is_valid()
     assert form.cleaned_data["locale"] == locale_a
-
-
-@pytest.mark.django_db
-def test_create_translation_form_clean_plural_form(entity_a, locale_a):
-    form = CreateTranslationForm(
-        {
-            "entity": entity_a.pk,
-            "translation": "salut",
-            "locale": locale_a.code,
-            "plural_form": "-1",
-            "original": "hello",
-        }
-    )
-    assert form.is_valid()
-    assert form.cleaned_data["plural_form"] is None
-
-    form = CreateTranslationForm(
-        {
-            "entity": entity_a.pk,
-            "translation": "salut",
-            "locale": locale_a.code,
-            "plural_form": "1",
-            "original": "hello",
-        }
-    )
-    assert form.is_valid()
-    assert form.cleaned_data["plural_form"] == "1"
 
 
 @pytest.mark.django_db
@@ -116,7 +82,6 @@ def test_create_translation_form_clean_paths(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": locale_a.code,
-            "plural_form": "-1",
             "original": "hello",
         }
     )
@@ -128,7 +93,6 @@ def test_create_translation_form_clean_paths(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": locale_a.code,
-            "plural_form": "-1",
             "original": "hello",
             "paths[]": ["a/d.ext", "foo/bar"],
         }
@@ -144,7 +108,6 @@ def test_create_translation_form_clean_translation(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": " salut ",
             "locale": locale_a.code,
-            "plural_form": "-1",
             "original": "hello",
         }
     )

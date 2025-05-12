@@ -18,8 +18,7 @@ import { TranslationLength } from './TranslationLength';
 const SELECTED_ENTITY = {
   pk: 1,
   original: 'le test',
-  original_plural: 'les tests',
-  translation: [{ string: 'test' }, { string: 'test plural' }],
+  translation: { string: 'test' },
 };
 
 function createEditorMenu({

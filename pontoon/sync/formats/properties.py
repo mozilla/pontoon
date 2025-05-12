@@ -37,7 +37,7 @@ def as_translation(order: int, entry: Entry[Message]):
         key=key,
         context=key,
         order=order,
-        strings={None: string},
+        string=string,
         source_string=string,
         comments=entry.comment.split("\n") if entry.comment else None,
     )

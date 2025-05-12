@@ -40,7 +40,7 @@ export function useUpdateTranslationStatus(
   const { resource } = useContext(Location);
   const showNotification = useContext(ShowNotification);
   const showBadgeTooltip = useContext(ShowBadgeTooltip);
-  const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
+  const { entity } = useContext(EntityView);
   const pushNextTranslatable = usePushNextTranslatable();
   const { updateHistory } = useContext(HistoryData);
   const { setFailedChecks } = useContext(FailedChecksData);
@@ -81,7 +81,7 @@ export function useUpdateTranslationStatus(
       showNotification(notif);
 
       if (results.translation && change === 'approve') {
-        // The change did work, we want to move on to the next Entity or pluralForm.
+        // The change did work, we want to move on to the next Entity.
         pushNextTranslatable();
       } else {
         updateHistory();
@@ -113,8 +113,7 @@ export function useUpdateTranslationStatus(
       }
 
       // Update entity translation data now that it has changed on the server.
-      const pf = hasPluralForms ? pluralForm : -1;
-      dispatch(updateEntityTranslation(entity.pk, pf, results.translation));
+      dispatch(updateEntityTranslation(entity.pk, results.translation));
     }
 
     NProgress.done();

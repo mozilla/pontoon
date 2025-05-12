@@ -44,44 +44,44 @@ const ENTITIES = [
     format: 'ftl',
     key: 'my-message',
     original: 'my-message = Hello',
-    translation: [{ string: 'my-message = Salut' }],
+    translation: { string: 'my-message = Salut' },
   },
   {
     pk: 2,
     format: 'ftl',
     key: 'my-message',
     original: 'my-message =\n    .my-attr = Something guud',
-    translation: [
-      { string: 'my-message =\n    .my-attr = Quelque chose de bien' },
-    ],
+    translation: {
+      string: 'my-message =\n    .my-attr = Quelque chose de bien',
+    },
   },
   {
     pk: 3,
     format: 'ftl',
     key: 'my-message',
     original: RICH_MESSAGE_STRING,
-    translation: [],
+    translation: undefined,
   },
   {
     pk: 4,
     format: 'ftl',
     key: 'my-message',
     original: 'my-message = Hello',
-    translation: [{ string: '' }],
+    translation: { string: '' },
   },
   {
     pk: 5,
     format: 'ftl',
     key: 'my-message',
     original: NESTED_SELECTORS_STRING,
-    translation: [{ string: NESTED_SELECTORS_STRING }],
+    translation: { string: NESTED_SELECTORS_STRING },
   },
   {
     pk: 6,
     format: 'ftl',
     key: 'my-message',
     original: BROKEN_STRING,
-    translation: [{ string: BROKEN_STRING }],
+    translation: { string: BROKEN_STRING },
   },
 ];
 

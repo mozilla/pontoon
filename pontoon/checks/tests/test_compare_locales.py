@@ -67,24 +67,6 @@ def entity_with_comment(entity_a):
     return entity_a
 
 
-@pytest.fixture
-def plural_entity(entity_with_comment):
-    """
-    Entity with plural string.
-    """
-    entity_with_comment.key = "key_entity_a"
-    entity_with_comment.string_plural = "plural entity_a"
-    entity_with_comment.comment = "example comment"
-    return entity_with_comment
-
-
-@pytest.fixture
-def plural_translation(translation_a):
-    translation_a.plural_form = 1
-    translation_a.string = "Plural translation for entity_a"
-    return translation_a
-
-
 def test_unsupported_resource_file():
     """
     Fail if passed resource is not supported by the integration with
@@ -147,7 +129,6 @@ def test_cast_to_dtd(entity_with_comment, translation_a, entity_a):
         mock_quality_check_args(
             resource_ext="properties",
             string="Mozilla",
-            string_plural="Mozillas",
             translation="Allizom",
         ),
         mock_quality_check_args(

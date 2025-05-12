@@ -1,5 +1,4 @@
 import { batchEditEntities, fetchEntities, fetchEntityIds } from '~/api/entity';
-import type { EntityTranslation } from '~/api/translation';
 import type { Location } from '~/context/Location';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { updateResource } from '~/modules/resource/actions';
@@ -108,13 +107,10 @@ const updateUI =
     }
 
     // Update entity translation data now that it has changed on the server.
-    for (let entity of entitiesData.entities) {
-      entity.translation.forEach(function (
-        translation: EntityTranslation,
-        pluralForm: number,
-      ) {
-        dispatch(updateEntityTranslation(entity.pk, pluralForm, translation));
-      });
+    for (const entity of entitiesData.entities) {
+      if (entity.translation) {
+        dispatch(updateEntityTranslation(entity.pk, entity.translation));
+      }
     }
   };
 

@@ -41,7 +41,7 @@ def as_translation(order: int, section: Section, entry: Entry):
         key=key,
         context=context,
         order=order,
-        strings={None: string} if string else {},
+        string=string or None,
         source_string=entry.get_meta("source") or "",
         comments=comments or None,
     )

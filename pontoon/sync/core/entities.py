@@ -19,6 +19,8 @@ from pontoon.sync.formats.common import ParseError, VCSTranslation
 
 log = logging.getLogger(__name__)
 
+BILINGUAL_FORMATS = {"po", "xliff"}
+
 
 def sync_entities_from_repo(
     project: Project,
@@ -157,7 +159,6 @@ def update_resources(
 
     mod_fields = [
         "string",
-        "string_plural",
         "comment",
         "source",
         "group_comment",
@@ -286,8 +287,8 @@ def is_translated_resource(
 ) -> bool:
     if locale is None:
         return False
-    if resource.format == "po":
-        # For gettext, only create TranslatedResource
+    if resource.format in BILINGUAL_FORMATS:
+        # For bilingual formats, only create TranslatedResource
         # if the resource exists for the locale.
         target, _ = paths.target(resource.path)
         if target is None:
@@ -305,7 +306,6 @@ def entity_from_source(
     resource_comments = getattr(tx, "resource_comments", None)
     return Entity(
         string=tx.source_string,
-        string_plural=tx.source_string_plural,
         key=tx.key,
         comment="\n".join(comments) if comments else "",
         order=tx.order or idx,

@@ -8,6 +8,7 @@ from os.path import commonpath, dirname, isfile, join, normpath
 from re import compile
 
 from moz.l10n.formats import Format
+from moz.l10n.message import parse_message
 from moz.l10n.model import (
     Entry,
     Expression,
@@ -332,7 +333,7 @@ def set_translations(
                     except ValueError:
                         pass
 
-    if not_translated and res.format != Format.xliff:
+    if not_translated and res.format not in (Format.po, Format.xliff):
         section = not_translated[0][0]
         rm: list[Entry] = []
         for section_, entry in not_translated:
@@ -348,7 +349,7 @@ def set_translations(
         header = {m.key: m.value for m in res.meta}
         header["Language"] = locale.code.replace("-", "_")
         header["Plural-Forms"] = (
-            f"nplurals={locale.nplurals or '1'}; plural={locale.plural_rule or '0'};"
+            f"nplurals={locale.nplurals}; plural={locale.plural_rule};"
         )
         header["Generated-By"] = "Pontoon"
         res.meta = [
@@ -379,64 +380,74 @@ def set_translation(
         case _:
             key = entry.id[0]
 
-    if res.format == Format.po:
-        po_tx = [tx for tx in translations if tx.entity.key == key]
-        if isinstance(entry.value, SelectMessage):
-            entry.value.variants = {(str(tx.plural_form),): [tx.string] for tx in po_tx}
-        else:
-            entry.value = po_tx[0].string if po_tx else ""
-        fuzzy_flag = Metadata("flag", "fuzzy")
-        if any(tx.fuzzy for tx in po_tx):
-            if fuzzy_flag not in entry.meta:
-                entry.meta.insert(0, fuzzy_flag)
-        elif fuzzy_flag in entry.meta:
-            entry.meta = [m for m in entry.meta if m != fuzzy_flag]
-        return True
+    tx = next((tx for tx in translations if tx.entity.key == key), None)
+    if tx is None:
+        return False
 
-    for tx in translations:
-        if tx.entity.key == key:
-            if res.format == Format.android:
-                # Literal newlines \n and tabs \t are included in the string
-                entry.value = android_esc.sub(
-                    lambda m: "\n" if m[1] == "n" else "\t",
-                    android_nl.sub(" ", tx.string),
+    match res.format:
+        case Format.android:
+            # Literal newlines \n and tabs \t are included in the string
+            entry.value = android_esc.sub(
+                lambda m: "\n" if m[1] == "n" else "\t",
+                android_nl.sub(" ", tx.string),
+            )
+
+        case Format.po:
+            msg = parse_message(Format.mf2, tx.string)
+            if isinstance(entry.value, SelectMessage):
+                entry.value.variants = (
+                    {("0",): msg.pattern}
+                    if isinstance(msg, PatternMessage)
+                    else {
+                        (str(idx),): pattern
+                        for idx, pattern in enumerate(msg.variants.values())
+                    }
                 )
-            elif (
-                res.format == Format.webext
-                and isinstance(entry.value, PatternMessage)
-                and entry.value.declarations
-            ):
-                # With a message value, placeholders in string parts would have their
-                # $ characters doubled to escape them.
-                entry.value.pattern = []
-                pos = 0
-                for m in webext_placeholder.finditer(tx.string):
-                    start = m.start()
-                    if start > pos:
-                        entry.value.pattern.append(tx.string[pos:start])
-                    if m[1]:
-                        ph_name = m[1].replace("@", "_")
-                        if ph_name[0].isdigit():
-                            ph_name = f"_{ph_name}"
-                        ph_name = next(
-                            (
-                                name
-                                for name in entry.value.declarations
-                                if name.lower() == ph_name.lower()
-                            ),
-                            ph_name,
-                        )
-                        pass
-                    else:
-                        ph_name = m[0]
-                    entry.value.pattern.append(
-                        Expression(VariableRef(ph_name), attributes={"source": m[0]})
-                    )
-                    pos = m.end()
-                if pos < len(tx.string):
-                    entry.value.pattern.append(tx.string[pos:])
             else:
-                entry.value = tx.string
-            return True
+                assert isinstance(entry.value, PatternMessage)
+                assert isinstance(msg, PatternMessage)
+                entry.value = msg
+            fuzzy_flag = Metadata("flag", "fuzzy")
+            if tx.fuzzy:
+                if fuzzy_flag not in entry.meta:
+                    entry.meta.insert(0, fuzzy_flag)
+            elif fuzzy_flag in entry.meta:
+                entry.meta = [m for m in entry.meta if m != fuzzy_flag]
 
-    return False
+        case Format.webext if (
+            isinstance(entry.value, PatternMessage) and entry.value.declarations
+        ):
+            # With a message value, placeholders in string parts would have their
+            # $ characters doubled to escape them.
+            entry.value.pattern = []
+            pos = 0
+            for m in webext_placeholder.finditer(tx.string):
+                start = m.start()
+                if start > pos:
+                    entry.value.pattern.append(tx.string[pos:start])
+                if m[1]:
+                    ph_name = m[1].replace("@", "_")
+                    if ph_name[0].isdigit():
+                        ph_name = f"_{ph_name}"
+                    ph_name = next(
+                        (
+                            name
+                            for name in entry.value.declarations
+                            if name.lower() == ph_name.lower()
+                        ),
+                        ph_name,
+                    )
+                    pass
+                else:
+                    ph_name = m[0]
+                entry.value.pattern.append(
+                    Expression(VariableRef(ph_name), attributes={"source": m[0]})
+                )
+                pos = m.end()
+            if pos < len(tx.string):
+                entry.value.pattern.append(tx.string[pos:])
+
+        case _:
+            entry.value = tx.string
+
+    return True

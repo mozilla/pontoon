@@ -284,7 +284,7 @@ class TranslatedResourceAdmin(admin.ModelAdmin):
 
 
 class EntityAdmin(admin.ModelAdmin):
-    search_fields = ["string", "string_plural"]
+    search_fields = ["string"]
     autocomplete_fields = ("resource",)
 
 

@@ -52,13 +52,6 @@ Incorrect pattern::
 
     locales/{locale_code}/path/to/file.{locale_code}.extension
 
-For Gettext files,
-you will need to ensure that ``.po`` files are included in the repository
-for each target locale for which they are to be translated
-(these files may be initially empty).
-For all other supported formats,
-Pontoon will automatically add files for each locale when it is translated.
-
 .. _project configuration file: https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html
 
 Adding a new project to Pontoon

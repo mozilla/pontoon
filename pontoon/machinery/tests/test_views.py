@@ -129,7 +129,6 @@ def test_view_caighdean(client, entity_a):
         entity=entity_a,
         locale=gd,
         string="GD translation",
-        plural_form=None,
         approved=True,
     )
     entity_a.translation_set.add(translation)
@@ -178,7 +177,6 @@ def test_view_caighdean_bad(client, entity_a):
         entity=entity_a,
         locale=gd,
         string="foo",
-        plural_form=None,
         approved=True,
     )
     entity_a.translation_set.add(translation)

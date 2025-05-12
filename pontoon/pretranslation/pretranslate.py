@@ -9,7 +9,7 @@ from fluent.syntax import FluentParser, FluentSerializer
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
 
-from pontoon.base.models import TranslatedResource, User
+from pontoon.base.models import Entity, Locale, TranslatedResource, User
 from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
@@ -25,7 +25,9 @@ parser = FluentParser()
 serializer = FluentSerializer()
 
 
-def get_pretranslations(entity, locale, preserve_placeables=False):
+def get_pretranslation(
+    entity: Entity, locale: Locale, preserve_placeables: bool = False
+) -> tuple[str, User] | None:
     """
     Get pretranslations for the entity-locale pair using internal translation memory and
     Google's machine translation.
@@ -38,9 +40,8 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
     :arg Locale locale: the Locale object
     :arg boolean preserve_placeables
 
-    :returns: a list of tuples, consisting of:
+    :returns: None, or a tuple consisting of:
         - a pretranslation of the entity
-        - a plural form
         - a user (representing TM or GT service)
     """
     source = entity.string
@@ -56,7 +57,7 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
             pretranslate.visit(entry)
         except ValueError as e:
             log.info(f"Fluent pretranslation error: {e}")
-            return []
+            return None
 
         pretranslation = serializer.serialize_entry(entry)
 
@@ -67,27 +68,21 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
         authors = [services[service] for service in pretranslate.services]
         author = max(set(authors), key=authors.count) if authors else services["tm"]
 
-        return [(pretranslation, None, author)]
+        return (pretranslation, author)
+
+    # TODO
+    # elif entity.resource.format == "po":
 
     else:
         pretranslation, service = get_pretranslated_data(
             source, locale, preserve_placeables
         )
-
         if pretranslation is None:
-            return []
-
-        author = services[service]
-        if entity.string_plural == "":
-            return [(pretranslation, None, author)]
-        else:
-            plural_forms = range(0, locale.nplurals or 1)
-            return [
-                (pretranslation, plural_form, author) for plural_form in plural_forms
-            ]
+            return None
+        return (pretranslation, services[service])
 
 
-def get_pretranslated_data(source, locale, preserve_placeables):
+def get_pretranslated_data(source: str, locale: Locale, preserve_placeables: bool):
     # Empty strings and strings containing whitespace only do not need translation
     if re.search("^\\s*$", source):
         return source, "tm"

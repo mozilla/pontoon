@@ -1,7 +1,7 @@
 import re
 
 from os import makedirs
-from os.path import isfile, join
+from os.path import join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest.mock import patch
@@ -32,7 +32,7 @@ from pontoon.sync.tests.utils import build_file_tree
 
 
 @pytest.mark.django_db
-def test_kitchen_sink():
+def test_end_to_end():
     mock_vcs = MockVersionControl(changes=([join("en-US", "c.ftl")], [], []))
     with (
         TemporaryDirectory() as root,
@@ -154,144 +154,6 @@ def test_kitchen_sink():
         )
         assert TranslatedResource.objects.filter(resource__project=project).count() == 6
         assert Sync.objects.get(project=project).status == Sync.Status.DONE
-
-
-@pytest.mark.django_db
-def test_add_resources():
-    mock_vcs = MockVersionControl(changes=None)
-    with (
-        TemporaryDirectory() as root,
-        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
-    ):
-        # Database setup
-        settings.MEDIA_ROOT = root
-        locale_de = LocaleFactory.create(code="de-Test", name="Test German")
-        repo_src = RepositoryFactory(
-            url="http://example.com/src-repo", source_repo=True
-        )
-        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
-        project = ProjectFactory.create(
-            name="add-resources",
-            locales=[locale_de],
-            repositories=[repo_src, repo_tgt],
-        )
-
-        # Filesystem setup
-        src_root = repo_src.checkout_path
-        makedirs(src_root)
-        file_pot = dedent("""
-            #
-            msgid ""
-            msgstr ""
-
-            msgid "source"
-            msgstr "source"
-        """)
-        file_xliff = dedent("""\
-            <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-              <file original="file.txt" source-language="en-US" target-language="en-US" datatype="plaintext">
-                <body>
-                  <trans-unit id="key">
-                    <source>source</source>
-                    <target>source</target>
-                  </trans-unit>
-                </body>
-              </file>
-            </xliff>
-        """)
-        build_file_tree(
-            src_root,
-            {
-                "en-US": {
-                    "file.ftl": "key = Message\n",
-                    "file.pot": file_pot,
-                    "file.xliff": file_xliff,
-                }
-            },
-        )
-
-        tgt_root = repo_tgt.checkout_path
-        makedirs(tgt_root)
-        build_file_tree(tgt_root, {"de-Test": {}})
-
-        # Sync with no translations
-        sync_project_task(project.pk)
-
-        # Test that entities are generated, translations are not, and FTL & XLIFF are localizable
-        assert {
-            (ent.resource.path, ent.key)
-            for ent in Entity.objects.filter(resource__project=project)
-        } == {
-            ("file.ftl", "key"),
-            ("file.po", "source"),
-            ("file.xliff", "file.txt\x04key"),
-        }
-        assert (
-            Translation.objects.filter(entity__resource__project=project).count() == 0
-        )
-        assert {
-            (tr.resource.path, tr.locale.code)
-            for tr in TranslatedResource.objects.filter(resource__project=project)
-        } == {("file.ftl", "de-Test"), ("file.xliff", "de-Test")}
-
-        # Add an XLIFF translation
-        TranslationFactory.create(
-            entity=Entity.objects.get(
-                resource__project=project, resource__path="file.xliff"
-            ),
-            locale=locale_de,
-            string="xliff translation",
-            active=True,
-            approved=True,
-        )
-        sync_project_task(project.pk)
-
-        # Test that gettext is not written, while XLIFF is
-        tgt_po_path = join(repo_tgt.checkout_path, "de-Test", "file.po")
-        tgt_xliff_path = join(repo_tgt.checkout_path, "de-Test", "file.xliff")
-        assert not isfile(tgt_po_path)
-        with open(tgt_xliff_path) as file:
-            assert file.read() == dedent("""\
-                <?xml version="1.0" encoding="utf-8"?>
-                <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-                  <file original="file.txt" source-language="en-US" target-language="de-Test" datatype="plaintext">
-                    <body>
-                      <trans-unit id="key">
-                        <source>source</source>
-                        <target>xliff translation</target>
-                      </trans-unit>
-                    </body>
-                  </file>
-                </xliff>
-            """)
-
-        # Add an empty target gettext file
-        with open(tgt_po_path, "x") as file:
-            file.write("\n")
-        sync_project_task(project.pk)
-
-        # Test that the gettext file is now localizable
-        assert {
-            (tr.resource.path, tr.locale.code)
-            for tr in TranslatedResource.objects.filter(resource__project=project)
-        } == {
-            ("file.ftl", "de-Test"),
-            ("file.po", "de-Test"),
-            ("file.xliff", "de-Test"),
-        }
-        with open(tgt_po_path) as file:
-            assert file.read() == dedent("""\
-                #
-                msgid ""
-                msgstr ""
-                "Language: de_Test\\n"
-                "Plural-Forms: nplurals=1; plural=0;\\n"
-                "Generated-By: Pontoon\\n"
-
-                msgid "source"
-                msgstr ""
-            """)
 
 
 @pytest.mark.django_db

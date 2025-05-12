@@ -1408,9 +1408,9 @@ uhashring==2.3 \
     --hash=sha256:7ee8a25ca495a97effad10bd563c83b4054a6d7606d9530757049a04edab9297 \
     --hash=sha256:9f76187e8d8e82f6e5519c995eef1f1bf44d4a5e0fc4fdd1219a044b10040612
     # via python-binary-memcached
-urllib3==2.5.0 \
-    --hash=sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760 \
-    --hash=sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc
+urllib3==2.2.3 \
+    --hash=sha256:ca899ca043dcb1bafa3e262d73aa25c465bfb49e0bd9dd5d59f1d0acba2f8fac \
+    --hash=sha256:e7d814a81dad81e6caf2ec9fdedb284ecc9c73076b62654547cc64ccdcae26e9
     # via requests
 vine==5.1.0 \
     --hash=sha256:40fdf3c48b2cfe1c38a49e9ae2da6fda88e4794c810050a728bd7413811fb1dc \

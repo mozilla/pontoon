@@ -20,7 +20,7 @@ export function FluentAttribute({
     return null;
   }
 
-  const entry = parseEntry(original);
+  const entry = parseEntry(format, original);
   if (!entry || entry.value || entry.attributes?.size !== 1) {
     return null;
   }

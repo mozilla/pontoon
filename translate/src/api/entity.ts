@@ -17,7 +17,6 @@ import type { BatchBadgeUpdate } from '../modules/batchactions/actions';
 export type Entity = {
   readonly pk: number;
   readonly original: string;
-  readonly original_plural: string;
   readonly machinery_original: string;
   readonly comment: string;
   readonly group_comment: string;
@@ -28,7 +27,7 @@ export type Entity = {
   readonly path: string;
   readonly project: Record<string, any>;
   readonly source: Array<Array<string>> | Record<string, any>;
-  readonly translation: Array<EntityTranslation>;
+  readonly translation: EntityTranslation | undefined;
   readonly readonly: boolean;
   readonly isSibling: boolean;
   readonly date_created: string;
@@ -163,13 +162,8 @@ export async function fetchSiblingEntities(
 export async function fetchEntityHistory(
   entity: number,
   locale: string,
-  pluralForm: number = -1,
 ): Promise<HistoryTranslation[]> {
-  const search = new URLSearchParams({
-    entity: String(entity),
-    locale,
-    plural_form: String(pluralForm),
-  });
+  const search = new URLSearchParams({ entity: String(entity), locale });
   const results = await GET('/get-history/', search, { singleton: true });
   return Array.isArray(results) ? keysToCamelCase(results) : [];
 }

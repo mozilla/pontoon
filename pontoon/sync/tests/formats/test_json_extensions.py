@@ -44,15 +44,15 @@ class JsonExtensionsTests(TestCase):
                 file.write(src)
             t0, t1, t2, t3 = parse_translations(path)
 
-        assert t0.strings == {None: "Translated String"}
+        assert t0.string == "Translated String"
         assert t0.comments == ["Sample comment"]
 
         assert t1.comments == ["Second comment"]
 
-        assert t2.strings == {None: "Translated No Comments or Sources"}
+        assert t2.string == "Translated No Comments or Sources"
 
         assert t3.key == "placeholder"
-        assert t3.strings == {None: "Hello $YOUR_NAME$"}
+        assert t3.string == "Hello $YOUR_NAME$"
         assert t3.comments == ["Peer greeting"]
         assert t3.source == {"YOUR_NAME": {"content": "$1", "example": "Cira"}}
         assert t3.order == 3

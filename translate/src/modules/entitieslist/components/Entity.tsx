@@ -33,7 +33,6 @@ type Props = {
  *   - "warnings": one of the plural forms has warnings and is approved, pretranslated or fuzzy
  *   - "approved": all plural forms are approved and don't have errors or warnings
  *   - "pretranslated": all plural forms are pretranslated and don't have errors or warnings
- *   - "partial": some plural forms have either approved or pretranslated translations, but not all
  *   - "missing": none of the plural forms have an approved or pretranslated translation
  *
  * "Source" is the original string from the project. Usually it's the en-US string.
@@ -148,7 +147,7 @@ export function Entity({
           data-script={script}
         >
           <Translation
-            content={entity.translation[0].string ?? ''}
+            content={entity.translation?.string ?? ''}
             format={entity.format}
             search={parameters.search}
           />
