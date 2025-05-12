@@ -10,7 +10,7 @@ describe('extractAccessKeyCandidates', () => {
         .foo = Bar
         .accesskey = B
       `;
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('ftl', input));
     const res = extractAccessKeyCandidates(message, 'accesskey');
 
     expect(res).toEqual([]);
@@ -21,7 +21,7 @@ describe('extractAccessKeyCandidates', () => {
       title = Candidates
         .accesskey = B
       `;
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('ftl', input));
     const res = extractAccessKeyCandidates(message, 'accesskey');
 
     expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
@@ -35,7 +35,7 @@ describe('extractAccessKeyCandidates', () => {
         .aria-label = Ignore this
         .value = Ignore this
       `;
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('ftl', input));
     const res = extractAccessKeyCandidates(message, 'accesskey');
 
     expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
@@ -48,7 +48,7 @@ describe('extractAccessKeyCandidates', () => {
         .aria-label = Ignore this
         .value = Candidates
       `;
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('ftl', input));
     const res = extractAccessKeyCandidates(message, 'accesskey');
 
     expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
@@ -60,7 +60,7 @@ describe('extractAccessKeyCandidates', () => {
         .accesskey = B
         .aria-label = Candidates
       `;
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('ftl', input));
     const res = extractAccessKeyCandidates(message, 'accesskey');
 
     expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
@@ -74,7 +74,7 @@ describe('extractAccessKeyCandidates', () => {
         .label = Ignore this
         .value = Ignore this
       `;
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('ftl', input));
     const res = extractAccessKeyCandidates(message, 'buttonaccesskey');
 
     expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
@@ -86,7 +86,7 @@ describe('extractAccessKeyCandidates', () => {
         .label = Candidates { brand }
         .accesskey = B
       `;
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('ftl', input));
     const res = extractAccessKeyCandidates(message, 'accesskey');
 
     expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
@@ -102,7 +102,7 @@ describe('extractAccessKeyCandidates', () => {
             }
         .accesskey = C
       `;
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('ftl', input));
     const res = extractAccessKeyCandidates(message, 'accesskey');
 
     expect(res).toEqual(['C', 't', 'r', 'l', 'm', 'd']);

@@ -58,7 +58,6 @@ def create_translation(request):
     entity = form.cleaned_data["entity"]
     string = form.cleaned_data["translation"]
     locale = form.cleaned_data["locale"]
-    plural_form = form.cleaned_data["plural_form"]
     original = form.cleaned_data["original"]
     ignore_warnings = form.cleaned_data["ignore_warnings"]
     approve = form.cleaned_data["approve"]
@@ -78,11 +77,7 @@ def create_translation(request):
             status=403,
         )
 
-    translations = Translation.objects.filter(
-        entity=entity,
-        locale=locale,
-        plural_form=plural_form,
-    )
+    translations = Translation.objects.filter(entity=entity, locale=locale)
 
     same_translations = translations.filter(string=string)
 
@@ -104,6 +99,14 @@ def create_translation(request):
             string,
             user.profile.quality_checks,
         )
+        print(
+            {
+                "entity": entity,
+                "original": original,
+                "string": string,
+                "FC": failed_checks,
+            }
+        )
 
         if are_blocking_checks(failed_checks, ignore_warnings):
             return JsonResponse({"status": False, "failedChecks": failed_checks})
@@ -116,7 +119,6 @@ def create_translation(request):
     translation = Translation(
         entity=entity,
         locale=locale,
-        plural_form=plural_form,
         string=string,
         user=user,
         date=now,
@@ -133,10 +135,7 @@ def create_translation(request):
     log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
     if translations:
-        translation = entity.reset_active_translation(
-            locale=locale,
-            plural_form=plural_form,
-        )
+        translation = entity.reset_active_translation(locale=locale)
 
     # When user makes their first contribution to the team, notify team managers
     first_contribution = (
@@ -308,10 +307,7 @@ def approve_translation(request):
 
     log_action(ActionLog.ActionType.TRANSLATION_APPROVED, user, translation=translation)
 
-    active_translation = translation.entity.reset_active_translation(
-        locale=locale,
-        plural_form=translation.plural_form,
-    )
+    active_translation = translation.entity.reset_active_translation(locale=locale)
 
     response_data = {
         "translation": active_translation.serialize(),
@@ -376,10 +372,7 @@ def unapprove_translation(request):
         translation=translation,
     )
 
-    active_translation = translation.entity.reset_active_translation(
-        locale=locale,
-        plural_form=translation.plural_form,
-    )
+    active_translation = translation.entity.reset_active_translation(locale=locale)
 
     return JsonResponse(
         {
@@ -443,10 +436,7 @@ def reject_translation(request):
         ActionLog.ActionType.TRANSLATION_REJECTED, request.user, translation=translation
     )
 
-    active_translation = translation.entity.reset_active_translation(
-        locale=locale,
-        plural_form=translation.plural_form,
-    )
+    active_translation = translation.entity.reset_active_translation(locale=locale)
 
     response_data = {
         "translation": active_translation.serialize(),
@@ -511,10 +501,7 @@ def unreject_translation(request):
         translation=translation,
     )
 
-    active_translation = translation.entity.reset_active_translation(
-        locale=locale,
-        plural_form=translation.plural_form,
-    )
+    active_translation = translation.entity.reset_active_translation(locale=locale)
 
     return JsonResponse(
         {

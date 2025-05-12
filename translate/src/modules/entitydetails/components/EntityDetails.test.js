@@ -12,7 +12,7 @@ import { EntityDetails } from './EntityDetails';
 const ENTITY = (pk) => ({
   pk,
   original: 'le test',
-  translation: [{ string: 'test', errors: [], warnings: [] }],
+  translation: { string: 'test', errors: [], warnings: [] },
   project: { contact: '' },
   comment: '',
   date_created: new Date().toISOString(),
@@ -29,14 +29,7 @@ function mockEntityDetails(pk) {
   };
   const store = createReduxStore(initialState);
   const Component = () => (
-    <EntityView.Provider
-      value={{
-        entity: ENTITY(pk),
-        hasPluralForms: false,
-        pluralForm: 0,
-        setPluralForm: () => {},
-      }}
-    >
+    <EntityView.Provider value={{ entity: ENTITY(pk) }}>
       <EntityDetails />
     </EntityView.Provider>
   );

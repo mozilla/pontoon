@@ -45,33 +45,29 @@ class XLIFFTests(TestCase):
             assert t0.comments == ["Sample comment"]
             assert t0.key == "filename\x04Source String Key"
             assert t0.context == "Source String Key"
-            assert t0.strings == {None: "Translated <b>String</b>"}
+            assert t0.string == "Translated <b>String</b>"
             assert t0.source_string == "Source <b>String</b>"
-            assert t0.source_string_plural == ""
             assert t0.order == 0
 
             # multiple comments
             assert t1.comments == ["First comment", "Second comment"]
             assert t1.key == "filename\x04Multiple Comments Key"
-            assert t1.strings == {None: "Translated Multiple Comments"}
+            assert t1.string == "Translated Multiple Comments"
             assert t1.source_string == "Multiple Comments"
-            assert t1.source_string_plural == ""
             assert t1.order == 1
 
             # no comments or sources
             assert t2.comments == []
             assert t2.key == "filename\x04No Comments or Sources Key"
-            assert t2.strings == {None: "Translated No Comments or Sources"}
+            assert t2.string == "Translated No Comments or Sources"
             assert t2.source_string == "No Comments or Sources"
-            assert t2.source_string_plural == ""
             assert t2.order == 2
 
             # missing translation
             assert t3.comments == []
             assert t3.key == "filename\x04Missing Translation Key"
-            assert t3.strings == {}
+            assert t3.string is None
             assert t3.source_string == "Missing Translation"
-            assert t3.source_string_plural == ""
             assert t3.order == 3
 
     def test_invalid_xliff(self):
