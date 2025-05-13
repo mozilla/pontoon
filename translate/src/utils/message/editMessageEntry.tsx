@@ -1,4 +1,4 @@
-import type { Message, Pattern, Variant } from 'messageformat';
+import type { Model } from 'messageformat';
 import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
@@ -55,9 +55,9 @@ export function editMessageEntry(entry: MessageEntry): EditorField[] {
 }
 
 function* genPatterns(
-  msg: Message,
+  msg: Model.Message,
 ): Generator<
-  [Variant['keys'], Array<{ label: string; plural: boolean }>, string]
+  [Model.Variant['keys'], Array<{ label: string; plural: boolean }>, string]
 > {
   switch (msg.type) {
     case 'message':
@@ -77,24 +77,20 @@ function* genPatterns(
   }
 }
 
-function patternAsString({ body }: Pattern) {
-  switch (body.length) {
+function patternAsString(pattern: Model.Pattern) {
+  switch (pattern.length) {
     case 0:
       return '';
     case 1:
-      if (body[0].type === 'text') {
-        return body[0].value;
+      if (typeof pattern[0] === 'string') {
+        return pattern[0];
       } else {
-        throw new Error(`Unsupported message element ${body[0].type}`);
+        throw new Error(`Unsupported message element ${pattern[0].type}`);
       }
   }
-  throw new Error(`Unsupported message pattern length ${body.length}`);
+  throw new Error(`Unsupported message pattern length ${pattern.length}`);
 }
 
-function getId(name: string, keys: Variant['keys']) {
-  let id = name;
-  for (const key of keys) {
-    id += '|' + ('value' in key ? key.value : '*');
-  }
-  return id;
+function getId(name: string, keys: Model.Variant['keys']) {
+  return [name, ...keys.map((key) => key.value ?? '*')].join('|');
 }

@@ -6,8 +6,8 @@ import {
   TextElement,
   Transformer,
 } from '@fluent/syntax';
-import { defaultFunctionMap, resourceToFluent } from '@messageformat/fluent';
-import type { Message } from 'messageformat';
+import { resourceToFluent } from '@messageformat/fluent';
+import type { Model } from 'messageformat';
 import type { MessageEntry } from '.';
 
 class SerializeTransformer extends Transformer {
@@ -47,52 +47,37 @@ export function serializeEntry(
       );
     }
     let res = '';
-    for (const el of entry.value.pattern.body) {
-      if (el.type !== 'text') {
+    for (const el of entry.value.pattern) {
+      if (typeof el === 'string') {
+        res += el;
+      } else {
         throw new Error(
           `Unsupported ${format} element type: ${el.type} [${entry.id}]`,
         );
       }
-      res += el.value;
     }
     return res;
   }
 
-  const data = new Map<string, Message>();
-  const fnMap: typeof defaultFunctionMap = {};
+  const data = new Map<string, Model.Message>();
   if (entry.value) {
     data.set('', entry.value);
-    addSelectorExpressions(fnMap, entry.value);
   }
   if (entry.attributes) {
     for (const [name, attr] of entry.attributes) {
       data.set(name, attr);
-      addSelectorExpressions(fnMap, attr);
     }
   }
   const resource = new Map([[entry.id, data]]);
-  Object.assign(fnMap, defaultFunctionMap);
+  const functionMap = new Proxy(
+    {},
+    { get: (_, prop) => String(prop).toUpperCase() },
+  );
   try {
-    const fr = resourceToFluent(resource, undefined, fnMap);
+    const fr = resourceToFluent(resource, { functionMap });
     transformer.visit(fr);
     return serializer.serialize(fr);
   } catch {
     return '';
-  }
-}
-
-function addSelectorExpressions(
-  fnMap: typeof defaultFunctionMap,
-  msg: Message,
-) {
-  if (msg.type === 'select') {
-    for (let sel of msg.selectors) {
-      if (sel.type === 'placeholder') {
-        sel = sel.body;
-      }
-      if (sel.type === 'expression') {
-        fnMap[sel.name] = sel.name;
-      }
-    }
   }
 }
