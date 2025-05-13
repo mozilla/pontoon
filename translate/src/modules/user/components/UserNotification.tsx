@@ -1,11 +1,6 @@
 import classNames from 'classnames';
 import parse from 'html-react-parser';
-import React, {
-  BlockquoteHTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // @ts-expect-error Working types are unavailable for react-linkify 0.2.2
 import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago';
@@ -17,29 +12,31 @@ type Props = {
 };
 
 interface DateDisplayProps {
+  date: string;
   date_iso: string;
 }
 
-const DateDisplay: React.FC<DateDisplayProps> = ({ date_iso }) => {
-  const date: Date = new Date(date_iso);
-  const formattedDate: string = date.toLocaleDateString('en-US', {
+const DateDisplay: React.FC<DateDisplayProps> = ({ date, date_iso }) => {
+  const formattedDate: string = new Date(date).toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   });
   const isOld: boolean =
-    new Date().getTime() - date.getTime() > 7 * 24 * 60 * 60 * 1000;
+    new Date().getTime() - new Date(date).getTime() > 7 * 24 * 60 * 60 * 1000;
   return (
     <>
       {isOld ? (
         <div className='date-display'>
-          <time dateTime={formattedDate}>{formattedDate}</time>
+          <time dateTime={date_iso} title={`${date} UTC`}>
+            {formattedDate}
+          </time>
         </div>
       ) : (
         <ReactTimeAgo
           className='timeago'
-          date={new Date(date_iso)}
-          title={`${formattedDate} UTC`}
+          date={new Date(date)}
+          title={`${date} UTC`}
         />
       )}
     </>
@@ -54,7 +51,7 @@ const Suggestion = ({ date, date_iso, description }: Props['notification']) => (
       dangerouslySetInnerHTML={{ __html: description.content }}
     />
 
-    <DateDisplay date_iso={date_iso} />
+    <DateDisplay date={date} date_iso={date_iso} />
   </div>
 );
 
@@ -88,7 +85,7 @@ const Comment = ({
       </Linkify>
     </div>
 
-    <DateDisplay date_iso={date_iso} />
+    <DateDisplay date={date} date_iso={date_iso} />
   </div>
 );
 
@@ -126,7 +123,7 @@ const Other = ({
       />
     ) : null}
 
-    <DateDisplay date_iso={date_iso} />
+    <DateDisplay date={date} date_iso={date_iso} />
   </div>
 );
 
