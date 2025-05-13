@@ -50,10 +50,6 @@ def translations_target_url(
         ref = target_repo.branch or "HEAD"
         return f"https://gitlab.com/{org}/{repo}/-/raw/{ref}/{rel_path}?inline=false"
 
-    if target_repo.permalink_prefix:
-        url = target_repo.permalink_prefix.format(locale_code=locale.code)
-        return f"{url}{'' if url.endswith('/') else '/'}{rel_path}"
-
     # Default to bare repo link
     return re.sub(r"^.*?(://|@)", "https://", target_repo.url, count=1)
 
