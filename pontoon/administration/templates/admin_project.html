@@ -134,13 +134,6 @@
           </div>
         </section>
       </div>
-      <section class="prefix-wrapper clearfix">
-        <div class="prefix">
-          {{ repo_form.permalink_prefix.label_tag(label_suffix='') }}
-          {{ repo_form.permalink_prefix }}
-          {{ repo_form.permalink_prefix.errors }}
-        </div>
-      </section>
       <section class="website-wrapper clearfix">
         <div class="website">
           {{ repo_form.website.label_tag(label_suffix='') }}
@@ -183,12 +176,6 @@
         </div>
       </section>
     </div>
-    <section class="prefix-wrapper clearfix">
-      <div class="prefix">
-        {{ repo_formset.empty_form.permalink_prefix.label_tag() }}
-        {{ repo_formset.empty_form.permalink_prefix }}
-      </div>
-    </section>
     <section class="website-wrapper clearfix">
       <div class="website">
         {{ repo_formset.empty_form.website.label_tag() }}
