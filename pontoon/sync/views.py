@@ -75,7 +75,11 @@ def sync_log_errors(request: HttpRequest):
 
     sync_events = (
         Sync.objects.filter(project__disabled=False)
-        .exclude(Q(status=Sync.Status.DONE) | Q(status=Sync.Status.NO_CHANGES) | Q(status=Sync.Status.IN_PROGRESS))
+        .exclude(
+            Q(status=Sync.Status.DONE)
+            | Q(status=Sync.Status.NO_CHANGES)
+            | Q(status=Sync.Status.IN_PROGRESS)
+        )
         .order_by("-start_time")
         .select_related("project")
     )
