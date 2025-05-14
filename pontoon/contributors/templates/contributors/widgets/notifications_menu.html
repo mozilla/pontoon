@@ -76,9 +76,9 @@
             {{ target.resource.project.name }}
           </span>
           
-          <div class="message trim">{{ description|linkify|safe }}</div>
-
           {{ notification_time(notification) }}
+          
+          <div class="message trim">{{ description|linkify|safe }}</div>
 
         {% else %}
 
@@ -96,12 +96,12 @@
             </span>
           {% endif %}
           
+          {{ notification_time(notification )}}
+
           {% set description = notification.description %}
           {% if description %}
             <div class="message">{{ description|safe }}</div>
           {% endif %}
-
-          {{ notification_time(notification )}}
 
         {% endif%}
       </div>

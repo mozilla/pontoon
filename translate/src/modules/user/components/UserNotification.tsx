@@ -72,6 +72,8 @@ const Comment = ({
 
     <span className='target'>{target.anchor}</span>
 
+    <DateDisplay date={date} date_iso={date_iso} />
+
     <div className='message trim'>
       <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>
         {
@@ -84,8 +86,6 @@ const Comment = ({
         }
       </Linkify>
     </div>
-
-    <DateDisplay date={date} date_iso={date_iso} />
   </div>
 );
 
@@ -112,6 +112,8 @@ const Other = ({
       </span>
     )}
 
+    <DateDisplay date={date} date_iso={date_iso} />
+
     {description ? (
       <div
         className='message'
@@ -122,8 +124,6 @@ const Other = ({
         dangerouslySetInnerHTML={{ __html: description.content }}
       />
     ) : null}
-
-    <DateDisplay date={date} date_iso={date_iso} />
   </div>
 );
 
