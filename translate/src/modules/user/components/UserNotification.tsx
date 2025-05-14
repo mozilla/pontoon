@@ -23,7 +23,7 @@ const DateDisplay: React.FC<DateDisplayProps> = ({ date, date_iso }) => {
     year: 'numeric',
   });
   const isOld: boolean =
-    new Date().getTime() - new Date(date).getTime() > 7 * 24 * 60 * 60 * 1000;
+    new Date(date).getTime() < new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
   return (
     <>
       {isOld ? (
