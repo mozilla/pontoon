@@ -1,15 +1,15 @@
-import type { Message } from 'messageformat';
+import type { Model } from 'messageformat';
 
 export type MessageEntry =
   | {
       id: string;
-      value: Message;
+      value: Model.Message;
       attributes?: never;
     }
   | {
       id: string;
-      value: Message | null;
-      attributes: Map<string, Message>;
+      value: Model.Message | null;
+      attributes: Map<string, Model.Message>;
     };
 
 export { buildMessageEntry } from './buildMessageEntry';

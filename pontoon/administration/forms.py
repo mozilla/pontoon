@@ -77,7 +77,7 @@ RepositoryInlineFormSet = inlineformset_factory(
     extra=1,
     min_num=0,
     validate_min=True,
-    fields=("type", "url", "branch", "website", "source_repo", "permalink_prefix"),
+    fields=("type", "url", "branch", "website", "source_repo"),
 )
 
 

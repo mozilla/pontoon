@@ -1,6 +1,6 @@
 import { serializeExpression } from '@fluent/syntax';
-import { defaultFunctionMap, messageToFluent } from '@messageformat/fluent';
-import type { Message } from 'messageformat';
+import { messageToFluent } from '@messageformat/fluent';
+import type { Model } from 'messageformat';
 import type { MessageEntry } from '.';
 import { parseEntry } from './parseEntry';
 
@@ -56,7 +56,7 @@ export function getSimplePreview(content: string | MessageEntry): string {
   return '';
 }
 
-function previewMessage(message: Message): string {
+function previewMessage(message: Model.Message): string {
   // Presumes that the last variant is the most appropriate
   // to use as a generic representation of the message.
   if (message.type === 'select') {
@@ -71,9 +71,11 @@ function previewMessage(message: Message): string {
     }
   }
 
-  // TODO Should not be hard-coded
-  const fnMap = { ...defaultFunctionMap, PLATFORM: 'PLATFORM' };
-  const { elements } = messageToFluent(message, 'other', fnMap);
+  const functionMap = new Proxy(
+    {},
+    { get: (_, prop) => String(prop).toUpperCase() },
+  );
+  const { elements } = messageToFluent(message, { functionMap });
 
   let res = '';
   for (const elt of elements) {

@@ -200,7 +200,6 @@ class RepositoryInline(admin.TabularInline):
         "url",
         "branch",
         "website",
-        "permalink_prefix",
         "last_synced_revisions",
         "source_repo",
     )

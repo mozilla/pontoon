@@ -82,10 +82,7 @@ describe('<EditorProvider>', () => {
     mountSpy(Spy, 'simple', 'message');
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: {
-        id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: 'message' }] } },
-      },
+      initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
       fields: [
         {
           id: '',
@@ -109,10 +106,7 @@ describe('<EditorProvider>', () => {
     mountSpy(Spy, 'ftl', 'key = message');
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: {
-        id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: 'message' }] } },
-      },
+      initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
       fields: [
         {
           id: '',
@@ -150,7 +144,7 @@ describe('<EditorProvider>', () => {
     }));
     expect(editor).toMatchObject({ sourceView: false, initial: entry, fields });
     expect(result).toMatchObject([
-      { name: '', keys: [{ type: 'nmtoken', value: 'one' }], value: 'ONE' },
+      { name: '', keys: [{ type: 'literal', value: 'one' }], value: 'ONE' },
       { name: '', keys: [{ type: '*', value: 'other' }], value: 'OTHER' },
     ]);
   });
@@ -169,7 +163,7 @@ describe('<EditorProvider>', () => {
       sourceView: true,
       initial: {
         id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: '## comment\n' }] } },
+        value: { type: 'message', pattern: ['## comment\n'] },
       },
       fields: [
         {
@@ -199,9 +193,7 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
-      initial: {
-        value: { pattern: { body: [{ type: 'text', value: 'one' }] } },
-      },
+      initial: { value: { type: 'message', pattern: ['one'] } },
       fields: [{ handle: { current: { value: 'one' } } }],
     });
     expect(result).toMatchObject([{ value: 'one' }]);
@@ -210,9 +202,7 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
-      initial: {
-        value: { pattern: { body: [{ type: 'text', value: 'other' }] } },
-      },
+      initial: { value: { type: 'message', pattern: ['other'] } },
       fields: [{ handle: { current: { value: 'other' } } }],
     });
     expect(result).toMatchObject([{ value: 'other' }]);
@@ -242,7 +232,7 @@ describe('<EditorProvider>', () => {
         {
           handle: { current: { value: '' } },
           id: '|one',
-          keys: [{ type: 'nmtoken', value: 'one' }],
+          keys: [{ type: 'literal', value: 'one' }],
           labels: [{ label: 'one', plural: true }],
           name: '',
         },
@@ -283,7 +273,7 @@ describe('<EditorProvider>', () => {
         {
           handle: { current: { value: 'ONE' } },
           id: '|one',
-          keys: [{ type: 'nmtoken', value: 'one' }],
+          keys: [{ type: 'literal', value: 'one' }],
           labels: [{ label: 'one', plural: true }],
           name: '',
         },
@@ -297,7 +287,7 @@ describe('<EditorProvider>', () => {
       ],
     });
     expect(result).toMatchObject([
-      { keys: [{ type: 'nmtoken', value: 'one' }], name: '', value: 'ONE' },
+      { keys: [{ type: 'literal', value: 'one' }], name: '', value: 'ONE' },
       { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
     ]);
   });
@@ -340,7 +330,7 @@ describe('<EditorProvider>', () => {
 
     expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
     expect(result).toMatchObject([
-      { keys: [{ type: 'nmtoken', value: 'one' }], name: '', value: 'ONE' },
+      { keys: [{ type: 'literal', value: 'one' }], name: '', value: 'ONE' },
       { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
     ]);
   });
