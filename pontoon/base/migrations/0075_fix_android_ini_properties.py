@@ -83,7 +83,7 @@ def fix_props(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0073_alter_permissionchangelog_performed_on"),
+        ("base", "0074_remove_repository_permalink_prefix"),
     ]
 
     operations = [
