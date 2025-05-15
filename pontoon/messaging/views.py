@@ -98,10 +98,11 @@ def get_recipients(form):
     recipients = User.objects.none()
 
     """
-    Filter recipients by user role, locale and project:
+    Filter recipients by user role, locale, project and email opt-in status:
     - Contributors of selected Locales and Projects
     - Managers of selected Locales
     - Translators of selected Locales
+    - Email/Notification opt-in status
     """
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = form.cleaned_data.get("projects")
@@ -237,6 +238,11 @@ def get_recipients(form):
         rejected_filters = rejected.values_list("rejected_user", flat=True).distinct()
         review_filters = approved_filters.union(rejected_filters)
         recipients = recipients.filter(pk__in=review_filters)
+
+    if form.cleaned_data.get("email") and not form.cleaned_data.get("notification"):
+        recipients = recipients & User.objects.filter(
+            profile__email_communications_enabled=True
+        )
 
     return recipients
 
