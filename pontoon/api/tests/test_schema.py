@@ -86,7 +86,6 @@ def test_projects(client):
     assert response.json() == {
         "data": {
             "projects": [
-                {"name": "Pontoon Intro"},
                 {"name": "Terminology"},
                 {"name": "Tutorial"},
             ]
