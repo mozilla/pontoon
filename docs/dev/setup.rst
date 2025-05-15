@@ -14,7 +14,7 @@ Prerequisites
 
 1. Install `Docker <https://docs.docker.com/install/>`_.
 
-2. Install `Node.js 14 and npm 7 or later <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>`_.
+2. Install `Node.js 16.6.0 and npm 7 or later <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>`_.
 
 3. Install `make <https://www.gnu.org/software/make/>`_ using either your
    system's package manager (Linux) or Xcode command line developer tools (OSX).
