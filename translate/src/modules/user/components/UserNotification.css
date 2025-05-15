@@ -124,7 +124,8 @@
 }
 /* End message styling */
 
-.user-notification .timeago {
+.user-notification .timeago,
+.user-notification .date-display {
   color: var(--light-grey-2);
   display: block;
   font-size: 11px;
