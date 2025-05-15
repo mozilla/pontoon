@@ -98,7 +98,7 @@ def get_recipients(form):
     recipients = User.objects.none()
 
     """
-    Filter recipients by user role, locale, project and email/notification opt:
+    Filter recipients by user role, locale, project and email opt-in status:
     - Contributors of selected Locales and Projects
     - Managers of selected Locales
     - Translators of selected Locales
