@@ -74,7 +74,6 @@ which are not supported by earlier npm versions.
 Database
 ========
 
-By default, you will have default data loaded for only the Pontoon Intro project.
 If you have a database dump, you can load it into your PostgreSQL database.
 
 Make sure you backup your existing database first:
