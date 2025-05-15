@@ -174,35 +174,6 @@ def test_project_filters(
     }
 
 
-# @pytest.mark.django_db
-# def test_project_localizations(client):
-#     body = {
-#         "query": """{
-#             project(slug: "pontoon-intro") {
-#                 localizations {
-#                     locale {
-#                         name,
-#                         stringsWithErrors
-#                     }
-#                 }
-#             }
-#         }"""
-#     }
-
-#     response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
-
-#     assert response.status_code == 200
-#     assert response.json() == {
-#         "data": {
-#             "project": {
-#                 "localizations": [
-#                     {"locale": {"name": "English", "stringsWithErrors": 0}}
-#                 ]
-#             }
-#         }
-#     }
-
-
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "include_disabled,include_system,is_admin",
