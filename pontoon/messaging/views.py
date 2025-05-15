@@ -102,7 +102,7 @@ def get_recipients(form):
     - Contributors of selected Locales and Projects
     - Managers of selected Locales
     - Translators of selected Locales
-    - Email/Notification opt
+    - Email/Notification opt-in status
     """
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = form.cleaned_data.get("projects")
