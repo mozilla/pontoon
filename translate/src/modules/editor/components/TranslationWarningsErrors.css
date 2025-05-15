@@ -10,7 +10,7 @@
 .translation-warnings-list h3 {
   color: var(--status-error);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 300;
   margin-bottom: 10px;
 }
 
