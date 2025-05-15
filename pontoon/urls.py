@@ -53,7 +53,6 @@ urlpatterns = [
     ),
     # Legacy
     path("in-context/", RedirectView.as_view(url="/", permanent=True)),
-    path("intro/", RedirectView.as_view(url="/", permanent=True)),
     # Include URL configurations from installed apps
     path("terminology/", include("pontoon.terminology.urls")),
     path("translations/", include("pontoon.translations.urls")),
