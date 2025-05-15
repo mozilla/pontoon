@@ -65,7 +65,7 @@ the ``URL`` will need to include both the PAT and username, e.g.
 JavaScript setup
 ================
 
-For working on the front-end, you need at least Node.js 16.6.0 and npm 7
+For working on the front-end, you need the latest versions of Node.js and npm
 (`installation instructions <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>`_).
 Parts of the front-end use `npm workspaces <https://docs.npmjs.com/cli/v7/using-npm/workspaces>`_,
 which are not supported by earlier npm versions.
