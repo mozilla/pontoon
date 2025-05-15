@@ -141,7 +141,7 @@ Installation
 
 9.
 
-10. After you've provided credentials for your django-allauth provider, you have to update them in database,
+8. After you've provided credentials for your django-allauth provider, you have to update them in database,
    because it's required by django-allauth. You will have to call this command after every change in your
    django-allauth settings (e.g. client key):
 
