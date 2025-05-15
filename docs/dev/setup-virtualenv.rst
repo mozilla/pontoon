@@ -140,14 +140,9 @@ Installation
    Make sure that the email address you use for the superuser account matches
    the email that you will log in with via Firefox Accounts.
 
-8. Pull the latest strings from version control for the Pontoon Intro project
-   (which is automatically created for you during the database migrations):
+9.
 
-   .. code-block:: bash
-
-      python manage.py sync_projects --projects=pontoon-intro --no-commit
-
-9. After you've provided credentials for your django-allauth provider, you have to update them in database,
+10. After you've provided credentials for your django-allauth provider, you have to update them in database,
    because it's required by django-allauth. You will have to call this command after every change in your
    django-allauth settings (e.g. client key):
 
@@ -155,13 +150,13 @@ Installation
 
       python manage.py update_auth_providers
 
-10. Install the required Node libraries using ``npm``:
+11. Install the required Node libraries using ``npm``:
 
    .. code-block:: bash
 
       npm install
 
-11. Build the client:
+12. Build the client:
 
    .. code-block:: bash
 
