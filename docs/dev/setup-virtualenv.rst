@@ -17,7 +17,7 @@ This guide assumes you have already installed and set up the following:
 1. `Git <https://git-scm.com>`__
 2. `Python 3.11 <https://www.python.org>`__
 3. `uv <https://docs.astral.sh/uv/getting-started/installation/#standalone-installer>`_
-4. `Latest versions of Node.js <https://nodejs.org>`__ and `npm <https://www.npmjs.com>`__
+4. `Node.js <https://nodejs.org>`__ and `npm <https://www.npmjs.com>`__
 5. `PostgreSQL 15 <http://www.postgresql.org>`__
 
 These docs assume a Unix-like operating system, although the site should, in
