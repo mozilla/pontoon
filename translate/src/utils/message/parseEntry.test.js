@@ -14,7 +14,7 @@ describe('parseEntry', () => {
               [feminine] her
           }
       `;
-    const entry = parseEntry(input);
+    const entry = parseEntry('ftl', input);
     expect(entry).toEqual({
       id: 'my-entry',
       value: {

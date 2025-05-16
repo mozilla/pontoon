@@ -5,9 +5,10 @@ from datetime import datetime
 from itertools import groupby
 from os import makedirs, remove
 from os.path import commonpath, dirname, isfile, join, normpath
-from re import finditer
+from re import compile
 
 from moz.l10n.formats import Format
+from moz.l10n.message import parse_message
 from moz.l10n.model import (
     Entry,
     Expression,
@@ -332,7 +333,7 @@ def set_translations(
                     except ValueError:
                         pass
 
-    if not_translated and res.format != Format.xliff:
+    if not_translated and res.format not in (Format.po, Format.xliff):
         section = not_translated[0][0]
         rm: list[Entry] = []
         for section_, entry in not_translated:
@@ -358,6 +359,10 @@ def set_translations(
         ]
 
 
+android_quotes = compile(r"(?<!\\)(['\"])")
+webext_placeholder = compile(r"\$([a-zA-Z0-9_@]+)\$|(\$[1-9])|\$(\$+)")
+
+
 def set_translation(
     translations: list[Translation],
     res: Resource,
@@ -374,69 +379,70 @@ def set_translation(
         case _:
             key = entry.id[0]
 
+    tx = next((tx for tx in translations if tx.entity.key == key), None)
+    if tx is None:
+        return False
+
     match res.format:
+        case Format.android:
+            entry.value = android_quotes.sub(r"\\\1", tx.string)
+
         case Format.po:
-            po_tx = [tx for tx in translations if tx.entity.key == key]
+            msg = parse_message(Format.mf2, tx.string)
             if isinstance(entry.value, SelectMessage):
-                entry.value.variants = {
-                    (str(tx.plural_form),): [tx.string] for tx in po_tx
-                }
+                entry.value.variants = (
+                    {("0",): msg.pattern}
+                    if isinstance(msg, PatternMessage)
+                    else {
+                        (str(idx),): pattern
+                        for idx, pattern in enumerate(msg.variants.values())
+                    }
+                )
             else:
-                entry.value = po_tx[0].string if po_tx else ""
+                assert isinstance(entry.value, PatternMessage)
+                assert isinstance(msg, PatternMessage)
+                entry.value = msg
             fuzzy_flag = Metadata("flag", "fuzzy")
-            if any(tx.fuzzy for tx in po_tx):
+            if tx.fuzzy:
                 if fuzzy_flag not in entry.meta:
                     entry.meta.insert(0, fuzzy_flag)
             elif fuzzy_flag in entry.meta:
                 entry.meta = [m for m in entry.meta if m != fuzzy_flag]
-            return True
-        case Format.webext:
-            for tx in translations:
-                if tx.entity.key == key:
-                    if (
-                        isinstance(entry.value, PatternMessage)
-                        and entry.value.declarations
-                    ):
-                        # With a message value, placeholders in string parts would have their
-                        # $ characters doubled to escape them.
-                        entry.value.pattern = []
-                        pos = 0
-                        for m in finditer(
-                            r"\$([a-zA-Z0-9_@]+)\$|(\$[1-9])|\$(\$+)", tx.string
-                        ):
-                            start = m.start()
-                            if start > pos:
-                                entry.value.pattern.append(tx.string[pos:start])
-                            if m[1]:
-                                ph_name = m[1].replace("@", "_")
-                                if ph_name[0].isdigit():
-                                    ph_name = f"_{ph_name}"
-                                ph_name = next(
-                                    (
-                                        name
-                                        for name in entry.value.declarations
-                                        if name.lower() == ph_name.lower()
-                                    ),
-                                    ph_name,
-                                )
-                                pass
-                            else:
-                                ph_name = m[0]
-                            entry.value.pattern.append(
-                                Expression(
-                                    VariableRef(ph_name), attributes={"source": m[0]}
-                                )
-                            )
-                            pos = m.end()
-                        if pos < len(tx.string):
-                            entry.value.pattern.append(tx.string[pos:])
-                    else:
-                        entry.value = tx.string
-                    return True
-            return False
+
+        case Format.webext if (
+            isinstance(entry.value, PatternMessage) and entry.value.declarations
+        ):
+            # With a message value, placeholders in string parts would have their
+            # $ characters doubled to escape them.
+            entry.value.pattern = []
+            pos = 0
+            for m in webext_placeholder.finditer(tx.string):
+                start = m.start()
+                if start > pos:
+                    entry.value.pattern.append(tx.string[pos:start])
+                if m[1]:
+                    ph_name = m[1].replace("@", "_")
+                    if ph_name[0].isdigit():
+                        ph_name = f"_{ph_name}"
+                    ph_name = next(
+                        (
+                            name
+                            for name in entry.value.declarations
+                            if name.lower() == ph_name.lower()
+                        ),
+                        ph_name,
+                    )
+                    pass
+                else:
+                    ph_name = m[0]
+                entry.value.pattern.append(
+                    Expression(VariableRef(ph_name), attributes={"source": m[0]})
+                )
+                pos = m.end()
+            if pos < len(tx.string):
+                entry.value.pattern.append(tx.string[pos:])
+
         case _:
-            for tx in translations:
-                if tx.entity.key == key:
-                    entry.value = tx.string
-                    return True
-            return False
+            entry.value = tx.string
+
+    return True

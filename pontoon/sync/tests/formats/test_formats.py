@@ -1,4 +1,5 @@
-from pontoon.base.tests import TestCase
+from unittest import TestCase
+
 from pontoon.sync.formats import are_compatible_files
 
 
@@ -17,7 +18,6 @@ class FormatsTests(TestCase):
 
         # Different parser
         assert not are_compatible_files("file_a.ftl", "file_b.json")
-        assert not are_compatible_files("file_a.json", "messages.json")
 
         # Not supported file format
         assert not are_compatible_files("file_a.something", "file_b.else")

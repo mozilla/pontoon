@@ -42,7 +42,6 @@ type ResetAction = {
 type UpdateAction = {
   type: typeof UPDATE_ENTITIES;
   entity: number;
-  pluralForm: number;
   translation: EntityTranslation;
 };
 
@@ -57,9 +56,8 @@ export const resetEntities = (): ResetAction => ({ type: RESET_ENTITIES });
 
 export const updateEntityTranslation = (
   entity: number,
-  pluralForm: number,
   translation: EntityTranslation,
-): UpdateAction => ({ type: UPDATE_ENTITIES, entity, pluralForm, translation });
+): UpdateAction => ({ type: UPDATE_ENTITIES, entity, translation });
 
 /** Fetch entities and their translation.  */
 export const getEntities =

@@ -293,12 +293,6 @@ entitydetails-Metadata--entity-created-date =
 
 entitydetails-ContextIssueButton--context-issue-button = REQUEST CONTEXT or REPORT ISSUE
 
-## Entity Details PluralString
-## Shows the original string of an entity with plural forms
-
-entitydetails-PluralString--plural = PLURAL
-entitydetails-PluralString--singular = SINGULAR
-
 
 ## Entities List Entity
 ## Displays a single Entity as a list element

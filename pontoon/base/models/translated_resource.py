@@ -3,7 +3,6 @@ import logging
 from django.db import models
 from django.db.models import F, Q, Sum
 
-from .entity import Entity
 from .locale import Locale
 from .project import Project
 from .resource import Resource
@@ -76,10 +75,10 @@ class TranslatedResource(models.Model):
     Resource representation for a specific locale.
     """
 
-    resource = models.ForeignKey(
+    resource: models.ForeignKey[Resource] = models.ForeignKey(
         Resource, models.CASCADE, related_name="translatedresources"
     )
-    locale = models.ForeignKey(
+    locale: models.ForeignKey[Locale] = models.ForeignKey(
         Locale, models.CASCADE, related_name="translatedresources"
     )
 
@@ -105,14 +104,6 @@ class TranslatedResource(models.Model):
     class Meta:
         unique_together = (("locale", "resource"),)
 
-    def count_total_strings(self):
-        entities = Entity.objects.filter(resource=self.resource, obsolete=False)
-        total = entities.count()
-        plural_count = entities.exclude(string_plural="").count()
-        if plural_count:
-            total += (self.locale.nplurals - 1) * plural_count
-        return total
-
     def stats_data(self) -> dict[str, int]:
         return {
             "total": self.total_strings,
@@ -127,7 +118,7 @@ class TranslatedResource(models.Model):
         self, before: dict[str, int], after: dict[str, int], tr_created: bool
     ):
         if tr_created:
-            self.total_strings = self.count_total_strings()
+            self.total_strings = self.resource.total_strings
         self.approved_strings = (
             F("approved_strings") + after["approved"] - before["approved"]
         )
@@ -159,7 +150,7 @@ class TranslatedResource(models.Model):
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
 
-        self.total_strings = self.count_total_strings()
+        self.total_strings = self.resource.total_strings
 
         translations = Translation.objects.filter(
             entity__resource=self.resource,
