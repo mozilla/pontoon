@@ -174,6 +174,34 @@ def test_project_filters(
 
 
 @pytest.mark.django_db
+def test_project_localizations(client):
+    body = {
+        "query": """{
+            project(slug: "tutorial") {
+                localizations {
+                    locale {
+                        name,
+                        stringsWithErrors
+                    }
+                }
+            }
+        }"""
+    }
+
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+
+    assert response.status_code == 200
+    assert response.status_code == 200
+    localizations = response.json()["data"]["project"]["localizations"]
+    assert isinstance(localizations, list)
+    assert len(localizations) > 0
+
+    first_locale = localizations[0]["locale"]
+    assert "name" in first_locale
+    assert "stringsWithErrors" in first_locale
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "include_disabled,include_system,is_admin",
     # Produces a product with all possible filters combinations
@@ -281,6 +309,28 @@ def test_locales_localizations_cyclic(client):
             locales {
                 localizations {
                     project {
+                        localizations {
+                            totalStrings
+                        }
+                    }
+                }
+            }
+        }"""
+    }
+
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+
+    assert response.status_code == 200
+    assert b"Cyclic queries are forbidden" in response.content
+
+
+@pytest.mark.django_db
+def test_project_localizations_cyclic(client):
+    body = {
+        "query": """{
+            project(slug: "tutorial") {
+                localizations {
+                    locale {
                         localizations {
                             totalStrings
                         }
