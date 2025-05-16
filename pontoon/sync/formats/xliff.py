@@ -4,36 +4,44 @@ Parser for the xliff translation format.
 
 from __future__ import annotations
 
-from lxml import etree
+from html import unescape
+from re import compile
 
-from translate.storage import xliff
+from moz.l10n.formats import Format
+from moz.l10n.message import serialize_message
+from moz.l10n.model import Entry, Message, Resource, Section
 
-from .common import ParseError, VCSTranslation
+from .common import VCSTranslation
 
 
-def parse_xml_unit(unit: xliff.xliffunit, order: int):
-    key = unit.getid()
-    rich_target = unit.get_rich_target()
-    target_string = str(rich_target[0]) if rich_target else None
-    notes = unit.getnotes()
+note_re = compile(r"note\[\d+\]")
+
+
+def parse(res: Resource[Message]):
+    return [
+        as_translation(order, section, entry)
+        for order, (section, entry) in enumerate(
+            (section, entry)
+            for section in res.sections
+            for entry in section.entries
+            if isinstance(entry, Entry)
+        )
+    ]
+
+
+def as_translation(order: int, section: Section, entry: Entry):
+    assert len(section.id) == 1
+    assert len(entry.id) == 1
+    context = entry.id[0]
+    key = section.id[0] + "\x04" + context
+    string = unescape(serialize_message(Format.xliff, entry.value))
+    comments: list[str] = [entry.comment] if entry.comment else []
+    comments += [m.value for m in entry.meta if note_re.fullmatch(m.key)]
     return VCSTranslation(
         key=key,
-        context=unit.xmlelement.get("id"),
+        context=context,
         order=order,
-        strings={None: target_string} if target_string else {},
-        source_string=str(unit.rich_source[0]),
-        comments=notes.split("\n") if notes else None,
+        strings={None: string} if string else {},
+        source_string=entry.get_meta("source") or "",
+        comments=comments or None,
     )
-
-
-def parse(path: str):
-    try:
-        with open(path) as f:
-            xml = f.read().encode("utf-8")
-            xliff_file = xliff.xlifffile(xml)
-            return [
-                parse_xml_unit(unit, order)
-                for order, unit in enumerate(xliff_file.units)
-            ]
-    except (OSError, etree.XMLSyntaxError) as err:
-        raise ParseError(f"Failed to parse {path}: {err}")

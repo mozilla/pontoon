@@ -1,102 +1,96 @@
-from difflib import Differ
+from os.path import join
+from tempfile import TemporaryDirectory
 from textwrap import dedent
+from unittest import TestCase
 
-import pytest
-
-from pontoon.base.tests import TestCase
-from pontoon.sync.formats import xliff
-from pontoon.sync.formats.common import ParseError
-from pontoon.sync.tests.formats import FormatTestsMixin
+from pontoon.sync.formats import ParseError, parse_translations
 
 
-BASE_XLIFF_FILE = """
-<xliff>
-    <file original="filename" source-language="en" datatype="plaintext" target-language="en">
-        <body>
-            <trans-unit id="Source String Key">
-                <source>Source String</source>
-                <target>Translated String</target>
-                <note>Sample comment</note>
-            </trans-unit>
-            <trans-unit id="Multiple Comments Key">
-                <source>Multiple Comments</source>
-                <target>Translated Multiple Comments</target>
-                <note>First comment</note>
-                <note>Second comment</note>
-            </trans-unit>
-            <trans-unit id="No Comments or Sources Key">
-                <source>No Comments or Sources</source>
-                <target>Translated No Comments or Sources</target>
-            </trans-unit>
-            <trans-unit id="Missing Translation Key">
-                <source>Missing Translation</source>
-            </trans-unit>
-        </body>
-    </file>
-</xliff>
-"""
+class XLIFFTests(TestCase):
+    def test_xliff(self):
+        src = dedent("""
+            <xliff version="1.2">
+                <file original="filename" source-language="en" datatype="plaintext" target-language="en">
+                    <body>
+                        <trans-unit id="Source String Key">
+                            <source>Source &lt;b&gt;String&lt;/b&gt;</source>
+                            <target>Translated &lt;b&gt;String&lt;/b&gt;</target>
+                            <note>Sample comment</note>
+                        </trans-unit>
+                        <trans-unit id="Multiple Comments Key">
+                            <source>Multiple Comments</source>
+                            <target>Translated Multiple Comments</target>
+                            <note>First comment</note>
+                            <note>Second comment</note>
+                        </trans-unit>
+                        <trans-unit id="No Comments or Sources Key">
+                            <source>No Comments or Sources</source>
+                            <target>Translated No Comments or Sources</target>
+                        </trans-unit>
+                        <trans-unit id="Missing Translation Key">
+                            <source>Missing Translation</source>
+                        </trans-unit>
+                    </body>
+                </file>
+            </xliff>
+            """)
 
+        with TemporaryDirectory() as dir:
+            path = join(dir, "file.xliff")
+            with open(path, "x") as file:
+                file.write(src)
+            t0, t1, t2, t3 = parse_translations(path)
 
-XLIFF_TEMPLATE = """
-<xliff>
-    <file original="filename" source-language="en" datatype="plaintext" {attr}>
-        <body>
-            {body}
-        </body>
-    </file>
-</xliff>
-"""
+            # basic
+            assert t0.comments == ["Sample comment"]
+            assert t0.key == "filename\x04Source String Key"
+            assert t0.context == "Source String Key"
+            assert t0.strings == {None: "Translated <b>String</b>"}
+            assert t0.source_string == "Source <b>String</b>"
+            assert t0.source_string_plural == ""
+            assert t0.order == 0
 
+            # multiple comments
+            assert t1.comments == ["First comment", "Second comment"]
+            assert t1.key == "filename\x04Multiple Comments Key"
+            assert t1.strings == {None: "Translated Multiple Comments"}
+            assert t1.source_string == "Multiple Comments"
+            assert t1.source_string_plural == ""
+            assert t1.order == 1
 
-class XLIFFTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(xliff.parse)
-    supports_keys = True
-    supports_source = False
-    supports_source_string = True
+            # no comments or sources
+            assert t2.comments == []
+            assert t2.key == "filename\x04No Comments or Sources Key"
+            assert t2.strings == {None: "Translated No Comments or Sources"}
+            assert t2.source_string == "No Comments or Sources"
+            assert t2.source_string_plural == ""
+            assert t2.order == 2
 
-    def key(self, source_string):
-        """XLIFF keys are prefixed with the file name."""
-        return "filename\x04" + super().key(source_string)
+            # missing translation
+            assert t3.comments == []
+            assert t3.key == "filename\x04Missing Translation Key"
+            assert t3.strings == {}
+            assert t3.source_string == "Missing Translation"
+            assert t3.source_string_plural == ""
+            assert t3.order == 3
 
-    def assert_file_content(self, file_path, expected_content):
-        """
-        Compare XML file contents as XML rather than direct strings.
-        """
-        with open(file_path) as f:
-            file_content = f.read()
+    def test_invalid_xliff(self):
+        src = dedent("""
+            <xliff version="1.2">
+                <file original="filename" source-language="en" datatype="plaintext" target-language="en">
+                    <body>
+                        <trans-unit id="Source String Key"
+                            <source>Source String</source>
+                            <target>Translated String</target>
+                        </trans-unit>
+                    </body>
+                </file>
+            </xliff>
+            """)
 
-            # Generate a diff for the error message.
-            result = Differ().compare(
-                file_content.splitlines(1), expected_content.splitlines(1)
-            )
-            msg = "XML strings are not equal:\n" + "".join(result)
-
-            self.assertXMLEqual(file_content, expected_content, msg)
-
-    def test_parse_basic(self):
-        self.run_parse_basic(BASE_XLIFF_FILE, 0)
-
-    def test_parse_multiple_comments(self):
-        self.run_parse_multiple_comments(BASE_XLIFF_FILE, 1)
-
-    def test_parse_no_comments_no_sources(self):
-        self.run_parse_no_comments_no_sources(BASE_XLIFF_FILE, 2)
-
-    def test_parse_missing_translation(self):
-        self.run_parse_missing_translation(BASE_XLIFF_FILE, 3)
-
-    def test_parse_invalid_translation(self):
-        """
-        If a resource has an invalid translation, raise a ParseError.
-        """
-        with pytest.raises(ParseError):
-            self.parse_string(
-                dedent(
-                    """
-                <trans-unit id="Source String Key"
-                    <source>Source String</source>
-                    <target>Translated String</target>
-                </trans-unit>
-            """
-                )
-            )
+        with TemporaryDirectory() as dir:
+            path = join(dir, "file.xlf")
+            with open(path, "x") as file:
+                file.write(src)
+            with self.assertRaises(ParseError):
+                parse_translations(path)

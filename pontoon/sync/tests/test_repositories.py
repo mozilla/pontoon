@@ -1,8 +1,33 @@
 from textwrap import dedent
 from unittest.mock import Mock, patch
 
-from pontoon.base.tests import CONTAINS, TestCase
+from pontoon.base.tests import TestCase
 from pontoon.sync.repositories import get_repo
+
+
+class CONTAINS:
+    """
+    Helper class that is considered equal to any object that contains
+    elements the elements passed to it.
+
+    Used mostly in conjunction with Mock.assert_called_with to test if
+    a string argument contains certain substrings:
+
+    >>> mock_function('foobarbaz')
+    >>> mock_function.assert_called_with(CONTAINS('bar'))  # Passes
+    """
+
+    def __init__(self, *args):
+        self.items = args
+
+    def __eq__(self, other):
+        return all(item in other for item in self.items)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        return "<CONTAINS {}>".format(",".join(repr(item) for item in self.items))
 
 
 class VCSRevisionTests(TestCase):
