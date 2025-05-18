@@ -69,8 +69,8 @@ def theme_class(request):
     if user.is_authenticated:
         theme = user.profile.theme
 
-        if theme == "system":
-            theme = request.COOKIES.get("system_theme", "system")
+    if theme == "system":
+        theme = request.COOKIES.get("system_theme", "system")
 
     return f"{theme}-theme"
 

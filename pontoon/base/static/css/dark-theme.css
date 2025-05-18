@@ -1,6 +1,5 @@
 /* Dark Theme Variables */
-.dark-theme,
-.system-theme {
+.dark-theme {
   /* Main */
   --main-border-1: #4d5967;
   --moz-logo: url(../img/moz-logo-light.svg);
