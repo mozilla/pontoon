@@ -13,7 +13,7 @@ def reverse_0002_load_initial_data(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0074_remove_repository_permalink_prefix"),  # update as needed
+        ("base", "0075_fix_android_ini_properties")
     ]
 
     operations = [
