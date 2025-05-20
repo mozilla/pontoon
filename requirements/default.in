@@ -20,7 +20,7 @@ bleach==6.1.0
 celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==2.1.0
-Django==4.2.20
+Django==4.2.21
 django-ace==1.32.4
 django-allauth==0.51.0
 django-bmemcached==0.3.0
@@ -37,13 +37,10 @@ google-cloud-translate==3.16.0
 graphene-django==3.2.2
 gunicorn==23.0.0
 jsonfield==3.1.0
-jsonschema==4.23.0
-lxml==5.3.0
 markupsafe==2.0.1
-moz.l10n[xml]==0.6.0
+moz.l10n[xml]==0.7.0
 newrelic==9.6.0
 openai==1.47.1
-polib==1.2.0
 psycopg2==2.9.6
 PyJWT==2.9.0
 python-dateutil==2.9.0
@@ -54,6 +51,3 @@ sacrebleu==2.4.3
 sacremoses==0.1.1
 translate-toolkit==3.14.1
 whitenoise==5.2.0
-
-# Dependencies loaded from outside pypi.
-silme @ https://github.com/mozilla/silme/archive/v0.11.2.zip
