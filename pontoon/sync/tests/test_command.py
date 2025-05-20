@@ -19,8 +19,6 @@ class CommandTests(TestCase):
         self.command.force = False
         self.command.stderr = io.StringIO()
 
-        Project.objects.filter(slug="pontoon-intro").delete()
-
         self.mock_sync_project_task = self.patch_object(
             sync_projects, "sync_project_task"
         )
