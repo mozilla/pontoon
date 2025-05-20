@@ -61,7 +61,7 @@ jobs:
       - name: Check licenses
         run: |
           pip-licenses
-          pip-licenses --fail-on="GNU General Public License (GPL)" --ignore-packages text-unidecode translate-toolkit silme
+          pip-licenses --fail-on="GNU General Public License (GPL)" --ignore-packages text-unidecode translate-toolkit
       # Set environment variables
       - run: uv pip install pytest-dotenv
       - run: >

@@ -19,7 +19,7 @@ class VCSTranslation:
         key: str,
         context: str,
         order: int,
-        strings: dict[str | None, str],
+        strings: dict[int | None, str],
         source_string: str = "",
         source_string_plural: str = "",
         comments: list[str] | None = None,
