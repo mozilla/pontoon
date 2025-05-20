@@ -281,12 +281,12 @@ def test_localization_filters(
 
 
 @pytest.mark.django_db
-def test_projects_localizations_cyclic(client):
+def test_locales_localizations_cyclic(client):
     body = {
         "query": """{
-            projects {
+            locales {
                 localizations {
-                    locale {
+                    project {
                         localizations {
                             totalStrings
                         }
@@ -303,12 +303,12 @@ def test_projects_localizations_cyclic(client):
 
 
 @pytest.mark.django_db
-def test_locales_localizations_cyclic(client):
+def test_projects_localizations_cyclic(client):
     body = {
         "query": """{
-            locales {
+            projects {
                 localizations {
-                    project {
+                    locale {
                         localizations {
                             totalStrings
                         }
