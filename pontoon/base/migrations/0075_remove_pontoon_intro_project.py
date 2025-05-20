@@ -7,8 +7,6 @@ def reverse_0002_load_initial_data(apps, schema_editor):
 
     try:
         project = Project.objects.get(slug="pontoon-intro")
-        Repository.objects.filter(project=project).delete()
-        project.locales.clear()
         project.delete()
     except Project.DoesNotExist:
         pass
