@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
     dependencies = [
         ("base", "0075_fix_android_ini_properties"),
-        ("base", "0075_remove_pontoon_intro_project"),
+        ("base", "0076_remove_pontoon_intro_project"),
     ]
 
     operations = []
