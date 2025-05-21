@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0072_remove_locale_approved_strings_and_more"),
+        ("base", "0076_remove_pontoon_intro_project"),
     ]
 
     operations = [
