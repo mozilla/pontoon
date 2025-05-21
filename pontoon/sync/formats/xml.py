@@ -27,7 +27,7 @@ def parse(res: Resource[Message]):
     ]
 
 
-esc_u = compile(r"(?<!\\)\\u[0-9]{4}")
+esc_u = compile(r"(?<!\\)\\u([0-9]{4})")
 esc_char = compile(r"(?<!\\)\\([^nt])")
 esc_nl = compile(r"(?<!\\)\\n\s*")
 ws_around_outer_tag = compile(r"^\s+(?=<)|(?<=>)\s+$")
