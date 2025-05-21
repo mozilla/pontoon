@@ -332,14 +332,9 @@ def get_translations_from_other_locales(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    plural_form = None if entity.string_plural == "" else 0
 
     translations = (
-        Translation.objects.filter(
-            entity=entity,
-            plural_form=plural_form,
-            approved=True,
-        )
+        Translation.objects.filter(entity=entity, approved=True)
         .exclude(locale=locale)
         .order_by("locale__name")
     ).values(
@@ -414,7 +409,6 @@ def get_translation_history(request):
     try:
         entity = int(request.GET["entity"])
         locale = request.GET["locale"]
-        plural_form = int(request.GET["plural_form"])
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
@@ -425,24 +419,23 @@ def get_translation_history(request):
     locale = get_object_or_404(Locale, code=locale)
     project_contact = entity.resource.project.contact
 
-    translations = Translation.objects.filter(
-        entity=entity,
-        locale=locale,
-    ).prefetch_related(
-        Prefetch(
-            "comments",
-            queryset=Comment.objects.prefetch_related("author").order_by("timestamp"),
-        ),
-        "user",
-        "approved_user",
-        "rejected_user",
-        "errors",
-        "warnings",
+    translations = (
+        Translation.objects.filter(entity=entity, locale=locale)
+        .prefetch_related(
+            Prefetch(
+                "comments",
+                queryset=Comment.objects.prefetch_related("author").order_by(
+                    "timestamp"
+                ),
+            ),
+            "user",
+            "approved_user",
+            "rejected_user",
+            "errors",
+            "warnings",
+        )
+        .order_by("-active", "rejected", "-date")
     )
-
-    if plural_form != -1:
-        translations = translations.filter(plural_form=plural_form)
-    translations = translations.order_by("-active", "rejected", "-date")
 
     payload = []
 

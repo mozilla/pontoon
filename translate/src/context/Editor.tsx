@@ -122,7 +122,7 @@ export type EditorActions = {
 };
 
 function parseEntryFromFluentSource(base: MessageEntry, source: string) {
-  const entry = parseEntry(source);
+  const entry = parseEntry('ftl', source);
   if (entry) {
     entry.id = base.id;
   }
@@ -173,6 +173,7 @@ const buildResult = (message: EditorField[]): EditorResult =>
 export function EditorProvider({ children }: { children: React.ReactElement }) {
   const locale = useContext(Locale);
   const { entity } = useContext(EntityView);
+  const { format } = entity;
   const activeTranslation = useActiveTranslation();
   const readonly = useReadonlyEditor();
   const machinery = useContext(MachineryTranslations);
@@ -221,12 +222,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorFromHistory: (str) =>
         setState((prev) => {
           const next = { ...prev };
-          if (entity.format === 'ftl') {
-            const entry = parseEntry(str);
+          if (format === 'ftl' || format === 'po') {
+            const entry = parseEntry(format, str);
             if (entry) {
               next.entry = entry;
             }
-            if (entry && !requiresSourceView(entry)) {
+            if (entry && !requiresSourceView(format, entry)) {
               next.fields = prev.sourceView
                 ? editSource(entry)
                 : editMessageEntry(entry);
@@ -267,13 +268,13 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (prev.sourceView) {
             const source = prev.fields[0].handle.current.value;
             const entry = parseEntryFromFluentSource(prev.entry, source);
-            if (entry && !requiresSourceView(entry)) {
+            if (entry && !requiresSourceView(format, entry)) {
               const fields = editMessageEntry(entry);
               prev.focusField.current = fields[0];
               setResult(buildResult(fields));
               return { ...prev, entry, fields, sourceView: false };
             }
-          } else if (entity.format === 'ftl') {
+          } else if (format === 'ftl') {
             const entry = buildMessageEntry(
               prev.entry,
               buildResult(prev.fields),
@@ -287,40 +288,36 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           return prev;
         }),
     };
-  }, [entity.format, readonly]);
+  }, [format, readonly]);
 
   useEffect(() => {
     let entry: MessageEntry;
     let source = activeTranslation?.string || '';
     let sourceView = false;
-    if (entity.format === 'ftl') {
-      if (!source) {
-        const orig = parseEntry(entity.original);
-        entry = orig
-          ? getEmptyMessageEntry(orig, locale)
-          : createSimpleMessageEntry(entity.key, '');
-        if (requiresSourceView(entry)) {
-          source = serializeEntry('ftl', entry);
-          sourceView = true;
-        }
-      } else {
-        if (!source.endsWith('\n')) {
-          // Some Fluent translations may be stored without a terminal newline.
-          // If the data is cleaned up, this conditional may be removed.
-          // https://github.com/mozilla/pontoon/issues/2216
-          source += '\n';
-        }
-        const entry_ = parseEntry(source);
-        if (entry_) {
-          entry = entry_;
-          sourceView = requiresSourceView(entry);
-        } else {
-          entry = createSimpleMessageEntry(entity.key, source);
-          sourceView = true;
-        }
+    if (!source) {
+      const orig = parseEntry(format, entity.original);
+      entry = orig
+        ? getEmptyMessageEntry(orig, locale)
+        : createSimpleMessageEntry(entity.key, '');
+      if (requiresSourceView(format, entry)) {
+        source = serializeEntry(format, entry);
+        sourceView = true;
       }
     } else {
-      entry = createSimpleMessageEntry(entity.key, source);
+      if (format === 'ftl' && !source.endsWith('\n')) {
+        // Some Fluent translations may be stored without a terminal newline.
+        // If the data is cleaned up, this conditional may be removed.
+        // https://github.com/mozilla/pontoon/issues/2216
+        source += '\n';
+      }
+      const entry_ = parseEntry(format, source);
+      if (entry_) {
+        entry = entry_;
+        sourceView = requiresSourceView(format, entry);
+      } else {
+        entry = createSimpleMessageEntry(entity.key, source);
+        sourceView = format === 'ftl';
+      }
     }
 
     const fields = sourceView ? editSource(source) : editMessageEntry(entry);

@@ -15,8 +15,8 @@ import { EntitiesList } from './EntitiesList';
 
 // Entities shared between tests
 const ENTITIES = [
-  { pk: 1, translation: [{ string: '', errors: [], warnings: [] }] },
-  { pk: 2, translation: [{ string: '', errors: [], warnings: [] }] },
+  { pk: 1, translation: { string: '', errors: [], warnings: [] } },
+  { pk: 2, translation: { string: '', errors: [], warnings: [] } },
 ];
 
 describe('<EntitiesList>', () => {

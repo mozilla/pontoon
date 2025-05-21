@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { FluentTranslation } from './FluentTranslation';
+import { getPlainMessage } from '~/utils/message';
+
 import { GenericTranslation } from './GenericTranslation';
 
 type Props = {
@@ -11,13 +12,25 @@ type Props = {
 };
 
 export function Translation({
+  content,
+  diffTarget,
   format,
-  ...props
+  search,
 }: Props): null | React.ReactElement<React.ElementType> {
-  if (!props.content) {
+  if (!content) {
     return null;
   }
 
-  const Translation = format === 'ftl' ? FluentTranslation : GenericTranslation;
-  return <Translation {...props} />;
+  if (format === 'ftl' || format === 'po') {
+    content = getPlainMessage(content, format);
+    diffTarget &&= getPlainMessage(diffTarget, format);
+  }
+
+  return (
+    <GenericTranslation
+      content={content}
+      diffTarget={diffTarget}
+      search={search}
+    />
+  );
 }
