@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0076_remove_pontoon_intro_project"),
+        ("base", "0077_fix_android_newlines"),
     ]
 
     operations = [
