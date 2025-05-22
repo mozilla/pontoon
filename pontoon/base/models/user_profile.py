@@ -35,7 +35,7 @@ class UserProfile(models.Model):
     theme = models.CharField(
         choices=Themes.choices,
         max_length=20,
-        default=Themes.DARK,
+        default=Themes.SYSTEM,
     )
 
     # External accounts
