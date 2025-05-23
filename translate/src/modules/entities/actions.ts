@@ -78,14 +78,18 @@ export const getEntities =
     } = location;
 
     if (search) {
-      logUXAction('Load: String list with search parameter', 'Search Options Statistics', {
-        search,
-        search_exclude_source_strings: search_exclude_source_strings,
-        search_identifiers: search_identifiers,
-        search_match_case: search_match_case,
-        search_match_whole_word: search_match_whole_word,
-        search_rejected_translations: search_rejected_translations,
-      });
+      logUXAction(
+        'Load: String list with search parameter',
+        'Search Options Statistics',
+        {
+          search,
+          search_exclude_source_strings: search_exclude_source_strings,
+          search_identifiers: search_identifiers,
+          search_match_case: search_match_case,
+          search_match_whole_word: search_match_whole_word,
+          search_rejected_translations: search_rejected_translations,
+        },
+      );
     }
 
     if (content.entities) {
