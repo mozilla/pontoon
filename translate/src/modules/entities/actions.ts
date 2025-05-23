@@ -5,6 +5,7 @@ import {
   fetchSiblingEntities,
 } from '~/api/entity';
 import { EntityTranslation } from '~/api/translation';
+import { logUXAction } from '~/api/uxaction';
 import { Location } from '~/context/Location';
 import { updateStats } from '~/modules/stats/actions';
 import type { AppDispatch } from '~/store';
@@ -67,6 +68,25 @@ export const getEntities =
     dispatch({ type: REQUEST_ENTITIES });
 
     const content = await fetchEntities(location, page);
+    const {
+      search,
+      search_exclude_source_strings,
+      search_identifiers,
+      search_match_case,
+      search_match_whole_word,
+      search_rejected_translations,
+    } = location;
+
+    if (search) {
+      logUXAction('Search Options Selected', 'Search Option Statistics', {
+        search,
+        search_exclude_source_strings: search_exclude_source_strings,
+        search_identifiers: search_identifiers,
+        search_match_case: search_match_case,
+        search_match_whole_word: search_match_whole_word,
+        search_rejected_translations: search_rejected_translations,
+      });
+    }
 
     if (content.entities) {
       dispatch({
