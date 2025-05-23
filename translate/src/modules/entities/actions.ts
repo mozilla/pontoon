@@ -78,7 +78,7 @@ export const getEntities =
     } = location;
 
     if (search) {
-      logUXAction('Search Options Selected', 'Search Option Statistics', {
+      logUXAction('Load: String list with search parameter', 'Search Options Statistics', {
         search,
         search_exclude_source_strings: search_exclude_source_strings,
         search_identifiers: search_identifiers,
