@@ -27,7 +27,7 @@ def parse(res: Resource[Message]):
     ]
 
 
-esc_u = compile(r"(?<!\\)\\u([0-9]{4})")
+esc_u = compile(r"(?<!\\)\\u([0-9A-Fa-f]{4})")
 esc_char = compile(r"(?<!\\)\\([^nt])")
 esc_nl = compile(r"(?<!\\)\\n\s*")
 ws_around_outer_tag = compile(r"^\s+(?=<)|(?<=>)\s+$")
@@ -39,7 +39,7 @@ def as_translation(order: int, entry: Entry[Message]):
     key = entry.id[0]
     string = serialize_message(Format.android, entry.value)
     string = unescape(string)
-    string = esc_u.sub(lambda m: chr(int(m[1])), string)
+    string = esc_u.sub(lambda m: chr(int(m[1], base=16)), string)
     string = esc_char.sub(r"\1", string)
     string = esc_nl.sub(r"\\n\n", string)
     string = ws_around_outer_tag.sub("", string)
