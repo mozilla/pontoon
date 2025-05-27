@@ -48,10 +48,10 @@ def ajax_compose(request):
         "messaging/includes/compose.html",
         {
             "form": forms.MessageForm(),
-            "available_locales": [],
-            "selected_locales": Locale.objects.available(),
-            "available_projects": [],
-            "selected_projects": Project.objects.available().order_by("name"),
+            "available_locales": Locale.objects.available(),
+            "selected_locales": [],
+            "available_projects": Project.objects.available().order_by("name"),
+            "selected_projects": [],
         },
     )
 
@@ -106,6 +106,13 @@ def get_recipients(form):
     """
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = form.cleaned_data.get("projects")
+
+    if len(locale_ids) <= 0:
+        locale_ids = Locale.objects.all()
+        print(locale_ids)
+
+    if len(project_ids) <= 0:
+        project_ids = Project.objects.all()
 
     translations = Translation.objects.filter(
         locale_id__in=locale_ids,
