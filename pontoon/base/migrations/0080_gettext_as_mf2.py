@@ -211,7 +211,7 @@ def plural_entities(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0075_fix_android_ini_properties"),
+        ("base", "0079_trim_android"),
         ("sync", "0002_change_pontoon_sync_email"),
     ]
     operations = [

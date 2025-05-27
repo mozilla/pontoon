@@ -10,7 +10,12 @@ import pytest
 
 from django.conf import settings
 
-from pontoon.base.models import ChangedEntityLocale, TranslatedResource, Translation
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    Entity,
+    TranslatedResource,
+    Translation,
+)
 from pontoon.base.tests import (
     EntityFactory,
     LocaleFactory,
@@ -229,6 +234,78 @@ def test_translation_before_source():
         # Test -- New a0 translation is picked up, added a1 is dropped
         with open(join(repo_tgt.checkout_path, "de-Test", "a.ftl")) as file:
             assert file.read() == "a0 = New translation 0\n"
+
+
+@pytest.mark.django_db
+def test_android():
+    mock_vcs = MockVersionControl(changes=None)
+    with (
+        TemporaryDirectory() as root,
+        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
+        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
+    ):
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="de-Test", name="Test German")
+        repo_src = RepositoryFactory(
+            url="http://example.com/src-repo", source_repo=True
+        )
+        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
+        project = ProjectFactory.create(
+            name="test-android",
+            locales=[locale],
+            repositories=[repo_src, repo_tgt],
+        )
+        res = ResourceFactory.create(project=project, path="strings.xml", format="xml")
+
+        entity = EntityFactory.create(resource=res, key="quotes", string="Prev quotes")
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="'Hello' \"translation\"",
+            active=True,
+            approved=True,
+        )
+
+        entity = EntityFactory.create(
+            resource=res, key="newline", string="Prev newline"
+        )
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="translated \n escaped \\n newlines",
+            active=True,
+            approved=True,
+        )
+
+        # Filesystem setup
+        src_root = repo_src.checkout_path
+        src_xml = """<?xml version="1.0" ?>
+            <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+                <string name="quotes">\\'Hello\\' \\"source\\"</string>
+                <string name="newline">literal \n escaped \\n newlines</string>
+            </resources>"""
+        makedirs(src_root)
+        build_file_tree(src_root, {"en-US": {"strings.xml": src_xml}})
+
+        tgt_root = repo_tgt.checkout_path
+        makedirs(tgt_root)
+        build_file_tree(tgt_root, {"de-Test": {}})
+
+        # Test
+        sync_project_task(project.pk)
+        assert set(ent.string for ent in Entity.objects.filter(resource=res)) == {
+            "'Hello' \"source\"",
+            "literal escaped \\n\nnewlines",
+        }
+        with open(join(repo_tgt.checkout_path, "de-Test", "strings.xml")) as file:
+            assert file.read() == dedent("""\
+                <?xml version="1.0" encoding="utf-8"?>
+                <resources>
+                  <string name="quotes">\\'Hello\\' \\"translation\\"</string>
+                  <string name="newline">translated escaped \\nnewlines</string>
+                </resources>
+                """)
 
 
 @pytest.mark.django_db

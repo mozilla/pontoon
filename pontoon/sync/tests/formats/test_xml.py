@@ -67,4 +67,19 @@ class AndroidXMLTests(TestCase):
             with open(path, "x") as file:
                 file.write(src)
             (t0,) = parse_translations(path)
-            assert t0.string == "'"
+        assert t0.string == "'"
+
+    def test_android_escapes_and_trimming(self):
+        src = dedent("""\
+            <?xml version="1.0" encoding="utf-8"?>
+            <resources>
+                <string name="key"> \\u0020\\u000a </string>
+            </resources>
+            """)
+
+        with TemporaryDirectory() as dir:
+            path = join(dir, "strings.xml")
+            with open(path, "x") as file:
+                file.write(src)
+            (t0,) = parse_translations(path)
+        assert t0.string == " \\n\n"

@@ -27,7 +27,7 @@ def fix_nonplural_plural_form(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0076_gettext_as_mf2"),
+        ("base", "0080_gettext_as_mf2"),
     ]
 
     operations = [

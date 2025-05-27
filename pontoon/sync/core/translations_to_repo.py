@@ -359,7 +359,8 @@ def set_translations(
         ]
 
 
-android_quotes = compile(r"(?<!\\)(['\"])")
+android_nl = compile(r"\s*\n\s*")
+android_esc = compile(r"(?<!\\)\\([nt])\s*")
 webext_placeholder = compile(r"\$([a-zA-Z0-9_@]+)\$|(\$[1-9])|\$(\$+)")
 
 
@@ -385,7 +386,11 @@ def set_translation(
 
     match res.format:
         case Format.android:
-            entry.value = android_quotes.sub(r"\\\1", tx.string)
+            # Literal newlines \n and tabs \t are included in the string
+            entry.value = android_esc.sub(
+                lambda m: "\n" if m[1] == "n" else "\t",
+                android_nl.sub(" ", tx.string),
+            )
 
         case Format.po:
             msg = parse_message(Format.mf2, tx.string)
