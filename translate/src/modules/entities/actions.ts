@@ -82,7 +82,6 @@ export const getEntities =
         'Load: String list with search parameter',
         'Search Options Statistics',
         {
-          search,
           search_exclude_source_strings: search_exclude_source_strings,
           search_identifiers: search_identifiers,
           search_match_case: search_match_case,
