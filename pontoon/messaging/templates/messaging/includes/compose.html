@@ -2,6 +2,18 @@
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 
+{% macro collapsible(filter_title, filter_classname) %}
+    <section class="{{ filter_classname }}">        
+        <div class="collapsible">
+            <span class="collapsible-arrow">►</span><h3>Filter by {{ filter_title }}</h3>
+        </div>
+        <div class="collapsible-content" style="display: none;">
+            {{ caller() }}
+        </div>
+    </section>
+{% endmacro %}
+
+
 <div id="compose" class="selected">
     <form id="send-message" method="POST" action="{{ url('pontoon.messaging.ajax.send_message') }}">
         {% csrf_token %}
@@ -48,7 +60,7 @@
         </section>
 
         <section class="user-roles">
-            <h3>Filter by user role</h3>
+            <h3>User role</h3>
             <div class="check-list">
                 {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
                 is_enabled=form.managers.value(), form_field=form.managers) }}
@@ -62,8 +74,7 @@
             </div>
         </section>
 
-        <section class="locale">
-            <h3>Filter by locale</h3>
+        {% call collapsible("locale", "locale") %}
             <div class="multi-selector locale-selector">
                 <div class="clearfix">
                     {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales') }}
@@ -72,10 +83,9 @@
             <div class="errors">
                 <p>You must select at least one locale</p>
             </div>
-        </section>
+        {% endcall %}
 
-        <section class="project">
-            <h3>Filter by project</h3>
+        {% call collapsible("project", "project") %}
             <div class="multi-selector project-selector">
                 <div class="clearfix">
                     {{ multiple_item_selector.render(available_projects, selected_projects, form_field=form.projects) }}
@@ -84,10 +94,9 @@
             <div class="errors">
                 <p>You must select at least one project</p>
             </div>
-        </section>
+        {% endcall %}
 
-        <section class="submitted-translations clearfix">
-            <h3>Filter by submitted translations</h3>
+        {% call collapsible("submitted translations", "submitted-translations clearfix") %}
             <div class="amount">
                 <div class="field clearfix minimum half">
                     {{ form.translation_minimum.label_tag() }}
@@ -114,10 +123,9 @@
                     {{ form.translation_to }}
                 </div>
             </div>
-        </section>
+        {% endcall %}
 
-        <section class="performed-reviews clearfix">
-            <h3>Filter by performed reviews</h3>
+        {% call collapsible("performed reviews", "performed-reviews clearfix") %}
             <div class="amount">
                 <div class="field clearfix minimum half">
                     {{ form.review_minimum.label_tag() }}
@@ -144,12 +152,10 @@
                     {{ form.review_to }}
                 </div>
             </div>
-        </section>
+        {% endcall %}
 
-        <section class="last-login clearfix">
-            <h3>Filter by last login</h3>
+        {% call collapsible("last login", "last-login clearfix") %}
             <div class="date">
-
                 <div class="field clearfix from half">
                     {{ form.login_from.label_tag() }}
                     {{ form.login_from }}
@@ -159,7 +165,8 @@
                     {{ form.login_to }}
                 </div>
             </div>
-        </section>
+        {% endcall %}
+
     </form>
     <menu class="controls">
         <button class="button toggle review" data-target="#review">Review message<span

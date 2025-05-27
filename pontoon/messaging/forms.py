@@ -22,6 +22,11 @@ class MessageForm(forms.ModelForm):
     locales = forms.CharField(
         widget=forms.Textarea(),
         validators=[validators.validate_comma_separated_integer_list],
+        required=False,
+    )
+
+    projects = forms.ModelMultipleChoiceField(
+        queryset=Project.objects.all(), required=False
     )
 
     class Meta:
@@ -73,9 +78,6 @@ class MessageForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # Set all available Projects as selected
-        self.fields["projects"].initial = Project.objects.available()
 
         # Remove the colon from all field labels
         for field in self.fields.values():

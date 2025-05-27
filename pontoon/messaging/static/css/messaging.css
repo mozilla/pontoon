@@ -175,6 +175,23 @@
     .multi-selector .menu {
       width: 285px;
     }
+
+    .collapsible {
+      display: flex;
+      align-items: center;
+    }
+    .collapsible h3 {
+      user-select: none;
+    }
+
+    .collapsible-arrow {
+      color: var(--status-translated);
+      font-size: 18px;
+      font-weight: 300;
+      margin-bottom: 20px;
+      margin-right: 2px;
+      user-select: none;
+    }
   }
 
   #review {
