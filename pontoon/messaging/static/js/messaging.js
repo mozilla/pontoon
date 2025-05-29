@@ -380,10 +380,5 @@ $(function () {
   container.on('click', '.collapsible', function () {
     $(this).next('.collapsible-content').slideToggle();
     $(this).toggleClass('open');
-
-    const arrow = $(this).find('.collapsible-arrow');
-    if (arrow.length) {
-      arrow.text(arrow.text() === '►' ? '▼' : '►');
-    }
   });
 });
