@@ -242,8 +242,8 @@
         font-weight: 100;
       }
 
-      /* .locales,
-      .projects, */
+      .locales,
+      .projects,
       .submitted-translations,
       .performed-reviews,
       .last-login {
