@@ -107,17 +107,17 @@ def get_recipients(form):
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = form.cleaned_data.get("projects")
 
-    if len(locale_ids) <= 0:
-        locale_ids = Locale.objects.all()
-        print(locale_ids)
+    translations = Translation.objects.all()
 
-    if len(project_ids) <= 0:
-        project_ids = Project.objects.all()
+    if form.cleaned_data.get("locale_toggle"):
+        translations = translations.filter(
+            locale_id__in=locale_ids,
+        )
 
-    translations = Translation.objects.filter(
-        locale_id__in=locale_ids,
-        entity__resource__project_id__in=project_ids,
-    )
+    if form.cleaned_data.get("project_toggle"):
+        translations = translations.filter(
+            entity__resource__project_id__in=project_ids,
+        )
 
     locales = Locale.objects.filter(pk__in=locale_ids)
     manager_ids = (
