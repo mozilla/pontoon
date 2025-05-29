@@ -100,6 +100,7 @@ $(function () {
 
   function updateReviewPanel() {
     function updateMultipleItemSelector(source, target, item) {
+      let show = false;
       const allProjects = !$(`${source}.available li:not(.no-match)`).length;
       const projectsSelected = $(`${source}.selected li:not(.no-match)`)
         .map(function () {
@@ -107,12 +108,17 @@ $(function () {
         })
         .get();
       const projectsDisplay = allProjects ? 'All' : projectsSelected.join(', ');
+
+      if (projectsSelected.length > 0) {
+        show = true;
+      }
       $(`#review ${target} .value`).html(projectsDisplay);
+      $(`#review ${target}`).toggle(show);
     }
 
     function updateFields(filter) {
       let show = false;
-      $(`#compose .${filter} > div`).each(function () {
+      $(`#compose ${filter} > div`).each(function () {
         const className = $(this).attr('class');
         const values = [];
 
@@ -135,9 +141,9 @@ $(function () {
             }
           });
 
-        $(`#review .${filter} .${className}`).html(values.join(', '));
+        $(`#review ${filter} .value`).html(values.join(', '));
       });
-      $(`#review .${filter}`).toggle(show);
+      $(`#review ${filter}`).toggle(show);
     }
 
     // Update hidden textarea with the HTML content to be sent to backend
@@ -168,13 +174,13 @@ $(function () {
     updateMultipleItemSelector('.project .item', '.projects', '.item');
 
     // Submitted translations
-    updateFields('submitted-translations');
+    updateFields('.submitted-translations');
 
     // Performed reviews
-    updateFields('performed-reviews');
+    updateFields('.performed-reviews');
 
     // Last login
-    updateFields('last-login');
+    updateFields('.last-login');
 
     // Message types
     let messageTypes = $('.message-type .enabled')

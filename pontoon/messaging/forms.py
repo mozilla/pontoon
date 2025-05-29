@@ -29,6 +29,16 @@ class MessageForm(forms.ModelForm):
         queryset=Project.objects.all(), required=False
     )
 
+    locale_toggle = forms.BooleanField(required=False)
+
+    project_toggle = forms.BooleanField(required=False)
+
+    translation_toggle = forms.BooleanField(required=False)
+
+    review_toggle = forms.BooleanField(required=False)
+
+    login_toggle = forms.BooleanField(required=False)
+
     class Meta:
         model = Message
         fields = [
@@ -41,16 +51,21 @@ class MessageForm(forms.ModelForm):
             "managers",
             "translators",
             "contributors",
+            "locale_toggle",
             "locales",
+            "project_toggle",
             "projects",
+            "translation_toggle",
             "translation_minimum",
             "translation_maximum",
             "translation_from",
             "translation_to",
+            "review_toggle",
             "review_minimum",
             "review_maximum",
             "review_from",
             "review_to",
+            "login_toggle",
             "login_from",
             "login_to",
             "send_to_myself",

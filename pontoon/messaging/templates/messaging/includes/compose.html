@@ -2,10 +2,11 @@
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 
-{% macro collapsible(filter_title, filter_classname) %}
+{% macro collapsible(title, filter_classname, attribute, is_enabled, form_field) %}
     <section class="{{ filter_classname }}">        
         <div class="collapsible">
-            <span class="collapsible-arrow">►</span><h3>Filter by {{ filter_title }}</h3>
+            {{ Checkbox.large_checkbox(title, class=filter_classname, attribute=attribute,
+                is_enabled=is_enabled, form_field=form_field) }}
         </div>
         <div class="collapsible-content" style="display: none;">
             {{ caller() }}
@@ -74,98 +75,101 @@
             </div>
         </section>
 
-        {% call collapsible("locale", "locale") %}
-            <div class="multi-selector locale-selector">
-                <div class="clearfix">
-                    {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales') }}
-                </div>
-            </div>
-            <div class="errors">
-                <p>You must select at least one locale</p>
-            </div>
-        {% endcall %}
-
-        {% call collapsible("project", "project") %}
-            <div class="multi-selector project-selector">
-                <div class="clearfix">
-                    {{ multiple_item_selector.render(available_projects, selected_projects, form_field=form.projects) }}
-                </div>
-            </div>
-            <div class="errors">
-                <p>You must select at least one project</p>
-            </div>
-        {% endcall %}
-
-        {% call collapsible("submitted translations", "submitted-translations clearfix") %}
-            <div class="amount">
-                <div class="field clearfix minimum half">
-                    {{ form.translation_minimum.label_tag() }}
-                    {{ form.translation_minimum }}
-                    <div class="errors">
-                        <p>The value must be an integer</p>
+        <div class="check-list">
+            {% call collapsible("locale", "locale", "locale", form.locale_toggle.value(), form.locale_toggle) %}
+                <div class="multi-selector locale-selector">
+                    <div class="clearfix">
+                        {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales') }}
                     </div>
                 </div>
-                <div class="field clearfix maximum half">
-                    {{ form.translation_maximum.label_tag() }}
-                    {{ form.translation_maximum }}
-                    <div class="errors">
-                        <p>The value must be an integer</p>
-                    </div>
+                <div class="errors">
+                    <p>You must select at least one locale</p>
                 </div>
-            </div>
-            <div class="date">
-                <div class="field clearfix from half">
-                    {{ form.translation_from.label_tag() }}
-                    {{ form.translation_from }}
-                </div>
-                <div class="field clearfix to half">
-                    {{ form.translation_to.label_tag() }}
-                    {{ form.translation_to }}
-                </div>
-            </div>
-        {% endcall %}
+            {% endcall %}
 
-        {% call collapsible("performed reviews", "performed-reviews clearfix") %}
-            <div class="amount">
-                <div class="field clearfix minimum half">
-                    {{ form.review_minimum.label_tag() }}
-                    {{ form.review_minimum }}
-                    <div class="errors">
-                        <p>The value must be an integer</p>
+            {% call collapsible("project", "project", "project", form.project_toggle.value(), form.project_toggle) %}
+                <div class="multi-selector project-selector">
+                    <div class="clearfix">
+                        {{ multiple_item_selector.render(available_projects, selected_projects, form_field=form.projects) }}
                     </div>
                 </div>
-                <div class="field clearfix maximum half">
-                    {{ form.review_maximum.label_tag() }}
-                    {{ form.review_maximum }}
-                    <div class="errors">
-                        <p>The value must be an integer</p>
-                    </div>
+                <div class="errors">
+                    <p>You must select at least one project</p>
                 </div>
-            </div>
-            <div class="date">
-                <div class="field clearfix from half">
-                    {{ form.review_from.label_tag() }}
-                    {{ form.review_from }}
-                </div>
-                <div class="field clearfix to half">
-                    {{ form.review_to.label_tag() }}
-                    {{ form.review_to }}
-                </div>
-            </div>
-        {% endcall %}
+            {% endcall %}
 
-        {% call collapsible("last login", "last-login clearfix") %}
-            <div class="date">
-                <div class="field clearfix from half">
-                    {{ form.login_from.label_tag() }}
-                    {{ form.login_from }}
+            {% call collapsible("submitted translations", "submitted-translations clearfix", "submitted translations", form.translation_toggle.value(), form.translation_toggle) %}
+                <div class="amount">
+                    <div class="field clearfix minimum half">
+                        {{ form.translation_minimum.label_tag() }}
+                        {{ form.translation_minimum }}
+                        <div class="errors">
+                            <p>The value must be an integer</p>
+                        </div>
+                    </div>
+                    <div class="field clearfix maximum half">
+                        {{ form.translation_maximum.label_tag() }}
+                        {{ form.translation_maximum }}
+                        <div class="errors">
+                            <p>The value must be an integer</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="field clearfix to half">
-                    {{ form.login_to.label_tag() }}
-                    {{ form.login_to }}
+                <div class="date">
+                    <div class="field clearfix from half">
+                        {{ form.translation_from.label_tag() }}
+                        {{ form.translation_from }}
+                    </div>
+                    <div class="field clearfix to half">
+                        {{ form.translation_to.label_tag() }}
+                        {{ form.translation_to }}
+                    </div>
                 </div>
-            </div>
-        {% endcall %}
+            {% endcall %}
+
+            {% call collapsible("performed reviews", "performed-reviews clearfix", "performed reviews", form.review_toggle.value(), form.review_toggle) %}
+                <div class="amount">
+                    <div class="field clearfix minimum half">
+                        {{ form.review_minimum.label_tag() }}
+                        {{ form.review_minimum }}
+                        <div class="errors">
+                            <p>The value must be an integer</p>
+                        </div>
+                    </div>
+                    <div class="field clearfix maximum half">
+                        {{ form.review_maximum.label_tag() }}
+                        {{ form.review_maximum }}
+                        <div class="errors">
+                            <p>The value must be an integer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="date">
+                    <div class="field clearfix from half">
+                        {{ form.review_from.label_tag() }}
+                        {{ form.review_from }}
+                    </div>
+                    <div class="field clearfix to half">
+                        {{ form.review_to.label_tag() }}
+                        {{ form.review_to }}
+                    </div>
+                </div>
+            {% endcall %}
+
+            {% call collapsible("last login", "last-login clearfix", "last login", form.login_toggle.value(), form.login_toggle) %}
+                <div class="date">
+                    <div class="field clearfix from half">
+                        {{ form.login_from.label_tag() }}
+                        {{ form.login_from }}
+                    </div>
+                    <div class="field clearfix to half">
+                        {{ form.login_to.label_tag() }}
+                        {{ form.login_to }}
+                    </div>
+                </div>
+            {% endcall %}
+        </div> 
+
 
     </form>
     <menu class="controls">
