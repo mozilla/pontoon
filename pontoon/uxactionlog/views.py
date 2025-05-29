@@ -15,7 +15,6 @@ def log_ux_action(request):
     user = request.user
 
     if not user.is_authenticated:
-        print("hello")
         return JsonResponse({"is_authenticated": False}, status=403)
 
     if not form.is_valid():
