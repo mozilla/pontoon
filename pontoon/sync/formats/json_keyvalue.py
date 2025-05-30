@@ -32,6 +32,6 @@ def as_translation(order: int, entry: Entry):
         key=dumps(entry.id),
         context=".".join(entry.id),
         order=order,
-        strings={None: string} if (string) else {},
+        string=string or None,
         source_string=string,
     )

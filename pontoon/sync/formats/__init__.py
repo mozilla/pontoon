@@ -79,9 +79,7 @@ def parse_translations(path: str) -> list[VCSTranslation]:
                     key=entry.id[0],
                     context=entry.id[0],
                     order=order,
-                    strings={
-                        None: (string := serialize_message(res.format, entry.value))
-                    },
+                    string=(string := serialize_message(res.format, entry.value)),
                     source_string=string,
                     comments=entry.comment.split("\n") if entry.comment else None,
                 )

@@ -1,6 +1,5 @@
 import { mount } from 'enzyme';
 import React, { useContext } from 'react';
-import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 
 import * as Hooks from '~/hooks';
@@ -15,7 +14,7 @@ import { Location } from './Location';
 
 const ENTITIES = [
   { pk: 1, original: 'hello' },
-  { pk: 2, original: 'world', original_plural: 'plural' },
+  { pk: 2, original: 'world' },
   { pk: 3 },
 ];
 
@@ -40,27 +39,11 @@ describe('<EntityViewProvider', () => {
       </Location.Provider>,
     );
 
-    expect(view).toMatchObject({
-      entity: ENTITIES[0],
-      hasPluralForms: false,
-      pluralForm: 0,
-    });
+    expect(view).toMatchObject({ entity: ENTITIES[0] });
 
     wrapper.setProps({ value: { entity: 2 } });
 
-    expect(view).toMatchObject({
-      entity: ENTITIES[1],
-      hasPluralForms: true,
-      pluralForm: 0,
-    });
-
-    act(() => view.setPluralForm(1));
-
-    expect(view).toMatchObject({
-      entity: ENTITIES[1],
-      hasPluralForms: true,
-      pluralForm: 1,
-    });
+    expect(view).toMatchObject({ entity: ENTITIES[1] });
   });
 });
 
@@ -77,8 +60,7 @@ describe('useActiveTranslation', () => {
 
   it('returns the correct string', () => {
     React.useContext.returns({
-      entity: { translation: [{ string: 'world' }] },
-      pluralForm: 0,
+      entity: { translation: { string: 'world' } },
     });
     const res = useActiveTranslation();
     expect(res).toEqual({ string: 'world' });
@@ -86,8 +68,7 @@ describe('useActiveTranslation', () => {
 
   it('does not return rejected translations', () => {
     React.useContext.returns({
-      entity: { translation: [{ string: 'world', rejected: true }] },
-      pluralForm: 0,
+      entity: { translation: { string: 'world', rejected: true } },
     });
     const res = useActiveTranslation();
     expect(res).toBeNull();
