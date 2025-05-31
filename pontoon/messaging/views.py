@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
+from django.db.models import Q
 
 from pontoon.base.models import Locale, Project, Translation, UserProfile
 from pontoon.base.utils import require_AJAX, split_ints
@@ -107,18 +108,6 @@ def get_recipients(form):
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = form.cleaned_data.get("projects")
 
-    translations = Translation.objects.all()
-
-    if form.cleaned_data.get("locale_toggle"):
-        translations = translations.filter(
-            locale_id__in=locale_ids,
-        )
-
-    if form.cleaned_data.get("project_toggle"):
-        translations = translations.filter(
-            entity__resource__project_id__in=project_ids,
-        )
-
     locales = Locale.objects.filter(pk__in=locale_ids)
     manager_ids = (
         locales.exclude(managers_group__user__isnull=True)
@@ -131,15 +120,31 @@ def get_recipients(form):
         .distinct()
     )
 
+    translations = Translation.objects.all()
+
     if form.cleaned_data.get("contributors"):
-        contributors = translations.values("user").distinct()
-        recipients = recipients | User.objects.filter(pk__in=contributors)
+        recipients = User.objects.exclude(pk=-1)
 
     if form.cleaned_data.get("managers"):
         recipients = recipients | User.objects.filter(pk__in=manager_ids)
 
     if form.cleaned_data.get("translators"):
         recipients = recipients | User.objects.filter(pk__in=translator_ids)
+
+    if form.cleaned_data.get("locale_toggle"):
+        translations = translations.filter(
+            locale_id__in=locale_ids,
+        )
+
+    if form.cleaned_data.get("project_toggle"):
+        translations = translations.filter(
+            entity__resource__project_id__in=project_ids,
+        )
+
+    if form.cleaned_data.get("locale_toggle") or form.cleaned_data.get("project_toggle"):
+        contributors = translations.values_list("user", flat=True).distinct()
+        recipients = recipients & User.objects.filter(pk__in=contributors)
+
 
     """
     Filter recipients by login date:
