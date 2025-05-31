@@ -14,7 +14,6 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-from django.db.models import Q
 
 from pontoon.base.models import Locale, Project, Translation, UserProfile
 from pontoon.base.utils import require_AJAX, split_ints
@@ -141,10 +140,11 @@ def get_recipients(form):
             entity__resource__project_id__in=project_ids,
         )
 
-    if form.cleaned_data.get("locale_toggle") or form.cleaned_data.get("project_toggle"):
+    if form.cleaned_data.get("locale_toggle") or form.cleaned_data.get(
+        "project_toggle"
+    ):
         contributors = translations.values_list("user", flat=True).distinct()
         recipients = recipients & User.objects.filter(pk__in=contributors)
-
 
     """
     Filter recipients by login date:
