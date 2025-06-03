@@ -122,7 +122,6 @@
 
       .large-checkbox {
         padding-top: 2px;
-        font-size: 26px;
       }
     }
 
@@ -188,6 +187,9 @@
     }
     .collapsible h3 {
       user-select: none;
+    }
+    .collapsible-content {
+      display: none;
     }
   }
 
