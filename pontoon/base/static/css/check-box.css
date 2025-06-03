@@ -26,7 +26,16 @@
     text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 360px;
+    width: 342px;
+  }
+
+  .large-check-box-wrapper {
+    color: var(--status-translated);
+    font-size: 26px;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: -1px;
+    width: 380px;
   }
 
   .check-box.hover .check-box-wrapper,

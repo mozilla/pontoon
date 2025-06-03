@@ -5,10 +5,10 @@
 {% macro collapsible(title, filter_classname, attribute, is_enabled, form_field) %}
     <section class="{{ filter_classname }}">        
         <div class="collapsible">
-            {{ Checkbox.large_checkbox(title, class=filter_classname, attribute=attribute,
-                is_enabled=is_enabled, form_field=form_field) }}
+            {{ Checkbox.checkbox(title, class=filter_classname, attribute=attribute,
+                is_enabled=is_enabled, form_field=form_field, is_large=True) }}
         </div>
-        <div class="collapsible-content" style="display: none;">
+        <div class="collapsible-content">
             {{ caller() }}
         </div>
     </section>
@@ -76,7 +76,7 @@
         </section>
 
         <div class="check-list">
-            {% call collapsible("locale", "locale", "locale", form.locale_toggle.value(), form.locale_toggle) %}
+            {% call collapsible("Filter by locale", "locale", "locale", form.locale_toggle.value(), form.locale_toggle) %}
                 <div class="multi-selector locale-selector">
                     <div class="clearfix">
                         {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales') }}
@@ -87,7 +87,7 @@
                 </div>
             {% endcall %}
 
-            {% call collapsible("project", "project", "project", form.project_toggle.value(), form.project_toggle) %}
+            {% call collapsible("Filter by project", "project", "project", form.project_toggle.value(), form.project_toggle) %}
                 <div class="multi-selector project-selector">
                     <div class="clearfix">
                         {{ multiple_item_selector.render(available_projects, selected_projects, form_field=form.projects) }}
@@ -98,7 +98,7 @@
                 </div>
             {% endcall %}
 
-            {% call collapsible("submitted translations", "submitted-translations clearfix", "submitted translations", form.translation_toggle.value(), form.translation_toggle) %}
+            {% call collapsible("Filter by submitted translations", "submitted-translations clearfix", "submitted_translations", form.translation_toggle.value(), form.translation_toggle) %}
                 <div class="amount">
                     <div class="field clearfix minimum half">
                         {{ form.translation_minimum.label_tag() }}
@@ -127,7 +127,7 @@
                 </div>
             {% endcall %}
 
-            {% call collapsible("performed reviews", "performed-reviews clearfix", "performed reviews", form.review_toggle.value(), form.review_toggle) %}
+            {% call collapsible("Filter by performed reviews", "performed-reviews clearfix", "performed_reviews", form.review_toggle.value(), form.review_toggle) %}
                 <div class="amount">
                     <div class="field clearfix minimum half">
                         {{ form.review_minimum.label_tag() }}
@@ -156,7 +156,7 @@
                 </div>
             {% endcall %}
 
-            {% call collapsible("last login", "last-login clearfix", "last login", form.login_toggle.value(), form.login_toggle) %}
+            {% call collapsible("Filter by last login", "last-login clearfix", "last_login", form.login_toggle.value(), form.login_toggle) %}
                 <div class="date">
                     <div class="field clearfix from half">
                         {{ form.login_from.label_tag() }}

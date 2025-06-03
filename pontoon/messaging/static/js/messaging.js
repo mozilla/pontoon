@@ -100,20 +100,16 @@ $(function () {
 
   function updateReviewPanel() {
     function updateMultipleItemSelector(source, target, item) {
-      let show = false;
-      const allProjects = !$(`${source}.available li:not(.no-match)`).length;
-      const projectsSelected = $(`${source}.selected li:not(.no-match)`)
+      const allItems = !$(`${source}.available li:not(.no-match)`).length;
+      const itemsSelected = $(`${source}.selected li:not(.no-match)`)
         .map(function () {
           return $(this).find(item).text();
         })
         .get();
-      const projectsDisplay = allProjects ? 'All' : projectsSelected.join(', ');
+      const itemsDisplay = allItems ? 'All' : itemsSelected.join(', ');
 
-      if (projectsSelected.length > 0) {
-        show = true;
-      }
-      $(`#review ${target} .value`).html(projectsDisplay);
-      $(`#review ${target}`).toggle(show);
+      $(`#review ${target} .value`).html(itemsDisplay);
+      $(`#review ${target}`).toggle(itemsSelected.length > 0);
     }
 
     function updateFields(filter) {
@@ -376,7 +372,7 @@ $(function () {
     });
   });
 
-  // collapseable for Filters
+  // collapsible for Filters
   container.on('click', '.collapsible', function () {
     $(this).next('.collapsible-content').slideToggle();
     $(this).toggleClass('open');
