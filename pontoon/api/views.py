@@ -1,12 +1,20 @@
 from datetime import datetime, timedelta
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.api.filters import TermFilter
 from pontoon.base.models import Project
+from pontoon.base.models.locale import Locale
+from pontoon.terminology.models import Term
+
+from .serializers import LocaleSerializer, ProjectSerializer, TermSerializer
 
 
 @require_GET
@@ -98,3 +106,33 @@ def get_user_actions(request, date, slug):
             },
         }
     )
+
+
+class LocaleListCreateView(generics.ListCreateAPIView):
+    queryset = Locale.objects.all()
+    serializer_class = LocaleSerializer
+
+
+class LocaleIndividualView(generics.RetrieveAPIView):
+    queryset = Locale.objects.all()
+    serializer_class = LocaleSerializer
+    lookup_field = "code"
+
+
+class ProjectListCreateView(generics.ListCreateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+
+
+class ProjectIndividualView(generics.RetrieveAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    lookup_field = "slug"
+
+
+class ListTermSearchView(generics.ListAPIView):
+    queryset = Term.objects.all()
+    serializer_class = TermSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TermFilter
