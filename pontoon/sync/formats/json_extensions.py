@@ -28,7 +28,7 @@ def as_translation(order: int, entry: Entry):
         key=key,
         context=key,
         order=order,
-        strings={None: string} if (string) else {},
+        string=string or None,
         source_string=string,
         comments=[entry.comment] if entry.comment else None,
         source=placeholders,
