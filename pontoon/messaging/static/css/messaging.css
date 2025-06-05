@@ -123,6 +123,10 @@
       .large-checkbox {
         padding-top: 2px;
       }
+
+      .check-list-contents {
+        padding-bottom: 20px;
+      }
     }
 
     .field {
