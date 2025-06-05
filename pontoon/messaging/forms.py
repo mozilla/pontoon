@@ -14,9 +14,9 @@ class MessageForm(forms.ModelForm):
     send_to_myself = forms.BooleanField(required=False)
 
     recipient_ids = forms.CharField(
-        required=False,
         widget=forms.Textarea(),
         validators=[validators.validate_comma_separated_integer_list],
+        required=False,
     )
 
     locales = forms.CharField(
