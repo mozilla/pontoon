@@ -403,7 +403,7 @@ $(function () {
     });
   });
 
-  // collapsible for Filters
+  // Collapse or Expand filters
   container.on('click', '.collapsible', function () {
     $(this).next('.collapsible-content').slideToggle();
     $(this).toggleClass('open');
