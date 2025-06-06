@@ -1,56 +1,43 @@
 from __future__ import annotations
 
-from fluent.syntax import FluentParser, FluentSerializer, ast
+from fluent.syntax import FluentParser, FluentSerializer
+from moz.l10n.formats.fluent import fluent_astify_entry
+from moz.l10n.model import Entry, Message, Resource
 
-from .common import ParseError, VCSTranslation
+from .common import VCSTranslation
 
 
 parser = FluentParser()
 serializer = FluentSerializer()
 
 
-def parse(path: str):
-    try:
-        with open(path, "r", encoding="utf-8") as resource:
-            structure = parser.parse(resource.read())
-    # Parse errors are handled gracefully by fluent
-    # No need to catch them here
-    except OSError as err:
-        raise ParseError(err)
-
+def parse(res: Resource[Message]):
     translations: list[VCSTranslation] = []
-    group_comment: list[str] = []
-    resource_comment: list[str] = []
     order = 0
-    for obj in structure.body:
-        if isinstance(obj, (ast.Message, ast.Term)):
-            key = obj.id.name
-            if isinstance(obj, ast.Term):
-                key = "-" + key
+    for section in res.sections:
+        for entry in section.entries:
+            if isinstance(entry, Entry):
+                assert len(entry.id) == 1
+                key = entry.id[0]
 
-            # Do not store comments in the string column
-            comment = obj.comment.content if obj.comment else None
-            obj.comment = None
-            translation = serializer.serialize_entry(obj)
+                # Do not store comments in the string column
+                comment = entry.comment
+                entry.comment = ""
+                entry.meta = []
+                translation = serializer.serialize_entry(fluent_astify_entry(entry))
 
-            translations.append(
-                VCSTranslation(
-                    key=key,
-                    context=key,
-                    order=order,
-                    string=translation,
-                    source_string=translation,
-                    comments=[comment] if comment else None,
-                    group_comments=group_comment,
-                    resource_comments=resource_comment,
+                translations.append(
+                    VCSTranslation(
+                        key=key,
+                        context=key,
+                        order=order,
+                        string=translation,
+                        source_string=translation,
+                        comments=[comment] if comment else None,
+                        group_comment=section.comment,
+                        resource_comment=res.comment,
+                    )
                 )
-            )
-            order += 1
-
-        elif isinstance(obj, ast.GroupComment):
-            group_comment = [obj.content] if obj.content else []
-
-        elif isinstance(obj, ast.ResourceComment) and obj.content:
-            resource_comment.append(obj.content)
+                order += 1
 
     return translations

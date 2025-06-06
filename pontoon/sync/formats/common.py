@@ -16,8 +16,8 @@ class VCSTranslation:
         string: str | None,
         source_string: str = "",
         comments: list[str] | None = None,
-        group_comments: list[str] | None = None,
-        resource_comments: list[str] | None = None,
+        group_comment: str = "",
+        resource_comment: str = "",
         fuzzy: bool = False,
         source=None,
     ):
@@ -27,8 +27,8 @@ class VCSTranslation:
         self.string = string
         self.source_string = source_string
         self.comments = comments or []
-        self.group_comments = group_comments
-        self.resource_comments = resource_comments
+        self.group_comment = group_comment
+        self.resource_comment = resource_comment
         self.fuzzy = fuzzy
         self.source = source or []
 

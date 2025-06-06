@@ -51,8 +51,6 @@ def parse_translations(
     :param path:
         Path to the resource file to parse.
     """
-    if path.endswith(".ftl"):
-        return ftl.parse(path)
     try:
         # TODO: android_ascii_spaces and android_literal_quotes
         # should be dropped after data migration
@@ -65,6 +63,8 @@ def parse_translations(
     except Exception as err:
         raise ParseError(f"Could not parse {path}") from err
     match res.format:
+        case Format.fluent:
+            return ftl.parse(res)
         case Format.gettext:
             return gettext.parse(res)
         case Format.properties:

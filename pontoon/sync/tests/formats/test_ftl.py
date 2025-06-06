@@ -3,7 +3,7 @@ from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import TestCase
 
-from pontoon.sync.formats import ftl
+from pontoon.sync.formats import parse_translations
 
 
 class FTLTests(TestCase):
@@ -20,10 +20,10 @@ class FTLTests(TestCase):
             """)
 
         with TemporaryDirectory() as dir:
-            path = join(dir, "messages.json")
+            path = join(dir, "messages.ftl")
             with open(path, "x") as file:
                 file.write(src)
-            t0, t1, t2 = ftl.parse(path)
+            t0, t1, t2 = parse_translations(path)
 
         # basic
         assert t0.comments == ["Sample comment"]

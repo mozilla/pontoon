@@ -301,8 +301,6 @@ def entity_from_source(
     resource: Resource, now: datetime, idx: int, tx: VCSTranslation
 ) -> Entity:
     comments = getattr(tx, "comments", None)
-    group_comments = getattr(tx, "group_comments", None)
-    resource_comments = getattr(tx, "resource_comments", None)
     return Entity(
         string=tx.source_string,
         key=tx.key,
@@ -311,8 +309,8 @@ def entity_from_source(
         source=tx.source,
         resource=resource,
         date_created=now,
-        group_comment="\n".join(group_comments) if group_comments else "",
-        resource_comment="\n".join(resource_comments) if resource_comments else "",
+        group_comment=tx.group_comment,
+        resource_comment=tx.resource_comment,
         context=tx.context,
     )
 
