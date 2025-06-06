@@ -42,10 +42,18 @@ urlpatterns = [
                     views.ProjectIndividualView.as_view(),
                     name="project-individual",
                 ),
-                # path(
-                #     # Term Search
-                #     "termsearch/"
-                # )
+                path(
+                    # Term Search
+                    "termsearch/",
+                    views.TermSearchListView.as_view(),
+                    name="term-search"
+                ),
+                path(
+                    # Translation Memory Search
+                    "tmsearch/",
+                    views.TranslationMemorySearchListView.as_view(),
+                    name="translation-memory-search"
+                )
             ]
         ),
     ),
