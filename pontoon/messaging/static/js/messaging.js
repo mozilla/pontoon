@@ -122,7 +122,7 @@ $(function () {
     const $form = $('#send-message');
     function updateMultipleItemSelector(source, target, item, toggle) {
       const allItems = !$(`${source}.available li:not(.no-match)`).length;
-      const itemsSelected = $(`${source}.selected li:not(.no-match)`)
+      const selectedItems = $(`${source}.selected li:not(.no-match)`)
         .map(function () {
           return $(this).find(item).text();
         })
