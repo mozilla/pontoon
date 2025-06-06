@@ -1,13 +1,20 @@
 from rest_framework import serializers
 
-from pontoon.base.models.locale import Locale
-from pontoon.base.models.project import Project
-from pontoon.terminology.models import Term
-
+from pontoon.base.models import (
+    Locale as LocaleModel,
+    Project as ProjectModel,
+    ProjectLocale as ProjectLocaleModel,
+    TranslationMemoryEntry as TranslationMemoryEntryModel,
+)
+from pontoon.tags.models import Tag as TagModel
+from pontoon.terminology.models import (
+    Term as TermModel,
+    TermTranslation as TermTranslationModel,
+)
 
 class LocaleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Locale
+        model = LocaleModel
         fields = [
             "code",
             "approved_strings",
@@ -34,7 +41,7 @@ class LocaleSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Project
+        model = ProjectModel
         fields = [
             "approved_strings",
             "complete",
@@ -59,12 +66,19 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class TermSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Term
+        model = TermModel
         fields = [
             "definition",
             "part_of_speech",
             "text",
-            "translation_text",
             "usage",
             "notes",
+        ]
+
+class TranslationMemorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TranslationMemoryEntryModel
+        fields = [
+            "source",
+            "target",
         ]
