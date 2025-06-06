@@ -2,10 +2,10 @@
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 
-{% macro collapsible(title, filter_classname, attribute, is_enabled, form_field) %}
+{% macro collapsible(label, filter_classname, attribute, is_enabled, form_field) %}
     <div class="check-list-contents {{ filter_classname }}">
         <div class="collapsible">
-            {{ Checkbox.checkbox(title, class=filter_classname, attribute=attribute,
+            {{ Checkbox.checkbox(label, class=filter_classname, attribute=attribute,
                 is_enabled=is_enabled, form_field=form_field, is_large=True) }}
         </div>
         <div class="collapsible-content">

@@ -193,6 +193,15 @@ def get_recipients(form):
         if translation_maximum is not None:
             submitted = submitted.filter(count__lte=translation_maximum)
 
+        if (
+            translation_from
+            or translation_to
+            or translation_minimum
+            or translation_maximum is not None
+        ):
+            submission_filters = submitted.values_list("user", flat=True).distinct()
+            recipients = recipients.filter(pk__in=submission_filters)
+
     """
     Filter recipients by reviews performed:
     - Reviewed more than provided Minimum translations
@@ -238,15 +247,6 @@ def get_recipients(form):
         if review_maximum is not None:
             approved = approved.filter(count__lte=review_maximum)
             rejected = rejected.filter(count__lte=review_maximum)
-
-        if (
-            translation_from
-            or translation_to
-            or translation_minimum
-            or translation_maximum is not None
-        ):
-            submission_filters = submitted.values_list("user", flat=True).distinct()
-            recipients = recipients.filter(pk__in=submission_filters)
 
         if review_from or review_to or review_minimum or review_maximum is not None:
             approved_filters = approved.values_list(

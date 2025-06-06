@@ -23,16 +23,14 @@ $(function () {
       .is(':checked');
     const localeValue = $form.find('[name=locales]').val();
 
-    const isValidLocale =
-      !isLocaleToggleChecked || (localeValue && localeValue.length > 0);
+    const isValidLocale = !isLocaleToggleChecked || localeValue.length > 0;
 
     const isProjectToggleChecked = $form
       .find('[name=project_toggle]')
       .is(':checked');
     const projectValue = $form.find('[name=projects]').val();
 
-    const isValidProject =
-      !isProjectToggleChecked || (projectValue && projectValue.length > 0);
+    const isValidProject = !isProjectToggleChecked || projectValue.length > 0;
 
     const isValidTranslationMinimum = $form
       .find('[name=translation_minimum]')[0]
@@ -120,6 +118,7 @@ $(function () {
 
   function updateReviewPanel() {
     const $form = $('#send-message');
+
     function updateMultipleItemSelector(source, target, item, toggle) {
       const allItems = !$(`${source}.available li:not(.no-match)`).length;
       const selectedItems = $(`${source}.selected li:not(.no-match)`)
@@ -127,19 +126,19 @@ $(function () {
           return $(this).find(item).text();
         })
         .get();
-      const itemsDisplay = allItems ? 'All' : itemsSelected.join(', ');
+      const itemsDisplay = allItems ? 'All' : selectedItems.join(', ');
 
-      const isToggleChecked = $form.find(`[name=${toggle}]`).is(':checked');
+      const isToggleChecked = $form.find(toggle).is(':checked');
 
       $(`#review ${target} .value`).html(itemsDisplay);
       $(`#review ${target}`).toggle(
-        itemsSelected.length > 0 && isToggleChecked,
+        selectedItems.length > 0 && isToggleChecked,
       );
     }
 
     function updateFields(filter, toggle) {
       let show = false;
-      const isToggleChecked = $form.find(`[name=${toggle}]`).is(':checked');
+      const isToggleChecked = $form.find(toggle).is(':checked');
       $(`#compose ${filter} > div`).each(function () {
         const className = $(this).attr('class');
         const values = [];
@@ -190,24 +189,29 @@ $(function () {
     $('#review .user-roles .value').html(userRoles.join(', '));
 
     // Locales
-    updateMultipleItemSelector('.locale', '.locales', '.code', 'locale_toggle');
+    updateMultipleItemSelector(
+      '.locale',
+      '.locales',
+      '.code',
+      '[name="locale_toggle"]',
+    );
 
     // Projects
     updateMultipleItemSelector(
       '.project .item',
       '.projects',
       '.item',
-      'project_toggle',
+      '[name="project_toggle"]',
     );
 
     // Submitted translations
-    updateFields('.submitted-translations', 'translation_toggle');
+    updateFields('.submitted-translations', '[name="translation_toggle"]');
 
     // Performed reviews
-    updateFields('.performed-reviews', 'review_toggle');
+    updateFields('.performed-reviews', '[name="review_toggle"]');
 
     // Last login
-    updateFields('.last-login', 'login_toggle');
+    updateFields('.last-login', '[name="login_toggle"]');
 
     // Message types
     let messageTypes = $('.message-type .enabled')
