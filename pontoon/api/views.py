@@ -9,12 +9,21 @@ from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.api.filters import TermFilter
-from pontoon.base.models import Project
-from pontoon.base.models.locale import Locale
-from pontoon.terminology.models import Term
+from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 
-from .serializers import LocaleSerializer, ProjectSerializer, TermSerializer
+from pontoon.base.models import (
+    Locale as LocaleModel,
+    Project as ProjectModel,
+    ProjectLocale as ProjectLocaleModel,
+    TranslationMemoryEntry as TranslationMemoryEntryModel,
+)
+from pontoon.tags.models import Tag as TagModel
+from pontoon.terminology.models import (
+    Term as TermModel,
+    TermTranslation as TermTranslationModel,
+)
+
+from .serializers import LocaleSerializer, ProjectSerializer, TermSerializer, TranslationMemorySerializer
 
 
 @require_GET
@@ -33,8 +42,8 @@ def get_user_actions(request, date, slug):
     end_date = start_date + timedelta(days=1)
 
     try:
-        project = Project.objects.get(slug=slug)
-    except Project.DoesNotExist:
+        project = ProjectModel.objects.get(slug=slug)
+    except ProjectModel.DoesNotExist:
         return JsonResponse(
             {
                 "error": "Project not found. Please use a valid project slug.",
@@ -109,30 +118,45 @@ def get_user_actions(request, date, slug):
 
 
 class LocaleListCreateView(generics.ListCreateAPIView):
-    queryset = Locale.objects.all()
+    queryset = LocaleModel.objects.all()
     serializer_class = LocaleSerializer
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
-    queryset = Locale.objects.all()
+    queryset = LocaleModel.objects.all()
     serializer_class = LocaleSerializer
     lookup_field = "code"
 
 
 class ProjectListCreateView(generics.ListCreateAPIView):
-    queryset = Project.objects.all()
+    queryset = ProjectModel.objects.all()
     serializer_class = ProjectSerializer
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    queryset = Project.objects.all()
+    queryset = ProjectModel.objects.all()
     serializer_class = ProjectSerializer
     lookup_field = "slug"
 
 
-class ListTermSearchView(generics.ListAPIView):
-    queryset = Term.objects.all()
+class TermSearchListView(generics.ListAPIView):
+    queryset = TermModel.objects.all()
     serializer_class = TermSerializer
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = TermFilter
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.distinct()
+
+class TranslationMemorySearchListView(generics.ListAPIView):
+    queryset = TranslationMemoryEntryModel.objects.all()
+    serializer_class = TranslationMemorySerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TranslationMemoryFilter
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.distinct()

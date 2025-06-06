@@ -1,26 +1,38 @@
-import django_filters
+from django_filters import FilterSet, CharFilter
+from django.db.models import Q
 
+from pontoon.base.models import (
+    TranslationMemoryEntry as TranslationMemoryEntryModel,
+)
 
-class TermFilter(django_filters.FilterSet):
-    pass
+from pontoon.terminology.models import (
+    Term as TermModel,
+)
 
-    # def resolve_term_search(self, info, search, locale):
-    #     term_query = Q(text__icontains=search)
+class TermFilter(FilterSet):
+    search = CharFilter(method='filter_search')
+    locale = CharFilter(method='filter_locale')
 
-    #     translation_query = Q(translations__text__icontains=search) & Q(
-    #         translations__locale__code=locale
-    #     )
+    class Meta:
+        model = TermModel
+        fields = []
 
-    #     # Prefetch translations for the specified locale
-    #     prefetch_translations = Prefetch(
-    #         "translations",
-    #         queryset=TermTranslationModel.objects.filter(locale__code=locale),
-    #         to_attr="locale_translations",
-    #     )
+    def filter_search(self, queryset, name, value):
+        return queryset.filter(text__icontains=value)
 
-    #     # Perform the query on the Term model and prefetch translations
-    #     return (
-    #         TermModel.objects.filter(term_query | translation_query)
-    #         .prefetch_related(prefetch_translations)
-    #         .distinct()
-    #     )
+    def filter_locale(self, queryset, name, value):
+        return queryset.filter(translations__locale__code=value)
+
+class TranslationMemoryFilter(FilterSet):
+    search = CharFilter(method='filter_search')
+    locale = CharFilter(method='filter_locale')
+
+    class Meta:
+        model = TranslationMemoryEntryModel
+        fields = []
+
+    def filter_search(self, queryset, name, value):
+        return queryset.filter(Q(Q(source__icontains=value) | Q(target__icontains=value)))
+
+    def filter_locale(self, queryset, name, value):
+        return queryset.filter(locale__code=value)

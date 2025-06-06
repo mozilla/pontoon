@@ -270,6 +270,7 @@ INSTALLED_APPS = (
     # Django sites app is required by django-allauth
     "django.contrib.sites",
     # Third-party apps, patches, fixes
+    "django_filters",
     "django_jinja",
     "pipeline",
     "guardian",
@@ -368,6 +369,7 @@ TEMPLATES = [
                     socialaccount|
                     graphene|
                     rest_framework|
+                    django_filters|
                 )/).*\.(
                     html|
                     jinja|
