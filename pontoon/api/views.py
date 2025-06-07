@@ -117,7 +117,7 @@ def get_user_actions(request, date, slug):
     )
 
 
-class LocaleListCreateView(generics.ListCreateAPIView):
+class LocaleListView(generics.ListAPIView):
     queryset = LocaleModel.objects.all()
     serializer_class = LocaleSerializer
 
@@ -128,7 +128,7 @@ class LocaleIndividualView(generics.RetrieveAPIView):
     lookup_field = "code"
 
 
-class ProjectListCreateView(generics.ListCreateAPIView):
+class ProjectListView(generics.ListAPIView):
     queryset = ProjectModel.objects.all()
     serializer_class = ProjectSerializer
 
@@ -157,6 +157,12 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = TranslationMemoryFilter
 
+    def get_queryset(self):
+        # Only return results if at least one filter param is set
+        if not self.request.query_params:
+            return TranslationMemoryEntryModel.objects.none()
+        return TranslationMemoryEntryModel.objects.all()
+
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
-        return queryset.distinct()
+        return queryset

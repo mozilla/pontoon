@@ -12,7 +12,32 @@ from pontoon.terminology.models import (
     TermTranslation as TermTranslationModel,
 )
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TagModel
+        fields = (
+            "slug",
+            "name",
+            "priority",
+        )
+
+class ProjectLocaleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectLocaleModel
+        fields = (
+            "project",
+            "locale",
+            "total_strings",
+            "approved_strings",
+            "pretranslated_strings",
+            "strings_with_errors",
+            "strings_with_warnings",
+            "unreviewed_strings",
+        )
+
 class LocaleSerializer(serializers.ModelSerializer):
+    project_locale = ProjectLocaleSerializer(many=True, read_only=True)
+
     class Meta:
         model = LocaleModel
         fields = [
@@ -36,10 +61,13 @@ class LocaleSerializer(serializers.ModelSerializer):
             "team_description",
             "total_strings",
             "unreviewed_strings",
+            "project_locale"
         ]
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    tag = TagSerializer(many=True, read_only=True)
+    
     class Meta:
         model = ProjectModel
         fields = [
@@ -61,10 +89,19 @@ class ProjectSerializer(serializers.ModelSerializer):
             "total_strings",
             "unreviewed_strings",
             "visibility",
+            "tag"
         ]
 
+class TermTranslationSerializer(serializers.ModelSerializer):
+    # locale = LocaleSerializer(read_only=True)
+
+    class Meta:
+        model = TermTranslationModel
+        fields = ["text", "locale"]
 
 class TermSerializer(serializers.ModelSerializer):
+    translations = TermTranslationSerializer(many=True, read_only=True)
+
     class Meta:
         model = TermModel
         fields = [
@@ -73,6 +110,7 @@ class TermSerializer(serializers.ModelSerializer):
             "text",
             "usage",
             "notes",
+            "translations"
         ]
 
 class TranslationMemorySerializer(serializers.ModelSerializer):

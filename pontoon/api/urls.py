@@ -21,7 +21,7 @@ urlpatterns = [
                 path(
                     # Locales
                     "locales/",
-                    views.LocaleListCreateView.as_view(),
+                    views.LocaleListView.as_view(),
                     name="locale-list",
                 ),
                 path(
@@ -33,7 +33,7 @@ urlpatterns = [
                 path(
                     # Projects
                     "projects/",
-                    views.ProjectListCreateView.as_view(),
+                    views.ProjectListView.as_view(),
                     name="project-list",
                 ),
                 path(
