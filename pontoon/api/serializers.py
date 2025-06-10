@@ -113,10 +113,10 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class NestedProjectSerializer(ProjectSerializer):
-    tags = TagSerializer(many=True, read_only=True)
+    tag = TagSerializer(many=True, read_only=True)
 
     class Meta(ProjectSerializer.Meta):
-        fields = ProjectSerializer.Meta.fields + ["tags"]
+        fields = ProjectSerializer.Meta.fields + ["tag"]
 
 
 class TermTranslationSerializer(serializers.ModelSerializer):
