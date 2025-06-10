@@ -12,6 +12,7 @@ from pontoon.terminology.models import (
     TermTranslation as TermTranslationModel,
 )
 
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = TagModel
@@ -21,7 +22,11 @@ class TagSerializer(serializers.ModelSerializer):
             "priority",
         )
 
+
 class ProjectLocaleSerializer(serializers.ModelSerializer):
+    locale = serializers.SerializerMethodField()
+    project = serializers.SerializerMethodField()
+
     class Meta:
         model = ProjectLocaleModel
         fields = (
@@ -35,9 +40,20 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
             "unreviewed_strings",
         )
 
-class LocaleSerializer(serializers.ModelSerializer):
-    project_locale = ProjectLocaleSerializer(many=True, read_only=True)
+    def get_locale(self, obj):
+        return {
+            "code": obj.locale.code,
+            "name": obj.locale.name,
+        }
 
+    def get_project(self, obj):
+        return {
+            "slug": obj.project.slug,
+            "name": obj.project.name,
+        }
+
+
+class LocaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocaleModel
         fields = [
@@ -61,13 +77,17 @@ class LocaleSerializer(serializers.ModelSerializer):
             "team_description",
             "total_strings",
             "unreviewed_strings",
-            "project_locale"
         ]
 
 
+class NestedLocaleSerializer(LocaleSerializer):
+    project_locale = ProjectLocaleSerializer(many=True, read_only=True)
+
+    class Meta(LocaleSerializer.Meta):
+        fields = LocaleSerializer.Meta.fields + ["project_locale"]
+
+
 class ProjectSerializer(serializers.ModelSerializer):
-    tag = TagSerializer(many=True, read_only=True)
-    
     class Meta:
         model = ProjectModel
         fields = [
@@ -89,15 +109,23 @@ class ProjectSerializer(serializers.ModelSerializer):
             "total_strings",
             "unreviewed_strings",
             "visibility",
-            "tag"
         ]
 
+
+class NestedProjectSerializer(ProjectSerializer):
+    tags = TagSerializer(many=True, read_only=True)
+
+    class Meta(ProjectSerializer.Meta):
+        fields = ProjectSerializer.Meta.fields + ["tags"]
+
+
 class TermTranslationSerializer(serializers.ModelSerializer):
-    # locale = LocaleSerializer(read_only=True)
+    locale = LocaleSerializer(read_only=True)
 
     class Meta:
         model = TermTranslationModel
         fields = ["text", "locale"]
+
 
 class TermSerializer(serializers.ModelSerializer):
     translations = TermTranslationSerializer(many=True, read_only=True)
@@ -110,13 +138,19 @@ class TermSerializer(serializers.ModelSerializer):
             "text",
             "usage",
             "notes",
-            "translations"
+            "translations",
         ]
 
+
 class TranslationMemorySerializer(serializers.ModelSerializer):
+    locale = LocaleSerializer(read_only=True)
+    project = ProjectSerializer(read_only=True)
+
     class Meta:
         model = TranslationMemoryEntryModel
         fields = [
+            "locale",
+            "project",
             "source",
             "target",
         ]
