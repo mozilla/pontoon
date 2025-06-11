@@ -68,7 +68,7 @@ class Checkout:
             self.changed, self.removed, self.renamed = delta
         else:
             # Initially and on error & when forced, consider all files changed
-            log.warning(f"[{slug}] Considering all files as changed")
+            log.warning(f"[{slug}] Considering all files as changed (f={force},s={shallow},d={delta})")
             self.changed = []
             for root, dirnames, filenames in walk(self.path):
                 dirnames[:] = (dn for dn in dirnames if not dn.startswith("."))

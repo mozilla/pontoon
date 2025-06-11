@@ -147,6 +147,7 @@ class Project(models.Model, AggregatedStats):
 
     date_created = models.DateTimeField(default=timezone.now)
     date_disabled = models.DateTimeField(null=True, blank=True)
+    date_modified = models.DateTimeField(default=timezone.now)
 
     sync_disabled = models.BooleanField(
         default=False,

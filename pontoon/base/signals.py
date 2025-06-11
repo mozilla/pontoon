@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 from pontoon.base import errors
 from pontoon.base.models import (
@@ -101,6 +102,48 @@ def create_project_locale_permissions_groups(sender, **kwargs):
         )
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
+
+
+@receiver(pre_save, sender=Project)
+def set_project_date_modified(sender, instance, update_fields, **kwargs):
+    if not instance.pk:
+        return
+    try:
+        prev = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+    for attr in [
+        "configuration_file",
+        "data_source",
+        "disabled",
+        "sync_disabled",
+        "system_project",
+    ]:
+        if getattr(prev, attr, None) != getattr(instance, attr, None):
+            instance.date_modified = timezone.now()
+            if update_fields is not None and "date_modified" not in update_fields:
+                update_fields.append("date_modified")
+            return
+
+
+@receiver(pre_save, sender=ProjectLocale)
+def set_project_date_modified_locales(sender, instance, **kwargs):
+    if instance.pk:
+        # update
+        try:
+            prev = sender.objects.get(pk=instance.pk)
+            if (
+                prev.readonly != instance.readonly
+                or prev.pretranslation_enabled != instance.pretranslation_enabled
+            ):
+                instance.project.date_modified = timezone.now()
+                instance.project.save(update_fields=["date_modified"])
+        except sender.DoesNotExist:
+            pass
+    elif instance.project:
+        # create
+        instance.project.date_modified = timezone.now()
+        instance.project.save(update_fields=["date_modified"])
 
 
 @receiver(post_save, sender=Locale)
