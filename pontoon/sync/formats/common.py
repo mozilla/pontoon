@@ -5,12 +5,6 @@ class ParseError(RuntimeError):
 class VCSTranslation:
     """
     A single translation of a source string into another language.
-
-    Since a string can have different translations based on plural
-    forms, all of the different forms are stored under self.strings, a
-    dict where the keys equal possible values for
-    pontoon.base.models.Translation.plural_form and the values equal the
-    translation for that plural form.
     """
 
     def __init__(
@@ -19,9 +13,8 @@ class VCSTranslation:
         key: str,
         context: str,
         order: int,
-        strings: dict[int | None, str],
+        string: str | None,
         source_string: str = "",
-        source_string_plural: str = "",
         comments: list[str] | None = None,
         group_comments: list[str] | None = None,
         resource_comments: list[str] | None = None,
@@ -31,9 +24,8 @@ class VCSTranslation:
         self.key = key
         self.context = context
         self.order = order
-        self.strings = strings
+        self.string = string
         self.source_string = source_string
-        self.source_string_plural = source_string_plural
         self.comments = comments or []
         self.group_comments = group_comments
         self.resource_comments = resource_comments

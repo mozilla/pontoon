@@ -44,13 +44,10 @@ export function usePushNextTranslatable() {
   const { cldrPlurals } = useContext(Locale);
   const { updateHistory } = useContext(HistoryData);
   const nextEntity = useNextEntity();
-  const { entity, hasPluralForms, pluralForm, setPluralForm } =
-    useContext(EntityView);
+  const { entity } = useContext(EntityView);
 
   return () => {
-    if (hasPluralForms && pluralForm < cldrPlurals.length - 1) {
-      setPluralForm(pluralForm + 1);
-    } else if (nextEntity && nextEntity.pk !== entity.pk) {
+    if (nextEntity && nextEntity.pk !== entity.pk) {
       push({ entity: nextEntity.pk });
     } else {
       // No next string, so staying with current one -> history needs a refresh

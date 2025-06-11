@@ -11,11 +11,10 @@ import { Metadata } from './Metadata';
 const ENTITY = {
   pk: 42,
   original: 'le test',
-  original_plural: 'les tests',
   comment: 'my comment',
   path: 'path/to/RESOURCE',
   source: [['file_source.rs', '31']],
-  translation: [{ string: 'the test' }, { string: 'plural' }],
+  translation: { string: 'the test' },
   project: {
     slug: 'callme',
     name: 'CallMe',
@@ -38,18 +37,13 @@ const USER = {
   user: 'A_Ludgate',
 };
 
-function createMetadata(entity = ENTITY, pluralForm = -1) {
+function createMetadata(entity = ENTITY) {
   const store = createReduxStore({ user: USER });
   return mount(
     <Provider store={store}>
       <MockLocalizationProvider>
         <Locale.Provider value={LOCALE}>
-          <Metadata
-            entity={entity}
-            pluralForm={pluralForm}
-            terms={TERMS}
-            user={USER}
-          />
+          <Metadata entity={entity} terms={TERMS} user={USER} />
         </Locale.Provider>
       </MockLocalizationProvider>
     </Provider>,

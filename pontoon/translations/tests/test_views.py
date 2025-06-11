@@ -18,7 +18,6 @@ def request_create_translation():
     def func(client, **args):
         update_params = {
             "translation": "approved translation",
-            "plural_form": "-1",
             "ignore_warnings": "true",
         }
         update_params.update(args)
