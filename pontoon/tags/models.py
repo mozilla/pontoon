@@ -12,7 +12,7 @@ class Tag(models.Model):
     slug = models.CharField(max_length=20)
     name = models.CharField(max_length=30)
     project = models.ForeignKey(
-        Project, models.CASCADE, blank=True, null=True, related_name="tag"
+        Project, models.CASCADE, blank=True, null=True, related_name="tags"
     )
     resources = models.ManyToManyField(Resource)
     priority = models.IntegerField(blank=True, null=True, choices=Priority.choices)
