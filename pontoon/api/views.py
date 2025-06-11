@@ -160,11 +160,6 @@ class ProjectIndividualView(generics.RetrieveAPIView):
     lookup_field = "slug"
 
 
-class ProjectLocaleListView(generics.ListAPIView):
-    queryset = ProjectLocaleModel.objects.all()
-    serializer_class = ProjectLocaleSerializer
-
-
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
     queryset = ProjectLocaleModel.objects.all()
     serializer_class = ProjectLocaleSerializer
@@ -190,7 +185,7 @@ class TermSearchListView(generics.ListAPIView):
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
-    queryset = TranslationMemoryEntryModel.objects.all()[:1]
+    queryset = TranslationMemoryEntryModel.objects.all()
     serializer_class = TranslationMemorySerializer
 
     filter_backends = [DjangoFilterBackend]

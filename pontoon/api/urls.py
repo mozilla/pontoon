@@ -15,7 +15,7 @@ urlpatterns = [
         csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=True)),
     ),
     path(
-        "api/new/",
+        "api/v2/",
         include(
             [
                 path(
@@ -43,14 +43,8 @@ urlpatterns = [
                     name="project-individual",
                 ),
                 path(
-                    # Localizations
-                    "localizations/",
-                    views.ProjectLocaleListView.as_view(),
-                    name="localization-list",
-                ),
-                path(
                     # Localization
-                    "localizations/<str:slug>/<str:code>",
+                    "<str:code>/<str:slug>",
                     views.ProjectLocaleIndividualView.as_view(),
                     name="localization-individual",
                 ),

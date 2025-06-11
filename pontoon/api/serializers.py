@@ -23,36 +23,6 @@ class TagSerializer(serializers.ModelSerializer):
         )
 
 
-class ProjectLocaleSerializer(serializers.ModelSerializer):
-    locale = serializers.SerializerMethodField()
-    project = serializers.SerializerMethodField()
-
-    class Meta:
-        model = ProjectLocaleModel
-        fields = (
-            "project",
-            "locale",
-            "total_strings",
-            "approved_strings",
-            "pretranslated_strings",
-            "strings_with_errors",
-            "strings_with_warnings",
-            "unreviewed_strings",
-        )
-
-    def get_locale(self, obj):
-        return {
-            "code": obj.locale.code,
-            "name": obj.locale.name,
-        }
-
-    def get_project(self, obj):
-        return {
-            "slug": obj.project.slug,
-            "name": obj.project.name,
-        }
-
-
 class LocaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocaleModel
@@ -80,13 +50,6 @@ class LocaleSerializer(serializers.ModelSerializer):
         ]
 
 
-class NestedLocaleSerializer(LocaleSerializer):
-    project_locale = ProjectLocaleSerializer(many=True, read_only=True)
-
-    class Meta(LocaleSerializer.Meta):
-        fields = LocaleSerializer.Meta.fields + ["project_locale"]
-
-
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectModel
@@ -112,11 +75,38 @@ class ProjectSerializer(serializers.ModelSerializer):
         ]
 
 
+class ProjectLocaleSerializer(serializers.ModelSerializer):
+    # locale = serializers.SerializerMethodField()
+    # project = serializers.SerializerMethodField()
+    locale = LocaleSerializer(read_only=True)
+    project = ProjectSerializer(read_only=True)
+
+    class Meta:
+        model = ProjectLocaleModel
+        fields = (
+            "project",
+            "locale",
+            "total_strings",
+            "approved_strings",
+            "pretranslated_strings",
+            "strings_with_errors",
+            "strings_with_warnings",
+            "unreviewed_strings",
+        )
+
+
 class NestedProjectSerializer(ProjectSerializer):
     tags = TagSerializer(many=True, read_only=True)
 
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + ["tags"]
+
+
+class NestedLocaleSerializer(LocaleSerializer):
+    project_locale = ProjectLocaleSerializer(many=True, read_only=True)
+
+    class Meta(LocaleSerializer.Meta):
+        fields = LocaleSerializer.Meta.fields + ["project_locale"]
 
 
 class TermTranslationSerializer(serializers.ModelSerializer):
