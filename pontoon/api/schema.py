@@ -95,7 +95,7 @@ class Project(DjangoObjectType, Stats):
         return obj.project_locale.all()
 
     def resolve_tags(obj, info):
-        return obj.tag_set.all()
+        return obj.tags.all()
 
 
 class Locale(DjangoObjectType, Stats):
@@ -246,7 +246,7 @@ class Query(graphene.ObjectType):
             qs = qs.prefetch_related("project_locale__locale")
 
         if "project.tags" in fields:
-            qs = qs.prefetch_related("tag_set")
+            qs = qs.prefetch_related("tags")
 
         if "project.localizations.locale.localizations" in fields:
             raise Exception("Cyclic queries are forbidden")

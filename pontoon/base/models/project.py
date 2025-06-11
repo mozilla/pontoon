@@ -287,7 +287,7 @@ class Project(models.Model, AggregatedStats):
         """
         resource_priority = {}
 
-        resource_priority_qs = self.tag_set.prefetch_related("resources").values(
+        resource_priority_qs = self.tags.prefetch_related("resources").values(
             "resources__path", "priority"
         )
 

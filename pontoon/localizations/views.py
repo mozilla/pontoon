@@ -53,7 +53,7 @@ def localization(request, code, slug):
             .distinct()
             .count(),
             "tags_count": (
-                project.tag_set.filter(resources__isnull=False).distinct().count()
+                project.tags.filter(resources__isnull=False).distinct().count()
                 if project.tags_enabled
                 else None
             ),
