@@ -15,7 +15,7 @@ urlpatterns = [
         csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=True)),
     ),
     path(
-        "api/new/",
+        "api/v2/",
         include(
             [
                 path(
