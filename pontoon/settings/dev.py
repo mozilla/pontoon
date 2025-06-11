@@ -32,6 +32,8 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
             account|
             socialaccount|
             graphene|
+            rest_framework|
+            django_filters|
         )/).*\.(
             html|
             jinja|
@@ -42,3 +44,7 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
 )
 
 GRAPHENE = {"MIDDLEWARE": ["graphene_django.debug.DjangoDebugMiddleware"]}
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+}

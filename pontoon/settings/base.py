@@ -270,6 +270,7 @@ INSTALLED_APPS = (
     # Django sites app is required by django-allauth
     "django.contrib.sites",
     # Third-party apps, patches, fixes
+    "django_filters",
     "django_jinja",
     "pipeline",
     "guardian",
@@ -285,6 +286,8 @@ INSTALLED_APPS = (
     "notifications",
     "graphene_django",
     "django_ace",
+    "rest_framework",
+    "pontoon.api",
 )
 
 # A list of IP addresses or IP ranges to be blocked from accessing the app,
@@ -365,6 +368,8 @@ TEMPLATES = [
                     account|
                     socialaccount|
                     graphene|
+                    rest_framework|
+                    django_filters|
                 )/).*\.(
                     html|
                     jinja|
@@ -1209,3 +1214,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Used in the header of the Terminology (.TBX) files.
 TBX_TITLE = os.environ.get("TBX_TITLE", "Pontoon Terminology")
 TBX_DESCRIPTION = os.environ.get("TBX_DESCRIPTION", "Terms localized in Pontoon")
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+}
