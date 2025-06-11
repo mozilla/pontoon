@@ -27,6 +27,17 @@ def sync_project_task(
         log.error(f"[id={project_pk}] Sync aborted: Project not found.")
         raise
 
+    if not force:
+        try:
+            prev_sync = Sync.objects.filter(project=project).latest("start_time")
+            if project.date_modified > prev_sync.start_time:
+                log.info(
+                    f"Using forced sync due to project config change on {project.date_modified}"
+                )
+                force = True
+        except Sync.DoesNotExist:
+            pass
+
     sync = Sync.objects.create(project=project)
     lock_name = f"sync_{project_pk}"
     if not cache.add(lock_name, True, timeout=settings.SYNC_TASK_TIMEOUT):
