@@ -43,10 +43,10 @@ urlpatterns = [
                     name="project-individual",
                 ),
                 path(
-                    # Localization
+                    # Project Locale
                     "<str:code>/<str:slug>",
                     views.ProjectLocaleIndividualView.as_view(),
-                    name="localization-individual",
+                    name="project-locale-individual",
                 ),
                 path(
                     # Term Search
