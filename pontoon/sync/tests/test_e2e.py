@@ -286,7 +286,7 @@ def test_add_resources():
                 msgid ""
                 msgstr ""
                 "Language: de_Test\\n"
-                "Plural-Forms: nplurals=1; plural=;\\n"
+                "Plural-Forms: nplurals=1; plural=0;\\n"
                 "Generated-By: Pontoon\\n"
 
                 msgid "source"
