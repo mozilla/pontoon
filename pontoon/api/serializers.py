@@ -76,22 +76,18 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectLocaleSerializer(serializers.ModelSerializer):
-    # locale = serializers.SerializerMethodField()
-    # project = serializers.SerializerMethodField()
-    locale = LocaleSerializer(read_only=True)
     project = ProjectSerializer(read_only=True)
 
     class Meta:
         model = ProjectLocaleModel
         fields = (
-            "project",
-            "locale",
             "total_strings",
             "approved_strings",
             "pretranslated_strings",
             "strings_with_errors",
             "strings_with_warnings",
             "unreviewed_strings",
+            "project",
         )
 
 
@@ -109,12 +105,23 @@ class NestedLocaleSerializer(LocaleSerializer):
         fields = LocaleSerializer.Meta.fields + ["project_locale"]
 
 
-class TermTranslationSerializer(serializers.ModelSerializer):
+class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
     locale = LocaleSerializer(read_only=True)
+    project = ProjectSerializer(read_only=True)
+
+    class Meta(ProjectLocaleSerializer.Meta):
+        fields = ProjectLocaleSerializer.Meta.fields + ("locale", "project")
+
+
+class TermTranslationSerializer(serializers.ModelSerializer):
+    locale = serializers.SerializerMethodField()
 
     class Meta:
         model = TermTranslationModel
         fields = ["text", "locale"]
+
+    def get_locale(self, obj):
+        return obj.locale.code
 
 
 class TermSerializer(serializers.ModelSerializer):
@@ -133,8 +140,8 @@ class TermSerializer(serializers.ModelSerializer):
 
 
 class TranslationMemorySerializer(serializers.ModelSerializer):
-    locale = LocaleSerializer(read_only=True)
-    project = ProjectSerializer(read_only=True)
+    locale = serializers.SerializerMethodField()
+    project = serializers.SerializerMethodField()
 
     class Meta:
         model = TranslationMemoryEntryModel
@@ -144,3 +151,12 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
             "source",
             "target",
         ]
+
+    def get_locale(self, obj):
+        return obj.locale.code
+
+    def get_project(self, obj):
+        if obj.project:
+            return obj.project.slug
+        else:
+            return None
