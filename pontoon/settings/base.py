@@ -243,6 +243,7 @@ ROOT_URLCONF = "pontoon.urls"
 INSTALLED_APPS = (
     "pontoon.actionlog",
     "pontoon.administration",
+    "pontoon.api",
     "pontoon.base",
     "pontoon.contributors",
     "pontoon.checks",
@@ -287,7 +288,6 @@ INSTALLED_APPS = (
     "graphene_django",
     "django_ace",
     "rest_framework",
-    "pontoon.api",
 )
 
 # A list of IP addresses or IP ranges to be blocked from accessing the app,
