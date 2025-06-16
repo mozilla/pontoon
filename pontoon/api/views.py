@@ -185,7 +185,6 @@ class TermSearchListView(generics.ListAPIView):
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
-    queryset = TranslationMemoryEntryModel.objects.all()
     serializer_class = TranslationMemorySerializer
 
     filter_backends = [DjangoFilterBackend]
@@ -197,7 +196,7 @@ class TranslationMemorySearchListView(generics.ListAPIView):
         locale = query_params.get("locale")
 
         # Only return results if at least one filter param is set
-        if not query_params:
+        if not search and not locale:
             return TranslationMemoryEntryModel.objects.none()
 
         # Only return results if search param is not set by itself
@@ -209,4 +208,4 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         # return queryset
-        return queryset.prefetch_related("locale", "project")
+        return queryset
