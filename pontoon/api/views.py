@@ -21,9 +21,10 @@ from pontoon.terminology.models import (
 )
 
 from .serializers import (
+    LocaleSerializer,
     NestedLocaleSerializer,
+    NestedProjectLocaleSerializer,
     NestedProjectSerializer,
-    ProjectLocaleSerializer,
     TermSerializer,
     TranslationMemorySerializer,
 )
@@ -140,7 +141,7 @@ class MultipleFieldLookupMixin:
 
 class LocaleListView(generics.ListAPIView):
     queryset = LocaleModel.objects.all()
-    serializer_class = NestedLocaleSerializer
+    serializer_class = LocaleSerializer
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
@@ -162,7 +163,7 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
     queryset = ProjectLocaleModel.objects.all()
-    serializer_class = ProjectLocaleSerializer
+    serializer_class = NestedProjectLocaleSerializer
 
     def get_object(self):
         slug = self.kwargs["slug"]
@@ -173,11 +174,21 @@ class ProjectLocaleIndividualView(generics.RetrieveAPIView):
 
 
 class TermSearchListView(generics.ListAPIView):
-    queryset = TermModel.objects.all()
     serializer_class = TermSerializer
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = TermFilter
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        search = query_params.get("search")
+        locale = query_params.get("locale")
+
+        # Only return results if search param is not set by itself
+        if search and not locale:
+            return TermModel.objects.none()
+
+        return TermModel.objects.all()
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
