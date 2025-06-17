@@ -11,9 +11,11 @@ from django.views.decorators.http import require_GET
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base.models import (
+    Entity as EntityModel,
     Locale as LocaleModel,
     Project as ProjectModel,
     ProjectLocale as ProjectLocaleModel,
+    Translation as TranslationModel,
     TranslationMemoryEntry as TranslationMemoryEntryModel,
 )
 from pontoon.terminology.models import (
@@ -27,6 +29,7 @@ from .serializers import (
     NestedProjectSerializer,
     TermSerializer,
     TranslationMemorySerializer,
+    TranslationSerializer,
 )
 
 
@@ -220,3 +223,44 @@ class TranslationMemorySearchListView(generics.ListAPIView):
         queryset = super().filter_queryset(queryset)
         # return queryset
         return queryset
+
+
+class EntityTranslationSearchListView(generics.ListAPIView):
+    serializer_class = TranslationSerializer
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        entity = query_params.get("entity")
+        locale = query_params.get("locale")
+
+        # Only return results if both params are set
+        if entity and locale:
+            entity = generics.get_object_or_404(EntityModel, pk=entity)
+            locale = generics.get_object_or_404(LocaleModel, code=locale)
+            plural_form = None if entity.string_plural == "" else 0
+
+            queryset = (
+                TranslationModel.objects.filter(
+                    entity=entity,
+                    plural_form=plural_form,
+                    approved=True,
+                )
+                .exclude(locale=locale)
+                .order_by("locale__code")
+            )
+
+            return queryset
+
+        return TranslationModel.objects.none()
+
+        # commented out for later inclusion
+        # preferred_locales = []
+        # if self.request.user.is_authenticated:
+        #     preferred_locales = self.request.user.profile.preferred_locales.values_list(
+        #         "code", flat=True
+        #     )
+
+        # payload = [
+        #     _serialize_translation_values(translation, preferred_locales)
+        #     for translation in translations
+        # ]
