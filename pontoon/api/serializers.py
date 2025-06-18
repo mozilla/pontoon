@@ -6,7 +6,6 @@ from pontoon.base.models import (
     ProjectLocale as ProjectLocaleModel,
     TranslationMemoryEntry as TranslationMemoryEntryModel,
 )
-from pontoon.base.models.translation import Translation as TranslationModel
 from pontoon.tags.models import Tag as TagModel
 from pontoon.terminology.models import (
     Term as TermModel,
@@ -161,18 +160,3 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
             return obj.project.slug
         else:
             return None
-
-
-class TranslationSerializer(serializers.ModelSerializer):
-    locale = serializers.SerializerMethodField()
-    entity = serializers.SerializerMethodField()
-
-    class Meta:
-        model = TranslationModel
-        fields = ["locale", "entity", "string"]
-
-    def get_locale(self, obj):
-        return obj.locale.code
-
-    def get_entity(self, obj):
-        return obj.entity.key
