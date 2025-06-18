@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.exceptions import ValidationError
 from rest_framework import generics
 
 from django.contrib.auth.decorators import login_required
@@ -187,9 +188,9 @@ class TermSearchListView(generics.ListAPIView):
         search = query_params.get("search")
         locale = query_params.get("locale")
 
-        # Only return results if search param is not set by itself
+        # Only return results if search param is set without locale param
         if search and not locale:
-            return TermModel.objects.none()
+            raise ValidationError("Missing query parameters required with 'search': 'locale'.")
 
         return TermModel.objects.all()
 
@@ -215,7 +216,7 @@ class TranslationMemorySearchListView(generics.ListAPIView):
 
         # Only return results if search param is not set by itself
         if search and not locale:
-            return TranslationMemoryEntryModel.objects.none()
+            raise ValidationError("Missing query parameters required with 'search': 'locale'.")
 
         return TranslationMemoryEntryModel.objects.all()
 
@@ -233,6 +234,15 @@ class EntityTranslationSearchListView(generics.ListAPIView):
         entity = query_params.get("entity")
         locale = query_params.get("locale")
 
+        if not entity and not locale:
+            raise ValidationError("Missing required query parameters: 'entity', 'locale'.")
+        
+        if not entity:
+            raise ValidationError("Missing required query parameters: 'entity'.")
+        
+        if not locale:
+            raise ValidationError("Missing required query parameters: 'locale'.")
+
         # Only return results if both params are set
         if entity and locale:
             entity = generics.get_object_or_404(EntityModel, pk=entity)
@@ -246,7 +256,7 @@ class EntityTranslationSearchListView(generics.ListAPIView):
                     approved=True,
                 )
                 .exclude(locale=locale)
-                .order_by("locale__code")
+                .order_by('locale__code')
             )
 
             return queryset
