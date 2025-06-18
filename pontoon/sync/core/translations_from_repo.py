@@ -6,7 +6,7 @@ from datetime import datetime
 from os.path import join, relpath, splitext
 
 from fluent.syntax import FluentParser
-from moz.l10n.formats import bilingual_extensions, l10n_extensions
+from moz.l10n.formats import l10n_extensions
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
 
 from django.core.paginator import Paginator
@@ -50,7 +50,7 @@ def sync_translations_from_repo(
     """(removed_resource_count, updated_translation_count)"""
     co = checkouts.target
     source_paths: set[str] = set(paths.ref_paths) if checkouts.source == co else set()
-    del_count = delete_removed_bilingual_resources(project, co, paths, source_paths)
+    del_count = delete_removed_gettext_resources(project, co, paths, source_paths)
 
     changed_target_paths = [
         path
@@ -80,7 +80,7 @@ def write_db_updates(
     add_translation_memory_entries(project, new_translations + updated_translations)
 
 
-def delete_removed_bilingual_resources(
+def delete_removed_gettext_resources(
     project: Project,
     target: Checkout,
     paths: L10nConfigPaths | L10nDiscoverPaths,
@@ -92,7 +92,7 @@ def delete_removed_bilingual_resources(
     removed_target_paths = (
         path
         for path in (join(target.path, co_path) for co_path in target.removed)
-        if path not in source_paths and splitext(path)[1] in bilingual_extensions
+        if path not in source_paths and splitext(path)[1] in {".po", ".pot"}
     )
     for target_path in removed_target_paths:
         ref = paths.find_reference(target_path)
