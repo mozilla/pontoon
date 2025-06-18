@@ -60,12 +60,6 @@ urlpatterns = [
                     views.TranslationMemorySearchListView.as_view(),
                     name="translation-memory-search",
                 ),
-                path(
-                    # Entity Translations
-                    "entity-translations/",
-                    views.EntityTranslationSearchListView.as_view(),
-                    name="entity-translation-list",
-                ),
             ]
         ),
     ),
