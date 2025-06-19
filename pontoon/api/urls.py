@@ -43,7 +43,7 @@ urlpatterns = [
                     name="project-individual",
                 ),
                 path(
-                    # Project Locale
+                    # ProjectLocale
                     "<str:code>/<str:slug>",
                     views.ProjectLocaleIndividualView.as_view(),
                     name="project-locale-individual",
