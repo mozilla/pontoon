@@ -23,6 +23,16 @@ class InsightsSnapshot(models.Model):
     strings_with_warnings = models.PositiveIntegerField(default=0)
     unreviewed_strings = models.PositiveIntegerField(default=0)
 
+    @property
+    def missing_strings(self):
+        return (
+            self.total_strings
+            - self.approved_strings
+            - self.pretranslated_strings
+            - self.strings_with_errors
+            - self.strings_with_warnings
+        )
+
     # Active users
     total_managers = models.PositiveIntegerField(default=0)
     total_reviewers = models.PositiveIntegerField(default=0)
