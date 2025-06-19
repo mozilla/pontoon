@@ -3,10 +3,10 @@ from django_filters import CharFilter, FilterSet
 from django.db.models import Q
 
 from pontoon.base.models import (
-    TranslationMemoryEntry as TranslationMemoryEntryModel,
+    TranslationMemoryEntry,
 )
 from pontoon.terminology.models import (
-    Term as TermModel,
+    Term,
 )
 
 
@@ -15,7 +15,7 @@ class TermFilter(FilterSet):
     locale = CharFilter(method="filter_locale")
 
     class Meta:
-        model = TermModel
+        model = Term
         fields = []
 
     def filter_search(self, queryset, name, value):
@@ -30,7 +30,7 @@ class TranslationMemoryFilter(FilterSet):
     locale = CharFilter(method="filter_locale")
 
     class Meta:
-        model = TranslationMemoryEntryModel
+        model = TranslationMemoryEntry
         fields = []
 
     def filter_search(self, queryset, name, value):

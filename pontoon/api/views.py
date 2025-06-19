@@ -12,13 +12,13 @@ from django.views.decorators.http import require_GET
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base.models import (
-    Locale as LocaleModel,
-    Project as ProjectModel,
-    ProjectLocale as ProjectLocaleModel,
-    TranslationMemoryEntry as TranslationMemoryEntryModel,
+    Locale,
+    Project,
+    ProjectLocale,
+    TranslationMemoryEntry,
 )
 from pontoon.terminology.models import (
-    Term as TermModel,
+    Term,
 )
 
 from .serializers import (
@@ -47,8 +47,8 @@ def get_user_actions(request, date, slug):
     end_date = start_date + timedelta(days=1)
 
     try:
-        project = ProjectModel.objects.get(slug=slug)
-    except ProjectModel.DoesNotExist:
+        project = Project.objects.get(slug=slug)
+    except Project.DoesNotExist:
         return JsonResponse(
             {
                 "error": "Project not found. Please use a valid project slug.",
@@ -141,36 +141,36 @@ class MultipleFieldLookupMixin:
 
 
 class LocaleListView(generics.ListAPIView):
-    queryset = LocaleModel.objects.all()
+    queryset = Locale.objects.all()
     serializer_class = LocaleSerializer
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
-    queryset = LocaleModel.objects.all()
+    queryset = Locale.objects.all()
     serializer_class = NestedLocaleSerializer
     lookup_field = "code"
 
 
 class ProjectListView(generics.ListAPIView):
-    queryset = ProjectModel.objects.all()
+    queryset = Project.objects.all()
     serializer_class = NestedProjectSerializer
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    queryset = ProjectModel.objects.all()
+    queryset = Project.objects.all()
     serializer_class = NestedProjectSerializer
     lookup_field = "slug"
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
-    queryset = ProjectLocaleModel.objects.all()
+    queryset = ProjectLocale.objects.all()
     serializer_class = NestedProjectLocaleSerializer
 
     def get_object(self):
         slug = self.kwargs["slug"]
         code = self.kwargs["code"]
         return generics.get_object_or_404(
-            ProjectLocaleModel, project__slug=slug, locale__code=code
+            ProjectLocale, project__slug=slug, locale__code=code
         )
 
 
@@ -191,7 +191,7 @@ class TermSearchListView(generics.ListAPIView):
                 "Missing query parameters required with 'search': 'locale'."
             )
 
-        return TermModel.objects.all()
+        return Term.objects.all()
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -211,7 +211,7 @@ class TranslationMemorySearchListView(generics.ListAPIView):
 
         # Only return results if at least one filter param is set
         if not search and not locale:
-            return TranslationMemoryEntryModel.objects.none()
+            return TranslationMemoryEntry.objects.none()
 
         # Only return results if search param is not set by itself
         if search and not locale:
@@ -219,7 +219,7 @@ class TranslationMemorySearchListView(generics.ListAPIView):
                 "Missing query parameters required with 'search': 'locale'."
             )
 
-        return TranslationMemoryEntryModel.objects.all()
+        return TranslationMemoryEntry.objects.all()
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
