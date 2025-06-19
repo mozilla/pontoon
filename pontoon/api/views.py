@@ -22,7 +22,6 @@ from pontoon.terminology.models import (
 )
 
 from .serializers import (
-    LocaleSerializer,
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
     NestedProjectSerializer,
@@ -142,7 +141,7 @@ class MultipleFieldLookupMixin:
 
 class LocaleListView(generics.ListAPIView):
     queryset = Locale.objects.all()
-    serializer_class = LocaleSerializer
+    serializer_class = NestedLocaleSerializer
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
