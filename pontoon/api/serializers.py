@@ -34,7 +34,7 @@ class LocaleSerializer(serializers.ModelSerializer):
             "direction",
             "google_translate_code",
             "missing_strings",
-            "ms_terminology_code",
+            "ms_translator_code",
             "ms_translator_code",
             "name",
             "plural_rule",
@@ -80,7 +80,7 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProjectLocale
-        fields = (
+        fields = [
             "total_strings",
             "approved_strings",
             "pretranslated_strings",
@@ -88,21 +88,28 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
             "strings_with_warnings",
             "unreviewed_strings",
             "project",
-        )
+        ]
 
 
 class NestedProjectSerializer(ProjectSerializer):
+    locales = serializers.SerializerMethodField()
     tags = TagSerializer(many=True, read_only=True)
 
     class Meta(ProjectSerializer.Meta):
-        fields = ProjectSerializer.Meta.fields + ["tags"]
+        fields = ProjectSerializer.Meta.fields + ["tags", "locales"]
+
+    def get_locales(self, obj):
+        return list(obj.project_locale.values_list("locale__code", flat=True))
 
 
 class NestedLocaleSerializer(LocaleSerializer):
-    project_locale = ProjectLocaleSerializer(many=True, read_only=True)
+    projects = serializers.SerializerMethodField()
 
     class Meta(LocaleSerializer.Meta):
-        fields = LocaleSerializer.Meta.fields + ["project_locale"]
+        fields = LocaleSerializer.Meta.fields + ["projects"]
+
+    def get_projects(self, obj):
+        return list(obj.project_locale.values_list("project__slug", flat=True))
 
 
 class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
@@ -110,7 +117,7 @@ class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
     project = ProjectSerializer(read_only=True)
 
     class Meta(ProjectLocaleSerializer.Meta):
-        fields = ProjectLocaleSerializer.Meta.fields + ("locale", "project")
+        fields = ProjectLocaleSerializer.Meta.fields + ["locale", "project"]
 
 
 class TermTranslationSerializer(serializers.ModelSerializer):
