@@ -1,21 +1,21 @@
 from rest_framework import serializers
 
 from pontoon.base.models import (
-    Locale as LocaleModel,
-    Project as ProjectModel,
-    ProjectLocale as ProjectLocaleModel,
-    TranslationMemoryEntry as TranslationMemoryEntryModel,
+    Locale,
+    Project,
+    ProjectLocale,
+    TranslationMemoryEntry,
 )
-from pontoon.tags.models import Tag as TagModel
+from pontoon.tags.models import Tag
 from pontoon.terminology.models import (
-    Term as TermModel,
-    TermTranslation as TermTranslationModel,
+    Term,
+    TermTranslation,
 )
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TagModel
+        model = Tag
         fields = (
             "slug",
             "name",
@@ -25,7 +25,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class LocaleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LocaleModel
+        model = Locale
         fields = [
             "code",
             "approved_strings",
@@ -52,7 +52,7 @@ class LocaleSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProjectModel
+        model = Project
         fields = [
             "approved_strings",
             "complete",
@@ -79,7 +79,7 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
     project = ProjectSerializer(read_only=True)
 
     class Meta:
-        model = ProjectLocaleModel
+        model = ProjectLocale
         fields = (
             "total_strings",
             "approved_strings",
@@ -117,7 +117,7 @@ class TermTranslationSerializer(serializers.ModelSerializer):
     locale = serializers.SerializerMethodField()
 
     class Meta:
-        model = TermTranslationModel
+        model = TermTranslation
         fields = ["text", "locale"]
 
     def get_locale(self, obj):
@@ -128,7 +128,7 @@ class TermSerializer(serializers.ModelSerializer):
     translations = TermTranslationSerializer(many=True, read_only=True)
 
     class Meta:
-        model = TermModel
+        model = Term
         fields = [
             "definition",
             "part_of_speech",
@@ -144,7 +144,7 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
     project = serializers.SerializerMethodField()
 
     class Meta:
-        model = TranslationMemoryEntryModel
+        model = TranslationMemoryEntry
         fields = [
             "locale",
             "project",
