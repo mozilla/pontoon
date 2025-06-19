@@ -18,9 +18,19 @@ $(function () {
     const isValidRole =
       $form.find('.user-roles [type=checkbox]:checked').length > 0;
 
-    const isValidLocale = $form.find('[name=locales]').val();
+    const isLocaleToggleChecked = $form
+      .find('[name=locale_toggle]')
+      .is(':checked');
+    const localeValue = $form.find('[name=locales]').val();
 
-    const isValidProject = $form.find('[name=projects]').val().length;
+    const isValidLocale = !isLocaleToggleChecked || localeValue.length > 0;
+
+    const isProjectToggleChecked = $form
+      .find('[name=project_toggle]')
+      .is(':checked');
+    const projectValue = $form.find('[name=projects]').val();
+
+    const isValidProject = !isProjectToggleChecked || projectValue.length > 0;
 
     const isValidTranslationMinimum = $form
       .find('[name=translation_minimum]')[0]
@@ -107,20 +117,29 @@ $(function () {
   }
 
   function updateReviewPanel() {
-    function updateMultipleItemSelector(source, target, item) {
-      const allProjects = !$(`${source}.available li:not(.no-match)`).length;
-      const projectsSelected = $(`${source}.selected li:not(.no-match)`)
+    const $form = $('#send-message');
+
+    function updateMultipleItemSelector(source, target, item, toggle) {
+      const allItems = !$(`${source}.available li:not(.no-match)`).length;
+      const selectedItems = $(`${source}.selected li:not(.no-match)`)
         .map(function () {
           return $(this).find(item).text();
         })
         .get();
-      const projectsDisplay = allProjects ? 'All' : projectsSelected.join(', ');
-      $(`#review ${target} .value`).html(projectsDisplay);
+      const itemsDisplay = allItems ? 'All' : selectedItems.join(', ');
+
+      const isToggleChecked = $form.find(toggle).is(':checked');
+
+      $(`#review ${target} .value`).html(itemsDisplay);
+      $(`#review ${target}`).toggle(
+        selectedItems.length > 0 && isToggleChecked,
+      );
     }
 
-    function updateFields(filter) {
+    function updateFields(filter, toggle) {
       let show = false;
-      $(`#compose .${filter} > div`).each(function () {
+      const isToggleChecked = $form.find(toggle).is(':checked');
+      $(`#compose ${filter} > div`).each(function () {
         const className = $(this).attr('class');
         const values = [];
 
@@ -143,9 +162,9 @@ $(function () {
             }
           });
 
-        $(`#review .${filter} .${className}`).html(values.join(', '));
+        $(`#review ${filter} .value`).html(values.join(', '));
       });
-      $(`#review .${filter}`).toggle(show);
+      $(`#review ${filter}`).toggle(show && isToggleChecked);
     }
 
     // Update hidden textarea with the HTML content to be sent to backend
@@ -170,19 +189,29 @@ $(function () {
     $('#review .user-roles .value').html(userRoles.join(', '));
 
     // Locales
-    updateMultipleItemSelector('.locale', '.locales', '.code');
+    updateMultipleItemSelector(
+      '.locale',
+      '.locales',
+      '.code',
+      '[name="locale_toggle"]',
+    );
 
     // Projects
-    updateMultipleItemSelector('.project .item', '.projects', '.item');
+    updateMultipleItemSelector(
+      '.project .item',
+      '.projects',
+      '.item',
+      '[name="project_toggle"]',
+    );
 
     // Submitted translations
-    updateFields('submitted-translations');
+    updateFields('.submitted-translations', '[name="translation_toggle"]');
 
     // Performed reviews
-    updateFields('performed-reviews');
+    updateFields('.performed-reviews', '[name="review_toggle"]');
 
     // Last login
-    updateFields('last-login');
+    updateFields('.last-login', '[name="login_toggle"]');
 
     // Message types
     let messageTypes = $('.message-type .enabled')
@@ -376,5 +405,11 @@ $(function () {
         button.removeClass('sending');
       },
     });
+  });
+
+  // Collapse or Expand filters
+  container.on('click', '.collapsible', function () {
+    $(this).next('.collapsible-content').slideToggle();
+    $(this).toggleClass('open');
   });
 });
