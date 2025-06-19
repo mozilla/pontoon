@@ -117,7 +117,6 @@ def set_project_date_modified(sender, instance, update_fields, **kwargs):
         "data_source",
         "disabled",
         "sync_disabled",
-        "system_project",
     ]:
         if getattr(prev, attr, None) != getattr(instance, attr, None):
             instance.date_modified = timezone.now()
