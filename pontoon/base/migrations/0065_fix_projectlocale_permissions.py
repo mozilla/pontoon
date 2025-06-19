@@ -1,10 +1,10 @@
 from django.db import migrations
 
-from pontoon.base.models import ProjectLocale
 from pontoon.base.signals import assign_group_permissions, create_group
 
 
 def fix_projectlocale_permissions(apps, schema_editor):
+    ProjectLocale = apps.get_model("base", "ProjectLocale")
     for project, locale in [
         ("common-voice", "cdo"),
         ("common-voice", "dar"),
