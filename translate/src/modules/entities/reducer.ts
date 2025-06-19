@@ -25,7 +25,6 @@ type EntitiesState = {
 function updateEntityTranslation(
   state: EntitiesState,
   entity: number,
-  pluralForm: number,
   translation: EntityTranslation,
 ): Entity[] {
   return state.entities.map((item) => {
@@ -33,17 +32,7 @@ function updateEntityTranslation(
       return item;
     }
 
-    const translations = [...item.translation];
-
-    // If the plural form is -1, then there's no plural and we should
-    // simply update the first translation.
-    const plural = pluralForm === -1 ? 0 : pluralForm;
-    translations[plural] = translation;
-
-    return {
-      ...item,
-      translation: translations,
-    };
+    return { ...item, translation };
   });
 }
 
@@ -120,7 +109,6 @@ export function reducer(
         entities: updateEntityTranslation(
           state,
           action.entity,
-          action.pluralForm,
           action.translation,
         ),
       };

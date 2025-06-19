@@ -157,7 +157,6 @@ def update_resources(
 
     mod_fields = [
         "string",
-        "string_plural",
         "comment",
         "source",
         "group_comment",
@@ -305,7 +304,6 @@ def entity_from_source(
     resource_comments = getattr(tx, "resource_comments", None)
     return Entity(
         string=tx.source_string,
-        string_plural=tx.source_string_plural,
         key=tx.key,
         comment="\n".join(comments) if comments else "",
         order=tx.order or idx,

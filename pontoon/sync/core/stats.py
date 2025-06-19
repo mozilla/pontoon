@@ -33,30 +33,14 @@ def update_stats(project: Project) -> None:
             [project.id, project.id],
         )
 
-        # Translated resource total strings are counted from entities and expected locale plurals.
-        # The source entity count is offset by the number of gettext plural source strings
-        # multiplied by one less than the count of plural categories of the target locale,
-        # which equals the number of commas in cldr_plurals.
+        # Translated resources, copied from resources
         cursor.execute(
             dedent(
                 """
-                UPDATE base_translatedresource tr
-                SET total_strings = agg.total
-                FROM (
-                    SELECT
-                        tr.id AS "id",
-                        COUNT(*) +
-                            (LENGTH(loc.cldr_plurals) - LENGTH(REPLACE(loc.cldr_plurals, ',', ''))) *
-                            COUNT(*) FILTER (WHERE ent.string_plural != '')
-                        AS "total"
-                    FROM "base_translatedresource" tr
-                    LEFT OUTER JOIN "base_resource" res ON (tr.resource_id = res.id)
-                    LEFT OUTER JOIN "base_locale" loc ON (tr.locale_id = loc.id)
-                    LEFT OUTER JOIN "base_entity" ent ON (tr.resource_id = ent.resource_id)
-                    WHERE NOT ent.obsolete AND res.project_id = %s
-                    GROUP BY tr.id, loc.cldr_plurals
-                ) AS agg
-                WHERE agg.id = tr.id
+                UPDATE "base_translatedresource" tr
+                SET total_strings = res.total_strings
+                FROM "base_resource" res
+                WHERE tr.resource_id = res.id AND res.project_id = %s
                 """
             ),
             [project.id],

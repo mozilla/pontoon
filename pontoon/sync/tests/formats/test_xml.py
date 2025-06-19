@@ -33,25 +33,25 @@ class AndroidXMLTests(TestCase):
             assert t0.comments == ["Sample comment"]
             assert t0.key == "Source String"
             assert t0.context == "Source String"
-            assert t0.strings == {None: "Translated <b>String</b>"}
+            assert t0.string == "Translated <b>String</b>"
             assert t0.order == 0
 
             # multiple comments
             assert t1.comments == ["First comment", "", "Second comment"]
             assert t1.key == "Multiple Comments"
-            assert t1.strings == {None: "Translated Multiple Comments"}
+            assert t1.string == "Translated Multiple Comments"
             assert t1.order == 1
 
             # no comments or sources
             assert t2.comments == []
             assert t2.key == "No Comments or Sources"
-            assert t2.strings == {None: "Translated No Comments or Sources"}
+            assert t2.string == "Translated No Comments or Sources"
             assert t2.order == 2
 
             # empty translation
             assert t3.comments == []
             assert t3.key == "Empty Translation"
-            assert t3.strings == {None: ""}
+            assert t3.string == ""
             assert t3.order == 3
 
     def test_android_quotes(self):
@@ -67,7 +67,7 @@ class AndroidXMLTests(TestCase):
             with open(path, "x") as file:
                 file.write(src)
             (t0,) = parse_translations(path)
-            assert t0.strings == {None: "'"}
+        assert t0.string == "'"
 
     def test_android_escapes_and_trimming(self):
         src = dedent("""\
@@ -82,4 +82,4 @@ class AndroidXMLTests(TestCase):
             with open(path, "x") as file:
                 file.write(src)
             (t0,) = parse_translations(path)
-            assert t0.strings == {None: " \\n\n"}
+        assert t0.string == " \\n\n"
