@@ -49,14 +49,14 @@ urlpatterns = [
                     name="project-locale-individual",
                 ),
                 path(
-                    # Term Search
-                    "termsearch/",
+                    # Terminology Search
+                    "search/terminology/",
                     views.TermSearchListView.as_view(),
                     name="term-search",
                 ),
                 path(
                     # Translation Memory Search
-                    "tmsearch/",
+                    "search/tm/",
                     views.TranslationMemorySearchListView.as_view(),
                     name="translation-memory-search",
                 ),
