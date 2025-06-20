@@ -56,6 +56,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = [
             "approved_strings",
             "complete",
+            "contact",
             "deadline",
             "disabled",
             "info",
