@@ -32,6 +32,8 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
             account|
             socialaccount|
             graphene|
+            rest_framework|
+            django_filters|
         )/).*\.(
             html|
             jinja|

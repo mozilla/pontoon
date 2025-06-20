@@ -1,12 +1,34 @@
 from datetime import datetime, timedelta
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
+from rest_framework.exceptions import ValidationError
+
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Project
+from pontoon.api.filters import TermFilter, TranslationMemoryFilter
+from pontoon.base.models import (
+    Locale,
+    Project,
+    ProjectLocale,
+    TranslationMemoryEntry,
+)
+from pontoon.terminology.models import (
+    Term,
+)
+
+from .serializers import (
+    NestedLocaleSerializer,
+    NestedProjectLocaleSerializer,
+    NestedProjectSerializer,
+    TermSerializer,
+    TranslationMemorySerializer,
+)
 
 
 @require_GET
@@ -98,3 +120,137 @@ def get_user_actions(request, date, slug):
             },
         }
     )
+
+
+class MultipleFieldLookupMixin:
+    """
+    Apply this mixin to any view or viewset to get multiple field filtering
+    based on a `lookup_fields` attribute, instead of the default single field filtering.
+    """
+
+    def get_object(self):
+        queryset = self.get_queryset()  # Get the base queryset
+        queryset = self.filter_queryset(queryset)  # Apply any filter backends
+        filter = {}
+        for field in self.lookup_fields:
+            if self.kwargs.get(field):  # Ignore empty fields.
+                filter[field] = self.kwargs[field]
+        obj = generics.get_object_or_404(queryset, **filter)  # Lookup the object
+        # self.check_object_permissions(self.request, obj)
+        return obj
+
+
+class LocaleListView(generics.ListAPIView):
+    queryset = Locale.objects.all()
+    serializer_class = NestedLocaleSerializer
+
+
+class LocaleIndividualView(generics.RetrieveAPIView):
+    queryset = Locale.objects.all()
+    serializer_class = NestedLocaleSerializer
+    lookup_field = "code"
+
+
+class ProjectListView(generics.ListAPIView):
+    serializer_class = NestedProjectSerializer
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        include_disabled = query_params.get("include_disabled")
+        include_system = query_params.get("include_system")
+
+        base_queryset = Project.objects.visible().visible_for(self.request.user)
+        filters = Q()
+        if include_disabled is not None:
+            if include_disabled.lower() == "true":
+                filters |= Q(disabled=True)
+            else:
+                raise ValidationError(
+                    "Query parameter 'include_disabled' must have value(s): true."
+                )
+        if include_system is not None:
+            if include_system.lower() == "true":
+                filters |= Q(system_project=True)
+            else:
+                raise ValidationError(
+                    "Query parameter 'include_system' must have value(s): true."
+                )
+
+        # if there are filters, combine with visible projects
+        if filters:
+            return base_queryset.union(Project.objects.filter(filters))
+
+        # return Project.objects.visible_for(self.request.user)
+        return base_queryset
+
+
+class ProjectIndividualView(generics.RetrieveAPIView):
+    queryset = Project.objects.all()
+    serializer_class = NestedProjectSerializer
+    lookup_field = "slug"
+
+
+class ProjectLocaleIndividualView(generics.RetrieveAPIView):
+    queryset = ProjectLocale.objects.all()
+    serializer_class = NestedProjectLocaleSerializer
+
+    def get_object(self):
+        slug = self.kwargs["slug"]
+        code = self.kwargs["code"]
+        return generics.get_object_or_404(
+            ProjectLocale, project__slug=slug, locale__code=code
+        )
+
+
+class TermSearchListView(generics.ListAPIView):
+    serializer_class = TermSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TermFilter
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        text = query_params.get("text")
+        locale = query_params.get("locale")
+
+        # Only return results if text param is set without locale param
+        if text and not locale:
+            raise ValidationError(
+                "Missing query parameters required with 'text': 'locale'."
+            )
+
+        return Term.objects.all()
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset
+
+
+class TranslationMemorySearchListView(generics.ListAPIView):
+    serializer_class = TranslationMemorySerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TranslationMemoryFilter
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        text = query_params.get("text")
+        locale = query_params.get("locale")
+
+        # Only return results if at least one filter param is set
+        if not text and not locale:
+            raise ValidationError(
+                "Missing query parameter(s) required: 'locale', 'text'."
+            )
+
+        # Only return results if text param is not set by itself
+        if text and not locale:
+            raise ValidationError(
+                "Missing query parameter(s) required with 'text': 'locale'."
+            )
+
+        return TranslationMemoryEntry.objects.all()
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset
