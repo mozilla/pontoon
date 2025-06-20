@@ -34,7 +34,7 @@ class LocaleSerializer(serializers.ModelSerializer):
             "direction",
             "google_translate_code",
             "missing_strings",
-            "ms_translator_code",
+            "ms_terminology_code",
             "ms_translator_code",
             "name",
             "plural_rule",
