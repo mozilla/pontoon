@@ -5,6 +5,7 @@ from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
@@ -151,8 +152,36 @@ class LocaleIndividualView(generics.RetrieveAPIView):
 
 
 class ProjectListView(generics.ListAPIView):
-    queryset = Project.objects.all()
     serializer_class = NestedProjectSerializer
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        include_disabled = query_params.get("include_disabled")
+        include_system = query_params.get("include_system")
+
+        base_queryset = Project.objects.visible().visible_for(self.request.user)
+        filters = Q()
+        if include_disabled is not None:
+            if include_disabled.lower() == "true":
+                filters |= Q(disabled=True)
+            else:
+                raise ValidationError(
+                    "Query parameter 'include_disabled' must have value(s): true."
+                )
+        if include_system is not None:
+            if include_system.lower() == "true":
+                filters |= Q(system_project=True)
+            else:
+                raise ValidationError(
+                    "Query parameter 'include_system' must have value(s): true."
+                )
+
+        # if there are filters, combine with visible projects
+        if filters:
+            return base_queryset.union(Project.objects.filter(filters))
+
+        # return Project.objects.visible_for(self.request.user)
+        return base_queryset
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
@@ -181,13 +210,13 @@ class TermSearchListView(generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        search = query_params.get("search")
+        text = query_params.get("text")
         locale = query_params.get("locale")
 
-        # Only return results if search param is set without locale param
-        if search and not locale:
+        # Only return results if text param is set without locale param
+        if text and not locale:
             raise ValidationError(
-                "Missing query parameters required with 'search': 'locale'."
+                "Missing query parameters required with 'text': 'locale'."
             )
 
         return Term.objects.all()
@@ -205,22 +234,23 @@ class TranslationMemorySearchListView(generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        search = query_params.get("search")
+        text = query_params.get("text")
         locale = query_params.get("locale")
 
         # Only return results if at least one filter param is set
-        if not search and not locale:
-            return TranslationMemoryEntry.objects.none()
-
-        # Only return results if search param is not set by itself
-        if search and not locale:
+        if not text and not locale:
             raise ValidationError(
-                "Missing query parameters required with 'search': 'locale'."
+                "Missing query parameter(s) required: 'locale', 'text'."
+            )
+
+        # Only return results if text param is not set by itself
+        if text and not locale:
+            raise ValidationError(
+                "Missing query parameter(s) required with 'text': 'locale'."
             )
 
         return TranslationMemoryEntry.objects.all()
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
-        # return queryset
         return queryset
