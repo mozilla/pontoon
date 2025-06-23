@@ -247,6 +247,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     "can_be_requested",
                     "date_created",
                     "date_disabled",
+                    "date_modified",
                     "system_project",
                     "visibility",
                     "pretranslation_enabled",
