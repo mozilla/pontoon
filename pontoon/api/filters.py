@@ -11,14 +11,14 @@ from pontoon.terminology.models import (
 
 
 class TermFilter(FilterSet):
-    search = CharFilter(method="filter_search")
+    text = CharFilter(method="filter_text")
     locale = CharFilter(method="filter_locale")
 
     class Meta:
         model = Term
         fields = []
 
-    def filter_search(self, queryset, name, value):
+    def filter_text(self, queryset, name, value):
         return queryset.filter(text__icontains=value)
 
     def filter_locale(self, queryset, name, value):
@@ -26,14 +26,14 @@ class TermFilter(FilterSet):
 
 
 class TranslationMemoryFilter(FilterSet):
-    search = CharFilter(method="filter_search")
+    text = CharFilter(method="filter_text")
     locale = CharFilter(method="filter_locale")
 
     class Meta:
         model = TranslationMemoryEntry
         fields = []
 
-    def filter_search(self, queryset, name, value):
+    def filter_text(self, queryset, name, value):
         return queryset.filter(
             Q(Q(source__icontains=value) | Q(target__icontains=value))
         )
