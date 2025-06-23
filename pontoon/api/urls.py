@@ -26,7 +26,7 @@ urlpatterns = [
                 ),
                 path(
                     # Locale
-                    "locales/<str:code>",
+                    "locales/<str:code>/",
                     views.LocaleIndividualView.as_view(),
                     name="locale-individual",
                 ),
@@ -38,13 +38,13 @@ urlpatterns = [
                 ),
                 path(
                     # Project
-                    "projects/<str:slug>",
+                    "projects/<str:slug>/",
                     views.ProjectIndividualView.as_view(),
                     name="project-individual",
                 ),
                 path(
                     # ProjectLocale
-                    "<str:code>/<str:slug>",
+                    "<str:code>/<str:slug>/",
                     views.ProjectLocaleIndividualView.as_view(),
                     name="project-locale-individual",
                 ),
