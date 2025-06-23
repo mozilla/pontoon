@@ -1,5 +1,5 @@
-DC := $(shell which docker-compose)
-DOCKER := $(shell which docker)
+DC := "docker compose"
+DOCKER := "docker"
 
 # *IMPORTANT*
 # Don't use this instance in a production setting. More info at:
