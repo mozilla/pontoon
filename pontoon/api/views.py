@@ -162,25 +162,13 @@ class ProjectListView(generics.ListAPIView):
         base_queryset = Project.objects.visible().visible_for(self.request.user)
         filters = Q()
         if include_disabled is not None:
-            if include_disabled.lower() == "true":
-                filters |= Q(disabled=True)
-            else:
-                raise ValidationError(
-                    "Query parameter 'include_disabled' must have value(s): true."
-                )
+            filters |= Q(disabled=True)
         if include_system is not None:
-            if include_system.lower() == "true":
-                filters |= Q(system_project=True)
-            else:
-                raise ValidationError(
-                    "Query parameter 'include_system' must have value(s): true."
-                )
+            filters |= Q(system_project=True)
 
-        # if there are filters, combine with visible projects
         if filters:
             return base_queryset.union(Project.objects.filter(filters))
 
-        # return Project.objects.visible_for(self.request.user)
         return base_queryset
 
 

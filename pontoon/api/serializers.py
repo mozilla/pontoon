@@ -51,6 +51,8 @@ class LocaleSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    contact = serializers.SerializerMethodField()
+
     class Meta:
         model = Project
         fields = [
@@ -74,6 +76,11 @@ class ProjectSerializer(serializers.ModelSerializer):
             "unreviewed_strings",
             "visibility",
         ]
+
+    def get_contact(self, obj):
+        if obj.contact:
+            return obj.contact.username
+        return None
 
 
 class ProjectLocaleSerializer(serializers.ModelSerializer):
@@ -166,5 +173,4 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
     def get_project(self, obj):
         if obj.project:
             return obj.project.slug
-        else:
-            return None
+        return None
