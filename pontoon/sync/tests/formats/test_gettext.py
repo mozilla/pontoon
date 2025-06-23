@@ -6,8 +6,8 @@ from unittest import TestCase
 from pontoon.sync.formats import parse_translations
 
 
-class POTests(TestCase):
-    def test_po(self):
+class GettextTests(TestCase):
+    def test_gettext(self):
         src = dedent("""
             #
             msgid ""
@@ -66,7 +66,9 @@ class POTests(TestCase):
             path = join(dir, "file.po")
             with open(path, "x") as file:
                 file.write(src)
-            t0, t1, t2, t3, t4, t5, t6, t7 = parse_translations(path)
+            t0, t1, t2, t3, t4, t5, t6, t7 = parse_translations(
+                path, gettext_plurals=["one", "other"]
+            )
 
         # basic
         assert t0.comments == ["Sample comment"]
@@ -131,7 +133,7 @@ class POTests(TestCase):
             == dedent("""
                 .input {$n :number}
                 .match $n
-                0 {{Translated Plural %(count)s string}}
+                one {{Translated Plural %(count)s string}}
                 * {{Translated Plural %(count)s strings}}
                 """).strip()
         )
@@ -156,7 +158,7 @@ class POTests(TestCase):
             == dedent("""
                 .input {$n :number}
                 .match $n
-                0 {{}}
+                one {{}}
                 * {{Translated Plural %(count)s strings with missing translations}}
                 """).strip()
         )
@@ -172,7 +174,7 @@ class POTests(TestCase):
         assert not t7.fuzzy
         assert t7.order == 7
 
-    def test_po_context(self):
+    def test_context(self):
         src = dedent("""
             #
             msgid ""

@@ -46,8 +46,9 @@ def plural_translations(apps: Any, schema_editor):
     Locale = apps.get_model("base", "Locale")
     Translation = apps.get_model("base", "Translation")
 
-    plural_counts: dict[int, int] = {
-        id: plurals.count(",") + 1
+    plural_names = ["zero", "one", "two", "few", "many", "other"]
+    plural_categories: dict[int, list[str]] = {
+        id: [plural_names[int(pi)] for pi in plurals.split(",")]
         for id, plurals in Locale.objects.exclude(cldr_plurals="")
         .values_list("id", "cldr_plurals")
         .iterator()
@@ -77,18 +78,21 @@ def plural_translations(apps: Any, schema_editor):
 
     def add_translation(tx: Any, patterns: list[Pattern]):
         try:
+            plurals = plural_categories[tx.locale_id]
             msg = (
                 SelectMessage(
                     declarations={"n": Expression(VariableRef("n"), "number")},
                     selectors=(VariableRef("n"),),
                     variants={
                         (
-                            str(idx) if idx < plural_count - 1 else CatchallKey(),
+                            plurals[idx]
+                            if idx < len(plurals) - 1
+                            else CatchallKey(plurals[-1]),
                         ): pattern
                         for idx, pattern in enumerate(patterns)
                     },
                 )
-                if plural_count > 1
+                if len(plurals) > 1
                 else PatternMessage(patterns[0])
             )
             tx.string = mf2_serialize_message(msg)
@@ -121,7 +125,11 @@ def plural_translations(apps: Any, schema_editor):
                     add_translation(suggested_tx, suggested)
             prev_key = t_key
 
-            plural_count = plural_counts.get(t.locale_id, 1)
+            plural_count = (
+                len(plural_categories[t.locale_id])
+                if t.locale_id in plural_categories
+                else 1
+            )
             approved = [[] for _ in range(plural_count)]
             approved_tx = Translation(
                 entity_id=t.entity_id,

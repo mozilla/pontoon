@@ -3,6 +3,7 @@ Parsing resource files.
 """
 
 from os.path import splitext
+from typing import Sequence
 
 from moz.l10n.formats import Format, detect_format, l10n_extensions
 from moz.l10n.message import serialize_message
@@ -10,9 +11,9 @@ from moz.l10n.resource import parse_resource
 
 from pontoon.sync.formats import (
     ftl,
+    gettext,
     json_extensions,
     json_keyvalue,
-    po,
     properties,
     xliff,
     xml,
@@ -37,7 +38,9 @@ def are_compatible_files(file_a, file_b):
     return False
 
 
-def parse_translations(path: str) -> list[VCSTranslation]:
+def parse_translations(
+    path: str, gettext_plurals: Sequence[str] | None = None
+) -> list[VCSTranslation]:
     """
     Parse the resource file at the given path and return a
     list of translations.
@@ -54,13 +57,16 @@ def parse_translations(path: str) -> list[VCSTranslation]:
         # TODO: android_ascii_spaces and android_literal_quotes
         # should be dropped after data migration
         res = parse_resource(
-            path, android_ascii_spaces=True, android_literal_quotes=True
+            path,
+            android_ascii_spaces=True,
+            android_literal_quotes=True,
+            gettext_plurals=gettext_plurals,
         )
     except Exception as err:
         raise ParseError(f"Could not parse {path}") from err
     match res.format:
-        case Format.po:
-            return po.parse(res)
+        case Format.gettext:
+            return gettext.parse(res)
         case Format.properties:
             return properties.parse(res)
         case Format.android:

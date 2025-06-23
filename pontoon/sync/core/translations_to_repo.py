@@ -333,7 +333,7 @@ def set_translations(
                     except ValueError:
                         pass
 
-    if not_translated and res.format not in (Format.po, Format.xliff):
+    if not_translated and res.format not in (Format.gettext, Format.xliff):
         section = not_translated[0][0]
         rm: list[Entry] = []
         for section_, entry in not_translated:
@@ -345,7 +345,7 @@ def set_translations(
                 rm = [entry]
         section.entries = [e for e in section.entries if e not in rm]
 
-    if res.format == Format.po:
+    if res.format == Format.gettext:
         header = {m.key: m.value for m in res.meta}
         header["Language"] = locale.code.replace("-", "_")
         header["Plural-Forms"] = (
@@ -375,7 +375,7 @@ def set_translation(
             key = ".".join(entry.id)
         case Format.xliff:
             key = f"{section.id[0]}\x04{entry.id[0]}"
-        case Format.po if len(entry.id) == 2:
+        case Format.gettext if len(entry.id) == 2:
             key = f"{entry.id[1]}\x04{entry.id[0]}"
         case _:
             key = entry.id[0]
@@ -392,7 +392,7 @@ def set_translation(
                 android_nl.sub(" ", tx.string),
             )
 
-        case Format.po:
+        case Format.gettext:
             msg = parse_message(Format.mf2, tx.string)
             if isinstance(entry.value, SelectMessage):
                 entry.value.variants = (
