@@ -1,3 +1,4 @@
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerSplitView
 from graphene_django.views import GraphQLView
 
 from django.urls import include, path, re_path
@@ -59,7 +60,12 @@ urlpatterns = [
         csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=True)),
     ),
     # REST API
-    path("api/v2/", views.APIV2RootView.as_view(), name="api-root"),
+    path("api/v2/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/v2/schema/swagger-ui/",
+        SpectacularSwaggerSplitView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
     path("api/v2/", include(api_v2_patterns)),
     # API v1
     path(

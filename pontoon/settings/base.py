@@ -290,6 +290,7 @@ INSTALLED_APPS = (
     "graphene_django",
     "django_ace",
     "rest_framework",
+    "drf_spectacular",
 )
 
 # A list of IP addresses or IP ranges to be blocked from accessing the app,
@@ -372,6 +373,7 @@ TEMPLATES = [
                     graphene|
                     rest_framework|
                     django_filters|
+                    drf_spectacular|
                 )/).*\.(
                     html|
                     jinja|
@@ -937,7 +939,7 @@ SECURE_SSL_REDIRECT = (
 )
 
 # Content-Security-Policy headers
-CSP_DEFAULT_SRC = ("'none'",)
+CSP_DEFAULT_SRC = ("'self'",)
 CSP_FRAME_SRC = ("https:",)
 CSP_WORKER_SRC = (
     "https:",
@@ -1221,4 +1223,12 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Pontoon API",
+    "DESCRIPTION": "Pontoon is Mozilla's Open Source Localization Platform.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }

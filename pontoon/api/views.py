@@ -3,8 +3,6 @@ from datetime import datetime, timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -122,21 +120,6 @@ def get_user_actions(request, date, slug):
             },
         }
     )
-
-
-class APIV2RootView(APIView):
-    def get(self, request, format=None):
-        return Response(
-            [
-                "locales/",
-                "locales/{code}/",
-                "projects/?include_disabled&include_system",
-                "projects/{slug}/",
-                "{code}/{slug}/",
-                "search/terminology/?locale=LOCALECODE&text=TERMTEXT",
-                "search/tm/?locale=LOCALECODE&text=TMTEXT",
-            ]
-        )
 
 
 class LocaleListView(generics.ListAPIView):

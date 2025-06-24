@@ -34,6 +34,7 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
             graphene|
             rest_framework|
             django_filters|
+            drf_spectacular|
         )/).*\.(
             html|
             jinja|
