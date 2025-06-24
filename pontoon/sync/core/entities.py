@@ -19,8 +19,6 @@ from pontoon.sync.formats.common import ParseError, VCSTranslation
 
 log = logging.getLogger(__name__)
 
-BILINGUAL_FORMATS = {"po", "xliff"}
-
 
 def sync_entities_from_repo(
     project: Project,
@@ -287,8 +285,9 @@ def is_translated_resource(
 ) -> bool:
     if locale is None:
         return False
-    if resource.format in BILINGUAL_FORMATS:
-        # For bilingual formats, only create TranslatedResource
+
+    if resource.format == "po":
+        # For gettext, only create TranslatedResource
         # if the resource exists for the locale.
         target, _ = paths.target(resource.path)
         if target is None:

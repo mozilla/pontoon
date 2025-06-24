@@ -349,7 +349,7 @@ def set_translations(
         header = {m.key: m.value for m in res.meta}
         header["Language"] = locale.code.replace("-", "_")
         header["Plural-Forms"] = (
-            f"nplurals={locale.nplurals}; plural={locale.plural_rule};"
+            f"nplurals={locale.nplurals or '1'}; plural={locale.plural_rule or '0'};"
         )
         header["Generated-By"] = "Pontoon"
         res.meta = [

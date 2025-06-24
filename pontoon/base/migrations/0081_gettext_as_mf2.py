@@ -240,7 +240,7 @@ def fix_nonplural_plural_form(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0079_trim_android"),
+        ("base", "0080_project_date_modified"),
         ("sync", "0002_change_pontoon_sync_email"),
     ]
     operations = [
