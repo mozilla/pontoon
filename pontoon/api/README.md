@@ -17,13 +17,13 @@ if it explicitly contains a `raw` query argument, the endpoint will return JSON
 `application/json` responses to GET and POST requests. In case of GET requests,
 any whitespace in the query must be escaped.
 
-An example GET requests may look like this:
+An example GET request may look like this:
 
 ```bash
 $ curl --globoff "https://example.com/graphql/?query={projects{name}}"
 ```
 
-An example POST requests may look like this:
+An example POST request may look like this:
 
 ```bash
 $ curl -X POST -d "query={ projects { name } }" https://example.com/graphql/
@@ -60,431 +60,41 @@ It offers a query editor with:
 
 Pontoon provides a set of [RESTful](https://developer.mozilla.org/en-US/docs/Glossary/REST) endpoints via the [Django REST Framework](https://www.django-rest-framework.org/), accessible under `/api/v2/`.
 
-## Base URL
+This endpoint only supports a JSON mode of operation and is best suited for retrieving data such as locales, projects, terminology, and translation memory.
 
-```
-/api/v2/
-```
+## JSON Mode
 
----
+When a request is sent without any headers or with `Accept: application/json`,
+the endpoint will return JSON `application/json` responses to GET requests. 
 
-## Endpoints
+An example GET request may look like this:
 
-### `GET /locales/`
-
-Returns a list of all `Locale` objects.
-
-**Sample Response**
-
-```json
-[
-    {
-        "code": "ab",
-        "approved_strings": 4217,
-        "cldr_plurals": "1,5",
-        "complete": false,
-        "direction": "ltr",
-        "google_translate_code": "",
-        "missing_strings": 875,
-        "ms_terminology_code": "",
-        "ms_translator_code": "",
-        "name": "Abkhaz",
-        "plural_rule": "(n != 1)",
-        "population": 200000,
-        "pretranslated_strings": 0,
-        "script": "Cyrillic",
-        "strings_with_errors": 0,
-        "strings_with_warnings": 0,
-        "systran_translate_code": "",
-        "team_description": "You should contact us both in case one of us didn't see your message:\nНарт Лӏыша (daniel.abzakh@gmail.com)",
-        "total_strings": 5092,
-        "unreviewed_strings": 9,
-        "projects": [
-            "common-voice",
-            "tutorial",
-            "terminology",
-            "firefox-for-android",
-            "firefox-for-ios"
-        ]
-    },
-    ...
-]
+```bash
+$ curl --globoff "https://example.com/api/v2/search/terminology/?locale=ar"
 ```
 
----
+## Browsable API
 
-### `GET /locales/{code}/`
+Pontoon's REST API includes a browseable interface provided by the Django REST Framework.
 
-Returns a single `Locale` object by its code.
+When accessed from a browser, Pontoon’s REST API provides a browsable, interactive HTML interface powered by Django REST Framework.
 
-**Sample Request**
+Available at any `/api/v2/` endpoint, the browsable API lets you:
 
-```
-GET /api/v2/locales/ar/
-```
+- View and explore JSON data in a human-friendly format
+- See validation rules and error messages inline
+- Navigate related resources easily via hyperlinks
 
-**Sample Response**
-
-```json
-{
-    "code": "ar",
-    "approved_strings": 26161,
-    "cldr_plurals": "0,1,2,3,4,5",
-    "complete": false,
-    "direction": "rtl",
-    "google_translate_code": "ar",
-    "missing_strings": 13806,
-    "ms_terminology_code": "ar-sa",
-    "ms_translator_code": "ar",
-    "name": "Arabic",
-    "plural_rule": "(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)",
-    "population": 304854000,
-    "pretranslated_strings": 0,
-    "script": "Arabic",
-    "strings_with_errors": 0,
-    "strings_with_warnings": 25,
-    "systran_translate_code": "",
-    "team_description": "",
-    "total_strings": 39992,
-    "unreviewed_strings": 3932,
-    "projects": [
-        "affiliates",
-        "firefox-updater",
-        "firefox-tiles",
-        ...
-    ]
-}
-```
-
----
-
-### `GET /projects/`
-
-Returns a list of `Project` objects.
-
-**Query Parameters**
-
-- `include_disabled`: Include projects where `disabled = true`.
-- `include_system`: Include projects where `system_project = true`.
-
-**Sample Request**
-
-```
-GET /api/v2/projects/?include_disabled=true&include_system=true
-```
-
-**Sample Response**
-
-```json
-[
-    {
-        "approved_strings": 5415,
-        "complete": false,
-        "contact": "a38vv5uDFBj7jzqgkseUwdPwnS4",
-        "deadline": null,
-        "disabled": true,
-        "info": "Here you can localize UI elements for <a href=\"https://developer.mozilla.org/\">MDN</a>. To localize articles, check out <a href=\"https://developer.mozilla.org/en-US/docs/MDN/Contribute/Localize/Translating_pages\">this page</a>. If English is a dominant language among native speaking developers, you probably shouldn't bother translating MDN. You can see your localization in action on the <a href=\"http://developer.allizom.org/\">staging site</a>.<br><br>New strings are extracted and new translations are applied during site updates. The staging and production sites are updated once or twice a week, on an irregular schedule.  You should expect to see your new translations in 3-7 days.",
-        "missing_strings": 391,
-        "name": "MDN",
-        "pretranslated_strings": 0,
-        "pretranslation_enabled": false,
-        "priority": 2,
-        "slug": "mdn",
-        "strings_with_errors": 0,
-        "strings_with_warnings": 0,
-        "sync_disabled": false,
-        "system_project": false,
-        "total_strings": 5806,
-        "unreviewed_strings": 244,
-        "visibility": "public",
-        "tags": [],
-        "locales": [
-            "zh-TW",
-            "fr",
-            "zh-CN",
-            "ja"
-        ]
-    },
-    ...
-]
-```
-
----
-
-### `GET /projects/{slug}/`
-
-Returns a specific `Project` object by its slug.
-
-**Sample Request**
-
-```
-GET /api/v2/projects/firefox/
-```
-
-**Sample Response**
-
-```json
-{
-    "approved_strings": 1290933,
-    "complete": false,
-    "contact": "CMLZ_n1lNNSfQScLGE2yBmlS55w",
-    "deadline": "2025-05-18",
-    "disabled": false,
-    "info": "<p>Firefox is the most important project we localize at Mozilla. Localization takes place in the <a href=\"https://mozilla-l10n.github.io/localizer-documentation/products/firefox_desktop/testing.html\">Nightly channel</a>.</p>\n\n<p>Please check out these <a href=\"https://mozilla-l10n.github.io/localizer-documentation/products/firefox_desktop/testing.html\">testing instructions</a>.</p>\n\n<p>For more information on how to request a new language, <a href=\"https://discourse.mozilla.org/t/about-requesting-a-new-locale-for-firefox/86515\">see this page</a>.</p>",
-    "missing_strings": 611103,
-    "name": "Firefox",
-    "pretranslated_strings": 0,
-    "pretranslation_enabled": true,
-    "priority": 5,
-    "slug": "firefox",
-    "strings_with_errors": 0,
-    "strings_with_warnings": 130,
-    "sync_disabled": false,
-    "system_project": false,
-    "total_strings": 1902166,
-    "unreviewed_strings": 13479,
-    "visibility": "public",
-    "tags": [
-        {
-            "slug": "browser-secondary",
-            "name": "Browser Secondary",
-            "priority": 3
-        },
-        {
-            "slug": "dom-accessibility",
-            "name": "DOM Accessibility",
-            "priority": 4
-        },
-        {
-            "slug": "dom-technical",
-            "name": "DOM Technical",
-            "priority": 1
-        },
-        ...
-    ],
-    "locales": [
-        "el",
-        "he",
-        "ko",
-        ...
-    ]
-}
-```
-
----
-
-### `GET /{locale_code}/{project_slug}/`
-
-Returns a `ProjectLocale` (localization) object for a given locale and project.
-
-**Sample Request**
-
-```
-GET /api/v2/fr/firefox/
-```
-
-**Sample Response**
-
-```json
-{
-  "total_strings": 14302,
-  "approved_strings": 14225,
-  "pretranslated_strings": 0,
-  "strings_with_errors": 0,
-  "strings_with_warnings": 2,
-  "unreviewed_strings": 3,
-  "project": {
-    "approved_strings": 1290933,
-    "complete": false,
-    "contact": "CMLZ_n1lNNSfQScLGE2yBmlS55w",
-    "deadline": "2025-05-18",
-    "disabled": false,
-    "info": "<p>Firefox is the most important project we localize at Mozilla. Localization takes place in the <a href=\"https://mozilla-l10n.github.io/localizer-documentation/products/firefox_desktop/testing.html\">Nightly channel</a>.</p>\n\n<p>Please check out these <a href=\"https://mozilla-l10n.github.io/localizer-documentation/products/firefox_desktop/testing.html\">testing instructions</a>.</p>\n\n<p>For more information on how to request a new language, <a href=\"https://discourse.mozilla.org/t/about-requesting-a-new-locale-for-firefox/86515\">see this page</a>.</p>",
-    "missing_strings": 611103,
-    "name": "Firefox",
-    "pretranslated_strings": 0,
-    "pretranslation_enabled": true,
-    "priority": 5,
-    "slug": "firefox",
-    "strings_with_errors": 0,
-    "strings_with_warnings": 130,
-    "sync_disabled": false,
-    "system_project": false,
-    "total_strings": 1902166,
-    "unreviewed_strings": 13479,
-    "visibility": "public"
-  },
-  "locale": {
-    "code": "fr",
-    "approved_strings": 68358,
-    "cldr_plurals": "1,5",
-    "complete": false,
-    "direction": "ltr",
-    "google_translate_code": "fr",
-    "missing_strings": 194,
-    "ms_terminology_code": "fr-fr",
-    "ms_translator_code": "fr",
-    "name": "French",
-    "plural_rule": "(n > 1)",
-    "population": 231632000,
-    "pretranslated_strings": 22,
-    "script": "Latin",
-    "strings_with_errors": 0,
-    "strings_with_warnings": 8,
-    "systran_translate_code": "",
-    "team_description": "Bonjour et bienvenue&nbsp;!\r\n<p>\r\nSur cette page, il vous suffit de vous inscrire pour pouvoir proposer des suggestions de traduction. Il s’agit de mots et phrases qui apparaissent dans les logiciels ou les pages de Mozilla.\r\nN’hésitez pas à rejoindre la communauté des traducteurs francophones de Mozilla qui sera ravie de vous accueillir. Notre objectif est d’atteindre la meilleure qualité possible pour les utilisateurs.\r\n<br>\r\nNous disposons pour cela d’un <a href=\"https://github.com/mozfr/besogne/wiki/Traduction\">wiki</a> et d’un <a href=\"https://github.com/mozfr/besogne/wiki/Guide-stylistique-pour-la-traduction\">guide de style</a> qui nous servent de référence pour harmoniser nos traductions. Mais surtout, nous menons un travail d’équipe&nbsp;!\r\n</p>\r\nC’est pourquoi nous vous invitons à nous rejoindre sur l’un des canaux suivants&nbsp;:\r\n    <ul>\r\n\t<li><a href=\"https://chat.mozilla.org/#/room/#l10n-fr:mozilla.org\">Le salon Matrix «&nbsp;Localisation / traduction en français&nbsp;» (#l10n-fr)</a> pour discuter en direct avec l’équipe de traduction. Besoin d’aide pour vous connecter&nbsp;? <a href=\"https://github.com/mozfr/besogne/wiki/Matrix\">Consultez cette page</a></li>\r\n        <li><a href=\"https://discourse.mozilla.org/c/fr-l10n\">Le forum Discourse</a> pour les discussions en cours liées à la traduction</li>\r\n  </ul>\r\n  <br>\r\n  À bientôt&nbsp;!",
-    "total_strings": 68582,
-    "unreviewed_strings": 38
-  }
-}
-```
-
----
-
-### `GET /search/terminology/`
-
-Searches for `Term` objects in the terminology database.
-
-**Query Parameters**
-
-- `text` (required): Term to search.
-- `locale` (required): Locale code to filter terms by.
-
-If only locale is provided, all terms for that locale will be returned.
-
-**Sample Request**
-
-```
-GET /api/v2/search/terminology/?text=browser&locale=ar
-```
-
-**Sample Response**
-
-```json
-[
-    {
-        "definition": "Firefox is the only major independent multi-platform browser not associated with a large tech company such as Google or Apple, or built on the same Chromium code base, such as Google Chrome, Microsoft Edge, or other browsers.",
-        "part_of_speech": "noun",
-        "text": "independent browser",
-        "usage": "Choose the independent browser",
-        "notes": "",
-        "translations": [
-            {
-                "text": "independete nga browser",
-                "locale": "hil"
-            },
-            {
-                "text": "nezavisni pretraživač",
-                "locale": "bs"
-            },
-            {
-                "text": "tlaixmatani isel",
-                "locale": "nhi"
-            },
-            ...
-        ]
-    }
-    ...
-]
-```
-
----
-
-### `GET /search/tm/`
-
-Searches for `TranslationMemory` (TM) objects in the translation memory database.
-
-**Query Parameters**
-
-- `text` (required): Search query.
-- `locale` (required): Locale code.
-
-If only locale is provided, all translation memories for that locale will be returned.
-
-**Sample Request**
-
-```
-GET /api/v2/search/tm/?text=privacy&locale=fr
-```
-
-**Sample Response**
-
-```json
-[
-    {
-        "locale": "fr",
-        "project": "foundation-website-content",
-        "source": "When it comes to sharing data with law enforcement, Garmin's privacy policy says, \"We may process and disclose personal data about you to others: … to comply with legal obligations, such as a valid subpoena, court or judicial order, or other valid legal process.\" Which isn't as strong and clear a statement of sharing data with law enforcement as we like to see. We much prefer when companies state they won't give up user data to law enforcement unless required to under subpoena, and even then, we like to see them commit to only giving up the bare minimum necessary.",
-        "target": "Lorsqu’il s’agit de partager des données avec les forces de l’ordre, la politique de confidentialité de Garmin nous dit : « Nous pouvons traiter et divulguer des données personnelles vous concernant à d’autres personnes : … pour nous conformer aux obligations légales, telles qu’une citation à comparaître valide, une décision de justice ou autre procédure légale valide ». Cette déclaration à propos du partage des données avec les forces de l’ordre n’est pas aussi ferme et claire que ce que l’on aimerait lire. Nous préférons bien mieux quand les entreprises déclarent qu’elles ne céderont pas les données des utilisateurs et utilisatrices aux forces de l’ordre à moins d’y être obligées en vertu d’une citation à comparaître, et même dans ce cas, nous aimons qu’elles s’engagent à fournir uniquement strict minimum nécessaire."
-    },
-    {
-        "locale": "fr",
-        "project": "foundation-website-content",
-        "source": "If you do not reside in the EEA, U.K., Switzerland, or mainland China but you believe you have a right to exercise the right to erasure of your data or any other rights under your local laws, please contact Garmin International, Inc. by email at privacy@garmin.com.",
-        "target": "Si vous ne résidez pas dans l’EEE, au Royaume-Uni, en Suisse ou en Chine continentale mais que vous pensez avoir le droit d’exercer le droit d’effacer vos données ou tout autre droit en vertu de vos lois locales, veuillez contacter Garmin International, Inc. par e-mail à l’adresse privacy@garmin.com."
-    },
-    {
-        "locale": "fr",
-        "project": "mozillaorg",
-        "source": "Privacy Hub",
-        "target": "Pôle de confidentialité"
-    },
-    ...
-]
-```
-
----
+This interface is especially useful for exploring the API without external tools like Postman or curl.
 
 ## Pagination
 
-All list endpoints are paginated. Default page size is **100**.
+All list-based endpoints are paginated. By default, each page contains up to 100 items.
 
-To paginate, use the `?page=N` query parameter.
+Use the `?page=N` query parameter to navigate between pages.
 
-**Sample Request**
+An example may look like this:
 
-```
-GET /api/v2/locales/?page=1
-```
-
-**Sample Response**
-
-```json
-{
-    "count": 444,
-    "next": "http://localhost:8000/api/v2/locales/?page=2",
-    "previous": null,
-    "results": [
-        {
-            "code": "ab",
-            "approved_strings": 4217,
-            "cldr_plurals": "1,5",
-            "complete": false,
-            "direction": "ltr",
-            "google_translate_code": "",
-            "missing_strings": 875,
-            "ms_terminology_code": "",
-            "ms_translator_code": "",
-            "name": "Abkhaz",
-            "plural_rule": "(n != 1)",
-            "population": 200000,
-            "pretranslated_strings": 0,
-            "script": "Cyrillic",
-            "strings_with_errors": 0,
-            "strings_with_warnings": 0,
-            "systran_translate_code": "",
-            "team_description": "You should contact us both in case one of us didn't see your message:\nНарт Лӏыша (daniel.abzakh@gmail.com)",
-            "total_strings": 5092,
-            "unreviewed_strings": 9,
-            "projects": [
-                "common-voice",
-                "tutorial",
-                "terminology",
-                "firefox-for-android",
-                "firefox-for-ios"
-            ]
-        },
-        ...
-    ]
-}
+```bash
+$ curl --globoff "https://example.com/api/v2/locales/?page=2"
 ```
