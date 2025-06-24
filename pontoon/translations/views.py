@@ -99,15 +99,6 @@ def create_translation(request):
             string,
             user.profile.quality_checks,
         )
-        print(
-            {
-                "entity": entity,
-                "original": original,
-                "string": string,
-                "FC": failed_checks,
-            }
-        )
-
         if are_blocking_checks(failed_checks, ignore_warnings):
             return JsonResponse({"status": False, "failedChecks": failed_checks})
 

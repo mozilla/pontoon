@@ -75,7 +75,6 @@ def run_checks(
         tt_checks = translate_toolkit.run_checks(
             original, string, locale_code, tt_disabled_checks
         )
-        print(tt_disabled_checks, tt_checks)
 
     checks = dict(tt_checks, **(cl_checks or {}))
 
