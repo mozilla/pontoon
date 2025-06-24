@@ -65,7 +65,7 @@ This endpoint only supports a JSON mode of operation and is best suited for retr
 ## JSON Mode
 
 When a request is sent without any headers or with `Accept: application/json`,
-the endpoint will return JSON `application/json` responses to GET requests. 
+the endpoint will return JSON `application/json` responses to GET requests.
 
 An example GET request may look like this:
 
