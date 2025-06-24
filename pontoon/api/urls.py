@@ -62,7 +62,7 @@ urlpatterns = [
     # REST API
     path("api/v2/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
-        "api/v2/schema/swagger-ui/",
+        "api/v2/",
         SpectacularSwaggerSplitView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
