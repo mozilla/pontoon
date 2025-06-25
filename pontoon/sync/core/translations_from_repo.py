@@ -149,7 +149,10 @@ def find_db_updates(
                 locale = locale_map[lc]
                 db_path = relpath(ref_path, paths.ref_root)
                 try:
-                    repo_translations = parse_translations(target_path)
+                    repo_translations = parse_translations(
+                        target_path, gettext_plurals=locale.cldr_plurals_list()
+                    )
+
                 except Exception as error:
                     scope = f"[{project.slug}:{db_path}, {locale.code}]"
                     log.warning(f"{scope} Skipping resource with parse error: {error}")
