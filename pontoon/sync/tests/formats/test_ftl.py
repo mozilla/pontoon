@@ -1,9 +1,10 @@
-from os.path import join
-from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import TestCase
 
-from pontoon.sync.formats import parse_translations
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
+
+from pontoon.sync.formats import as_vcs_translations
 
 
 class FTLTests(TestCase):
@@ -19,11 +20,8 @@ class FTLTests(TestCase):
             NoCommentsOrSources = Translated No Comments or Sources
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "messages.ftl")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1, t2 = parse_translations(path)
+        res = parse_resource(Format.fluent, src)
+        t0, t1, t2 = as_vcs_translations(res)
 
         # basic
         assert t0.comments == ["Sample comment"]

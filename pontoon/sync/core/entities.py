@@ -6,14 +6,15 @@ from os.path import exists, isfile, join, relpath, splitext
 from typing import Optional
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
+from moz.l10n.resource import parse_resource
 
 from django.db import transaction
 from django.db.models import Q
 
 from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
 from pontoon.sync.core.checkout import Checkout
-from pontoon.sync.formats import parse_translations
-from pontoon.sync.formats.common import ParseError, VCSTranslation
+from pontoon.sync.formats import as_vcs_translations
+from pontoon.sync.formats.common import VCSTranslation
 
 
 log = logging.getLogger(__name__)
@@ -39,21 +40,23 @@ def sync_entities_from_repo(
         if path in source_paths and exists(path):
             db_path = get_db_path(paths, path)
             try:
-                translations = parse_translations(path, gettext_plurals=source_plurals)
-            except ParseError as error:
+                res = parse_resource(path, gettext_plurals=source_plurals)
+            except Exception as error:
                 log.error(
                     f"[{project.slug}:{db_path}] Skipping resource with parse error: {error}"
                 )
-                translations = []
+                updates[db_path] = []
+                continue
+            try:
+                updates[db_path] = as_vcs_translations(res)
             except ValueError as error:
                 if str(error).startswith("Translation format"):
                     log.warning(
                         f"[{project.slug}:{db_path}] Skipping resource with unsupported format"
                     )
-                    translations = []
+                    updates[db_path] = []
                 else:
                     raise error
-            updates[db_path] = translations
 
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)

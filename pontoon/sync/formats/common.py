@@ -1,7 +1,3 @@
-class ParseError(RuntimeError):
-    """Exception to raise when parsing fails."""
-
-
 class VCSTranslation:
     """
     A single translation of a source string into another language.

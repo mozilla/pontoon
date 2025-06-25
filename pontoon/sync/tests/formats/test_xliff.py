@@ -1,9 +1,10 @@
-from os.path import join
-from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import TestCase
 
-from pontoon.sync.formats import ParseError, parse_translations
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
+
+from pontoon.sync.formats import as_vcs_translations
 
 
 class XLIFFTests(TestCase):
@@ -35,58 +36,34 @@ class XLIFFTests(TestCase):
             </xliff>
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "file.xliff")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1, t2, t3 = parse_translations(path)
+        res = parse_resource(Format.xliff, src)
+        t0, t1, t2, t3 = as_vcs_translations(res)
 
-            # basic
-            assert t0.comments == ["Sample comment"]
-            assert t0.key == "filename\x04Source String Key"
-            assert t0.context == "Source String Key"
-            assert t0.string == "Translated <b>String</b>"
-            assert t0.source_string == "Source <b>String</b>"
-            assert t0.order == 0
+        # basic
+        assert t0.comments == ["Sample comment"]
+        assert t0.key == "filename\x04Source String Key"
+        assert t0.context == "Source String Key"
+        assert t0.string == "Translated <b>String</b>"
+        assert t0.source_string == "Source <b>String</b>"
+        assert t0.order == 0
 
-            # multiple comments
-            assert t1.comments == ["First comment", "Second comment"]
-            assert t1.key == "filename\x04Multiple Comments Key"
-            assert t1.string == "Translated Multiple Comments"
-            assert t1.source_string == "Multiple Comments"
-            assert t1.order == 1
+        # multiple comments
+        assert t1.comments == ["First comment", "Second comment"]
+        assert t1.key == "filename\x04Multiple Comments Key"
+        assert t1.string == "Translated Multiple Comments"
+        assert t1.source_string == "Multiple Comments"
+        assert t1.order == 1
 
-            # no comments or sources
-            assert t2.comments == []
-            assert t2.key == "filename\x04No Comments or Sources Key"
-            assert t2.string == "Translated No Comments or Sources"
-            assert t2.source_string == "No Comments or Sources"
-            assert t2.order == 2
+        # no comments or sources
+        assert t2.comments == []
+        assert t2.key == "filename\x04No Comments or Sources Key"
+        assert t2.string == "Translated No Comments or Sources"
+        assert t2.source_string == "No Comments or Sources"
+        assert t2.order == 2
 
-            # missing translation
-            assert t3.comments == []
-            assert t3.key == "filename\x04Missing Translation Key"
-            assert t3.string is None
-            assert t3.source_string == "Missing Translation"
-            assert t3.order == 3
-
-    def test_invalid_xliff(self):
-        src = dedent("""
-            <xliff version="1.2">
-                <file original="filename" source-language="en" datatype="plaintext" target-language="en">
-                    <body>
-                        <trans-unit id="Source String Key"
-                            <source>Source String</source>
-                            <target>Translated String</target>
-                        </trans-unit>
-                    </body>
-                </file>
-            </xliff>
-            """)
-
-        with TemporaryDirectory() as dir:
-            path = join(dir, "file.xlf")
-            with open(path, "x") as file:
-                file.write(src)
-            with self.assertRaises(ParseError):
-                parse_translations(path)
+        # missing translation
+        assert t3.comments == []
+        assert t3.key == "filename\x04Missing Translation Key"
+        assert t3.string is None
+        assert t3.source_string == "Missing Translation"
+        assert t3.order == 3

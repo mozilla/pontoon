@@ -1,9 +1,10 @@
-from os.path import join
-from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import TestCase
 
-from pontoon.sync.formats import parse_translations
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
+
+from pontoon.sync.formats import as_vcs_translations
 
 
 class JsonKeyValueTests(TestCase):
@@ -17,11 +18,8 @@ class JsonKeyValueTests(TestCase):
             }
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "file.json")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1 = parse_translations(path)
+        res = parse_resource(Format.plain_json, src)
+        t0, t1 = as_vcs_translations(res)
 
         assert t0.key == '["No Comments or Sources"]'
         assert t0.context == "No Comments or Sources"
@@ -46,11 +44,8 @@ class JsonKeyValueTests(TestCase):
             }
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "file.json")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1, t2 = parse_translations(path)
+        res = parse_resource(Format.plain_json, src)
+        t0, t1, t2 = as_vcs_translations(res)
 
         assert t0.key == '["Source", "String"]'
         assert t0.context == "Source.String"

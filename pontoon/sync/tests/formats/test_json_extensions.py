@@ -1,9 +1,10 @@
-from os.path import join
-from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import TestCase
 
-from pontoon.sync.formats import parse_translations
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
+
+from pontoon.sync.formats import as_vcs_translations
 
 
 class JsonExtensionsTests(TestCase):
@@ -38,11 +39,8 @@ class JsonExtensionsTests(TestCase):
             }
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "messages.json")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1, t2, t3 = parse_translations(path)
+        res = parse_resource(Format.webext, src)
+        t0, t1, t2, t3 = as_vcs_translations(res)
 
         assert t0.string == "Translated String"
         assert t0.comments == ["Sample comment"]

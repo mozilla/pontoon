@@ -1,9 +1,10 @@
-from os.path import join
-from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest import TestCase
 
-from pontoon.sync.formats import parse_translations
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
+
+from pontoon.sync.formats import as_vcs_translations
 
 
 class GettextTests(TestCase):
@@ -62,13 +63,8 @@ class GettextTests(TestCase):
             msgstr[1] "Translated Plural %(count)s strings with missing translations"
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "file.po")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1, t2, t3, t4, t5, t6, t7 = parse_translations(
-                path, gettext_plurals=["one", "other"]
-            )
+        res = parse_resource(Format.gettext, src, gettext_plurals=["one", "other"])
+        t0, t1, t2, t3, t4, t5, t6, t7 = as_vcs_translations(res)
 
         # basic
         assert t0.comments == ["Sample comment"]
@@ -205,11 +201,8 @@ class GettextTests(TestCase):
             msgstr ""
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "file.po")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1, t2 = parse_translations(path)
+        res = parse_resource(Format.gettext, src)
+        t0, t1, t2 = as_vcs_translations(res)
 
         assert t0.source_string == "Source"
         assert t0.key == "Main context\x04Source"

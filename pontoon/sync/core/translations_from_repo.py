@@ -8,6 +8,7 @@ from os.path import join, relpath, splitext
 from fluent.syntax import FluentParser
 from moz.l10n.formats import l10n_extensions
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
+from moz.l10n.resource import parse_resource
 
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -30,7 +31,7 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
-from pontoon.sync.formats import parse_translations
+from pontoon.sync.formats import as_vcs_translations
 
 
 log = logging.getLogger(__name__)
@@ -149,9 +150,10 @@ def find_db_updates(
                 locale = locale_map[lc]
                 db_path = relpath(ref_path, paths.ref_root)
                 try:
-                    repo_translations = parse_translations(
+                    res = parse_resource(
                         target_path, gettext_plurals=locale.cldr_plurals_list()
                     )
+                    repo_translations = as_vcs_translations(res)
 
                 except Exception as error:
                     scope = f"[{project.slug}:{db_path}, {locale.code}]"

@@ -3,11 +3,10 @@ Parsing resource files.
 """
 
 from os.path import splitext
-from typing import Sequence
 
 from moz.l10n.formats import Format, detect_format, l10n_extensions
 from moz.l10n.message import serialize_message
-from moz.l10n.resource import parse_resource
+from moz.l10n.model import Message, Resource as MozL10nResource
 
 from pontoon.sync.formats import (
     ftl,
@@ -19,7 +18,7 @@ from pontoon.sync.formats import (
     xml,
 )
 
-from .common import ParseError, VCSTranslation
+from .common import VCSTranslation
 
 
 def are_compatible_files(file_a, file_b):
@@ -38,30 +37,7 @@ def are_compatible_files(file_a, file_b):
     return False
 
 
-def parse_translations(
-    path: str, gettext_plurals: Sequence[str] | None = None
-) -> list[VCSTranslation]:
-    """
-    Parse the resource file at the given path and return a
-    list of translations.
-
-    To add support for a new resource format,
-    add it to moz.l10n: https://github.com/mozilla/moz-l10n
-
-    :param path:
-        Path to the resource file to parse.
-    """
-    try:
-        # TODO: android_ascii_spaces and android_literal_quotes
-        # should be dropped after data migration
-        res = parse_resource(
-            path,
-            android_ascii_spaces=True,
-            android_literal_quotes=True,
-            gettext_plurals=gettext_plurals,
-        )
-    except Exception as err:
-        raise ParseError(f"Could not parse {path}") from err
+def as_vcs_translations(res: MozL10nResource[Message]) -> list[VCSTranslation]:
     match res.format:
         case Format.fluent:
             return ftl.parse(res)
