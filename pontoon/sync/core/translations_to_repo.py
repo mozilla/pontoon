@@ -2,7 +2,6 @@ import logging
 
 from collections import defaultdict
 from datetime import datetime
-from itertools import groupby
 from os import makedirs, remove
 from os.path import commonpath, dirname, isfile, join, normpath
 from re import compile
@@ -275,31 +274,16 @@ def set_translations(
                         not_translated.append((section, entry))
                     else:
                         entry.value = te.value
+                        entry.properties = (
+                            te.properties
+                            if entry.id[0].startswith("-")
+                            else {
+                                name: tp
+                                for name, tp in te.properties.items()
+                                if name in entry.properties
+                            }
+                        )
                         trans_entries[entry.id] = None
-
-        # Fluent terms may have translator-defined properties
-        # that need to be included in the result.
-        for term_name, prop_entries in groupby(
-            (
-                e
-                for id, e in trans_entries.items()
-                if e is not None and len(id) == 2 and id[0].startswith("-")
-            ),
-            lambda e: e.id[0],
-        ):
-            for section in res.sections:
-                prev = next(
-                    (
-                        e
-                        for e in reversed(section.entries)
-                        if isinstance(e, Entry) and e.id[0] == term_name
-                    ),
-                    None,
-                )
-                if prev is not None:
-                    idx = section.entries.index(prev) + 1
-                    section.entries[idx:idx] = prop_entries
-                    break
     else:
         for section in res.sections:
             if res.format == Format.xliff and any(
