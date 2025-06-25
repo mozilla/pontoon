@@ -11,7 +11,6 @@ from django.db import transaction
 from django.db.models import Q
 
 from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
-from pontoon.base.models.entity import get_word_count
 from pontoon.sync.core.checkout import Checkout
 from pontoon.sync.formats import parse_translations
 from pontoon.sync.formats.common import ParseError, VCSTranslation
@@ -315,7 +314,6 @@ def entity_from_source(
         group_comment="\n".join(group_comments) if group_comments else "",
         resource_comment="\n".join(resource_comments) if resource_comments else "",
         context=tx.context,
-        word_count=get_word_count(tx.source_string),
     )
 
 

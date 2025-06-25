@@ -1,6 +1,6 @@
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.comment import Comment
-from pontoon.base.models.entity import Entity, get_word_count
+from pontoon.base.models.entity import Entity
 from pontoon.base.models.external_resource import ExternalResource
 from pontoon.base.models.locale import Locale, LocaleCodeHistory, validate_cldr
 from pontoon.base.models.permission_changelog import PermissionChangelog
@@ -35,7 +35,6 @@ __all__ = [
     "TranslationMemoryEntry",
     "User",
     "UserProfile",
-    "get_word_count",
     "repository_url_validator",
     "validate_cldr",
 ]

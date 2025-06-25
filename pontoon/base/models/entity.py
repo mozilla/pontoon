@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 from functools import reduce
 from operator import ior
-from re import escape, findall, match
+from re import escape, match
 
 from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
@@ -15,11 +15,6 @@ from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
-
-
-def get_word_count(string):
-    """Compute the number of words in a given string."""
-    return len(findall(r"[\w,.-]+", string))
 
 
 def combine_entity_filters(entities, filter_choices, filters, *args):
@@ -247,18 +242,6 @@ class EntityQuerySet(models.QuerySet):
 
         return entities
 
-    def get_or_create(self, defaults=None, **kwargs):
-        kwargs["word_count"] = get_word_count(kwargs["string"])
-        return super().get_or_create(defaults=defaults, **kwargs)
-
-    def bulk_update(self, objs, fields, batch_size=None):
-        if "string" in fields:
-            for obj in objs:
-                obj.word_count = get_word_count(obj.string)
-            if "word_count" not in fields:
-                fields.append("word_count")
-        return super().bulk_update(objs, fields=fields, batch_size=batch_size)
-
 
 class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
@@ -273,7 +256,6 @@ class Entity(DirtyFieldsMixin, models.Model):
     order = models.PositiveIntegerField(default=0)
     source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
-    word_count = models.PositiveIntegerField(default=0)
 
     date_created = models.DateTimeField(default=timezone.now)
     date_obsoleted = models.DateTimeField(null=True, blank=True)
@@ -291,10 +273,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def __str__(self):
         return self.string
-
-    def save(self, *args, **kwargs):
-        self.word_count = get_word_count(self.string)
-        super().save(*args, **kwargs)
 
     def get_stats(self, locale) -> dict[str, int]:
         """
