@@ -214,15 +214,7 @@ class Locale(models.Model, AggregatedStats):
         Group, models.SET_NULL, related_name="managed_locales", null=True
     )
 
-    # CLDR Plurals
-    CLDR_PLURALS = (
-        (0, "zero"),
-        (1, "one"),
-        (2, "two"),
-        (3, "few"),
-        (4, "many"),
-        (5, "other"),
-    )
+    CLDR_PLURALS = ("zero", "one", "two", "few", "many", "other")
 
     cldr_plurals = models.CharField(
         "CLDR Plurals",
@@ -314,7 +306,7 @@ class Locale(models.Model, AggregatedStats):
             "pk": self.pk,
             "nplurals": self.nplurals,
             "plural_rule": self.plural_rule,
-            "cldr_plurals": self.cldr_plurals_list_string(),
+            "cldr_plurals": ", ".join(self.cldr_plurals_list()),
             "direction": self.direction,
             "script": self.script,
             "google_translate_code": self.google_translate_code,
@@ -323,33 +315,15 @@ class Locale(models.Model, AggregatedStats):
             "ms_terminology_code": self.ms_terminology_code,
         }
 
-    def cldr_id_list(self):
+    def cldr_plurals_list(self) -> list[str]:
         if self.cldr_plurals == "":
-            return [1]
+            return ["other"]
         else:
-            return [int(p) for p in self.cldr_plurals.split(",")]
-
-    def cldr_plurals_list(self):
-        return map(Locale.cldr_id_to_plural, self.cldr_id_list())
-
-    def cldr_plurals_list_string(self):
-        return ", ".join(self.cldr_plurals_list())
-
-    @classmethod
-    def cldr_plural_to_id(self, cldr_plural):
-        for i in self.CLDR_PLURALS:
-            if i[1] == cldr_plural:
-                return i[0]
-
-    @classmethod
-    def cldr_id_to_plural(self, cldr_id):
-        for i in self.CLDR_PLURALS:
-            if i[0] == cldr_id:
-                return i[1]
+            return [self.CLDR_PLURALS[int(p)] for p in self.cldr_plurals.split(",")]
 
     @property
-    def nplurals(self):
-        return len(self.cldr_id_list())
+    def nplurals(self) -> int:
+        return self.cldr_plurals.count(",") + 1
 
     def available_projects_list(self, user):
         """Get a list of available project slugs."""
@@ -358,18 +332,6 @@ class Locale(models.Model, AggregatedStats):
             .visible_for(user)
             .values_list("slug", flat=True)
         ) + ["all-projects"]
-
-    def get_plural_index(self, cldr_plural):
-        """Returns plural index for given cldr name."""
-        cldr_id = Locale.cldr_plural_to_id(cldr_plural)
-        return self.cldr_id_list().index(cldr_id)
-
-    def get_relative_cldr_plural(self, plural_id):
-        """
-        Every locale supports a subset (a list) of The CLDR Plurals forms.
-        In code, we store their relative position.
-        """
-        return Locale.cldr_id_to_plural(self.cldr_id_list()[plural_id])
 
     def get_latest_activity(self):
         return (
