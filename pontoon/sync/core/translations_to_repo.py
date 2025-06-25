@@ -9,6 +9,7 @@ from re import compile
 from moz.l10n.formats import Format
 from moz.l10n.message import parse_message
 from moz.l10n.model import (
+    CatchallKey,
     Entry,
     Expression,
     Id,
@@ -233,11 +234,12 @@ def update_changed_resources(
             if not lc_translations and not isfile(target_path):
                 continue
             try:
+                lc_plurals = locale.cldr_plurals_list()
                 res = parse_resource(ref_path)
                 set_translations(locale, lc_translations, res)
                 makedirs(dirname(target_path), exist_ok=True)
                 with open(target_path, "w", encoding="utf-8") as file:
-                    for line in serialize_resource(res):
+                    for line in serialize_resource(res, gettext_plurals=lc_plurals):
                         file.write(line)
                 updated_locales.add(locale)
                 for tx in lc_translations:
@@ -366,7 +368,14 @@ def set_translation(
 
     tx = next((tx for tx in translations if tx.entity.key == key), None)
     if tx is None:
-        return False
+        if res.format == Format.gettext:
+            if isinstance(entry.value, SelectMessage):
+                entry.value.variants = {(CatchallKey(),): []}
+            else:
+                entry.value = PatternMessage([])
+            return True
+        else:
+            return False
 
     match res.format:
         case Format.android:
@@ -380,12 +389,9 @@ def set_translation(
             msg = parse_message(Format.mf2, tx.string)
             if isinstance(entry.value, SelectMessage):
                 entry.value.variants = (
-                    {("0",): msg.pattern}
+                    {(CatchallKey(),): msg.pattern}
                     if isinstance(msg, PatternMessage)
-                    else {
-                        (str(idx),): pattern
-                        for idx, pattern in enumerate(msg.variants.values())
-                    }
+                    else msg.variants
                 )
             else:
                 assert isinstance(entry.value, PatternMessage)
