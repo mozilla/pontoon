@@ -46,9 +46,12 @@ def plural_translations(apps: Any, schema_editor):
     Locale = apps.get_model("base", "Locale")
     Translation = apps.get_model("base", "Translation")
 
+    plural_names = ["zero", "one", "two", "few", "many", "other"]
     plural_categories: dict[int, list[str]] = {
-        locale.id: locale.cldr_plurals_list()
-        for locale in Locale.objects.exclude(cldr_plurals="").iterator()
+        id: [plural_names[int(pi)] for pi in plurals.split(",")]
+        for id, plurals in Locale.objects.exclude(cldr_plurals="")
+        .values_list("id", "cldr_plurals")
+        .iterator()
     }
 
     # constants
