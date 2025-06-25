@@ -318,8 +318,15 @@ class Locale(models.Model, AggregatedStats):
     def cldr_plurals_list(self) -> list[str]:
         if self.cldr_plurals == "":
             return ["other"]
-        else:
-            return [self.CLDR_PLURALS[int(p)] for p in self.cldr_plurals.split(",")]
+        res: list[str] = []
+        for p in self.cldr_plurals.split(","):
+            try:
+                res.append(self.CLDR_PLURALS[int(p)])
+            except (ValueError, IndexError):
+                log.error(
+                    f"Invalid cldr_plurals for locale {self.code}: {self.cldr_plurals}"
+                )
+        return res
 
     @property
     def nplurals(self) -> int:
