@@ -18,7 +18,6 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslationMemoryEntry,
 )
-from pontoon.base.models.translated_resource import TranslatedResource
 from pontoon.terminology.models import (
     Term,
 )
