@@ -23,6 +23,7 @@ class TagSerializer(serializers.ModelSerializer):
         )
 
 
+
 class LocaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Locale
@@ -117,7 +118,7 @@ class NestedLocaleSerializer(LocaleSerializer):
         fields = LocaleSerializer.Meta.fields + ["projects"]
 
     def get_projects(self, obj):
-        return list(obj.project_locale.values_list("project__slug", flat=True))
+        return [pl.project.slug for pl in obj.project_locale.all()]
 
 
 class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
