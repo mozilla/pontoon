@@ -151,7 +151,9 @@ def find_db_updates(
                 db_path = relpath(ref_path, paths.ref_root)
                 try:
                     res = parse_resource(
-                        target_path, gettext_plurals=locale.cldr_plurals_list()
+                        target_path,
+                        gettext_plurals=locale.cldr_plurals_list(),
+                        gettext_skip_obsolete=True,
                     )
                     repo_translations = as_vcs_translations(res)
 

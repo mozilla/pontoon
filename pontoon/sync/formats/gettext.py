@@ -1,6 +1,4 @@
-"""
-Parser for to pofile translation format.
-"""
+from datetime import datetime
 
 from moz.l10n.formats import Format
 from moz.l10n.message import serialize_message
@@ -10,31 +8,34 @@ from moz.l10n.model import (
     Expression,
     Message,
     PatternMessage,
-    Resource,
     SelectMessage,
     VariableRef,
 )
 
+from pontoon.base.models import Entity
+
 from .common import VCSTranslation
 
 
-def parse(res: Resource[Message]):
-    return [
-        as_translation(order, entry)
-        for order, entry in enumerate(res.all_entries())
-        if entry.get_meta("obsolete") != "true"
-    ]
-
-
-def as_translation(order: int, entry: Entry[Message]):
-    # Pofiles use the source as the key prepended with context if available.
+def _key_and_context(entry: Entry[Message]):
     key = entry.id[0]
     context = entry.id[1] if len(entry.id) == 2 else ""
     if context:
         key = context + "\x04" + key
-    string = serialize_message(Format.mf2, entry.value)
-    comment = entry.get_meta("extracted-comments")
+    return key, context
 
+
+def gettext_as_translation(entry: Entry[Message]):
+    key, _ = _key_and_context(entry)
+    return VCSTranslation(
+        key=key,
+        string=serialize_message(Format.mf2, entry.value) or None,
+        fuzzy=any(m.key == "flag" and m.value == "fuzzy" for m in entry.meta),
+    )
+
+
+def gettext_as_entity(entry: Entry[Message], now: datetime) -> Entity:
+    key, context = _key_and_context(entry)
     source_str = entry.id[0]
     plural_str = entry.get_meta("plural")
     source_msg = (
@@ -47,14 +48,11 @@ def as_translation(order: int, entry: Entry[Message]):
         )
     )
 
-    return VCSTranslation(
+    return Entity(
         key=key,
         context=context,
-        order=order,
-        string=string or None,
-        source_string=serialize_message(Format.mf2, source_msg),
-        comments=comment.split("\n") if comment else None,
-        fuzzy=any(m.key == "flag" and m.value == "fuzzy" for m in entry.meta),
-        source=[tuple(m.value.split(":")) for m in entry.meta if m.key == "reference"]
-        or None,
+        string=serialize_message(Format.mf2, source_msg),
+        comment=entry.get_meta("extracted-comments") or "",
+        source=[tuple(m.value.split(":")) for m in entry.meta if m.key == "reference"],
+        date_created=now,
     )

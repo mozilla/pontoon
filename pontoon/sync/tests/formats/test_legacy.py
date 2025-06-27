@@ -1,10 +1,11 @@
+from datetime import datetime
 from textwrap import dedent
 from unittest import TestCase
 
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_vcs_translations
+from pontoon.sync.formats import as_entity
 
 
 class DTDTests(TestCase):
@@ -23,32 +24,30 @@ class DTDTests(TestCase):
             """)
 
         res = parse_resource(Format.dtd, src)
-        t0, t1, t2, t3 = as_vcs_translations(res)
+        e0, e1, e2, e3 = (
+            as_entity(res, None, entry, datetime.now()) for entry in res.all_entries()
+        )
 
         # basic
-        assert t0.comments == ["Sample comment"]
-        assert t0.key == "SourceString"
-        assert t0.context == "SourceString"
-        assert t0.string == "Translated String"
-        assert t0.order == 0
+        assert e0.comment == "Sample comment"
+        assert e0.key == "SourceString"
+        assert e0.context == "SourceString"
+        assert e0.string == "Translated String"
 
         # multiple comments
-        assert t1.comments == ["First comment", "Second comment"]
-        assert t1.key == "MultipleComments"
-        assert t1.string == "Translated Multiple Comments"
-        assert t1.order == 1
+        assert e1.comment == "First comment\nSecond comment"
+        assert e1.key == "MultipleComments"
+        assert e1.string == "Translated Multiple Comments"
 
         # no comments or sources
-        assert t2.comments == []
-        assert t2.key == "NoCommentsorSources"
-        assert t2.string == "Translated No Comments or Sources"
-        assert t2.order == 2
+        assert e2.comment == ""
+        assert e2.key == "NoCommentsorSources"
+        assert e2.string == "Translated No Comments or Sources"
 
         # empty translation
-        assert t3.comments == []
-        assert t3.key == "EmptyTranslation"
-        assert t3.string == ""
-        assert t3.order == 3
+        assert e3.comment == ""
+        assert e3.key == "EmptyTranslation"
+        assert e3.string == ""
 
 
 class IniTests(TestCase):
@@ -68,29 +67,27 @@ class IniTests(TestCase):
             """)
 
         res = parse_resource(Format.ini, src)
-        t0, t1, t2, t3 = as_vcs_translations(res)
+        e0, e1, e2, e3 = (
+            as_entity(res, None, entry, datetime.now()) for entry in res.all_entries()
+        )
 
         # basic
-        assert t0.comments == ["Sample comment"]
-        assert t0.key == "SourceString"
-        assert t0.context == "SourceString"
-        assert t0.string == "Translated String"
-        assert t0.order == 0
+        assert e0.comment == "Sample comment"
+        assert e0.key == "SourceString"
+        assert e0.context == "SourceString"
+        assert e0.string == "Translated String"
 
         # multiple comments
-        assert t1.comments == ["First comment", "Second comment"]
-        assert t1.key == "MultipleComments"
-        assert t1.string == "Translated Multiple Comments"
-        assert t1.order == 1
+        assert e1.comment == "First comment\nSecond comment"
+        assert e1.key == "MultipleComments"
+        assert e1.string == "Translated Multiple Comments"
 
         # no comments or sources
-        assert t2.comments == []
-        assert t2.key == "NoCommentsorSources"
-        assert t2.string == "Translated No Comments or Sources"
-        assert t2.order == 2
+        assert e2.comment == ""
+        assert e2.key == "NoCommentsorSources"
+        assert e2.string == "Translated No Comments or Sources"
 
         # empty translation
-        assert t3.comments == []
-        assert t3.key == "EmptyTranslation"
-        assert t3.string == ""
-        assert t3.order == 3
+        assert e3.comment == ""
+        assert e3.key == "EmptyTranslation"
+        assert e3.string == ""

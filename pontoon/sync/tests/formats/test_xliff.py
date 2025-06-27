@@ -1,10 +1,13 @@
+from datetime import datetime
 from textwrap import dedent
 from unittest import TestCase
 
 from moz.l10n.formats import Format
+from moz.l10n.model import Entry
 from moz.l10n.resource import parse_resource
 
 from pontoon.sync.formats import as_vcs_translations
+from pontoon.sync.formats.xliff import xliff_as_entity
 
 
 class XLIFFTests(TestCase):
@@ -37,33 +40,43 @@ class XLIFFTests(TestCase):
             """)
 
         res = parse_resource(Format.xliff, src)
+        e0, e1, e2, e3 = (
+            xliff_as_entity(section.id, entry, datetime.now())
+            for section in res.sections
+            for entry in section.entries
+            if isinstance(entry, Entry)
+        )
         t0, t1, t2, t3 = as_vcs_translations(res)
 
         # basic
-        assert t0.comments == ["Sample comment"]
+        assert e0.comment == "Sample comment"
+        assert e0.key == "filename\x04Source String Key"
+        assert e0.context == "Source String Key"
+        assert e0.string == "Source <b>String</b>"
+
         assert t0.key == "filename\x04Source String Key"
-        assert t0.context == "Source String Key"
         assert t0.string == "Translated <b>String</b>"
-        assert t0.source_string == "Source <b>String</b>"
-        assert t0.order == 0
 
         # multiple comments
-        assert t1.comments == ["First comment", "Second comment"]
+        assert e1.comment == "First comment\nSecond comment"
+        assert e1.key == "filename\x04Multiple Comments Key"
+        assert e1.string == "Multiple Comments"
+
         assert t1.key == "filename\x04Multiple Comments Key"
         assert t1.string == "Translated Multiple Comments"
-        assert t1.source_string == "Multiple Comments"
-        assert t1.order == 1
 
         # no comments or sources
-        assert t2.comments == []
+        assert e2.comment == ""
+        assert e2.key == "filename\x04No Comments or Sources Key"
+        assert e2.string == "No Comments or Sources"
+
         assert t2.key == "filename\x04No Comments or Sources Key"
         assert t2.string == "Translated No Comments or Sources"
-        assert t2.source_string == "No Comments or Sources"
-        assert t2.order == 2
 
         # missing translation
-        assert t3.comments == []
+        assert e3.comment == ""
+        assert e3.key == "filename\x04Missing Translation Key"
+        assert e3.string == "Missing Translation"
+
         assert t3.key == "filename\x04Missing Translation Key"
         assert t3.string is None
-        assert t3.source_string == "Missing Translation"
-        assert t3.order == 3

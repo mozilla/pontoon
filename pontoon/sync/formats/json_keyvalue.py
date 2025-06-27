@@ -11,27 +11,29 @@ Nested keys are internally stored as a JSON array.
 
 from __future__ import annotations
 
+from datetime import datetime
 from json import dumps
 
 from moz.l10n.formats import Format
 from moz.l10n.message import serialize_message
-from moz.l10n.model import Entry, Message, Resource
+from moz.l10n.model import Entry, Message
+
+from pontoon.base.models import Entity
 
 from .common import VCSTranslation
 
 
-def parse(res: Resource[Message]):
-    return [
-        as_translation(order, entry) for order, entry in enumerate(res.all_entries())
-    ]
-
-
-def as_translation(order: int, entry: Entry):
-    string = serialize_message(Format.plain_json, entry.value)
+def plain_json_as_translation(entry: Entry):
     return VCSTranslation(
         key=dumps(entry.id),
+        string=serialize_message(Format.plain_json, entry.value) or None,
+    )
+
+
+def plain_json_as_entity(entry: Entry[Message], now: datetime) -> Entity:
+    return Entity(
+        key=dumps(entry.id),
         context=".".join(entry.id),
-        order=order,
-        string=string or None,
-        source_string=string,
+        string=serialize_message(Format.plain_json, entry.value),
+        date_created=now,
     )
