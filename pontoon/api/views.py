@@ -18,6 +18,7 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.translated_resource import TranslatedResource
 from pontoon.terminology.models import (
     Term,
 )
@@ -123,12 +124,12 @@ def get_user_actions(request, date, slug):
 
 
 class LocaleListView(generics.ListAPIView):
-    queryset = Locale.objects.all()
+    queryset = Locale.objects.all().prefetch_related("project_locale__project")
     serializer_class = NestedLocaleSerializer
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
-    queryset = Locale.objects.all()
+    queryset = Locale.objects.all().prefetch_related("project_locale__project")
     serializer_class = NestedLocaleSerializer
     lookup_field = "code"
 
@@ -155,13 +156,15 @@ class ProjectListView(generics.ListAPIView):
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    queryset = Project.objects.all()
+    queryset = Project.objects.all().prefetch_related(
+        "project_locale__locale", "contact"
+    )
     serializer_class = NestedProjectSerializer
     lookup_field = "slug"
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
-    queryset = ProjectLocale.objects.all()
+    queryset = ProjectLocale.objects.all().prefetch_related("project", "locale")
     serializer_class = NestedProjectLocaleSerializer
 
     def get_object(self):
@@ -193,7 +196,7 @@ class TermSearchListView(generics.ListAPIView):
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
-        return queryset
+        return queryset.prefetch_related("translations__locale")
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
@@ -203,6 +206,9 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     filterset_class = TranslationMemoryFilter
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return TranslationMemoryEntry.objects.none()
+
         query_params = self.request.query_params
         text = query_params.get("text")
         locale = query_params.get("locale")
@@ -223,4 +229,4 @@ class TranslationMemorySearchListView(generics.ListAPIView):
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
-        return queryset
+        return queryset.prefetch_related("project", "locale")
