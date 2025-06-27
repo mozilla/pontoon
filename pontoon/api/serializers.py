@@ -23,7 +23,6 @@ class TagSerializer(serializers.ModelSerializer):
         )
 
 
-
 class LocaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Locale
