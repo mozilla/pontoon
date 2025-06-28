@@ -42,3 +42,8 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
 )
 
 GRAPHENE = {"MIDDLEWARE": ["graphene_django.debug.DjangoDebugMiddleware"]}
+
+if base.DJANGO_DEBUG_TOOLBAR:
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+    }

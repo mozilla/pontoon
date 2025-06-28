@@ -34,6 +34,8 @@ DEV = os.environ.get("DJANGO_DEV", "False") != "False"
 
 DEBUG = os.environ.get("DJANGO_DEBUG", "False") != "False"
 
+DJANGO_DEBUG_TOOLBAR = os.environ.get("DJANGO_DEBUG_TOOLBAR", "False") != "False"
+
 HEROKU_DEMO = os.environ.get("HEROKU_DEMO", "False") != "False"
 
 LOGOUT_REDIRECT_URL = "/"
