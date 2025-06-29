@@ -121,7 +121,7 @@ you create:
    production.
 
 ``DJANGO_DEBUG_TOOLBAR``
-   Enables Django Debug Toolbar (default: ``False``) if ``DJANGO_DEV`` set to `True`.
+   Enables Django Debug Toolbar (default: ``False``). ``DJANGO_DEV`` must be set to `True`.
 
 ``DJANGO_DEV``
    Signifies whether this is a development server or not. Should be `False` in
