@@ -1,3 +1,5 @@
+import debug_toolbar
+
 from django.contrib import admin
 from django.contrib.auth import logout
 from django.urls import include, path, register_converter
@@ -72,6 +74,8 @@ urlpatterns = [
     path("", include("pontoon.batch.urls")),
     path("", include("pontoon.homepage.urls")),
     path("", include("pontoon.uxactionlog.urls")),
+    # Django Debug Toolbar
+    path("__debug__/", include(debug_toolbar.urls)),
     # Team page: Must be at the end
     path("<locale:locale>/", team, name="pontoon.teams.team"),
 ]
