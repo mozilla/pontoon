@@ -68,7 +68,7 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.force_syncable().filter(sync_disabled=False)
 
-    def stats_data(self, locale):
+    def stats_data(self, locale=None):
         query = (
             self
             if locale is None

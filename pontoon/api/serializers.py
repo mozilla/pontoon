@@ -84,8 +84,6 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectLocaleSerializer(serializers.ModelSerializer):
-    project = ProjectSerializer(read_only=True)
-
     class Meta:
         model = ProjectLocale
         fields = [
@@ -113,11 +111,44 @@ class NestedProjectSerializer(ProjectSerializer):
 class NestedLocaleSerializer(LocaleSerializer):
     projects = serializers.SerializerMethodField()
 
+    approved_strings = serializers.SerializerMethodField()
+    complete = serializers.SerializerMethodField()
+    missing_strings = serializers.SerializerMethodField()
+    pretranslated_strings = serializers.SerializerMethodField()
+    strings_with_errors = serializers.SerializerMethodField()
+    strings_with_warnings = serializers.SerializerMethodField()
+    total_strings = serializers.SerializerMethodField()
+    unreviewed_strings = serializers.SerializerMethodField()
+
     class Meta(LocaleSerializer.Meta):
         fields = LocaleSerializer.Meta.fields + ["projects"]
 
     def get_projects(self, obj):
         return [pl.project.slug for pl in obj.project_locale.all()]
+
+    def get_approved_strings(self, obj):
+        return obj.approved
+
+    def get_complete(self, obj):
+        return obj.is_complete
+
+    def get_missing_strings(self, obj):
+        return obj.missing
+
+    def get_pretranslated_strings(self, obj):
+        return obj.pretranslated
+
+    def get_strings_with_errors(self, obj):
+        return obj.errors
+
+    def get_strings_with_warnings(self, obj):
+        return obj.warnings
+
+    def get_total_strings(self, obj):
+        return obj.total
+
+    def get_unreviewed_strings(self, obj):
+        return obj.unreviewed
 
 
 class NestedProjectLocaleSerializer(ProjectLocaleSerializer):

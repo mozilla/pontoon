@@ -123,14 +123,20 @@ def get_user_actions(request, date, slug):
 
 
 class LocaleListView(generics.ListAPIView):
-    queryset = Locale.objects.all().prefetch_related("project_locale__project")
     serializer_class = NestedLocaleSerializer
+
+    def get_queryset(self):
+        locales = Locale.objects.prefetch_related("project_locale__project")
+        return locales.stats_data()
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
-    queryset = Locale.objects.all().prefetch_related("project_locale__project")
     serializer_class = NestedLocaleSerializer
     lookup_field = "code"
+
+    def get_queryset(self):
+        locales = Locale.objects.prefetch_related("project_locale__project")
+        return locales.stats_data()
 
 
 class ProjectListView(generics.ListAPIView):
