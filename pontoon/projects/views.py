@@ -31,7 +31,7 @@ def projects(request):
     if not projects:
         return render(request, "no_projects.html", {"title": "Projects"})
 
-    project_stats = projects.stats_data()
+    project_stats = projects.stats_data_as_dict()
     return render(
         request,
         "projects/projects.html",
@@ -114,7 +114,7 @@ def ajax_teams(request, slug):
         {
             "project": project,
             "locales": locales,
-            "locale_stats": locales.stats_data(project),
+            "locale_stats": locales.stats_data_as_dict(project),
             "latest_activities": latest_activities,
         },
     )

@@ -66,7 +66,7 @@ def teams(request):
     if not locales:
         return render(request, "no_projects.html", {"title": "Teams"})
 
-    locale_stats = locales.stats_data()
+    locale_stats = locales.stats_data_as_dict()
     return render(
         request,
         "teams/teams.html",
@@ -166,7 +166,7 @@ def ajax_projects(request, locale):
         "teams/includes/projects.html",
         {
             "locale": locale,
-            "project_stats": Project.objects.all().stats_data(locale),
+            "project_stats": Project.objects.all().stats_data_as_dict(locale),
             "latest_activities": latest_activities,
             "enabled_projects": enabled_projects,
             "projects_to_request": projects_to_request,
