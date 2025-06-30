@@ -1,12 +1,34 @@
 from datetime import datetime, timedelta
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
+from rest_framework.exceptions import ValidationError
+
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Project
+from pontoon.api.filters import TermFilter, TranslationMemoryFilter
+from pontoon.base.models import (
+    Locale,
+    Project,
+    ProjectLocale,
+    TranslationMemoryEntry,
+)
+from pontoon.terminology.models import (
+    Term,
+)
+
+from .serializers import (
+    NestedLocaleSerializer,
+    NestedProjectLocaleSerializer,
+    NestedProjectSerializer,
+    TermSerializer,
+    TranslationMemorySerializer,
+)
 
 
 @require_GET
@@ -98,3 +120,116 @@ def get_user_actions(request, date, slug):
             },
         }
     )
+
+
+class LocaleListView(generics.ListAPIView):
+    queryset = Locale.objects.all().prefetch_related("project_locale__project")
+    serializer_class = NestedLocaleSerializer
+
+
+class LocaleIndividualView(generics.RetrieveAPIView):
+    queryset = Locale.objects.all().prefetch_related("project_locale__project")
+    serializer_class = NestedLocaleSerializer
+    lookup_field = "code"
+
+
+class ProjectListView(generics.ListAPIView):
+    serializer_class = NestedProjectSerializer
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        include_disabled = query_params.get("include_disabled")
+        include_system = query_params.get("include_system")
+
+        base_queryset = (
+            Project.objects.visible()
+            .visible_for(self.request.user)
+            .prefetch_related("project_locale__locale", "contact")
+        )
+        filters = Q()
+        if include_disabled is not None:
+            filters |= Q(disabled=True)
+        if include_system is not None:
+            filters |= Q(system_project=True)
+
+        if filters:
+            return base_queryset.union(Project.objects.filter(filters))
+
+        return base_queryset
+
+
+class ProjectIndividualView(generics.RetrieveAPIView):
+    queryset = Project.objects.all().prefetch_related(
+        "project_locale__locale", "contact"
+    )
+    serializer_class = NestedProjectSerializer
+    lookup_field = "slug"
+
+
+class ProjectLocaleIndividualView(generics.RetrieveAPIView):
+    queryset = ProjectLocale.objects.all().prefetch_related("project", "locale")
+    serializer_class = NestedProjectLocaleSerializer
+
+    def get_object(self):
+        slug = self.kwargs["slug"]
+        code = self.kwargs["code"]
+        return generics.get_object_or_404(
+            ProjectLocale, project__slug=slug, locale__code=code
+        )
+
+
+class TermSearchListView(generics.ListAPIView):
+    serializer_class = TermSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TermFilter
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        text = query_params.get("text")
+        locale = query_params.get("locale")
+
+        # Only return results if text param is set without locale param
+        if text and not locale:
+            raise ValidationError(
+                "Missing query parameters required with 'text': 'locale'."
+            )
+
+        return Term.objects.all()
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.prefetch_related("translations__locale")
+
+
+class TranslationMemorySearchListView(generics.ListAPIView):
+    serializer_class = TranslationMemorySerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TranslationMemoryFilter
+
+    def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return TranslationMemoryEntry.objects.none()
+
+        query_params = self.request.query_params
+        text = query_params.get("text")
+        locale = query_params.get("locale")
+
+        # Only return results if at least one filter param is set
+        if not text and not locale:
+            raise ValidationError(
+                "Missing query parameter(s) required: 'locale', 'text'."
+            )
+
+        # Only return results if text param is not set by itself
+        if text and not locale:
+            raise ValidationError(
+                "Missing query parameter(s) required with 'text': 'locale'."
+            )
+
+        return TranslationMemoryEntry.objects.all()
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.prefetch_related("project", "locale")
