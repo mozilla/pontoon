@@ -31,7 +31,7 @@ def projects(request):
     if not projects:
         return render(request, "no_projects.html", {"title": "Projects"})
 
-    project_stats = projects.stats_data()
+    project_stats = projects.stats_data_as_dict()
     return render(
         request,
         "projects/projects.html",

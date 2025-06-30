@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Sum
+from django.db.models import BooleanField, Case, F, Sum, Value, When
 from django.db.models.manager import BaseManager
 from django.utils import timezone
 
@@ -68,22 +68,40 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.force_syncable().filter(sync_disabled=False)
 
-    def stats_data(self, locale=None) -> dict[int, dict[str, int]]:
-        """Mapping of project `id` to dict with counts."""
+    def stats_data(self, locale):
         query = (
             self
             if locale is None
             else self.filter(resources__translatedresources__locale=locale)
         )
         tr = "resources__translatedresources"
-        data = query.annotate(
+        return query.annotate(
             total=Sum(f"{tr}__total_strings", default=0),
             approved=Sum(f"{tr}__approved_strings", default=0),
             pretranslated=Sum(f"{tr}__pretranslated_strings", default=0),
             errors=Sum(f"{tr}__strings_with_errors", default=0),
             warnings=Sum(f"{tr}__strings_with_warnings", default=0),
             unreviewed=Sum(f"{tr}__unreviewed_strings", default=0),
-        ).values(
+        ).annotate(
+            missing=F("total")
+            - F("approved")
+            - F("pretranslated")
+            - F("errors")
+            - F("warnings"),
+            is_complete=Case(
+                When(
+                    total=F("approved") + F("pretranslated") + F("warnings"),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            ),
+        )
+
+    def stats_data_as_dict(self, locale=None) -> dict[int, dict[str, int]]:
+        """Mapping of project `id` to dict with counts."""
+        query = self.stats_data(locale)
+        data = query.values(
             "id",
             "total",
             "approved",
