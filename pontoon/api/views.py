@@ -150,7 +150,8 @@ class ProjectListView(generics.ListAPIView):
         base_queryset = (
             Project.objects.visible()
             .visible_for(self.request.user)
-            .prefetch_related("project_locale__locale", "contact")
+            .prefetch_related("project_locale__locale", "contact", "tags")
+            .stats_data()
         )
         filters = Q()
         if include_disabled is not None:
@@ -165,11 +166,17 @@ class ProjectListView(generics.ListAPIView):
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    queryset = Project.objects.all().prefetch_related(
-        "project_locale__locale", "contact"
-    )
     serializer_class = NestedProjectSerializer
     lookup_field = "slug"
+
+    def get_queryset(self):
+        queryset = (
+            Project.objects.all()
+            .prefetch_related("project_locale__locale", "contact", "tags")
+            .stats_data()
+        )
+
+        return queryset
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
