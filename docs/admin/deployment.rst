@@ -120,6 +120,9 @@ you create:
    Controls ``DEBUG`` mode for the site. Should be set to `False` in
    production.
 
+``DJANGO_DEBUG_TOOLBAR``
+   Enables Django Debug Toolbar (default: ``False``). ``DJANGO_DEV`` must be set to `True`.
+
 ``DJANGO_DEV``
    Signifies whether this is a development server or not. Should be `False` in
    production.

@@ -3,7 +3,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0081_gettext_as_mf2_data"),
+        ("base", "0082_gettext_as_mf2_data"),
     ]
     operations = [
         migrations.RemoveConstraint(

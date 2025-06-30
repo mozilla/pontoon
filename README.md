@@ -13,7 +13,7 @@ If you are looking to host your own instance of Pontoon, there are several ways 
 To deploy Pontoon to Heroku without leaving your web browser, click the **Deploy to
 Heroku** button below.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/mozilla/pontoon)
 
 Alternatively, you can deploy to Heroku manually by following our
 [Deployment Documentation](https://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html).
