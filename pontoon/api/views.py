@@ -141,7 +141,11 @@ class ProjectListView(generics.ListAPIView):
         include_disabled = query_params.get("include_disabled")
         include_system = query_params.get("include_system")
 
-        base_queryset = Project.objects.visible().visible_for(self.request.user)
+        base_queryset = (
+            Project.objects.visible()
+            .visible_for(self.request.user)
+            .prefetch_related("project_locale__locale", "contact")
+        )
         filters = Q()
         if include_disabled is not None:
             filters |= Q(disabled=True)
