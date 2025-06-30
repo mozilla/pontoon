@@ -66,7 +66,7 @@ def teams(request):
     if not locales:
         return render(request, "no_projects.html", {"title": "Teams"})
 
-    locale_stats = locales.stats_data()
+    locale_stats = locales.stats_data_as_dict()
     return render(
         request,
         "teams/teams.html",

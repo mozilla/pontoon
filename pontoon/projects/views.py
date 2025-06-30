@@ -114,7 +114,7 @@ def ajax_teams(request, slug):
         {
             "project": project,
             "locales": locales,
-            "locale_stats": locales.stats_data(project),
+            "locale_stats": locales.stats_data_as_dict(project),
             "latest_activities": latest_activities,
         },
     )

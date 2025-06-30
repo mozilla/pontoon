@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum
+from django.db.models import BooleanField, Case, F, Sum, Value, When
 
 from pontoon.base.aggregated_stats import AggregatedStats
 
@@ -61,8 +61,7 @@ class LocaleQuerySet(models.QuerySet):
             pk__in=TranslatedResource.objects.values_list("locale", flat=True)
         )
 
-    def stats_data(self, project=None) -> dict[int, dict[str, int]]:
-        """Mapping of locale `id` to dict with counts."""
+    def stats_data(self, project):
         if project is not None:
             query = self.filter(translatedresources__resource__project=project)
         else:
@@ -71,14 +70,34 @@ class LocaleQuerySet(models.QuerySet):
                 translatedresources__resource__project__system_project=False,
                 translatedresources__resource__project__visibility="public",
             )
-        data = query.annotate(
+
+        return query.annotate(
             total=Sum("translatedresources__total_strings", default=0),
             approved=Sum("translatedresources__approved_strings", default=0),
             pretranslated=Sum("translatedresources__pretranslated_strings", default=0),
             errors=Sum("translatedresources__strings_with_errors", default=0),
             warnings=Sum("translatedresources__strings_with_warnings", default=0),
             unreviewed=Sum("translatedresources__unreviewed_strings", default=0),
-        ).values(
+        ).annotate(
+            missing=F("total")
+            - F("approved")
+            - F("pretranslated")
+            - F("errors")
+            - F("warnings"),
+            is_complete=Case(
+                When(
+                    total=F("approved") + F("pretranslated") + F("warnings"),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            ),
+        )
+
+    def stats_data_as_dict(self, project=None) -> dict[int, dict[str, int]]:
+        """Mapping of locale `id` to dict with counts."""
+        query = self.stats_data(project)
+        data = query.values(
             "id",
             "total",
             "approved",
