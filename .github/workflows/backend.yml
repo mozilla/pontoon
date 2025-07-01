@@ -86,7 +86,7 @@ jobs:
           bash docker/compile_requirements.sh
           for file in requirements/*.txt; do
             if ! diff <(grep -vE '^\s*#|^\s*$' "$file") <(git show HEAD:"$file" | grep -vE '^\s*#|^\s*$'); then
-              echo "Error: $file is not up to date. Please run 'bash docker/compile_requirements.sh' and commit the changes."
+              echo "Error: $file is not up to date. Please run 'make requirements' and commit the changes."
               exit 1
             fi
           done
