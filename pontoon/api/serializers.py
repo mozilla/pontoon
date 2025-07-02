@@ -204,7 +204,7 @@ class TermTranslationSerializer(serializers.ModelSerializer):
 
 
 class TermSerializer(serializers.ModelSerializer):
-    translations = TermTranslationSerializer(many=True, read_only=True)
+    translationtext = serializers.SerializerMethodField()
 
     class Meta:
         model = Term
@@ -212,10 +212,21 @@ class TermSerializer(serializers.ModelSerializer):
             "definition",
             "part_of_speech",
             "text",
+            "translationtext",
             "usage",
             "notes",
-            "translations",
         ]
+
+    def get_translationtext(self, obj):
+        request = self.context.get("request")
+        locale = request.query_params.get("locale") if request else None
+
+        if not locale:
+            return None
+
+        for translated_term in obj.translations.all():
+            if translated_term.locale.code == locale:
+                return translated_term.text
 
 
 class TranslationMemorySerializer(serializers.ModelSerializer):
