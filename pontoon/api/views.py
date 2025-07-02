@@ -148,6 +148,7 @@ class ProjectListView(generics.ListAPIView):
         include_system = query_params.get("include_system")
 
         # Base queryset
+        queryset = (
             Project.objects.visible()
             .visible_for(self.request.user)
             .prefetch_related("project_locale__locale", "contact", "tags")
