@@ -147,7 +147,7 @@ $(function () {
   });
 
   // Suggest slugified name for tags
-  $('body').on('blur', '[id^=id_tag_set-][id$=-name]', function () {
+  $('body').on('blur', '[id^=id_tags-][id$=-name]', function () {
     const target = $('input#' + $(this).attr('id').replace('-name', '-slug'));
     const $this = this;
     if (target.val() || !$(this).val()) {

@@ -245,6 +245,7 @@ ROOT_URLCONF = "pontoon.urls"
 INSTALLED_APPS = (
     "pontoon.actionlog",
     "pontoon.administration",
+    "pontoon.api",
     "pontoon.base",
     "pontoon.contributors",
     "pontoon.checks",
@@ -272,6 +273,7 @@ INSTALLED_APPS = (
     # Django sites app is required by django-allauth
     "django.contrib.sites",
     # Third-party apps, patches, fixes
+    "django_filters",
     "django_jinja",
     "pipeline",
     "guardian",
@@ -287,6 +289,8 @@ INSTALLED_APPS = (
     "notifications",
     "graphene_django",
     "django_ace",
+    "rest_framework",
+    "drf_spectacular",
 )
 
 # A list of IP addresses or IP ranges to be blocked from accessing the app,
@@ -367,6 +371,9 @@ TEMPLATES = [
                     account|
                     socialaccount|
                     graphene|
+                    rest_framework|
+                    django_filters|
+                    drf_spectacular|
                 )/).*\.(
                     html|
                     jinja|
@@ -1211,3 +1218,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Used in the header of the Terminology (.TBX) files.
 TBX_TITLE = os.environ.get("TBX_TITLE", "Pontoon Terminology")
 TBX_DESCRIPTION = os.environ.get("TBX_DESCRIPTION", "Terms localized in Pontoon")
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 100,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Pontoon API",
+    "DESCRIPTION": "Pontoon is Mozilla's Open Source Localization Platform.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
