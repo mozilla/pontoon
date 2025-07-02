@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0079_trim_android"),
+        ("base", "0081_fix_android_spaces"),
         ("tags", "0001_squashed_0002_set_tag_priority_choices"),
     ]
 
