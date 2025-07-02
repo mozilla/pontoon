@@ -75,8 +75,6 @@ $ curl --globoff "https://example.com/api/v2/search/terminology/?locale=ar"
 
 ## Browsable API
 
-Pontoon's REST API includes a browseable interface provided by the Django REST Framework.
-
 When accessed from a browser, Pontoon’s REST API provides a browsable, interactive HTML interface powered by Django REST Framework.
 
 Available at any `/api/v2/` endpoint, the browsable API lets you:
