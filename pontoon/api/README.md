@@ -1,6 +1,6 @@
 # Pontoon Application Programming Interface
 
-Pontoon provides access to some of its data through a set of public API endpoints, available in both REST and GraphQL formats.
+Pontoon provides access to some of its data through a set of public API endpoints, available in GraphQL and REST formats.
 
 # GraphQL API
 
