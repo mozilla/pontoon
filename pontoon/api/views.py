@@ -147,22 +147,22 @@ class ProjectListView(generics.ListAPIView):
         include_disabled = query_params.get("include_disabled")
         include_system = query_params.get("include_system")
 
-        base_queryset = (
             Project.objects.visible()
             .visible_for(self.request.user)
             .prefetch_related("project_locale__locale", "contact", "tags")
-            .stats_data()
         )
-        filters = Q()
-        if include_disabled is not None:
-            filters |= Q(disabled=True)
-        if include_system is not None:
-            filters |= Q(system_project=True)
 
-        if filters:
-            return base_queryset.union(Project.objects.stats_data().filter(filters))
+        # Build filters if needed
+        if include_disabled is not None or include_system is not None:
+            filters = Q()
+            if include_disabled is not None:
+                filters |= Q(disabled=True)
+            if include_system is not None:
+                filters |= Q(system_project=True)
+            queryset = queryset | Project.objects.filter(filters).distinct()
 
-        return base_queryset
+        # Apply stats_data once at the end
+        return queryset.stats_data()
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
