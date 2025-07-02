@@ -202,11 +202,11 @@ class TermSearchListView(generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
-        # Only return results if text param is set without locale param
-        if text and not locale:
-            raise ValidationError(
-                "Missing query parameters required with 'text': 'locale'."
-            )
+        # Enforce required query parameters
+        if not text or not locale:
+            raise ValidationError({
+                "detail": "Both 'text' and 'locale' query parameters are required."
+            })
 
         return Term.objects.all()
 
