@@ -1,8 +1,6 @@
 # Pontoon Application Programming Interface
 
-Pontoon currently exposes some of its data via a series of public API endpoints.
-It currently supports a GraphQL and REST implementation. As of June 2025, there
-are discussions underway to deprecate the existing GraphQL endpoint.
+Pontoon provides access to some of its data through a set of public API endpoints, available in both REST and GraphQL formats.
 
 # GraphQL API
 
