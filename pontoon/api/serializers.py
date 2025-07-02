@@ -217,7 +217,7 @@ class TermSerializer(serializers.ModelSerializer):
             "notes",
         ]
 
-    def get_translationtext(self, obj):
+    def get_translation_text(self, obj):
         request = self.context.get("request")
         locale = request.query_params.get("locale") if request else None
 
