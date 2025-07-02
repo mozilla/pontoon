@@ -79,14 +79,17 @@ jobs:
       - name: Verify missing migrations
         run: python manage.py makemigrations --check
 
-      # Confirm that requirements have been correctly compiled
+      # Confirm that requirements have been correctly compiled.
+      # Ignore comments and empty lines.
       - name: Check compiled requirements
         run: |
           bash docker/compile_requirements.sh
-          if ! git diff --quiet --exit-code requirements/; then
-            echo "Error: The requirements files are not up to date. Please run 'bash docker/compile_requirements.sh' and commit the changes."
-            exit 1
-          fi
+          for file in requirements/*.txt; do
+            if ! diff <(grep -vE '^\s*#|^\s*$' "$file") <(git show HEAD:"$file" | grep -vE '^\s*#|^\s*$'); then
+              echo "Error: $file is not up to date. Please run 'make requirements' and commit the changes."
+              exit 1
+            fi
+          done
 
       - name: Run tests
         run: pytest --cov-report=xml:pontoon/coverage.xml --cov=.
