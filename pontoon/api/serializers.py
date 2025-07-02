@@ -204,7 +204,7 @@ class TermTranslationSerializer(serializers.ModelSerializer):
 
 
 class TermSerializer(serializers.ModelSerializer):
-    translationtext = serializers.SerializerMethodField()
+    translation_text = serializers.SerializerMethodField()
 
     class Meta:
         model = Term
