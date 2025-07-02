@@ -229,17 +229,11 @@ class TranslationMemorySearchListView(generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
-        # Only return results if at least one filter param is set
-        if not text and not locale:
-            raise ValidationError(
-                "Missing query parameter(s) required: 'locale', 'text'."
-            )
-
-        # Only return results if text param is not set by itself
-        if text and not locale:
-            raise ValidationError(
-                "Missing query parameter(s) required with 'text': 'locale'."
-            )
+        # Enforce required query parameters
+        if not text or not locale:
+            raise ValidationError({
+                "detail": "Both 'text' and 'locale' query parameters are required."
+            })
 
         return TranslationMemoryEntry.objects.all()
 
