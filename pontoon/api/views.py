@@ -154,7 +154,6 @@ class ProjectListView(generics.ListAPIView):
             .prefetch_related("project_locale__locale", "contact", "tags")
         )
 
-        # Build filters if needed
         if include_disabled is not None or include_system is not None:
             filters = Q()
             if include_disabled is not None:
@@ -163,7 +162,6 @@ class ProjectListView(generics.ListAPIView):
                 filters |= Q(system_project=True)
             queryset = queryset | Project.objects.filter(filters).distinct()
 
-        # Apply stats_data once at the end
         return queryset.stats_data()
 
 
