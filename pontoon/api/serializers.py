@@ -212,7 +212,7 @@ class TermSerializer(serializers.ModelSerializer):
             "definition",
             "part_of_speech",
             "text",
-            "translationtext",
+            "translation_text",
             "usage",
             "notes",
         ]
