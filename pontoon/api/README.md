@@ -58,8 +58,6 @@ It offers a query editor with:
 
 Pontoon provides a set of [RESTful](https://developer.mozilla.org/en-US/docs/Glossary/REST) endpoints via the [Django REST Framework](https://www.django-rest-framework.org/), accessible under `/api/v2/`.
 
-This endpoint only supports a JSON mode of operation and is best suited for retrieving data such as locales, projects, terminology, and translation memory.
-
 ## JSON Mode
 
 When a request is sent without any headers or with `Accept: application/json`,

@@ -204,9 +204,9 @@ class TermSearchListView(generics.ListAPIView):
 
         # Enforce required query parameters
         if not text or not locale:
-            raise ValidationError({
-                "detail": "Both 'text' and 'locale' query parameters are required."
-            })
+            raise ValidationError(
+                {"detail": "Both 'text' and 'locale' query parameters are required."}
+            )
 
         return Term.objects.all()
 
@@ -231,9 +231,9 @@ class TranslationMemorySearchListView(generics.ListAPIView):
 
         # Enforce required query parameters
         if not text or not locale:
-            raise ValidationError({
-                "detail": "Both 'text' and 'locale' query parameters are required."
-            })
+            raise ValidationError(
+                {"detail": "Both 'text' and 'locale' query parameters are required."}
+            )
 
         return TranslationMemoryEntry.objects.all()
 

@@ -939,7 +939,7 @@ SECURE_SSL_REDIRECT = (
 )
 
 # Content-Security-Policy headers
-CSP_DEFAULT_SRC = ("'self'",)
+CSP_DEFAULT_SRC = ("'none'",)
 CSP_FRAME_SRC = ("https:",)
 CSP_WORKER_SRC = (
     "https:",
