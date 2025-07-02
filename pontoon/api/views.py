@@ -222,9 +222,6 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     filterset_class = TranslationMemoryFilter
 
     def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return TranslationMemoryEntry.objects.none()
-
         query_params = self.request.query_params
         text = query_params.get("text")
         locale = query_params.get("locale")
