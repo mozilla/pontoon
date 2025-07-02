@@ -9,7 +9,6 @@ from pontoon.base.models import (
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import (
     Term,
-    TermTranslation,
 )
 
 
@@ -190,17 +189,6 @@ class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
 
     class Meta(ProjectLocaleSerializer.Meta):
         fields = ProjectLocaleSerializer.Meta.fields + ["locale", "project"]
-
-
-class TermTranslationSerializer(serializers.ModelSerializer):
-    locale = serializers.SerializerMethodField()
-
-    class Meta:
-        model = TermTranslation
-        fields = ["text", "locale"]
-
-    def get_locale(self, obj):
-        return obj.locale.code
 
 
 class TermSerializer(serializers.ModelSerializer):
