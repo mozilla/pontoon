@@ -160,7 +160,7 @@ class ProjectListView(generics.ListAPIView):
             filters |= Q(system_project=True)
 
         if filters:
-            return base_queryset.union(Project.objects.filter(filters))
+            return base_queryset.union(Project.objects.stats_data().filter(filters))
 
         return base_queryset
 
