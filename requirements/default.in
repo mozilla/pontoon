@@ -21,16 +21,19 @@ celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==2.1.0
 Django==4.2.22
+djangorestframework==3.16.0
 django-ace==1.32.4
 django-allauth==0.51.0
 django-bmemcached==0.3.0
 django-cors-headers==4.3.1
 django-csp==3.8
 django-dirtyfields==1.9.2
+django-filter==25.1
 django-guardian==2.4.0
 django-jinja==2.11.0
 django-notifications-hq==1.8.3
 django-pipeline==3.0.0
+drf-spectacular==0.28.0
 google-cloud-translate==3.16.0
 # When updating, check that https://localhost:8000/graphql still works
 # See https://github.com/mozilla/pontoon/issues/3292
