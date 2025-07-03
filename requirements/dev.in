@@ -20,6 +20,3 @@
 django-debug-toolbar==4.3.0
 django-extensions==3.2.3
 django-stubs[compatible-mypy]==5.1.3
-djangorestframework==3.16.0
-django-filter==25.1
-drf-spectacular==0.28.0
