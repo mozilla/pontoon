@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Install requirements/dev.txt on staging
+# Install development requirements in stage / production environment if enabled
 if [ "$DJANGO_DEV" = True ]; then
     echo "Installing dev requirements..."
     pip install --require-hashes -r requirements/dev.txt
