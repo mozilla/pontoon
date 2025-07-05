@@ -18,6 +18,6 @@ export { getEmptyMessageEntry } from './getEmptyMessage';
 export { getPlainMessage } from './getPlainMessage';
 export { editMessageEntry, editSource } from './editMessageEntry';
 export { findPluralSelectors } from './findPluralSelectors';
-export { parseEntry as parseEntry } from './parseEntry';
+export { parseEntry } from './parseEntry';
 export { requiresSourceView } from './requiresSourceView';
 export { serializeEntry } from './serializeEntry';
