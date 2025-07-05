@@ -11,9 +11,9 @@ function mountEntityNav() {
   const store = createReduxStore({
     entities: {
       entities: [
-        { pk: 1, translation: [{ string: '', errors: [], warnings: [] }] },
-        { pk: 2, translation: [{ string: '', errors: [], warnings: [] }] },
-        { pk: 3, translation: [{ string: '', errors: [], warnings: [] }] },
+        { pk: 1, translation: { string: '', errors: [], warnings: [] } },
+        { pk: 2, translation: { string: '', errors: [], warnings: [] } },
+        { pk: 3, translation: { string: '', errors: [], warnings: [] } },
       ],
     },
   });

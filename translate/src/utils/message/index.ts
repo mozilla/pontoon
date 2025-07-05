@@ -16,7 +16,6 @@ export { buildMessageEntry } from './buildMessageEntry';
 export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
 export { getEmptyMessageEntry } from './getEmptyMessage';
 export { getPlainMessage } from './getPlainMessage';
-export { getSimplePreview } from './getSimplePreview';
 export { editMessageEntry, editSource } from './editMessageEntry';
 export { findPluralSelectors } from './findPluralSelectors';
 export { parseEntry } from './parseEntry';

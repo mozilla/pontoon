@@ -29,20 +29,22 @@ function mountSpy(Spy, format, translation) {
           format,
           key: 'key',
           original: 'key = test',
-          translation: [{ string: translation, errors: [], warnings: [] }],
+          translation: { string: translation, errors: [], warnings: [] },
           project: { contact: '' },
           comment: '',
         },
         {
           pk: 13,
-          format: 'simple',
+          format: 'po',
           key: 'plural',
-          original: 'original',
-          original_plural: 'original plural',
-          translation: [
-            { string: 'one', errors: [], warnings: [] },
-            { string: 'other', errors: [], warnings: [] },
-          ],
+          original:
+            '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}',
+          translation: {
+            string:
+              '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}',
+            errors: [],
+            warnings: [],
+          },
           project: { contact: '' },
           comment: '',
         },
@@ -137,8 +139,8 @@ describe('<EditorProvider>', () => {
       `;
     mountSpy(Spy, 'ftl', source);
 
-    const entry = parseEntry(source);
-    const fields = editMessageEntry(parseEntry(source)).map((field) => ({
+    const entry = parseEntry('ftl', source);
+    const fields = editMessageEntry(entry).map((field) => ({
       ...field,
       handle: { current: { value: field.handle.current.value } },
     }));
@@ -178,13 +180,13 @@ describe('<EditorProvider>', () => {
     expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
   });
 
-  it('updates state on entity and plural form changes', () => {
+  it('updates state on entity change', () => {
     let editor, result, location, entity;
     const Spy = () => {
       editor = useContext(EditorData);
       result = useContext(EditorResult);
       location = useContext(Location);
-      entity = useContext(EntityView);
+      entity = useContext(EntityView).entity;
       return null;
     };
     const wrapper = mountSpy(Spy, 'simple', 'translated');
@@ -193,19 +195,16 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
-      initial: { value: { type: 'message', pattern: ['one'] } },
-      fields: [{ handle: { current: { value: 'one' } } }],
+      initial: parseEntry('po', entity.translation.string),
+      fields: [
+        { handle: { current: { value: 'trans one' } } },
+        { handle: { current: { value: 'trans other' } } },
+      ],
     });
-    expect(result).toMatchObject([{ value: 'one' }]);
-
-    act(() => entity.setPluralForm(1));
-    wrapper.update();
-
-    expect(editor).toMatchObject({
-      initial: { value: { type: 'message', pattern: ['other'] } },
-      fields: [{ handle: { current: { value: 'other' } } }],
-    });
-    expect(result).toMatchObject([{ value: 'other' }]);
+    expect(result).toMatchObject([
+      { value: 'trans one' },
+      { value: 'trans other' },
+    ]);
   });
 
   it('clears a rich Fluent value', () => {

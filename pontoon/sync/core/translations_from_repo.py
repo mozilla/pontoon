@@ -35,8 +35,8 @@ from pontoon.sync.formats import parse_translations
 
 log = logging.getLogger(__name__)
 
-Updates = dict[tuple[int, int], tuple[dict[int | None, str], bool]]
-""" (entity.id, locale.id) -> (plural_form -> string, fuzzy) """
+Updates = dict[tuple[int, int], tuple[str | None, bool]]
+""" (entity.id, locale.id) -> (string, fuzzy) """
 
 
 def sync_translations_from_repo(
@@ -127,7 +127,7 @@ def find_db_updates(
     db_changes: Iterable[ChangedEntityLocale],
 ) -> Updates | None:
     """
-    `(entity.id, locale.id) -> (plural_form -> string, fuzzy)`
+    `(entity.id, locale.id) -> (string|None, fuzzy)`
 
     Translations in changed resources, excluding:
     - Exact matches with previous approved or pretranslated translations
@@ -138,8 +138,8 @@ def find_db_updates(
     resource_paths: set[str] = set()
     # db_path -> {locale.id}
     translated_resources: dict[str, set[int]] = defaultdict(set)
-    # (db_path, tx.key, locale.id) -> (plural_form -> string, fuzzy)
-    translations: dict[tuple[str, str, int], tuple[dict[int | None, str], bool]] = {}
+    # (db_path, tx.key, locale.id) -> (string|None, fuzzy)
+    translations: dict[tuple[str, str, int], tuple[str | None, bool]] = {}
     for target_path in changed_target_paths:
         ref = paths.find_reference(target_path)
         if ref:
@@ -149,7 +149,10 @@ def find_db_updates(
                 locale = locale_map[lc]
                 db_path = relpath(ref_path, paths.ref_root)
                 try:
-                    repo_translations = parse_translations(target_path)
+                    repo_translations = parse_translations(
+                        target_path, gettext_plurals=locale.cldr_plurals_list()
+                    )
+
                 except Exception as error:
                     scope = f"[{project.slug}:{db_path}, {locale.code}]"
                     log.warning(f"{scope} Skipping resource with parse error: {error}")
@@ -159,9 +162,9 @@ def find_db_updates(
                 resource_paths.add(db_path)
                 translated_resources[db_path].add(locale.pk)
                 translations.update(
-                    ((db_path, tx.key, locale.pk), (tx.strings, tx.fuzzy))
+                    ((db_path, tx.key, locale.pk), (tx.string, tx.fuzzy))
                     for tx in repo_translations
-                    if tx.strings
+                    if tx.string is not None
                 )
         elif splitext(target_path)[1] in l10n_extensions and not isinstance(
             paths, UploadPaths
@@ -199,7 +202,6 @@ def find_db_updates(
                 "entity__key",
                 "entity__string",  # terminology/common and tutorial/playground use string instead of key.
                 "locale_id",
-                "plural_form",
                 "string",
             )
         )
@@ -213,22 +215,18 @@ def find_db_updates(
                     trans_values["locale_id"],
                 )
                 if key in translations:
-                    plural_form = trans_values["plural_form"]
-                    strings, _ = translations[key]
+                    string, _ = translations[key]
                     if translations_equal(
                         project,
                         key[0],
                         trans_values["entity__resource__format"],
-                        strings.get(plural_form, None),
+                        string,
                         trans_values["string"],
                     ):
-                        if len(strings) > 1:
-                            del strings[plural_form]
-                        else:
-                            del translations[key]
+                        del translations[key]
                 else:
                     # The translation has been removed from the repo
-                    translations[key] = ({}, False)
+                    translations[key] = (None, False)
             if paginator.num_pages > 3:
                 log.debug(
                     f"[{project.slug}] Filtering matches from translations... {page_number}/{paginator.num_pages}"
@@ -303,23 +301,19 @@ def update_db_translations(
     # Approve matching suggestions
     matching_suggestions_q = Q()
     repo_rm_count = 0
-    for (entity_id, locale_id), (strings, _) in repo_translations.items():
-        if strings:
-            for plural_form, string in strings.items():
-                matching_suggestions_q |= Q(
-                    entity_id=entity_id,
-                    locale_id=locale_id,
-                    plural_form=plural_form,
-                    string=string,
-                )
-        else:
+    for (entity_id, locale_id), (string, _) in repo_translations.items():
+        if string is None:
             # The translation has been removed from the repo
             translations_to_reject |= Q(entity_id=entity_id, locale_id=locale_id)
             repo_rm_count += 1
-    # (entity_id, locale_id, plural_form) => translation
-    suggestions: dict[tuple[int, int, int], Translation] = (
+        else:
+            matching_suggestions_q |= Q(
+                entity_id=entity_id, locale_id=locale_id, string=string
+            )
+    # (entity_id, locale_id) => translation
+    suggestions: dict[tuple[int, int], Translation] = (
         {
-            (tx.entity_id, tx.locale_id, tx.plural_form): tx
+            (tx.entity_id, tx.locale_id): tx
             for tx in Translation.objects.filter(matching_suggestions_q)
             .filter(approved=False, pretranslated=False)
             .iterator()
@@ -365,11 +359,9 @@ def update_db_translations(
                 )
             )
             approve_count += 1
-        translations_to_reject |= Q(
-            entity=tx.entity, locale=tx.locale, plural_form=tx.plural_form
-        ) & ~Q(id=tx.id)
+        translations_to_reject |= Q(entity=tx.entity, locale=tx.locale) & ~Q(id=tx.id)
         update_fields.update(tx.get_dirty_fields())
-    for entity_id, locale_id, _ in suggestions:
+    for entity_id, locale_id in suggestions:
         try:
             del repo_translations[(entity_id, locale_id)]
         except KeyError:
@@ -378,13 +370,12 @@ def update_db_translations(
     new_translations: list[Translation] = []
     if repo_translations:
         # Add new approved translations for the remainder
-        for (entity_id, locale_id), (strings, fuzzy) in repo_translations.items():
-            for plural_form, string in strings.items():
+        for (entity_id, locale_id), (string, fuzzy) in repo_translations.items():
+            if string is not None:
                 tx = Translation(
                     entity_id=entity_id,
                     locale_id=locale_id,
                     string=string,
-                    plural_form=plural_form,
                     date=now,
                     active=True,
                     user=user,
@@ -403,9 +394,7 @@ def update_db_translations(
                         translation=tx,
                     )
                 )
-                translations_to_reject |= Q(
-                    entity_id=entity_id, locale_id=locale_id, plural_form=plural_form
-                )
+                translations_to_reject |= Q(entity_id=entity_id, locale_id=locale_id)
 
     if translations_to_reject:
         rejected = Translation.objects.filter(rejected=False).filter(

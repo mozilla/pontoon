@@ -173,24 +173,55 @@ def test_add_translation():
         TranslatedResourceFactory.create(locale=locale, resource=res_a)
         TranslatedResourceFactory.create(locale=locale, resource=res_b)
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
-        for i in range(3):
-            entity = EntityFactory.create(
-                resource=res_c, key=f"key-{i}", string=f"key-{i} = Message {i}\n"
-            )
-            TranslationFactory.create(
-                entity=entity,
-                locale=locale,
-                string=f"key-{i} = Translation {i}\n",
-                active=True,
-                approved=True,
-            )
+        ent_0 = EntityFactory.create(
+            resource=res_c, key="key-0", string="key-0 = Message 0\n"
+        )
+        TranslationFactory.create(
+            entity=ent_0,
+            locale=locale,
+            string="key-0 = Translation 0\n",
+            active=True,
+            approved=True,
+        )
+        ent_1 = EntityFactory.create(
+            resource=res_c, key="key-1", string="key-1 = Message 1\n"
+        )
+        TranslationFactory.create(
+            entity=ent_1,
+            locale=locale,
+            string="key-1 = Translation 1\n",
+            active=True,
+            approved=True,
+        )
+        ent_2 = EntityFactory.create(
+            resource=res_c, key="key-2", string="key-2 =\n    .attr = Message 2\n"
+        )
+        TranslationFactory.create(
+            entity=ent_2,
+            locale=locale,
+            string="key-2 =\n    .attr = Translation 2\n",
+            active=True,
+            approved=True,
+        )
+        ent_3 = EntityFactory.create(
+            resource=res_c, key="-term-3", string="-term-3 = Term 3\n"
+        )
+        TranslationFactory.create(
+            entity=ent_3,
+            locale=locale,
+            string="-term-3 = Translation 3\n    .attr = Term attribute\n",
+            active=True,
+            approved=True,
+        )
 
         # Filesystem setup
         c_ftl_src = dedent(
             """\
             key-0 = Message 0
             key-1 = Message 1
-            key-2 = Message 2
+            key-2 =
+                .attr = Message 2
+            -term-3 = Term 3
             """
         )
         c_ftl_tgt = dedent(
@@ -221,7 +252,7 @@ def test_add_translation():
         db_changes = ChangedEntityLocale.objects.filter(
             entity__resource__project=project
         )
-        assert len(db_changes) == 3
+        assert len(db_changes) == 4
         sync_translations_to_repo(
             project, False, locale_map, checkouts, paths, db_changes, set(), set(), now
         )
@@ -230,7 +261,10 @@ def test_add_translation():
                 """\
                 key-0 = Translation 0
                 key-1 = Translation 1
-                key-2 = Translation 2
+                key-2 =
+                    .attr = Translation 2
+                -term-3 = Translation 3
+                    .attr = Term attribute
                 """
             )
 
