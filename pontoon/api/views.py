@@ -126,7 +126,7 @@ class LocaleListView(generics.ListAPIView):
     serializer_class = NestedLocaleSerializer
 
     def get_queryset(self):
-        locales = Locale.objects.prefetch_related("project_locale__project")
+        locales = Locale.objects.prefetch_related("project_locale__project").distinct()
         return locales.stats_data()
 
 
