@@ -132,7 +132,6 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
         return obj.unreviewed
 
 
-
 class NestedProjectSerializer(ProjectSerializer):
     locales = serializers.SerializerMethodField()
     tags = TagSerializer(many=True, read_only=True)
@@ -218,11 +217,11 @@ class NestedIndividualProjectSerializer(ProjectSerializer):
         return obj.unreviewed
 
     def get_project_locale(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if not request:
             return None
 
-        slug = self.context['view'].kwargs.get('slug')
+        slug = self.context["view"].kwargs.get("slug")
         project = get_object_or_404(
             Project,
             slug=slug,
