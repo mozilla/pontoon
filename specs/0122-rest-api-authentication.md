@@ -1,6 +1,6 @@
 - Feature Name: API Authentication
 - Created: 2025-06-20
-- Associated Issue: #N/A
+- Associated Issue: #2502
 
 # Summary
 
