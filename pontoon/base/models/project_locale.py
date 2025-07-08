@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group
 from django.db import models
+from django.db.models import F, Sum
 
 from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
@@ -27,6 +28,26 @@ class ProjectLocaleQuerySet(models.QuerySet):
             project__resources__isnull=False,
             project__system_project=False,
         ).distinct()
+
+    def stats_data(self, project):
+        query = self.filter(
+            locale__translatedresources__resource__project=project
+        ).prefetch_related("locale")
+        tr = "locale__translatedresources"
+        return query.annotate(
+            total=Sum(f"{tr}__total_strings", default=0),
+            approved=Sum(f"{tr}__approved_strings", default=0),
+            pretranslated=Sum(f"{tr}__pretranslated_strings", default=0),
+            errors=Sum(f"{tr}__strings_with_errors", default=0),
+            warnings=Sum(f"{tr}__strings_with_warnings", default=0),
+            unreviewed=Sum(f"{tr}__unreviewed_strings", default=0),
+        ).annotate(
+            missing=F("total")
+            - F("approved")
+            - F("pretranslated")
+            - F("errors")
+            - F("warnings")
+        )
 
 
 class ProjectLocale(models.Model, AggregatedStats):

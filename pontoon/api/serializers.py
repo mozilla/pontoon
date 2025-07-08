@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from django.shortcuts import get_object_or_404
+
 from pontoon.base.models import (
     Locale,
     Project,
@@ -83,17 +85,52 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectLocaleSerializer(serializers.ModelSerializer):
+    locale = serializers.SerializerMethodField()
+    approved_strings = serializers.SerializerMethodField()
+    missing_strings = serializers.SerializerMethodField()
+    pretranslated_strings = serializers.SerializerMethodField()
+    strings_with_errors = serializers.SerializerMethodField()
+    strings_with_warnings = serializers.SerializerMethodField()
+    total_strings = serializers.SerializerMethodField()
+    unreviewed_strings = serializers.SerializerMethodField()
+
     class Meta:
         model = ProjectLocale
         fields = [
+            "locale",
             "total_strings",
             "approved_strings",
             "pretranslated_strings",
             "strings_with_errors",
             "strings_with_warnings",
+            "missing_strings",
             "unreviewed_strings",
-            "project",
         ]
+
+    def get_locale(self, obj):
+        return obj.locale.code
+
+    def get_approved_strings(self, obj):
+        return obj.approved
+
+    def get_missing_strings(self, obj):
+        return obj.missing
+
+    def get_pretranslated_strings(self, obj):
+        return obj.pretranslated
+
+    def get_strings_with_errors(self, obj):
+        return obj.errors
+
+    def get_strings_with_warnings(self, obj):
+        return obj.warnings
+
+    def get_total_strings(self, obj):
+        return obj.total
+
+    def get_unreviewed_strings(self, obj):
+        return obj.unreviewed
+
 
 
 class NestedProjectSerializer(ProjectSerializer):
@@ -138,6 +175,61 @@ class NestedProjectSerializer(ProjectSerializer):
 
     def get_unreviewed_strings(self, obj):
         return obj.unreviewed
+
+
+class NestedIndividualProjectSerializer(ProjectSerializer):
+    tags = TagSerializer(many=True, read_only=True)
+    project_locale = serializers.SerializerMethodField()
+
+    approved_strings = serializers.SerializerMethodField()
+    complete = serializers.SerializerMethodField()
+    missing_strings = serializers.SerializerMethodField()
+    pretranslated_strings = serializers.SerializerMethodField()
+    strings_with_errors = serializers.SerializerMethodField()
+    strings_with_warnings = serializers.SerializerMethodField()
+    total_strings = serializers.SerializerMethodField()
+    unreviewed_strings = serializers.SerializerMethodField()
+
+    class Meta(ProjectSerializer.Meta):
+        fields = ProjectSerializer.Meta.fields + ["tags", "project_locale"]
+
+    def get_approved_strings(self, obj):
+        return obj.approved
+
+    def get_complete(self, obj):
+        return obj.is_complete
+
+    def get_missing_strings(self, obj):
+        return obj.missing
+
+    def get_pretranslated_strings(self, obj):
+        return obj.pretranslated
+
+    def get_strings_with_errors(self, obj):
+        return obj.errors
+
+    def get_strings_with_warnings(self, obj):
+        return obj.warnings
+
+    def get_total_strings(self, obj):
+        return obj.total
+
+    def get_unreviewed_strings(self, obj):
+        return obj.unreviewed
+
+    def get_project_locale(self, obj):
+        request = self.context.get('request')
+        if not request:
+            return None
+
+        slug = self.context['view'].kwargs.get('slug')
+        project = get_object_or_404(
+            Project,
+            slug=slug,
+        )
+
+        project_locales = obj.project_locale.stats_data(project=project)
+        return ProjectLocaleSerializer(project_locales, many=True).data
 
 
 class NestedLocaleSerializer(LocaleSerializer):
