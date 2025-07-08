@@ -8,7 +8,7 @@ Introduce a personal access token (PAT) implementation for accessing certain pub
 
 # Motivation
 
-With the rollout of our new series of REST API endpoints built with Django REST Framework, there is an increasing need to protect or restrict access to specific endpoints using authentication.
+There is an increasing need to protect or restrict access to specific endpoints using authentication.
 
 This feature sets a standard for third parties and localizers by providing a more secure method of accessing Pontoon's external REST API. It also lays the groundwork for future enhancements, such as permission levels based on token access scope.
 
