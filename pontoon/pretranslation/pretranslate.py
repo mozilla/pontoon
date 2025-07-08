@@ -70,8 +70,10 @@ def get_pretranslation(
 
         return (pretranslation, author)
 
-    # TODO
-    # elif entity.resource.format == "po":
+    # For now, disable pretranslation for plural gettext messages.
+    # https://github.com/mozilla/pontoon/issues/3694
+    elif entity.resource.format == "po" and ".match" in source:
+        return None
 
     else:
         pretranslation, service = get_pretranslated_data(
