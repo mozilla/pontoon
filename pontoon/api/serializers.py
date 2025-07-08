@@ -14,6 +14,32 @@ from pontoon.terminology.models import (
 )
 
 
+class TranslationStatsMixin:
+    def get_approved_strings(self, obj):
+        return obj.approved
+
+    def get_missing_strings(self, obj):
+        return obj.missing
+
+    def get_pretranslated_strings(self, obj):
+        return obj.pretranslated
+
+    def get_strings_with_errors(self, obj):
+        return obj.errors
+
+    def get_strings_with_warnings(self, obj):
+        return obj.warnings
+
+    def get_total_strings(self, obj):
+        return obj.total
+
+    def get_unreviewed_strings(self, obj):
+        return obj.unreviewed
+
+    def get_complete(self, obj):
+        return obj.is_complete
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -84,7 +110,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         return None
 
 
-class ProjectLocaleSerializer(serializers.ModelSerializer):
+class ProjectLocaleSerializer(serializers.ModelSerializer, TranslationStatsMixin):
     locale = serializers.SerializerMethodField()
     approved_strings = serializers.SerializerMethodField()
     missing_strings = serializers.SerializerMethodField()
@@ -112,32 +138,8 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
     def get_locale(self, obj):
         return obj.locale.code
 
-    def get_approved_strings(self, obj):
-        return obj.approved
 
-    def get_missing_strings(self, obj):
-        return obj.missing
-
-    def get_pretranslated_strings(self, obj):
-        return obj.pretranslated
-
-    def get_strings_with_errors(self, obj):
-        return obj.errors
-
-    def get_strings_with_warnings(self, obj):
-        return obj.warnings
-
-    def get_total_strings(self, obj):
-        return obj.total
-
-    def get_unreviewed_strings(self, obj):
-        return obj.unreviewed
-
-    def get_complete(self, obj):
-        return obj.is_complete
-
-
-class NestedProjectSerializer(ProjectSerializer):
+class NestedProjectSerializer(ProjectSerializer, TranslationStatsMixin):
     locales = serializers.SerializerMethodField()
     tags = TagSerializer(many=True, read_only=True)
 
@@ -156,32 +158,8 @@ class NestedProjectSerializer(ProjectSerializer):
     def get_locales(self, obj):
         return [pl.locale.code for pl in obj.project_locale.visible()]
 
-    def get_approved_strings(self, obj):
-        return obj.approved
 
-    def get_complete(self, obj):
-        return obj.is_complete
-
-    def get_missing_strings(self, obj):
-        return obj.missing
-
-    def get_pretranslated_strings(self, obj):
-        return obj.pretranslated
-
-    def get_strings_with_errors(self, obj):
-        return obj.errors
-
-    def get_strings_with_warnings(self, obj):
-        return obj.warnings
-
-    def get_total_strings(self, obj):
-        return obj.total
-
-    def get_unreviewed_strings(self, obj):
-        return obj.unreviewed
-
-
-class NestedIndividualProjectSerializer(ProjectSerializer):
+class NestedIndividualProjectSerializer(ProjectSerializer, TranslationStatsMixin):
     tags = TagSerializer(many=True, read_only=True)
     localizations = serializers.SerializerMethodField()
 
@@ -196,30 +174,6 @@ class NestedIndividualProjectSerializer(ProjectSerializer):
 
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + ["tags", "localizations"]
-
-    def get_approved_strings(self, obj):
-        return obj.approved
-
-    def get_complete(self, obj):
-        return obj.is_complete
-
-    def get_missing_strings(self, obj):
-        return obj.missing
-
-    def get_pretranslated_strings(self, obj):
-        return obj.pretranslated
-
-    def get_strings_with_errors(self, obj):
-        return obj.errors
-
-    def get_strings_with_warnings(self, obj):
-        return obj.warnings
-
-    def get_total_strings(self, obj):
-        return obj.total
-
-    def get_unreviewed_strings(self, obj):
-        return obj.unreviewed
 
     def get_localizations(self, obj):
         request = self.context.get("request")
@@ -241,7 +195,7 @@ class NestedIndividualProjectSerializer(ProjectSerializer):
         }
 
 
-class NestedLocaleSerializer(LocaleSerializer):
+class NestedLocaleSerializer(LocaleSerializer, TranslationStatsMixin):
     projects = serializers.SerializerMethodField()
 
     approved_strings = serializers.SerializerMethodField()
@@ -258,30 +212,6 @@ class NestedLocaleSerializer(LocaleSerializer):
 
     def get_projects(self, obj):
         return [pl.project.slug for pl in obj.project_locale.visible()]
-
-    def get_approved_strings(self, obj):
-        return obj.approved
-
-    def get_complete(self, obj):
-        return obj.is_complete
-
-    def get_missing_strings(self, obj):
-        return obj.missing
-
-    def get_pretranslated_strings(self, obj):
-        return obj.pretranslated
-
-    def get_strings_with_errors(self, obj):
-        return obj.errors
-
-    def get_strings_with_warnings(self, obj):
-        return obj.warnings
-
-    def get_total_strings(self, obj):
-        return obj.total
-
-    def get_unreviewed_strings(self, obj):
-        return obj.unreviewed
 
 
 class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
