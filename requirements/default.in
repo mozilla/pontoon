@@ -41,7 +41,7 @@ graphene-django==3.2.2
 gunicorn==23.0.0
 jsonfield==3.1.0
 markupsafe==2.0.1
-moz.l10n[xml]==0.8.0b2
+moz.l10n[xml]==0.8.0
 newrelic==9.6.0
 openai==1.47.1
 psycopg2==2.9.6
