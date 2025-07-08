@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from django.db import models
-from django.db.models import F, Sum
+from django.db.models import BooleanField, Case, F, Sum, Value, When
 
 from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
@@ -46,7 +46,15 @@ class ProjectLocaleQuerySet(models.QuerySet):
             - F("approved")
             - F("pretranslated")
             - F("errors")
-            - F("warnings")
+            - F("warnings"),
+            is_complete=Case(
+                When(
+                    total=F("approved") + F("pretranslated") + F("warnings"),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            ),
         )
 
 

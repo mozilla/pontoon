@@ -93,6 +93,7 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
     strings_with_warnings = serializers.SerializerMethodField()
     total_strings = serializers.SerializerMethodField()
     unreviewed_strings = serializers.SerializerMethodField()
+    complete = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectLocale
@@ -105,6 +106,7 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
             "strings_with_warnings",
             "missing_strings",
             "unreviewed_strings",
+            "complete",
         ]
 
     def get_locale(self, obj):
@@ -130,6 +132,9 @@ class ProjectLocaleSerializer(serializers.ModelSerializer):
 
     def get_unreviewed_strings(self, obj):
         return obj.unreviewed
+
+    def get_complete(self, obj):
+        return obj.is_complete
 
 
 class NestedProjectSerializer(ProjectSerializer):
@@ -178,7 +183,7 @@ class NestedProjectSerializer(ProjectSerializer):
 
 class NestedIndividualProjectSerializer(ProjectSerializer):
     tags = TagSerializer(many=True, read_only=True)
-    project_locale = serializers.SerializerMethodField()
+    localizations = serializers.SerializerMethodField()
 
     approved_strings = serializers.SerializerMethodField()
     complete = serializers.SerializerMethodField()
@@ -190,7 +195,7 @@ class NestedIndividualProjectSerializer(ProjectSerializer):
     unreviewed_strings = serializers.SerializerMethodField()
 
     class Meta(ProjectSerializer.Meta):
-        fields = ProjectSerializer.Meta.fields + ["tags", "project_locale"]
+        fields = ProjectSerializer.Meta.fields + ["tags", "localizations"]
 
     def get_approved_strings(self, obj):
         return obj.approved
@@ -216,7 +221,7 @@ class NestedIndividualProjectSerializer(ProjectSerializer):
     def get_unreviewed_strings(self, obj):
         return obj.unreviewed
 
-    def get_project_locale(self, obj):
+    def get_localizations(self, obj):
         request = self.context.get("request")
         if not request:
             return None
