@@ -233,7 +233,12 @@ class NestedIndividualProjectSerializer(ProjectSerializer):
         )
 
         project_locales = obj.project_locale.stats_data(project=project)
-        return ProjectLocaleSerializer(project_locales, many=True).data
+        serialized = ProjectLocaleSerializer(project_locales, many=True).data
+
+        return {
+            item["locale"]: {k: v for k, v in item.items() if k != "locale"}
+            for item in serialized
+        }
 
 
 class NestedLocaleSerializer(LocaleSerializer):
