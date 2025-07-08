@@ -61,7 +61,7 @@ class LocaleQuerySet(models.QuerySet):
             pk__in=TranslatedResource.objects.values_list("locale", flat=True)
         )
 
-    def stats_data(self, project):
+    def stats_data(self, project=None):
         if project is not None:
             query = self.filter(translatedresources__resource__project=project)
         else:

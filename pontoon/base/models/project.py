@@ -68,7 +68,7 @@ class ProjectQuerySet(models.QuerySet):
         """
         return self.force_syncable().filter(sync_disabled=False)
 
-    def stats_data(self, locale):
+    def stats_data(self, locale=None):
         query = (
             self
             if locale is None
@@ -287,7 +287,7 @@ class Project(models.Model, AggregatedStats):
         """
         resource_priority = {}
 
-        resource_priority_qs = self.tag_set.prefetch_related("resources").values(
+        resource_priority_qs = self.tags.prefetch_related("resources").values(
             "resources__path", "priority"
         )
 

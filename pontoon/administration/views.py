@@ -47,7 +47,7 @@ def admin(request):
 
     enabled_projects = projects.filter(disabled=False)
     disabled_projects = projects.filter(disabled=True)
-    project_stats = projects.stats_data()
+    project_stats = projects.stats_data_as_dict()
 
     return render(
         request,
