@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from django.shortcuts import get_object_or_404
-
 from pontoon.base.models import (
     Locale,
     Project,
@@ -135,9 +133,6 @@ class ProjectLocaleSerializer(serializers.ModelSerializer, TranslationStatsMixin
             "complete",
         ]
 
-    def get_locale(self, obj):
-        return obj.locale.code
-
 
 class NestedProjectSerializer(ProjectSerializer, TranslationStatsMixin):
     locales = serializers.SerializerMethodField()
@@ -179,12 +174,6 @@ class NestedIndividualProjectSerializer(ProjectSerializer, TranslationStatsMixin
         request = self.context.get("request")
         if not request:
             return None
-
-        slug = self.context["view"].kwargs.get("slug")
-        project = get_object_or_404(
-            Project,
-            slug=slug,
-        )
 
         project_locales = obj.project_locale.stats_data(project=obj)
         serialized = ProjectLocaleSerializer(project_locales, many=True).data
