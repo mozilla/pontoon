@@ -161,7 +161,7 @@ class ProjectListView(generics.ListAPIView):
             filters |= Q(system_project=True)
         if filters:
             queryset = queryset | Project.objects.filter(filters).distinct()
-        return queryset.stats_data()
+        return queryset.stats_data().order_by("slug")
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
