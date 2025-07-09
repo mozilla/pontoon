@@ -77,7 +77,7 @@ def parse_translations(
             return json_extensions.parse(res)
         case Format.plain_json:
             return json_keyvalue.parse(res)
-        # Currently this includes .dtd, .inc, and .ini support.
+        # Currently this includes .dtd, and .ini support.
         # https://github.com/mozilla/moz-l10n/blob/v0.7.0/python/moz/l10n/formats/__init__.py#L32-L47
         case _:
             return [
