@@ -11,7 +11,7 @@
       "dom.iterable",
       "esnext"
     ] /* Specify library files to be included in the compilation. */,
-    // "allowJs": true,                             /* Allow javascript files to be compiled. */
+    // "allowJs": true,                             /* Allow JavaScript files to be compiled. */
     // "checkJs": true,                             /* Report errors in .js files. */
     "jsx": "react-jsx" /* Specify JSX code generation: 'preserve', 'react-native', 'react', 'react-jsx' or 'react-jsxdev'. */,
     // "declaration": true,                         /* Generates corresponding '.d.ts' file. */

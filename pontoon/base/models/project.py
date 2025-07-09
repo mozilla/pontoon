@@ -109,7 +109,7 @@ class ProjectQuerySet(models.QuerySet):
             "errors",
             "warnings",
             "unreviewed",
-            # TODO: Add "missing" string field and prevent recalculation of field in javascript
+            # TODO: Add "missing" string field and prevent recalculation of field in JavaScript
         )
         return {row["id"]: row for row in data if row["total"]}
 
