@@ -113,7 +113,7 @@ class NestedProjectSerializer(ProjectSerializer):
         fields = ProjectSerializer.Meta.fields + ["tags", "locales"]
 
     def get_locales(self, obj):
-        return [pl.locale.code for pl in obj.project_locale.all()]
+        return [pl.locale.code for pl in obj.project_locale.visible()]
 
     def get_approved_strings(self, obj):
         return obj.approved
@@ -156,7 +156,7 @@ class NestedLocaleSerializer(LocaleSerializer):
         fields = LocaleSerializer.Meta.fields + ["projects"]
 
     def get_projects(self, obj):
-        return [pl.project.slug for pl in obj.project_locale.all()]
+        return [pl.project.slug for pl in obj.project_locale.visible()]
 
     def get_approved_strings(self, obj):
         return obj.approved
