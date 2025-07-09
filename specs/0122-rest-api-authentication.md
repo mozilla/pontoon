@@ -18,7 +18,7 @@ This feature sets a standard for third parties and localizers by providing a mor
 
 The PAT implementation includes the following features:
 
-- Tokens are created from the user settings page  
+- Tokens are created from the user settings page
 - Tokens have an expiration date  
 - Users can hold up to 10 tokens simultaneously  
 - Tokens can be deleted, but their values cannot be viewed again after the initial creation  
