@@ -111,7 +111,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectLocaleSerializer(serializers.ModelSerializer, TranslationStatsMixin):
-    locale = serializers.SerializerMethodField()
+    locale = serializers.SlugRelatedField(read_only=True, slug_field="code")
     approved_strings = serializers.SerializerMethodField()
     missing_strings = serializers.SerializerMethodField()
     pretranslated_strings = serializers.SerializerMethodField()
