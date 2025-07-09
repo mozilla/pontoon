@@ -2,6 +2,8 @@ from collections import defaultdict
 
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
+from moz.l10n.formats.mf2 import mf2_parse_message
+from moz.l10n.model import PatternMessage
 
 
 parser = FluentParser()
@@ -47,6 +49,18 @@ def run_checks(entity, original, string):
     if resource_ext == "po":
         if original.endswith("\n") != string.endswith("\n"):
             checks["pErrors"].append("Ending newline mismatch")
+        if string != "":
+            try:
+                msg = mf2_parse_message(string)
+                patterns = (
+                    (msg.pattern,)
+                    if isinstance(msg, PatternMessage)
+                    else msg.variants.values()
+                )
+                if any(not pattern or pattern == [""] for pattern in patterns):
+                    checks["pErrors"].append("Empty translations are not allowed")
+            except ValueError as e:
+                checks["pErrors"].append(f"Parse error: {e}")
 
     # Prevent empty translation submissions if not supported
     if string == "" and not entity.resource.allows_empty_translations:

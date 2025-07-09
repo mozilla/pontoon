@@ -45,9 +45,18 @@ def test_empty_translations(get_entity_mock):
     """
     Empty translations shouldn't be allowed for some extensions.
     """
-    assert run_checks(get_entity_mock("po"), "", "") == {
-        "pErrors": ["Empty translations are not allowed"]
-    }
+    po_entity = get_entity_mock("po")
+    empty_error = {"pErrors": ["Empty translations are not allowed"]}
+    assert run_checks(po_entity, "", "") == empty_error
+    assert run_checks(po_entity, "", "{{}}") == empty_error
+    assert (
+        run_checks(po_entity, "", ".input {$n :number} .match $n * {{}}") == empty_error
+    )
+    assert (
+        run_checks(po_entity, "", ".input {$n :number} .match $n 1 {{}} * {{other}}")
+        == empty_error
+    )
+    assert run_checks(po_entity, "", "{{{||}}}") == {}
 
     assert run_checks(
         get_entity_mock("ftl", string="key = value"), "", 'key = { "" }'
