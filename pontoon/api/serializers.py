@@ -12,7 +12,16 @@ from pontoon.terminology.models import (
 )
 
 
-class TranslationStatsMixin:
+class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
+    approved_strings = serializers.SerializerMethodField()
+    complete = serializers.SerializerMethodField()
+    missing_strings = serializers.SerializerMethodField()
+    pretranslated_strings = serializers.SerializerMethodField()
+    strings_with_errors = serializers.SerializerMethodField()
+    strings_with_warnings = serializers.SerializerMethodField()
+    total_strings = serializers.SerializerMethodField()
+    unreviewed_strings = serializers.SerializerMethodField()
+
     def get_approved_strings(self, obj):
         return obj.approved
 
@@ -108,16 +117,8 @@ class ProjectSerializer(serializers.ModelSerializer):
         return None
 
 
-class ProjectLocaleSerializer(serializers.ModelSerializer, TranslationStatsMixin):
+class ProjectLocaleSerializer(TranslationStatsMixin, serializers.ModelSerializer):
     locale = serializers.SlugRelatedField(read_only=True, slug_field="code")
-    approved_strings = serializers.SerializerMethodField()
-    missing_strings = serializers.SerializerMethodField()
-    pretranslated_strings = serializers.SerializerMethodField()
-    strings_with_errors = serializers.SerializerMethodField()
-    strings_with_warnings = serializers.SerializerMethodField()
-    total_strings = serializers.SerializerMethodField()
-    unreviewed_strings = serializers.SerializerMethodField()
-    complete = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectLocale
@@ -134,18 +135,9 @@ class ProjectLocaleSerializer(serializers.ModelSerializer, TranslationStatsMixin
         ]
 
 
-class NestedProjectSerializer(ProjectSerializer, TranslationStatsMixin):
+class NestedProjectSerializer(TranslationStatsMixin, ProjectSerializer):
     locales = serializers.SerializerMethodField()
     tags = TagSerializer(many=True, read_only=True)
-
-    approved_strings = serializers.SerializerMethodField()
-    complete = serializers.SerializerMethodField()
-    missing_strings = serializers.SerializerMethodField()
-    pretranslated_strings = serializers.SerializerMethodField()
-    strings_with_errors = serializers.SerializerMethodField()
-    strings_with_warnings = serializers.SerializerMethodField()
-    total_strings = serializers.SerializerMethodField()
-    unreviewed_strings = serializers.SerializerMethodField()
 
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + ["tags", "locales"]
@@ -154,18 +146,9 @@ class NestedProjectSerializer(ProjectSerializer, TranslationStatsMixin):
         return [pl.locale.code for pl in obj.project_locale.visible()]
 
 
-class NestedIndividualProjectSerializer(ProjectSerializer, TranslationStatsMixin):
+class NestedIndividualProjectSerializer(TranslationStatsMixin, ProjectSerializer):
     tags = TagSerializer(many=True, read_only=True)
     localizations = serializers.SerializerMethodField()
-
-    approved_strings = serializers.SerializerMethodField()
-    complete = serializers.SerializerMethodField()
-    missing_strings = serializers.SerializerMethodField()
-    pretranslated_strings = serializers.SerializerMethodField()
-    strings_with_errors = serializers.SerializerMethodField()
-    strings_with_warnings = serializers.SerializerMethodField()
-    total_strings = serializers.SerializerMethodField()
-    unreviewed_strings = serializers.SerializerMethodField()
 
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + ["tags", "localizations"]
@@ -184,17 +167,8 @@ class NestedIndividualProjectSerializer(ProjectSerializer, TranslationStatsMixin
         }
 
 
-class NestedLocaleSerializer(LocaleSerializer, TranslationStatsMixin):
+class NestedLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
     projects = serializers.SerializerMethodField()
-
-    approved_strings = serializers.SerializerMethodField()
-    complete = serializers.SerializerMethodField()
-    missing_strings = serializers.SerializerMethodField()
-    pretranslated_strings = serializers.SerializerMethodField()
-    strings_with_errors = serializers.SerializerMethodField()
-    strings_with_warnings = serializers.SerializerMethodField()
-    total_strings = serializers.SerializerMethodField()
-    unreviewed_strings = serializers.SerializerMethodField()
 
     class Meta(LocaleSerializer.Meta):
         fields = LocaleSerializer.Meta.fields + ["projects"]
