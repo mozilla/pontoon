@@ -7,7 +7,6 @@ It can handle any project that uses one of the supported file formats:
 
 - .dtd
 - .ftl (Fluent)
-- .inc
 - .ini
 - .json (WebExtensions)
 - .json (key-value)

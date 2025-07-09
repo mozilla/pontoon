@@ -304,20 +304,6 @@ def set_translations(
                 if isinstance(entry, Entry):
                     if not set_translation(translations, res, section, entry):
                         not_translated.append((section, entry))
-                elif res.format == Format.inc:
-                    try:
-                        # HACK support for legacy usage in SeaMonkey defines.inc files
-                        # https://bugzilla.mozilla.org/show_bug.cgi?id=1951101
-                        mlc_start = entry.comment.index(
-                            "\n# #define MOZ_LANGPACK_CONTRIBUTORS"
-                        )
-                        entry.comment = entry.comment[:mlc_start]
-                        section.entries.insert(
-                            section.entries.index(entry) + 1,
-                            Entry(("MOZ_LANGPACK_CONTRIBUTORS",), PatternMessage([])),
-                        )
-                    except ValueError:
-                        pass
 
     if not_translated and res.format not in (Format.gettext, Format.xliff):
         section = not_translated[0][0]

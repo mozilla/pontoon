@@ -24,7 +24,6 @@ class Resource(models.Model):
     class Format(models.TextChoices):
         DTD = "dtd", "dtd"
         FTL = "ftl", "ftl"
-        INC = "inc", "inc"
         INI = "ini", "ini"
         JSON = "json", "json"
         PO = "po", "po"
@@ -42,7 +41,6 @@ class Resource(models.Model):
     # Formats that allow empty translations
     EMPTY_TRANSLATION_FORMATS = {
         Format.DTD,
-        Format.INC,
         Format.INI,
         Format.PROPERTIES,
     }
