@@ -186,7 +186,7 @@ class NestedIndividualProjectSerializer(ProjectSerializer, TranslationStatsMixin
             slug=slug,
         )
 
-        project_locales = obj.project_locale.stats_data(project=project)
+        project_locales = obj.project_locale.stats_data(project=obj)
         serialized = ProjectLocaleSerializer(project_locales, many=True).data
 
         return {
