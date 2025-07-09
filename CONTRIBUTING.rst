@@ -138,7 +138,7 @@ To format the Python and the JavaScript code at once you can use:
 
 Code formatting is explained in more detail in the following sections.
 
-To run the required linters on the Python and the Javascript code at once you can use:
+To run the required linters on the Python and the JavaScript code at once you can use:
 
 .. code-block:: shell
 
@@ -166,10 +166,10 @@ ignore that error (see `documentation <https://docs.astral.sh/ruff/linter/#error
 Note that in most cases, it is better to fix the issues than ignoring them.
 
 
-Javascript code conventions
+JavaScript code conventions
 ===========================
 
-Our Javascript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>`_.
+Our JavaScript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>`_.
 We enforce that in our Continuous Integration, so you will need to run
 prettier on your code before sending it for review.
 
