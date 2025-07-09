@@ -33,13 +33,13 @@ export function FtlSwitch() {
   const { entity } = useContext(EntityView);
 
   const hasError = useMemo(() => {
-    if (sourceView) {
+    if (sourceView && entity.format === 'ftl') {
       const source = edit[0].value;
-      return !source || requiresSourceView(parseEntry(source));
+      return !source || requiresSourceView('ftl', parseEntry('ftl', source));
     } else {
       return false;
     }
-  }, [sourceView, edit]);
+  }, [sourceView, edit, entity.format]);
 
   const handleClick = useCallback(() => {
     if (hasError) {

@@ -2,13 +2,14 @@ import logging
 
 from collections import defaultdict
 from datetime import datetime
-from itertools import groupby
 from os import makedirs, remove
 from os.path import commonpath, dirname, isfile, join, normpath
 from re import compile
 
 from moz.l10n.formats import Format
+from moz.l10n.message import parse_message
 from moz.l10n.model import (
+    CatchallKey,
     Entry,
     Expression,
     Id,
@@ -233,11 +234,12 @@ def update_changed_resources(
             if not lc_translations and not isfile(target_path):
                 continue
             try:
+                lc_plurals = locale.cldr_plurals_list()
                 res = parse_resource(ref_path)
                 set_translations(locale, lc_translations, res)
                 makedirs(dirname(target_path), exist_ok=True)
                 with open(target_path, "w", encoding="utf-8") as file:
-                    for line in serialize_resource(res):
+                    for line in serialize_resource(res, gettext_plurals=lc_plurals):
                         file.write(line)
                 updated_locales.add(locale)
                 for tx in lc_translations:
@@ -274,31 +276,16 @@ def set_translations(
                         not_translated.append((section, entry))
                     else:
                         entry.value = te.value
+                        entry.properties = (
+                            te.properties
+                            if entry.id[0].startswith("-")
+                            else {
+                                name: tp
+                                for name, tp in te.properties.items()
+                                if name in entry.properties
+                            }
+                        )
                         trans_entries[entry.id] = None
-
-        # Fluent terms may have translator-defined properties
-        # that need to be included in the result.
-        for term_name, prop_entries in groupby(
-            (
-                e
-                for id, e in trans_entries.items()
-                if e is not None and len(id) == 2 and id[0].startswith("-")
-            ),
-            lambda e: e.id[0],
-        ):
-            for section in res.sections:
-                prev = next(
-                    (
-                        e
-                        for e in reversed(section.entries)
-                        if isinstance(e, Entry) and e.id[0] == term_name
-                    ),
-                    None,
-                )
-                if prev is not None:
-                    idx = section.entries.index(prev) + 1
-                    section.entries[idx:idx] = prop_entries
-                    break
     else:
         for section in res.sections:
             if res.format == Format.xliff and any(
@@ -332,7 +319,7 @@ def set_translations(
                     except ValueError:
                         pass
 
-    if not_translated and res.format != Format.xliff:
+    if not_translated and res.format not in (Format.gettext, Format.xliff):
         section = not_translated[0][0]
         rm: list[Entry] = []
         for section_, entry in not_translated:
@@ -344,7 +331,7 @@ def set_translations(
                 rm = [entry]
         section.entries = [e for e in section.entries if e not in rm]
 
-    if res.format == Format.po:
+    if res.format == Format.gettext:
         header = {m.key: m.value for m in res.meta}
         header["Language"] = locale.code.replace("-", "_")
         header["Plural-Forms"] = (
@@ -374,69 +361,83 @@ def set_translation(
             key = ".".join(entry.id)
         case Format.xliff:
             key = f"{section.id[0]}\x04{entry.id[0]}"
-        case Format.po if len(entry.id) == 2:
+        case Format.gettext if len(entry.id) == 2:
             key = f"{entry.id[1]}\x04{entry.id[0]}"
         case _:
             key = entry.id[0]
 
-    if res.format == Format.po:
-        po_tx = [tx for tx in translations if tx.entity.key == key]
-        if isinstance(entry.value, SelectMessage):
-            entry.value.variants = {(str(tx.plural_form),): [tx.string] for tx in po_tx}
-        else:
-            entry.value = po_tx[0].string if po_tx else ""
-        fuzzy_flag = Metadata("flag", "fuzzy")
-        if any(tx.fuzzy for tx in po_tx):
-            if fuzzy_flag not in entry.meta:
-                entry.meta.insert(0, fuzzy_flag)
-        elif fuzzy_flag in entry.meta:
-            entry.meta = [m for m in entry.meta if m != fuzzy_flag]
-        return True
-
-    for tx in translations:
-        if tx.entity.key == key:
-            if res.format == Format.android:
-                # Literal newlines \n and tabs \t are included in the string
-                entry.value = android_esc.sub(
-                    lambda m: "\n" if m[1] == "n" else "\t",
-                    android_nl.sub(" ", tx.string),
-                )
-            elif (
-                res.format == Format.webext
-                and isinstance(entry.value, PatternMessage)
-                and entry.value.declarations
-            ):
-                # With a message value, placeholders in string parts would have their
-                # $ characters doubled to escape them.
-                entry.value.pattern = []
-                pos = 0
-                for m in webext_placeholder.finditer(tx.string):
-                    start = m.start()
-                    if start > pos:
-                        entry.value.pattern.append(tx.string[pos:start])
-                    if m[1]:
-                        ph_name = m[1].replace("@", "_")
-                        if ph_name[0].isdigit():
-                            ph_name = f"_{ph_name}"
-                        ph_name = next(
-                            (
-                                name
-                                for name in entry.value.declarations
-                                if name.lower() == ph_name.lower()
-                            ),
-                            ph_name,
-                        )
-                        pass
-                    else:
-                        ph_name = m[0]
-                    entry.value.pattern.append(
-                        Expression(VariableRef(ph_name), attributes={"source": m[0]})
-                    )
-                    pos = m.end()
-                if pos < len(tx.string):
-                    entry.value.pattern.append(tx.string[pos:])
+    tx = next((tx for tx in translations if tx.entity.key == key), None)
+    if tx is None:
+        if res.format == Format.gettext:
+            if isinstance(entry.value, SelectMessage):
+                entry.value.variants = {(CatchallKey(),): []}
             else:
-                entry.value = tx.string
+                entry.value = PatternMessage([])
             return True
+        else:
+            return False
 
-    return False
+    match res.format:
+        case Format.android:
+            # Literal newlines \n and tabs \t are included in the string
+            entry.value = android_esc.sub(
+                lambda m: "\n" if m[1] == "n" else "\t",
+                android_nl.sub(" ", tx.string),
+            )
+
+        case Format.gettext:
+            msg = parse_message(Format.mf2, tx.string)
+            if isinstance(entry.value, SelectMessage):
+                entry.value.variants = (
+                    {(CatchallKey(),): msg.pattern}
+                    if isinstance(msg, PatternMessage)
+                    else msg.variants
+                )
+            else:
+                assert isinstance(entry.value, PatternMessage)
+                assert isinstance(msg, PatternMessage)
+                entry.value = msg
+            fuzzy_flag = Metadata("flag", "fuzzy")
+            if tx.fuzzy:
+                if fuzzy_flag not in entry.meta:
+                    entry.meta.insert(0, fuzzy_flag)
+            elif fuzzy_flag in entry.meta:
+                entry.meta = [m for m in entry.meta if m != fuzzy_flag]
+
+        case Format.webext if (
+            isinstance(entry.value, PatternMessage) and entry.value.declarations
+        ):
+            # With a message value, placeholders in string parts would have their
+            # $ characters doubled to escape them.
+            entry.value.pattern = []
+            pos = 0
+            for m in webext_placeholder.finditer(tx.string):
+                start = m.start()
+                if start > pos:
+                    entry.value.pattern.append(tx.string[pos:start])
+                if m[1]:
+                    ph_name = m[1].replace("@", "_")
+                    if ph_name[0].isdigit():
+                        ph_name = f"_{ph_name}"
+                    ph_name = next(
+                        (
+                            name
+                            for name in entry.value.declarations
+                            if name.lower() == ph_name.lower()
+                        ),
+                        ph_name,
+                    )
+                    pass
+                else:
+                    ph_name = m[0]
+                entry.value.pattern.append(
+                    Expression(VariableRef(ph_name), attributes={"source": m[0]})
+                )
+                pos = m.end()
+            if pos < len(tx.string):
+                entry.value.pattern.append(tx.string[pos:])
+
+        case _:
+            entry.value = tx.string
+
+    return True

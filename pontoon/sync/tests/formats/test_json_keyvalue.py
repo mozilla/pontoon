@@ -25,14 +25,14 @@ class JsonKeyValueTests(TestCase):
 
         assert t0.key == '["No Comments or Sources"]'
         assert t0.context == "No Comments or Sources"
-        assert t0.strings == {None: "Translated No Comments or Sources"}
+        assert t0.string == "Translated No Comments or Sources"
         assert t0.comments == []
         assert t0.source == []
         assert t0.order == 0
 
         assert t1.key == '["Nested", "key"]'
         assert t1.context == "Nested.key"
-        assert t1.strings == {None: "value"}
+        assert t1.string == "value"
         assert t1.comments == []
         assert t1.source == []
         assert t1.order == 1
@@ -54,12 +54,12 @@ class JsonKeyValueTests(TestCase):
 
         assert t0.key == '["Source", "String"]'
         assert t0.context == "Source.String"
-        assert t0.strings == {None: "foo"}
+        assert t0.string == "foo"
 
         assert t1.key == '["Source.String"]'
         assert t1.context == "Source.String"
-        assert t1.strings == {None: "bar"}
+        assert t1.string == "bar"
 
         assert t2.key == '["[\\"Source\\", \\"String\\"]"]'
         assert t2.context == '["Source", "String"]'
-        assert t2.strings == {None: "eek"}
+        assert t2.string == "eek"

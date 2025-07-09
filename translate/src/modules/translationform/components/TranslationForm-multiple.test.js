@@ -30,7 +30,7 @@ function mountForm(string) {
     pk: 0,
     format: 'ftl',
     original: 'my-message = Hello',
-    translation: [{ string }],
+    translation: { string },
   };
 
   let actions, result;
@@ -44,7 +44,7 @@ function mountForm(string) {
     () => (
       <Locale.Provider value={DEFAULT_LOCALE}>
         <MockLocalizationProvider>
-          <EntityView.Provider value={{ entity, pluralForm: 0 }}>
+          <EntityView.Provider value={{ entity }}>
             <EditorProvider>
               <Spy />
               <TranslationForm />

@@ -7,7 +7,7 @@ import {
   Transformer,
 } from '@fluent/syntax';
 import { resourceToFluent } from '@messageformat/fluent';
-import type { Model } from 'messageformat';
+import { type Model, stringifyMessage } from 'messageformat';
 import type { MessageEntry } from '.';
 
 class SerializeTransformer extends Transformer {
@@ -40,44 +40,51 @@ export function serializeEntry(
     return '';
   }
 
-  if (format !== 'ftl') {
-    if (entry.value?.type !== 'message') {
-      throw new Error(
-        `Unsupported ${format} message type: ${entry.value?.type} [${entry.id}]`,
+  switch (format) {
+    case 'ftl': {
+      const data = new Map<string, Model.Message>();
+      if (entry.value) {
+        data.set('', entry.value);
+      }
+      if (entry.attributes) {
+        for (const [name, attr] of entry.attributes) {
+          data.set(name, attr);
+        }
+      }
+      const resource = new Map([[entry.id, data]]);
+      const functionMap = new Proxy(
+        {},
+        { get: (_, prop) => String(prop).toUpperCase() },
       );
-    }
-    let res = '';
-    for (const el of entry.value.pattern) {
-      if (typeof el === 'string') {
-        res += el;
-      } else {
-        throw new Error(
-          `Unsupported ${format} element type: ${el.type} [${entry.id}]`,
-        );
+      try {
+        const fr = resourceToFluent(resource, { functionMap });
+        transformer.visit(fr);
+        return serializer.serialize(fr);
+      } catch {
+        return '';
       }
     }
-    return res;
-  }
 
-  const data = new Map<string, Model.Message>();
-  if (entry.value) {
-    data.set('', entry.value);
-  }
-  if (entry.attributes) {
-    for (const [name, attr] of entry.attributes) {
-      data.set(name, attr);
+    case 'po':
+      return entry.value ? stringifyMessage(entry.value) : '';
+
+    default: {
+      if (entry.value?.type !== 'message') {
+        throw new Error(
+          `Unsupported ${format} message type: ${entry.value?.type} [${entry.id}]`,
+        );
+      }
+      let res = '';
+      for (const el of entry.value.pattern) {
+        if (typeof el === 'string') {
+          res += el;
+        } else {
+          throw new Error(
+            `Unsupported ${format} element type: ${el.type} [${entry.id}]`,
+          );
+        }
+      }
+      return res;
     }
-  }
-  const resource = new Map([[entry.id, data]]);
-  const functionMap = new Proxy(
-    {},
-    { get: (_, prop) => String(prop).toUpperCase() },
-  );
-  try {
-    const fr = resourceToFluent(resource, { functionMap });
-    transformer.visit(fr);
-    return serializer.serialize(fr);
-  } catch {
-    return '';
   }
 }

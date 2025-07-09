@@ -6,8 +6,8 @@ from unittest import TestCase
 from pontoon.sync.formats import parse_translations
 
 
-class POTests(TestCase):
-    def test_po(self):
+class GettextTests(TestCase):
+    def test_gettext(self):
         src = dedent("""
             #
             msgid ""
@@ -56,7 +56,7 @@ class POTests(TestCase):
             msgstr[0] "Translated Plural %(count)s string"
             msgstr[1] "Translated Plural %(count)s strings"
 
-            msgid "Plural %(count)s string with missing translations"
+            msgid "Plural %(count)s string with missing translation"
             msgid_plural "Plural %(count)s strings with missing translations"
             msgstr[0] ""
             msgstr[1] "Translated Plural %(count)s strings with missing translations"
@@ -66,15 +66,16 @@ class POTests(TestCase):
             path = join(dir, "file.po")
             with open(path, "x") as file:
                 file.write(src)
-            t0, t1, t2, t3, t4, t5, t6, t7 = parse_translations(path)
+            t0, t1, t2, t3, t4, t5, t6, t7 = parse_translations(
+                path, gettext_plurals=["one", "other"]
+            )
 
         # basic
         assert t0.comments == ["Sample comment"]
         assert t0.key == "Source String"
-        assert t0.strings == {None: "Translated String"}
+        assert t0.string == "Translated String"
         assert t0.source == [("file.py", "1")]
         assert t0.source_string == "Source String"
-        assert t0.source_string_plural == ""
         assert not t0.fuzzy
         assert t0.order == 0
 
@@ -82,9 +83,8 @@ class POTests(TestCase):
         assert t1.comments == ["First comment", "Second comment"]
         assert t1.source == []
         assert t1.key == "Multiple Comments"
-        assert t1.strings == {None: "Translated Multiple Comments"}
+        assert t1.string == "Translated Multiple Comments"
         assert t1.source_string == "Multiple Comments"
-        assert t1.source_string_plural == ""
         assert not t1.fuzzy
         assert t1.order == 1
 
@@ -92,9 +92,8 @@ class POTests(TestCase):
         assert t2.comments == []
         assert t2.source == [("file.py", "2"), ("file.py", "3")]
         assert t2.key == "Multiple Sources"
-        assert t2.strings == {None: "Translated Multiple Sources"}
+        assert t2.string == "Translated Multiple Sources"
         assert t2.source_string == "Multiple Sources"
-        assert t2.source_string_plural == ""
         assert not t2.fuzzy
         assert t2.order == 2
 
@@ -102,9 +101,8 @@ class POTests(TestCase):
         assert t3.comments == []
         assert t3.source == []
         assert t3.key == "Fuzzy"
-        assert t3.strings == {None: "Translated Fuzzy"}
+        assert t3.string == "Translated Fuzzy"
         assert t3.source_string == "Fuzzy"
-        assert t3.source_string_plural == ""
         assert t3.fuzzy
         assert t3.order == 3
 
@@ -112,9 +110,8 @@ class POTests(TestCase):
         assert t4.comments == []
         assert t4.source == []
         assert t4.key == "No Comments or Sources"
-        assert t4.strings == {None: "Translated No Comments or Sources"}
+        assert t4.string == "Translated No Comments or Sources"
         assert t4.source_string == "No Comments or Sources"
-        assert t4.source_string_plural == ""
         assert not t4.fuzzy
         assert t4.order == 4
 
@@ -122,9 +119,8 @@ class POTests(TestCase):
         assert t5.comments == []
         assert t5.source == []
         assert t5.key == "Missing Translation"
-        assert t5.strings == {}
+        assert t5.string is None
         assert t5.source_string == "Missing Translation"
-        assert t5.source_string_plural == ""
         assert not t5.fuzzy
         assert t5.order == 5
 
@@ -132,31 +128,53 @@ class POTests(TestCase):
         assert t6.comments == []
         assert t6.source == []
         assert t6.key == "Plural %(count)s string"
-        assert t6.strings == {
-            0: "Translated Plural %(count)s string",
-            1: "Translated Plural %(count)s strings",
-        }
-        assert t6.source_string == "Plural %(count)s string"
-        assert t6.source_string_plural == "Plural %(count)s strings"
+        assert (
+            t6.string
+            == dedent("""
+                .input {$n :number}
+                .match $n
+                one {{Translated Plural %(count)s string}}
+                * {{Translated Plural %(count)s strings}}
+                """).strip()
+        )
+        assert (
+            t6.source_string
+            == dedent("""
+                .input {$n :number}
+                .match $n
+                one {{Plural %(count)s string}}
+                * {{Plural %(count)s strings}}
+                """).strip()
+        )
         assert not t6.fuzzy
         assert t6.order == 6
 
         # missing plural translation
         assert t7.comments == []
         assert t7.source == []
-        assert t7.key == "Plural %(count)s string with missing translations"
-        assert t7.strings == {
-            1: "Translated Plural %(count)s strings with missing translations"
-        }
-        assert t7.source_string == "Plural %(count)s string with missing translations"
+        assert t7.key == "Plural %(count)s string with missing translation"
         assert (
-            t7.source_string_plural
-            == "Plural %(count)s strings with missing translations"
+            t7.string
+            == dedent("""
+                .input {$n :number}
+                .match $n
+                one {{}}
+                * {{Translated Plural %(count)s strings with missing translations}}
+                """).strip()
+        )
+        assert (
+            t7.source_string
+            == dedent("""
+                .input {$n :number}
+                .match $n
+                one {{Plural %(count)s string with missing translation}}
+                * {{Plural %(count)s strings with missing translations}}
+                """).strip()
         )
         assert not t7.fuzzy
         assert t7.order == 7
 
-    def test_po_context(self):
+    def test_context(self):
         src = dedent("""
             #
             msgid ""

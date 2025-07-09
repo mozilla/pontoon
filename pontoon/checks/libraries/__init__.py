@@ -45,6 +45,15 @@ def run_checks(
             "untranslated",
         }
 
+        # gettext plurals are temporarily represented using MF2 syntax,
+        # with one/* variant keys in the source and 0/1/.../* in the translations.
+        if (
+            resource_ext == "po"
+            and original.startswith(".input")
+            and original.endswith("}}")
+        ):
+            tt_disabled_checks.add("numbers")
+
         # Some compare-locales checks overlap with Translate Toolkit checks
         if cl_checks is not None:
             if resource_ext == "properties":

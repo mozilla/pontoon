@@ -14,7 +14,6 @@ class CreateTranslationForm(forms.Form):
 
     entity = forms.IntegerField()
     locale = forms.CharField()
-    plural_form = forms.CharField()
 
     # Some file formats allow empty original strings and translations.
     # We must allow both here. Validation is handled in pontoon.checks module.
@@ -49,11 +48,6 @@ class CreateTranslationForm(forms.Form):
             raise forms.ValidationError(
                 f"Locale `{self.cleaned_data['locale']}` could not be found"
             )
-
-    def clean_plural_form(self):
-        if self.cleaned_data["plural_form"] == "-1":
-            return None
-        return self.cleaned_data["plural_form"]
 
     def clean_original(self):
         return self.data.get("original", "")

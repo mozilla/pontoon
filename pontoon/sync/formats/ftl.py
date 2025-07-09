@@ -38,7 +38,7 @@ def parse(path: str):
                     key=key,
                     context=key,
                     order=order,
-                    strings={None: translation},
+                    string=translation,
                     source_string=translation,
                     comments=[comment] if comment else None,
                     group_comments=group_comment,

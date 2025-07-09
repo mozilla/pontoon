@@ -39,21 +39,16 @@ export function HistoryProvider({
   children: React.ReactElement;
 }) {
   const { code } = useContext(Locale);
-  const {
-    entity: { pk },
-    hasPluralForms,
-    pluralForm,
-  } = useContext(EntityView);
+  const { pk } = useContext(EntityView).entity;
 
   const [fetching, setFetching] = useState(false);
   const [translations, setTranslations] = useState<HistoryTranslation[]>([]);
 
-  const pf = hasPluralForms ? pluralForm : -1;
   const updateHistory = useCallback(() => {
     if (pk) {
       setFetching(true);
       // Not using async/await to not leak function color
-      fetchEntityHistory(pk, code, pf).then((translations) => {
+      fetchEntityHistory(pk, code).then((translations) => {
         setTranslations(translations);
         setFetching(false);
       });
@@ -61,7 +56,7 @@ export function HistoryProvider({
       setFetching(false);
       setTranslations([]);
     }
-  }, [code, pk, pf]);
+  }, [code, pk]);
 
   useEffect(() => {
     setTranslations([]);

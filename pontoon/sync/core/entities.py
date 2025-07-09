@@ -34,12 +34,13 @@ def sync_entities_from_repo(
     # db_path -> parsed_resource
     updates: dict[str, list[VCSTranslation]] = {}
     source_paths = set(paths.ref_paths)
+    source_plurals = ["one", "other"]
     for co_path in checkout.changed:
         path = join(checkout.path, co_path)
         if path in source_paths and exists(path):
             db_path = get_db_path(paths, path)
             try:
-                translations = parse_translations(path)
+                translations = parse_translations(path, gettext_plurals=source_plurals)
             except ParseError as error:
                 log.error(
                     f"[{project.slug}:{db_path}] Skipping resource with parse error: {error}"
@@ -157,7 +158,6 @@ def update_resources(
 
     mod_fields = [
         "string",
-        "string_plural",
         "comment",
         "source",
         "group_comment",
@@ -286,6 +286,7 @@ def is_translated_resource(
 ) -> bool:
     if locale is None:
         return False
+
     if resource.format == "po":
         # For gettext, only create TranslatedResource
         # if the resource exists for the locale.
@@ -305,7 +306,6 @@ def entity_from_source(
     resource_comments = getattr(tx, "resource_comments", None)
     return Entity(
         string=tx.source_string,
-        string_plural=tx.source_string_plural,
         key=tx.key,
         comment="\n".join(comments) if comments else "",
         order=tx.order or idx,

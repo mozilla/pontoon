@@ -82,7 +82,7 @@ describe('useExistingTranslation', () => {
   });
 
   it('finds identical Fluent initial/active translation', () => {
-    const entry = parseEntry('msg = something');
+    const entry = parseEntry('ftl', 'msg = something');
     const res = mountSpy('ftl', HISTORY_FLUENT, {
       entry,
       fields: editMessageEntry(entry),
@@ -125,11 +125,11 @@ describe('useExistingTranslation', () => {
   });
 
   it('finds identical Fluent translation in history', () => {
-    const entry = parseEntry('msg = something');
+    const entry = parseEntry('ftl', 'msg = something');
     const prev0 = HISTORY_FLUENT.translations[0];
     const res0 = mountSpy('ftl', HISTORY_FLUENT, {
       entry,
-      fields: editMessageEntry(parseEntry(prev0.string)),
+      fields: editMessageEntry(parseEntry('ftl', prev0.string)),
       initial: entry,
     });
 
@@ -138,7 +138,7 @@ describe('useExistingTranslation', () => {
     const prev1 = HISTORY_FLUENT.translations[1];
     const res1 = mountSpy('ftl', HISTORY_FLUENT, {
       entry,
-      fields: editMessageEntry(parseEntry(prev1.string)),
+      fields: editMessageEntry(parseEntry('ftl', prev1.string)),
       initial: entry,
     });
 
@@ -157,7 +157,7 @@ describe('useExistingTranslation', () => {
   });
 
   it('finds a Fluent translation in history', () => {
-    const entry = parseEntry('msg = something');
+    const entry = parseEntry('ftl', 'msg = something');
     const res = mountSpy('ftl', HISTORY_FLUENT, {
       entry,
       fields: mockEditorMessage('Come on Morty!'),
