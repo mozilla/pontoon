@@ -51,6 +51,12 @@ api_v2_patterns = [
         views.ProjectLocaleIndividualView.as_view(),
         name="project-locale-individual",
     ),
+    path(
+        # User Actions
+        "user-actions/<str:date>/project/<slug:slug>/",
+        views.UserActionsView.as_view(),
+        name="user-actions",
+    ),
 ]
 urlpatterns = [
     # GraphQL endpoint. Serves the GraphiQL IDE if accessed with Accept: text/html.
