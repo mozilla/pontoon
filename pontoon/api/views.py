@@ -126,6 +126,8 @@ def get_user_actions(request, date, slug):
 
 
 class UserActionsView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, date, slug):
         try:
             start_date = make_aware(datetime.strptime(date, "%Y-%m-%d"))
