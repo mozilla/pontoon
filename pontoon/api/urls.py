@@ -58,6 +58,16 @@ api_v2_patterns = [
         name="user-actions",
     ),
 ]
+
+api_auth_patterns = [
+    path(
+        # Create Personal Access Token
+        "token/",
+        views.PersonalAccessTokenCreateView.as_view(),
+        name="create-personal-access-token"
+    ),
+]
+
 urlpatterns = [
     # GraphQL endpoint. Serves the GraphiQL IDE if accessed with Accept: text/html.
     # Explicitly support URLs with or without trailing slash in order to support curl requests.
@@ -65,6 +75,8 @@ urlpatterns = [
         r"^graphql/?$",
         csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=True)),
     ),
+    # API auth
+    path("api/auth/", include(api_auth_patterns)),
     # REST API
     path("api/v2/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

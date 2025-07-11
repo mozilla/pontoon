@@ -1,13 +1,18 @@
 from datetime import datetime, timedelta
+import secrets
 
 from django_filters.rest_framework import DjangoFilterBackend
+from pontoon.api.models import PersonalAccessToken
 from rest_framework import generics
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, APIException
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password, check_password
+from django.db.models import Q
 from django.db.models import Prefetch, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -31,6 +36,7 @@ from .serializers import (
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
     NestedProjectSerializer,
+    PersonalAccessTokenSerializer,
     TermSerializer,
     TranslationMemorySerializer,
 )
@@ -352,3 +358,36 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         return queryset.prefetch_related("project", "locale")
+
+
+def generate_unique_token_id(length=8):
+    while True:
+        token_id = secrets.token_hex(length)
+        if not PersonalAccessToken.objects.filter(token_id=token_id).exists():
+            return token_id
+
+
+class PersonalAccessTokenCreateView(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PersonalAccessTokenSerializer
+
+    def perform_create(self, serializer):
+
+        token = secrets.token_urlsafe(32)
+        try:
+            serializer.save(
+                token_id=generate_unique_token_id(8),
+                token_hash=make_password(token),
+                user=self.request.user,
+            )
+        except:
+            raise APIException("Something went wrong.")
+
+class PersonalAccessTokenRetrieveView(generics.RetrieveAPIView):
+    serializer_class = PersonalAccessTokenSerializer
+
+class PersonalAccessTokenRevokeView(generics.UpdateAPIView):
+    serializer_class = PersonalAccessTokenSerializer
+
+class PersonalAccessTokenDestroyView(generics.DestroyAPIView):
+    serializer_class = PersonalAccessTokenSerializer
