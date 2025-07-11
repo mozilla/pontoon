@@ -1,4 +1,7 @@
 import logging
+import operator
+
+from functools import reduce
 
 from celery import shared_task
 
@@ -18,11 +21,9 @@ from pontoon.base.models import (
 from pontoon.base.tasks import PontoonTask
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import bulk_run_checks
-from pontoon.pretranslation import AUTHORS
-from pontoon.pretranslation.pretranslate import (
-    get_pretranslation,
-    update_changed_instances,
-)
+
+from . import AUTHORS
+from .pretranslate import get_pretranslation
 
 
 log = logging.getLogger(__name__)
@@ -78,13 +79,13 @@ def pretranslate(project: Project, paths: set[str] | None):
     )
 
     # Fetch all locale-entity pairs with non-rejected or pretranslated translations
-    pt_authors = [User.objects.get(email=email) for email in AUTHORS.values()]
+    pt_authors = {key: User.objects.get(email=email) for key, email in AUTHORS.items()}
     translated_entities = (
         Translation.objects.filter(
             locale__in=locales,
             entity__in=entities,
         )
-        .filter(Q(rejected=False) | Q(user__in=pt_authors))
+        .filter(Q(rejected=False) | Q(user__in=pt_authors.values()))
         .annotate(
             locale_entity=Concat(
                 "locale_id", V("-"), "entity_id", output_field=CharField()
@@ -112,9 +113,10 @@ def pretranslate(project: Project, paths: set[str] | None):
             if locale_entity in translated_entities or locale_resource not in tr_pairs:
                 continue
 
-            pretranslation = get_pretranslation(entity, locale)
-
-            if pretranslation is None:
+            try:
+                pretranslation = get_pretranslation(entity, locale)
+            except ValueError as e:
+                log.info(f"Pretranslation error: {e}")
                 continue
 
             failed_checks = run_checks(
@@ -126,34 +128,37 @@ def pretranslate(project: Project, paths: set[str] | None):
             )
 
             if failed_checks:
-                pretranslation = get_pretranslation(
-                    entity, locale, preserve_placeables=True
-                )
-
-            if pretranslation is not None:
-                t = Translation(
-                    entity=entity,
-                    locale=locale,
-                    string=pretranslation[0],
-                    user=pretranslation[1],
-                    approved=False,
-                    pretranslated=True,
-                    active=True,
-                )
-
-                index += 1
-                translations.append(t)
-
-                if locale_resource not in tr_dict:
-                    tr_dict[locale_resource] = index
-
-                    # Add query for fetching respective TranslatedResource.
-                    tr_filter.append(
-                        Q(locale__id=locale.id) & Q(resource__id=entity.resource.id)
+                try:
+                    pretranslation = get_pretranslation(
+                        entity, locale, preserve_placeables=True
                     )
+                except ValueError as e:
+                    log.info(f"Pretranslation error: {e}")
+                    continue
 
-                # Update the latest translation index
+            t = Translation(
+                entity=entity,
+                locale=locale,
+                string=pretranslation[0],
+                user=pt_authors[pretranslation[1]],
+                approved=False,
+                pretranslated=True,
+                active=True,
+            )
+
+            index += 1
+            translations.append(t)
+
+            if locale_resource not in tr_dict:
                 tr_dict[locale_resource] = index
+
+                # Add query for fetching respective TranslatedResource.
+                tr_filter.append(
+                    Q(locale__id=locale.id) & Q(resource__id=entity.resource.id)
+                )
+
+            # Update the latest translation index
+            tr_dict[locale_resource] = index
 
         if len(translations) == 0:
             log.info(
@@ -189,7 +194,19 @@ def pretranslate(project: Project, paths: set[str] | None):
         changed_translations.bulk_mark_changed()
 
         # Update latest activity and stats for changed instances.
-        update_changed_instances(tr_filter, tr_dict, translations)
+        # `operator.ior` is the '|' Python operator, which turns into a logical OR
+        # when used between django ORM query objects.
+        tr_query = reduce(operator.ior, tr_filter)
+        translatedresources = TranslatedResource.objects.filter(tr_query).annotate(
+            locale_resource=Concat(
+                "locale_id", V("-"), "resource_id", output_field=CharField()
+            )
+        )
+        translatedresources.calculate_stats()
+        for tr in translatedresources:
+            index = tr_dict[tr.locale_resource]
+            translation = translations[index]
+            translation.update_latest_translation()
 
         log.info(f"Fetching pretranslations for locale {locale.code} done")
 

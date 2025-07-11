@@ -46,7 +46,7 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     )
 
     gt_user = User.objects.get(email="pontoon-gt@example.com")
-    gt_mock.return_value = ("pretranslation", gt_user)
+    gt_mock.return_value = ("pretranslation", "gt")
 
     pretranslate_task(project_a.pk)
     project_a.refresh_from_db()
@@ -92,7 +92,7 @@ def test_which_strings_to_pretranslate(gt_mock, project_a, locale_a, resource_a)
     rejected_by_machine = EntityFactory.create(resource=resource)
 
     gt_user = User.objects.get(email="pontoon-gt@example.com")
-    gt_mock.return_value = ("pretranslation", gt_user)
+    gt_mock.return_value = ("pretranslation", "gt")
 
     TranslationFactory.create(entity=non_rejected, locale=locale_a, rejected=False)
     TranslationFactory.create(entity=rejected_by_human, locale=locale_a, rejected=True)
