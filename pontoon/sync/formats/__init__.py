@@ -7,7 +7,7 @@ from os.path import splitext
 
 from moz.l10n.formats import Format, detect_format, l10n_extensions
 from moz.l10n.message import serialize_message
-from moz.l10n.model import Entry, Message, Resource as MozL10nResource, Section
+from moz.l10n.model import Entry, Id as L10nId, Message, Resource as MozL10nResource
 
 from pontoon.base.models import Entity
 
@@ -70,33 +70,36 @@ def as_vcs_translations(res: MozL10nResource[Message]) -> list[VCSTranslation]:
 
 
 def as_entity(
-    res: MozL10nResource[Message],
-    section: Section[Message],
+    format: Format | None,
+    section_id: L10nId,
     entry: Entry[Message],
     now: datetime,
 ) -> Entity:
-    """All required fields **except** `order` and `resource` are set in result."""
-    match res.format:
+    """Sets all required fields **except** `order`, `resource`, and `section`."""
+    match format:
         case Format.fluent:
-            return ftl_as_entity(res, section, entry, now)
+            entity = ftl_as_entity(entry, now)
         case Format.gettext:
-            return gettext_as_entity(entry, now)
+            entity = gettext_as_entity(entry, now)
         case Format.properties:
-            return properties_as_entity(entry, now)
+            entity = properties_as_entity(entry, now)
         case Format.android:
-            return android_as_entity(entry, now)
+            entity = android_as_entity(entry, now)
         case Format.xliff:
-            return xliff_as_entity(section.id, entry, now)
+            entity = xliff_as_entity(section_id, entry, now)
         case Format.webext:
-            return webext_as_entity(entry, now)
+            entity = webext_as_entity(entry, now)
         case Format.plain_json:
-            return plain_json_as_entity(entry, now)
+            entity = plain_json_as_entity(entry, now)
         case _:
             # For Format.dtd and Format.ini
-            return Entity(
+            entity = Entity(
                 key=entry.id[0],
                 context=entry.id[0],
-                string=serialize_message(res.format, entry.value),
+                string=serialize_message(format, entry.value),
                 comment=entry.comment,
                 date_created=now,
             )
+    if entry.meta:
+        entity.meta = [[m.key, m.value] for m in entry.meta]
+    return entity

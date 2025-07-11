@@ -3,7 +3,6 @@ from textwrap import dedent
 from unittest import TestCase
 
 from moz.l10n.formats import Format
-from moz.l10n.model import Entry
 from moz.l10n.resource import parse_resource
 
 from pontoon.sync.formats import as_vcs_translations
@@ -25,10 +24,7 @@ class FTLTests(TestCase):
 
         res = parse_resource(Format.fluent, src)
         e0, e1, e2 = (
-            ftl_as_entity(res, section, entry, datetime.now())
-            for section in res.sections
-            for entry in section.entries
-            if isinstance(entry, Entry)
+            ftl_as_entity(entry, datetime.now()) for entry in res.all_entries()
         )
         t0, t1, t2 = as_vcs_translations(res)
 

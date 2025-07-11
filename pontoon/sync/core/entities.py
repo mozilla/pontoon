@@ -5,14 +5,21 @@ from datetime import datetime
 from os.path import exists, isfile, join, relpath, splitext
 from typing import Optional
 
-from moz.l10n.model import Entry, Message, Resource as L10nResource
+from moz.l10n.model import Entry, Id as L10nId, Message, Resource as L10nResource
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 from moz.l10n.resource import parse_resource
 
 from django.db import transaction
 from django.db.models import Q
 
-from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
+from pontoon.base.models import (
+    Entity,
+    Locale,
+    Project,
+    Resource,
+    Section,
+    TranslatedResource,
+)
 from pontoon.sync.core.checkout import Checkout
 from pontoon.sync.formats import as_entity
 
@@ -126,39 +133,87 @@ def update_resources(
             resource__in=changed_resources, obsolete=False
         ).iterator()
     }
+    prev_sections: dict[tuple[str, L10nId, str], Section] = {
+        (changed_resources[s.resource_id].path, tuple(s.key), s.comment): s
+        for s in Section.objects.filter(resource__in=changed_resources).iterator()
+    }
+
+    mod_resources: list[Resource] = []
+    new_sections: list[Section] = []
+    mod_sections: list[Section] = []
+    keep_sections: list[Section] = []
     next_entities: dict[tuple[str, str], Entity] = {}
-    for cr in changed_resources.values():
-        l10n_res = updates[cr.path]
+    for db_res in changed_resources.values():
+        l10n_res = updates[db_res.path]
+        res_meta = [[m.key, m.value] for m in l10n_res.meta]
+        if db_res.meta != res_meta or db_res.comment != l10n_res.comment:
+            db_res.meta = res_meta
+            db_res.comment = l10n_res.comment
+            mod_resources.append(db_res)
         idx = 0
         for l10n_section in l10n_res.sections:
+            section_key = (db_res.path, l10n_section.id, l10n_section.comment)
+            section_meta = [[m.key, m.value] for m in l10n_section.meta]
+            db_section = prev_sections.get(section_key, None)
+            if db_section is None:
+                db_section = Section(
+                    resource=db_res,
+                    key=l10n_section.id,
+                    meta=section_meta,
+                    comment=l10n_section.comment,
+                )
+                new_sections.append(db_section)
+            elif db_section.meta != section_meta:
+                db_section.meta = section_meta
+                mod_sections.append(db_section)
+            has_entries = False
             for entry in l10n_section.entries:
                 if isinstance(entry, Entry):
-                    entity = as_entity(l10n_res, l10n_section, entry, now)
+                    entity = as_entity(l10n_res.format, l10n_section.id, entry, now)
                     entity.order = idx
-                    entity.resource = cr
-                    next_entities[cr.path, entity.key or entity.string] = entity
+                    entity.resource = db_res
+                    entity.section = db_section
+                    next_entities[db_res.path, entity.key or entity.string] = entity
                     idx += 1
-    prev_not_next = prev_entities.keys() - next_entities.keys()
-    prev_and_next = prev_entities.keys() & next_entities.keys()
-    next_not_prev = next_entities.keys() - prev_entities.keys()
+                    has_entries = True
+            if has_entries:
+                if db_section.pk:
+                    keep_sections.append(db_section)
+            elif not db_section.pk:
+                new_sections.pop()
 
     obsolete_entities: list[Entity] = []
     log_rm: dict[str, list[str]] = defaultdict(list)
     for key, prev_ent in prev_entities.items():
-        if key in prev_not_next:
+        if key not in next_entities:
             prev_ent.obsolete = True
             prev_ent.date_obsoleted = now
+            prev_ent.section = None
             obsolete_entities.append(prev_ent)
             key_path, key_entity = key
             log_rm[key_path].append(key_entity)
-    Entity.objects.bulk_update(obsolete_entities, ["obsolete", "date_obsoleted"])
+    Entity.objects.bulk_update(
+        obsolete_entities, ["obsolete", "date_obsoleted", "section"]
+    )
+
+    Resource.objects.bulk_update(mod_resources, ["meta", "comment"])
+
+    # Order matters here: Sections can be simultaneously modified and deleted.
+    Section.objects.bulk_update(mod_sections, ["meta"])
+    del_section_ids = [
+        section.pk for section in prev_sections.values() if section not in keep_sections
+    ]
+    if del_section_ids:
+        Section.objects.filter(pk__in=del_section_ids).delete()
+
+    # The Section.pk values need to be set before we modify or create Entities.
+    Section.objects.bulk_create(new_sections)
 
     mod_fields = [
         "string",
         "comment",
+        "meta",
         "source",
-        "group_comment",
-        "resource_comment",
         "context",
     ]
     mod_entities: list[Entity] = []
@@ -167,12 +222,12 @@ def update_resources(
     log_add: dict[str, list[str]] = defaultdict(list)
     for key, next_ent in next_entities.items():
         key_path, key_entity = key
-        if key in prev_and_next:
+        if key in prev_entities:
             mod_ent = entity_update(prev_entities[key], next_ent, mod_fields)
             if mod_ent is not None:
                 mod_entities.append(mod_ent)
                 log_mod[key_path].append(key_entity)
-        elif key in next_not_prev:
+        else:
             added_entities.append(next_ent)
             log_add[key_path].append(key_entity)
     Entity.objects.bulk_update(mod_entities, mod_fields)
@@ -203,36 +258,49 @@ def add_resources(
     changed_paths: set[str],
     now: datetime,
 ) -> tuple[int, set[str]]:
-    added_resources = [
+    new_resources = [
         Resource(project=project, path=db_path, format=get_path_format(db_path))
         for db_path, res in updates.items()
         if next(res.all_entries(), None) and db_path not in changed_paths
     ]
-    if not added_resources:
+    if not new_resources:
         return 0, set()
 
-    added_resources = Resource.objects.bulk_create(added_resources)
+    Resource.objects.bulk_create(new_resources)
     ordered_resources = project.resources.order_by("path")
     for idx, r in enumerate(ordered_resources):
         r.order = idx
     Resource.objects.bulk_update(ordered_resources, ["order"])
 
-    added_entities: list[Entity] = []
-    for ar in added_resources:
-        l10n_res = updates[ar.path]
+    new_sections: list[Section] = []
+    new_entities: list[Entity] = []
+    for db_res in new_resources:
+        l10n_res = updates[db_res.path]
         idx = 0
         for l10n_section in l10n_res.sections:
+            db_section = Section(
+                resource=db_res,
+                key=l10n_section.id,
+                meta=[[m.key, m.value] for m in l10n_section.meta],
+                comment=l10n_section.comment,
+            )
+            has_entries = False
             for entry in l10n_section.entries:
                 if isinstance(entry, Entry):
-                    entity = as_entity(l10n_res, l10n_section, entry, now)
+                    entity = as_entity(l10n_res.format, l10n_section.id, entry, now)
                     entity.order = idx
-                    entity.resource = ar
-                    added_entities.append(entity)
+                    entity.resource = db_res
+                    entity.section = db_section
+                    new_entities.append(entity)
                     idx += 1
-    added_entities = Entity.objects.bulk_create(added_entities)
+                    has_entries = True
+            if has_entries:
+                new_sections.append(db_section)
+    Section.objects.bulk_create(new_sections)
+    Entity.objects.bulk_create(new_entities)
 
-    ent_count = len(added_entities)
-    added_paths = {ar.path for ar in added_resources}
+    ent_count = len(new_entities)
+    added_paths = {ar.path for ar in new_resources}
     log.info(
         f"[{project.slug}] New source files with {ent_count} entities: {', '.join(added_paths)}"
     )

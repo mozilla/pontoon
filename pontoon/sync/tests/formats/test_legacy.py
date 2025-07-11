@@ -25,7 +25,8 @@ class DTDTests(TestCase):
 
         res = parse_resource(Format.dtd, src)
         e0, e1, e2, e3 = (
-            as_entity(res, None, entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.dtd, (), entry, datetime.now())
+            for entry in res.all_entries()
         )
 
         # basic
@@ -68,7 +69,8 @@ class IniTests(TestCase):
 
         res = parse_resource(Format.ini, src)
         e0, e1, e2, e3 = (
-            as_entity(res, None, entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.ini, (), entry, datetime.now())
+            for entry in res.all_entries()
         )
 
         # basic

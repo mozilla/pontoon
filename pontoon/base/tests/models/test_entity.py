@@ -3,7 +3,9 @@ import pytest
 from pontoon.base.models import ChangedEntityLocale, Entity, Project
 from pontoon.test.factories import (
     EntityFactory,
+    ProjectLocaleFactory,
     ResourceFactory,
+    SectionFactory,
     TermFactory,
     TranslationFactory,
 )
@@ -270,21 +272,13 @@ def test_entity_project_locale_no_paths(
     entity_a = tr0.entity
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
-    entities = Entity.map_entities(
+    e0, e1 = Entity.map_entities(
         locale_a,
         preferred_source_locale,
         Entity.for_project_locale(admin, project_a, locale_a),
     )
-    assert len(entities) == 2
-    assert entities[0]["path"] == resource0.path
-    assert entities[0]["original"] == entity_a.string
-    assert entities[0]["translation"]["string"] == tr0.string
-    assert entities[1]["path"] == trX.entity.resource.path
-    assert entities[1]["original"] == trX.entity.string
-    assert entities[1]["translation"]["string"] == trX.string
 
-    # Ensure all attributes are assigned correctly
-    expected = {
+    assert e0 == {
         "comment": "",
         "group_comment": "",
         "resource_comment": "",
@@ -292,13 +286,13 @@ def test_entity_project_locale_no_paths(
         "obsolete": False,
         "key": "",
         "context": "",
-        "path": str(resource0.path),
+        "path": resource0.path,
         "project": project_a.serialize(),
         "translation": {
             "pk": tr0.pk,
             "pretranslated": False,
             "fuzzy": False,
-            "string": str(tr0.string),
+            "string": tr0.string,
             "approved": False,
             "rejected": False,
             "warnings": [],
@@ -307,13 +301,15 @@ def test_entity_project_locale_no_paths(
         "order": 0,
         "source": [],
         "pk": entity_a.pk,
-        "original": str(entity_a.string),
+        "original": entity_a.string,
         "machinery_original": str(entity_a.string),
         "readonly": False,
         "is_sibling": False,
         "date_created": entity_a.date_created,
     }
-    assert entities[0] == expected
+    assert e1["path"] == trX.entity.resource.path
+    assert e1["original"] == trX.entity.string
+    assert e1["translation"]["string"] == trX.string
 
 
 @pytest.mark.django_db
@@ -446,6 +442,34 @@ def test_entity_project_locale_tags(admin, entity_a, locale_a, tag_a):
         tag=tag_a.slug,
     )
     assert entity_a not in entities
+
+
+@pytest.mark.django_db
+def test_entity_project_comments(admin, resource_a, locale_a):
+    resource_a.comment = "rc"
+    resource_a.save()
+    ProjectLocaleFactory.create(project=resource_a.project, locale=locale_a)
+    s0 = SectionFactory(resource=resource_a, key=[], comment="s0 comment")
+    s1 = SectionFactory(resource=resource_a, key=[], comment="s1 comment")
+    s2 = SectionFactory(resource=resource_a, key=[], comment="")
+    EntityFactory(resource=resource_a, section=s0, string="e0")
+    EntityFactory(resource=resource_a, section=s0, string="e1")
+    EntityFactory(resource=resource_a, section=s1, string="e2")
+    EntityFactory(resource=resource_a, section=s2, string="e3")
+    EntityFactory(resource=resource_a, section=None, string="e4")
+
+    assert set(
+        (e["original"], e["group_comment"], e["resource_comment"])
+        for e in Entity.map_entities(
+            locale_a, "", Entity.objects.filter(resource=resource_a)
+        )
+    ) == {
+        ("e0", "s0 comment", "rc"),
+        ("e1", "s0 comment", "rc"),
+        ("e2", "s1 comment", "rc"),
+        ("e3", "", "rc"),
+        ("e4", "", "rc"),
+    }
 
 
 @pytest.mark.django_db

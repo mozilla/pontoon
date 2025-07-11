@@ -4,7 +4,7 @@ from datetime import datetime
 
 from fluent.syntax import FluentSerializer
 from moz.l10n.formats.fluent import fluent_astify_entry
-from moz.l10n.model import Entry, Message, Resource, Section
+from moz.l10n.model import Entry, Message
 
 from pontoon.base.models import Entity
 
@@ -26,12 +26,7 @@ def ftl_as_translation(entry: Entry[Message]):
     return VCSTranslation(key=entry.id[0], string=_string(entry))
 
 
-def ftl_as_entity(
-    res: Resource[Message],
-    section: Section[Message],
-    entry: Entry[Message],
-    now: datetime,
-) -> Entity:
+def ftl_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     assert len(entry.id) == 1
     key = entry.id[0]
     comment = entry.comment
@@ -40,7 +35,5 @@ def ftl_as_entity(
         context=key,
         string=_string(entry),
         comment=comment,
-        group_comment=section.comment,
-        resource_comment=res.comment,
         date_created=now,
     )
