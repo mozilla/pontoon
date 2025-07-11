@@ -255,9 +255,6 @@ def update_changed_resources(
 def set_translations(
     locale: Locale, translations: list[Translation], res: Resource
 ) -> None:
-    # Section and Entry are unhashable, so can't use them in a set or as dict keys
-    not_translated: list[tuple[Section, Entry]] = []
-
     if res.format == Format.fluent:
         trans_res = parse_resource(
             Format.fluent, "".join(tx.string for tx in translations)
@@ -269,11 +266,12 @@ def set_translations(
             if isinstance(entry, Entry)
         }
         for section in res.sections:
+            rm: list[Entry] = []
             for entry in section.entries:
                 if isinstance(entry, Entry):
                     te = trans_entries.get(entry.id, None)
                     if te is None:
-                        not_translated.append((section, entry))
+                        rm.append(entry)
                     else:
                         entry.value = te.value
                         entry.properties = (
@@ -285,11 +283,13 @@ def set_translations(
                                 if name in entry.properties
                             }
                         )
-                        trans_entries[entry.id] = None
+            if rm:
+                section.entries = [e for e in section.entries if e not in rm]
     else:
         for section in res.sections:
-            if res.format == Format.xliff and any(
-                m.key == "@source-language" for m in section.meta
+            if (
+                res.format == Format.xliff
+                and section.get_meta("@source-language") is not None
             ):
                 prev_tgt = next(
                     (m for m in section.meta if m.key == "@target-language"), None
@@ -300,35 +300,35 @@ def set_translations(
                 else:
                     prev_tgt.value = lc
 
+            rm: list[Entry] = []
             for entry in section.entries:
                 if isinstance(entry, Entry):
                     if not set_translation(translations, res, section, entry):
-                        not_translated.append((section, entry))
-
-    if not_translated and res.format not in (Format.gettext, Format.xliff):
-        section = not_translated[0][0]
-        rm: list[Entry] = []
-        for section_, entry in not_translated:
-            if section_ == section:
-                rm.append(entry)
-            else:
+                        rm.append(entry)
+            if rm and res.format not in (Format.gettext, Format.xliff):
                 section.entries = [e for e in section.entries if e not in rm]
-                section = section_
-                rm = [entry]
-        section.entries = [e for e in section.entries if e not in rm]
 
-    if res.format == Format.gettext:
-        header = {m.key: m.value for m in res.meta}
-        header["Language"] = locale.code.replace("-", "_")
-        header["Plural-Forms"] = (
-            f"nplurals={locale.nplurals or '1'}; plural={locale.plural_rule or '0'};"
-        )
-        header["Generated-By"] = "Pontoon"
-        res.meta = [
-            Metadata(key, value)
-            for key, value in header.items()
-            if key not in gettext_trim_headers
-        ]
+    match res.format:
+        case Format.gettext:
+            header = {m.key: m.value for m in res.meta}
+            header["Language"] = locale.code.replace("-", "_")
+            header["Plural-Forms"] = (
+                f"nplurals={locale.nplurals or '1'}; plural={locale.plural_rule or '0'};"
+            )
+            header["Generated-By"] = "Pontoon"
+            res.meta = [
+                Metadata(key, value)
+                for key, value in header.items()
+                if key not in gettext_trim_headers
+            ]
+        case Format.xliff:
+            pass
+        case _:
+            res.sections = [
+                section
+                for section in res.sections
+                if any(isinstance(entry, Entry) for entry in section.entries)
+            ]
 
 
 android_nl = compile(r"\s*\n\s*")
