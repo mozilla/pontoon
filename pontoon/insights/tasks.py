@@ -2,6 +2,7 @@ import logging
 import statistics
 
 from datetime import timedelta
+from itertools import groupby
 
 from celery import shared_task
 from dateutil.relativedelta import relativedelta
@@ -19,7 +20,6 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
 )
-from pontoon.base.utils import group_dict_by
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
@@ -113,6 +113,7 @@ def get_privileged_users():
     privileged_users = (
         Locale.objects.available()
         .prefetch_related("managers_group__user_set", "translators_group__user_set")
+        .order_by("pk")
         .values(
             "pk",
             "managers_group__user__last_login",
@@ -120,8 +121,7 @@ def get_privileged_users():
             "translators_group__user",
         )
     )
-
-    return group_dict_by(privileged_users, "pk")
+    return {key: dict for key, dict in groupby(privileged_users, lambda g: g["pk"])}
 
 
 def get_contributors():
@@ -134,11 +134,11 @@ def get_contributors():
     contributors = (
         Translation.objects.filter(user__isnull=False)
         .exclude(user__pk__in=system_users)
+        .order_by("locale")
         .values("locale", "user")
         .distinct()
     )
-
-    return group_dict_by(contributors, "locale")
+    return {key: dict for key, dict in groupby(contributors, lambda g: g["locale"])}
 
 
 def get_active_users_actions(start_of_today):
@@ -149,28 +149,33 @@ def get_active_users_actions(start_of_today):
             created_at__lt=start_of_today,
         )
         .values("action_type", "created_at", "performed_by", "translation__locale")
+        .order_by("translation__locale")
         .distinct()
     )
-
-    return group_dict_by(actions, "translation__locale")
+    return {
+        key: dict for key, dict in groupby(actions, lambda g: g["translation__locale"])
+    }
 
 
 def get_suggestions():
     """Get currently unreviewed suggestions."""
-    suggestions = Translation.objects.filter(
-        # Make sure TranslatedResource is still enabled for the locale
-        locale=F("entity__resource__translatedresources__locale"),
-        approved=False,
-        pretranslated=False,
-        fuzzy=False,
-        rejected=False,
-        entity__obsolete=False,
-        entity__resource__project__disabled=False,
-        entity__resource__project__system_project=False,
-        entity__resource__project__visibility="public",
-    ).values("locale", "date")
-
-    return group_dict_by(suggestions, "locale")
+    suggestions = (
+        Translation.objects.filter(
+            # Make sure TranslatedResource is still enabled for the locale
+            locale=F("entity__resource__translatedresources__locale"),
+            approved=False,
+            pretranslated=False,
+            fuzzy=False,
+            rejected=False,
+            entity__obsolete=False,
+            entity__resource__project__disabled=False,
+            entity__resource__project__system_project=False,
+            entity__resource__project__visibility="public",
+        )
+        .order_by("locale")
+        .values("locale", "date")
+    )
+    return {key: dict for key, dict in groupby(suggestions, lambda g: g["locale"])}
 
 
 def query_entities(start_of_today):
