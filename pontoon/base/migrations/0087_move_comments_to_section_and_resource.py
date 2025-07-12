@@ -66,6 +66,4 @@ class Migration(migrations.Migration):
             set_section_and_resource_comments,
             reverse_code=reverse_section_and_resource_comments,
         ),
-        migrations.RemoveField(model_name="entity", name="group_comment"),
-        migrations.RemoveField(model_name="entity", name="resource_comment"),
     ]
