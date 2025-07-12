@@ -179,9 +179,7 @@ def test_add_resource():
         ) == (3, set(), set())
         res_c = project.resources.get(path="c.ftl")
         TranslatedResource.objects.get(resource=res_c)
-        assert set(
-            tuple(ent.new_key) for ent in Entity.objects.filter(resource=res_c)
-        ) == {
+        assert set(tuple(ent.key) for ent in Entity.objects.filter(resource=res_c)) == {
             ("key-1",),
             ("key-2",),
             ("key-3",),
@@ -207,7 +205,7 @@ def test_update_resource():
             for i in (1, 2, 3):
                 entity = EntityFactory.create(
                     resource=res[n],
-                    new_key=[f"key-{n}-{i}"],
+                    key=[f"key-{n}-{i}"],
                     string=f"key-{n}-{i} = Message {i}\n",
                 )
                 TranslationFactory.create(
@@ -249,8 +247,7 @@ def test_update_resource():
             project, locale_map, mock_checkout, paths, now
         ) == (1, {"c.ftl"}, set())
         assert set(
-            (*ent.new_key, ent.obsolete)
-            for ent in Entity.objects.filter(resource=res["c"])
+            (*ent.key, ent.obsolete) for ent in Entity.objects.filter(resource=res["c"])
         ) == {
             ("key-c-1", True),
             ("key-c-2", False),
@@ -284,7 +281,7 @@ def test_change_entities():
         for i in (1, 2, 3):
             entity = EntityFactory.create(
                 resource=res,
-                new_key=[f"key-{i}"],
+                key=[f"key-{i}"],
                 string=f"key-{i} = Message {i}\n",
             )
             TranslationFactory.create(

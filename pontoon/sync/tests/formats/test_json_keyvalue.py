@@ -26,7 +26,7 @@ class JsonKeyValueTests(TestCase):
         )
         t0, t1 = as_vcs_translations(res)
 
-        assert e0.new_key == ["No Comments or Sources"]
+        assert e0.key == ["No Comments or Sources"]
         assert e0.string == "Translated No Comments or Sources"
         assert e0.comment == ""
         assert e0.source == []
@@ -34,7 +34,7 @@ class JsonKeyValueTests(TestCase):
         assert t0.key == ("No Comments or Sources",)
         assert t0.string == "Translated No Comments or Sources"
 
-        assert e1.new_key == ["Nested", "key"]
+        assert e1.key == ["Nested", "key"]
         assert e1.string == "value"
         assert e1.comment == ""
         assert e1.source == []
@@ -56,11 +56,11 @@ class JsonKeyValueTests(TestCase):
             plain_json_as_entity(entry, datetime.now()) for entry in res.all_entries()
         )
 
-        assert e0.new_key == ["Source", "String"]
+        assert e0.key == ["Source", "String"]
         assert e0.string == "foo"
 
-        assert e1.new_key == ["Source.String"]
+        assert e1.key == ["Source.String"]
         assert e1.string == "bar"
 
-        assert e2.new_key == ['["Source", "String"]']
+        assert e2.key == ['["Source", "String"]']
         assert e2.string == "eek"

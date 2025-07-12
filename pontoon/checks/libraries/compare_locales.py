@@ -86,7 +86,7 @@ def cast_to_compare_locales(resource_ext, entity, string):
     :return: source entity and translation entity that will be compatible with
         a compare-locales checker. Type of those entities depends on the resource_ext.
     """
-    cl_key = entity.new_key[0] if entity and entity.new_key else ""
+    cl_key = entity.key[0] if entity and entity.key else ""
     if resource_ext == ".properties":
         return (
             ComparePropertiesEntity(
@@ -186,7 +186,7 @@ def run_checks(entity, locale_code, string):
     if checker.needs_reference:
         references = KeyedTuple(
             CompareDTDEntity(
-                e.new_key[0] if e.new_key else "",
+                e.key[0] if e.key else "",
                 e.string,
                 e.comment,
             )

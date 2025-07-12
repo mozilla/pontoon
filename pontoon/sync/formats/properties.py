@@ -37,7 +37,7 @@ def properties_as_translation(entry: Entry[Message]):
 
 def properties_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     return Entity(
-        new_key=list(entry.id),
+        key=list(entry.id),
         string=_string(entry),
         comment=entry.comment,
         date_created=now,

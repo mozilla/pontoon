@@ -19,4 +19,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RenameField(model_name="entity", old_name="key", new_name="old_key"),
+        migrations.AlterField(
+            model_name="entity",
+            name="old_key",
+            field=models.TextField(default=""),
+        ),
     ]

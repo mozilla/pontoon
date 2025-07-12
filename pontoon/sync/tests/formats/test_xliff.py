@@ -50,7 +50,7 @@ class XLIFFTests(TestCase):
 
         # basic
         assert e0.comment == "Sample comment"
-        assert e0.new_key == ["filename", "Source String Key"]
+        assert e0.key == ["filename", "Source String Key"]
         assert e0.string == "Source <b>String</b>"
 
         assert t0.key == ("filename", "Source String Key")
@@ -58,7 +58,7 @@ class XLIFFTests(TestCase):
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
-        assert e1.new_key == ["filename", "Multiple Comments Key"]
+        assert e1.key == ["filename", "Multiple Comments Key"]
         assert e1.string == "Multiple Comments"
 
         assert t1.key == ("filename", "Multiple Comments Key")
@@ -66,7 +66,7 @@ class XLIFFTests(TestCase):
 
         # no comments or sources
         assert e2.comment == ""
-        assert e2.new_key == ["filename", "No Comments or Sources Key"]
+        assert e2.key == ["filename", "No Comments or Sources Key"]
         assert e2.string == "No Comments or Sources"
 
         assert t2.key == ("filename", "No Comments or Sources Key")
@@ -74,7 +74,7 @@ class XLIFFTests(TestCase):
 
         # missing translation
         assert e3.comment == ""
-        assert e3.new_key == ["filename", "Missing Translation Key"]
+        assert e3.key == ["filename", "Missing Translation Key"]
         assert e3.string == "Missing Translation"
 
         assert t3.key == ("filename", "Missing Translation Key")

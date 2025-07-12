@@ -259,11 +259,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         Section, models.SET_NULL, related_name="entities", null=True, blank=True
     )
     string = models.TextField()
-    new_key = ArrayField(models.TextField(), default=list)
-    # Unique identifier, used to compare DB and VCS objects
-    old_key = models.TextField()
-    # Format-specific value, used to provide more context
-    context = models.TextField(blank=True)
+    key = ArrayField(models.TextField(), default=list)
     meta = ArrayField(ArrayField(models.TextField(), size=2), default=list)
     comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
@@ -565,7 +561,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     )
                 )
                 | (
-                    Q(**{f"new_key__{i}regex": rf"{y}{escape(s)}{y}"})
+                    Q(**{f"key__{i}regex": rf"{y}{escape(s)}{y}"})
                     if search_identifiers
                     else Q()
                 )
@@ -635,7 +631,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "pk": entity.pk,
                     "original": original,
                     "machinery_original": entity.string,
-                    "key": entity.new_key,
+                    "key": entity.key,
                     "path": entity.resource.path,
                     "project": entity.resource.project.serialize(),
                     "format": entity.resource.format,

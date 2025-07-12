@@ -128,7 +128,7 @@ def update_resources(
     log.info(f"[{project.slug}] Changed source files: {', '.join(changed_res_paths)}")
 
     prev_entities: dict[tuple[str, L10nId], Entity] = {
-        (changed_resources[e.resource_id].path, tuple(e.new_key)): e
+        (changed_resources[e.resource_id].path, tuple(e.key)): e
         for e in Entity.objects.filter(
             resource__in=changed_resources, obsolete=False
         ).iterator()

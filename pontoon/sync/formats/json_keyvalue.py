@@ -31,7 +31,7 @@ def plain_json_as_translation(entry: Entry):
 
 def plain_json_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     return Entity(
-        new_key=list(entry.id),
+        key=list(entry.id),
         string=serialize_message(Format.plain_json, entry.value),
         date_created=now,
     )

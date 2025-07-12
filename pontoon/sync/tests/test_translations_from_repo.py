@@ -62,7 +62,7 @@ def test_update_ftl_translations():
                 key = f"key-{id}-{i}"
                 string = f"{key} = Message {id} {i}\n"
                 entity = EntityFactory.create(
-                    resource=res[id], string=string, new_key=[key]
+                    resource=res[id], string=string, key=[key]
                 )
                 if not (id == "c" and i == 2):
                     TranslationFactory.create(
@@ -73,7 +73,7 @@ def test_update_ftl_translations():
                         approved=True,
                     )
         TranslationFactory.create(
-            entity=Entity.objects.get(resource=res["c"], new_key=["key-c-1"]),
+            entity=Entity.objects.get(resource=res["c"], key=["key-c-1"]),
             locale=locale,
             string="key-c-1 = New translation c 1\n",
         )
@@ -118,17 +118,13 @@ def test_update_ftl_translations():
         translations = Translation.objects.filter(
             entity__resource=res["c"], locale=locale
         )
-        assert set(
-            (*trans.entity.new_key, trans.approved) for trans in translations
-        ) == {
+        assert set((*trans.entity.key, trans.approved) for trans in translations) == {
             ("key-c-0", False),
             ("key-c-1", False),
             ("key-c-1", True),
             ("key-c-2", True),
         }
-        tr_c2 = next(
-            trans for trans in translations if trans.entity.new_key == ["key-c-2"]
-        )
+        tr_c2 = next(trans for trans in translations if trans.entity.key == ["key-c-2"])
         assert not tr_c2.user
 
         # Test actions
@@ -182,7 +178,7 @@ def test_remove_po_target_resource():
                 key = f"key-{id}-{i}"
                 string = f"Message {id} {i}"
                 entity = EntityFactory.create(
-                    resource=res[id], string=string, new_key=[key]
+                    resource=res[id], string=string, key=[key]
                 )
                 TranslationFactory.create(
                     entity=entity,

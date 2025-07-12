@@ -108,7 +108,7 @@ def test_remove_entity():
             if i != 1:
                 entity = EntityFactory.create(
                     resource=res_c,
-                    new_key=[f"key-{i}"],
+                    key=[f"key-{i}"],
                     string=f"key-{i} = Message {i}\n",
                 )
                 TranslationFactory.create(
@@ -194,7 +194,7 @@ def test_add_translation():
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
         ent_0 = EntityFactory.create(
             resource=res_c,
-            new_key=["key-0"],
+            key=["key-0"],
             string="key-0 = Message 0\n",
         )
         TranslationFactory.create(
@@ -206,7 +206,7 @@ def test_add_translation():
         )
         ent_1 = EntityFactory.create(
             resource=res_c,
-            new_key=["key-1"],
+            key=["key-1"],
             string="key-1 = Message 1\n",
         )
         TranslationFactory.create(
@@ -218,7 +218,7 @@ def test_add_translation():
         )
         ent_2 = EntityFactory.create(
             resource=res_c,
-            new_key=["key-2"],
+            key=["key-2"],
             string="key-2 =\n    .attr = Message 2\n",
         )
         TranslationFactory.create(
@@ -230,7 +230,7 @@ def test_add_translation():
         )
         ent_3 = EntityFactory.create(
             resource=res_c,
-            new_key=["-term-3"],
+            key=["-term-3"],
             string="-term-3 = Term 3\n",
         )
         TranslationFactory.create(
@@ -315,7 +315,7 @@ def test_directory_creation_on_translation_update():
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=1)
         entity = EntityFactory.create(
             resource=res_c,
-            new_key=["key-0"],
+            key=["key-0"],
             string="key-0 = Message 0\n",
         )
         TranslationFactory.create(

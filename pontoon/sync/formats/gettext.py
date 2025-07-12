@@ -42,7 +42,7 @@ def gettext_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     )
 
     return Entity(
-        new_key=list(entry.id),
+        key=list(entry.id),
         string=serialize_message(Format.mf2, source_msg),
         comment=entry.get_meta("extracted-comments") or "",
         source=[tuple(m.value.split(":")) for m in entry.meta if m.key == "reference"],

@@ -94,7 +94,7 @@ def as_entity(
         case _:
             # For Format.dtd and Format.ini
             entity = Entity(
-                new_key=list(entry.id),
+                key=list(entry.id),
                 string=serialize_message(format, entry.value),
                 comment=entry.comment,
                 date_created=now,

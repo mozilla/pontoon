@@ -204,7 +204,7 @@ def find_db_updates(
             .values(
                 "entity__resource__path",
                 "entity__resource__format",
-                "entity__new_key",
+                "entity__key",
                 "locale_id",
                 "string",
             )
@@ -215,7 +215,7 @@ def find_db_updates(
             for trans_values in page:
                 key = (
                     trans_values["entity__resource__path"],
-                    tuple(trans_values["entity__new_key"]),
+                    tuple(trans_values["entity__key"]),
                     trans_values["locale_id"],
                 )
                 if key in translations:
@@ -243,7 +243,7 @@ def find_db_updates(
     for change in db_changes:
         key = (
             change.entity.resource.path,
-            tuple(change.entity.new_key),
+            tuple(change.entity.key),
             change.locale_id,
         )
         if key in translations:
@@ -256,9 +256,9 @@ def find_db_updates(
         resources[db_path] for db_path, _, _ in translations if db_path in resources
     }
     entities: dict[tuple[str, L10nId], int] = {
-        (e["resource__path"], tuple(e["new_key"])): e["id"]
+        (e["resource__path"], tuple(e["key"])): e["id"]
         for e in Entity.objects.filter(resource__in=trans_res, obsolete=False)
-        .values("id", "new_key", "resource__path")
+        .values("id", "key", "resource__path")
         .iterator()
     }
     updates: Updates = {}

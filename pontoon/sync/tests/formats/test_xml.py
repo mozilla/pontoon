@@ -34,7 +34,7 @@ class AndroidXMLTests(TestCase):
 
         # basic
         assert e0.comment == "Sample comment"
-        assert e0.new_key == ["Source String"]
+        assert e0.key == ["Source String"]
         assert e0.string == "Translated <b>String</b>"
 
         assert t0.key == ("Source String",)
@@ -42,7 +42,7 @@ class AndroidXMLTests(TestCase):
 
         # multiple comments
         assert e1.comment == "First comment\n\nSecond comment"
-        assert e1.new_key == ["Multiple Comments"]
+        assert e1.key == ["Multiple Comments"]
         assert e1.string == "Translated Multiple Comments"
 
         assert t1.key == ("Multiple Comments",)
@@ -50,7 +50,7 @@ class AndroidXMLTests(TestCase):
 
         # no comments or sources
         assert e2.comment == ""
-        assert e2.new_key == ["No Comments or Sources"]
+        assert e2.key == ["No Comments or Sources"]
         assert e2.string == "Translated No Comments or Sources"
 
         assert t2.key == ("No Comments or Sources",)
@@ -58,7 +58,7 @@ class AndroidXMLTests(TestCase):
 
         # empty translation
         assert e3.comment == ""
-        assert e3.new_key == ["Empty Translation"]
+        assert e3.key == ["Empty Translation"]
         assert e3.string == ""
 
         assert t3.key == ("Empty Translation",)

@@ -29,7 +29,7 @@ def xliff_as_entity(section_id: L10nId, entry: Entry[Message], now: datetime) ->
     comments: list[str] = [entry.comment] if entry.comment else []
     comments += [m.value for m in entry.meta if note_re.fullmatch(m.key)]
     return Entity(
-        new_key=list(section_id + entry.id),
+        key=list(section_id + entry.id),
         string=entry.get_meta("source") or "",
         comment="\n".join(comments),
         date_created=now,

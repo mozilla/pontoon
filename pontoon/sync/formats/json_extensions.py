@@ -26,7 +26,7 @@ def webext_as_translation(entry: Entry):
 def webext_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     string, placeholders = webext_serialize_message(entry.value)
     return Entity(
-        new_key=list(entry.id),
+        key=list(entry.id),
         string=string,
         comment=entry.comment,
         source=placeholders,

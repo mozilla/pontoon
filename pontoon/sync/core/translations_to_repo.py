@@ -342,8 +342,8 @@ def set_translation(
     section: Section,
     entry: Entry,
 ) -> bool:
-    new_key = list(section.id + entry.id)
-    tx = next((tx for tx in translations if tx.entity.new_key == new_key), None)
+    key = list(section.id + entry.id)
+    tx = next((tx for tx in translations if tx.entity.key == key), None)
     if tx is None:
         if format == Format.gettext:
             if isinstance(entry.value, SelectMessage):

@@ -33,13 +33,13 @@ def entity_test_models(translation_a, locale_b):
         order=1,
     )
     entity_a.string = "Entity zero"
-    entity_a.new_key = [entity_a.string]
+    entity_a.key = [entity_a.string]
     entity_a.order = 0
     entity_a.save()
     entity_b = EntityFactory(
         resource=resourceX,
         string="entity_b",
-        new_key=["Key", "entity_b"],
+        key=["Key", "entity_b"],
         order=0,
     )
     translation_a_alt = TranslationFactory(
