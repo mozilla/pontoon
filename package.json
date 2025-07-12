@@ -85,7 +85,7 @@
     "rollup-plugin-css-only": "^4.3.0",
     "sinon": "^13.0.2",
     "ts-jest": "^29.0.3",
-    "typescript": "^5.0.4",
+    "typescript": "^5.8.3",
     "utility-types": "^3.10.0"
   },
   "prettier": {
