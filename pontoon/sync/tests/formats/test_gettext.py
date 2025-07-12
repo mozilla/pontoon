@@ -66,10 +66,10 @@ class GettextTests(TestCase):
 
         res = parse_resource(Format.gettext, src, gettext_plurals=["one", "other"])
         e0, e1, e2, e3, e4, e5, e6, e7 = (
-            as_entity(Format.gettext, (), entry, datetime.now())
+            as_entity(Format.gettext, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
-        t0, t1, t2, t3, t4, t5, t6, t7 = as_vcs_translations(res)
+        t0, t1, t2, t3, t4, t6, t7 = as_vcs_translations(res)
 
         # basic
         assert e0.comment == "Sample comment"
@@ -126,10 +126,6 @@ class GettextTests(TestCase):
         assert e5.source == []
         assert e5.key == ["Missing Translation"]
         assert e5.string == "Missing Translation"
-
-        assert t5.key == ("Missing Translation",)
-        assert t5.string is None
-        assert not t5.fuzzy
 
         # plural translation
         assert e6.comment == ""
@@ -218,14 +214,13 @@ class GettextTests(TestCase):
 
         res = parse_resource(Format.gettext, src)
         e0, e1, e2 = (
-            as_entity(Format.gettext, (), entry, datetime.now())
+            as_entity(Format.gettext, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
-        t0, t1, t2 = as_vcs_translations(res)
+        assert list(as_vcs_translations(res)) == []
 
         assert e0.key == ["Source", "Main context"]
         assert e0.string == "Source"
-        assert t0.string is None
 
         assert e1.key == ["Source", "Other context"]
         assert e1.string == dedent("""\
@@ -233,8 +228,6 @@ class GettextTests(TestCase):
             .match $n
             one {{Source}}
             * {{Source Plural}}""")
-        assert t1.string is None
 
         assert e2.key == ["Source"]
         assert e2.string == "Source"
-        assert t2.string is None

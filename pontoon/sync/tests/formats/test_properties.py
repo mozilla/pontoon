@@ -25,7 +25,7 @@ class PropertiesTests(TestCase):
 
         res = parse_resource(Format.properties, src)
         e0, e1, e2, e3 = (
-            as_entity(Format.properties, (), entry, datetime.now())
+            as_entity(Format.properties, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
         t0, t1, t2, t3 = as_vcs_translations(res)

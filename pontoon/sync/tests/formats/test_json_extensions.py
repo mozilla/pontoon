@@ -42,7 +42,7 @@ class JsonExtensionsTests(TestCase):
 
         res = parse_resource(Format.webext, src)
         e0, e1, e2, e3 = (
-            as_entity(Format.webext, (), entry, datetime.now())
+            as_entity(Format.webext, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
         t0, t1, t2, t3 = as_vcs_translations(res)
@@ -57,7 +57,6 @@ class JsonExtensionsTests(TestCase):
         assert e3.key == ["placeholder"]
         assert e3.string == "Hello $YOUR_NAME$"
         assert e3.comment == "Peer greeting"
-        assert e3.source == {"YOUR_NAME": {"content": "$1", "example": "Cira"}}
 
         assert t3.key == ("placeholder",)
         assert t3.string == "Hello $YOUR_NAME$"

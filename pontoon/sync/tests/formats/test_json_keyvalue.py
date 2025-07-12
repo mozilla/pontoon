@@ -21,7 +21,7 @@ class JsonKeyValueTests(TestCase):
 
         res = parse_resource(Format.plain_json, src)
         e0, e1 = (
-            as_entity(Format.plain_json, (), entry, datetime.now())
+            as_entity(Format.plain_json, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
         t0, t1 = as_vcs_translations(res)
@@ -53,7 +53,7 @@ class JsonKeyValueTests(TestCase):
 
         res = parse_resource(Format.plain_json, src)
         e0, e1, e2 = (
-            as_entity(Format.plain_json, (), entry, datetime.now())
+            as_entity(Format.plain_json, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
 

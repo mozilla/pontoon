@@ -2,23 +2,22 @@
 Parsing resource files.
 """
 
-from datetime import datetime
+from html import unescape
 from os.path import splitext
+from re import Match, compile
+from typing import Iterator
 
+from fluent.syntax import FluentSerializer
 from moz.l10n.formats import Format, detect_format, l10n_extensions
+from moz.l10n.formats.fluent import fluent_astify_entry
 from moz.l10n.message import serialize_message
 from moz.l10n.model import Entry, Id as L10nId, Message, Resource as MozL10nResource
 
 from pontoon.base.models import Entity
 
 from .common import VCSTranslation
-from .ftl import ftl_as_entity, ftl_as_translation
 from .gettext import gettext_as_entity, gettext_as_translation
-from .json_extensions import webext_as_entity, webext_as_translation
-from .json_keyvalue import plain_json_as_entity, plain_json_as_translation
-from .properties import properties_as_entity, properties_as_translation
 from .xliff import xliff_as_entity, xliff_as_translation
-from .xml import android_as_entity, android_as_translation
 
 
 def are_compatible_files(file_a, file_b):
@@ -37,68 +36,82 @@ def are_compatible_files(file_a, file_b):
     return False
 
 
-def as_vcs_translations(res: MozL10nResource[Message]) -> list[VCSTranslation]:
-    translations: list[VCSTranslation] = []
+_fluent_serializer = FluentSerializer()
+_android_esc_u = compile(r"(?<!\\)\\u[0-9A-Fa-f]{4}")
+_android_esc_char = compile(r"(?<!\\)\\([^nt])")
+_android_esc_nl = compile(r"(?<!\\)\\n\s*")
+_android_ws_around_outer_tag = compile(r"^\s+(?=<)|(?<=>)\s+$")
+_android_ws_before_block = compile(r"\s+(?=<(br|label|li|p|/?ul)\b)")
+_android_ws_after_block = compile(r"((?<=<br>)|(?<=<br/>)|(?<=</ul>)|(?<=\\n))\s+")
+_prop_esc_u = compile(r"(?<!\\)\\u(?!0000)[0-9A-Fa-f]{4}")
+_prop_esc_ws = compile(r"(?<!\\)\\([^\S\n])")
+
+
+def _unicode_unescape(m: Match[str]):
+    return m[0].encode("utf-8").decode("unicode_escape")
+
+
+def _as_string(format: Format | None, entry: Entry[Message]) -> str:
+    match format:
+        case Format.fluent:
+            fluent_entry = fluent_astify_entry(entry, lambda _: "")
+            return _fluent_serializer.serialize_entry(fluent_entry)
+        case Format.android:
+            string = serialize_message(Format.android, entry.value)
+            string = unescape(string)
+            string = _android_esc_u.sub(_unicode_unescape, string)
+            string = _android_esc_char.sub(r"\1", string)
+            string = _android_esc_nl.sub(r"\\n\n", string)
+            string = _android_ws_around_outer_tag.sub("", string)
+            string = _android_ws_before_block.sub("\n", string)
+            string = _android_ws_after_block.sub("\n", string)
+            return string
+        case Format.properties:
+            string = serialize_message(Format.properties, entry.value)
+            string = _prop_esc_u.sub(_unicode_unescape, string)
+            string = _prop_esc_ws.sub(r"\1", string)
+            return string
+        case _:
+            return serialize_message(format, entry.value)
+
+
+def as_vcs_translations(res: MozL10nResource[Message]) -> Iterator[VCSTranslation]:
     for section in res.sections:
         if res.format == Format.android and section.id:
             continue
         for entry in section.entries:
-            if not isinstance(entry, Entry):
-                continue
-            match res.format:
-                case Format.fluent:
-                    tx = ftl_as_translation(entry)
-                case Format.gettext:
-                    tx = gettext_as_translation(entry)
-                case Format.properties:
-                    tx = properties_as_translation(entry)
-                case Format.android:
-                    tx = android_as_translation(entry)
-                case Format.xliff:
-                    tx = xliff_as_translation(section.id, entry)
-                case Format.webext:
-                    tx = webext_as_translation(entry)
-                case Format.plain_json:
-                    tx = plain_json_as_translation(entry)
-                case _:
-                    # Currently this includes .dtd, .inc, and .ini support.
-                    # https://github.com/mozilla/moz-l10n/blob/v0.7.0/python/moz/l10n/formats/__init__.py#L32-L47
-                    string = serialize_message(res.format, entry.value)
-                    tx = VCSTranslation(key=entry.id, string=string)
-            translations.append(tx)
-    return translations
+            if isinstance(entry, Entry):
+                match res.format:
+                    case Format.gettext:
+                        tx = gettext_as_translation(entry)
+                    case Format.xliff:
+                        tx = xliff_as_translation(section.id, entry)
+                    case _:
+                        tx = VCSTranslation(
+                            key=section.id + entry.id,
+                            string=_as_string(res.format, entry),
+                        )
+                if tx is not None:
+                    yield tx
 
 
 def as_entity(
     format: Format | None,
     section_id: L10nId,
     entry: Entry[Message],
-    now: datetime,
+    **kwargs,
 ) -> Entity:
-    """Sets all required fields **except** `order`, `resource`, and `section`."""
+    """At least `order`, `resource`, and `section` should be set as `kwargs`."""
     match format:
-        case Format.fluent:
-            entity = ftl_as_entity(entry, now)
         case Format.gettext:
-            entity = gettext_as_entity(entry, now)
-        case Format.properties:
-            entity = properties_as_entity(entry, now)
-        case Format.android:
-            entity = android_as_entity(entry, now)
+            return gettext_as_entity(entry, kwargs)
         case Format.xliff:
-            entity = xliff_as_entity(section_id, entry, now)
-        case Format.webext:
-            entity = webext_as_entity(entry, now)
-        case Format.plain_json:
-            entity = plain_json_as_entity(entry, now)
+            return xliff_as_entity(section_id, entry, kwargs)
         case _:
-            # For Format.dtd and Format.ini
-            entity = Entity(
-                key=list(entry.id),
-                string=serialize_message(format, entry.value),
-                date_created=now,
+            return Entity(
+                key=list(section_id + entry.id),
+                string=_as_string(format, entry),
+                comment=entry.comment,
+                meta=[[m.key, m.value] for m in entry.meta],
+                **kwargs,
             )
-    entity.comment = entry.comment
-    if entry.meta:
-        entity.meta = [[m.key, m.value] for m in entry.meta]
-    return entity

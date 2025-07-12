@@ -1,4 +1,4 @@
-from datetime import datetime
+from typing import Any
 
 from moz.l10n.formats import Format
 from moz.l10n.message import serialize_message
@@ -18,17 +18,14 @@ from .common import VCSTranslation
 
 
 def gettext_as_translation(entry: Entry[Message]):
-    if isinstance(entry.value, SelectMessage) and all(
-        not pattern or pattern == [""] for pattern in entry.value.variants.values()
-    ):
-        string = None
-    else:
-        string = serialize_message(Format.mf2, entry.value) or None
+    if entry.value.is_empty():
+        return None
+    string = serialize_message(Format.mf2, entry.value)
     fuzzy = any(m.key == "flag" and m.value == "fuzzy" for m in entry.meta)
     return VCSTranslation(key=entry.id, string=string, fuzzy=fuzzy)
 
 
-def gettext_as_entity(entry: Entry[Message], now: datetime) -> Entity:
+def gettext_as_entity(entry: Entry[Message], kwargs: dict[str, Any]) -> Entity:
     source_str = entry.id[0]
     plural_str = entry.get_meta("plural")
     source_msg = (
@@ -45,6 +42,7 @@ def gettext_as_entity(entry: Entry[Message], now: datetime) -> Entity:
         key=list(entry.id),
         string=serialize_message(Format.mf2, source_msg),
         comment=entry.comment,
+        meta=[[m.key, m.value] for m in entry.meta],
         source=[tuple(m.value.split(":")) for m in entry.meta if m.key == "reference"],
-        date_created=now,
+        **kwargs,
     )

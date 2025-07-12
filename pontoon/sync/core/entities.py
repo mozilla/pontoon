@@ -169,10 +169,15 @@ def update_resources(
             has_entries = False
             for entry in l10n_section.entries:
                 if isinstance(entry, Entry):
-                    entity = as_entity(l10n_res.format, l10n_section.id, entry, now)
-                    entity.order = idx
-                    entity.resource = db_res
-                    entity.section = db_section
+                    entity = as_entity(
+                        l10n_res.format,
+                        l10n_section.id,
+                        entry,
+                        date_created=now,
+                        order=idx,
+                        resource=db_res,
+                        section=db_section,
+                    )
                     next_entities[db_res.path, l10n_section.id + entry.id] = entity
                     idx += 1
                     has_entries = True
@@ -286,10 +291,15 @@ def add_resources(
             has_entries = False
             for entry in l10n_section.entries:
                 if isinstance(entry, Entry):
-                    entity = as_entity(l10n_res.format, l10n_section.id, entry, now)
-                    entity.order = idx
-                    entity.resource = db_res
-                    entity.section = db_section
+                    entity = as_entity(
+                        l10n_res.format,
+                        l10n_section.id,
+                        entry,
+                        date_created=now,
+                        order=idx,
+                        resource=db_res,
+                        section=db_section,
+                    )
                     new_entities.append(entity)
                     idx += 1
                     has_entries = True

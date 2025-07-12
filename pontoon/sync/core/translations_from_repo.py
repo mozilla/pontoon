@@ -151,26 +151,22 @@ def find_db_updates(
                 locale = locale_map[lc]
                 db_path = relpath(ref_path, paths.ref_root)
                 try:
-                    res = parse_resource(
+                    l10n_res = parse_resource(
                         target_path,
                         gettext_plurals=locale.cldr_plurals_list(),
                         gettext_skip_obsolete=True,
                     )
-                    repo_translations = as_vcs_translations(res)
-
+                    if not project.configuration_file and db_path.endswith(".pot"):
+                        db_path = db_path[:-1]
+                    resource_paths.add(db_path)
+                    translated_resources[db_path].add(locale.pk)
+                    translations.update(
+                        ((db_path, tx.key, locale.pk), (tx.string, tx.fuzzy))
+                        for tx in as_vcs_translations(l10n_res)
+                    )
                 except Exception as error:
                     scope = f"[{project.slug}:{db_path}, {locale.code}]"
                     log.warning(f"{scope} Skipping resource with parse error: {error}")
-                    continue
-                if not project.configuration_file and db_path.endswith(".pot"):
-                    db_path = db_path[:-1]
-                resource_paths.add(db_path)
-                translated_resources[db_path].add(locale.pk)
-                translations.update(
-                    ((db_path, tx.key, locale.pk), (tx.string, tx.fuzzy))
-                    for tx in repo_translations
-                    if tx.string is not None
-                )
         elif splitext(target_path)[1] in l10n_extensions and not isinstance(
             paths, UploadPaths
         ):

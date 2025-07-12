@@ -23,7 +23,7 @@ class FTLTests(TestCase):
 
         res = parse_resource(Format.fluent, src)
         e0, e1, e2 = (
-            as_entity(Format.fluent, (), entry, datetime.now())
+            as_entity(Format.fluent, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
         t0, t1, t2 = as_vcs_translations(res)

@@ -27,7 +27,7 @@ class AndroidXMLTests(TestCase):
 
         res = parse_resource(Format.android, src)
         e0, e1, e2, e3 = (
-            as_entity(Format.android, (), entry, datetime.now())
+            as_entity(Format.android, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
         t0, t1, t2, t3 = as_vcs_translations(res)
