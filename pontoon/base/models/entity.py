@@ -6,6 +6,7 @@ from re import escape, match
 from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import F, Prefetch, Q
 from django.utils import timezone
@@ -15,6 +16,7 @@ from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
+from pontoon.base.models.section import Section
 
 
 def combine_entity_filters(entities, filter_choices, filters, *args):
@@ -205,24 +207,32 @@ class EntityQuerySet(models.QuerySet):
         # Prefetch active translations for given locale
         from pontoon.base.models.translation import Translation
 
-        entities = self.prefetch_related(
-            Prefetch(
-                "translation_set",
-                queryset=(
-                    Translation.objects.filter(
-                        locale=locale, active=True
-                    ).prefetch_related("errors", "warnings")
-                ),
-                to_attr="active_translations",
+        # Prefetch related Translations, Section comments, and ProjectLocales
+        entities = (
+            self.prefetch_related(
+                Prefetch(
+                    "translation_set",
+                    queryset=(
+                        Translation.objects.filter(
+                            locale=locale, active=True
+                        ).prefetch_related("errors", "warnings")
+                    ),
+                    to_attr="active_translations",
+                )
             )
-        )
-
-        # Prefetch related Translations, Resources, Projects and ProjectLocales
-        entities = entities.prefetch_related(
-            Prefetch(
-                "resource__project__project_locale",
-                queryset=ProjectLocale.objects.filter(locale=locale),
-                to_attr="projectlocale",
+            .annotate(
+                section_comment=models.Subquery(
+                    Section.objects.filter(id=models.OuterRef("section_id")).values(
+                        "comment"
+                    )
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "resource__project__project_locale",
+                    queryset=ProjectLocale.objects.filter(locale=locale),
+                    to_attr="projectlocale",
+                )
             )
         )
 
@@ -245,14 +255,16 @@ class EntityQuerySet(models.QuerySet):
 
 class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
+    section = models.ForeignKey(
+        Section, models.SET_NULL, related_name="entities", null=True, blank=True
+    )
     string = models.TextField()
     # Unique identifier, used to compare DB and VCS objects
     key = models.TextField()
     # Format-specific value, used to provide more context
     context = models.TextField(blank=True)
+    meta = ArrayField(ArrayField(models.TextField(), size=2), default=list)
     comment = models.TextField(blank=True)
-    group_comment = models.TextField(blank=True)
-    resource_comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
@@ -426,6 +438,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 )
             )
 
+        entities: EntityQuerySet
         if pre_filters:
             entities = Entity.objects.filter(
                 pk__in=Entity.objects.filter(Q(*pre_filters))
@@ -598,6 +611,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             try:
                 readonly = entity.resource.project.projectlocale[0].readonly
             except IndexError:
+                print(entity, "IndexError")
                 # Entities explicitly requested using `string` or `list` URL parameters
                 # might not be enabled for localization for the given locale. If the
                 # project is given in the URL, the 404 page shows up, but if the All
@@ -632,8 +646,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "project": entity.resource.project.serialize(),
                     "format": entity.resource.format,
                     "comment": entity.comment,
-                    "group_comment": entity.group_comment,
-                    "resource_comment": entity.resource_comment,
+                    "group_comment": entity.section_comment or "",
+                    "resource_comment": entity.resource.comment or "",
                     "order": entity.order,
                     "source": entity.source,
                     "obsolete": entity.obsolete,

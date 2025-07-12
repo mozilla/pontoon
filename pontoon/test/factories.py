@@ -18,6 +18,7 @@ from pontoon.base.models import (
     ProjectSlugHistory,
     Repository,
     Resource,
+    Section,
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
@@ -93,6 +94,13 @@ class ResourceFactory(DjangoModelFactory):
 
     class Meta:
         model = Resource
+
+
+class SectionFactory(DjangoModelFactory):
+    resource = SubFactory(ResourceFactory)
+
+    class Meta:
+        model = Section
 
 
 class LocaleFactory(DjangoModelFactory):

@@ -8,28 +8,31 @@ https://www.chromium.org/developers/design-documents/extensions/how-the-extensio
 
 from __future__ import annotations
 
+from datetime import datetime
+
 from moz.l10n.formats.webext import webext_serialize_message
-from moz.l10n.model import Entry, Message, Resource
+from moz.l10n.model import Entry, Message
+
+from pontoon.base.models import Entity
 
 from .common import VCSTranslation
 
 
-def parse(res: Resource[Message]):
-    return [
-        as_translation(order, entry) for order, entry in enumerate(res.all_entries())
-    ]
+def webext_as_translation(entry: Entry):
+    assert len(entry.id) == 1
+    string, _ = webext_serialize_message(entry.value)
+    return VCSTranslation(key=entry.id[0], string=string or None)
 
 
-def as_translation(order: int, entry: Entry):
+def webext_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     assert len(entry.id) == 1
     key = entry.id[0]
     string, placeholders = webext_serialize_message(entry.value)
-    return VCSTranslation(
+    return Entity(
         key=key,
         context=key,
-        order=order,
-        string=string or None,
-        source_string=string,
-        comments=[entry.comment] if entry.comment else None,
+        string=string,
+        comment=entry.comment,
         source=placeholders,
+        date_created=now,
     )
