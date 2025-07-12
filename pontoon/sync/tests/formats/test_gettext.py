@@ -5,8 +5,7 @@ from unittest import TestCase
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_vcs_translations
-from pontoon.sync.formats.gettext import gettext_as_entity
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
 class GettextTests(TestCase):
@@ -67,7 +66,8 @@ class GettextTests(TestCase):
 
         res = parse_resource(Format.gettext, src, gettext_plurals=["one", "other"])
         e0, e1, e2, e3, e4, e5, e6, e7 = (
-            gettext_as_entity(entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.gettext, (), entry, datetime.now())
+            for entry in res.all_entries()
         )
         t0, t1, t2, t3, t4, t5, t6, t7 = as_vcs_translations(res)
 
@@ -218,7 +218,8 @@ class GettextTests(TestCase):
 
         res = parse_resource(Format.gettext, src)
         e0, e1, e2 = (
-            gettext_as_entity(entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.gettext, (), entry, datetime.now())
+            for entry in res.all_entries()
         )
         t0, t1, t2 = as_vcs_translations(res)
 

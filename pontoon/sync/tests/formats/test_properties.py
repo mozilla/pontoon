@@ -5,8 +5,7 @@ from unittest import TestCase
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_vcs_translations
-from pontoon.sync.formats.properties import properties_as_entity
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
 class PropertiesTests(TestCase):
@@ -26,7 +25,8 @@ class PropertiesTests(TestCase):
 
         res = parse_resource(Format.properties, src)
         e0, e1, e2, e3 = (
-            properties_as_entity(entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.properties, (), entry, datetime.now())
+            for entry in res.all_entries()
         )
         t0, t1, t2, t3 = as_vcs_translations(res)
 

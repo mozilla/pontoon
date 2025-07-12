@@ -27,6 +27,5 @@ def ftl_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     return Entity(
         key=list(entry.id),
         string=_string(entry),
-        comment=entry.comment,
         date_created=now,
     )

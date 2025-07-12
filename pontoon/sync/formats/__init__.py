@@ -96,9 +96,9 @@ def as_entity(
             entity = Entity(
                 key=list(entry.id),
                 string=serialize_message(format, entry.value),
-                comment=entry.comment,
                 date_created=now,
             )
+    entity.comment = entry.comment
     if entry.meta:
         entity.meta = [[m.key, m.value] for m in entry.meta]
     return entity

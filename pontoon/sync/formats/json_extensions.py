@@ -28,7 +28,6 @@ def webext_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     return Entity(
         key=list(entry.id),
         string=string,
-        comment=entry.comment,
         source=placeholders,
         date_created=now,
     )

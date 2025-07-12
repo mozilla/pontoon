@@ -6,8 +6,7 @@ from moz.l10n.formats import Format
 from moz.l10n.model import Entry
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_vcs_translations
-from pontoon.sync.formats.xliff import xliff_as_entity
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
 class XLIFFTests(TestCase):
@@ -41,7 +40,7 @@ class XLIFFTests(TestCase):
 
         res = parse_resource(Format.xliff, src)
         e0, e1, e2, e3 = (
-            xliff_as_entity(section.id, entry, datetime.now())
+            as_entity(Format.xliff, section.id, entry, datetime.now())
             for section in res.sections
             for entry in section.entries
             if isinstance(entry, Entry)
@@ -57,7 +56,7 @@ class XLIFFTests(TestCase):
         assert t0.string == "Translated <b>String</b>"
 
         # multiple comments
-        assert e1.comment == "First comment\nSecond comment"
+        assert e1.comment == "First comment\n\nSecond comment"
         assert e1.key == ["filename", "Multiple Comments Key"]
         assert e1.string == "Multiple Comments"
 
