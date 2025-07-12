@@ -7,6 +7,7 @@ from os.path import join, relpath, splitext
 
 from fluent.syntax import FluentParser
 from moz.l10n.formats import l10n_extensions
+from moz.l10n.model import Id as L10nId
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
 from moz.l10n.resource import parse_resource
 
@@ -140,7 +141,7 @@ def find_db_updates(
     # db_path -> {locale.id}
     translated_resources: dict[str, set[int]] = defaultdict(set)
     # (db_path, tx.key, locale.id) -> (string|None, fuzzy)
-    translations: dict[tuple[str, str, int], tuple[str | None, bool]] = {}
+    translations: dict[tuple[str, L10nId, int], tuple[str | None, bool]] = {}
     for target_path in changed_target_paths:
         ref = paths.find_reference(target_path)
         if ref:
@@ -203,8 +204,7 @@ def find_db_updates(
             .values(
                 "entity__resource__path",
                 "entity__resource__format",
-                "entity__key",
-                "entity__string",  # terminology/common and tutorial/playground use string instead of key.
+                "entity__new_key",
                 "locale_id",
                 "string",
             )
@@ -215,7 +215,7 @@ def find_db_updates(
             for trans_values in page:
                 key = (
                     trans_values["entity__resource__path"],
-                    trans_values["entity__key"] or trans_values["entity__string"],
+                    tuple(trans_values["entity__new_key"]),
                     trans_values["locale_id"],
                 )
                 if key in translations:
@@ -243,7 +243,7 @@ def find_db_updates(
     for change in db_changes:
         key = (
             change.entity.resource.path,
-            change.entity.key or change.entity.string,
+            tuple(change.entity.new_key),
             change.locale_id,
         )
         if key in translations:
@@ -255,10 +255,10 @@ def find_db_updates(
     trans_res = {
         resources[db_path] for db_path, _, _ in translations if db_path in resources
     }
-    entities: dict[tuple[str, str], int] = {
-        (e["resource__path"], e["key"] or e["string"]): e["id"]
+    entities: dict[tuple[str, L10nId], int] = {
+        (e["resource__path"], tuple(e["new_key"])): e["id"]
         for e in Entity.objects.filter(resource__in=trans_res, obsolete=False)
-        .values("id", "key", "string", "resource__path")
+        .values("id", "new_key", "resource__path")
         .iterator()
     }
     updates: Updates = {}

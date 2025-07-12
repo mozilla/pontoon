@@ -7,6 +7,6 @@ class VCSTranslation:
     A single translation of a source string into another language.
     """
 
-    key: str
+    key: tuple[str, ...]
     string: str | None
     fuzzy: bool = False

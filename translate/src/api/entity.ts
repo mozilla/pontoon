@@ -16,13 +16,12 @@ import type { BatchBadgeUpdate } from '../modules/batchactions/actions';
  */
 export type Entity = {
   readonly pk: number;
+  readonly key: string[];
   readonly original: string;
   readonly machinery_original: string;
   readonly comment: string;
   readonly group_comment: string;
   readonly resource_comment: string;
-  readonly key: string;
-  readonly context: string;
   readonly format: string;
   readonly path: string;
   readonly project: Record<string, any>;

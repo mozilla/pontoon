@@ -26,7 +26,7 @@ def mock_quality_check_args(
     function.
     """
     entity = MagicMock()
-    entity.key = "entity_a"
+    entity.new_key = ["entity_a"]
     if resource_path:
         entity.resource.path = resource_path
         entity.resource.format = os.path.splitext(resource_path)[1][1:]
@@ -62,7 +62,7 @@ def entity_with_comment(entity_a):
     """
     A simple entity that contains pre-defined key and comment.
     """
-    entity_a.key = "key_entity_a"
+    entity_a.new_key = ["key_entity_a"]
     entity_a.comment = "example comment"
     return entity_a
 
@@ -200,7 +200,7 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         (
             mock_quality_check_args(
                 resource_ext="dtd",
-                key="test",
+                new_key=["test"],
                 string="2005",
                 translation="not a number",
             ),
@@ -209,13 +209,13 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         (
             mock_quality_check_args(
                 resource_ext="dtd",
-                key="test",
+                new_key=["test"],
                 string="Second &aa; entity",
                 translation="Testing &NonExistingKey; translation",
                 resource_entities=[
-                    {"key": "validProductName", "string": "Firefox"},
-                    {"key": "aa", "string": "bb &validProductName;"},
-                    {"key": "cc", "string": "dd &aa;"},
+                    {"new_key": ["validProductName"], "string": "Firefox"},
+                    {"new_key": ["aa"], "string": "bb &validProductName;"},
+                    {"new_key": ["cc"], "string": "dd &aa;"},
                 ],
             ),
             {
@@ -228,12 +228,12 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         (
             mock_quality_check_args(
                 resource_ext="dtd",
-                key="test",
+                new_key=["test"],
                 string="Valid entity",
                 translation="&validProductName; translation",
                 resource_entities=[
-                    {"key": "validProductName", "string": "Firefox"},
-                    {"key": "hello", "string": "hello &validProductName;"},
+                    {"new_key": ["validProductName"], "string": "Firefox"},
+                    {"new_key": ["hello"], "string": "hello &validProductName;"},
                 ],
             ),
             {},
@@ -241,13 +241,13 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         (
             mock_quality_check_args(
                 resource_ext="dtd",
-                key="test",
+                new_key=["test"],
                 string="&validProductName; - 2017",
                 comment="Some comment",
                 translation="Valid translation",
                 resource_entities=[
-                    {"key": "validProductName", "string": "Firefox"},
-                    {"key": "hello", "string": "hello &validProductName;"},
+                    {"new_key": ["validProductName"], "string": "Firefox"},
+                    {"new_key": ["hello"], "string": "hello &validProductName;"},
                 ],
             ),
             {},
@@ -255,7 +255,7 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         (
             mock_quality_check_args(
                 resource_ext="dtd",
-                key="test",
+                new_key=["test"],
                 string="Mozilla 2017",
                 comment="Some comment",
                 translation="< translation",
@@ -352,7 +352,7 @@ def test_invalid_ftl_translations(quality_check_args, failed_checks):
 def test_android_apostrophes():
     quality_check_args = mock_quality_check_args(
         resource_path="strings.xml",
-        key="test",
+        new_key=["test"],
         string="Source string",
         comment="Some comment",
         translation="Translation with a straight '",

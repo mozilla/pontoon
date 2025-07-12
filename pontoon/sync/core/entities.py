@@ -127,8 +127,8 @@ def update_resources(
     changed_res_paths: set[str] = set(res.path for res in changed_resources.values())
     log.info(f"[{project.slug}] Changed source files: {', '.join(changed_res_paths)}")
 
-    prev_entities: dict[tuple[str, str], Entity] = {
-        (changed_resources[e.resource_id].path, e.key or e.string): e
+    prev_entities: dict[tuple[str, L10nId], Entity] = {
+        (changed_resources[e.resource_id].path, tuple(e.new_key)): e
         for e in Entity.objects.filter(
             resource__in=changed_resources, obsolete=False
         ).iterator()
@@ -142,7 +142,7 @@ def update_resources(
     new_sections: list[Section] = []
     mod_sections: list[Section] = []
     keep_sections: list[Section] = []
-    next_entities: dict[tuple[str, str], Entity] = {}
+    next_entities: dict[tuple[str, L10nId], Entity] = {}
     for db_res in changed_resources.values():
         l10n_res = updates[db_res.path]
         res_meta = [[m.key, m.value] for m in l10n_res.meta]
@@ -173,7 +173,7 @@ def update_resources(
                     entity.order = idx
                     entity.resource = db_res
                     entity.section = db_section
-                    next_entities[db_res.path, entity.key or entity.string] = entity
+                    next_entities[db_res.path, l10n_section.id + entry.id] = entity
                     idx += 1
                     has_entries = True
             if has_entries:
@@ -191,7 +191,7 @@ def update_resources(
             prev_ent.section = None
             obsolete_entities.append(prev_ent)
             key_path, key_entity = key
-            log_rm[key_path].append(key_entity)
+            log_rm[key_path].append("/".join(key_entity))
     Entity.objects.bulk_update(
         obsolete_entities, ["obsolete", "date_obsoleted", "section"]
     )
@@ -214,7 +214,6 @@ def update_resources(
         "comment",
         "meta",
         "source",
-        "context",
     ]
     mod_entities: list[Entity] = []
     added_entities: list[Entity] = []
@@ -226,10 +225,10 @@ def update_resources(
             mod_ent = entity_update(prev_entities[key], next_ent, mod_fields)
             if mod_ent is not None:
                 mod_entities.append(mod_ent)
-                log_mod[key_path].append(key_entity)
+                log_mod[key_path].append("/".join(key_entity))
         else:
             added_entities.append(next_ent)
-            log_add[key_path].append(key_entity)
+            log_add[key_path].append("/".join(key_entity))
     Entity.objects.bulk_update(mod_entities, mod_fields)
 
     # FIXME: Entity order should be updated on insertion

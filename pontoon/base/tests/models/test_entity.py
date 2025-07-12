@@ -33,13 +33,13 @@ def entity_test_models(translation_a, locale_b):
         order=1,
     )
     entity_a.string = "Entity zero"
-    entity_a.key = entity_a.string
+    entity_a.new_key = [entity_a.string]
     entity_a.order = 0
     entity_a.save()
     entity_b = EntityFactory(
         resource=resourceX,
         string="entity_b",
-        key="Key\x04entity_b",
+        new_key=["Key", "entity_b"],
         order=0,
     )
     translation_a_alt = TranslationFactory(
@@ -284,8 +284,7 @@ def test_entity_project_locale_no_paths(
         "resource_comment": "",
         "format": "po",
         "obsolete": False,
-        "key": "",
-        "context": "",
+        "key": ["Entity zero"],
         "path": resource0.path,
         "project": project_a.serialize(),
         "translation": {
@@ -397,11 +396,7 @@ def test_entity_project_locale_order(admin, entity_test_models):
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_cleaned_key(admin, entity_test_models):
-    """
-    If key contanis source string and Translate Toolkit separator,
-    remove them.
-    """
+def test_entity_project_locale_key(admin, entity_test_models):
     resource0 = entity_test_models[0].entity.resource
     locale_a = entity_test_models[0].locale
     preferred_source_locale = ""
@@ -415,8 +410,8 @@ def test_entity_project_locale_cleaned_key(admin, entity_test_models):
             locale_a,
         ),
     )
-    assert entities[0]["key"] == ""
-    assert entities[1]["key"] == "Key"
+    assert entities[0]["key"] == ["Entity zero"]
+    assert entities[1]["key"] == ["Key", "entity_b"]
 
 
 @pytest.mark.django_db

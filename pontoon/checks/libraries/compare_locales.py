@@ -86,30 +86,19 @@ def cast_to_compare_locales(resource_ext, entity, string):
     :return: source entity and translation entity that will be compatible with
         a compare-locales checker. Type of those entities depends on the resource_ext.
     """
+    cl_key = entity.new_key[0] if entity and entity.new_key else ""
     if resource_ext == ".properties":
         return (
             ComparePropertiesEntity(
-                entity.key, entity.string, CommentEntity(entity.comment)
+                cl_key, entity.string, CommentEntity(entity.comment)
             ),
-            ComparePropertiesEntity(
-                entity.key,
-                string,
-                CommentEntity(entity.comment),
-            ),
+            ComparePropertiesEntity(cl_key, string, CommentEntity(entity.comment)),
         )
 
     elif resource_ext == ".dtd":
         return (
-            CompareDTDEntity(
-                entity.key,
-                entity.string,
-                CommentEntity(entity.comment),
-            ),
-            CompareDTDEntity(
-                entity.key,
-                string,
-                CommentEntity(entity.comment),
-            ),
+            CompareDTDEntity(cl_key, entity.string, CommentEntity(entity.comment)),
+            CompareDTDEntity(cl_key, string, CommentEntity(entity.comment)),
         )
 
     elif resource_ext == ".ftl":
@@ -138,7 +127,7 @@ def cast_to_compare_locales(resource_ext, entity, string):
                 <string name="{key}"><![CDATA[{translation}]]></string>
             </resources>
         """.format(
-            key=entity.key,
+            key=cl_key,
             original=entity.string.replace("'", "\\'"),
             translation=string.replace("'", "\\'"),
         )
@@ -197,7 +186,7 @@ def run_checks(entity, locale_code, string):
     if checker.needs_reference:
         references = KeyedTuple(
             CompareDTDEntity(
-                e.key,
+                e.new_key[0] if e.new_key else "",
                 e.string,
                 e.comment,
             )

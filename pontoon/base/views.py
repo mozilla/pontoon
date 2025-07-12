@@ -888,7 +888,7 @@ def download_translation_memory(request, locale, slug):
             locale.code,
             tm_entries.values_list(
                 "entity__resource__path",
-                "entity__key",
+                "entity__new_key",
                 "source",
                 "target",
                 "project__slug",

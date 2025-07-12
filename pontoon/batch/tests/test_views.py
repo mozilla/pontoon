@@ -38,7 +38,7 @@ def translation_dtd_unapproved():
         string="Test Translation",
         active=True,
         approved=False,
-        entity__key="test",
+        entity__new_key=["test"],
         entity__resource__format="dtd",
         entity__resource__path="test.dtd",
     )
@@ -59,7 +59,7 @@ def translation_dtd_invalid_unapproved():
         string='!@#$""\'',
         active=True,
         approved=False,
-        entity__key="test",
+        entity__new_key=["test"],
         entity__resource__format="dtd",
         entity__resource__path="test.dtd",
     )

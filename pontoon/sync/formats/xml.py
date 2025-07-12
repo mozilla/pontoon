@@ -38,14 +38,12 @@ def _string(entry: Entry[Message]):
 
 
 def android_as_translation(entry: Entry[Message]):
-    return VCSTranslation(key=entry.id[0], string=_string(entry))
+    return VCSTranslation(key=entry.id, string=_string(entry))
 
 
 def android_as_entity(entry: Entry[Message], now: datetime) -> Entity:
-    key = entry.id[0]
     return Entity(
-        key=key,
-        context=key,
+        new_key=list(entry.id),
         string=_string(entry),
         comment=entry.comment,
         date_created=now,

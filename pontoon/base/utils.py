@@ -195,7 +195,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         "\n\t<body>" % {"creation_date": creation_date.isoformat()}
     )
     for resource_path, key, source, target, project_slug in entries:
-        tuid = ":".join((project_slug, resource_path, slugify(key)))
+        tuid = ":".join((project_slug, resource_path, slugify("".join(key))))
         source = sanitize_xml_input_string(source)
         target = sanitize_xml_input_string(target)
 

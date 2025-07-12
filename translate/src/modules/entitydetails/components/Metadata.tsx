@@ -1,6 +1,6 @@
 import { Localized } from '@fluent/react';
 import parse from 'html-react-parser';
-import React, { useContext, useLayoutEffect } from 'react';
+import React, { Fragment, useContext, useLayoutEffect } from 'react';
 // @ts-expect-error Working types are unavailable for react-linkify 0.2.2
 import Linkify from 'react-linkify';
 
@@ -174,7 +174,7 @@ function SourceObject({
 }
 
 const EntityContext = ({
-  entity: { context, path, project },
+  entity: { format, key, path, project },
   localeCode,
   navigateToPath,
 }: {
@@ -184,12 +184,15 @@ const EntityContext = ({
 }) => (
   <Localized id='entitydetails-Metadata--context' attrs={{ title: true }}>
     <Property title='CONTEXT' className='context'>
-      {context ? (
-        <>
-          {context}
-          <span className='divider'>&bull;</span>
-        </>
-      ) : null}
+      {key
+        .filter((_, i) => i !== 0 || format !== 'po')
+        .toReversed()
+        .map((k, i) => (
+          <Fragment key={i}>
+            {k}
+            <span className='divider'>&bull;</span>
+          </Fragment>
+        ))}
       <a
         href={`/${localeCode}/${project.slug}/${path}/`}
         onClick={(ev) => {

@@ -73,68 +73,68 @@ class GettextTests(TestCase):
 
         # basic
         assert e0.comment == "Sample comment"
-        assert e0.key == "Source String"
+        assert e0.new_key == ["Source String"]
         assert e0.source == [("file.py", "1")]
         assert e0.string == "Source String"
 
-        assert t0.key == "Source String"
+        assert t0.key == ("Source String",)
         assert t0.string == "Translated String"
         assert not t0.fuzzy
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
         assert e1.source == []
-        assert e1.key == "Multiple Comments"
+        assert e1.new_key == ["Multiple Comments"]
         assert e1.string == "Multiple Comments"
 
-        assert t1.key == "Multiple Comments"
+        assert t1.key == ("Multiple Comments",)
         assert t1.string == "Translated Multiple Comments"
         assert not t1.fuzzy
 
         # multiple sources
         assert e2.comment == ""
         assert e2.source == [("file.py", "2"), ("file.py", "3")]
-        assert e2.key == "Multiple Sources"
+        assert e2.new_key == ["Multiple Sources"]
         assert e2.string == "Multiple Sources"
 
-        assert t2.key == "Multiple Sources"
+        assert t2.key == ("Multiple Sources",)
         assert t2.string == "Translated Multiple Sources"
         assert not t2.fuzzy
 
         # fuzzy
         assert e3.comment == ""
         assert e3.source == []
-        assert e3.key == "Fuzzy"
+        assert e3.new_key == ["Fuzzy"]
         assert e3.string == "Fuzzy"
 
-        assert t3.key == "Fuzzy"
+        assert t3.key == ("Fuzzy",)
         assert t3.string == "Translated Fuzzy"
         assert t3.fuzzy
 
         # no comments or sources
         assert e4.comment == ""
         assert e4.source == []
-        assert e4.key == "No Comments or Sources"
+        assert e4.new_key == ["No Comments or Sources"]
         assert e4.string == "No Comments or Sources"
 
-        assert t4.key == "No Comments or Sources"
+        assert t4.key == ("No Comments or Sources",)
         assert t4.string == "Translated No Comments or Sources"
         assert not t4.fuzzy
 
         # missing translation
         assert e5.comment == ""
         assert e5.source == []
-        assert e5.key == "Missing Translation"
+        assert e5.new_key == ["Missing Translation"]
         assert e5.string == "Missing Translation"
 
-        assert t5.key == "Missing Translation"
+        assert t5.key == ("Missing Translation",)
         assert t5.string is None
         assert not t5.fuzzy
 
         # plural translation
         assert e6.comment == ""
         assert e6.source == []
-        assert e6.key == "Plural %(count)s string"
+        assert e6.new_key == ["Plural %(count)s string"]
         assert (
             e6.string
             == dedent("""
@@ -145,7 +145,7 @@ class GettextTests(TestCase):
                 """).strip()
         )
 
-        assert t6.key == "Plural %(count)s string"
+        assert t6.key == ("Plural %(count)s string",)
         assert (
             t6.string
             == dedent("""
@@ -160,7 +160,7 @@ class GettextTests(TestCase):
         # missing plural translation
         assert e7.comment == ""
         assert e7.source == []
-        assert e7.key == "Plural %(count)s string with missing translation"
+        assert e7.new_key == ["Plural %(count)s string with missing translation"]
         assert (
             e7.string
             == dedent("""
@@ -171,7 +171,7 @@ class GettextTests(TestCase):
                 """).strip()
         )
 
-        assert t7.key == "Plural %(count)s string with missing translation"
+        assert t7.key == ("Plural %(count)s string with missing translation",)
         assert (
             t7.string
             == dedent("""
@@ -222,11 +222,11 @@ class GettextTests(TestCase):
         )
         t0, t1, t2 = as_vcs_translations(res)
 
-        assert e0.key == "Main context\x04Source"
+        assert e0.new_key == ["Source", "Main context"]
         assert e0.string == "Source"
         assert t0.string is None
 
-        assert e1.key == "Other context\x04Source"
+        assert e1.new_key == ["Source", "Other context"]
         assert e1.string == dedent("""\
             .input {$n :number}
             .match $n
@@ -234,6 +234,6 @@ class GettextTests(TestCase):
             * {{Source Plural}}""")
         assert t1.string is None
 
-        assert e2.key == "Source"
+        assert e2.new_key == ["Source"]
         assert e2.string == "Source"
         assert t2.string is None
