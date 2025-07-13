@@ -4,7 +4,6 @@ from operator import ior
 from re import escape, match
 
 from dirtyfields import DirtyFieldsMixin
-from jsonfield import JSONField
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -263,7 +262,6 @@ class Entity(DirtyFieldsMixin, models.Model):
     meta = ArrayField(ArrayField(models.TextField(), size=2), default=list)
     comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
-    source = JSONField(blank=True, default=list)  # List of paths to source code files
     obsolete = models.BooleanField(default=False)
 
     date_created = models.DateTimeField(default=timezone.now)
@@ -638,8 +636,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "comment": entity.comment,
                     "group_comment": entity.section_comment or "",
                     "resource_comment": entity.resource.comment or "",
-                    "order": entity.order,
-                    "source": entity.source,
+                    "meta": entity.meta,
                     "obsolete": entity.obsolete,
                     "translation": translation,
                     "readonly": readonly,

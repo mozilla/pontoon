@@ -74,7 +74,7 @@ class GettextTests(TestCase):
         # basic
         assert e0.comment == "Sample comment"
         assert e0.key == ["Source String"]
-        assert e0.source == [("file.py", "1")]
+        assert e0.meta == [["reference", "file.py:1"]]
         assert e0.string == "Source String"
 
         assert t0.key == ("Source String",)
@@ -83,7 +83,6 @@ class GettextTests(TestCase):
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
-        assert e1.source == []
         assert e1.key == ["Multiple Comments"]
         assert e1.string == "Multiple Comments"
 
@@ -93,7 +92,7 @@ class GettextTests(TestCase):
 
         # multiple sources
         assert e2.comment == ""
-        assert e2.source == [("file.py", "2"), ("file.py", "3")]
+        assert e2.meta == [["reference", "file.py:2"], ["reference", "file.py:3"]]
         assert e2.key == ["Multiple Sources"]
         assert e2.string == "Multiple Sources"
 
@@ -103,7 +102,6 @@ class GettextTests(TestCase):
 
         # fuzzy
         assert e3.comment == ""
-        assert e3.source == []
         assert e3.key == ["Fuzzy"]
         assert e3.string == "Fuzzy"
 
@@ -113,7 +111,6 @@ class GettextTests(TestCase):
 
         # no comments or sources
         assert e4.comment == ""
-        assert e4.source == []
         assert e4.key == ["No Comments or Sources"]
         assert e4.string == "No Comments or Sources"
 
@@ -123,13 +120,11 @@ class GettextTests(TestCase):
 
         # missing translation
         assert e5.comment == ""
-        assert e5.source == []
         assert e5.key == ["Missing Translation"]
         assert e5.string == "Missing Translation"
 
         # plural translation
         assert e6.comment == ""
-        assert e6.source == []
         assert e6.key == ["Plural %(count)s string"]
         assert (
             e6.string
@@ -155,7 +150,6 @@ class GettextTests(TestCase):
 
         # missing plural translation
         assert e7.comment == ""
-        assert e7.source == []
         assert e7.key == ["Plural %(count)s string with missing translation"]
         assert (
             e7.string

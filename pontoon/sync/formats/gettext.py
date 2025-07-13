@@ -43,6 +43,5 @@ def gettext_as_entity(entry: Entry[Message], kwargs: dict[str, Any]) -> Entity:
         string=serialize_message(Format.mf2, source_msg),
         comment=entry.comment,
         meta=[[m.key, m.value] for m in entry.meta],
-        source=[tuple(m.value.split(":")) for m in entry.meta if m.key == "reference"],
         **kwargs,
     )

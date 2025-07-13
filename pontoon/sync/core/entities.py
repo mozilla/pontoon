@@ -214,12 +214,7 @@ def update_resources(
     # The Section.pk values need to be set before we modify or create Entities.
     Section.objects.bulk_create(new_sections)
 
-    mod_fields = [
-        "string",
-        "comment",
-        "meta",
-        "source",
-    ]
+    mod_fields = ["string", "comment", "meta"]
     mod_entities: list[Entity] = []
     added_entities: list[Entity] = []
     log_mod: dict[str, list[str]] = defaultdict(list)

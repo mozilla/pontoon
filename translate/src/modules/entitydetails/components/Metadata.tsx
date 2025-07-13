@@ -136,29 +136,34 @@ function ResourceComment({ comment }: { comment: string }) {
   );
 }
 
-function SourceArray({ source }: { source: string[][] }) {
-  return source.length > 1 || (source.length === 1 && source[0]) ? (
-    <ul>
-      {source.map((value, i) => (
-        <li key={i}>
+function SourceReferences({ meta }: { meta: Entity['meta'] }) {
+  const refs = [];
+  for (let [key, value] of meta) {
+    if (key === 'reference') {
+      refs.push(
+        <li key={value}>
           <span className='title'>#:</span>
-          {value.join(':')}
-        </li>
-      ))}
-    </ul>
-  ) : null;
+          {value}
+        </li>,
+      );
+    }
+  }
+  return refs.length > 0 ? <ul>{refs}</ul> : null;
 }
 
-function SourceObject({
-  source,
-}: {
-  source: Record<string, { example?: string }>;
-}) {
+function SourcePlaceholders({ meta }: { meta: Entity['meta'] }) {
   const examples: string[] = [];
-  for (const [value, { example }] of Object.entries(source)) {
-    // Only placeholders with examples
-    if (example) {
-      examples.push(`$${value.toUpperCase()}$: ${example}`);
+  for (let [key, value] of meta) {
+    if (key === 'placeholders') {
+      try {
+        for (let [name, { example }] of Object.entries<any>(
+          JSON.parse(value),
+        )) {
+          if (example) {
+            examples.push(`$${name.toUpperCase()}$: ${example}`);
+          }
+        }
+      } catch {}
     }
   }
 
@@ -236,11 +241,8 @@ export function Metadata({
       <GroupComment comment={entity.group_comment} />
       <ResourceComment comment={entity.resource_comment} key={entity.pk} />
       <FluentAttribute entity={entity} />
-      {Array.isArray(entity.source) ? (
-        <SourceArray source={entity.source} />
-      ) : entity.source ? (
-        <SourceObject source={entity.source} />
-      ) : null}
+      <SourceReferences meta={entity.meta} />
+      <SourcePlaceholders meta={entity.meta} />
       <EntityContext
         entity={entity}
         localeCode={code}

@@ -631,11 +631,12 @@ def test_webext():
             approved=True,
         )
 
+        ph = '{"ORIGIN": {"content": "$1", "example": "developer.mozilla.org"}}'
         entity = EntityFactory.create(
             resource=res,
             key=["name"],
             string="Entity for $ORIGIN$",
-            source='{"ORIGIN": {"content": "$1", "example": "developer.mozilla.org"}}',
+            meta=[["placeholders", ph]],
         )
         TranslationFactory.create(
             entity=entity,

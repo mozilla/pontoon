@@ -22,10 +22,10 @@ export type Entity = {
   readonly comment: string;
   readonly group_comment: string;
   readonly resource_comment: string;
+  readonly meta: Array<[key: string, value: string]>;
   readonly format: string;
   readonly path: string;
   readonly project: Record<string, any>;
-  readonly source: Array<Array<string>> | Record<string, any>;
   readonly translation: EntityTranslation | undefined;
   readonly readonly: boolean;
   readonly isSibling: boolean;

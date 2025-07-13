@@ -28,16 +28,12 @@ class JsonKeyValueTests(TestCase):
 
         assert e0.key == ["No Comments or Sources"]
         assert e0.string == "Translated No Comments or Sources"
-        assert e0.comment == ""
-        assert e0.source == []
 
         assert t0.key == ("No Comments or Sources",)
         assert t0.string == "Translated No Comments or Sources"
 
         assert e1.key == ["Nested", "key"]
         assert e1.string == "value"
-        assert e1.comment == ""
-        assert e1.source == []
 
         assert t1.key == ("Nested", "key")
         assert t1.string == "value"
