@@ -51,9 +51,9 @@ def test_remove_resource():
         project = ProjectFactory.create(
             name="test-rm", locales=[locale], repositories=[repo]
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -95,9 +95,9 @@ def test_rename_resource():
         project = ProjectFactory.create(
             name="test-mv", locales=[locale], repositories=[repo]
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -143,8 +143,8 @@ def test_add_resource():
         project = ProjectFactory.create(
             name="test-add", locales=[locale], repositories=[repo]
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        ResourceFactory.create(project=project, path="b.po", format="po")
+        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        ResourceFactory.create(project=project, path="b.po", format="gettext")
 
         # Filesystem setup
         c_ftl = dedent(
@@ -200,7 +200,7 @@ def test_update_resource():
         res = {}
         for n in ("a", "b", "c"):
             res[n] = ResourceFactory.create(
-                project=project, path=f"{n}.ftl", format="ftl", total_strings=3
+                project=project, path=f"{n}.ftl", format="fluent", total_strings=3
             )
             for i in (1, 2, 3):
                 entity = EntityFactory.create(
@@ -276,7 +276,7 @@ def test_change_entities():
             visibility="public",
         )
         res = ResourceFactory.create(
-            project=project, path="res.ftl", format="ftl", total_strings=3
+            project=project, path="res.ftl", format="fluent", total_strings=3
         )
         for i in (1, 2, 3):
             entity = EntityFactory.create(

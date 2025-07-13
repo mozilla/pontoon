@@ -53,9 +53,9 @@ def test_kitchen_sink():
             locales=[locale_de, locale_fr],
             repositories=[repo_src, repo_tgt],
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
         for i in range(3):
             entity = EntityFactory.create(
                 resource=res_c,
@@ -312,7 +312,7 @@ def test_translation_before_source():
             locales=[locale_de],
             repositories=[repo_src, repo_tgt],
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
         TranslationFactory.create(
             entity=EntityFactory.create(
                 resource=res_a, key=["a0"], string="a0 = Message 0\n"
@@ -323,7 +323,7 @@ def test_translation_before_source():
             approved=True,
         )
 
-        res_b = ResourceFactory.create(project=project, path="b.ftl", format="ftl")
+        res_b = ResourceFactory.create(project=project, path="b.ftl", format="fluent")
         TranslationFactory.create(
             entity=EntityFactory.create(
                 resource=res_b, key=["b0"], string="b0 = Message 0\n"
@@ -397,7 +397,9 @@ def test_android():
             locales=[locale],
             repositories=[repo_src, repo_tgt],
         )
-        res = ResourceFactory.create(project=project, path="strings.xml", format="xml")
+        res = ResourceFactory.create(
+            project=project, path="strings.xml", format="android"
+        )
 
         entity = EntityFactory.create(
             resource=res, key=["quotes"], string="Prev quotes"
@@ -461,7 +463,7 @@ def test_fuzzy():
         project = ProjectFactory.create(
             name="test-write-fuzzy", locales=[locale], repositories=[repo]
         )
-        res = ResourceFactory.create(project=project, path="res.po", format="po")
+        res = ResourceFactory.create(project=project, path="res.po", format="gettext")
         TranslatedResourceFactory.create(locale=locale, resource=res)
         for i in range(5):
             string = f"Message {i}\n"
@@ -608,7 +610,7 @@ def test_webext():
             repositories=[repo_src, repo_tgt],
         )
         res = ResourceFactory.create(
-            project=project, path="messages.json", format="json"
+            project=project, path="messages.json", format="android"
         )
 
         entity = EntityFactory.create(resource=res, key=["plain"], string="Entity")

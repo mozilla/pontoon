@@ -45,7 +45,7 @@ describe('<TranslationLength>', () => {
 
   it('shows translation length and FTL original string length', () => {
     const wrapper = mountTranslationLength(
-      'ftl',
+      'fluent',
       'key = 123456',
       '1234567',
       '',

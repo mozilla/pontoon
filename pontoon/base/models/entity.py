@@ -515,7 +515,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             translation_filters = (
                 (
                     Q(
-                        Q(resource__format="ftl")
+                        Q(resource__format=Resource.Format.FLUENT)
                         & (
                             Q(
                                 **{
@@ -525,7 +525,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         )
                     )
                     | Q(
-                        ~Q(resource__format="ftl")
+                        ~Q(resource__format=Resource.Format.FLUENT)
                         & Q(**{f"translation__string__{i}regex": rf"{y}{escape(s)}{y}"})
                     )
                 )
@@ -549,11 +549,11 @@ class Entity(DirtyFieldsMixin, models.Model):
                     if search_exclude_source_strings
                     else (
                         Q(
-                            Q(resource__format="ftl")
+                            Q(resource__format=Resource.Format.FLUENT)
                             & (Q(**{f"string__{i}regex": rf"{r}{y}{escape(s)}{y}{o}"}))
                         )
                         | Q(
-                            ~Q(resource__format="ftl")
+                            ~Q(resource__format=Resource.Format.FLUENT)
                             & Q(**{f"string__{i}regex": rf"{y}{escape(s)}{y}"})
                         )
                     )

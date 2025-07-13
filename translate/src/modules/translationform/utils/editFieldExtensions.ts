@@ -83,7 +83,7 @@ export const getExtensions = (
   history(),
   closeBrackets(),
   EditorView.lineWrapping,
-  StreamLanguage.define<any>(format === 'ftl' ? fluentMode : commonMode),
+  StreamLanguage.define<any>(format === 'fluent' ? fluentMode : commonMode),
   syntaxHighlighting(style),
   decoratorPlugin,
   keymap.of([

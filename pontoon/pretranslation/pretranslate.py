@@ -21,7 +21,7 @@ from moz.l10n.model import (
     PatternMessage,
 )
 
-from pontoon.base.models import Entity, Locale, TranslationMemoryEntry
+from pontoon.base.models import Entity, Locale, Resource, TranslationMemoryEntry
 from pontoon.machinery.utils import get_google_translate_data
 
 
@@ -44,7 +44,7 @@ def get_pretranslation(
     """
 
     pt = Pretranslation(entity, locale, preserve_placeables)
-    if entity.resource.format == "ftl":
+    if entity.resource.format == Resource.Format.FLUENT:
         entry = fluent_parse_entry(entity.string, with_linepos=False)
         if entry.value:
             pt.message(entry.value)
@@ -58,7 +58,7 @@ def get_pretranslation(
             set_accesskey(entry, key, prop)
         pt_res = FluentSerializer().serialize_entry(fluent_astify_entry(entry))
     else:
-        if entity.resource.format == "po":
+        if entity.resource.format == Resource.Format.GETTEXT:
             format = Format.mf2
             msg = parse_message(format, entity.string)
         else:
@@ -80,9 +80,9 @@ class Pretranslation:
 
     def __init__(self, entity: Entity, locale: Locale, preserve_placeables: bool):
         match entity.resource.format:
-            case "ftl":
+            case Resource.Format.FLUENT:
                 self.format = Format.fluent
-            case "po":
+            case Resource.Format.GETTEXT:
                 self.format = Format.mf2
             case _:
                 self.format = None

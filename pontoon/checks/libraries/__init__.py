@@ -32,9 +32,9 @@ def run_checks(
         cl_checks = None
 
     tt_checks = {}
-    resource_ext = entity.resource.format
+    res_format = entity.resource.format
 
-    if use_tt_checks and resource_ext != "ftl":
+    if use_tt_checks and res_format != "fluent":
         # Always disable checks we don't use. For details, see:
         # https://bugzilla.mozilla.org/show_bug.cgi?id=1410619
         # https://bugzilla.mozilla.org/show_bug.cgi?id=1514691
@@ -48,7 +48,7 @@ def run_checks(
         # gettext plurals are temporarily represented using MF2 syntax,
         # with one/* variant keys in the source and 0/1/.../* in the translations.
         if (
-            resource_ext == "po"
+            res_format == "gettext"
             and original.startswith(".input")
             and original.endswith("}}")
         ):
@@ -56,9 +56,9 @@ def run_checks(
 
         # Some compare-locales checks overlap with Translate Toolkit checks
         if cl_checks is not None:
-            if resource_ext == "properties":
+            if res_format == "properties":
                 tt_disabled_checks.update(["escapes", "nplurals", "printf"])
-            elif resource_ext == "xml":
+            elif res_format == "android":
                 tt_disabled_checks.update(
                     [
                         "doublespacing",

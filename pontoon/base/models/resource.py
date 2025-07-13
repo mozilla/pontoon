@@ -25,15 +25,16 @@ class Resource(models.Model):
 
     # Format
     class Format(models.TextChoices):
+        ANDROID = "android", "android"
         DTD = "dtd", "dtd"
-        FTL = "ftl", "ftl"
+        FLUENT = "fluent", "fluent"
+        GETTEXT = "gettext", "gettext"
         INI = "ini", "ini"
-        JSON = "json", "json"
-        PO = "po", "po"
+        PLAIN_JSON = "plain_json", "plain_json"
         PROPERTIES = "properties", "properties"
-        XLF = "xlf", "xliff"
+        WEBEXT = "webext", "webext"
+        XCODE = "xcode", "xcode"
         XLIFF = "xliff", "xliff"
-        XML = "xml", "xml"
 
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=Format.choices

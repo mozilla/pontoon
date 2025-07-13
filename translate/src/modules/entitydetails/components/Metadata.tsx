@@ -190,7 +190,7 @@ const EntityContext = ({
   <Localized id='entitydetails-Metadata--context' attrs={{ title: true }}>
     <Property title='CONTEXT' className='context'>
       {key
-        .filter((_, i) => i !== 0 || format !== 'po')
+        .filter((_, i) => i !== 0 || format !== 'gettext')
         .toReversed()
         .map((k, i) => (
           <Fragment key={i}>

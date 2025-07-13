@@ -42,11 +42,11 @@ def run_checks(entity, original, string):
     :arg basestring string: a translation
     """
     checks = defaultdict(list)
-    resource_ext = entity.resource.format
+    format = entity.resource.format
 
     # Bug 1599056: Original and translation must either both end in a newline,
     # or none of them should.
-    if resource_ext == "po":
+    if format == "gettext":
         if original.endswith("\n") != string.endswith("\n"):
             checks["pErrors"].append("Ending newline mismatch")
         if string != "":
@@ -67,7 +67,7 @@ def run_checks(entity, original, string):
         checks["pErrors"].append("Empty translations are not allowed")
 
     # FTL checks
-    if resource_ext == "ftl" and string != "":
+    if format == "fluent" and string != "":
         translation_ast = parser.parse_entry(string)
         entity_ast = parser.parse_entry(entity.string)
 

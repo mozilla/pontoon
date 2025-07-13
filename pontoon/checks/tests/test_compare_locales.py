@@ -1,5 +1,3 @@
-import os
-
 from textwrap import dedent
 from unittest.mock import MagicMock
 
@@ -15,7 +13,7 @@ from pontoon.checks.libraries.compare_locales import (
 
 
 def mock_quality_check_args(
-    resource_ext="",
+    format,
     translation="",
     resource_entities=None,
     resource_path=None,
@@ -27,12 +25,20 @@ def mock_quality_check_args(
     """
     entity = MagicMock()
     entity.key = ["entity_a"]
+    entity.resource.format = format
     if resource_path:
         entity.resource.path = resource_path
-        entity.resource.format = os.path.splitext(resource_path)[1][1:]
     else:
-        entity.resource.path = f"resource1.{resource_ext}"
-        entity.resource.format = resource_ext
+        match format:
+            case "android":
+                ext = "xml"
+            case "fluent":
+                ext = "ftl"
+            case "gettext":
+                ext = "po"
+            case _:
+                ext = format
+        entity.resource.path = f"resource1.{ext}"
     entity.comment = ""
     res_entities = []
 
@@ -73,7 +79,7 @@ def test_unsupported_resource_file():
     compare-locales.
     """
     with pytest.raises(UnsupportedResourceTypeError):
-        cast_to_compare_locales(".random_ext", None, None)
+        cast_to_compare_locales("random_ext", None, None)
 
 
 @pytest.mark.django_db
@@ -82,7 +88,7 @@ def test_cast_to_properties(entity_with_comment, translation_a, entity_a):
     Cast entities from .properties resources to PropertiesEntity
     """
     refEnt, transEnt = cast_to_compare_locales(
-        ".properties", entity_with_comment, translation_a.string
+        "properties", entity_with_comment, translation_a.string
     )
 
     assert isinstance(refEnt, ComparePropertiesEntity)
@@ -103,7 +109,7 @@ def test_cast_to_dtd(entity_with_comment, translation_a, entity_a):
     Cast entities from .dtd resources to DTDEntity
     """
     refEnt, transEnt = cast_to_compare_locales(
-        ".dtd", entity_with_comment, translation_a.string
+        "dtd", entity_with_comment, translation_a.string
     )
 
     assert isinstance(refEnt, CompareDTDEntity)
@@ -123,26 +129,20 @@ def test_cast_to_dtd(entity_with_comment, translation_a, entity_a):
 @pytest.mark.parametrize(
     "quality_check_args",
     (
+        mock_quality_check_args("properties", string="Foobar2", translation="Barfoo2"),
+        mock_quality_check_args("properties", string="Mozilla", translation="Allizom"),
         mock_quality_check_args(
-            resource_ext="properties", string="Foobar2", translation="Barfoo2"
-        ),
-        mock_quality_check_args(
-            resource_ext="properties",
-            string="Mozilla",
-            translation="Allizom",
-        ),
-        mock_quality_check_args(
-            resource_ext="properties",
+            "properties",
             string="モジラ",
             translation="モジラ translation",
         ),
         mock_quality_check_args(
-            resource_ext="dtd",
+            "dtd",
             string="モジラ",
             translation="モジラ translation",
         ),
         mock_quality_check_args(
-            resource_ext="ftl",
+            "fluent",
             string="entity = モジラ",
             translation="entity = モジラ translation",
         ),
@@ -160,7 +160,7 @@ def test_valid_translations(quality_check_args):
     (
         (
             mock_quality_check_args(
-                resource_ext="properties",
+                "properties",
                 string="%s Foo %s bar %s",
                 translation="%d Bar %d foo %d \\q %",
             ),
@@ -171,7 +171,7 @@ def test_valid_translations(quality_check_args):
         ),
         (
             mock_quality_check_args(
-                resource_ext="properties",
+                "properties",
                 string="Invalid #1 entity",
                 comment="Localization_and_Plurals",
                 translation="Invalid #1;translation #2",
@@ -180,7 +180,7 @@ def test_valid_translations(quality_check_args):
         ),
         (
             mock_quality_check_args(
-                resource_ext="properties",
+                "properties",
                 string="Multi plural entity",
                 comment="Localization_and_Plurals",
                 translation="translation1;translation2;translation3",
@@ -199,7 +199,7 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
     (
         (
             mock_quality_check_args(
-                resource_ext="dtd",
+                "dtd",
                 key=["test"],
                 string="2005",
                 translation="not a number",
@@ -208,7 +208,7 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         ),
         (
             mock_quality_check_args(
-                resource_ext="dtd",
+                "dtd",
                 key=["test"],
                 string="Second &aa; entity",
                 translation="Testing &NonExistingKey; translation",
@@ -227,7 +227,7 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         ),
         (
             mock_quality_check_args(
-                resource_ext="dtd",
+                "dtd",
                 key=["test"],
                 string="Valid entity",
                 translation="&validProductName; translation",
@@ -240,7 +240,7 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         ),
         (
             mock_quality_check_args(
-                resource_ext="dtd",
+                "dtd",
                 key=["test"],
                 string="&validProductName; - 2017",
                 comment="Some comment",
@@ -254,7 +254,7 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
         ),
         (
             mock_quality_check_args(
-                resource_ext="dtd",
+                "dtd",
                 key=["test"],
                 string="Mozilla 2017",
                 comment="Some comment",
@@ -274,7 +274,7 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
     (
         (
             mock_quality_check_args(
-                resource_ext="ftl",
+                "fluent",
                 string=dedent(
                     """
                 brandName = Firefox
@@ -291,7 +291,7 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
         ),
         (
             mock_quality_check_args(
-                resource_ext="ftl",
+                "fluent",
                 string=dedent(
                     """
                 windowTitle = Old translations
@@ -308,7 +308,7 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
         ),
         (
             mock_quality_check_args(
-                resource_ext="ftl",
+                "fluent",
                 string=dedent(
                     """
                 windowTitle = Old translations
@@ -326,7 +326,7 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
         ),
         (
             mock_quality_check_args(
-                resource_ext="ftl",
+                "fluent",
                 string=dedent(
                     """
                 windowTitle = Old translations
@@ -351,6 +351,7 @@ def test_invalid_ftl_translations(quality_check_args, failed_checks):
 
 def test_android_apostrophes():
     quality_check_args = mock_quality_check_args(
+        "android",
         resource_path="strings.xml",
         key=["test"],
         string="Source string",

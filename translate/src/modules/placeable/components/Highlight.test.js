@@ -13,7 +13,7 @@ const mountMarker = (content, terms = [], search = null) =>
   );
 
 describe('Test parser order', () => {
-  it('matches JSON placeholder', () => {
+  it('matches webext placeholder', () => {
     const content = 'You have created $COUNT$ aliases';
     const wrapper = mountMarker(content);
 

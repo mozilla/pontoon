@@ -81,7 +81,7 @@ def entity_ftl_mock():
     """
     mock = MagicMock()
     mock.resource.path = "file.ftl"
-    mock.resource.format = Resource.Format.FTL
+    mock.resource.format = Resource.Format.FLUENT
     mock.resource.all.return_value = []
     mock.string = dedent(
         """

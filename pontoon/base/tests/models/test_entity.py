@@ -282,7 +282,7 @@ def test_entity_project_locale_no_paths(
         "comment": "",
         "group_comment": "",
         "resource_comment": "",
-        "format": "po",
+        "format": "gettext",
         "obsolete": False,
         "key": ["Entity zero"],
         "path": resource0.path,

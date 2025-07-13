@@ -271,16 +271,17 @@ def translations_equal(
 ) -> bool:
     if a == b:
         return True
-    if format != "ftl" or not isinstance(a, str) or not isinstance(b, str):
+    if not isinstance(a, str) or not isinstance(b, str):
         return False
-    parser = FluentParser(with_spans=False)
-    try:
-        fa = parser.parse(a)
-        fb = parser.parse(b)
-        return fa.equals(fb)
-    except Exception as error:
-        log.debug(f"[{project.slug}:{db_path}] Parse error: {error}")
-        return False
+    if format == Resource.Format.FLUENT:
+        parser = FluentParser(with_spans=False)
+        try:
+            fa = parser.parse(a)
+            fb = parser.parse(b)
+            return fa.equals(fb)
+        except Exception as error:
+            log.debug(f"[{project.slug}:{db_path}] Parse error: {error}")
+    return False
 
 
 def update_db_translations(
