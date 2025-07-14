@@ -1,6 +1,6 @@
-from pontoon.api.models import PersonalAccessToken
 from rest_framework import serializers
 
+from pontoon.api.models import PersonalAccessToken
 from pontoon.base.models import (
     Locale,
     Project,
@@ -221,22 +221,24 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
             return obj.project.slug
         return None
 
+
 class PersonalAccessTokenSerializer(serializers.ModelSerializer):
-    token_hash = serializers.CharField(read_only=True)
+    # token_id = serializers.CharField(read_only=True)
+    # token_hash = serializers.CharField(read_only=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    revoked = serializers.BooleanField(read_only=True)
+    # revoked = serializers.BooleanField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
     last_used = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = PersonalAccessToken
         fields = [
-            "token_id",
-            "token_hash",
+            # "token_id",
+            # "token_hash",
             "user",
             "note",
             "expires_at",
-            "revoked",
+            # "revoked",
             "created_at",
             "last_used",
         ]

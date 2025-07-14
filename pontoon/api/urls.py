@@ -64,7 +64,7 @@ api_auth_patterns = [
         # Create Personal Access Token
         "token/",
         views.PersonalAccessTokenCreateView.as_view(),
-        name="create-personal-access-token"
+        name="create-personal-access-token",
     ),
 ]
 
