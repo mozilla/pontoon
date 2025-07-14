@@ -382,7 +382,7 @@ def test_get_pretranslations_fluent_accesskeys_prefixed_label_attribute(
 def test_get_pretranslations_fluent_accesskeys_ignore_placeables(
     gt_mock, fluent_resource, google_translate_locale
 ):
-    # Ignore placeables whene generating accesskeys
+    # Ignore placeables when generating accesskeys
     input_string = dedent(
         """
         title = Title
@@ -397,6 +397,11 @@ def test_get_pretranslations_fluent_accesskeys_ignore_placeables(
         "translation": "{ $0 } gt_translation",
     }
 
+    # The `title` value here is hacky, but demonstrates that
+    # a Google Translate response that includes an unexpected `{$0}`
+    # does not cause a failure, just odd output.
+    # For the `.label` it's expected,
+    # and therefore replaced with the correct placeholder.
     expected = dedent(
         """
         title = {$0} gt_translation
@@ -738,6 +743,9 @@ def test_get_pretranslations_fluent_complex(
 def test_get_pretranslations_fluent_placeholders(
     gt_mock, fluent_resource, google_translate_locale
 ):
+    # Tests for various Fluent placeholders.
+    # - Placeholders are replaced by {$0}, {$1}, ... when passing to Google Translate.
+    # - Original placeholders are retained in final result.
     def gt_mock_fn(**kwargs):
         return {"status": True, "translation": f"GT: {kwargs['text']}"}
 
