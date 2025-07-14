@@ -3,6 +3,9 @@ from datetime import datetime, timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -120,6 +123,85 @@ def get_user_actions(request, date, slug):
             },
         }
     )
+
+
+class UserActionsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, date, slug):
+        try:
+            start_date = make_aware(datetime.strptime(date, "%Y-%m-%d"))
+        except ValueError:
+            raise ValidationError("Bad Request in kwarg: 'date'.")
+
+        end_date = start_date + timedelta(days=1)
+
+        project = generics.get_object_or_404(Project, slug=slug)
+
+        actions = ActionLog.objects.filter(
+            action_type__startswith="translation:",
+            created_at__gte=start_date,
+            created_at__lt=end_date,
+            translation__entity__resource__project=project,
+        )
+
+        actions = actions.prefetch_related(
+            "performed_by__profile",
+            "translation__entity__resource",
+            "translation__errors",
+            "translation__warnings",
+            "translation__locale",
+            "entity__resource",
+            "locale",
+        )
+
+        output = []
+
+        for action in actions:
+            user = action.performed_by
+            locale = action.locale or action.translation.locale
+            entity = action.entity or action.translation.entity
+            resource = entity.resource
+
+            data = {
+                "type": action.action_type,
+                "date": action.created_at,
+                "user": {
+                    "pk": user.pk,
+                    "name": user.display_name,
+                    "system_user": user.profile.system_user,
+                },
+                "locale": {
+                    "pk": locale.pk,
+                    "code": locale.code,
+                    "name": locale.name,
+                },
+                "entity": {
+                    "pk": entity.pk,
+                    "key": entity.key,
+                },
+                "resource": {
+                    "pk": resource.pk,
+                    "path": resource.path,
+                    "format": resource.format,
+                },
+            }
+
+            if action.translation:
+                data["translation"] = action.translation.serialize()
+
+            output.append(data)
+
+        return Response(
+            {
+                "actions": output,
+                "project": {
+                    "pk": project.pk,
+                    "slug": project.slug,
+                    "name": project.name,
+                },
+            }
+        )
 
 
 class LocaleListView(generics.ListAPIView):
