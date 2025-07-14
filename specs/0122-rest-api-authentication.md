@@ -1,6 +1,6 @@
 - Feature Name: API Authentication
 - Created: 2025-07-14
-- Associated Issue: #2502
+- Associated Issue: [#2502](https://github.com/mozilla/pontoon/issues/2502)
 
 # Summary
 
