@@ -12,6 +12,7 @@ from pontoon.terminology.models import (
 )
 
 
+# DO NOT REMOVE serializers.SerializerMetaclass, it is required for serializer functionality
 class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
     total_strings = serializers.SerializerMethodField()
     approved_strings = serializers.SerializerMethodField()
@@ -47,6 +48,18 @@ class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
         return obj.is_complete
 
 
+TRANSLATION_STATS_FIELDS = [
+    "total_strings",
+    "approved_strings",
+    "pretranslated_strings",
+    "strings_with_warnings",
+    "strings_with_errors",
+    "missing_strings",
+    "unreviewed_strings",
+    "complete",
+]
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -73,15 +86,7 @@ class LocaleSerializer(serializers.ModelSerializer):
             "ms_translator_code",
             "systran_translate_code",
             "team_description",
-            "total_strings",
-            "approved_strings",
-            "pretranslated_strings",
-            "strings_with_warnings",
-            "strings_with_errors",
-            "missing_strings",
-            "unreviewed_strings",
-            "complete",
-        ]
+        ] + TRANSLATION_STATS_FIELDS
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -101,15 +106,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "disabled",
             "sync_disabled",
             "pretranslation_enabled",
-            "total_strings",
-            "approved_strings",
-            "pretranslated_strings",
-            "strings_with_warnings",
-            "strings_with_errors",
-            "missing_strings",
-            "unreviewed_strings",
-            "complete",
-        ]
+        ] + TRANSLATION_STATS_FIELDS
 
     def get_contact(self, obj):
         if obj.contact:
@@ -124,15 +121,7 @@ class ProjectLocaleSerializer(TranslationStatsMixin, serializers.ModelSerializer
         model = ProjectLocale
         fields = [
             "locale",
-            "total_strings",
-            "approved_strings",
-            "pretranslated_strings",
-            "strings_with_warnings",
-            "strings_with_errors",
-            "missing_strings",
-            "unreviewed_strings",
-            "complete",
-        ]
+        ] + TRANSLATION_STATS_FIELDS
 
 
 class NestedProjectSerializer(TranslationStatsMixin, ProjectSerializer):
@@ -206,9 +195,8 @@ class TermSerializer(serializers.ModelSerializer):
         if not locale:
             return None
 
-        for translated_term in obj.translations.all():
-            if translated_term.locale.code == locale:
-                return translated_term.text
+        term = obj.translations.filter(locale__code=locale).first()
+        return term.text if term else None
 
 
 class TranslationMemorySerializer(serializers.ModelSerializer):

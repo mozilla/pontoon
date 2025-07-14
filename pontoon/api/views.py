@@ -129,7 +129,7 @@ class LocaleListView(generics.ListAPIView):
 
     def get_queryset(self):
         locales = Locale.objects.prefetch_related("project_locale__project").distinct()
-        return locales.stats_data()
+        return locales.stats_data().order_by("code")
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
