@@ -24,10 +24,11 @@ The PAT implementation includes the following features:
 - Tokens can be deleted, but their values cannot be viewed again after the initial creation  
 - Admins can monitor token usage and revoke tokens if necessary  
 - A user’s Pontoon permissions determine what their token can access
+- Actions performed with a user's PAT correspond directly to their account.
 
 ## Creating, Viewing, and Deleting a Personal Access Token
 
-A new **Personal Access Tokens** section will appear in the Settings page. A **Generate a New Access Token** button will allow users to create a new token, which is appended to a list (maximum of 10). Users can optionally add an expiration date and a note to each token to help identify its purpose.
+A new **Personal Access Tokens** section will appear in the Settings page. A **Generate a New Access Token** button will allow users to create a new token, which is appended to a list (maximum of 10). Users must select an expiration date and optionally include a note to each token to help identify its purpose.
 
 After generation, the token is displayed once for the user to copy. Refreshing the page or navigating away will hide the token permanently.
 
@@ -54,6 +55,6 @@ Multiple consecutive failed attempts will result in the user's IP address being 
 
 ## Admin Usage
 
-Admins have access to the [`Django Admin Dashboard`](https://docs.djangoproject.com/en/5.2/ref/contrib/admin/), where they can view token usage, usernames, and revoke tokens as needed.
+Admins have access to the [`Django Admin Dashboard`](https://docs.djangoproject.com/en/5.2/ref/contrib/admin/), where they can view token usage, usernames, and revoke tokens as needed. For security reasons, only the hashed version of each token is visible—admins cannot view the original token value.
 
 When a token is revoked, the associated user receives a notification indicating its revocation, along with corresponding updates to their list of tokens.
