@@ -1,11 +1,11 @@
-import timezone
-from pontoon.api.models import PersonalAccessToken
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework import generics
 
 from django.contrib.auth.hashers import check_password
-from django.contrib.auth.models import User
+from django.utils import timezone
+
+from pontoon.api.models import PersonalAccessToken
+
 
 class PersonalAccessTokenAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -17,24 +17,24 @@ class PersonalAccessTokenAuthentication(BaseAuthentication):
             )
 
         try:
-            id, unhashed_token = auth_header.split(" ")[1].split("_")
+            token_id, unhashed_token = auth_header.split(" ")[1].split("_")
         except ValueError:
             raise AuthenticationFailed({"detail": "Malformed token format"})
-        
+
         try:
-            pat = PersonalAccessToken.objects.get(id=id)
+            pat = PersonalAccessToken.objects.get(token_id=token_id)
         except PersonalAccessToken.DoesNotExist:
             raise AuthenticationFailed({"detail": "Invalid token"})
-        
+
         if not check_password(unhashed_token, pat.token_hash):
             raise AuthenticationFailed({"detail": "Invalid token"})
-        
+
         if pat.revoked:
             raise AuthenticationFailed({"detail": "Token has been revoked"})
-        
+
         if pat.expires_at and pat.expires_at < timezone.now():
             raise AuthenticationFailed({"detail": "Token has expired"})
-        
+
         user = pat.user
         return (user, None)
 
