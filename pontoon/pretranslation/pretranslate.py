@@ -1,130 +1,257 @@
-import logging
-import operator
-import re
+from copy import deepcopy
+from re import compile
+from typing import Literal
 
-from functools import reduce
-
-from fluent.syntax import FluentParser, FluentSerializer
-
-from django.db.models import CharField, Value as V
-from django.db.models.functions import Concat
-
-from pontoon.base.models import Entity, Locale, TranslatedResource, User
-from pontoon.machinery.utils import (
-    get_google_translate_data,
-    get_translation_memory_data,
+from fluent.syntax import FluentSerializer, ast as FTL
+from fluent.syntax.serializer import serialize_expression
+from moz.l10n.formats import Format
+from moz.l10n.formats.fluent import (
+    fluent_astify_entry,
+    fluent_astify_message,
+    fluent_parse_entry,
 )
-from pontoon.pretranslation import AUTHORS
+from moz.l10n.message import parse_message, serialize_message
+from moz.l10n.model import (
+    CatchallKey,
+    Entry,
+    Expression,
+    Markup,
+    Message,
+    Pattern,
+    PatternMessage,
+)
 
-from .transformer import ApplyPretranslation
+from pontoon.base.models import Entity, Locale, TranslationMemoryEntry
+from pontoon.machinery.utils import get_google_translate_data
 
 
-log = logging.getLogger(__name__)
-
-parser = FluentParser()
-serializer = FluentSerializer()
+pt_placeholder = compile(r"{ *\$(\d+) *}")
 
 
 def get_pretranslation(
     entity: Entity, locale: Locale, preserve_placeables: bool = False
-) -> tuple[str, User] | None:
+) -> tuple[str, Literal["gt", "tm"]]:
     """
     Get pretranslations for the entity-locale pair using internal translation memory and
     Google's machine translation.
 
-    For Fluent strings, uplift SelectExpressions, serialize Placeables as TextElements
-    and then only pretranslate TextElements. Set the most frequent TextElement
-    pretranslation author as the author of the entire pretranslation.
+    For entities with multiple variants and/or Fluent attributes,
+    sets the most frequent pretranslation author as the author of the entire pretranslation.
 
-    :arg Entity entity: the Entity object
-    :arg Locale locale: the Locale object
-    :arg boolean preserve_placeables
-
-    :returns: None, or a tuple consisting of:
+    :returns: A tuple consisting of:
         - a pretranslation of the entity
-        - a user (representing TM or GT service)
+        - a pretranslation service identifier, either "gt" or "tm"
     """
-    source = entity.string
-    services = {k: User.objects.get(email=email) for k, email in AUTHORS.items()}
 
+    pt = Pretranslation(entity, locale, preserve_placeables)
     if entity.resource.format == "ftl":
-        entry = parser.parse_entry(source)
-        pretranslate = ApplyPretranslation(
-            locale, entry, get_pretranslated_data, preserve_placeables
-        )
-
-        try:
-            pretranslate.visit(entry)
-        except ValueError as e:
-            log.info(f"Fluent pretranslation error: {e}")
-            return None
-
-        pretranslation = serializer.serialize_entry(entry)
-
-        # Parse and serialize pretranslation again in order to assure cannonical style
-        parsed_pretranslation = parser.parse_entry(pretranslation)
-        pretranslation = serializer.serialize_entry(parsed_pretranslation)
-
-        authors = [services[service] for service in pretranslate.services]
-        author = max(set(authors), key=authors.count) if authors else services["tm"]
-
-        return (pretranslation, author)
-
-    # For now, disable pretranslation for plural gettext messages.
-    # https://github.com/mozilla/pontoon/issues/3694
-    elif entity.resource.format == "po" and ".match" in source:
-        return None
-
+        entry = fluent_parse_entry(entity.string, with_linepos=False)
+        if entry.value:
+            pt.message(entry.value)
+        accesskeys: list[tuple[str, Message]] = []
+        for key, prop in entry.properties.items():
+            if key.endswith("accesskey"):
+                accesskeys.append((key, prop))
+            else:
+                pt.message(prop)
+        for key, prop in accesskeys:
+            set_accesskey(entry, key, prop)
+        pt_res = FluentSerializer().serialize_entry(fluent_astify_entry(entry))
     else:
-        pretranslation, service = get_pretranslated_data(
-            source, locale, preserve_placeables
+        if entity.resource.format == "po":
+            format = Format.mf2
+            msg = parse_message(format, entity.string)
+        else:
+            format = None
+            msg = PatternMessage([entity.string])
+        pt.message(msg)
+        pt_res = serialize_message(format, msg)
+
+    pt_service = max(set(pt.services), key=pt.services.count) if pt.services else "tm"
+    return (pt_res, pt_service)
+
+
+class Pretranslation:
+    format: Format | None
+    locale: Locale
+    preserve_placeables: bool
+    services: list[Literal["gt", "tm"]]
+    source: str
+
+    def __init__(self, entity: Entity, locale: Locale, preserve_placeables: bool):
+        match entity.resource.format:
+            case "ftl":
+                self.format = Format.fluent
+            case "po":
+                self.format = Format.mf2
+            case _:
+                self.format = None
+        self.source = entity.string
+        self.locale = locale
+        self.preserve_placeables = preserve_placeables
+        self.services = []
+
+    def message(self, msg: Message) -> None:
+        """Modifies `msg`."""
+        if isinstance(msg, PatternMessage):
+            msg.pattern = self.pattern(msg.pattern)
+        else:
+            # catchall category is always last, and is always included
+            plurals = self.locale.cldr_plurals_list()[:-1]
+
+            # Plural selectors need special attention
+            plural_selectors = [
+                idx
+                for idx, sel in enumerate(msg.selector_expressions())
+                if sel.function in ("integer", "number")
+            ]
+
+            # Do not translate plural "one" variants if not used in the target locale
+            has_pc_one = "one" in plurals
+            rm_keys = []
+            for keys, pattern in msg.variants.items():
+                if not has_pc_one and any(
+                    keys[idx] == "one" for idx in plural_selectors
+                ):
+                    rm_keys.append(keys)
+                else:
+                    pattern[:] = self.pattern(pattern)
+            for keys in rm_keys:
+                del msg.variants[keys]
+
+            # Copy catchall patterns for the locale's other plural categories
+            if plurals:
+                for idx in plural_selectors:
+                    tgt_variants = {}
+                    for keys, pattern in msg.variants.items():
+                        key = keys[idx]
+                        if isinstance(key, CatchallKey):
+                            for pc in plurals:
+                                pc_keys = keys[:idx] + (pc,) + keys[idx + 1 :]
+                                if pc_keys not in msg.variants:
+                                    tgt_variants[pc_keys] = deepcopy(pattern)
+                        tgt_variants[keys] = pattern
+                    msg.variants = tgt_variants
+
+    def pattern(self, pattern: Pattern) -> Pattern:
+        # First try to get a 100% match from Translation Memory
+        tm_source = (
+            "".join(
+                el.value
+                if isinstance(el, FTL.TextElement)
+                else serialize_expression(el)
+                for el in fluent_astify_message(PatternMessage(pattern)).elements
+            )
+            if self.format == Format.fluent
+            else self.source
         )
-        if pretranslation is None:
-            return None
-        return (pretranslation, services[service])
-
-
-def get_pretranslated_data(source: str, locale: Locale, preserve_placeables: bool):
-    # Empty strings and strings containing whitespace only do not need translation
-    if re.search("^\\s*$", source):
-        return source, "tm"
-
-    # Try to get matches from Translation Memory
-    tm_response = get_translation_memory_data(text=source, locale=locale)
-    tm_perfect = [t for t in tm_response if int(t["quality"]) == 100]
-    if tm_perfect:
-        return tm_perfect[0]["target"], "tm"
-
-    # Fetch from Google Translate
-    elif locale.google_translate_code:
-        gt_response = get_google_translate_data(
-            text=source, locale=locale, preserve_placeables=preserve_placeables
+        if not tm_source or tm_source.isspace():
+            return pattern
+        tm_q100 = list(
+            TranslationMemoryEntry.objects.filter(
+                locale=self.locale, source=tm_source
+            ).values_list("target", flat=True)
         )
-        if gt_response["status"]:
-            return gt_response["translation"], "gt"
+        if tm_q100:
+            tm_best = max(set(tm_q100), key=tm_q100.count)
+            self.services.append("tm")
+            if self.format == Format.fluent:
+                te = fluent_parse_entry(f"key = {tm_best}\n")
+                assert isinstance(te.value, PatternMessage)
+                return te.value.pattern
+            else:
+                return [tm_best]
 
-    return None, None
+        placeholders: list[Expression | Markup] = []
+        gt_source = ""
+        has_text = False
+        for el in pattern:
+            if isinstance(el, str):
+                if el and not el.isspace():
+                    has_text = True
+                # Machine translation treats each line as a separate sentence,
+                # hence we replace newline characters with spaces.
+                gt_source += el.replace("\n", " ")
+            else:
+                idx = len(placeholders)
+                placeholders.append(el)
+                gt_source += "{$" + str(idx) + "}"
+        if not has_text:
+            return pattern
 
+        if self.locale.google_translate_code:
+            # Try to fetch from Google Translate
+            gt_response = get_google_translate_data(
+                text=gt_source,
+                locale=self.locale,
+                preserve_placeables=self.preserve_placeables,
+            )
+            if gt_response["status"]:
+                self.services.append("gt")
+                return [
+                    el
+                    if idx % 2 == 0
+                    else (
+                        placeholders[int(el)]
+                        if int(el) < len(placeholders)
+                        else "{$" + el + "}"
+                    )
+                    for idx, el in enumerate(
+                        pt_placeholder.split(gt_response["translation"])
+                    )
+                    if el != ""
+                ]
 
-def update_changed_instances(tr_filter, tr_dict, translations):
-    """
-    Update the latest activity and stats for changed TranslatedResources
-    """
-    tr_filter = tuple(tr_filter)
-    # Combine all generated filters with an OK operator.
-    # `operator.ior` is the '|' Python operator, which turns into a logical OR
-    # when used between django ORM query objects.
-    tr_query = reduce(operator.ior, tr_filter)
-
-    translatedresources = TranslatedResource.objects.filter(tr_query).annotate(
-        locale_resource=Concat(
-            "locale_id", V("-"), "resource_id", output_field=CharField()
+        raise ValueError(
+            f"Pretranslation for `{self.source}` to {self.locale.code} not available."
         )
-    )
 
-    translatedresources.calculate_stats()
 
-    for tr in translatedresources:
-        index = tr_dict[tr.locale_resource]
-        translation = translations[index]
-        translation.update_latest_translation()
+def set_accesskey(entry: Entry[Message], ak_name: str, ak_msg: Message):
+    """Modifies `ak_msg`."""
+
+    if ak_name == "accesskey":
+        label = next(
+            (
+                value
+                for key, value in entry.properties.items()
+                if key in {"label", "value", "aria-label"}
+            ),
+            entry.value,
+        )
+    else:
+        label = entry.properties.get(ak_name.replace("accesskey", "label"), None)
+        if label is None:
+            return
+
+    def get_first_char(pattern: Pattern):
+        return next(
+            (
+                ch
+                for part in pattern
+                if isinstance(part, str) and (ch := part.lstrip()[:1])
+            ),
+            None,
+        )
+
+    if isinstance(ak_msg, PatternMessage):
+        if len(ak_msg.pattern) == 1 and isinstance(ak_msg.pattern[0], str):
+            if isinstance(label, PatternMessage):
+                first_char = get_first_char(label.pattern)
+            else:
+                catchall = tuple(CatchallKey() for _ in label.selectors)
+                first_char = get_first_char(label.variants[catchall])
+            if first_char:
+                ak_msg.pattern = [first_char]
+    elif isinstance(label, PatternMessage):
+        first_char = get_first_char(label.pattern)
+        if first_char:
+            for pattern in ak_msg.variants.values():
+                pattern[:] = [first_char]
+    elif ak_msg.selector_expressions() == label.selector_expressions() and set(
+        ak_msg.variants
+    ) == set(label.variants):
+        for keys, pattern in ak_msg.variants.items():
+            first_char = get_first_char(label.variants[keys])
+            if first_char:
+                pattern[:] = [first_char]
