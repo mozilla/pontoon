@@ -53,6 +53,6 @@ Multiple consecutive failed attempts will result in the user's IP address being 
 
 ## Admin Usage
 
-Admins have access to the [`Django Admin Dashboard`](https://docs.djangoproject.com/en/5.2/ref/contrib/admin/), where they can view token usage, usernames, and revoke tokens as needed. For security reasons, only the hashed version of each token is visible—admins cannot view the original token value.
+Admins have access to the [`Django Admin`](https://docs.djangoproject.com/en/5.2/ref/contrib/admin/), where they can view token usage, usernames, and revoke tokens as needed. For security reasons, only the hashed version of each token is visible—admins cannot view the original token value.
 
 When a token is revoked, the associated user receives a notification indicating its revocation, along with corresponding updates to their list of tokens.
