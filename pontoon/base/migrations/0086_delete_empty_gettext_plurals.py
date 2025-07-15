@@ -20,7 +20,6 @@ def delete_empty_gettext_plurals(apps, schema_editor):
                 performed_by=sync_user,
                 entity_id=t.entity_id,
                 locale_id=t.locale_id,
-                translation=t,
             )
             for t in translations
         ]
