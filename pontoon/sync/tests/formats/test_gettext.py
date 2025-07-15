@@ -174,7 +174,7 @@ class GettextTests(TestCase):
         assert not t7.fuzzy
         assert t7.order == 7
 
-    def test_context(self):
+    def test_context_and_empty_messages(self):
         src = dedent("""
             #
             msgid ""
@@ -199,7 +199,9 @@ class GettextTests(TestCase):
 
             msgctxt "Other context"
             msgid "Source"
-            msgstr ""
+            msgid_plural "Source Plural"
+            msgstr[0] ""
+            msgstr[1] ""
 
             msgid "Source"
             msgstr ""
@@ -213,9 +215,16 @@ class GettextTests(TestCase):
 
         assert t0.source_string == "Source"
         assert t0.key == "Main context\x04Source"
+        assert t0.string is None
 
-        assert t1.source_string == "Source"
+        assert t1.source_string == dedent("""\
+            .input {$n :number}
+            .match $n
+            one {{Source}}
+            * {{Source Plural}}""")
         assert t1.key == "Other context\x04Source"
+        assert t1.string is None
 
         assert t2.source_string == "Source"
         assert t2.key == "Source"
+        assert t2.string is None
