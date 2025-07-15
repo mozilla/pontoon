@@ -45,8 +45,6 @@ curl \
   -H "Authorization: Bearer <YOUR-TOKEN>" \
   https://example.com/api/v2/resource/
 ```
-
-
 ### Incorrect Usage
 
 If a user tries to access a protected endpoint without a valid token or without sufficient permissions, a `403 Unauthorized` response is returned.
