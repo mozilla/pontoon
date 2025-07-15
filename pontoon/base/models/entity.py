@@ -611,7 +611,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             try:
                 readonly = entity.resource.project.projectlocale[0].readonly
             except IndexError:
-                print(entity, "IndexError")
                 # Entities explicitly requested using `string` or `list` URL parameters
                 # might not be enabled for localization for the given locale. If the
                 # project is given in the URL, the 404 page shows up, but if the All
