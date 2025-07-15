@@ -32,7 +32,12 @@ def as_translation(order: int, entry: Entry[Message]):
     context = entry.id[1] if len(entry.id) == 2 else ""
     if context:
         key = context + "\x04" + key
-    string = serialize_message(Format.mf2, entry.value)
+    if isinstance(entry.value, SelectMessage) and all(
+        not pattern or pattern == [""] for pattern in entry.value.variants.values()
+    ):
+        string = None
+    else:
+        string = serialize_message(Format.mf2, entry.value)
     comment = entry.get_meta("extracted-comments")
 
     source_str = entry.id[0]
