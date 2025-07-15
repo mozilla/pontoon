@@ -12,6 +12,18 @@ from pontoon.terminology.models import (
 )
 
 
+TRANSLATION_STATS_FIELDS = [
+    "total_strings",
+    "approved_strings",
+    "pretranslated_strings",
+    "strings_with_warnings",
+    "strings_with_errors",
+    "missing_strings",
+    "unreviewed_strings",
+    "complete",
+]
+
+
 # DO NOT REMOVE serializers.SerializerMetaclass, it is required for serializer functionality
 class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
     total_strings = serializers.SerializerMethodField()
@@ -46,18 +58,6 @@ class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
 
     def get_complete(self, obj):
         return obj.is_complete
-
-
-TRANSLATION_STATS_FIELDS = [
-    "total_strings",
-    "approved_strings",
-    "pretranslated_strings",
-    "strings_with_warnings",
-    "strings_with_errors",
-    "missing_strings",
-    "unreviewed_strings",
-    "complete",
-]
 
 
 class TagSerializer(serializers.ModelSerializer):
