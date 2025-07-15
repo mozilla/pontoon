@@ -2,7 +2,6 @@ import functools
 import re
 import time
 
-from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from xml.sax.saxutils import escape, quoteattr
 
@@ -50,19 +49,6 @@ def get_project_locale_from_request(request, locales):
             return locales.get(code__iexact=a[0]).code
         except BaseException:
             continue
-
-
-def group_dict_by(list_of_dicts, key):
-    """
-    Group dicts in a list by the given key. Return a defaultdict instance with
-    key used as the key and dict as the value.
-    """
-    group = defaultdict(list)
-
-    for dictionary in list_of_dicts:
-        group[dictionary[key]].append(dictionary)
-
-    return group
 
 
 def is_ajax(request):
