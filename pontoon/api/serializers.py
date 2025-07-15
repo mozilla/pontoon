@@ -12,6 +12,54 @@ from pontoon.terminology.models import (
 )
 
 
+TRANSLATION_STATS_FIELDS = [
+    "total_strings",
+    "approved_strings",
+    "pretranslated_strings",
+    "strings_with_warnings",
+    "strings_with_errors",
+    "missing_strings",
+    "unreviewed_strings",
+    "complete",
+]
+
+
+# DO NOT REMOVE serializers.SerializerMetaclass, it is required for serializer functionality
+class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
+    total_strings = serializers.SerializerMethodField()
+    approved_strings = serializers.SerializerMethodField()
+    pretranslated_strings = serializers.SerializerMethodField()
+    strings_with_warnings = serializers.SerializerMethodField()
+    strings_with_errors = serializers.SerializerMethodField()
+    missing_strings = serializers.SerializerMethodField()
+    unreviewed_strings = serializers.SerializerMethodField()
+    complete = serializers.SerializerMethodField()
+
+    def get_total_strings(self, obj):
+        return obj.total
+
+    def get_approved_strings(self, obj):
+        return obj.approved
+
+    def get_pretranslated_strings(self, obj):
+        return obj.pretranslated
+
+    def get_strings_with_warnings(self, obj):
+        return obj.warnings
+
+    def get_strings_with_errors(self, obj):
+        return obj.errors
+
+    def get_missing_strings(self, obj):
+        return obj.missing
+
+    def get_unreviewed_strings(self, obj):
+        return obj.unreviewed
+
+    def get_complete(self, obj):
+        return obj.is_complete
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -27,26 +75,18 @@ class LocaleSerializer(serializers.ModelSerializer):
         model = Locale
         fields = [
             "code",
-            "approved_strings",
-            "cldr_plurals",
-            "complete",
+            "name",
             "direction",
+            "population",
+            "cldr_plurals",
+            "plural_rule",
+            "script",
             "google_translate_code",
-            "missing_strings",
             "ms_terminology_code",
             "ms_translator_code",
-            "name",
-            "plural_rule",
-            "population",
-            "pretranslated_strings",
-            "script",
-            "strings_with_errors",
-            "strings_with_warnings",
             "systran_translate_code",
             "team_description",
-            "total_strings",
-            "unreviewed_strings",
-        ]
+        ] + TRANSLATION_STATS_FIELDS
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -55,26 +95,18 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = [
-            "approved_strings",
-            "complete",
-            "contact",
-            "deadline",
-            "disabled",
-            "info",
-            "missing_strings",
-            "name",
-            "pretranslated_strings",
-            "pretranslation_enabled",
-            "priority",
             "slug",
-            "strings_with_errors",
-            "strings_with_warnings",
-            "sync_disabled",
-            "system_project",
-            "total_strings",
-            "unreviewed_strings",
+            "name",
+            "priority",
+            "deadline",
             "visibility",
-        ]
+            "contact",
+            "info",
+            "system_project",
+            "disabled",
+            "sync_disabled",
+            "pretranslation_enabled",
+        ] + TRANSLATION_STATS_FIELDS
 
     def get_contact(self, obj):
         if obj.contact:
@@ -82,105 +114,56 @@ class ProjectSerializer(serializers.ModelSerializer):
         return None
 
 
-class ProjectLocaleSerializer(serializers.ModelSerializer):
+class ProjectLocaleSerializer(TranslationStatsMixin, serializers.ModelSerializer):
+    locale = serializers.SlugRelatedField(read_only=True, slug_field="code")
+
     class Meta:
         model = ProjectLocale
         fields = [
-            "total_strings",
-            "approved_strings",
-            "pretranslated_strings",
-            "strings_with_errors",
-            "strings_with_warnings",
-            "unreviewed_strings",
-            "project",
-        ]
+            "locale",
+        ] + TRANSLATION_STATS_FIELDS
 
 
-class NestedProjectSerializer(ProjectSerializer):
+class NestedProjectSerializer(TranslationStatsMixin, ProjectSerializer):
     locales = serializers.SerializerMethodField()
     tags = TagSerializer(many=True, read_only=True)
-
-    approved_strings = serializers.SerializerMethodField()
-    complete = serializers.SerializerMethodField()
-    missing_strings = serializers.SerializerMethodField()
-    pretranslated_strings = serializers.SerializerMethodField()
-    strings_with_errors = serializers.SerializerMethodField()
-    strings_with_warnings = serializers.SerializerMethodField()
-    total_strings = serializers.SerializerMethodField()
-    unreviewed_strings = serializers.SerializerMethodField()
 
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + ["tags", "locales"]
 
     def get_locales(self, obj):
-        return [pl.locale.code for pl in obj.project_locale.visible()]
-
-    def get_approved_strings(self, obj):
-        return obj.approved
-
-    def get_complete(self, obj):
-        return obj.is_complete
-
-    def get_missing_strings(self, obj):
-        return obj.missing
-
-    def get_pretranslated_strings(self, obj):
-        return obj.pretranslated
-
-    def get_strings_with_errors(self, obj):
-        return obj.errors
-
-    def get_strings_with_warnings(self, obj):
-        return obj.warnings
-
-    def get_total_strings(self, obj):
-        return obj.total
-
-    def get_unreviewed_strings(self, obj):
-        return obj.unreviewed
+        return [pl.locale.code for pl in obj.project_locale.all()]
 
 
-class NestedLocaleSerializer(LocaleSerializer):
+class NestedIndividualProjectSerializer(TranslationStatsMixin, ProjectSerializer):
+    tags = TagSerializer(many=True, read_only=True)
+    localizations = serializers.SerializerMethodField()
+
+    class Meta(ProjectSerializer.Meta):
+        fields = ProjectSerializer.Meta.fields + ["tags", "localizations"]
+
+    def get_localizations(self, obj):
+        request = self.context.get("request")
+        if not request:
+            return None
+
+        project_locales = obj.project_locale.stats_data(project=obj)
+        serialized = ProjectLocaleSerializer(project_locales, many=True).data
+
+        return {
+            item["locale"]: {k: v for k, v in item.items() if k != "locale"}
+            for item in serialized
+        }
+
+
+class NestedLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
     projects = serializers.SerializerMethodField()
-
-    approved_strings = serializers.SerializerMethodField()
-    complete = serializers.SerializerMethodField()
-    missing_strings = serializers.SerializerMethodField()
-    pretranslated_strings = serializers.SerializerMethodField()
-    strings_with_errors = serializers.SerializerMethodField()
-    strings_with_warnings = serializers.SerializerMethodField()
-    total_strings = serializers.SerializerMethodField()
-    unreviewed_strings = serializers.SerializerMethodField()
 
     class Meta(LocaleSerializer.Meta):
         fields = LocaleSerializer.Meta.fields + ["projects"]
 
     def get_projects(self, obj):
-        return [pl.project.slug for pl in obj.project_locale.visible()]
-
-    def get_approved_strings(self, obj):
-        return obj.approved
-
-    def get_complete(self, obj):
-        return obj.is_complete
-
-    def get_missing_strings(self, obj):
-        return obj.missing
-
-    def get_pretranslated_strings(self, obj):
-        return obj.pretranslated
-
-    def get_strings_with_errors(self, obj):
-        return obj.errors
-
-    def get_strings_with_warnings(self, obj):
-        return obj.warnings
-
-    def get_total_strings(self, obj):
-        return obj.total
-
-    def get_unreviewed_strings(self, obj):
-        return obj.unreviewed
+        return [pl.project.slug for pl in obj.project_locale.all()]
 
 
 class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
@@ -212,9 +195,8 @@ class TermSerializer(serializers.ModelSerializer):
         if not locale:
             return None
 
-        for translated_term in obj.translations.all():
-            if translated_term.locale.code == locale:
-                return translated_term.text
+        term = obj.translations.filter(locale__code=locale).first()
+        return term.text if term else None
 
 
 class TranslationMemorySerializer(serializers.ModelSerializer):

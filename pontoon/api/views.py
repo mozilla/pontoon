@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
 
@@ -26,6 +27,7 @@ from pontoon.terminology.models import (
 )
 
 from .serializers import (
+    NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
     NestedProjectSerializer,
@@ -209,7 +211,7 @@ class LocaleListView(generics.ListAPIView):
 
     def get_queryset(self):
         locales = Locale.objects.prefetch_related("project_locale__project").distinct()
-        return locales.stats_data()
+        return locales.stats_data().order_by("code")
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
@@ -241,17 +243,17 @@ class ProjectListView(generics.ListAPIView):
             filters |= Q(system_project=True)
         if filters:
             queryset = queryset | Project.objects.filter(filters).distinct()
-        return queryset.stats_data()
+        return queryset.stats_data().order_by("slug")
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    serializer_class = NestedProjectSerializer
+    serializer_class = NestedIndividualProjectSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
         queryset = (
             Project.objects.all()
-            .prefetch_related("project_locale__locale", "contact", "tags")
+            .prefetch_related("project_locale", "contact", "tags")
             .stats_data()
         )
 
@@ -259,15 +261,27 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
-    queryset = ProjectLocale.objects.all().prefetch_related("project", "locale")
     serializer_class = NestedProjectLocaleSerializer
 
     def get_object(self):
         slug = self.kwargs["slug"]
         code = self.kwargs["code"]
-        return generics.get_object_or_404(
-            ProjectLocale, project__slug=slug, locale__code=code
+
+        project = get_object_or_404(
+            Project,
+            slug=slug,
         )
+
+        queryset = (
+            ProjectLocale.objects.all()
+            .filter(project__slug=slug, locale__code=code)
+            .prefetch_related("project", "locale")
+            .stats_data(project)
+        )
+
+        obj = get_object_or_404(queryset, project__slug=slug, locale__code=code)
+
+        return obj
 
 
 class TermSearchListView(generics.ListAPIView):
