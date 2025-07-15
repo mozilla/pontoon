@@ -24,7 +24,6 @@ The PAT implementation includes the following features:
 - Tokens can be deleted, but their values cannot be viewed again after the initial creation  
 - Admins can monitor token usage and revoke tokens if necessary  
 - A user’s Pontoon permissions determine what their token can access
-- Actions performed with a user's PAT correspond directly to their account.
 
 ## Creating, Viewing, and Deleting a Personal Access Token
 
@@ -45,6 +44,7 @@ curl \
   -H "Authorization: Bearer <YOUR-TOKEN>" \
   https://example.com/api/v2/resource/
 ```
+
 ### Incorrect Usage
 
 If a user tries to access a protected endpoint without a valid token or without sufficient permissions, a `403 Unauthorized` response is returned.
