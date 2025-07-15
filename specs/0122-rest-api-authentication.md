@@ -28,7 +28,7 @@ The PAT implementation includes the following features:
 
 ## Creating, Viewing, and Deleting a Personal Access Token
 
-A new **Personal Access Tokens** section will appear in the Settings page. A **Generate a New Access Token** button will allow users to create a new token, which is appended to a list (maximum of 10). Users must select an expiration date and optionally include a note to each token to help identify its purpose.
+A new **Personal Access Tokens** section will appear in the Settings page. A **Generate a New Access Token** button will allow users to create a new token, which is appended to a list (maximum of 10). Users must select an expiration date and optionally add a note to each token to help identify its purpose.
 
 After generation, the token is displayed once for the user to copy. Refreshing the page or navigating away will hide the token permanently.
 
