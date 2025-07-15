@@ -8,7 +8,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0085_remove_entity_word_count"),
+        ("base", "0086_delete_empty_gettext_plurals"),
     ]
 
     operations = [

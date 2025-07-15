@@ -58,7 +58,7 @@ def reverse_section_and_resource_comments(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0086_add_sections"),
+        ("base", "0087_add_sections"),
     ]
 
     operations = [

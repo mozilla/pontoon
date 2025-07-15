@@ -27,11 +27,14 @@ def _key_and_context(entry: Entry[Message]):
 
 def gettext_as_translation(entry: Entry[Message]):
     key, _ = _key_and_context(entry)
-    return VCSTranslation(
-        key=key,
-        string=serialize_message(Format.mf2, entry.value) or None,
-        fuzzy=any(m.key == "flag" and m.value == "fuzzy" for m in entry.meta),
-    )
+    if isinstance(entry.value, SelectMessage) and all(
+        not pattern or pattern == [""] for pattern in entry.value.variants.values()
+    ):
+        string = None
+    else:
+        string = serialize_message(Format.mf2, entry.value) or None
+    fuzzy = any(m.key == "flag" and m.value == "fuzzy" for m in entry.meta)
+    return VCSTranslation(key=key, string=string, fuzzy=fuzzy)
 
 
 def gettext_as_entity(entry: Entry[Message], now: datetime) -> Entity:

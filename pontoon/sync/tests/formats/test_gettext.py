@@ -183,7 +183,7 @@ class GettextTests(TestCase):
         )
         assert not t7.fuzzy
 
-    def test_context(self):
+    def test_context_and_empty_messages(self):
         src = dedent("""
             #
             msgid ""
@@ -208,7 +208,9 @@ class GettextTests(TestCase):
 
             msgctxt "Other context"
             msgid "Source"
-            msgstr ""
+            msgid_plural "Source Plural"
+            msgstr[0] ""
+            msgstr[1] ""
 
             msgid "Source"
             msgstr ""
@@ -218,12 +220,20 @@ class GettextTests(TestCase):
         e0, e1, e2 = (
             gettext_as_entity(entry, datetime.now()) for entry in res.all_entries()
         )
+        t0, t1, t2 = as_vcs_translations(res)
 
-        assert e0.string == "Source"
         assert e0.key == "Main context\x04Source"
+        assert e0.string == "Source"
+        assert t0.string is None
 
-        assert e1.string == "Source"
         assert e1.key == "Other context\x04Source"
+        assert e1.string == dedent("""\
+            .input {$n :number}
+            .match $n
+            one {{Source}}
+            * {{Source Plural}}""")
+        assert t1.string is None
 
-        assert e2.string == "Source"
         assert e2.key == "Source"
+        assert e2.string == "Source"
+        assert t2.string is None
