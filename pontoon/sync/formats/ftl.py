@@ -16,9 +16,7 @@ serializer = FluentSerializer()
 
 def _string(entry: Entry[Message]):
     # Do not store comments in the string field
-    entry.comment = ""
-    entry.meta = []
-    return serializer.serialize_entry(fluent_astify_entry(entry))
+    return serializer.serialize_entry(fluent_astify_entry(entry, lambda _: ""))
 
 
 def ftl_as_translation(entry: Entry[Message]):
