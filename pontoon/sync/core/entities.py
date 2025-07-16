@@ -2,7 +2,7 @@ import logging
 
 from collections import defaultdict
 from datetime import datetime
-from os.path import exists, isfile, join, relpath, splitext
+from os.path import exists, isfile, join, relpath
 from typing import Optional
 
 from moz.l10n.model import Entry, Id as L10nId, Message, Resource as L10nResource
