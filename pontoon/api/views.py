@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
@@ -210,7 +210,14 @@ class LocaleListView(generics.ListAPIView):
     serializer_class = NestedLocaleSerializer
 
     def get_queryset(self):
-        locales = Locale.objects.prefetch_related("project_locale__project").distinct()
+        locales = Locale.objects.prefetch_related(
+            Prefetch(
+                "project_locale",
+                queryset=ProjectLocale.objects.visible().select_related("project"),
+                to_attr="fetched_project_locales",
+            )
+        ).distinct()
+
         return locales.stats_data().order_by("code")
 
 
@@ -219,7 +226,13 @@ class LocaleIndividualView(generics.RetrieveAPIView):
     lookup_field = "code"
 
     def get_queryset(self):
-        locales = Locale.objects.prefetch_related("project_locale__project")
+        locales = Locale.objects.prefetch_related(
+            Prefetch(
+                "project_locale",
+                queryset=ProjectLocale.objects.visible().select_related("project"),
+                to_attr="fetched_project_locales",
+            )
+        ).distinct()
         return locales.stats_data()
 
 
@@ -234,8 +247,17 @@ class ProjectListView(generics.ListAPIView):
         queryset = (
             Project.objects.visible()
             .visible_for(self.request.user)
-            .prefetch_related("project_locale__locale", "contact", "tags")
+            .prefetch_related(
+                Prefetch(
+                    "project_locale",
+                    queryset=ProjectLocale.objects.visible().select_related("locale"),
+                    to_attr="fetched_project_locales",
+                ),
+                "contact",
+                "tags",
+            )
         )
+
         filters = Q()
         if include_disabled is not None:
             filters |= Q(disabled=True)
