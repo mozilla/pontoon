@@ -1,56 +1,37 @@
 from __future__ import annotations
 
-from fluent.syntax import FluentParser, FluentSerializer, ast
+from datetime import datetime
 
-from .common import ParseError, VCSTranslation
+from fluent.syntax import FluentSerializer
+from moz.l10n.formats.fluent import fluent_astify_entry
+from moz.l10n.model import Entry, Message
+
+from pontoon.base.models import Entity
+
+from .common import VCSTranslation
 
 
-parser = FluentParser()
 serializer = FluentSerializer()
 
 
-def parse(path: str):
-    try:
-        with open(path, "r", encoding="utf-8") as resource:
-            structure = parser.parse(resource.read())
-    # Parse errors are handled gracefully by fluent
-    # No need to catch them here
-    except OSError as err:
-        raise ParseError(err)
+def _string(entry: Entry[Message]):
+    # Do not store comments in the string field
+    return serializer.serialize_entry(fluent_astify_entry(entry, lambda _: ""))
 
-    translations: list[VCSTranslation] = []
-    group_comment: list[str] = []
-    resource_comment: list[str] = []
-    order = 0
-    for obj in structure.body:
-        if isinstance(obj, (ast.Message, ast.Term)):
-            key = obj.id.name
-            if isinstance(obj, ast.Term):
-                key = "-" + key
 
-            # Do not store comments in the string column
-            comment = obj.comment.content if obj.comment else None
-            obj.comment = None
-            translation = serializer.serialize_entry(obj)
+def ftl_as_translation(entry: Entry[Message]):
+    assert len(entry.id) == 1
+    return VCSTranslation(key=entry.id[0], string=_string(entry))
 
-            translations.append(
-                VCSTranslation(
-                    key=key,
-                    context=key,
-                    order=order,
-                    string=translation,
-                    source_string=translation,
-                    comments=[comment] if comment else None,
-                    group_comments=group_comment,
-                    resource_comments=resource_comment,
-                )
-            )
-            order += 1
 
-        elif isinstance(obj, ast.GroupComment):
-            group_comment = [obj.content] if obj.content else []
-
-        elif isinstance(obj, ast.ResourceComment) and obj.content:
-            resource_comment.append(obj.content)
-
-    return translations
+def ftl_as_entity(entry: Entry[Message], now: datetime) -> Entity:
+    assert len(entry.id) == 1
+    key = entry.id[0]
+    comment = entry.comment
+    return Entity(
+        key=key,
+        context=key,
+        string=_string(entry),
+        comment=comment,
+        date_created=now,
+    )

@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
 
@@ -5,6 +6,8 @@ from django.utils import timezone
 class Resource(models.Model):
     project = models.ForeignKey("Project", models.CASCADE, related_name="resources")
     path = models.TextField()  # Path to localization file
+    meta = ArrayField(ArrayField(models.TextField(), size=2), default=list)
+    comment = models.TextField(blank=True)
 
     order = models.PositiveIntegerField(default=0)
     """

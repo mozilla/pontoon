@@ -1,9 +1,12 @@
-from os.path import join
-from tempfile import TemporaryDirectory
+from datetime import datetime
 from textwrap import dedent
 from unittest import TestCase
 
-from pontoon.sync.formats import parse_translations
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
+
+from pontoon.sync.formats import as_vcs_translations
+from pontoon.sync.formats.gettext import gettext_as_entity
 
 
 class GettextTests(TestCase):
@@ -62,71 +65,86 @@ class GettextTests(TestCase):
             msgstr[1] "Translated Plural %(count)s strings with missing translations"
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "file.po")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1, t2, t3, t4, t5, t6, t7 = parse_translations(
-                path, gettext_plurals=["one", "other"]
-            )
+        res = parse_resource(Format.gettext, src, gettext_plurals=["one", "other"])
+        e0, e1, e2, e3, e4, e5, e6, e7 = (
+            gettext_as_entity(entry, datetime.now()) for entry in res.all_entries()
+        )
+        t0, t1, t2, t3, t4, t5, t6, t7 = as_vcs_translations(res)
 
         # basic
-        assert t0.comments == ["Sample comment"]
+        assert e0.comment == "Sample comment"
+        assert e0.key == "Source String"
+        assert e0.source == [("file.py", "1")]
+        assert e0.string == "Source String"
+
         assert t0.key == "Source String"
         assert t0.string == "Translated String"
-        assert t0.source == [("file.py", "1")]
-        assert t0.source_string == "Source String"
         assert not t0.fuzzy
-        assert t0.order == 0
 
         # multiple comments
-        assert t1.comments == ["First comment", "Second comment"]
-        assert t1.source == []
+        assert e1.comment == "First comment\nSecond comment"
+        assert e1.source == []
+        assert e1.key == "Multiple Comments"
+        assert e1.string == "Multiple Comments"
+
         assert t1.key == "Multiple Comments"
         assert t1.string == "Translated Multiple Comments"
-        assert t1.source_string == "Multiple Comments"
         assert not t1.fuzzy
-        assert t1.order == 1
 
         # multiple sources
-        assert t2.comments == []
-        assert t2.source == [("file.py", "2"), ("file.py", "3")]
+        assert e2.comment == ""
+        assert e2.source == [("file.py", "2"), ("file.py", "3")]
+        assert e2.key == "Multiple Sources"
+        assert e2.string == "Multiple Sources"
+
         assert t2.key == "Multiple Sources"
         assert t2.string == "Translated Multiple Sources"
-        assert t2.source_string == "Multiple Sources"
         assert not t2.fuzzy
-        assert t2.order == 2
 
         # fuzzy
-        assert t3.comments == []
-        assert t3.source == []
+        assert e3.comment == ""
+        assert e3.source == []
+        assert e3.key == "Fuzzy"
+        assert e3.string == "Fuzzy"
+
         assert t3.key == "Fuzzy"
         assert t3.string == "Translated Fuzzy"
-        assert t3.source_string == "Fuzzy"
         assert t3.fuzzy
-        assert t3.order == 3
 
         # no comments or sources
-        assert t4.comments == []
-        assert t4.source == []
+        assert e4.comment == ""
+        assert e4.source == []
+        assert e4.key == "No Comments or Sources"
+        assert e4.string == "No Comments or Sources"
+
         assert t4.key == "No Comments or Sources"
         assert t4.string == "Translated No Comments or Sources"
-        assert t4.source_string == "No Comments or Sources"
         assert not t4.fuzzy
-        assert t4.order == 4
 
         # missing translation
-        assert t5.comments == []
-        assert t5.source == []
+        assert e5.comment == ""
+        assert e5.source == []
+        assert e5.key == "Missing Translation"
+        assert e5.string == "Missing Translation"
+
         assert t5.key == "Missing Translation"
         assert t5.string is None
-        assert t5.source_string == "Missing Translation"
         assert not t5.fuzzy
-        assert t5.order == 5
 
         # plural translation
-        assert t6.comments == []
-        assert t6.source == []
+        assert e6.comment == ""
+        assert e6.source == []
+        assert e6.key == "Plural %(count)s string"
+        assert (
+            e6.string
+            == dedent("""
+                .input {$n :number}
+                .match $n
+                one {{Plural %(count)s string}}
+                * {{Plural %(count)s strings}}
+                """).strip()
+        )
+
         assert t6.key == "Plural %(count)s string"
         assert (
             t6.string
@@ -137,21 +155,22 @@ class GettextTests(TestCase):
                 * {{Translated Plural %(count)s strings}}
                 """).strip()
         )
+        assert not t6.fuzzy
+
+        # missing plural translation
+        assert e7.comment == ""
+        assert e7.source == []
+        assert e7.key == "Plural %(count)s string with missing translation"
         assert (
-            t6.source_string
+            e7.string
             == dedent("""
                 .input {$n :number}
                 .match $n
-                one {{Plural %(count)s string}}
-                * {{Plural %(count)s strings}}
+                one {{Plural %(count)s string with missing translation}}
+                * {{Plural %(count)s strings with missing translations}}
                 """).strip()
         )
-        assert not t6.fuzzy
-        assert t6.order == 6
 
-        # missing plural translation
-        assert t7.comments == []
-        assert t7.source == []
         assert t7.key == "Plural %(count)s string with missing translation"
         assert (
             t7.string
@@ -162,17 +181,7 @@ class GettextTests(TestCase):
                 * {{Translated Plural %(count)s strings with missing translations}}
                 """).strip()
         )
-        assert (
-            t7.source_string
-            == dedent("""
-                .input {$n :number}
-                .match $n
-                one {{Plural %(count)s string with missing translation}}
-                * {{Plural %(count)s strings with missing translations}}
-                """).strip()
-        )
         assert not t7.fuzzy
-        assert t7.order == 7
 
     def test_context_and_empty_messages(self):
         src = dedent("""
@@ -207,24 +216,24 @@ class GettextTests(TestCase):
             msgstr ""
             """)
 
-        with TemporaryDirectory() as dir:
-            path = join(dir, "file.po")
-            with open(path, "x") as file:
-                file.write(src)
-            t0, t1, t2 = parse_translations(path)
+        res = parse_resource(Format.gettext, src)
+        e0, e1, e2 = (
+            gettext_as_entity(entry, datetime.now()) for entry in res.all_entries()
+        )
+        t0, t1, t2 = as_vcs_translations(res)
 
-        assert t0.source_string == "Source"
-        assert t0.key == "Main context\x04Source"
+        assert e0.key == "Main context\x04Source"
+        assert e0.string == "Source"
         assert t0.string is None
 
-        assert t1.source_string == dedent("""\
+        assert e1.key == "Other context\x04Source"
+        assert e1.string == dedent("""\
             .input {$n :number}
             .match $n
             one {{Source}}
             * {{Source Plural}}""")
-        assert t1.key == "Other context\x04Source"
         assert t1.string is None
 
-        assert t2.source_string == "Source"
-        assert t2.key == "Source"
+        assert e2.key == "Source"
+        assert e2.string == "Source"
         assert t2.string is None

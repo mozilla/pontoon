@@ -8,6 +8,7 @@ from pontoon.base.models.project import Priority, Project, ProjectSlugHistory
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.repository import Repository, repository_url_validator
 from pontoon.base.models.resource import Resource
+from pontoon.base.models.section import Section
 from pontoon.base.models.translated_resource import TranslatedResource
 from pontoon.base.models.translation import Translation
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
@@ -30,6 +31,7 @@ __all__ = [
     "ProjectSlugHistory",
     "Repository",
     "Resource",
+    "Section",
     "TranslatedResource",
     "Translation",
     "TranslationMemoryEntry",
