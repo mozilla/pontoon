@@ -9,11 +9,6 @@ from pontoon.test.factories import LocaleFactory, ProjectFactory
 
 
 @pytest.fixture
-def api_client():
-    return APIClient()
-
-
-@pytest.fixture
 def locales():
     return LocaleFactory.create_batch(3)
 
@@ -87,8 +82,8 @@ def tm_entries(locale_a, locale_b, project_a, project_b):
 
 
 @pytest.mark.django_db
-def test_locale(api_client, locale_a):
-    response = api_client.get(
+def test_locale(locale_a):
+    response = APIClient().get(
         f"/api/v2/locales/{locale_a.code}/", HTTP_ACCEPT="application/json"
     )
     assert response.status_code == 200
@@ -96,17 +91,17 @@ def test_locale(api_client, locale_a):
 
 
 @pytest.mark.django_db
-def test_locales_optimization(api_client, django_assert_num_queries, locales):
+def test_locales_optimization(django_assert_num_queries, locales):
     with django_assert_num_queries(4):
-        response = api_client.get("/api/v2/locales/")
+        response = APIClient().get("/api/v2/locales/")
 
     assert isinstance(response.data, dict)
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_project(api_client, project_a):
-    response = api_client.get(
+def test_project(project_a):
+    response = APIClient().get(
         f"/api/v2/projects/{project_a.slug}/", HTTP_ACCEPT="application/json"
     )
     assert response.status_code == 200
@@ -115,14 +110,13 @@ def test_project(api_client, project_a):
 
 @pytest.mark.django_db
 def test_projects_optimization(
-    api_client,
     django_assert_num_queries,
     regular_projects,
     disabled_projects,
     system_projects,
 ):
     with django_assert_num_queries(5):
-        response = api_client.get("/api/v2/projects/")
+        response = APIClient().get("/api/v2/projects/")
 
     assert isinstance(response.data, dict)
     assert response.status_code == 200
@@ -131,18 +125,16 @@ def test_projects_optimization(
 
 @pytest.mark.django_db
 def test_projects_flags_optimization(
-    api_client,
     django_assert_num_queries,
     regular_projects,
     disabled_projects,
     system_projects,
 ):
     with django_assert_num_queries(5):
-        response = api_client.get("/api/v2/projects/?includeSystem&includeDisabled")
+        response = APIClient().get("/api/v2/projects/?includeSystem&includeDisabled")
 
     assert isinstance(response.data, dict)
     assert response.status_code == 200
-    # assert len(response["data"]["result"]) == 9
 
 
 # NON FUNCTIONAL
@@ -156,18 +148,18 @@ def test_projects_flags_optimization(
 
 
 @pytest.mark.django_db
-def test_terminology_search_optimization(api_client, django_assert_num_queries, terms):
+def test_terminology_search_optimization(django_assert_num_queries, terms):
     with django_assert_num_queries(5):
-        response = api_client.get("/api/v2/search/terminology/?text=open&locale=kg")
+        response = APIClient().get("/api/v2/search/terminology/?text=open&locale=kg")
 
     assert response.status_code == 200
     assert isinstance(response.data, dict)
 
 
 @pytest.mark.django_db
-def test_tm_search_optimization(api_client, django_assert_num_queries, tm_entries):
+def test_tm_search_optimization(django_assert_num_queries, tm_entries):
     with django_assert_num_queries(4):
-        response = api_client.get("/api/v2/search/tm/?text=hello&locale=kg")
+        response = APIClient().get("/api/v2/search/tm/?text=hello&locale=kg")
 
     assert response.status_code == 200
     assert isinstance(response.data, dict)
