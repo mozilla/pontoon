@@ -227,6 +227,8 @@ class LocaleListView(generics.ListAPIView):
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
+    authentication_classes = [PersonalAccessTokenAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = NestedLocaleSerializer
     lookup_field = "code"
 
@@ -242,6 +244,8 @@ class LocaleIndividualView(generics.RetrieveAPIView):
 
 
 class ProjectListView(generics.ListAPIView):
+    authentication_classes = [PersonalAccessTokenAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = NestedProjectSerializer
 
     def get_queryset(self):
@@ -274,7 +278,9 @@ class ProjectListView(generics.ListAPIView):
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    serializer_class = NestedIndividualProjectSerializer
+    authentication_classes = [PersonalAccessTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = NestedProjectSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
@@ -288,6 +294,9 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
+    authentication_classes = [PersonalAccessTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = ProjectLocale.objects.all().prefetch_related("project", "locale")
     serializer_class = NestedProjectLocaleSerializer
 
     def get_object(self):
@@ -312,6 +321,8 @@ class ProjectLocaleIndividualView(generics.RetrieveAPIView):
 
 
 class TermSearchListView(generics.ListAPIView):
+    authentication_classes = [PersonalAccessTokenAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = TermSerializer
 
     filter_backends = [DjangoFilterBackend]
@@ -336,6 +347,8 @@ class TermSearchListView(generics.ListAPIView):
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
+    authentication_classes = [PersonalAccessTokenAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = TranslationMemorySerializer
 
     filter_backends = [DjangoFilterBackend]
