@@ -25,9 +25,14 @@
         <section>
             <h3>Create Personal Access Token</h3>
             <div class="field">
-                {{ create_token_form.note.label_tag(label_suffix='') }}
-                {{ create_token_form.note }}
-                {{ create_token_form.note.errors }}
+                {{ create_token_form.name.label_tag(label_suffix='') }}
+                {{ create_token_form.name }}
+                {{ create_token_form.name.errors }}
+            </div>
+            <div class="field">
+                {{ create_token_form.description.label_tag(label_suffix='') }}
+                {{ create_token_form.description }}
+                {{ create_token_form.description.errors }}
             </div>
             <div class="field">
                 {{ create_token_form.expires_at.label_tag(label_suffix='') }}

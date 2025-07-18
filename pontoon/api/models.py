@@ -8,7 +8,8 @@ class PersonalAccessToken(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="personal_access_tokens"
     )
-    note = models.CharField(max_length=255)
+    name = models.CharField(max_length=128)
+    description = models.CharField(max_length=255)
     expires_at = models.DateTimeField()
     revoked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
