@@ -61,10 +61,22 @@ api_v2_patterns = [
 
 api_auth_patterns = [
     path(
+        # View Users Personal Access Tokens
+        "tokens/",
+        views.PersonalAccessTokenListView.as_view(),
+        name="list-personal-access-token",
+    ),
+    path(
         # Create Personal Access Token
-        "token/",
+        "tokens/create/",
         views.PersonalAccessTokenCreateView.as_view(),
         name="create-personal-access-token",
+    ),
+    path(
+        # Delete Personal Access Token
+        "tokens/<int:pk>/delete/",
+        views.PersonalAccessTokenDestroyView.as_view(),
+        name="delete-personal-access-token",
     ),
 ]
 

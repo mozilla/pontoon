@@ -385,16 +385,20 @@ class PersonalAccessTokenCreateView(generics.CreateAPIView):
     serializer_class = PersonalAccessTokenSerializer
 
     def create(self, request, *args, **kwargs):
-        token_id = generate_unique_token_id(8)
-        token_unhashed = generate_unhashed_token()
-        token_hash = make_password(token_unhashed)
-        token_secret = f"{token_id}_{token_unhashed}"
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        if (
+            PersonalAccessToken.objects.filter(user=request.user, revoked=False).count()
+            >= 10
+        ):
+            raise APIException("Reached maximum amount of created tokens.")
+
         try:
-            self.perform_create(serializer, token_id, token_hash)
+            token_unhashed = generate_unhashed_token()
+            token_hash = make_password(token_unhashed)
+            token_id = self.perform_create(serializer, token_hash)
+            token_secret = f"{token_id}_{token_unhashed}"
         except Exception:
             raise APIException("Something went wrong.")
 
@@ -408,12 +412,13 @@ class PersonalAccessTokenCreateView(generics.CreateAPIView):
             headers=headers,
         )
 
-    def perform_create(self, serializer, token_id, token_hash):
-        serializer.save(
-            token_id=token_id,
+    def perform_create(self, serializer, token_hash):
+        instance = serializer.save(
             token_hash=token_hash,
             user=self.request.user,
         )
+
+        return instance.id
 
 
 class PersonalAccessTokenListView(generics.ListAPIView):
@@ -421,14 +426,10 @@ class PersonalAccessTokenListView(generics.ListAPIView):
     serializer_class = PersonalAccessTokenSerializer
 
     def get_queryset(self):
-        return PersonalAccessToken.objects.filter(user=self.user)
-
-
-class PersonalAccessTokenRevokeView(generics.UpdateAPIView):
-    # admin only, is this view even necessary?
-    serializer_class = PersonalAccessTokenSerializer
+        return PersonalAccessToken.objects.filter(user=self.request.user)
 
 
 class PersonalAccessTokenDestroyView(generics.DestroyAPIView):
+    queryset = PersonalAccessToken.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = PersonalAccessTokenSerializer

@@ -44,6 +44,12 @@ urlpatterns = [
     path("profile/", views.profile, name="pontoon.contributors.profile"),
     # Current user's settings
     path("settings/", views.settings, name="pontoon.contributors.settings"),
+    # Create personal access token
+    path(
+        "settings/token/",
+        views.create_token,
+        name="pontoon.contributors.settings.token",
+    ),
     # Current user's notifications
     path(
         "notifications/",

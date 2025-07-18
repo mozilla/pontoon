@@ -22,7 +22,7 @@ class PersonalAccessTokenAuthentication(BaseAuthentication):
             raise AuthenticationFailed({"detail": "Malformed token format"})
 
         try:
-            pat = PersonalAccessToken.objects.get(token_id=token_id)
+            pat = PersonalAccessToken.objects.get(id=token_id)
         except PersonalAccessToken.DoesNotExist:
             raise AuthenticationFailed({"detail": "Invalid token"})
 
