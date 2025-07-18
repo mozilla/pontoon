@@ -410,7 +410,8 @@ class CreateTokenForm(forms.ModelForm):
     class Meta:
         model = PersonalAccessToken
         fields = (
-            "note",
+            "name",
+            "description",
             "expires_at",
         )
         widgets = {
