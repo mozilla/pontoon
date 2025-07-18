@@ -1,19 +1,14 @@
-import secrets
-import string
-
 from datetime import datetime, timedelta
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, status
-from rest_framework.exceptions import APIException, ValidationError
+from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.response import Response
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.db.models import Prefetch, Q
 from django.http import JsonResponse
@@ -24,7 +19,6 @@ from django.views.decorators.http import require_GET
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.authentication import PersonalAccessTokenAuthentication
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
-from pontoon.api.models import PersonalAccessToken
 from pontoon.base.models import (
     Locale,
     Project,
@@ -40,7 +34,6 @@ from .serializers import (
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
     NestedProjectSerializer,
-    PersonalAccessTokenSerializer,
     TermSerializer,
     TranslationMemorySerializer,
 )
@@ -364,72 +357,3 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         return queryset.prefetch_related("project", "locale")
-
-
-def generate_unique_token_id(length):
-    while True:
-        token_id = secrets.token_hex(length)
-        if not PersonalAccessToken.objects.filter(token_id=token_id).exists():
-            return token_id
-
-
-# generates a 43 char token with characters a-z, A-Z, 0-9
-def generate_unhashed_token():
-    return "".join(
-        secrets.choice(string.ascii_letters + string.digits) for _ in range(43)
-    )
-
-
-class PersonalAccessTokenCreateView(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = PersonalAccessTokenSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        if (
-            PersonalAccessToken.objects.filter(user=request.user, revoked=False).count()
-            >= 10
-        ):
-            raise APIException("Reached maximum amount of created tokens.")
-
-        try:
-            token_unhashed = generate_unhashed_token()
-            token_hash = make_password(token_unhashed)
-            token_id = self.perform_create(serializer, token_hash)
-            token_secret = f"{token_id}_{token_unhashed}"
-        except Exception:
-            raise APIException("Something went wrong.")
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            {
-                **serializer.data,
-                "token": token_secret,  # this is only time the user will see full token
-            },
-            status=status.HTTP_201_CREATED,
-            headers=headers,
-        )
-
-    def perform_create(self, serializer, token_hash):
-        instance = serializer.save(
-            token_hash=token_hash,
-            user=self.request.user,
-        )
-
-        return instance.id
-
-
-class PersonalAccessTokenListView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = PersonalAccessTokenSerializer
-
-    def get_queryset(self):
-        return PersonalAccessToken.objects.filter(user=self.request.user)
-
-
-class PersonalAccessTokenDestroyView(generics.DestroyAPIView):
-    queryset = PersonalAccessToken.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = PersonalAccessTokenSerializer

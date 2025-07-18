@@ -1,8 +1,5 @@
 from rest_framework import serializers
 
-from django.utils import timezone
-
-from pontoon.api.models import PersonalAccessToken
 from pontoon.base.models import (
     Locale,
     Project,
@@ -222,23 +219,3 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
         if obj.project:
             return obj.project.slug
         return None
-
-
-class PersonalAccessTokenSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(read_only=True)
-    last_used = serializers.DateTimeField(read_only=True)
-
-    class Meta:
-        model = PersonalAccessToken
-        fields = [
-            "id",
-            "note",
-            "expires_at",
-            "created_at",
-            "last_used",
-        ]
-
-    def validate_expires_at(self, value):
-        if value <= timezone.now():
-            raise serializers.ValidationError("Expiration time must be in the future.")
-        return value

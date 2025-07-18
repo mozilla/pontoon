@@ -59,26 +59,6 @@ api_v2_patterns = [
     ),
 ]
 
-api_auth_patterns = [
-    path(
-        # View Users Personal Access Tokens
-        "tokens/",
-        views.PersonalAccessTokenListView.as_view(),
-        name="list-personal-access-token",
-    ),
-    path(
-        # Create Personal Access Token
-        "tokens/create/",
-        views.PersonalAccessTokenCreateView.as_view(),
-        name="create-personal-access-token",
-    ),
-    path(
-        # Delete Personal Access Token
-        "tokens/<int:pk>/delete/",
-        views.PersonalAccessTokenDestroyView.as_view(),
-        name="delete-personal-access-token",
-    ),
-]
 
 urlpatterns = [
     # GraphQL endpoint. Serves the GraphiQL IDE if accessed with Accept: text/html.
@@ -87,8 +67,6 @@ urlpatterns = [
         r"^graphql/?$",
         csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=True)),
     ),
-    # API auth
-    path("api/auth/", include(api_auth_patterns)),
     # REST API
     path("api/v2/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
