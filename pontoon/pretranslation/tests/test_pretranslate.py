@@ -19,7 +19,7 @@ serializer = FluentSerializer()
 
 @pytest.fixture
 def fluent_resource(project_a):
-    return ResourceFactory(project=project_a, path="resource.ftl", format="ftl")
+    return ResourceFactory(project=project_a, path="resource.ftl", format="fluent")
 
 
 @pytest.mark.django_db

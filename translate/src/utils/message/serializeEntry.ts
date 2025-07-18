@@ -41,7 +41,7 @@ export function serializeEntry(
   }
 
   switch (format) {
-    case 'ftl': {
+    case 'fluent': {
       const data = new Map<string, Model.Message>();
       if (entry.value) {
         data.set('', entry.value);
@@ -65,7 +65,7 @@ export function serializeEntry(
       }
     }
 
-    case 'po':
+    case 'gettext':
       return entry.value ? stringifyMessage(entry.value) : '';
 
     default: {

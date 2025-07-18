@@ -21,7 +21,7 @@ def locale_parts(project_b, locale_c, locale_b):
     resourceX = ResourceFactory.create(
         project=project_b,
         path="resourceX.po",
-        format="po",
+        format="gettext",
     )
     entityX = EntityFactory.create(resource=resourceX, string="entityX")
     resourceX.total_strings = 1

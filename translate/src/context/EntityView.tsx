@@ -16,16 +16,16 @@ import { Location } from './Location';
 
 const emptyEntity: Entity = {
   pk: 0,
+  key: [],
   original: '',
   machinery_original: '',
   comment: '',
   group_comment: '',
   resource_comment: '',
-  key: [],
+  meta: [],
   format: '',
   path: '',
   project: {},
-  source: [],
   translation: undefined,
   readonly: true,
   isSibling: false,

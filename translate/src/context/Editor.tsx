@@ -103,7 +103,7 @@ export type EditorActions = {
 
   setEditorBusy(busy: boolean): void;
 
-  /** If `format: 'ftl'`, must be called with the source of a full entry */
+  /** If `format: 'fluent'`, must be called with the source of a full entry */
   setEditorFromHistory(value: string): void;
 
   /** @param manual Set `true` when value set due to direct user action */
@@ -122,7 +122,7 @@ export type EditorActions = {
 };
 
 function parseEntryFromFluentSource(base: MessageEntry, source: string) {
-  const entry = parseEntry('ftl', source);
+  const entry = parseEntry('fluent', source);
   if (entry) {
     entry.id = base.id;
   }
@@ -225,7 +225,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorFromHistory: (str) =>
         setState((prev) => {
           const next = { ...prev };
-          if (format === 'ftl' || format === 'po') {
+          if (format === 'fluent' || format === 'gettext') {
             const entry = parseEntry(format, str);
             if (entry) {
               next.entry = entry;
@@ -277,12 +277,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               setResult(buildResult(fields));
               return { ...prev, entry, fields, sourceView: false };
             }
-          } else if (format === 'ftl') {
+          } else if (format === 'fluent') {
             const entry = buildMessageEntry(
               prev.entry,
               buildResult(prev.fields),
             );
-            const source = serializeEntry('ftl', entry);
+            const source = serializeEntry('fluent', entry);
             const fields = editSource(source);
             prev.focusField.current = fields[0];
             setResult(buildResult(fields));
@@ -307,7 +307,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         sourceView = true;
       }
     } else {
-      if (format === 'ftl' && !source.endsWith('\n')) {
+      if (format === 'fluent' && !source.endsWith('\n')) {
         // Some Fluent translations may be stored without a terminal newline.
         // If the data is cleaned up, this conditional may be removed.
         // https://github.com/mozilla/pontoon/issues/2216
@@ -319,7 +319,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         sourceView = requiresSourceView(format, entry);
       } else {
         entry = createSimpleMessageEntry(entity.key, source);
-        sourceView = format === 'ftl';
+        sourceView = format === 'fluent';
       }
     }
 

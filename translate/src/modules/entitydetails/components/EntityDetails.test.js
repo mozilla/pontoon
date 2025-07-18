@@ -16,6 +16,7 @@ const ENTITY = (pk) => ({
   translation: { string: 'test', errors: [], warnings: [] },
   project: { contact: '' },
   comment: '',
+  meta: [],
   date_created: new Date().toISOString(),
 });
 

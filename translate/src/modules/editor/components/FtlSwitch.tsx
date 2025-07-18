@@ -33,9 +33,11 @@ export function FtlSwitch() {
   const { entity } = useContext(EntityView);
 
   const hasError = useMemo(() => {
-    if (sourceView && entity.format === 'ftl') {
+    if (sourceView && entity.format === 'fluent') {
       const source = edit[0].value;
-      return !source || requiresSourceView('ftl', parseEntry('ftl', source));
+      return (
+        !source || requiresSourceView('fluent', parseEntry('fluent', source))
+      );
     } else {
       return false;
     }
@@ -49,7 +51,7 @@ export function FtlSwitch() {
     }
   }, [hasError, toggleSourceView]);
 
-  if (entity.format !== 'ftl' || !isAuthenticated || readonly) {
+  if (entity.format !== 'fluent' || !isAuthenticated || readonly) {
     return null;
   }
 

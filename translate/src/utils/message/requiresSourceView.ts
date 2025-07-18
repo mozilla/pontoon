@@ -7,7 +7,7 @@ export function requiresSourceView(
   format: string,
   entry: MessageEntry | null,
 ): boolean {
-  if (format !== 'ftl') {
+  if (format !== 'fluent') {
     return false;
   }
   if (!entry || !entry.id) {

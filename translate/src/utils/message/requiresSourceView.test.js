@@ -4,26 +4,26 @@ import { parseEntry } from './parseEntry';
 describe('requiresSourceEditor', () => {
   it('returns true for a string with no value', () => {
     const input = 'my-entry =';
-    const message = parseEntry('ftl', input);
-    expect(requiresSourceView('ftl', message)).toEqual(true);
+    const message = parseEntry('fluent', input);
+    expect(requiresSourceView('fluent', message)).toEqual(true);
   });
 
   it('returns true for a missing brace', () => {
     const input = 'my-entry = { $foo';
-    const message = parseEntry('ftl', input);
-    expect(requiresSourceView('ftl', message)).toEqual(true);
+    const message = parseEntry('fluent', input);
+    expect(requiresSourceView('fluent', message)).toEqual(true);
   });
 
   it('returns true for a missing brace in an attribute', () => {
     const input = 'my-entry = foo\n  .attr = { $bar';
-    const message = parseEntry('ftl', input);
-    expect(requiresSourceView('ftl', message)).toEqual(true);
+    const message = parseEntry('fluent', input);
+    expect(requiresSourceView('fluent', message)).toEqual(true);
   });
 
   it('returns false for a string with simple value', () => {
     const input = 'my-entry = Hello!';
-    const message = parseEntry('ftl', input);
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    const message = parseEntry('fluent', input);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with multiline value', () => {
@@ -32,72 +32,72 @@ my-entry =
     Multi
     line
     value.`;
-    const message = parseEntry('ftl', input);
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    const message = parseEntry('fluent', input);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a reference to a built-in function', () => {
     const input =
       'my-entry = Today is { DATETIME($date, month: "long", year: "numeric", day: "numeric") }';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a Term', () => {
     const input = '-my-entry = Hello!';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a TermReference', () => {
     const input = 'my-entry = Term { -term } Reference';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a MessageReference', () => {
     const input = 'my-entry = { my_id }';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a MessageReference with attribute', () => {
     const input = 'my-entry = { my_id.title }';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a StringExpression', () => {
     const input = 'my-entry = { "" }';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a NumberExpression', () => {
     const input = 'my-entry = { 5 }';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a single simple attribute', () => {
     const input = 'my-entry = \n    .an-atribute = Hello!';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with value and attributes', () => {
     const input = 'my-entry = World\n    .an-atribute = Hello!';
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with no value and two attributes', () => {
@@ -105,9 +105,9 @@ my-entry =
 my-entry =
     .an-atribute = Hello!
     .another-atribute = World!`;
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a select expression', () => {
@@ -117,9 +117,9 @@ my-entry =
         [variant] Hello!
        *[another-variant] World!
     }`;
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with a double select expression in attribute', () => {
@@ -135,9 +135,9 @@ my-entry =
             [macos] e
            *[other] o
         }`;
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with multiple select expressions and surrounding text', () => {
@@ -150,9 +150,9 @@ my-entry =
        *[masculine] him
         [feminine] her
     }`;
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns false for a string with nested select expressions', () => {
@@ -170,9 +170,9 @@ my-entry =
                *[other] There are many emails for her
             }
     }`;
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(false);
+    expect(requiresSourceView('fluent', message)).toEqual(false);
   });
 
   it('returns true for a string with excessive select expressions', () => {
@@ -192,8 +192,8 @@ my-entry =
        *[other] { $clipsPerDay } clips
     } a day.
 `;
-    const message = parseEntry('ftl', input);
+    const message = parseEntry('fluent', input);
 
-    expect(requiresSourceView('ftl', message)).toEqual(true);
+    expect(requiresSourceView('fluent', message)).toEqual(true);
   });
 });

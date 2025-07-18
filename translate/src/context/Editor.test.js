@@ -35,7 +35,7 @@ function mountSpy(Spy, format, translation) {
         },
         {
           pk: 13,
-          format: 'po',
+          format: 'gettext',
           key: ['plural'],
           original:
             '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}',
@@ -105,7 +105,7 @@ describe('<EditorProvider>', () => {
       result = useContext(EditorResult);
       return null;
     };
-    mountSpy(Spy, 'ftl', 'key = message');
+    mountSpy(Spy, 'fluent', 'key = message');
     expect(editor).toMatchObject({
       sourceView: false,
       initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
@@ -137,9 +137,9 @@ describe('<EditorProvider>', () => {
           }
 
       `;
-    mountSpy(Spy, 'ftl', source);
+    mountSpy(Spy, 'fluent', source);
 
-    const entry = parseEntry('ftl', source);
+    const entry = parseEntry('fluent', source);
     const fields = editMessageEntry(entry).map((field) => ({
       ...field,
       handle: { current: { value: field.handle.current.value } },
@@ -159,7 +159,7 @@ describe('<EditorProvider>', () => {
       return null;
     };
     const source = '## comment\n';
-    mountSpy(Spy, 'ftl', source);
+    mountSpy(Spy, 'fluent', source);
 
     expect(editor).toMatchObject({
       sourceView: true,
@@ -195,7 +195,7 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
-      initial: parseEntry('po', entity.translation.string),
+      initial: parseEntry('gettext', entity.translation.string),
       fields: [
         { handle: { current: { value: 'trans one' } } },
         { handle: { current: { value: 'trans other' } } },
@@ -221,7 +221,7 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    const wrapper = mountSpy(Spy, 'ftl', source);
+    const wrapper = mountSpy(Spy, 'fluent', source);
     act(() => actions.clearEditor());
     wrapper.update();
 
@@ -254,7 +254,7 @@ describe('<EditorProvider>', () => {
       actions = useContext(EditorActions);
       return null;
     };
-    const wrapper = mountSpy(Spy, 'ftl', `key = VALUE\n`);
+    const wrapper = mountSpy(Spy, 'fluent', `key = VALUE\n`);
 
     const source = ftl`
       key =
@@ -306,7 +306,7 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    const wrapper = mountSpy(Spy, 'ftl', source);
+    const wrapper = mountSpy(Spy, 'fluent', source);
     act(() => actions.toggleSourceView());
     wrapper.update();
 
