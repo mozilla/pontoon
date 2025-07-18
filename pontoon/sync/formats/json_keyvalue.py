@@ -12,7 +12,6 @@ Nested keys are internally stored as a JSON array.
 from __future__ import annotations
 
 from datetime import datetime
-from json import dumps
 
 from moz.l10n.formats import Format
 from moz.l10n.message import serialize_message
@@ -25,15 +24,14 @@ from .common import VCSTranslation
 
 def plain_json_as_translation(entry: Entry):
     return VCSTranslation(
-        key=dumps(entry.id),
+        key=entry.id,
         string=serialize_message(Format.plain_json, entry.value) or None,
     )
 
 
 def plain_json_as_entity(entry: Entry[Message], now: datetime) -> Entity:
     return Entity(
-        key=dumps(entry.id),
-        context=".".join(entry.id),
+        key=list(entry.id),
         string=serialize_message(Format.plain_json, entry.value),
         date_created=now,
     )

@@ -2,6 +2,7 @@ from os import makedirs
 from os.path import join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
+from typing import Any, cast
 from unittest.mock import Mock
 
 import pytest
@@ -60,7 +61,9 @@ def test_update_ftl_translations():
             for i in [0, 1, 2]:
                 key = f"key-{id}-{i}"
                 string = f"{key} = Message {id} {i}\n"
-                entity = EntityFactory.create(resource=res[id], string=string, key=key)
+                entity = EntityFactory.create(
+                    resource=res[id], string=string, key=[key]
+                )
                 if not (id == "c" and i == 2):
                     TranslationFactory.create(
                         entity=entity,
@@ -70,7 +73,7 @@ def test_update_ftl_translations():
                         approved=True,
                     )
         TranslationFactory.create(
-            entity=Entity.objects.get(resource=res["c"], key="key-c-1"),
+            entity=Entity.objects.get(resource=res["c"], key=["key-c-1"]),
             locale=locale,
             string="key-c-1 = New translation c 1\n",
         )
@@ -109,19 +112,19 @@ def test_update_ftl_translations():
 
         # Test sync
         removed_resources, updated_translations = sync_translations_from_repo(
-            project, locale_map, checkouts, paths, [], now
+            project, locale_map, checkouts, paths, cast(Any, []), now
         )
         assert (removed_resources, updated_translations) == (0, 3)
         translations = Translation.objects.filter(
             entity__resource=res["c"], locale=locale
         )
-        assert set((trans.entity.key, trans.approved) for trans in translations) == {
+        assert set((*trans.entity.key, trans.approved) for trans in translations) == {
             ("key-c-0", False),
             ("key-c-1", False),
             ("key-c-1", True),
             ("key-c-2", True),
         }
-        tr_c2 = next(trans for trans in translations if trans.entity.key == "key-c-2")
+        tr_c2 = next(trans for trans in translations if trans.entity.key == ["key-c-2"])
         assert not tr_c2.user
 
         # Test actions
@@ -174,7 +177,9 @@ def test_remove_po_target_resource():
             for i in range(3):
                 key = f"key-{id}-{i}"
                 string = f"Message {id} {i}"
-                entity = EntityFactory.create(resource=res[id], string=string, key=key)
+                entity = EntityFactory.create(
+                    resource=res[id], string=string, key=[key]
+                )
                 TranslationFactory.create(
                     entity=entity,
                     locale=locale,
@@ -205,7 +210,7 @@ def test_remove_po_target_resource():
 
         # Test sync
         removed_resources, updated_translations = sync_translations_from_repo(
-            project, locale_map, checkouts, paths, [], now
+            project, locale_map, checkouts, paths, cast(Any, []), now
         )
         assert (removed_resources, updated_translations) == (1, 0)
         assert not TranslatedResource.objects.filter(locale=locale, resource=res["b"])

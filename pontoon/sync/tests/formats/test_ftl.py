@@ -30,22 +30,21 @@ class FTLTests(TestCase):
 
         # basic
         assert e0.comment == "Sample comment"
-        assert e0.key == "SourceString"
-        assert e0.context == "SourceString"
+        assert e0.key == ["SourceString"]
         assert e0.string == "SourceString = Translated String\n"
-        assert t0.key == "SourceString"
+        assert t0.key == ("SourceString",)
         assert t0.string == "SourceString = Translated String\n"
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
-        assert e1.key == "MultipleComments"
+        assert e1.key == ["MultipleComments"]
         assert e1.string == "MultipleComments = Translated Multiple Comments\n"
-        assert t1.key == "MultipleComments"
+        assert t1.key == ("MultipleComments",)
         assert t1.string == "MultipleComments = Translated Multiple Comments\n"
 
         # no comments or sources
         assert e2.comment == ""
-        assert e2.key == "NoCommentsOrSources"
+        assert e2.key == ["NoCommentsOrSources"]
         assert e2.string == "NoCommentsOrSources = Translated No Comments or Sources\n"
-        assert t2.key == "NoCommentsOrSources"
+        assert t2.key == ("NoCommentsOrSources",)
         assert t2.string == "NoCommentsOrSources = Translated No Comments or Sources\n"

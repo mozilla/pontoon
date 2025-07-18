@@ -20,18 +20,13 @@ def _string(entry: Entry[Message]):
 
 
 def ftl_as_translation(entry: Entry[Message]):
-    assert len(entry.id) == 1
-    return VCSTranslation(key=entry.id[0], string=_string(entry))
+    return VCSTranslation(key=entry.id, string=_string(entry))
 
 
 def ftl_as_entity(entry: Entry[Message], now: datetime) -> Entity:
-    assert len(entry.id) == 1
-    key = entry.id[0]
-    comment = entry.comment
     return Entity(
-        key=key,
-        context=key,
+        key=list(entry.id),
         string=_string(entry),
-        comment=comment,
+        comment=entry.comment,
         date_created=now,
     )

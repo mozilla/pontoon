@@ -50,33 +50,32 @@ class XLIFFTests(TestCase):
 
         # basic
         assert e0.comment == "Sample comment"
-        assert e0.key == "filename\x04Source String Key"
-        assert e0.context == "Source String Key"
+        assert e0.key == ["filename", "Source String Key"]
         assert e0.string == "Source <b>String</b>"
 
-        assert t0.key == "filename\x04Source String Key"
+        assert t0.key == ("filename", "Source String Key")
         assert t0.string == "Translated <b>String</b>"
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
-        assert e1.key == "filename\x04Multiple Comments Key"
+        assert e1.key == ["filename", "Multiple Comments Key"]
         assert e1.string == "Multiple Comments"
 
-        assert t1.key == "filename\x04Multiple Comments Key"
+        assert t1.key == ("filename", "Multiple Comments Key")
         assert t1.string == "Translated Multiple Comments"
 
         # no comments or sources
         assert e2.comment == ""
-        assert e2.key == "filename\x04No Comments or Sources Key"
+        assert e2.key == ["filename", "No Comments or Sources Key"]
         assert e2.string == "No Comments or Sources"
 
-        assert t2.key == "filename\x04No Comments or Sources Key"
+        assert t2.key == ("filename", "No Comments or Sources Key")
         assert t2.string == "Translated No Comments or Sources"
 
         # missing translation
         assert e3.comment == ""
-        assert e3.key == "filename\x04Missing Translation Key"
+        assert e3.key == ["filename", "Missing Translation Key"]
         assert e3.string == "Missing Translation"
 
-        assert t3.key == "filename\x04Missing Translation Key"
+        assert t3.key == ("filename", "Missing Translation Key")
         assert t3.string is None

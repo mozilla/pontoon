@@ -27,7 +27,7 @@ function mountSpy(Spy, format, translation) {
         {
           pk: 42,
           format,
-          key: 'key',
+          key: ['key'],
           original: 'key = test',
           translation: { string: translation, errors: [], warnings: [] },
           project: { contact: '' },
@@ -36,7 +36,7 @@ function mountSpy(Spy, format, translation) {
         {
           pk: 13,
           format: 'po',
-          key: 'plural',
+          key: ['plural'],
           original:
             '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}',
           translation: {

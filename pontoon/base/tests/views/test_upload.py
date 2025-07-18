@@ -31,7 +31,7 @@ def po_translation(translation_a):
     """
     Some tests require entity with non-empty key.
     """
-    translation_a.entity.key = "test_key"
+    translation_a.entity.key = ["test_key"]
     translation_a.entity.save()
 
     yield translation_a
@@ -168,7 +168,7 @@ def test_upload_file(
 
     translation = Translation.objects.get(string="new translation")
 
-    assert translation.entity.key == "test_key"
+    assert translation.entity.key == ["test_key"]
     assert translation.entity.resource.path == "resource_a.po"
     assert translation.approved
     assert translation.user

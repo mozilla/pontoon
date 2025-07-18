@@ -515,7 +515,7 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
 def test_mgr_entity_option_match_case(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
-            key="key %s" % i,
+            key=["key %s" % i],
             resource=resource_a,
             string="TestEntity%s" % i,
         )
@@ -614,7 +614,7 @@ def test_mgr_entity_option_match_whole_word(admin, resource_a, locale_a, user_a)
 def test_mgr_entity_option_identifiers(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
-            key="key %s" % i,
+            key=["key %s" % i],
             resource=resource_a,
             string="TestEntity%s" % i,
         )
@@ -759,7 +759,7 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
 
     entities = [
         EntityFactory.create(
-            key="key %s" % i,
+            key=["key %s" % i],
             resource=resource_a,
             string="TestEntity%s" % i,
         )

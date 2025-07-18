@@ -303,7 +303,7 @@ def set_translations(
             rm: list[Entry] = []
             for entry in section.entries:
                 if isinstance(entry, Entry):
-                    if not set_translation(translations, res, section, entry):
+                    if not set_translation(translations, res.format, section, entry):
                         rm.append(entry)
             if rm and res.format not in (Format.gettext, Format.xliff):
                 section.entries = [e for e in section.entries if e not in rm]
@@ -338,23 +338,14 @@ webext_placeholder = compile(r"\$([a-zA-Z0-9_@]+)\$|(\$[1-9])|\$(\$+)")
 
 def set_translation(
     translations: list[Translation],
-    res: Resource,
+    format: Format | None,
     section: Section,
     entry: Entry,
 ) -> bool:
-    match res.format:
-        case Format.plain_json:
-            key = ".".join(entry.id)
-        case Format.xliff:
-            key = f"{section.id[0]}\x04{entry.id[0]}"
-        case Format.gettext if len(entry.id) == 2:
-            key = f"{entry.id[1]}\x04{entry.id[0]}"
-        case _:
-            key = entry.id[0]
-
+    key = list(section.id + entry.id)
     tx = next((tx for tx in translations if tx.entity.key == key), None)
     if tx is None:
-        if res.format == Format.gettext:
+        if format == Format.gettext:
             if isinstance(entry.value, SelectMessage):
                 entry.value.variants = {(CatchallKey(),): []}
             else:
@@ -363,7 +354,7 @@ def set_translation(
         else:
             return False
 
-    match res.format:
+    match format:
         case Format.android:
             # Literal newlines \n and tabs \t are included in the string
             entry.value = android_esc.sub(

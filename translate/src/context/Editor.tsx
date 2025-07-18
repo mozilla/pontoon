@@ -133,8 +133,11 @@ function parseEntryFromFluentSource(base: MessageEntry, source: string) {
  * Create a new MessageEntry with a simple string pattern `value`,
  * using `id` as its identifier.
  */
-const createSimpleMessageEntry = (id: string, value: string): MessageEntry => ({
-  id,
+const createSimpleMessageEntry = (
+  key: string[],
+  value: string,
+): MessageEntry => ({
+  id: key[0] ?? '',
   value: { type: 'message', declarations: [], pattern: [value] },
 });
 

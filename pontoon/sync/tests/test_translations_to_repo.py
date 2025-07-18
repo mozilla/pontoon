@@ -2,6 +2,7 @@ from os import makedirs
 from os.path import dirname, exists, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
+from typing import Any, cast
 from unittest.mock import Mock
 
 import pytest
@@ -70,7 +71,15 @@ def test_remove_resource():
 
         # Test
         sync_translations_to_repo(
-            project, False, locale_map, checkouts, paths, [], set(), {"c.ftl"}, now
+            project,
+            False,
+            locale_map,
+            checkouts,
+            paths,
+            cast(Any, []),
+            set(),
+            {"c.ftl"},
+            now,
         )
         assert exists(join(repo.checkout_path, "fr-Test", "b.po"))
         assert not exists(join(repo.checkout_path, "fr-Test", "c.ftl"))
@@ -98,7 +107,9 @@ def test_remove_entity():
         for i in range(3):
             if i != 1:
                 entity = EntityFactory.create(
-                    resource=res_c, key=f"key-{i}", string=f"key-{i} = Message {i}\n"
+                    resource=res_c,
+                    key=[f"key-{i}"],
+                    string=f"key-{i} = Message {i}\n",
                 )
                 TranslationFactory.create(
                     entity=entity,
@@ -143,7 +154,15 @@ def test_remove_entity():
 
         # Test
         sync_translations_to_repo(
-            project, False, locale_map, checkouts, paths, [], {"c.ftl"}, set(), now
+            project,
+            False,
+            locale_map,
+            checkouts,
+            paths,
+            cast(Any, []),
+            {"c.ftl"},
+            set(),
+            now,
         )
         with open(join(repo.checkout_path, "fr-Test", "c.ftl")) as file:
             assert file.read() == dedent(
@@ -174,7 +193,9 @@ def test_add_translation():
         TranslatedResourceFactory.create(locale=locale, resource=res_b)
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
         ent_0 = EntityFactory.create(
-            resource=res_c, key="key-0", string="key-0 = Message 0\n"
+            resource=res_c,
+            key=["key-0"],
+            string="key-0 = Message 0\n",
         )
         TranslationFactory.create(
             entity=ent_0,
@@ -184,7 +205,9 @@ def test_add_translation():
             approved=True,
         )
         ent_1 = EntityFactory.create(
-            resource=res_c, key="key-1", string="key-1 = Message 1\n"
+            resource=res_c,
+            key=["key-1"],
+            string="key-1 = Message 1\n",
         )
         TranslationFactory.create(
             entity=ent_1,
@@ -194,7 +217,9 @@ def test_add_translation():
             approved=True,
         )
         ent_2 = EntityFactory.create(
-            resource=res_c, key="key-2", string="key-2 =\n    .attr = Message 2\n"
+            resource=res_c,
+            key=["key-2"],
+            string="key-2 =\n    .attr = Message 2\n",
         )
         TranslationFactory.create(
             entity=ent_2,
@@ -204,7 +229,9 @@ def test_add_translation():
             approved=True,
         )
         ent_3 = EntityFactory.create(
-            resource=res_c, key="-term-3", string="-term-3 = Term 3\n"
+            resource=res_c,
+            key=["-term-3"],
+            string="-term-3 = Term 3\n",
         )
         TranslationFactory.create(
             entity=ent_3,
@@ -287,7 +314,9 @@ def test_directory_creation_on_translation_update():
         )
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=1)
         entity = EntityFactory.create(
-            resource=res_c, key="key-0", string="key-0 = Message 0\n"
+            resource=res_c,
+            key=["key-0"],
+            string="key-0 = Message 0\n",
         )
         TranslationFactory.create(
             entity=entity,
@@ -326,7 +355,7 @@ def test_directory_creation_on_translation_update():
             locale_map,
             checkouts,
             paths,
-            [],
+            cast(Any, []),
             {"nested_dir/deeper_dir/c.ftl"},
             set(),
             now,

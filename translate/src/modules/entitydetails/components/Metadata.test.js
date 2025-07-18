@@ -10,6 +10,7 @@ import { Metadata } from './Metadata';
 
 const ENTITY = {
   pk: 42,
+  key: [],
   original: 'le test',
   comment: 'my comment',
   path: 'path/to/RESOURCE',

@@ -34,35 +34,34 @@ class AndroidXMLTests(TestCase):
 
         # basic
         assert e0.comment == "Sample comment"
-        assert e0.key == "Source String"
-        assert e0.context == "Source String"
+        assert e0.key == ["Source String"]
         assert e0.string == "Translated <b>String</b>"
 
-        assert t0.key == "Source String"
+        assert t0.key == ("Source String",)
         assert t0.string == "Translated <b>String</b>"
 
         # multiple comments
         assert e1.comment == "First comment\n\nSecond comment"
-        assert e1.key == "Multiple Comments"
+        assert e1.key == ["Multiple Comments"]
         assert e1.string == "Translated Multiple Comments"
 
-        assert t1.key == "Multiple Comments"
+        assert t1.key == ("Multiple Comments",)
         assert t1.string == "Translated Multiple Comments"
 
         # no comments or sources
         assert e2.comment == ""
-        assert e2.key == "No Comments or Sources"
+        assert e2.key == ["No Comments or Sources"]
         assert e2.string == "Translated No Comments or Sources"
 
-        assert t2.key == "No Comments or Sources"
+        assert t2.key == ("No Comments or Sources",)
         assert t2.string == "Translated No Comments or Sources"
 
         # empty translation
         assert e3.comment == ""
-        assert e3.key == "Empty Translation"
+        assert e3.key == ["Empty Translation"]
         assert e3.string == ""
 
-        assert t3.key == "Empty Translation"
+        assert t3.key == ("Empty Translation",)
         assert t3.string == ""
 
     def test_android_quotes(self):

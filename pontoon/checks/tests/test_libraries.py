@@ -38,7 +38,7 @@ def entity_dtd_mock():
     mock.resource.format = Resource.Format.DTD
     mock.resource.all.return_value = []
     mock.string = "Example string"
-    mock.key = "entity_dtd"
+    mock.key = ["entity_dtd"]
     mock.comment = ""
 
     yield mock

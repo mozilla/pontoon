@@ -58,7 +58,9 @@ def test_kitchen_sink():
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
         for i in range(3):
             entity = EntityFactory.create(
-                resource=res_c, key=f"key-{i}", string=f"key-{i} = Message {i}\n"
+                resource=res_c,
+                key=[f"key-{i}"],
+                string=f"key-{i} = Message {i}\n",
             )
             for locale in [locale_de, locale_fr]:
                 TranslationFactory.create(
@@ -221,12 +223,12 @@ def test_add_resources():
 
         # Test that entities are generated, translations are not, and FTL & XLIFF are localizable
         assert {
-            (ent.resource.path, ent.key)
+            (ent.resource.path, *ent.key)
             for ent in Entity.objects.filter(resource__project=project)
         } == {
             ("file.ftl", "key"),
             ("file.po", "source"),
-            ("file.xliff", "file.txt\x04key"),
+            ("file.xliff", "file.txt", "key"),
         }
         assert (
             Translation.objects.filter(entity__resource__project=project).count() == 0
@@ -313,7 +315,7 @@ def test_translation_before_source():
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         TranslationFactory.create(
             entity=EntityFactory.create(
-                resource=res_a, key="a0", string="a0 = Message 0\n"
+                resource=res_a, key=["a0"], string="a0 = Message 0\n"
             ),
             locale=locale_de,
             string="a0 = Translation 0\n",
@@ -324,7 +326,7 @@ def test_translation_before_source():
         res_b = ResourceFactory.create(project=project, path="b.ftl", format="ftl")
         TranslationFactory.create(
             entity=EntityFactory.create(
-                resource=res_b, key="b0", string="b0 = Message 0\n"
+                resource=res_b, key=["b0"], string="b0 = Message 0\n"
             ),
             locale=locale_de,
             string="b0 = Translation 0\n",
@@ -397,7 +399,9 @@ def test_android():
         )
         res = ResourceFactory.create(project=project, path="strings.xml", format="xml")
 
-        entity = EntityFactory.create(resource=res, key="quotes", string="Prev quotes")
+        entity = EntityFactory.create(
+            resource=res, key=["quotes"], string="Prev quotes"
+        )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
@@ -407,7 +411,7 @@ def test_android():
         )
 
         entity = EntityFactory.create(
-            resource=res, key="newline", string="Prev newline"
+            resource=res, key=["newline"], string="Prev newline"
         )
         TranslationFactory.create(
             entity=entity,
@@ -462,7 +466,7 @@ def test_fuzzy():
         for i in range(5):
             string = f"Message {i}\n"
             fuzzy = i < 3
-            entity = EntityFactory.create(resource=res, key=f"key-{i}", string=string)
+            entity = EntityFactory.create(resource=res, key=[f"key-{i}"], string=string)
             TranslationFactory.create(
                 entity=entity,
                 locale=locale,
@@ -607,7 +611,7 @@ def test_webext():
             project=project, path="messages.json", format="json"
         )
 
-        entity = EntityFactory.create(resource=res, key="plain", string="Entity")
+        entity = EntityFactory.create(resource=res, key=["plain"], string="Entity")
         TranslationFactory.create(
             entity=entity,
             locale=locale,
@@ -617,7 +621,7 @@ def test_webext():
         )
 
         entity = EntityFactory.create(
-            resource=res, key="number", string="Entity for $1"
+            resource=res, key=["number"], string="Entity for $1"
         )
         TranslationFactory.create(
             entity=entity,
@@ -629,7 +633,7 @@ def test_webext():
 
         entity = EntityFactory.create(
             resource=res,
-            key="name",
+            key=["name"],
             string="Entity for $ORIGIN$",
             source='{"ORIGIN": {"content": "$1", "example": "developer.mozilla.org"}}',
         )
