@@ -38,6 +38,7 @@ from pontoon.settings import (
     BADGES_TRANSLATION_THRESHOLDS,
     VIEW_CACHE_TIMEOUT,
 )
+from pontoon.settings.base import PERSONAL_ACCESS_TOKEN_MAX_COUNT
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -367,6 +368,12 @@ def settings(request):
 
             messages.success(request, "Settings saved.")
 
+        if "create" in request.POST:
+            pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
+            if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
+                # TO DO: display error for max token reached
+                pass
+
         if "delete" in request.POST:
             token_id = request.POST.get("delete")
             PersonalAccessToken.objects.filter(id=token_id).delete()
@@ -444,21 +451,27 @@ def create_token(request):
         )
 
     if request.method == "POST":
-        create_token_form = forms.CreateTokenForm(request.POST)
+        pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
 
-        if create_token_form.is_valid():
-            token = create_token_form.save(commit=False)
+        if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
+            create_token_form = forms.CreateTokenForm(request.POST)
 
-            token_unhashed = generate_unhashed_token()
-            token.token_hash = make_password(token_unhashed)
-            token.user = request.user
-            token.save()
-            token_id = token.id
-            token_secret = f"{token_id}_{token_unhashed}"
+            if create_token_form.is_valid():
+                token = create_token_form.save(commit=False)
 
-            request.session["new_token"] = token_secret
-            request.session["new_token_id"] = token_id
-            return redirect("pontoon.contributors.settings")
+                token_unhashed = generate_unhashed_token()
+                token.token_hash = make_password(token_unhashed)
+                token.user = request.user
+                token.save()
+                token_id = token.id
+                token_secret = f"{token_id}_{token_unhashed}"
+
+                request.session["new_token"] = token_secret
+                request.session["new_token_id"] = token_id
+                return redirect("pontoon.contributors.settings")
+        else:
+            # TO DO: display error for max token reached
+            pass
     else:
         create_token_form = forms.CreateTokenForm()
 
@@ -467,10 +480,6 @@ def create_token(request):
         "contributors/create_token.html",
         {"create_token_form": create_token_form},
     )
-
-
-# @login_required(redirect_field_name="", login_url="/403")
-# def delete_token(request):
 
 
 @login_required(redirect_field_name="", login_url="/403")
