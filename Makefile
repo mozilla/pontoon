@@ -45,12 +45,12 @@ translate/dist:
 	make build-translate
 .server-build:
 	make build-server
-node_modules:
+node_modules/.package-lock.json: package-lock.json
 	npm install
 
 build: build-translate build-server
 
-build-translate: node_modules
+build-translate: node_modules/.package-lock.json
 	npm run build -w translate
 
 build-server: server-env translate/dist
