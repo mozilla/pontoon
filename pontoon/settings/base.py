@@ -1186,6 +1186,9 @@ INACTIVE_CONTRIBUTOR_PERIOD = os.environ.get("INACTIVE_CONTRIBUTOR_PERIOD", 6)
 INACTIVE_TRANSLATOR_PERIOD = os.environ.get("INACTIVE_TRANSLATOR_PERIOD", 2)
 INACTIVE_MANAGER_PERIOD = os.environ.get("INACTIVE_MANAGER_PERIOD", 2)
 
+# Maximum number of personal access tokens user can simultaneously use
+PERSONAL_ACCESS_TOKEN_MAX_COUNT = 10
+
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
 try:

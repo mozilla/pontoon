@@ -309,7 +309,7 @@
 
         <section>
             <h3>Personal Access Tokens</h3>
-            <a href="{{ url('pontoon.contributors.settings.token') }}">Create Token<a>
+            <a class="create" href="{{ url('pontoon.contributors.settings.token') }}">Create Token<a>
                 {% for token in personal_access_tokens %}
                     <p class="text">{{ token.name }}</a>
                     {% if token.id == new_personal_access_token_id|int %}    
