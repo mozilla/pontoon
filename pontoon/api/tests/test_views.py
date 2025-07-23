@@ -92,7 +92,7 @@ def test_locale(locale_a):
 
 @pytest.mark.django_db
 def test_locales_optimization(django_assert_num_queries, locales):
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(3):
         response = APIClient().get("/api/v2/locales/")
 
     assert isinstance(response.data, dict)
@@ -115,7 +115,7 @@ def test_projects_optimization(
     disabled_projects,
     system_projects,
 ):
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(4):
         response = APIClient().get("/api/v2/projects/")
 
     assert isinstance(response.data, dict)
@@ -130,7 +130,7 @@ def test_projects_flags_optimization(
     disabled_projects,
     system_projects,
 ):
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(4):
         response = APIClient().get("/api/v2/projects/?includeSystem&includeDisabled")
 
     assert isinstance(response.data, dict)
@@ -139,10 +139,11 @@ def test_projects_flags_optimization(
 
 # NON FUNCTIONAL
 # @pytest.mark.django_db
-# def test_project_locale(api_client, project_locale_a):
+# def test_project_locale(project_locale_a, project_a, locale_a):
 
-#     response = api_client.get(f"/api/v2/{project_locale_a.locale.code}/{project_locale_a.project.slug}/", HTTP_ACCEPT="application/json")
-
+#     response = APIClient().get(f"/api/v2/{project_locale_a.locale.code}/{project_locale_a.project.slug}/", HTTP_ACCEPT="application/json")
+#     assert project_locale_a.project == project_a
+#     assert project_locale_a.locale == locale_a
 #     assert response.status_code == 200
 #     assert isinstance(response.data, dict)
 
