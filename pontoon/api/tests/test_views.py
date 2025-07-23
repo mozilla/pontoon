@@ -131,7 +131,7 @@ def test_projects_flags_optimization(
     system_projects,
 ):
     with django_assert_num_queries(4):
-        response = APIClient().get("/api/v2/projects/?includeSystem&includeDisabled")
+        response = APIClient().get("/api/v2/projects/?include_system&include_disabled")
 
     assert isinstance(response.data, dict)
     assert response.status_code == 200
