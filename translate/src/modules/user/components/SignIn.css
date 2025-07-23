@@ -6,7 +6,7 @@
   background: transparent;
   border: 1.5px solid var(--status-translated);
   border-radius: 2px;
-  color: white;
+  color: #000;
   font-size: 14px;
   font-weight: 300;
   height: 40px;
@@ -16,5 +16,5 @@
 }
 
 .user-signin button:hover {
-  background-color: var(--status-translated);
+  background-color: #333;
 }
