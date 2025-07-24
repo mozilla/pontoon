@@ -239,7 +239,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def tm_source(self):
         source = self.entity.string
 
-        if self.entity.resource.format == Resource.Format.FTL:
+        if self.entity.resource.format == Resource.Format.FLUENT:
             return get_simple_preview(source)
 
         return source
@@ -248,7 +248,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def tm_target(self):
         target = self.string
 
-        if self.entity.resource.format == Resource.Format.FTL:
+        if self.entity.resource.format == Resource.Format.FLUENT:
             return get_simple_preview(target)
 
         return target

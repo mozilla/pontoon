@@ -89,7 +89,7 @@ class RepositoryFactory(DjangoModelFactory):
 class ResourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
     path = Sequence(lambda n: f"/fake/path{n}.po")
-    format = Resource.Format.PO
+    format = Resource.Format.GETTEXT
     total_strings = 1
 
     class Meta:

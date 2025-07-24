@@ -261,7 +261,7 @@ def project_d():
     project = ProjectFactory.create(
         name="Project D", slug="project-d", disabled=False, system_project=False
     )
-    ResourceFactory.create(project=project, path="resource_d.po", format="po")
+    ResourceFactory.create(project=project, path="resource_d.po", format="gettext")
     ProjectLocaleFactory.create(project=project, locale=locale)
     return project
 
@@ -339,7 +339,7 @@ def test_handle_old_slug_redirect_no_redirect_to_different_project(client, proje
     project = ProjectFactory.create(
         name="Project E", slug="ee", disabled=False, system_project=False
     )
-    ResourceFactory.create(project=project, path="resource_e.po", format="po")
+    ResourceFactory.create(project=project, path="resource_e.po", format="gettext")
 
     # Request the project detail view with slug 'ee'
     response = client.get(reverse("pontoon.projects.project", kwargs={"slug": "ee"}))

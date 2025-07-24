@@ -7,7 +7,7 @@ import pytest
 from django.conf import settings
 from django.test import RequestFactory
 
-from pontoon.base.models.project import Project
+from pontoon.base.models import Project, Resource
 from pontoon.base.tests import (
     LocaleFactory,
     ProjectFactory,
@@ -75,7 +75,9 @@ def test_download(two_repos, repo_url, expected_location):
             build_file_tree(
                 repo_root, {"en-US": {"a.ftl": ""}, "de-Test": {"a.ftl": ""}}
             )
-        res = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        res = ResourceFactory.create(
+            project=project, path="a.ftl", format=Resource.Format.FLUENT
+        )
         TranslatedResourceFactory.create(locale=locale, resource=res)
 
         request = RequestFactory().get(

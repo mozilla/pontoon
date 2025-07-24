@@ -69,14 +69,14 @@ describe('<OtherLocaleTranslationComponent>', () => {
   });
 
   it('renders a Fluent translation correctly', () => {
-    const wrapper = createTranslation('ftl', FLUENT_TRANSLATION);
+    const wrapper = createTranslation('fluent', FLUENT_TRANSLATION);
 
     const gt = wrapper.find('GenericTranslation');
     expect(gt.props().content).toMatch(/^Un cheval/);
   });
 
   it('renders an MF2 translation correctly', () => {
-    const wrapper = createTranslation('po', MF2_TRANSLATION);
+    const wrapper = createTranslation('gettext', MF2_TRANSLATION);
 
     const gt = wrapper.find('GenericTranslation');
     expect(gt.props().content).toMatch(/^Un cheval/);
@@ -96,7 +96,7 @@ describe('<OtherLocaleTranslationComponent>', () => {
 
   it('sets editor value for a Fluent translation', () => {
     const spy = jest.fn();
-    const wrapper = createTranslation('ftl', FLUENT_TRANSLATION, spy);
+    const wrapper = createTranslation('fluent', FLUENT_TRANSLATION, spy);
 
     const { onClick } = wrapper.find('li').props();
     act(() => onClick());
