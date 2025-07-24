@@ -1,10 +1,13 @@
 import json
 import logging
+import secrets
+import string
 
 from dateutil.relativedelta import relativedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -23,6 +26,7 @@ from django.utils.html import escape
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
+from pontoon.api.models import PersonalAccessToken
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
@@ -34,6 +38,7 @@ from pontoon.settings import (
     BADGES_TRANSLATION_THRESHOLDS,
     VIEW_CACHE_TIMEOUT,
 )
+from pontoon.settings.base import PERSONAL_ACCESS_TOKEN_MAX_COUNT
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -323,6 +328,11 @@ def dismiss_addon_promotion(request):
 def settings(request):
     """View and edit user settings."""
     profile = request.user.profile
+
+    personal_access_tokens = PersonalAccessToken.objects.filter(user=request.user)
+    new_personal_access_token = request.session.pop("new_token", None)
+    new_personal_access_token_id = request.session.pop("new_token_id", None)
+
     if request.method == "POST":
         locales_form = forms.UserLocalesOrderForm(
             request.POST,
@@ -357,6 +367,17 @@ def settings(request):
                 send_verification_email(request.user, link)
 
             messages.success(request, "Settings saved.")
+
+        if "create" in request.POST:
+            pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
+            if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
+                # TO DO: display error for max token reached
+                pass
+
+        if "delete" in request.POST:
+            token_id = request.POST.get("delete")
+            PersonalAccessToken.objects.filter(id=token_id).delete()
+
     else:
         user_form = forms.UserForm(instance=request.user)
         user_profile_form = forms.UserProfileForm(instance=profile)
@@ -411,10 +432,53 @@ def settings(request):
             "locale": custom_homepage_locale,
             "preferred_locales": preferred_locales,
             "preferred_locale": preferred_source_locale,
+            "personal_access_tokens": personal_access_tokens,
+            "new_personal_access_token": new_personal_access_token,
+            "new_personal_access_token_id": new_personal_access_token_id,
             "user_form": user_form,
             "user_profile_form": user_profile_form,
             "user_profile_toggle_form": forms.UserProfileToggleForm(instance=profile),
         },
+    )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+def create_token(request):
+    # generates a 43 char token with characters a-z, A-Z, 0-9
+    def generate_unhashed_token():
+        return "".join(
+            secrets.choice(string.ascii_letters + string.digits) for _ in range(43)
+        )
+
+    if request.method == "POST":
+        pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
+
+        if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
+            create_token_form = forms.CreateTokenForm(request.POST)
+
+            if create_token_form.is_valid():
+                token = create_token_form.save(commit=False)
+
+                token_unhashed = generate_unhashed_token()
+                token.token_hash = make_password(token_unhashed)
+                token.user = request.user
+                token.save()
+                token_id = token.id
+                token_secret = f"{token_id}_{token_unhashed}"
+
+                request.session["new_token"] = token_secret
+                request.session["new_token_id"] = token_id
+                return redirect("pontoon.contributors.settings")
+        else:
+            # TO DO: display error for max token reached
+            pass
+    else:
+        create_token_form = forms.CreateTokenForm()
+
+    return render(
+        request,
+        "contributors/create_token.html",
+        {"create_token_form": create_token_form},
     )
 
 
