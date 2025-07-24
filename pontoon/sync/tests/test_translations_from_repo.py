@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
+    ChangedEntityLocale,
     Entity,
     TranslatedResource,
     Translation,
@@ -151,6 +152,71 @@ def test_update_ftl_translations():
             "Translation c 1",
             "New translation c 1",
             "New translation c 2",
+        }
+
+
+@pytest.mark.django_db
+def test_ini_translations():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-ini-trans",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
+        )
+        res = ResourceFactory.create(project=project, path="file.ini", format="ini")
+        TranslatedResourceFactory.create(locale=locale, resource=res)
+        ent = EntityFactory.create(
+            resource=res, key=["Strings", "key"], string="Source"
+        )
+        TranslationFactory.create(
+            entity=ent,
+            locale=locale,
+            string="Target",
+            active=True,
+            approved=True,
+        )
+        ChangedEntityLocale.objects.filter(entity__resource__project=project).delete()
+
+        # Filesystem setup
+        file_ini = dedent(
+            """
+            [Strings]
+            key = Target
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"file.ini": ""},
+                "fr-Test": {"file.ini": file_ini},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("fr-Test", "file.ini")],
+            removed=[],
+        )
+        checkouts = Checkouts(mock_checkout, mock_checkout)
+        paths = find_paths(project, checkouts)
+
+        # Test sync
+        removed_resources, updated_translations = sync_translations_from_repo(
+            project, locale_map, checkouts, paths, cast(Any, []), now
+        )
+        assert (removed_resources, updated_translations) == (0, 0)
+        translations = Translation.objects.filter(entity__resource=res, locale=locale)
+        assert set((*trans.entity.key, trans.approved) for trans in translations) == {
+            ("Strings", "key", True),
         }
 
 
