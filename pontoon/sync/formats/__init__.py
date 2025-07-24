@@ -64,7 +64,7 @@ def as_vcs_translations(res: MozL10nResource[Message]) -> list[VCSTranslation]:
                     # Currently this includes .dtd, .inc, and .ini support.
                     # https://github.com/mozilla/moz-l10n/blob/v0.7.0/python/moz/l10n/formats/__init__.py#L32-L47
                     string = serialize_message(res.format, entry.value)
-                    tx = VCSTranslation(key=entry.id, string=string)
+                    tx = VCSTranslation(key=section.id + entry.id, string=string)
             translations.append(tx)
     return translations
 
@@ -94,7 +94,7 @@ def as_entity(
         case _:
             # For Format.dtd and Format.ini
             entity = Entity(
-                key=list(entry.id),
+                key=list(section_id + entry.id),
                 string=serialize_message(format, entry.value),
                 comment=entry.comment,
                 date_created=now,
