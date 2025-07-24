@@ -16,5 +16,5 @@
 }
 
 .user-signin button:hover {
-   background-color: var(--status-translated);
+  background-color: var(--status-translated);
 }
