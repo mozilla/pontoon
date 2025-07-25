@@ -3,15 +3,20 @@ import pytest
 from rest_framework.test import APIClient
 
 from pontoon.base.models.project import Project
+from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
 from pontoon.terminology.models import Term, TermTranslation
-from pontoon.test import factories
-from pontoon.test.factories import LocaleFactory, ProjectFactory
+from pontoon.test.factories import (
+    LocaleFactory,
+    ProjectFactory,
+    ResourceFactory,
+    TranslatedResourceFactory,
+)
 
 
 @pytest.mark.django_db
 def test_locale():
-    locale_a = factories.LocaleFactory(
+    locale_a = LocaleFactory(
         code="kg",
         name="Klingon",
     )
@@ -43,6 +48,47 @@ def test_locale():
         "complete": True,
         "projects": ["terminology"],
     }
+
+
+@pytest.mark.django_db
+def test_locale_stats():
+    locale_a = LocaleFactory(
+        code="kg",
+        name="Klingon",
+    )
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+        repositories=[],
+    )
+    resource_a = ResourceFactory(project=project_a, path="resource_a.po", format="po")
+
+    translated_resource_a = TranslatedResourceFactory.create(
+        locale=locale_a,
+        resource=resource_a,
+    )
+
+    translated_resource_a.total_strings = 25
+    translated_resource_a.approved_strings = 15
+    translated_resource_a.pretranslated_strings = 0
+    translated_resource_a.strings_with_errors = 3
+    translated_resource_a.strings_with_warnings = 2
+    translated_resource_a.missing_strings = 5
+    translated_resource_a.unreviewed_strings = 5
+    translated_resource_a.save()
+
+    response = APIClient().get(
+        f"/api/v2/locales/{locale_a.code}/", HTTP_ACCEPT="application/json"
+    )
+    assert response.status_code == 200
+    assert response.data["code"] == "kg"
+    assert response.data["total_strings"] == 25
+    assert response.data["approved_strings"] == 15
+    assert response.data["pretranslated_strings"] == 0
+    assert response.data["strings_with_warnings"] == 2
+    assert response.data["strings_with_errors"] == 3
+    assert response.data["missing_strings"] == 5
+    assert response.data["unreviewed_strings"] == 5
 
 
 @pytest.mark.django_db
@@ -82,7 +128,7 @@ def test_locales(django_assert_num_queries):
 
 @pytest.mark.django_db
 def test_project():
-    project_a = factories.ProjectFactory(
+    project_a = ProjectFactory(
         slug="project_a",
         name="Project A",
         repositories=[],
@@ -114,6 +160,47 @@ def test_project():
         "tags": [],
         "localizations": {},
     }
+
+
+@pytest.mark.django_db
+def test_project_stats():
+    locale_a = LocaleFactory(
+        code="kg",
+        name="Klingon",
+    )
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+        repositories=[],
+    )
+    resource_a = ResourceFactory(project=project_a, path="resource_a.po", format="po")
+
+    translated_resource_a = TranslatedResourceFactory.create(
+        locale=locale_a,
+        resource=resource_a,
+    )
+
+    translated_resource_a.total_strings = 25
+    translated_resource_a.approved_strings = 15
+    translated_resource_a.pretranslated_strings = 0
+    translated_resource_a.strings_with_errors = 3
+    translated_resource_a.strings_with_warnings = 2
+    translated_resource_a.missing_strings = 5
+    translated_resource_a.unreviewed_strings = 5
+    translated_resource_a.save()
+
+    response = APIClient().get(
+        f"/api/v2/projects/{project_a.slug}/", HTTP_ACCEPT="application/json"
+    )
+    assert response.status_code == 200
+    assert response.data["slug"] == "project_a"
+    assert response.data["total_strings"] == 25
+    assert response.data["approved_strings"] == 15
+    assert response.data["pretranslated_strings"] == 0
+    assert response.data["strings_with_warnings"] == 2
+    assert response.data["strings_with_errors"] == 3
+    assert response.data["missing_strings"] == 5
+    assert response.data["unreviewed_strings"] == 5
 
 
 @pytest.mark.django_db
@@ -175,15 +262,46 @@ def test_regular_projects(
 
 
 @pytest.mark.django_db
-def test_all_projects(
-    django_assert_num_queries,
-):
-    ProjectFactory.create_batch(3, disabled=True)
-    ProjectFactory.create_batch(3, system_project=True)
-    with django_assert_num_queries(4):
-        response = APIClient().get("/api/v2/projects/?include_system&include_disabled")
+def test_all_projects_stats():
+    locale_a = LocaleFactory(
+        code="kg",
+        name="Klingon",
+    )
+    locale_b = LocaleFactory(code="hut", name="Huttese")
 
-    assert response.status_code == 200
+    projects = ProjectFactory.create_batch(3, disabled=True)
+    ProjectFactory.create_batch(3, system_project=True)
+
+    project_1 = projects[0]
+    project_2 = projects[1]
+
+    # append extra Resource to simulate multiple resource per project
+    resources = [
+        ResourceFactory.create(
+            project=project, path=f"resource_{project.slug}.po", format="po"
+        )
+        for project in Project.objects.all()
+    ] + [ResourceFactory.create(project=project_1, path="resource_a_2.po", format="po")]
+
+    # append extra TranslatedResource to simulate multiple Translated Resources per project
+    translated_resources = [
+        TranslatedResourceFactory.create(locale=locale_a, resource=resource)
+        for resource in resources
+    ] + [
+        TranslatedResourceFactory.create(
+            locale=locale_b, resource=Resource.objects.filter(project=project_2).first()
+        )
+    ]
+
+    for translated_resource in translated_resources:
+        translated_resource.total_strings = 25
+        translated_resource.approved_strings = 15
+        translated_resource.pretranslated_strings = 0
+        translated_resource.strings_with_errors = 3
+        translated_resource.strings_with_warnings = 2
+        translated_resource.missing_strings = 5
+        translated_resource.unreviewed_strings = 5
+        translated_resource.save()
 
     expected_results = [
         {
@@ -210,6 +328,10 @@ def test_all_projects(
         for p in sorted(Project.objects.all(), key=lambda p: p.pk)
     ]
 
+    response = APIClient().get("/api/v2/projects/?include_system&include_disabled")
+
+    assert response.status_code == 200
+
     for project in response.data["results"]:
         project.pop("locales", None)
         project.pop("tags", None)
@@ -217,7 +339,8 @@ def test_all_projects(
     results = sorted(response.data["results"], key=lambda p: p["slug"])
     expected_results = sorted(expected_results, key=lambda p: p["slug"])
 
-    # includes Terminology project
+    # includes Terminology, Tutorial project
+    assert response.data["count"] == 8
     assert response.data["count"] == 8
     assert results == expected_results
 
@@ -327,6 +450,11 @@ def test_disabled_projects(
 
 
 @pytest.mark.django_db
+def test_project_translation_stats():
+    print(Project.objects.all())
+
+
+@pytest.mark.django_db
 def test_project_locale():
     response = APIClient().get(
         "/api/v2/af/terminology/", HTTP_ACCEPT="application/json"
@@ -390,7 +518,7 @@ def test_project_locale():
 
 @pytest.mark.django_db
 def test_terminology_search(django_assert_num_queries):
-    locale_a = factories.LocaleFactory(
+    locale_a = LocaleFactory(
         code="kg",
         name="Klingon",
     )
@@ -434,20 +562,20 @@ def test_terminology_search(django_assert_num_queries):
 
 @pytest.mark.django_db
 def test_tm_search(django_assert_num_queries):
-    locale_a = factories.LocaleFactory(
+    locale_a = LocaleFactory(
         code="kg",
         name="Klingon",
     )
-    project_a = factories.ProjectFactory(
+    project_a = ProjectFactory(
         slug="project_a",
         name="Project A",
         repositories=[],
     )
-    locale_b = factories.LocaleFactory(
+    locale_b = LocaleFactory(
         code="gs",
         name="Geonosian",
     )
-    project_b = factories.ProjectFactory(slug="project_b", name="Project B")
+    project_b = ProjectFactory(slug="project_b", name="Project B")
     TranslationMemoryEntry.objects.create(
         source="Hello",
         target="Hola",
