@@ -235,7 +235,7 @@ def test_project(django_assert_num_queries):
 
 
 @pytest.mark.django_db
-def test_regular_projects(
+def test_projects(
     django_assert_num_queries,
 ):
     ProjectFactory.create_batch(3, disabled=True)
