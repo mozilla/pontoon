@@ -28,7 +28,7 @@ function mountForm(string) {
 
   const entity = {
     pk: 0,
-    format: 'ftl',
+    format: 'fluent',
     original: 'my-message = Hello',
     translation: { string },
   };

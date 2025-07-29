@@ -30,7 +30,7 @@ export function useExistingTranslationGetter() {
     }
 
     let test: (value: HistoryTranslation) => boolean;
-    if (format === 'ftl') {
+    if (format === 'fluent') {
       test = (t) => pojoEquals(entry, parseEntry(format, t.string));
     } else {
       try {

@@ -10,7 +10,7 @@ describe('isSimpleSingleAttributeMessage', () => {
           .an-atribute = Hello!
       `;
     const wrapper = shallow(
-      <FluentAttribute entity={{ format: 'ftl', original }} />,
+      <FluentAttribute entity={{ format: 'fluent', original }} />,
     );
     expect(wrapper.isEmptyRender()).toEqual(false);
   });
@@ -21,7 +21,7 @@ describe('isSimpleSingleAttributeMessage', () => {
           .an-atribute = Hello!
       `;
     const wrapper = shallow(
-      <FluentAttribute entity={{ format: 'ftl', original }} />,
+      <FluentAttribute entity={{ format: 'fluent', original }} />,
     );
     expect(wrapper.isEmptyRender()).toEqual(true);
   });
@@ -33,7 +33,7 @@ describe('isSimpleSingleAttributeMessage', () => {
           .two-attrites = World!
       `;
     const wrapper = shallow(
-      <FluentAttribute entity={{ format: 'ftl', original }} />,
+      <FluentAttribute entity={{ format: 'fluent', original }} />,
     );
     expect(wrapper.isEmptyRender()).toEqual(true);
   });

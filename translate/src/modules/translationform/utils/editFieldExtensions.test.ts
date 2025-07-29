@@ -34,8 +34,8 @@ function getAncestorWith(node: Node | null, attribute: string) {
 }
 
 describe('spellcheck', () => {
-  test('ftl mode', () => {
-    const view = tempView('foo { $bar }', 'ftl');
+  test('fluent mode', () => {
+    const view = tempView('foo { $bar }', 'fluent');
 
     const text = getAncestorWith(view.domAtPos(1).node, 'spellcheck');
     expect(text?.getAttribute('spellcheck')).toBe('true');

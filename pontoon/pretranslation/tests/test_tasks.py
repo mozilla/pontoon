@@ -20,7 +20,7 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     project_a.save()
 
     resources = [
-        ResourceFactory(project=project_a, path=x, format="po")
+        ResourceFactory(project=project_a, path=x, format="gettext")
         for x in ["resource_x.po", "resource_y.po"]
     ]
 
@@ -82,7 +82,7 @@ def test_which_strings_to_pretranslate(gt_mock, project_a, locale_a, resource_a)
     )
 
     resource = ResourceFactory.create(
-        project=project_a, path="resource.po", format="po"
+        project=project_a, path="resource.po", format="gettext"
     )
     TranslatedResourceFactory.create(resource=resource, locale=locale_a)
 

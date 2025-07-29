@@ -131,14 +131,14 @@ def system_project_a():
 @pytest.fixture
 def resource_a(project_a):
     return factories.ResourceFactory(
-        project=project_a, path="resource_a.po", format="po"
+        project=project_a, path="resource_a.po", format="gettext"
     )
 
 
 @pytest.fixture
 def resource_b(project_b):
     return factories.ResourceFactory(
-        project=project_b, path="resource_b.po", format="po"
+        project=project_b, path="resource_b.po", format="gettext"
     )
 
 

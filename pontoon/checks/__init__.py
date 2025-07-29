@@ -1,10 +1,10 @@
 # Warnings and Errors from these file formats will be saved in the DB
 DB_FORMATS = (
+    "android",
     "dtd",
-    "ftl",
+    "fluent",
     "ini",
     "properties",
-    "xml",
 )
 
 # Warnings and Errors from these libraries will be saved in the DB

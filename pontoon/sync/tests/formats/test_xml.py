@@ -5,8 +5,7 @@ from unittest import TestCase
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_vcs_translations
-from pontoon.sync.formats.xml import android_as_entity
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
 class AndroidXMLTests(TestCase):
@@ -28,7 +27,8 @@ class AndroidXMLTests(TestCase):
 
         res = parse_resource(Format.android, src)
         e0, e1, e2, e3 = (
-            android_as_entity(entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.android, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
         t0, t1, t2, t3 = as_vcs_translations(res)
 
