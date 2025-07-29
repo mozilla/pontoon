@@ -235,65 +235,7 @@ def test_project(django_assert_num_queries):
 
 
 @pytest.mark.django_db
-def test_projects(
-    django_assert_num_queries,
-):
-    ProjectFactory.create_batch(3, disabled=True)
-    ProjectFactory.create_batch(3, system_project=True)
-    with django_assert_num_queries(4):
-        response = APIClient().get("/api/v2/projects/")
-
-    assert response.status_code == 200
-
-    expected_results = [
-        {
-            "slug": p.slug,
-            "name": p.name,
-            "priority": p.priority,
-            "deadline": p.deadline,
-            "visibility": p.visibility,
-            "contact": p.contact,
-            "info": p.info,
-            "system_project": p.system_project,
-            "disabled": p.disabled,
-            "sync_disabled": p.sync_disabled,
-            "pretranslation_enabled": p.pretranslation_enabled,
-            "total_strings": p.total_strings,
-            "approved_strings": p.approved_strings,
-            "pretranslated_strings": p.pretranslated_strings,
-            "strings_with_warnings": p.strings_with_warnings,
-            "strings_with_errors": p.strings_with_errors,
-            "missing_strings": p.missing_strings,
-            "unreviewed_strings": p.unreviewed_strings,
-            "complete": p.complete,
-            "tags": [
-                tag.name for tag in sorted(p.tags.all(), key=lambda tag: tag.name)
-            ],
-            "locales": [
-                locale.code
-                for locale in sorted(p.locales.all(), key=lambda locale: locale.code)
-            ],
-        }
-        for p in sorted(
-            Project.objects.filter(disabled=False, system_project=False),
-            key=lambda p: p.pk,
-        )
-    ]
-
-    for project in response.data["results"]:
-        project["locales"] = sorted(project["locales"])
-        project["tags"] = sorted(project["tags"])
-
-    results = sorted(response.data["results"], key=lambda p: p["slug"])
-    expected_results = sorted(expected_results, key=lambda p: p["slug"])
-
-    # includes Terminology project
-    assert response.data["count"] == 1
-    assert results == expected_results
-
-
-@pytest.mark.django_db
-def test_all_projects_stats(django_assert_num_queries):
+def test_projects(django_assert_num_queries):
     locale_a = LocaleFactory(
         code="kg",
         name="Klingon",
