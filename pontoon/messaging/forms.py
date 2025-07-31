@@ -14,15 +14,30 @@ class MessageForm(forms.ModelForm):
     send_to_myself = forms.BooleanField(required=False)
 
     recipient_ids = forms.CharField(
-        required=False,
         widget=forms.Textarea(),
         validators=[validators.validate_comma_separated_integer_list],
+        required=False,
     )
 
     locales = forms.CharField(
         widget=forms.Textarea(),
         validators=[validators.validate_comma_separated_integer_list],
+        required=False,
     )
+
+    projects = forms.ModelMultipleChoiceField(
+        queryset=Project.objects.all(), required=False
+    )
+
+    locale_toggle = forms.BooleanField(required=False)
+
+    project_toggle = forms.BooleanField(required=False)
+
+    translation_toggle = forms.BooleanField(required=False)
+
+    review_toggle = forms.BooleanField(required=False)
+
+    login_toggle = forms.BooleanField(required=False)
 
     class Meta:
         model = Message
@@ -36,16 +51,21 @@ class MessageForm(forms.ModelForm):
             "managers",
             "translators",
             "contributors",
+            "locale_toggle",
             "locales",
+            "project_toggle",
             "projects",
+            "translation_toggle",
             "translation_minimum",
             "translation_maximum",
             "translation_from",
             "translation_to",
+            "review_toggle",
             "review_minimum",
             "review_maximum",
             "review_from",
             "review_to",
+            "login_toggle",
             "login_from",
             "login_to",
             "send_to_myself",
@@ -73,9 +93,6 @@ class MessageForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # Set all available Projects as selected
-        self.fields["projects"].initial = Project.objects.available()
 
         # Remove the colon from all field labels
         for field in self.fields.values():
