@@ -17,12 +17,15 @@
     .button {
       font-size: 15px;
       padding: 10px 20px;
+
       .fa-chevron-left {
         margin-right: 5px;
       }
+
       .fa-chevron-right {
         margin-left: 5px;
       }
+
       .fa-spin {
         font-size: 16px;
       }
@@ -57,6 +60,7 @@
 
     .button.active.sending {
       pointer-events: none;
+
       .fa-spin {
         display: inline;
       }
@@ -100,7 +104,6 @@
 
     .check-list {
       overflow: visible;
-      width: 100%;
 
       .check-box.transactional {
         display: none;
@@ -114,19 +117,35 @@
 
       .check-box-wrapper {
         text-align: left;
-      }
 
-      .fas {
-        margin: 2px 10px 0 0;
-        float: left;
+        .fas {
+          margin: 2px 10px 0 0;
+          float: left;
+        }
       }
+    }
 
-      .large-checkbox {
-        padding-top: 2px;
-      }
+    .filters {
+      .check-list {
+        width: 100%;
 
-      .check-list-contents {
-        padding-bottom: 20px;
+        .check-list-contents {
+          padding-bottom: 20px;
+
+          .check-box-wrapper {
+            color: var(--status-translated);
+            font-size: 26px;
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: -1px;
+            width: 100%;
+
+            .fas {
+              font-size: 16px;
+              padding-top: 7px;
+            }
+          }
+        }
       }
     }
 
@@ -190,9 +209,11 @@
       align-items: center;
       margin-bottom: 20px;
     }
+
     .collapsible h3 {
       user-select: none;
     }
+
     .collapsible-content {
       display: none;
     }
@@ -216,13 +237,13 @@
       }
     }
 
-    > section {
+    >section {
       background: var(--dark-grey-1);
       border-radius: 6px;
       margin-bottom: 40px;
     }
 
-    > section:last-child {
+    >section:last-child {
       margin-bottom: 0;
     }
 
@@ -236,7 +257,7 @@
     }
 
     .recipients {
-      > div {
+      >div {
         margin-top: 20px;
       }
 
@@ -290,7 +311,7 @@
         position: relative;
         transition: background-color 2s ease-in;
 
-        > div {
+        >div {
           display: inline-block;
         }
 
@@ -371,6 +392,7 @@
 
   .body {
     .value {
+
       h1,
       h2,
       h3,

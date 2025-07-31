@@ -6,7 +6,7 @@
     <div class="check-list-contents {{ filter_classname }}">
         <div class="collapsible">
             {{ Checkbox.checkbox(label, class=filter_classname, attribute=attribute,
-                is_enabled=is_enabled, form_field=form_field, is_large=True) }}
+                is_enabled=is_enabled, form_field=form_field) }}
         </div>
         <div class="collapsible-content">
             {{ caller() }}

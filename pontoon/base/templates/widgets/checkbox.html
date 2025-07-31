@@ -1,8 +1,8 @@
-{% macro checkbox(label, class, attribute, is_enabled=False, title=False, help=False, form_field=None, is_large=False) %}
+{% macro checkbox(label, class, attribute, is_enabled=False, title=False, help=False, form_field=None) %}
 <div class="check-box {{ class }}{% if is_enabled %} enabled{% endif %}" data-attribute="{{ attribute }}"{% if title %} title="{{title}}"{% endif %}>
-    <div class="{% if is_large %} large-check-box-wrapper {% else %} check-box-wrapper {% endif %}">
+    <div class="check-box-wrapper">
         <span class="label">{{ label }}</span>
-        <i class="fas {% if is_large %} large-checkbox {% else %} fa-fw {% endif %}"></i>
+        <i class="fas fa-fw"></i>
     </div>
     {% if help %}
     <p class="help">{{ help|safe }}</p>
