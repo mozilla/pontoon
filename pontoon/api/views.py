@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -15,7 +14,6 @@ from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.api.authentication import PersonalAccessTokenAuthentication
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base.models import (
     Locale,
@@ -128,8 +126,6 @@ def get_user_actions(request, date, slug):
 
 
 class UserActionsView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, date, slug):
         try:
             start_date = make_aware(datetime.strptime(date, "%Y-%m-%d"))
@@ -207,8 +203,6 @@ class UserActionsView(APIView):
 
 
 class LocaleListView(generics.ListAPIView):
-    authentication_classes = [PersonalAccessTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = NestedLocaleSerializer
 
     def get_queryset(self):
@@ -224,8 +218,6 @@ class LocaleListView(generics.ListAPIView):
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
-    authentication_classes = [PersonalAccessTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = NestedLocaleSerializer
     lookup_field = "code"
 
@@ -241,8 +233,6 @@ class LocaleIndividualView(generics.RetrieveAPIView):
 
 
 class ProjectListView(generics.ListAPIView):
-    authentication_classes = [PersonalAccessTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = NestedProjectSerializer
 
     def get_queryset(self):
@@ -275,8 +265,6 @@ class ProjectListView(generics.ListAPIView):
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    authentication_classes = [PersonalAccessTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = NestedProjectSerializer
     lookup_field = "slug"
 
@@ -291,8 +279,6 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
-    authentication_classes = [PersonalAccessTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     queryset = ProjectLocale.objects.all().prefetch_related("project", "locale")
     serializer_class = NestedProjectLocaleSerializer
 
@@ -318,8 +304,6 @@ class ProjectLocaleIndividualView(generics.RetrieveAPIView):
 
 
 class TermSearchListView(generics.ListAPIView):
-    authentication_classes = [PersonalAccessTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = TermSerializer
 
     filter_backends = [DjangoFilterBackend]
@@ -344,8 +328,6 @@ class TermSearchListView(generics.ListAPIView):
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
-    authentication_classes = [PersonalAccessTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = TranslationMemorySerializer
 
     filter_backends = [DjangoFilterBackend]
