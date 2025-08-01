@@ -1,7 +1,10 @@
+import datetime
 import json
 import logging
 import secrets
 import string
+
+from datetime import time, timedelta
 
 from dateutil.relativedelta import relativedelta
 
@@ -330,8 +333,6 @@ def settings(request):
     profile = request.user.profile
 
     personal_access_tokens = PersonalAccessToken.objects.filter(user=request.user)
-    new_personal_access_token = request.session.pop("new_token", None)
-    new_personal_access_token_id = request.session.pop("new_token_id", None)
 
     if request.method == "POST":
         locales_form = forms.UserLocalesOrderForm(
@@ -367,16 +368,6 @@ def settings(request):
                 send_verification_email(request.user, link)
 
             messages.success(request, "Settings saved.")
-
-        if "create" in request.POST:
-            pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
-            if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
-                # TO DO: display error for max token reached
-                pass
-
-        if "delete" in request.POST:
-            token_id = request.POST.get("delete")
-            PersonalAccessToken.objects.filter(id=token_id).delete()
 
     else:
         user_form = forms.UserForm(instance=request.user)
@@ -433,8 +424,6 @@ def settings(request):
             "preferred_locales": preferred_locales,
             "preferred_locale": preferred_source_locale,
             "personal_access_tokens": personal_access_tokens,
-            "new_personal_access_token": new_personal_access_token,
-            "new_personal_access_token_id": new_personal_access_token_id,
             "user_form": user_form,
             "user_profile_form": user_profile_form,
             "user_profile_toggle_form": forms.UserProfileToggleForm(instance=profile),
@@ -443,43 +432,110 @@ def settings(request):
 
 
 @login_required(redirect_field_name="", login_url="/403")
-def create_token(request):
+@require_AJAX
+def generate_token(request):
     # generates a 43 char token with characters a-z, A-Z, 0-9
     def generate_unhashed_token():
         return "".join(
             secrets.choice(string.ascii_letters + string.digits) for _ in range(43)
         )
 
+    try:
+        name = request.POST["name"]
+    except KeyError:
+        return JsonResponse(
+            {"status": "error", "message": "Token name is required."}, status=400
+        )
     if request.method == "POST":
         pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
 
         if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
+            print("Creating token")
             create_token_form = forms.CreateTokenForm(request.POST)
 
             if create_token_form.is_valid():
+                print("Form is valid")
                 token = create_token_form.save(commit=False)
 
                 token_unhashed = generate_unhashed_token()
+                date_midnight = timezone.now().date() + timedelta(days=365)
+                token.name = name
                 token.token_hash = make_password(token_unhashed)
+                token.expires_at = timezone.make_aware(
+                    datetime.datetime.combine(date_midnight, time.min)
+                )
                 token.user = request.user
                 token.save()
                 token_id = token.id
                 token_secret = f"{token_id}_{token_unhashed}"
 
-                request.session["new_token"] = token_secret
-                request.session["new_token_id"] = token_id
-                return redirect("pontoon.contributors.settings")
+                return JsonResponse(
+                    {
+                        "status": "success",
+                        "message": "Form submitted successfully!",
+                        "data": {
+                            "new_token_id": token.id,
+                            "new_token_name": token.name,
+                            "new_token_last_used": token.last_used.strftime(
+                                "%B, %d, %Y"
+                            )
+                            if token.last_used
+                            else None,
+                            "new_token_expires_at": token.expires_at.strftime(
+                                "%B, %d, %Y"
+                            ),
+                            "new_token_secret": token_secret,
+                        },
+                    }
+                )
+            else:
+                print("Form is not valid")
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "Form validation failed.",
+                        "errors": create_token_form.errors,
+                    },
+                    status=400,
+                )
         else:
-            # TO DO: display error for max token reached
-            pass
-    else:
-        create_token_form = forms.CreateTokenForm()
-
-    return render(
-        request,
-        "contributors/create_token.html",
-        {"create_token_form": create_token_form},
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Maximum number of personal access tokens reached.",
+                },
+                status=400,
+            )
+    return JsonResponse(
+        {"status": "error", "message": "Invalid request method."}, status=405
     )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def delete_token(request, token_id):
+    print("hello")
+
+    if request.method == "POST":
+        try:
+            print(token_id)
+            PersonalAccessToken.objects.filter(id=token_id).delete()
+
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Token deleted successfully!",
+                }
+            )
+
+        except KeyError:
+            return JsonResponse(
+                {"status": "error", "message": "Token deletion failed."}, status=400
+            )
+    else:
+        return JsonResponse(
+            {"status": "error", "message": "Invalid request method."}, status=405
+        )
 
 
 @login_required(redirect_field_name="", login_url="/403")

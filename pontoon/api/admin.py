@@ -6,14 +6,12 @@ from .models import PersonalAccessToken
 class PersonalAccessTokenAdmin(admin.ModelAdmin):
     search_fields = (
         "name",
-        "description",
         "user__username",
         "user__email",
     )
     list_display = (
         "name",
         "user",
-        "description",
         "expires_at",
         "revoked",
         "created_at",

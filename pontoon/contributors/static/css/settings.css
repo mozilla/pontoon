@@ -225,3 +225,79 @@
 #notification-email-frequency {
   margin-top: 20px;
 }
+
+.pat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.token-card {
+  background-color: var(--input-background-1);
+  padding: 15px;
+  border-radius: 3px;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.token-card .created {
+  background-color: var(--status-translated-alt);
+  color: var(--status-translated);
+  border: 2px solid var(--status-translated);
+}
+
+.token-card .token-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0px;
+  text-align: left;
+}
+
+.token-card .token-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.token-card .token-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--light-grey-7);
+  margin: 5px 0;
+}
+
+.token-card .date {
+  color: var(--white-1);
+}
+
+.token-card .token-name {
+  font-weight: bold;
+}
+
+.token-card .delete-btn {
+  align-self: center;
+  width: 33px;
+  height: 33px;
+  font-size: 18px;
+}
+
+.token-card input[type='checkbox'] {
+  display: none;
+}
+
+.generate-token {
+  background: var(--status-translated);
+  color: var(--black-3);
+  width: 100px;
+}
+
+.generate-token:disabled {
+  background: var(--light-grey-2);
+  color: var(--white-1);
+  cursor: not-allowed;
+}
