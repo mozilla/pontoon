@@ -47,6 +47,81 @@ $(function () {
     });
   });
 
+  $('.generate-token').click(function (e) {
+    e.preventDefault();
+
+    const csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+    $.ajax({
+      url: '/generate-token/',
+      type: 'POST',
+      data: {
+        name: $('.id_name').val(),
+        csrfmiddlewaretoken: csrfmiddlewaretoken,
+      },
+      success: function (response) {
+        // console.log(response.data);
+        if (response.status === 'success') {
+          const lastListItem = $('.pat-list li:last');
+          const newListItem = lastListItem.clone();
+
+          newListItem.attr('data-token-id', response.data['new_token_id']);
+          newListItem.addClass('created');
+          newListItem.find('.token-name').text(response.data['new_token_name']);
+          newListItem
+            .find('.token-date .date')
+            .first()
+            .text(response.data['new_token_expires_at']);
+          newListItem
+            .find('.token-date .date')
+            .last()
+            .text(
+              response.data['new_token_last_used']
+                ? response.data['new_token_last_used']
+                : 'Never',
+            );
+          newListItem
+            .find('.delete-btn')
+            .attr('data-token-id', response.data['new_token_id']);
+
+          const tokenInfo = newListItem.find('.token-info');
+          const newItem = $('<div class="new-item">New item content</div>');
+          tokenInfo.after(newItem);
+          $('.pat-list').append(newListItem);
+        }
+      },
+    });
+  });
+
+  $('.delete-btn').click(function (e) {
+    e.preventDefault();
+
+    const tokenId = $(this).data('token-id');
+    // const tokenId = $(this).parents('li').data('token-id');
+    const csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+    $.ajax({
+      url: `/delete-token/${tokenId}/`,
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: csrfmiddlewaretoken,
+      },
+      success: function (response) {
+        if (response.status === 'success') {
+          $(`li[data-token-id="${tokenId}"]`).remove();
+        }
+      },
+    });
+  });
+
+  $('.id_name').on('input', function () {
+    if ($(this).val().trim() !== '') {
+      $('.generate-token').prop('disabled', false); // Enable the button
+    } else {
+      $('.generate-token').prop('disabled', true); // Disable the button
+    }
+  });
+
   // Handle checkboxes
   $('.check-box').click(function () {
     const self = $(this);

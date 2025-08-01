@@ -1,7 +1,5 @@
-import datetime
 import re
 
-from datetime import timezone
 from pathlib import Path
 
 import bleach
@@ -9,7 +7,6 @@ import bleach
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.utils import timezone as django_timezone
 
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base import utils
@@ -410,28 +407,4 @@ class CreateTokenForm(forms.ModelForm):
 
     class Meta:
         model = PersonalAccessToken
-        fields = (
-            "name",
-            "description",
-            "expires_at",
-        )
-        widgets = {
-            "expires_at": forms.DateInput(
-                attrs={"type": "date", "min": datetime.date.today().isoformat()}
-            )
-        }
-
-    def clean_expires_at(self):
-        date = self.cleaned_data["expires_at"]
-        naive_dt = datetime.datetime.combine(date, datetime.time(23, 59))
-        # set to user timezone for automatic utc conversion in database
-        aware_dt = django_timezone.make_aware(
-            naive_dt, django_timezone.get_current_timezone()
-        )
-        return aware_dt
-
-    def validate_expires_at(self):
-        expires = self.cleaned_data["expires_at"]
-        if expires <= timezone.now().date():
-            raise forms.ValidationError("Expiration time must be in the future.")
-        return expires
+        fields = ("name",)
