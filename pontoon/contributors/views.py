@@ -1,10 +1,16 @@
+import datetime
 import json
 import logging
+import secrets
+import string
+
+from datetime import time, timedelta
 
 from dateutil.relativedelta import relativedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -23,6 +29,7 @@ from django.utils.html import escape
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
+from pontoon.api.models import PersonalAccessToken
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
@@ -34,6 +41,7 @@ from pontoon.settings import (
     BADGES_TRANSLATION_THRESHOLDS,
     VIEW_CACHE_TIMEOUT,
 )
+from pontoon.settings.base import PERSONAL_ACCESS_TOKEN_MAX_COUNT
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -323,6 +331,9 @@ def dismiss_addon_promotion(request):
 def settings(request):
     """View and edit user settings."""
     profile = request.user.profile
+
+    personal_access_tokens = PersonalAccessToken.objects.filter(user=request.user)
+
     if request.method == "POST":
         locales_form = forms.UserLocalesOrderForm(
             request.POST,
@@ -357,6 +368,7 @@ def settings(request):
                 send_verification_email(request.user, link)
 
             messages.success(request, "Settings saved.")
+
     else:
         user_form = forms.UserForm(instance=request.user)
         user_profile_form = forms.UserProfileForm(instance=profile)
@@ -411,11 +423,119 @@ def settings(request):
             "locale": custom_homepage_locale,
             "preferred_locales": preferred_locales,
             "preferred_locale": preferred_source_locale,
+            "personal_access_tokens": personal_access_tokens,
             "user_form": user_form,
             "user_profile_form": user_profile_form,
             "user_profile_toggle_form": forms.UserProfileToggleForm(instance=profile),
         },
     )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def generate_token(request):
+    # generates a 43 char token with characters a-z, A-Z, 0-9
+    def generate_unhashed_token():
+        return "".join(
+            secrets.choice(string.ascii_letters + string.digits) for _ in range(43)
+        )
+
+    try:
+        name = request.POST["name"]
+    except KeyError:
+        return JsonResponse(
+            {"status": "error", "message": "Token name is required."}, status=400
+        )
+    if request.method == "POST":
+        pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
+
+        if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
+            print("Creating token")
+            create_token_form = forms.CreateTokenForm(request.POST)
+
+            if create_token_form.is_valid():
+                print("Form is valid")
+                token = create_token_form.save(commit=False)
+
+                token_unhashed = generate_unhashed_token()
+                date_midnight = timezone.now().date() + timedelta(days=365)
+                token.name = name
+                token.token_hash = make_password(token_unhashed)
+                token.expires_at = timezone.make_aware(
+                    datetime.datetime.combine(date_midnight, time.min)
+                )
+                token.user = request.user
+                token.save()
+                token_id = token.id
+                token_secret = f"{token_id}_{token_unhashed}"
+
+                return JsonResponse(
+                    {
+                        "status": "success",
+                        "message": "Form submitted successfully!",
+                        "data": {
+                            "new_token_id": token.id,
+                            "new_token_name": token.name,
+                            "new_token_last_used": token.last_used.strftime(
+                                "%B, %d, %Y"
+                            )
+                            if token.last_used
+                            else None,
+                            "new_token_expires_at": token.expires_at.strftime(
+                                "%B, %d, %Y"
+                            ),
+                            "new_token_secret": token_secret,
+                        },
+                    }
+                )
+            else:
+                print("Form is not valid")
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "Form validation failed.",
+                        "errors": create_token_form.errors,
+                    },
+                    status=400,
+                )
+        else:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Maximum number of personal access tokens reached.",
+                },
+                status=400,
+            )
+    return JsonResponse(
+        {"status": "error", "message": "Invalid request method."}, status=405
+    )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def delete_token(request, token_id):
+    print("hello")
+
+    if request.method == "POST":
+        try:
+            print(token_id)
+            PersonalAccessToken.objects.filter(id=token_id).delete()
+
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Token deleted successfully!",
+                }
+            )
+
+        except KeyError:
+            return JsonResponse(
+                {"status": "error", "message": "Token deletion failed."}, status=400
+            )
+    else:
+        return JsonResponse(
+            {"status": "error", "message": "Invalid request method."}, status=405
+        )
 
 
 @login_required(redirect_field_name="", login_url="/403")

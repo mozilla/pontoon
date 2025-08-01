@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -27,7 +26,6 @@ from pontoon.terminology.models import (
 )
 
 from .serializers import (
-    NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
     NestedProjectSerializer,
@@ -128,8 +126,6 @@ def get_user_actions(request, date, slug):
 
 
 class UserActionsView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, date, slug):
         try:
             start_date = make_aware(datetime.strptime(date, "%Y-%m-%d"))
@@ -269,7 +265,7 @@ class ProjectListView(generics.ListAPIView):
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    serializer_class = NestedIndividualProjectSerializer
+    serializer_class = NestedProjectSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
@@ -283,6 +279,7 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
+    queryset = ProjectLocale.objects.all().prefetch_related("project", "locale")
     serializer_class = NestedProjectLocaleSerializer
 
     def get_object(self):
