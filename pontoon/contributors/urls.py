@@ -44,12 +44,6 @@ urlpatterns = [
     path("profile/", views.profile, name="pontoon.contributors.profile"),
     # Current user's settings
     path("settings/", views.settings, name="pontoon.contributors.settings"),
-    # Create personal access token
-    path(
-        "settings/token/",
-        views.create_token,
-        name="pontoon.contributors.settings.token",
-    ),
     # Current user's notifications
     path(
         "notifications/",
@@ -115,5 +109,17 @@ urlpatterns = [
         "toggle-active-user-status/<username:username>/",
         views.toggle_active_user_status,
         name="pontoon.contributors.toggle_active_user_status",
+    ),
+    # AJAX: Generate a new personal access token
+    path(
+        "generate-token/",
+        views.generate_token,
+        name="pontoon.contributors.generate_token",
+    ),
+    # AJAX: Delete a personal access token
+    path(
+        "delete-token/<int:token_id>/",
+        views.delete_token,
+        name="pontoon.contributors.delete_token",
     ),
 ]
