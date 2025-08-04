@@ -43,7 +43,7 @@ def unset_format(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0093_remove_entity_source"),
+        ("base", "0094_remove_entity_source"),
     ]
 
     operations = [

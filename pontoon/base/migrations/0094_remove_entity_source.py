@@ -39,7 +39,7 @@ def set_source_from_meta(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0092_del_entity_old_key"),
+        ("base", "0093_delete_more_empty_gettext_plurals"),
     ]
 
     operations = [

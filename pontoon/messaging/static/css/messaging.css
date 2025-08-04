@@ -17,12 +17,15 @@
     .button {
       font-size: 15px;
       padding: 10px 20px;
+
       .fa-chevron-left {
         margin-right: 5px;
       }
+
       .fa-chevron-right {
         margin-left: 5px;
       }
+
       .fa-spin {
         font-size: 16px;
       }
@@ -57,6 +60,7 @@
 
     .button.active.sending {
       pointer-events: none;
+
       .fa-spin {
         display: inline;
       }
@@ -113,11 +117,35 @@
 
       .check-box-wrapper {
         text-align: left;
-      }
 
-      .fas {
-        margin: 2px 10px 0 0;
-        float: left;
+        .fas {
+          margin: 2px 10px 0 0;
+          float: left;
+        }
+      }
+    }
+
+    .filters {
+      .check-list {
+        width: 100%;
+
+        .check-list-contents {
+          padding-bottom: 20px;
+
+          .check-box-wrapper {
+            color: var(--status-translated);
+            font-size: 26px;
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: -1px;
+            width: 100%;
+
+            .fas {
+              font-size: 16px;
+              padding-top: 7px;
+            }
+          }
+        }
       }
     }
 
@@ -175,6 +203,20 @@
     .multi-selector .menu {
       width: 285px;
     }
+
+    .collapsible {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .collapsible h3 {
+      user-select: none;
+    }
+
+    .collapsible-content {
+      display: none;
+    }
   }
 
   #review {
@@ -228,6 +270,8 @@
         font-weight: 100;
       }
 
+      .locales,
+      .projects,
       .submitted-translations,
       .performed-reviews,
       .last-login {

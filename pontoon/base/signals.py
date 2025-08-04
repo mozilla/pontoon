@@ -112,12 +112,7 @@ def set_project_date_modified(sender, instance, update_fields, **kwargs):
         prev = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
         return
-    for attr in [
-        "configuration_file",
-        "data_source",
-        "disabled",
-        "sync_disabled",
-    ]:
+    for attr in ["configuration_file", "data_source", "disabled"]:
         if getattr(prev, attr, None) != getattr(instance, attr, None):
             instance.date_modified = timezone.now()
             if update_fields is not None and "date_modified" not in update_fields:
