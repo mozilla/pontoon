@@ -13,8 +13,6 @@ def delete_more_empty_gettext_plurals(apps, schema_editor):
 
     regex = r"^\.input {\$n :number}\s\.match \$n(\s[a-z*]+ {{}})+$"
 
-    TranslationMemoryEntry.objects.filter(target__regex=regex).delete()
-
     translations = Translation.objects.filter(string__regex=regex)
     ActionLog.objects.bulk_create(
         [
@@ -29,6 +27,21 @@ def delete_more_empty_gettext_plurals(apps, schema_editor):
         ]
     )
     translations.delete()
+
+    tm_entries = TranslationMemoryEntry.objects.filter(target__regex=regex)
+    ActionLog.objects.bulk_create(
+        [
+            ActionLog(
+                action_type="tm_entry:deleted",
+                created_at=now,
+                performed_by=sync_user,
+                entity_id=t.entity_id,
+                locale_id=t.locale_id,
+            )
+            for t in tm_entries
+        ]
+    )
+    tm_entries.delete()
 
 
 class Migration(migrations.Migration):
