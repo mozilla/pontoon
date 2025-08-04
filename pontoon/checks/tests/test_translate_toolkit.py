@@ -1,26 +1,18 @@
-import pytest
-
 from pontoon.checks.libraries.translate_toolkit import run_checks
 
 
-@pytest.fixture()
-def mock_locale():
-    """Small mock of Locale object to make faster unit-tests."""
-    yield "en-US"
-
-
-def test_tt_invalid_translation(mock_locale):
+def test_tt_invalid_translation():
     """
     Check if translate toolkit returns errors if chek
     """
     assert run_checks(
         "Original string",
         "Translation \\q",
-        mock_locale,
+        "en-US",
     ) == {"ttWarnings": ["Escapes"]}
 
 
-def test_tt_disabled_checks(mock_locale):
+def test_tt_disabled_checks():
     """
     Disabled checks should be respected by the run_checks.
     """
@@ -28,15 +20,15 @@ def test_tt_disabled_checks(mock_locale):
         run_checks(
             "Original string",
             "Translation \\q",
-            mock_locale,
+            "en-US",
             disabled_checks={"escapes"},
         )
         == {}
     )
 
 
-def test_tt_correct_translation(mock_locale):
+def test_tt_correct_translation():
     """
     Quality check should return empty dictionary if everything is okay (no warnings).
     """
-    assert run_checks("Original string", "Translation string", mock_locale) == {}
+    assert run_checks("Original string", "Translation string", "en-US") == {}
