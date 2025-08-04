@@ -38,10 +38,9 @@ from pontoon.sync.tests.utils import build_file_tree
     ],
 )
 def test_download(two_repos, repo_url, expected_location):
-    mock_vcs = MockVersionControl(changes=None)
     with (
         TemporaryDirectory() as root,
-        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
+        patch("pontoon.sync.core.checkout.get_repo", return_value=MockVersionControl()),
     ):
         settings.MEDIA_ROOT = root
         locale = LocaleFactory.create(code="de-Test")
