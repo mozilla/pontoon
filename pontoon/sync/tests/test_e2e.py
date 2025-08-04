@@ -594,6 +594,38 @@ class TestEndToEnd(TestCase):
                 ("old-file.json", "plain_json", "o2"),
             }
 
+    @pytest.mark.django_db
+    def test_unsupported_formats(self):
+        with mock_setup() as (repo, locale):
+            project = ProjectFactory.create(
+                name="test-unsupported-formats", locales=[locale], repositories=[repo]
+            )
+
+            makedirs(repo.checkout_path)
+            build_file_tree(
+                repo.checkout_path,
+                {
+                    "en-US": {
+                        "file.inc": "#define inc unsupported\n",
+                        "file.json": '{ "json": "valid src" }',
+                        "file.lang": "",
+                    },
+                    "de-Test": {},
+                },
+            )
+
+            with self.assertLogs("pontoon.sync.core.entities", level="ERROR") as cm:
+                sync_project_task(project.pk)
+            bad_inc_error = next(msg for msg in cm.output if ":file.inc]" in msg)
+            assert "Skipping resource with unsupported format: inc" in bad_inc_error
+            bad_lang_error = next(msg for msg in cm.output if ":file.lang]" in msg)
+            assert "Resource format detection failed" in bad_lang_error
+            assert len(cm.output) == 2
+            assert {
+                (ent.resource.path, ent.resource.format, *ent.key)
+                for ent in Entity.objects.filter(resource__project=project)
+            } == {("file.json", "plain_json", "json")}
+
 
 @pytest.mark.django_db
 def test_webext():

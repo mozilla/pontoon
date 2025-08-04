@@ -49,9 +49,17 @@ def sync_resources_from_repo(
         if path in source_paths and exists(path):
             db_path = get_db_path(paths, path)
             try:
-                updates[db_path] = parse_resource(
+                res = parse_resource(
                     path, gettext_plurals=source_plurals, gettext_skip_obsolete=True
                 )
+                assert res.format
+                try:
+                    Resource.Format(res.format.name)
+                    updates[db_path] = res
+                except ValueError:
+                    log.error(
+                        f"[{project.slug}:{db_path}] Skipping resource with unsupported format: {res.format.name}"
+                    )
             except Exception as error:
                 log.error(
                     f"[{project.slug}:{db_path}] Skipping resource with parse error: {error}"
