@@ -4,6 +4,7 @@ from os import makedirs
 from os.path import isfile, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
+from unittest import TestCase
 from unittest.mock import patch
 
 import pytest
@@ -587,6 +588,76 @@ def test_fuzzy():
                 msgstr "Made Fuzzy 4"
                 """
             )
+
+
+class TestEndToEnd(TestCase):
+    @pytest.mark.django_db
+    def test_plain_json(self):
+        mock_vcs = MockVersionControl(changes=None)
+        with (
+            TemporaryDirectory() as root,
+            patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
+            patch(
+                "pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs
+            ),
+        ):
+            # Database setup
+            settings.MEDIA_ROOT = root
+            locale = LocaleFactory.create(code="de-Test", name="Test German")
+            repo = RepositoryFactory(url="http://example.com/repo")
+            project = ProjectFactory.create(
+                name="test-plain-json", locales=[locale], repositories=[repo]
+            )
+            res = ResourceFactory.create(
+                project=project, path="old-file.json", format="plain_json"
+            )
+
+            entity = EntityFactory.create(resource=res, key=["o1"], string="Entity 1")
+            TranslationFactory.create(
+                entity=entity,
+                locale=locale,
+                string="Translation 1",
+                active=True,
+                approved=True,
+            )
+
+            # Filesystem setup
+            makedirs(repo.checkout_path)
+            build_file_tree(
+                repo.checkout_path,
+                {
+                    "en-US": {
+                        "bad-file.json": '{ "b1": "Entity 1", "b2": "Entity 2", }',  # trailing comma
+                        "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
+                        "old-file.json": '{ "o1": "Entity 1", "o2": "Entity 2" }',
+                    },
+                    "de-Test": {
+                        "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
+                        "old-file.json": "{}",
+                    },
+                },
+            )
+
+            # Test
+            with self.assertLogs("pontoon.sync.core.entities", level="ERROR") as cm:
+                sync_project_task(project.pk)
+            (bad_json_error,) = cm.output
+            assert "Resource format detection failed" in bad_json_error
+            with open(join(repo.checkout_path, "de-Test", "old-file.json")) as file:
+                assert file.read() == dedent("""\
+            {
+              "o1": "Translation 1"
+            }
+            """)
+            assert {
+                (ent.resource.path, ent.resource.format, *ent.key)
+                for ent in Entity.objects.filter(resource__project=project)
+            } == {
+                ("new-file.json", "plain_json", "n1"),
+                ("new-file.json", "plain_json", "n2"),
+                ("old-file.json", "plain_json", "o1"),
+                ("old-file.json", "plain_json", "o2"),
+            }
 
 
 @pytest.mark.django_db
