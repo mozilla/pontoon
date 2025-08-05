@@ -35,9 +35,8 @@ class PersonalAccessTokenAuthentication(BaseAuthentication):
         if pat.expires_at and pat.expires_at.astimezone() < timezone.now():
             raise AuthenticationFailed({"detail": "Token has expired."})
 
+        pat.last_used = timezone.now()
+        pat.save(update_fields=["last_used"])
+
         user = pat.user
         return (user, None)
-
-    # create the token model, api endpoints to create, revoke, edit tokens
-    # create the UI to add, delete tokens in user settings
-    # create token expiration, repeated wrong tries
