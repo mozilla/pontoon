@@ -262,7 +262,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 28px;
-  margin-left: 30px;
+  margin-left: 36px;
 }
 
 .token-card .token-date {
@@ -322,7 +322,7 @@
 .token-container {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 input.token-secret {
