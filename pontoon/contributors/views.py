@@ -450,11 +450,9 @@ def generate_token(request):
         pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
 
         if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
-            print("Creating token")
             create_token_form = forms.CreateTokenForm(request.POST)
 
             if create_token_form.is_valid():
-                print("Form is valid")
                 token = create_token_form.save(commit=False)
 
                 token_unhashed = generate_unhashed_token()
@@ -489,7 +487,6 @@ def generate_token(request):
                     }
                 )
             else:
-                print("Form is not valid")
                 return JsonResponse(
                     {
                         "status": "error",
@@ -514,11 +511,8 @@ def generate_token(request):
 @login_required(redirect_field_name="", login_url="/403")
 @require_AJAX
 def delete_token(request, token_id):
-    print("hello")
-
     if request.method == "POST":
         try:
-            print(token_id)
             PersonalAccessToken.objects.filter(id=token_id).delete()
 
             return JsonResponse(

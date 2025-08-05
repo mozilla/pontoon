@@ -243,29 +243,32 @@
   margin-bottom: 20px;
 }
 
-.token-card .created {
-  background-color: var(--status-translated-alt);
-  color: var(--status-translated);
+.created {
   border: 2px solid var(--status-translated);
 }
 
 .token-card .token-header {
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 300;
   margin-bottom: 0px;
   text-align: left;
+  display: flex;
+  justify-content: space-between;
 }
 
 .token-card .token-info {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
+  gap: 28px;
+  margin-left: 30px;
 }
 
 .token-card .token-date {
   display: flex;
   align-items: center;
+  width: 220px;
   gap: 6px;
   color: var(--light-grey-7);
   margin: 5px 0;
@@ -273,10 +276,6 @@
 
 .token-card .date {
   color: var(--white-1);
-}
-
-.token-card .token-name {
-  font-weight: bold;
 }
 
 .token-card .delete-btn {
@@ -291,13 +290,77 @@
 }
 
 .generate-token {
-  background: var(--status-translated);
-  color: var(--black-3);
-  width: 100px;
+  display: flex;
+  justify-content: right;
 }
 
-.generate-token:disabled {
+.token-name-input {
+  width: 200px;
+  margin-right: 10px;
+}
+
+.generate-token-btn {
+  background: var(--status-translated);
+  border: none;
+  border-radius: 3px;
+  font-weight: 400;
+  color: var(--black-3);
+  font-size: 14px;
+  font-weight: 300;
+  padding: 6px;
+  text-align: center;
+  text-transform: uppercase;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.generate-token-btn:disabled {
   background: var(--light-grey-2);
-  color: var(--white-1);
   cursor: not-allowed;
+}
+
+.token-container {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+input.token-secret {
+  color: var(--white-1);
+  font-size: 16px;
+  text-align: left;
+  width: 463px;
+  height: 33px;
+  background-color: var(--black-3);
+  border-radius: 3px 0 0 3px;
+  box-sizing: border-box;
+  margin-left: 30px;
+  margin-bottom: 0px;
+}
+
+.token-card button.copy-btn {
+  align-self: center;
+  width: 33px;
+  height: 33px;
+  font-size: 18px;
+  margin-right: 6px;
+  border-radius: 0 3px 3px 0;
+  border-left: none;
+  border-right: 1px solid #4d5967;
+  border-bottom: 1px solid #4d5967;
+  border-top: 1px solid #4d5967;
+}
+
+.clipboard-success {
+  float: left;
+  color: var(--status-translated);
+}
+
+p.success-message {
+  font-size: 14px;
+  color: var(--light-grey-2);
+  font-style: italic;
+  text-align: left;
+  margin: 5px 0 0 30px;
+  width: 496px;
 }

@@ -316,34 +316,33 @@
                         <li data-token-id="{{ token.id }}">
                               <div class="token-card controls clearfix">
                                 <div class="token-header">
-                                  <span class="token-name">{{ token.name }}</span>
+                                  <span>{{ token.name }}</span>
+                                    <div>
+                                        <button class="button delete-btn far fa-trash-alt" tabindex="-1" data-token-id="{{ token.id }}"></button>
+                                        <input type="checkbox">
+                                    </div>
                                 </div>
                                 <div class="token-info">
                                     <div class="token-date">
                                         <span class="icon fas fa-calendar-alt"></span>
                                         <span>Expires on:</span> 
-                                        <span class="date">{{ token.expires_at|date("F j, Y") }}</span>
+                                        <span class="date">{{ token.expires_at|date("F, d, Y") }}</span>
                                     </div>
                                     <div class="token-date">
                                         <span class="icon fas fa-calendar-alt"></span>
                                         <span>Last used:</span> 
                                         <span class="date">
-                                            {{ token.last_used|date("F j, Y") if token.last_used is not none else "Never" }}
+                                            {{ token.last_used|date("F, d, Y") if token.last_used is not none else "Never" }}
                                         </span>
                                     </div>
-                                <div>
-                                    <button class="button delete-btn far fa-trash-alt" tabindex="-1" data-token-id="{{ token.id }}"></button>
-                                    <input type="checkbox">
-                                </div>
                                 </div>
                               </div>
                         </li>
                     {% endfor %}
                 </ul>
-                    <div class="controls">
-                        <label>Name</label>
-                        <input class="id_name" type="text" placeholder="Enter your token name here"/>
-                            <button class="generate-token button" disabled>Generate Token</button>
+                    <div class="generate-token">
+                            <input class="token-name-input" type="text" placeholder="Enter your token name here"/>
+                        <button type="button" class="generate-token-btn" disabled>Generate Token</button>
                     </div>
             </div>
         </section>
