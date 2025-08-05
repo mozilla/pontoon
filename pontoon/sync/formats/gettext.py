@@ -1,7 +1,7 @@
 from typing import Any
 
 from moz.l10n.formats import Format
-from moz.l10n.message import serialize_message
+from moz.l10n.message import message_to_json, serialize_message
 from moz.l10n.model import (
     CatchallKey,
     Entry,
@@ -40,6 +40,7 @@ def gettext_as_entity(entry: Entry[Message], kwargs: dict[str, Any]) -> Entity:
 
     return Entity(
         key=list(entry.id),
+        value=message_to_json(source_msg),
         string=serialize_message(Format.mf2, source_msg),
         comment=entry.comment,
         meta=[[m.key, m.value] for m in entry.meta],

@@ -76,6 +76,7 @@ class GettextTests(TestCase):
         assert e0.key == ["Source String"]
         assert e0.meta == [["reference", "file.py:1"]]
         assert e0.string == "Source String"
+        assert e0.value == ["Source String"]
 
         assert t0.key == ("Source String",)
         assert t0.string == "Translated String"
@@ -85,6 +86,7 @@ class GettextTests(TestCase):
         assert e1.comment == "First comment\nSecond comment"
         assert e1.key == ["Multiple Comments"]
         assert e1.string == "Multiple Comments"
+        assert e1.value == ["Multiple Comments"]
 
         assert t1.key == ("Multiple Comments",)
         assert t1.string == "Translated Multiple Comments"
@@ -95,6 +97,7 @@ class GettextTests(TestCase):
         assert e2.meta == [["reference", "file.py:2"], ["reference", "file.py:3"]]
         assert e2.key == ["Multiple Sources"]
         assert e2.string == "Multiple Sources"
+        assert e2.value == ["Multiple Sources"]
 
         assert t2.key == ("Multiple Sources",)
         assert t2.string == "Translated Multiple Sources"
@@ -104,6 +107,7 @@ class GettextTests(TestCase):
         assert e3.comment == ""
         assert e3.key == ["Fuzzy"]
         assert e3.string == "Fuzzy"
+        assert e3.value == ["Fuzzy"]
 
         assert t3.key == ("Fuzzy",)
         assert t3.string == "Translated Fuzzy"
@@ -113,6 +117,7 @@ class GettextTests(TestCase):
         assert e4.comment == ""
         assert e4.key == ["No Comments or Sources"]
         assert e4.string == "No Comments or Sources"
+        assert e4.value == ["No Comments or Sources"]
 
         assert t4.key == ("No Comments or Sources",)
         assert t4.string == "Translated No Comments or Sources"
@@ -122,6 +127,7 @@ class GettextTests(TestCase):
         assert e5.comment == ""
         assert e5.key == ["Missing Translation"]
         assert e5.string == "Missing Translation"
+        assert e5.value == ["Missing Translation"]
 
         # plural translation
         assert e6.comment == ""
@@ -135,7 +141,14 @@ class GettextTests(TestCase):
                 * {{Plural %(count)s strings}}
                 """).strip()
         )
-
+        assert e6.value == {
+            "decl": {"n": {"$": "n", "fn": "number"}},
+            "sel": ["n"],
+            "alt": [
+                {"keys": ["one"], "pat": ["Plural %(count)s string"]},
+                {"keys": [{"*": "other"}], "pat": ["Plural %(count)s strings"]},
+            ],
+        }
         assert t6.key == ("Plural %(count)s string",)
         assert (
             t6.string
@@ -160,7 +173,20 @@ class GettextTests(TestCase):
                 * {{Plural %(count)s strings with missing translations}}
                 """).strip()
         )
-
+        assert e7.value == {
+            "decl": {"n": {"$": "n", "fn": "number"}},
+            "sel": ["n"],
+            "alt": [
+                {
+                    "keys": ["one"],
+                    "pat": ["Plural %(count)s string with missing translation"],
+                },
+                {
+                    "keys": [{"*": "other"}],
+                    "pat": ["Plural %(count)s strings with missing translations"],
+                },
+            ],
+        }
         assert t7.key == ("Plural %(count)s string with missing translation",)
         assert (
             t7.string
@@ -215,6 +241,7 @@ class GettextTests(TestCase):
 
         assert e0.key == ["Source", "Main context"]
         assert e0.string == "Source"
+        assert e0.value == ["Source"]
 
         assert e1.key == ["Source", "Other context"]
         assert e1.string == dedent("""\
@@ -222,6 +249,14 @@ class GettextTests(TestCase):
             .match $n
             one {{Source}}
             * {{Source Plural}}""")
-
+        assert e1.value == {
+            "decl": {"n": {"$": "n", "fn": "number"}},
+            "sel": ["n"],
+            "alt": [
+                {"keys": ["one"], "pat": ["Source"]},
+                {"keys": [{"*": "other"}], "pat": ["Source Plural"]},
+            ],
+        }
         assert e2.key == ["Source"]
         assert e2.string == "Source"
+        assert e2.value == ["Source"]
