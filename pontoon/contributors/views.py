@@ -424,6 +424,7 @@ def settings(request):
             "preferred_locales": preferred_locales,
             "preferred_locale": preferred_source_locale,
             "personal_access_tokens": personal_access_tokens,
+            "now": timezone.now(),
             "user_form": user_form,
             "user_profile_form": user_profile_form,
             "user_profile_toggle_form": forms.UserProfileToggleForm(instance=profile),
