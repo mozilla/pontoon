@@ -60,7 +60,6 @@ $(function () {
         csrfmiddlewaretoken: csrfmiddlewaretoken,
       },
       success: function (response) {
-        // instead of cloning, can we use a template?
         if (response.status === 'success') {
           const newTokenHTML = `
             <li data-token-id="${response.data['new_token_id']}">
