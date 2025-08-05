@@ -90,14 +90,25 @@ $(function () {
                       <input class="token-secret" type="text" value="${response.data['new_token_secret']}" readonly></input>
                       <button class="button copy-btn far fa-copy" tabindex="-1" data-clipboard-text="${response.data['new_token_secret']}" ></button>
                   </div>
-                  <p class="success-message">Make sure to copy your personal access token now as you will not be able to see this again.</p>
+                  <p class="copy-message">Make sure to copy your personal access token now as you will not be able to see this again.</p>
                 </div>
             </li>
             `;
 
+          $('.error-message').html('');
           $('.token-name-input').val('');
           $('.generate-token-btn').prop('disabled', true);
           $('.pat-list').append(newTokenHTML);
+        }
+      },
+      error: function (response) {
+        const errors = response.responseJSON.errors;
+
+        $('.error-message').html('');
+
+        for (const error in errors) {
+          const errorMessages = errors[error].join(', ');
+          $(`.error-message`).append(`<p>${errorMessages}</p>`);
         }
       },
     });
