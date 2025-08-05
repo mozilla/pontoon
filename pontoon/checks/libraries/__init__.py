@@ -1,4 +1,12 @@
+from moz.l10n.formats.mf2 import mf2_parse_message, mf2_serialize_pattern
+from moz.l10n.model import CatchallKey, Pattern, PatternMessage, SelectMessage
+
 from . import compare_locales, pontoon_db, pontoon_non_db, translate_toolkit
+
+
+def as_gettext(pattern: Pattern) -> str:
+    s = "".join(mf2_serialize_pattern(pattern))
+    return s.replace(r"\{", "{").replace(r"\}", "}")
 
 
 def run_checks(
@@ -21,17 +29,19 @@ def run_checks(
         * JsonResponse - If there are errors
         * None - If there's no errors and non-omitted warnings.
     """
-    pontoon_db_checks = pontoon_db.run_checks(entity, original, string)
-    pontoon_non_db_checks = pontoon_non_db.run_checks(entity, string)
+    checks = {}
+    checks.update(pontoon_db.run_checks(entity, original, string))
+    checks.update(pontoon_non_db.run_checks(entity, string))
 
     try:
         cl_checks = compare_locales.run_checks(entity, locale_code, string)
-    except compare_locales.UnsupportedStringError:
-        cl_checks = None
-    except compare_locales.UnsupportedResourceTypeError:
+        checks.update(cl_checks)
+    except (
+        compare_locales.UnsupportedStringError,
+        compare_locales.UnsupportedResourceTypeError,
+    ):
         cl_checks = None
 
-    tt_checks = {}
     res_format = entity.resource.format
 
     if use_tt_checks and res_format != "fluent":
@@ -44,15 +54,6 @@ def run_checks(
             "kdecomments",
             "untranslated",
         }
-
-        # gettext plurals are temporarily represented using MF2 syntax,
-        # with one/* variant keys in the source and 0/1/.../* in the translations.
-        if (
-            res_format == "gettext"
-            and original.startswith(".input")
-            and original.endswith("}}")
-        ):
-            tt_disabled_checks.add("numbers")
 
         # Some compare-locales checks overlap with Translate Toolkit checks
         if cl_checks is not None:
@@ -72,13 +73,35 @@ def run_checks(
                     ]
                 )
 
-        tt_checks = translate_toolkit.run_checks(
-            original, string, locale_code, tt_disabled_checks
-        )
-
-    checks = dict(tt_checks, **(cl_checks or {}))
-
-    checks.update(pontoon_db_checks)
-    checks.update(pontoon_non_db_checks)
+        tt_patterns: list[tuple[str, str]] = []
+        if res_format == "gettext":
+            src_msg = mf2_parse_message(original)
+            tgt_msg = mf2_parse_message(string)
+            if isinstance(src_msg, SelectMessage):
+                s0 = as_gettext(src_msg.variants[(CatchallKey(),)])
+                if isinstance(tgt_msg, SelectMessage):
+                    for keys, pattern in tgt_msg.variants.items():
+                        if keys == ("one",):
+                            src = as_gettext(src_msg.variants[keys])
+                        else:
+                            src = s0
+                        tt_patterns.append((src, as_gettext(pattern)))
+                else:
+                    tt_patterns.append((s0, as_gettext(tgt_msg.pattern)))
+            elif isinstance(tgt_msg, PatternMessage):
+                tt_patterns.append(
+                    (as_gettext(src_msg.pattern), as_gettext(tgt_msg.pattern))
+                )
+        else:
+            tt_patterns.append((original, string))
+        tt_warnings = {}
+        for src, tgt in tt_patterns:
+            tt_checks = translate_toolkit.run_checks(
+                src, tgt, locale_code, tt_disabled_checks
+            )
+            if tt_checks:
+                tt_warnings.update((w, None) for w in tt_checks["ttWarnings"])
+        if tt_warnings:
+            checks["ttWarnings"] = list(tt_warnings)
 
     return checks
