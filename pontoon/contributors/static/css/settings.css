@@ -278,6 +278,10 @@
   color: var(--white-1);
 }
 
+.token-card .warning {
+  color: var(--status-warning);
+}
+
 .token-card .delete-btn {
   align-self: center;
   width: 33px;

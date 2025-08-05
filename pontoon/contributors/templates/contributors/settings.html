@@ -324,9 +324,14 @@
                                 </div>
                                 <div class="token-info">
                                     <div class="token-date">
-                                        <span class="icon fas fa-calendar-alt"></span>
-                                        <span>Expires on:</span> 
-                                        <span class="date">{{ token.expires_at|date("F, d, Y") }}</span>
+                                        {% if token.expires_at > now %}
+                                            <span class="icon fas fa-calendar-alt"></span>
+                                            <span>Expires on:</span> 
+                                            <span class="date">{{ token.expires_at|date("F, d, Y") }}</span>
+                                        {% else %}
+                                            <span class="icon fas fa-exclamation-triangle warning"></span>
+                                            <span class="warning">This token has expired</span>
+                                        {% endif %}
                                     </div>
                                     <div class="token-date">
                                         <span class="icon fas fa-calendar-alt"></span>
