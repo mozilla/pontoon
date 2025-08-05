@@ -188,13 +188,25 @@ def test_tt_gettext_checks():
     entity.resource.path = "file.po"
     entity.resource.format = Resource.Format.PO
     entity.resource.all.return_value = []
-    entity.string = (
-        ".input {$n :number}\n.match $n\none {{One user}}\n* {{%(count)s Users}}"
-    )
+    entity.string = dedent("""\
+        .input {$n :number}
+        .match $n
+        one {{One user}}
+        * {{%(count)s Users}}""")
     entity.comment = ""
-    #                                         one: unchanged    two: has trailing whitespace  *: no warnings
-    string = ".input {$n :number}\n.match $n\none {{One user}}\ntwo {{%(count)s Users two }}\n* {{%(count)s Users:other}}"
+    string = dedent("""\
+        .input {$n :number}
+        .match $n
+        one {{One user}}
+        two {{two: %(count)s Users }}
+        * {{other: %(count)s Users}}""")
     checks = run_checks(
         entity, "en-US", original=entity.string, string=string, use_tt_checks=True
     )
-    assert checks == {"ttWarnings": ["Unchanged", "Ending whitespace"]}
+
+    # one: Unchanged
+    # two: Ending whitespace, Starting punctuation
+    # *: Starting punctuation
+    assert checks == {
+        "ttWarnings": ["Unchanged", "Ending whitespace", "Starting punctuation"]
+    }
