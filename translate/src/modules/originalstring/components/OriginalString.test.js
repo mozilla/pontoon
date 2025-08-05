@@ -9,7 +9,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { OriginalString } from './OriginalString';
 
 const ENTITY = {
-  format: 'ftl',
+  format: 'fluent',
   original: ftl`
     header =
         .page-title = Hello

@@ -1,9 +1,12 @@
 import re
 
+from contextlib import contextmanager
 from os import makedirs
 from os.path import isfile, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
+from typing import cast
+from unittest import TestCase
 from unittest.mock import patch
 
 import pytest
@@ -13,6 +16,8 @@ from django.conf import settings
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
+    Locale,
+    Repository,
     TranslatedResource,
     Translation,
 )
@@ -32,17 +37,26 @@ from pontoon.sync.tests.test_checkouts import MockVersionControl
 from pontoon.sync.tests.utils import build_file_tree
 
 
-@pytest.mark.django_db
-def test_kitchen_sink():
-    mock_vcs = MockVersionControl(changes=([join("en-US", "c.ftl")], [], []))
+@contextmanager
+def mock_setup(mock_vcs=None):
+    if mock_vcs is None:
+        mock_vcs = MockVersionControl()
     with (
         TemporaryDirectory() as root,
         patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
         patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
     ):
-        # Database setup
         settings.MEDIA_ROOT = root
-        locale_de = LocaleFactory.create(code="de-Test", name="Test German")
+        repo = cast(Repository, RepositoryFactory.create(url="http://example.com/repo"))
+        locale = cast(Locale, LocaleFactory.create(code="de-Test", name="Test German"))
+        yield repo, locale
+
+
+@pytest.mark.django_db
+def test_kitchen_sink():
+    mock_vcs = MockVersionControl(changed=[join("en-US", "c.ftl")])
+    with mock_setup(mock_vcs) as (_, locale_de):
+        # Database setup
         locale_fr = LocaleFactory.create(code="fr-Test", name="Test French")
         repo_src = RepositoryFactory(
             url="http://example.com/src-repo", source_repo=True
@@ -53,9 +67,9 @@ def test_kitchen_sink():
             locales=[locale_de, locale_fr],
             repositories=[repo_src, repo_tgt],
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
         for i in range(3):
             entity = EntityFactory.create(
                 resource=res_c,
@@ -161,28 +175,14 @@ def test_kitchen_sink():
 
 @pytest.mark.django_db
 def test_add_resources():
-    mock_vcs = MockVersionControl(changes=None)
-    with (
-        TemporaryDirectory() as root,
-        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
-    ):
+    with mock_setup() as (repo, locale):
         # Database setup
-        settings.MEDIA_ROOT = root
-        locale_de = LocaleFactory.create(code="de-Test", name="Test German")
-        repo_src = RepositoryFactory(
-            url="http://example.com/src-repo", source_repo=True
-        )
-        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
         project = ProjectFactory.create(
-            name="add-resources",
-            locales=[locale_de],
-            repositories=[repo_src, repo_tgt],
+            name="add-resources", locales=[locale], repositories=[repo]
         )
 
         # Filesystem setup
-        src_root = repo_src.checkout_path
-        makedirs(src_root)
+        makedirs(repo.checkout_path)
         file_pot = dedent("""
             #
             msgid ""
@@ -204,19 +204,16 @@ def test_add_resources():
             </xliff>
         """)
         build_file_tree(
-            src_root,
+            repo.checkout_path,
             {
                 "en-US": {
                     "file.ftl": "key = Message\n",
                     "file.pot": file_pot,
                     "file.xliff": file_xliff,
-                }
+                },
+                "de-Test": {},
             },
         )
-
-        tgt_root = repo_tgt.checkout_path
-        makedirs(tgt_root)
-        build_file_tree(tgt_root, {"de-Test": {}})
 
         # Sync with no translations
         sync_project_task(project.pk)
@@ -243,7 +240,7 @@ def test_add_resources():
             entity=Entity.objects.get(
                 resource__project=project, resource__path="file.xliff"
             ),
-            locale=locale_de,
+            locale=locale,
             string="xliff translation",
             active=True,
             approved=True,
@@ -251,8 +248,8 @@ def test_add_resources():
         sync_project_task(project.pk)
 
         # Test that gettext is not written, while XLIFF is
-        tgt_po_path = join(repo_tgt.checkout_path, "de-Test", "file.po")
-        tgt_xliff_path = join(repo_tgt.checkout_path, "de-Test", "file.xliff")
+        tgt_po_path = join(repo.checkout_path, "de-Test", "file.po")
+        tgt_xliff_path = join(repo.checkout_path, "de-Test", "file.xliff")
         assert not isfile(tgt_po_path)
         with open(tgt_xliff_path) as file:
             assert file.read() == dedent("""\
@@ -299,36 +296,29 @@ def test_add_resources():
 
 @pytest.mark.django_db
 def test_translation_before_source():
-    with TemporaryDirectory() as root:
+    mock_vcs = MockVersionControl(changed=[join("de-Test", "a.ftl")])
+    with mock_setup(mock_vcs) as (repo, locale):
         # Database setup
-        settings.MEDIA_ROOT = root
-        locale_de = LocaleFactory.create(code="de-Test", name="Test German")
-        repo_src = RepositoryFactory(
-            url="http://example.com/src-repo", source_repo=True
-        )
-        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
         project = ProjectFactory.create(
-            name="trans-before-source",
-            locales=[locale_de],
-            repositories=[repo_src, repo_tgt],
+            name="trans-before-source", locales=[locale], repositories=[repo]
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
         TranslationFactory.create(
             entity=EntityFactory.create(
                 resource=res_a, key=["a0"], string="a0 = Message 0\n"
             ),
-            locale=locale_de,
+            locale=locale,
             string="a0 = Translation 0\n",
             active=True,
             approved=True,
         )
 
-        res_b = ResourceFactory.create(project=project, path="b.ftl", format="ftl")
+        res_b = ResourceFactory.create(project=project, path="b.ftl", format="fluent")
         TranslationFactory.create(
             entity=EntityFactory.create(
                 resource=res_b, key=["b0"], string="b0 = Message 0\n"
             ),
-            locale=locale_de,
+            locale=locale,
             string="b0 = Translation 0\n",
             active=True,
             approved=True,
@@ -337,67 +327,38 @@ def test_translation_before_source():
         ChangedEntityLocale.objects.filter(entity__resource__project=project).delete()
 
         # Filesystem setup
-        src_root = repo_src.checkout_path
-        makedirs(src_root)
+        makedirs(repo.checkout_path)
         build_file_tree(
-            src_root,
+            repo.checkout_path,
             {
                 "en-US": {
                     "a.ftl": "a0 = Message 0\n",
                     "b.ftl": "b0 = Message 0\n",
-                }
-            },
-        )
-
-        tgt_root = repo_tgt.checkout_path
-        makedirs(tgt_root)
-        build_file_tree(
-            tgt_root,
-            {
+                },
                 "de-Test": {
                     "a.ftl": ("a0 = New translation 0\na1 = New translation 1\n"),
                     "b.ftl": "b0 = Translation 0\n",
-                }
+                },
             },
         )
 
-        # Sync
-        mock_vcs = MockVersionControl(changes=([join("de-Test", "a.ftl")], [], []))
-        with (
-            patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-            patch(
-                "pontoon.sync.core.translations_to_repo.get_repo",
-                return_value=mock_vcs,
-            ),
-        ):
-            sync_project_task(project.pk)
+        sync_project_task(project.pk)
 
         # Test -- New a0 translation is picked up, added a1 is dropped
-        with open(join(repo_tgt.checkout_path, "de-Test", "a.ftl")) as file:
+        with open(join(repo.checkout_path, "de-Test", "a.ftl")) as file:
             assert file.read() == "a0 = New translation 0\n"
 
 
 @pytest.mark.django_db
 def test_android():
-    mock_vcs = MockVersionControl(changes=None)
-    with (
-        TemporaryDirectory() as root,
-        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
-    ):
+    with mock_setup() as (repo, locale):
         # Database setup
-        settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="de-Test", name="Test German")
-        repo_src = RepositoryFactory(
-            url="http://example.com/src-repo", source_repo=True
-        )
-        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
         project = ProjectFactory.create(
-            name="test-android",
-            locales=[locale],
-            repositories=[repo_src, repo_tgt],
+            name="test-android", locales=[locale], repositories=[repo]
         )
-        res = ResourceFactory.create(project=project, path="strings.xml", format="xml")
+        res = ResourceFactory.create(
+            project=project, path="strings.xml", format="android"
+        )
 
         entity = EntityFactory.create(
             resource=res, key=["quotes"], string="Prev quotes"
@@ -422,18 +383,16 @@ def test_android():
         )
 
         # Filesystem setup
-        src_root = repo_src.checkout_path
         src_xml = """<?xml version="1.0" ?>
             <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
                 <string name="quotes">\\'Hello\\' \\"source\\"</string>
                 <string name="newline">literal \n escaped \\n newlines</string>
             </resources>"""
-        makedirs(src_root)
-        build_file_tree(src_root, {"en-US": {"strings.xml": src_xml}})
-
-        tgt_root = repo_tgt.checkout_path
-        makedirs(tgt_root)
-        build_file_tree(tgt_root, {"de-Test": {}})
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {"en-US": {"strings.xml": src_xml}, "de-Test": {}},
+        )
 
         # Test
         sync_project_task(project.pk)
@@ -441,7 +400,7 @@ def test_android():
             "'Hello' \"source\"",
             "literal escaped \\n\nnewlines",
         }
-        with open(join(repo_tgt.checkout_path, "de-Test", "strings.xml")) as file:
+        with open(join(repo.checkout_path, "de-Test", "strings.xml")) as file:
             assert file.read() == dedent("""\
                 <?xml version="1.0" encoding="utf-8"?>
                 <resources>
@@ -452,16 +411,16 @@ def test_android():
 
 
 @pytest.mark.django_db
-def test_fuzzy():
-    with TemporaryDirectory() as root:
+def test_gettext_fuzzy():
+    mock_vcs = MockVersionControl(
+        changed=[join("en-US", "res.pot"), join("de-test", "res.po")]
+    )
+    with mock_setup(mock_vcs) as (repo, locale):
         # Database setup
-        settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", name="Test French")
-        repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
             name="test-write-fuzzy", locales=[locale], repositories=[repo]
         )
-        res = ResourceFactory.create(project=project, path="res.po", format="po")
+        res = ResourceFactory.create(project=project, path="res.po", format="gettext")
         TranslatedResourceFactory.create(locale=locale, resource=res)
         for i in range(5):
             string = f"Message {i}\n"
@@ -523,21 +482,10 @@ def test_fuzzy():
         makedirs(repo.checkout_path)
         build_file_tree(
             repo.checkout_path,
-            {"en-US": {"res.pot": res_src}, "fr-Test": {"res.po": res_tgt}},
+            {"en-US": {"res.pot": res_src}, "de-Test": {"res.po": res_tgt}},
         )
 
-        # Sync
-        mock_vcs = MockVersionControl(
-            changes=([join("en-US", "res.pot"), join("fr-test", "res.po")], [], [])
-        )
-        with (
-            patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-            patch(
-                "pontoon.sync.core.translations_to_repo.get_repo",
-                return_value=mock_vcs,
-            ),
-        ):
-            sync_project_task(project.pk)
+        sync_project_task(project.pk)
 
         # Test
         trans = Translation.objects.filter(
@@ -559,7 +507,7 @@ def test_fuzzy():
             "Not Fuzzy 2",
             "Translation 3",
         }
-        with open(join(repo.checkout_path, "fr-Test", "res.po")) as file:
+        with open(join(repo.checkout_path, "de-Test", "res.po")) as file:
             assert re.sub(r'^".*"\n', "", file.read(), flags=re.MULTILINE) == dedent(
                 """\
                 #
@@ -587,28 +535,109 @@ def test_fuzzy():
             )
 
 
+class TestEndToEnd(TestCase):
+    @pytest.mark.django_db
+    def test_plain_json(self):
+        with mock_setup() as (repo, locale):
+            # Database setup
+            project = ProjectFactory.create(
+                name="test-plain-json", locales=[locale], repositories=[repo]
+            )
+            res = ResourceFactory.create(
+                project=project, path="old-file.json", format="plain_json"
+            )
+
+            entity = EntityFactory.create(resource=res, key=["o1"], string="Entity 1")
+            TranslationFactory.create(
+                entity=entity,
+                locale=locale,
+                string="Translation 1",
+                active=True,
+                approved=True,
+            )
+
+            # Filesystem setup
+            makedirs(repo.checkout_path)
+            build_file_tree(
+                repo.checkout_path,
+                {
+                    "en-US": {
+                        "bad-file.json": '{ "b1": "Entity 1", "b2": "Entity 2", }',  # trailing comma
+                        "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
+                        "old-file.json": '{ "o1": "Entity 1", "o2": "Entity 2" }',
+                    },
+                    "de-Test": {
+                        "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
+                        "old-file.json": "{}",
+                    },
+                },
+            )
+
+            # Test
+            with self.assertLogs("pontoon.sync.core.entities", level="ERROR") as cm:
+                sync_project_task(project.pk)
+            (bad_json_error,) = cm.output
+            assert "Resource format detection failed" in bad_json_error
+            with open(join(repo.checkout_path, "de-Test", "old-file.json")) as file:
+                assert file.read() == dedent("""\
+            {
+              "o1": "Translation 1"
+            }
+            """)
+            assert {
+                (ent.resource.path, ent.resource.format, *ent.key)
+                for ent in Entity.objects.filter(resource__project=project)
+            } == {
+                ("new-file.json", "plain_json", "n1"),
+                ("new-file.json", "plain_json", "n2"),
+                ("old-file.json", "plain_json", "o1"),
+                ("old-file.json", "plain_json", "o2"),
+            }
+
+    @pytest.mark.django_db
+    def test_unsupported_formats(self):
+        with mock_setup() as (repo, locale):
+            project = ProjectFactory.create(
+                name="test-unsupported-formats", locales=[locale], repositories=[repo]
+            )
+
+            makedirs(repo.checkout_path)
+            build_file_tree(
+                repo.checkout_path,
+                {
+                    "en-US": {
+                        "file.inc": "#define inc unsupported\n",
+                        "file.json": '{ "json": "valid src" }',
+                        "file.lang": "",
+                    },
+                    "de-Test": {},
+                },
+            )
+
+            with self.assertLogs("pontoon.sync.core.entities", level="ERROR") as cm:
+                sync_project_task(project.pk)
+            bad_inc_error = next(msg for msg in cm.output if ":file.inc]" in msg)
+            assert "Skipping resource with unsupported format: inc" in bad_inc_error
+            bad_lang_error = next(msg for msg in cm.output if ":file.lang]" in msg)
+            assert "Resource format detection failed" in bad_lang_error
+            assert len(cm.output) == 2
+            assert {
+                (ent.resource.path, ent.resource.format, *ent.key)
+                for ent in Entity.objects.filter(resource__project=project)
+            } == {("file.json", "plain_json", "json")}
+
+
 @pytest.mark.django_db
 def test_webext():
-    mock_vcs = MockVersionControl(changes=None)
-    with (
-        TemporaryDirectory() as root,
-        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
-    ):
+    with mock_setup() as (repo, locale):
         # Database setup
-        settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="de-Test", name="Test German")
-        repo_src = RepositoryFactory(
-            url="http://example.com/src-repo", source_repo=True
-        )
-        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
         project = ProjectFactory.create(
             name="test-webext",
             locales=[locale],
-            repositories=[repo_src, repo_tgt],
+            repositories=[repo],
         )
         res = ResourceFactory.create(
-            project=project, path="messages.json", format="json"
+            project=project, path="messages.json", format="android"
         )
 
         entity = EntityFactory.create(resource=res, key=["plain"], string="Entity")
@@ -631,11 +660,12 @@ def test_webext():
             approved=True,
         )
 
+        ph = '{"ORIGIN": {"content": "$1", "example": "developer.mozilla.org"}}'
         entity = EntityFactory.create(
             resource=res,
             key=["name"],
             string="Entity for $ORIGIN$",
-            source='{"ORIGIN": {"content": "$1", "example": "developer.mozilla.org"}}',
+            meta=[["placeholders", ph]],
         )
         TranslationFactory.create(
             entity=entity,
@@ -646,7 +676,6 @@ def test_webext():
         )
 
         # Filesystem setup
-        src_root = repo_src.checkout_path
         src_messages_json = dedent("""\
           {
             "plain": { "message": "Entity" },
@@ -661,16 +690,18 @@ def test_webext():
               }
             }
           }""")
-        makedirs(src_root)
-        build_file_tree(src_root, {"en-US": {"messages.json": src_messages_json}})
-
-        tgt_root = repo_tgt.checkout_path
-        makedirs(tgt_root)
-        build_file_tree(tgt_root, {"de-Test": {"messages.json": "{}"}})
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"messages.json": src_messages_json},
+                "de-Test": {"messages.json": "{}"},
+            },
+        )
 
         # Test
         sync_project_task(project.pk)
-        with open(join(repo_tgt.checkout_path, "de-Test", "messages.json")) as file:
+        with open(join(repo.checkout_path, "de-Test", "messages.json")) as file:
             assert file.read() == dedent("""\
             {
               "plain": {
@@ -694,35 +725,25 @@ def test_webext():
 
 @pytest.mark.django_db
 def test_add_project_locale():
-    mock_vcs = MockVersionControl(changes=([], [], []))
-    with (
-        TemporaryDirectory() as root,
-        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
-    ):
+    mock_vcs = MockVersionControl(changed=[])
+    with mock_setup(mock_vcs) as (repo, locale_de):
         # Database setup
-        settings.MEDIA_ROOT = root
-        locale_de = LocaleFactory.create(code="de-Test", name="Test German")
-        repo_src = RepositoryFactory(
-            url="http://example.com/src-repo", source_repo=True
-        )
-        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
         project = ProjectFactory.create(
             name="test-mod-locale",
             locales=[locale_de],
-            repositories=[repo_src, repo_tgt],
+            repositories=[repo],
             system_project=False,
         )
 
         # Filesystem setup
-        src_root = repo_src.checkout_path
-        makedirs(src_root)
+        makedirs(repo.checkout_path)
         build_file_tree(
-            src_root, {"en-US": {"messages.json": '{ "key": { "message": "Entity" } }'}}
+            repo.checkout_path,
+            {
+                "en-US": {"messages.json": '{ "key": { "message": "Entity" } }'},
+                "de-Test": {"messages.json": "{}"},
+            },
         )
-        tgt_root = repo_tgt.checkout_path
-        makedirs(tgt_root)
-        build_file_tree(tgt_root, {"de-Test": {"messages.json": "{}"}})
 
         # First sync...
         sync_project_task(project.pk)

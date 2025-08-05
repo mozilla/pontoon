@@ -21,7 +21,7 @@ export function Translation({
     return null;
   }
 
-  if (format === 'ftl' || format === 'po') {
+  if (format === 'fluent' || format === 'gettext') {
     content = getPlainMessage(content, format);
     diffTarget &&= getPlainMessage(diffTarget, format);
   }

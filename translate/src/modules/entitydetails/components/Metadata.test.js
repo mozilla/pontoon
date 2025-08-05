@@ -8,13 +8,15 @@ import { MockLocalizationProvider } from '~/test/utils';
 
 import { Metadata } from './Metadata';
 
+const SRC_LOC = 'file_source.rs:31';
+
 const ENTITY = {
   pk: 42,
   key: [],
   original: 'le test',
   comment: 'my comment',
   path: 'path/to/RESOURCE',
-  source: [['file_source.rs', '31']],
+  meta: [['reference', SRC_LOC]],
   translation: { string: 'the test' },
   project: {
     slug: 'callme',
@@ -55,7 +57,7 @@ describe('<Metadata>', () => {
   it('renders correctly', () => {
     const wrapper = createMetadata();
 
-    expect(wrapper.text()).toContain(ENTITY.source[0].join(':'));
+    expect(wrapper.text()).toContain(SRC_LOC);
     expect(wrapper.find('#entitydetails-Metadata--comment').text()).toContain(
       ENTITY.comment,
     );
@@ -66,34 +68,27 @@ describe('<Metadata>', () => {
   });
 
   it('does not require a comment', () => {
-    const wrapper = createMetadata({
-      ...ENTITY,
-      ...{ comment: '' },
-    });
-
-    expect(wrapper.text()).toContain(ENTITY.source[0].join(':'));
+    const wrapper = createMetadata({ ...ENTITY, comment: '' });
+    expect(wrapper.text()).toContain(SRC_LOC);
     expect(wrapper.find('#entitydetails-Metadata--comment')).toHaveLength(0);
   });
 
   it('does not require a source', () => {
-    const wrapper = createMetadata({ ...ENTITY, ...{ source: [] } });
-
-    expect(wrapper.text()).not.toContain(ENTITY.source[0].join(':'));
+    const wrapper = createMetadata({ ...ENTITY, meta: [] });
+    expect(wrapper.text()).not.toContain(SRC_LOC);
     expect(wrapper.find('#entitydetails-Metadata--comment').text()).toContain(
       ENTITY.comment,
     );
   });
 
   it('handles sources as an object with examples', () => {
-    const withSourceAsObject = {
-      source: {
-        arg1: { content: '', example: 'example_1' },
-        arg2: { content: '', example: 'example_2' },
-      },
+    const phData = {
+      arg1: { content: '', example: 'example_1' },
+      arg2: { content: '', example: 'example_2' },
     };
     const wrapper = createMetadata({
       ...ENTITY,
-      ...withSourceAsObject,
+      meta: [['placeholders', JSON.stringify(phData)]],
     });
 
     expect(wrapper.find('div.placeholder .content').text()).toBe(
@@ -102,15 +97,13 @@ describe('<Metadata>', () => {
   });
 
   it('handles sources as an object without examples', () => {
-    const withSourceAsObject = {
-      source: {
-        arg1: { content: '' },
-        arg2: { content: '' },
-      },
+    const phData = {
+      arg1: { content: '' },
+      arg2: { content: '' },
     };
     const wrapper = createMetadata({
       ...ENTITY,
-      ...withSourceAsObject,
+      meta: [['placeholders', JSON.stringify(phData)]],
     });
 
     expect(wrapper.find('div.placeholder')).toHaveLength(0);

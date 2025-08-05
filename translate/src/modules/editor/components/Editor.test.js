@@ -41,14 +41,14 @@ const BROKEN_STRING = `my-message = Why so {} serious?\n`;
 const ENTITIES = [
   {
     pk: 1,
-    format: 'ftl',
+    format: 'fluent',
     key: ['my-message'],
     original: 'my-message = Hello',
     translation: { string: 'my-message = Salut' },
   },
   {
     pk: 2,
-    format: 'ftl',
+    format: 'fluent',
     key: ['my-message'],
     original: 'my-message =\n    .my-attr = Something guud',
     translation: {
@@ -57,28 +57,28 @@ const ENTITIES = [
   },
   {
     pk: 3,
-    format: 'ftl',
+    format: 'fluent',
     key: ['my-message'],
     original: RICH_MESSAGE_STRING,
     translation: undefined,
   },
   {
     pk: 4,
-    format: 'ftl',
+    format: 'fluent',
     key: ['my-message'],
     original: 'my-message = Hello',
     translation: { string: '' },
   },
   {
     pk: 5,
-    format: 'ftl',
+    format: 'fluent',
     key: ['my-message'],
     original: NESTED_SELECTORS_STRING,
     translation: { string: NESTED_SELECTORS_STRING },
   },
   {
     pk: 6,
-    format: 'ftl',
+    format: 'fluent',
     key: ['my-message'],
     original: BROKEN_STRING,
     translation: { string: BROKEN_STRING },

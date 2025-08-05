@@ -42,9 +42,9 @@ def test_remove_resource():
             locales=[locale],
             repositories=[repo],
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        res_b = ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
         TranslatedResourceFactory.create(locale=locale, resource=res_a)
         TranslatedResourceFactory.create(locale=locale, resource=res_b)
         TranslatedResourceFactory.create(locale=locale, resource=res_c)
@@ -98,9 +98,9 @@ def test_remove_entity():
             locales=[locale],
             repositories=[repo],
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        res_b = ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
         TranslatedResourceFactory.create(locale=locale, resource=res_a)
         TranslatedResourceFactory.create(locale=locale, resource=res_b)
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
@@ -186,9 +186,9 @@ def test_add_translation():
             locales=[locale],
             repositories=[repo],
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        res_b = ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
         TranslatedResourceFactory.create(locale=locale, resource=res_a)
         TranslatedResourceFactory.create(locale=locale, resource=res_b)
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
@@ -310,7 +310,7 @@ def test_directory_creation_on_translation_update():
             repositories=[repo],
         )
         res_c = ResourceFactory.create(
-            project=project, path="nested_dir/deeper_dir/c.ftl", format="ftl"
+            project=project, path="nested_dir/deeper_dir/c.ftl", format="fluent"
         )
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=1)
         entity = EntityFactory.create(

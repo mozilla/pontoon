@@ -35,7 +35,7 @@ describe('<HistoryTranslationComponent>', () => {
   };
 
   const DEFAULT_ENTITY = {
-    format: 'po',
+    format: 'gettext',
   };
 
   describe('getStatus', () => {

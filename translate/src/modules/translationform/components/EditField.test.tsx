@@ -24,7 +24,7 @@ function MockEditField({
 }: {
   defaultValue: string;
   singleField?: boolean;
-  format: 'ftl' | 'plain';
+  format: 'fluent' | 'plain';
   fieldRef?: React.RefObject<EditFieldHandle>;
   isAuthenticated?: boolean;
   setResultFromInput?: EditorActions['setResultFromInput'];
@@ -77,7 +77,7 @@ describe('<EditField>', () => {
 
   it('renders field correctly', () => {
     const { container } = render(
-      <MockEditField defaultValue='foo' format='ftl' />,
+      <MockEditField defaultValue='foo' format='fluent' />,
     );
 
     const lines = container.querySelectorAll('.cm-line');
@@ -90,7 +90,7 @@ describe('<EditField>', () => {
     const { container } = render(
       <MockEditField
         defaultValue='foo'
-        format='ftl'
+        format='fluent'
         setResultFromInput={spy}
       />,
     );
@@ -109,7 +109,7 @@ describe('<EditField>', () => {
     const { container } = render(
       <MockEditField
         defaultValue='foo'
-        format='ftl'
+        format='fluent'
         isAuthenticated={false}
         setResultFromInput={spy}
       />,
@@ -125,7 +125,7 @@ describe('<EditField>', () => {
     render(
       <MockEditField
         defaultValue='foo'
-        format='ftl'
+        format='fluent'
         fieldRef={ref}
         setResultFromInput={spy}
       />,

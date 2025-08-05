@@ -8,7 +8,7 @@ import { parseEntry } from './parseEntry';
  * Return a plain string representation of a given message.
  *
  * @param format The format of the file of the concerned entity.
- * @returns If the format is `'ftl'` or `'po'`, return a simplified
+ * @returns If the format is `'fluent'` or `'gettext'`, return a simplified
  *   version of the translation. Otherwise, return the original translation.
  */
 export function getPlainMessage(

@@ -5,22 +5,22 @@ import { serializeEntry } from './serializeEntry';
 describe('getPlainMessage', () => {
   describe('Fluent', () => {
     it('works for an empty string', () => {
-      expect(getPlainMessage('', 'ftl')).toEqual('');
+      expect(getPlainMessage('', 'fluent')).toEqual('');
     });
 
     it('works for a null value', () => {
-      expect(getPlainMessage(null, 'ftl')).toEqual('');
+      expect(getPlainMessage(null, 'fluent')).toEqual('');
     });
 
     it('works for a non-FTL string', () => {
-      expect(getPlainMessage('I am inevitable', 'ftl')).toEqual(
+      expect(getPlainMessage('I am inevitable', 'fluent')).toEqual(
         'I am inevitable',
       );
     });
 
     it('returns the value for a simple Message', () => {
       const message = 'title = Marvel Cinematic Universe';
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Marvel Cinematic Universe');
     });
 
@@ -30,27 +30,27 @@ describe('getPlainMessage', () => {
             beat
             the Villain
         `;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Heroes\nbeat\nthe Villain');
     });
 
     it('returns the value for a simple Term', () => {
       const message = '-team-name = Avengers';
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Avengers');
     });
 
     it('returns an empty string for an empty literal value in a message', () => {
-      const entry = parseEntry('ftl', 'empty = { "" }\n');
-      serializeEntry('ftl', entry);
-      const res = getPlainMessage(entry, 'ftl');
+      const entry = parseEntry('fluent', 'empty = { "" }\n');
+      serializeEntry('fluent', entry);
+      const res = getPlainMessage(entry, 'fluent');
       expect(res).toEqual('');
     });
 
     it('returns an empty string for an empty literal value in a term', () => {
-      const entry = parseEntry('ftl', '-empty = { "" }\n');
+      const entry = parseEntry('fluent', '-empty = { "" }\n');
       serializeEntry(entry);
-      const res = getPlainMessage(entry, 'ftl');
+      const res = getPlainMessage(entry, 'fluent');
       expect(res).toEqual('');
     });
 
@@ -58,7 +58,7 @@ describe('getPlainMessage', () => {
       const message = `hawkeye =
             .real-name = Clint Barton
         `;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Clint Barton');
     });
 
@@ -66,7 +66,7 @@ describe('getPlainMessage', () => {
       const message = `ironman-slogan = I am Ironman!
             .attributed-to = Tony Stark
         `;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('I am Ironman!');
     });
 
@@ -76,7 +76,7 @@ describe('getPlainMessage', () => {
             .second-movie = The Dark World
             .third-movie = Ragnarok
         `;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Thor');
     });
 
@@ -86,7 +86,7 @@ describe('getPlainMessage', () => {
             [1] Simple String
            *[other] Other Simple String
         }`;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Other Simple String');
     });
 
@@ -99,7 +99,7 @@ describe('getPlainMessage', () => {
                *[other] { $number } Stones
             }
         `;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Thanos has { $number } Stones');
     });
 
@@ -111,7 +111,7 @@ describe('getPlainMessage', () => {
                *[other] Everyone
            } will die
         `;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Everyone will die');
     });
 
@@ -122,7 +122,7 @@ describe('getPlainMessage', () => {
                *[other] Jarvis
             }
         `;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('Jarvis');
     });
 
@@ -131,7 +131,7 @@ describe('getPlainMessage', () => {
             LINK("Wikipedia", title: "Go to Wikipedia")
         }Read more
         `;
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual(
         '{ LINK("Wikipedia", title: "Go to Wikipedia") }Read more',
       );
@@ -139,44 +139,44 @@ describe('getPlainMessage', () => {
 
     it('works with variable reference', () => {
       const message = 'big-green = { $hulk }';
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('{ $hulk }');
     });
 
     it('works with message reference', () => {
       const message = 'small-white = { banner }';
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('{ banner }');
     });
 
     it('works with message reference with attribute', () => {
       const message = 'hero = { ironman.name }';
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('{ ironman.name }');
     });
 
     it('works with term reference', () => {
       const message = 'team = { -team-name }';
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('{ -team-name }');
     });
 
     it('works with string literals', () => {
       const message = 'the-end = { "" }'; // #nospoil
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('');
     });
 
     it('works with number literals', () => {
       const message = 'movies = { 22 }';
-      const res = getPlainMessage(message, 'ftl');
+      const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('{ 22 }');
     });
   });
 
   describe('Unicode MessageFormat', () => {
     it('works for an MF2 string', () => {
-      expect(getPlainMessage('{{quoted pattern}}', 'po')).toEqual(
+      expect(getPlainMessage('{{quoted pattern}}', 'gettext')).toEqual(
         'quoted pattern',
       );
     });
@@ -189,7 +189,7 @@ describe('getPlainMessage', () => {
       1 {{Thanos has 1 Stone}}
       6 {{Thanos has all the Stones}}
       * {{Thanos has \\{number\\} Stones}}`;
-      const res = getPlainMessage(message, 'po');
+      const res = getPlainMessage(message, 'gettext');
       expect(res).toEqual('Thanos has {number} Stones');
     });
   });

@@ -5,8 +5,7 @@ from unittest import TestCase
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_vcs_translations
-from pontoon.sync.formats.gettext import gettext_as_entity
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
 class GettextTests(TestCase):
@@ -67,14 +66,15 @@ class GettextTests(TestCase):
 
         res = parse_resource(Format.gettext, src, gettext_plurals=["one", "other"])
         e0, e1, e2, e3, e4, e5, e6, e7 = (
-            gettext_as_entity(entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.gettext, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
-        t0, t1, t2, t3, t4, t5, t6, t7 = as_vcs_translations(res)
+        t0, t1, t2, t3, t4, t6, t7 = as_vcs_translations(res)
 
         # basic
         assert e0.comment == "Sample comment"
         assert e0.key == ["Source String"]
-        assert e0.source == [("file.py", "1")]
+        assert e0.meta == [["reference", "file.py:1"]]
         assert e0.string == "Source String"
 
         assert t0.key == ("Source String",)
@@ -83,7 +83,6 @@ class GettextTests(TestCase):
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
-        assert e1.source == []
         assert e1.key == ["Multiple Comments"]
         assert e1.string == "Multiple Comments"
 
@@ -93,7 +92,7 @@ class GettextTests(TestCase):
 
         # multiple sources
         assert e2.comment == ""
-        assert e2.source == [("file.py", "2"), ("file.py", "3")]
+        assert e2.meta == [["reference", "file.py:2"], ["reference", "file.py:3"]]
         assert e2.key == ["Multiple Sources"]
         assert e2.string == "Multiple Sources"
 
@@ -103,7 +102,6 @@ class GettextTests(TestCase):
 
         # fuzzy
         assert e3.comment == ""
-        assert e3.source == []
         assert e3.key == ["Fuzzy"]
         assert e3.string == "Fuzzy"
 
@@ -113,7 +111,6 @@ class GettextTests(TestCase):
 
         # no comments or sources
         assert e4.comment == ""
-        assert e4.source == []
         assert e4.key == ["No Comments or Sources"]
         assert e4.string == "No Comments or Sources"
 
@@ -123,17 +120,11 @@ class GettextTests(TestCase):
 
         # missing translation
         assert e5.comment == ""
-        assert e5.source == []
         assert e5.key == ["Missing Translation"]
         assert e5.string == "Missing Translation"
 
-        assert t5.key == ("Missing Translation",)
-        assert t5.string is None
-        assert not t5.fuzzy
-
         # plural translation
         assert e6.comment == ""
-        assert e6.source == []
         assert e6.key == ["Plural %(count)s string"]
         assert (
             e6.string
@@ -159,7 +150,6 @@ class GettextTests(TestCase):
 
         # missing plural translation
         assert e7.comment == ""
-        assert e7.source == []
         assert e7.key == ["Plural %(count)s string with missing translation"]
         assert (
             e7.string
@@ -218,13 +208,13 @@ class GettextTests(TestCase):
 
         res = parse_resource(Format.gettext, src)
         e0, e1, e2 = (
-            gettext_as_entity(entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.gettext, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
-        t0, t1, t2 = as_vcs_translations(res)
+        assert list(as_vcs_translations(res)) == []
 
         assert e0.key == ["Source", "Main context"]
         assert e0.string == "Source"
-        assert t0.string is None
 
         assert e1.key == ["Source", "Other context"]
         assert e1.string == dedent("""\
@@ -232,8 +222,6 @@ class GettextTests(TestCase):
             .match $n
             one {{Source}}
             * {{Source Plural}}""")
-        assert t1.string is None
 
         assert e2.key == ["Source"]
         assert e2.string == "Source"
-        assert t2.string is None

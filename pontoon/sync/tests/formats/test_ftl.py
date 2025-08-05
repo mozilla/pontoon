@@ -5,8 +5,7 @@ from unittest import TestCase
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_vcs_translations
-from pontoon.sync.formats.ftl import ftl_as_entity
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
 class FTLTests(TestCase):
@@ -24,7 +23,8 @@ class FTLTests(TestCase):
 
         res = parse_resource(Format.fluent, src)
         e0, e1, e2 = (
-            ftl_as_entity(entry, datetime.now()) for entry in res.all_entries()
+            as_entity(Format.fluent, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
         t0, t1, t2 = as_vcs_translations(res)
 

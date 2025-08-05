@@ -5,7 +5,7 @@ import type { MessageEntry } from '.';
 import { parseFlatFluent } from './parseFlatFluent';
 
 /**
- * Parse `'ftl'` or `'po'` message source as a {@link MessageEntry}.
+ * Parse `'fluent'` or `'gettext'` message source as a {@link MessageEntry}.
  *
  * @returns `null` on parse error or unsupported format
  */
@@ -14,7 +14,7 @@ export function parseEntry(
   source: string,
 ): MessageEntry | null {
   switch (format) {
-    case 'ftl': {
+    case 'fluent': {
       const fluentEntry = parseFlatFluent(source);
       const { data } = fluentToResourceData(new Resource([fluentEntry]));
       for (const [id, attributes] of data) {
@@ -27,7 +27,7 @@ export function parseEntry(
       }
       break;
     }
-    case 'po':
+    case 'gettext':
       return { id: '', value: parseMessage(source) };
   }
   return null;

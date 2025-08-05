@@ -8,5 +8,5 @@ class VCSTranslation:
     """
 
     key: tuple[str, ...]
-    string: str | None
+    string: str
     fuzzy: bool = False

@@ -81,7 +81,7 @@ def entity_ftl_mock():
     """
     mock = MagicMock()
     mock.resource.path = "file.ftl"
-    mock.resource.format = Resource.Format.FTL
+    mock.resource.format = Resource.Format.FLUENT
     mock.resource.all.return_value = []
     mock.string = dedent(
         """
@@ -186,7 +186,7 @@ def test_tt_disabled_checks(
 def test_tt_gettext_checks():
     entity = MagicMock()
     entity.resource.path = "file.po"
-    entity.resource.format = Resource.Format.PO
+    entity.resource.format = Resource.Format.GETTEXT
     entity.resource.all.return_value = []
     entity.string = dedent("""\
         .input {$n :number}

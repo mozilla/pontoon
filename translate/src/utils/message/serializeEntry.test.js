@@ -92,7 +92,7 @@ describe('serializeEntry("simple", ...)', () => {
         ],
       },
     };
-    expect(serializeEntry('ftl', entry)).toEqual(ftl`
+    expect(serializeEntry('fluent', entry)).toEqual(ftl`
       my-entry =
           { $num ->
               [one]

@@ -11,10 +11,17 @@ from pontoon.sync.tests.utils import FileTree, build_file_tree
 
 class MockVersionControl:
     def __init__(
-        self, changes: tuple[list[str], list[str], list[tuple[str, str]]] | None
+        self,
+        *,
+        changed: list[str] | None = None,
+        removed: list[str] | None = None,
+        renamed: list[tuple[str, str]] | None = None,
     ):
         self._calls: list[tuple[str, Any]] = []
-        self._changes = changes
+        if changed is None and removed is None and renamed is None:
+            self._changes = None
+        else:
+            self._changes = (changed or [], removed or [], renamed or [])
 
     def commit(self, *args):
         self._calls.append(("commit", args))
@@ -33,7 +40,7 @@ class MockVersionControl:
 
 class CheckoutsTests(TestCase):
     def test_no_changes_with_prev_commit(self):
-        mock_vcs = MockVersionControl(changes=([], [], []))
+        mock_vcs = MockVersionControl(changed=[])
         mock_repo = Mock(
             Repository,
             branch="BRANCH",
@@ -81,7 +88,7 @@ class CheckoutsTests(TestCase):
         }
         with TemporaryDirectory() as root:
             build_file_tree(root, tree)
-            mock_vcs = MockVersionControl(changes=([], [], []))
+            mock_vcs = MockVersionControl(changed=[])
             mock_repo = Mock(
                 Repository,
                 branch="BRANCH",

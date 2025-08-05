@@ -54,7 +54,7 @@ def test_update_ftl_translations():
         res = {}
         for id in ["a", "b", "c"]:
             res[id] = ResourceFactory.create(
-                project=project, path=f"{id}.ftl", format="ftl", total_strings=3
+                project=project, path=f"{id}.ftl", format="fluent", total_strings=3
             )
             TranslatedResourceFactory.create(
                 locale=locale, resource=res[id], total_strings=3
@@ -237,7 +237,7 @@ def test_remove_po_target_resource():
         res = {}
         for id in ["a", "b", "c"]:
             res[id] = ResourceFactory.create(
-                project=project, path=f"{id}.po", format="po", total_strings=3
+                project=project, path=f"{id}.po", format="gettext", total_strings=3
             )
             TranslatedResourceFactory.create(locale=locale, resource=res[id])
             for i in range(3):

@@ -16,7 +16,7 @@ type Props = {
 export function FluentAttribute({
   entity: { format, original },
 }: Props): null | React.ReactElement {
-  if (format !== 'ftl') {
+  if (format !== 'fluent') {
     return null;
   }
 
