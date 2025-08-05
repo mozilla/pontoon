@@ -416,8 +416,14 @@ class CreateTokenForm(forms.ModelForm):
         model = PersonalAccessToken
         fields = ("name",)
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
     def clean_name(self):
+        if not self.user:
+            raise ValidationError("User must be provided to create a token.")
         name = self.cleaned_data.get("name")
-        if PersonalAccessToken.objects.filter(name=name).exists():
-            raise ValidationError("A token with this name already exists.")
+        if PersonalAccessToken.objects.filter(name=name, user=self.user).exists():
+            raise ValidationError("You already have a token with this name.")
         return name
