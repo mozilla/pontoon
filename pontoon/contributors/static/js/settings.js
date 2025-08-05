@@ -47,7 +47,7 @@ $(function () {
     });
   });
 
-  $('.generate-token').click(function (e) {
+  $('.generate-token-btn').click(function (e) {
     e.preventDefault();
 
     const csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
@@ -56,48 +56,58 @@ $(function () {
       url: '/generate-token/',
       type: 'POST',
       data: {
-        name: $('.id_name').val(),
+        name: $('.token-name-input').val(),
         csrfmiddlewaretoken: csrfmiddlewaretoken,
       },
       success: function (response) {
-        // console.log(response.data);
+        // instead of cloning, can we use a template?
         if (response.status === 'success') {
-          const lastListItem = $('.pat-list li:last');
-          const newListItem = lastListItem.clone();
+          const newTokenHTML = `
+            <li data-token-id="${response.data['new_token_id']}">
+                <div class="token-card created controls clearfix">
+                <div class="token-header">
+                  <span class="token-name">${response.data['new_token_name']}</span>
+                  <div>
+                    <button class="button delete-btn far fa-trash-alt" tabindex="-1" data-token-id="${response.data['new_token_id']}"></button>
+                    <input type="checkbox">
+                  </div>
+                </div>
+                <div class="token-info">
+                  <div class="token-date">
+                    <span class="icon fas fa-calendar-alt"></span>
+                    <span>Expires on:</span> 
+                    <span class="date">${response.data['new_token_expires_at']}</span>
+                  </div>
+                  <div class="token-date">
+                    <span class="icon fas fa-calendar-alt"></span>
+                    <span>Last used:</span> 
+                    <span class="date">
+                      ${response.data['new_token_last_used'] ? response.data['new_token_last_used'] : 'Never'}
+                    </span>
+                  </div>
+                </div>
+                <div class="success-banner">
+                  <div class="token-container">
+                      <input class="token-secret" type="text" value="${response.data['new_token_secret']}" readonly></input>
+                      <button class="button copy-btn far fa-copy" tabindex="-1" data-clipboard-text="${response.data['new_token_secret']}" ></button>
+                  </div>
+                  <p class="success-message">Make sure to copy your personal access token now as you will not be able to see this again.</p>
+                </div>
+            </li>
+            `;
 
-          newListItem.attr('data-token-id', response.data['new_token_id']);
-          newListItem.addClass('created');
-          newListItem.find('.token-name').text(response.data['new_token_name']);
-          newListItem
-            .find('.token-date .date')
-            .first()
-            .text(response.data['new_token_expires_at']);
-          newListItem
-            .find('.token-date .date')
-            .last()
-            .text(
-              response.data['new_token_last_used']
-                ? response.data['new_token_last_used']
-                : 'Never',
-            );
-          newListItem
-            .find('.delete-btn')
-            .attr('data-token-id', response.data['new_token_id']);
-
-          const tokenInfo = newListItem.find('.token-info');
-          const newItem = $('<div class="new-item">New item content</div>');
-          tokenInfo.after(newItem);
-          $('.pat-list').append(newListItem);
+          $('.token-name-input').val('');
+          $('.generate-token-btn').prop('disabled', true);
+          $('.pat-list').append(newTokenHTML);
         }
       },
     });
   });
 
-  $('.delete-btn').click(function (e) {
+  $(document).on('click', '.delete-btn', function (e) {
     e.preventDefault();
 
     const tokenId = $(this).data('token-id');
-    // const tokenId = $(this).parents('li').data('token-id');
     const csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
 
     $.ajax({
@@ -114,11 +124,33 @@ $(function () {
     });
   });
 
-  $('.id_name').on('input', function () {
+  const clipboard = new Clipboard('.copy-btn');
+
+  clipboard.on('success', function (e) {
+    const $trigger = $(e.trigger);
+
+    // Remove any existing message
+    $('.clipboard-success').remove();
+
+    // Create and insert the success message after the button
+    const successMessage = $('<span class="clipboard-success">Copied!</span>');
+    $trigger.after(successMessage);
+    setTimeout(function () {
+      successMessage.fadeOut(500, function () {
+        successMessage.remove();
+      });
+    }, 1000);
+  });
+
+  $(document).on('click', '.copy-btn', function (e) {
+    e.preventDefault();
+  });
+
+  $('.token-name-input').on('input', function () {
     if ($(this).val().trim() !== '') {
-      $('.generate-token').prop('disabled', false); // Enable the button
+      $('.generate-token-btn').prop('disabled', false); // Enable the button
     } else {
-      $('.generate-token').prop('disabled', true); // Disable the button
+      $('.generate-token-btn').prop('disabled', true); // Disable the button
     }
   });
 

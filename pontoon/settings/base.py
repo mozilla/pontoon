@@ -722,6 +722,7 @@ PIPELINE_JS = {
             "js/lib/jquery-ui-1.13.2.js",
             "js/multiple_team_selector.js",
             "js/team_selector.js",
+            "js/lib/clipboard.min.js",
             "js/settings.js",
         ),
         "output_filename": "js/settings.min.js",
