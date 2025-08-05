@@ -450,7 +450,7 @@ def generate_token(request):
         pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
 
         if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
-            create_token_form = forms.CreateTokenForm(request.POST)
+            create_token_form = forms.CreateTokenForm(request.POST, user=request.user)
 
             if create_token_form.is_valid():
                 token = create_token_form.save(commit=False)
@@ -518,7 +518,8 @@ def generate_token(request):
 def delete_token(request, token_id):
     if request.method == "POST":
         try:
-            PersonalAccessToken.objects.filter(id=token_id).delete()
+            token = PersonalAccessToken.objects.get(id=token_id)
+            token.delete()
 
             return JsonResponse(
                 {
@@ -527,9 +528,9 @@ def delete_token(request, token_id):
                 }
             )
 
-        except KeyError:
+        except PersonalAccessToken.DoesNotExist:
             return JsonResponse(
-                {"status": "error", "message": "Token deletion failed."}, status=400
+                {"status": "error", "message": "Token not found."}, status=404
             )
     else:
         return JsonResponse(
