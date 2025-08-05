@@ -405,6 +405,19 @@ class CreateTokenForm(forms.ModelForm):
     Form for creating Personal Access Tokens.
     """
 
+    name = forms.RegexField(
+        regex=r"^[a-zA-Z0-9-]+$",
+        error_messages={
+            "invalid": "Name may only contain letters, numbers, and hyphens."
+        },
+    )
+
     class Meta:
         model = PersonalAccessToken
         fields = ("name",)
+
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if PersonalAccessToken.objects.filter(name=name).exists():
+            raise ValidationError("A token with this name already exists.")
+        return name

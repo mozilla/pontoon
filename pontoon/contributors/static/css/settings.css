@@ -356,7 +356,7 @@ input.token-secret {
   color: var(--status-translated);
 }
 
-p.success-message {
+p.copy-message {
   font-size: 14px;
   color: var(--light-grey-2);
   font-style: italic;

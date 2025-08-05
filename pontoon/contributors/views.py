@@ -500,6 +500,11 @@ def generate_token(request):
                 {
                     "status": "error",
                     "message": "Maximum number of personal access tokens reached.",
+                    "errors": {
+                        "maximum": [
+                            "You can only have up to 10 personal access tokens."
+                        ]
+                    },
                 },
                 status=400,
             )
