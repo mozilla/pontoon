@@ -181,3 +181,32 @@ def test_tt_disabled_checks(
     assert not run_tt_checks_mock.assert_called_with(
         ANY, ANY, ANY, {"acronyms", "gconf", "kdecomments", "untranslated"}
     )
+
+
+def test_tt_gettext_checks():
+    entity = MagicMock()
+    entity.resource.path = "file.po"
+    entity.resource.format = Resource.Format.PO
+    entity.resource.all.return_value = []
+    entity.string = dedent("""\
+        .input {$n :number}
+        .match $n
+        one {{One user}}
+        * {{%(count)s Users}}""")
+    entity.comment = ""
+    string = dedent("""\
+        .input {$n :number}
+        .match $n
+        one {{One user}}
+        two {{two: %(count)s Users }}
+        * {{other: %(count)s Users}}""")
+    checks = run_checks(
+        entity, "en-US", original=entity.string, string=string, use_tt_checks=True
+    )
+
+    # one: Unchanged
+    # two: Ending whitespace, Starting punctuation
+    # *: Starting punctuation
+    assert checks == {
+        "ttWarnings": ["Unchanged", "Ending whitespace", "Starting punctuation"]
+    }
