@@ -71,13 +71,13 @@ $(function () {
                     <input type="checkbox">
                   </div>
                 </div>
-                <div class="token-info">
-                  <div class="token-date">
+                <div class="token-info-container">
+                  <div class="token-info">
                     <span class="icon fas fa-calendar-alt"></span>
                     <span>Expires on:</span> 
                     <span class="date">${response.data['new_token_expires_at']}</span>
                   </div>
-                  <div class="token-date">
+                  <div class="token-info">
                     <span class="icon fas fa-calendar-alt"></span>
                     <span>Last used:</span> 
                     <span class="date">
