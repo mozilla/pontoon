@@ -322,18 +322,34 @@
                                         <input type="checkbox">
                                     </div>
                                 </div>
-                                <div class="token-info">
-                                    <div class="token-date">
-                                        {% if token.expires_at > now %}
+                                <div class="token-info-container">
+                                    <div class="token-info">
+                                        {% if token.expires_at < now %}
+                                            <span class="icon fas fa-calendar-alt"></span>
+                                            <span>Expired on:</span> 
+                                            <span class="date warning">{{ token.expires_at|date("F, d, Y") }}</span>
+                                        {% else %}
                                             <span class="icon fas fa-calendar-alt"></span>
                                             <span>Expires on:</span> 
                                             <span class="date">{{ token.expires_at|date("F, d, Y") }}</span>
-                                        {% else %}
-                                            <span class="icon fas fa-exclamation-triangle warning"></span>
-                                            <span class="warning">This token has expired</span>
                                         {% endif %}
                                     </div>
-                                    <div class="token-date">
+                                    <div class="token-info">
+                                        {% if token.revoked %}
+                                            <span class="icon fas fa-ban revoked"></span>
+                                            <span>Status:</span>
+                                            <span class="revoked">Revoked</span>
+                                        {% elif token.expires_at < now %}
+                                            <span class="icon fas fa-exclamation-triangle warning"></span>
+                                            <span>Status:</span>
+                                            <span class="warning">Expired</span>
+                                        {% else %}
+                                            <span class="icon fas fa-check-circle active"></span>
+                                            <span>Status:</span>
+                                            <span class="active">Active</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="token-info">
                                         <span class="icon fas fa-calendar-alt"></span>
                                         <span>Last used:</span> 
                                         <span class="date">

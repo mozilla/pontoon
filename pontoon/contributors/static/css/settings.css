@@ -256,16 +256,17 @@
   justify-content: space-between;
 }
 
-.token-card .token-info {
+.token-card .token-info-container {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
-  gap: 28px;
-  margin-left: 36px;
+  row-gap: 4px;
+  column-gap: 40px;
+  margin-left: 48px;
 }
 
-.token-card .token-date {
+.token-card .token-info {
   display: flex;
   align-items: center;
   width: 220px;
@@ -278,8 +279,16 @@
   color: var(--white-1);
 }
 
+.token-card .active {
+  color: var(--status-translated);
+}
+
 .token-card .warning {
   color: var(--status-warning);
+}
+
+.token-card .revoked {
+  color: var(--status-error);
 }
 
 .token-card .delete-btn {
