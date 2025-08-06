@@ -149,3 +149,25 @@ class ThrottleIpMiddleware:
             cache.set(observed_key, (1, now), self.observation_period)
 
         return response
+
+
+class DeprecationWarningMiddleware:
+    """
+    Middleware to add a deprecation warning to GraphQL API responses.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+
+        # Check if the request is for the GraphQL endpoint
+        if request.path.startswith("/graphql"):
+            response["X-GraphQL-Deprecation-Warning"] = (
+                "Warning: The GraphQL API is deprecated and will be removed in a future release. "
+                "Please use the REST API instead. For more information, visit: "
+                "https://github.com/mozilla/pontoon/discussions/3745"
+            )
+
+        return response
