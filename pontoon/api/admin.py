@@ -12,10 +12,10 @@ class PersonalAccessTokenAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "user",
-        "expires_at",
-        "revoked",
         "created_at",
+        "expires_at",
         "last_used",
+        "revoked",
     )
     list_filter = (
         "revoked",
