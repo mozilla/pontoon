@@ -9,7 +9,7 @@ class PersonalAccessToken(models.Model):
         User, on_delete=models.CASCADE, related_name="personal_access_tokens"
     )
     name = models.CharField(max_length=32)
-    expires_at = models.DateTimeField()
-    revoked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
     last_used = models.DateTimeField(null=True, blank=True)
+    revoked = models.BooleanField(default=False)
