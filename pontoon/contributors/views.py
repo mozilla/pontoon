@@ -434,6 +434,7 @@ def settings(request):
 
 @login_required(redirect_field_name="", login_url="/403")
 @require_AJAX
+@require_POST
 def generate_token(request):
     # generates a 43 char token with characters a-z, A-Z, 0-9
     def generate_unhashed_token():
@@ -447,95 +448,81 @@ def generate_token(request):
         return JsonResponse(
             {"status": "error", "message": "Token name is required."}, status=400
         )
-    if request.method == "POST":
-        pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
 
-        if pat_count < PERSONAL_ACCESS_TOKEN_MAX_COUNT:
-            create_token_form = forms.CreateTokenForm(request.POST, user=request.user)
+    pat_count = PersonalAccessToken.objects.filter(user=request.user).count()
 
-            if create_token_form.is_valid():
-                token = create_token_form.save(commit=False)
-
-                token_unhashed = generate_unhashed_token()
-                date_midnight = timezone.now().date() + timedelta(days=365)
-                token.name = name
-                token.token_hash = make_password(token_unhashed)
-                token.expires_at = timezone.make_aware(
-                    datetime.datetime.combine(date_midnight, time.min)
-                )
-                token.user = request.user
-                token.save()
-                token_id = token.id
-                token_secret = f"{token.id}_{token_unhashed}"
-
-                return JsonResponse(
-                    {
-                        "status": "success",
-                        "message": "Form submitted successfully!",
-                        "data": {
-                            "new_token_id": token.id,
-                            "new_token_name": token.name,
-                            "new_token_last_used": token.last_used.strftime(
-                                "%B %d, %Y"
-                            )
-                            if token.last_used
-                            else None,
-                            "new_token_expires_at": token.expires_at.strftime(
-                                "%B, %d, %Y"
-                            ),
-                            "new_token_secret": token_secret,
-                        },
-                    }
-                )
-            else:
-                return JsonResponse(
-                    {
-                        "status": "error",
-                        "message": "Form validation failed.",
-                        "errors": create_token_form.errors,
-                    },
-                    status=400,
-                )
-        else:
-            return JsonResponse(
-                {
-                    "status": "error",
-                    "message": "Maximum number of personal access tokens reached.",
-                    "errors": {
-                        "maximum": [
-                            "You can only have up to 10 personal access tokens."
-                        ]
-                    },
+    if pat_count >= PERSONAL_ACCESS_TOKEN_MAX_COUNT:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Maximum number of personal access tokens reached.",
+                "errors": {
+                    "maximum": ["You can only have up to 10 personal access tokens."]
                 },
-                status=400,
-            )
+            },
+            status=400,
+        )
+
+    create_token_form = forms.CreateTokenForm(request.POST, user=request.user)
+
+    if not create_token_form.is_valid():
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Form validation failed.",
+                "errors": create_token_form.errors,
+            },
+            status=400,
+        )
+
+    token = create_token_form.save(commit=False)
+
+    token_unhashed = generate_unhashed_token()
+    date_midnight = timezone.now().date() + timedelta(days=365)
+    token.name = name
+    token.token_hash = make_password(token_unhashed)
+    token.expires_at = timezone.make_aware(
+        datetime.datetime.combine(date_midnight, time.min)
+    )
+    token.user = request.user
+    token.save()
+    token_secret = f"{token.id}_{token_unhashed}"
+
     return JsonResponse(
-        {"status": "error", "message": "Invalid request method."}, status=405
+        {
+            "status": "success",
+            "message": "Form submitted successfully!",
+            "data": {
+                "new_token_id": token.id,
+                "new_token_name": token.name,
+                "new_token_last_used": token.last_used.strftime("%B %d, %Y")
+                if token.last_used
+                else None,
+                "new_token_expires_at": token.expires_at.strftime("%B, %d, %Y"),
+                "new_token_secret": token_secret,
+            },
+        }
     )
 
 
 @login_required(redirect_field_name="", login_url="/403")
 @require_AJAX
+@require_POST
 def delete_token(request, token_id):
-    if request.method == "POST":
-        try:
-            token = PersonalAccessToken.objects.get(id=token_id)
-            token.delete()
+    try:
+        token = PersonalAccessToken.objects.get(id=token_id)
+        token.delete()
 
-            return JsonResponse(
-                {
-                    "status": "success",
-                    "message": "Token deleted successfully!",
-                }
-            )
-
-        except PersonalAccessToken.DoesNotExist:
-            return JsonResponse(
-                {"status": "error", "message": "Token not found."}, status=404
-            )
-    else:
         return JsonResponse(
-            {"status": "error", "message": "Invalid request method."}, status=405
+            {
+                "status": "success",
+                "message": "Token deleted successfully!",
+            }
+        )
+
+    except PersonalAccessToken.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Token not found."}, status=404
         )
 
 
