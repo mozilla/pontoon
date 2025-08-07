@@ -77,13 +77,6 @@ $(function () {
                     <span>Expires on:</span> 
                     <span class="date">${response.data['new_token_expires_at']}</span>
                   </div>
-                  <div class="token-info">
-                    <span class="icon fas fa-calendar-alt"></span>
-                    <span>Last used:</span> 
-                    <span class="date">
-                      ${response.data['new_token_last_used'] ? response.data['new_token_last_used'] : 'Never'}
-                    </span>
-                  </div>
                 </div>
                 <div class="success-banner">
                   <div class="token-container">
