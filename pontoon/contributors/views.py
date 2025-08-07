@@ -476,7 +476,7 @@ def generate_token(request):
                             "new_token_id": token.id,
                             "new_token_name": token.name,
                             "new_token_last_used": token.last_used.strftime(
-                                "%B, %d, %Y"
+                                "%B %d, %Y"
                             )
                             if token.last_used
                             else None,
