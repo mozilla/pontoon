@@ -495,10 +495,7 @@ def generate_token(request):
             "data": {
                 "new_token_id": token.id,
                 "new_token_name": token.name,
-                "new_token_last_used": token.last_used.strftime("%B %d, %Y")
-                if token.last_used
-                else None,
-                "new_token_expires_at": token.expires_at.strftime("%B, %d, %Y"),
+                "new_token_expires_at": token.expires_at.strftime("%B %d, %Y"),
                 "new_token_secret": token_secret,
             },
         }
