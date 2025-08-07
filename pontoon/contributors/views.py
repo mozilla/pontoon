@@ -481,7 +481,7 @@ def generate_token(request):
                             if token.last_used
                             else None,
                             "new_token_expires_at": token.expires_at.strftime(
-                                "%B, %d, %Y"
+                                "%B %d, %Y"
                             ),
                             "new_token_secret": token_secret,
                         },
