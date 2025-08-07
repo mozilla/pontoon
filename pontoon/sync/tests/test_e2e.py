@@ -93,6 +93,7 @@ def test_kitchen_sink():
             # New entry comment
             key-2 = Message 2
             key-3 = Message 3
+                .attr = Attribute
             """
         )
         makedirs(src_root)
@@ -127,6 +128,14 @@ def test_kitchen_sink():
         # Test
         assert len(ChangedEntityLocale.objects.filter(entity__resource=res_c)) == 6
         sync_project_task(project.pk)
+        assert {
+            tuple(e.key): (e.value, e.properties)
+            for e in Entity.objects.filter(obsolete=False, resource__project=project)
+        } == {
+            ("key-0",): (["Message 0"], None),
+            ("key-2",): (["Message 2"], None),
+            ("key-3",): (["Message 3"], {"attr": ["Attribute"]}),
+        }
         assert len(ChangedEntityLocale.objects.filter(entity__resource=res_c)) == 0
         with open(join(repo_tgt.checkout_path, "de-Test", "c.ftl")) as file:
             assert (

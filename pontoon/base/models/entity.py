@@ -259,6 +259,8 @@ class Entity(DirtyFieldsMixin, models.Model):
     )
     string = models.TextField()
     key = ArrayField(models.TextField(), default=list)
+    value = models.JSONField(default=list)
+    properties = models.JSONField(null=True, blank=True)
     meta = ArrayField(ArrayField(models.TextField(), size=2), default=list)
     comment = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)

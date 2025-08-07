@@ -34,21 +34,25 @@ class DTDTests(TestCase):
         assert e0.comment == "Sample comment"
         assert e0.key == ["SourceString"]
         assert e0.string == "Translated String"
+        assert e0.value == ["Translated String"]
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
         assert e1.key == ["MultipleComments"]
         assert e1.string == "Translated Multiple Comments"
+        assert e1.value == ["Translated Multiple Comments"]
 
         # no comments or sources
         assert e2.comment == ""
         assert e2.key == ["NoCommentsorSources"]
         assert e2.string == "Translated No Comments or Sources"
+        assert e2.value == ["Translated No Comments or Sources"]
 
         # empty translation
         assert e3.comment == ""
         assert e3.key == ["EmptyTranslation"]
         assert e3.string == ""
+        assert e3.value == [""]
 
 
 class IniTests(TestCase):
@@ -79,18 +83,22 @@ class IniTests(TestCase):
         assert e0.comment == "Sample comment"
         assert e0.key == ["Strings", "SourceString"]
         assert e0.string == "Translated String"
+        assert e0.value == ["Translated String"]
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
         assert e1.key == ["Strings", "MultipleComments"]
         assert e1.string == "Translated Multiple Comments"
+        assert e1.value == ["Translated Multiple Comments"]
 
         # no comments or sources
         assert e2.comment == ""
         assert e2.key == ["Strings", "NoCommentsorSources"]
         assert e2.string == "Translated No Comments or Sources"
+        assert e2.value == ["Translated No Comments or Sources"]
 
         # empty translation
         assert e3.comment == ""
         assert e3.key == ["Strings", "EmptyTranslation"]
         assert e3.string == ""
+        assert e3.value == [""]

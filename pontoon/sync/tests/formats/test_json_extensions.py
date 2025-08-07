@@ -56,6 +56,12 @@ class JsonExtensionsTests(TestCase):
 
         assert e3.key == ["placeholder"]
         assert e3.string == "Hello $YOUR_NAME$"
+        assert e3.value == {
+            "decl": {
+                "YOUR_NAME": {"$": "arg1", "attr": {"example": "Cira", "source": "$1"}}
+            },
+            "msg": ["Hello ", {"$": "YOUR_NAME", "attr": {"source": "$YOUR_NAME$"}}],
+        }
         assert e3.comment == "Peer greeting"
         assert e3.meta == [
             ["placeholders", '{"YOUR_NAME": {"content": "$1", "example": "Cira"}}'],
