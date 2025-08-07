@@ -466,7 +466,7 @@ def generate_token(request):
                 token.user = request.user
                 token.save()
                 token_id = token.id
-                token_secret = f"{token_id}_{token_unhashed}"
+                token_secret = f"{token.id}_{token_unhashed}"
 
                 return JsonResponse(
                     {
