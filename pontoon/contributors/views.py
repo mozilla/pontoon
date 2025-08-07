@@ -488,6 +488,49 @@ def generate_token(request):
     token.save()
     token_secret = f"{token.id}_{token_unhashed}"
 
+                return JsonResponse(
+                    {
+                        "status": "success",
+                        "message": "Form submitted successfully!",
+                        "data": {
+                            "new_token_id": token.id,
+                            "new_token_name": token.name,
+                            "new_token_last_used": token.last_used.strftime(
+                                "%B %d, %Y"
+                            )
+                            if token.last_used
+                            else None,
+                            "new_token_expires_at": token.expires_at.strftime(
+                                "%B %d, %Y"
+                            ),
+                            "new_token_secret": token_secret,
+                        },
+                    }
+                )
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "Form validation failed.",
+                        "errors": create_token_form.errors,
+                    },
+                    status=400,
+                )
+        else:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Maximum number of personal access tokens reached.",
+                    "errors": {
+                        "maximum": [
+                            "You can only have up to 10 personal access tokens."
+                        ]
+                    },
+                },
+                status=400,
+            )
+    return JsonResponse(
+        {"status": "error", "message": "Invalid request method."}, status=405
     return JsonResponse(
         {
             "status": "success",
