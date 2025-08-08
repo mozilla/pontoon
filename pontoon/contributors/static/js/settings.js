@@ -47,6 +47,148 @@ $(function () {
     });
   });
 
+  $('.generate-token-btn').click(function (e) {
+    e.preventDefault();
+
+    const csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+    $.ajax({
+      url: '/generate-token/',
+      type: 'POST',
+      data: {
+        name: $('.token-name-input').val(),
+        csrfmiddlewaretoken: csrfmiddlewaretoken,
+      },
+      success: function (response) {
+        if (response.status === 'success') {
+          const li = $('<li>').attr(
+            'data-token-id',
+            response.data['new_token_id'],
+          );
+
+          const tokenCard = $('<div>').addClass(
+            'token-card created controls clearfix',
+          );
+          const tokenHeader = $('<div>').addClass('token-header');
+
+          tokenHeader.append(
+            $('<span>')
+              .addClass('token-name')
+              .text(response.data['new_token_name']),
+          );
+
+          const headerControls = $('<div>');
+          headerControls.append(
+            $('<button>')
+              .addClass('button delete-btn far fa-trash-alt')
+              .attr('tabindex', '-1')
+              .attr('data-token-id', response.data['new_token_id']),
+          );
+          headerControls.append($('<input>').attr('type', 'checkbox'));
+          tokenHeader.append(headerControls);
+
+          const tokenInfoContainer = $('<div>').addClass(
+            'token-info-container',
+          );
+          const tokenInfo = $('<div>').addClass('token-info');
+          tokenInfo.append($('<span>').addClass('icon fas fa-calendar-alt'));
+          tokenInfo.append($('<span>').text('Expires on:'));
+          tokenInfo.append(
+            $('<span>')
+              .addClass('date')
+              .text(response.data['new_token_expires_at']),
+          );
+          tokenInfoContainer.append(tokenInfo);
+
+          const tokenDetails = $('<div>').addClass('token-details');
+          tokenDetails.append(
+            $('<input>')
+              .addClass('token-value')
+              .attr('type', 'text')
+              .val(response.data['new_token_secret'])
+              .prop('readonly', true),
+          );
+          tokenDetails.append(
+            $('<button>')
+              .addClass('button copy-btn far fa-copy')
+              .attr('tabindex', '-1')
+              .attr('data-clipboard-text', response.data['new_token_secret']),
+          );
+
+          tokenCard.append(tokenHeader, tokenInfoContainer, tokenDetails);
+          tokenCard.append(
+            $('<p>')
+              .addClass('copy-message')
+              .text(
+                'Make sure to copy your personal access token now as you will not be able to see this again.',
+              ),
+          );
+
+          li.append(tokenCard);
+
+          // Update DOM safely
+          $('.error-message').empty();
+          $('.token-name-input').val('');
+          $('.generate-token-btn').prop('disabled', true);
+          $('.pat-list').append(li);
+          Pontoon.endLoader('Token created.');
+        }
+      },
+      error: function (response) {
+        const errors = response.responseJSON.errors;
+
+        $('.error-message').html('');
+
+        for (const error in errors) {
+          const errorMessages = errors[error].join(', ');
+          $(`.error-message`).append($('<p>').text(errorMessages));
+        }
+      },
+    });
+  });
+
+  $(document).on('click', '.delete-btn', function (e) {
+    e.preventDefault();
+
+    const tokenId = $(this).data('token-id');
+    const csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+    $.ajax({
+      url: `/delete-token/${tokenId}/`,
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: csrfmiddlewaretoken,
+      },
+      success: function (response) {
+        if (response.status === 'success') {
+          $(`li[data-token-id="${tokenId}"]`).remove();
+        }
+      },
+      error: function () {
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
+      },
+    });
+  });
+
+  const clipboard = new Clipboard('.copy-btn');
+
+  clipboard.on('success', function () {
+    $('.clipboard-success').remove();
+    Pontoon.endLoader('Token copied.');
+  });
+
+  $(document).on('click', '.copy-btn', function (e) {
+    e.preventDefault();
+  });
+
+  $('.token-name-input').on('input', function () {
+    if ($(this).val().trim() !== '') {
+      $('.generate-token-btn').prop('disabled', false); // Enable the button
+    } else {
+      $('.generate-token-btn').prop('disabled', true); // Disable the button
+    }
+  });
+
   // Handle checkboxes
   $('.check-box').click(function () {
     const self = $(this);
