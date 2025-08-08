@@ -78,13 +78,11 @@ $(function () {
                     <span class="date">${response.data['new_token_expires_at']}</span>
                   </div>
                 </div>
-                <div class="success-banner">
-                  <div class="token-container">
-                      <input class="token-secret" type="text" value="${response.data['new_token_secret']}" readonly></input>
-                      <button class="button copy-btn far fa-copy" tabindex="-1" data-clipboard-text="${response.data['new_token_secret']}" ></button>
+                  <div class="token-details">
+                    <input class="token-value" type="text" value="${response.data['new_token_secret']}" readonly></input>
+                    <button class="button copy-btn far fa-copy" tabindex="-1" data-clipboard-text="${response.data['new_token_secret']}" ></button>
                   </div>
                   <p class="copy-message">Make sure to copy your personal access token now as you will not be able to see this again.</p>
-                </div>
             </li>
             `;
 
@@ -92,6 +90,7 @@ $(function () {
           $('.token-name-input').val('');
           $('.generate-token-btn').prop('disabled', true);
           $('.pat-list').append(newTokenHTML);
+          Pontoon.endLoader('Token created.');
         }
       },
       error: function (response) {
@@ -124,25 +123,17 @@ $(function () {
           $(`li[data-token-id="${tokenId}"]`).remove();
         }
       },
+      error: function () {
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
+      },
     });
   });
 
   const clipboard = new Clipboard('.copy-btn');
 
-  clipboard.on('success', function (e) {
-    const $trigger = $(e.trigger);
-
-    // Remove any existing message
+  clipboard.on('success', function () {
     $('.clipboard-success').remove();
-
-    // Create and insert the success message after the button
-    const successMessage = $('<span class="clipboard-success">Copied!</span>');
-    $trigger.after(successMessage);
-    setTimeout(function () {
-      successMessage.fadeOut(500, function () {
-        successMessage.remove();
-      });
-    }, 1000);
+    Pontoon.endLoader('Token copied.');
   });
 
   $(document).on('click', '.copy-btn', function (e) {
