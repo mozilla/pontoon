@@ -263,7 +263,6 @@
   flex-wrap: wrap;
   row-gap: 4px;
   column-gap: 40px;
-  margin-left: 48px;
 }
 
 .token-card .token-info {
@@ -277,6 +276,7 @@
 
 .token-card .date {
   color: var(--white-1);
+  margin-left: auto;
 }
 
 .token-card .active {
@@ -307,8 +307,8 @@
   justify-content: right;
 }
 
-.token-name-input {
-  width: 200px;
+input.token-name-input {
+  width: 100%;
   margin-right: 10px;
 }
 
@@ -319,7 +319,6 @@
   font-weight: 400;
   color: var(--black-3);
   font-size: 14px;
-  font-weight: 300;
   padding: 6px;
   text-align: center;
   text-transform: uppercase;
@@ -332,22 +331,21 @@
   cursor: not-allowed;
 }
 
-.token-container {
+.token-details {
   display: flex;
   align-items: center;
   margin-top: 15px;
 }
 
-input.token-secret {
+input.token-value {
   color: var(--white-1);
   font-size: 16px;
   text-align: left;
-  width: 463px;
   height: 33px;
+  width: 100%;
   background-color: var(--black-3);
   border-radius: 3px 0 0 3px;
   box-sizing: border-box;
-  margin-left: 30px;
   margin-bottom: 0px;
 }
 
@@ -356,7 +354,6 @@ input.token-secret {
   width: 33px;
   height: 33px;
   font-size: 18px;
-  margin-right: 6px;
   border-radius: 0 3px 3px 0;
   border-left: none;
   border-right: 1px solid #4d5967;
@@ -374,6 +371,10 @@ p.copy-message {
   color: var(--light-grey-2);
   font-style: italic;
   text-align: left;
-  margin: 5px 0 0 30px;
-  width: 496px;
+  margin: 5px 0 0 0px;
+}
+
+.error-message {
+  color: var(--status-error);
+  font-style: italic;
 }
