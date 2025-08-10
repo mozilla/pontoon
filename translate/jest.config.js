@@ -19,9 +19,7 @@ module.exports = {
     '\\.jsx?$': ['babel-jest', { configFile: '../babel.config.json' }],
     '\\.tsx?$': ['ts-jest', { isolatedModules: true }],
   },
-  transformIgnorePatterns: [
-    '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$',
-  ],
+  transformIgnorePatterns: ['/node_modules/(?!@?messageformat/).+\\.(c?js)$'],
   resetMocks: true,
   moduleNameMapper: {
     '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$':

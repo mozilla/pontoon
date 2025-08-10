@@ -18,6 +18,7 @@ from pontoon.base.models import (
     ProjectSlugHistory,
     Repository,
     Resource,
+    Section,
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
@@ -88,11 +89,18 @@ class RepositoryFactory(DjangoModelFactory):
 class ResourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
     path = Sequence(lambda n: f"/fake/path{n}.po")
-    format = Resource.Format.PO
+    format = Resource.Format.GETTEXT
     total_strings = 1
 
     class Meta:
         model = Resource
+
+
+class SectionFactory(DjangoModelFactory):
+    resource = SubFactory(ResourceFactory)
+
+    class Meta:
+        model = Section
 
 
 class LocaleFactory(DjangoModelFactory):
@@ -107,15 +115,6 @@ class EntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
     string = Sequence(lambda n: f"string {n}")
     order = Sequence(lambda n: n)
-
-    class Meta:
-        model = Entity
-
-
-class PluralEntityFactory(DjangoModelFactory):
-    resource = SubFactory(ResourceFactory)
-    string = Sequence(lambda n: f"string {n}")
-    string_plural = Sequence(lambda n: f"string plural {n}")
 
     class Meta:
         model = Entity

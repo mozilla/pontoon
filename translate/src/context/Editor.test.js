@@ -27,22 +27,24 @@ function mountSpy(Spy, format, translation) {
         {
           pk: 42,
           format,
-          key: 'key',
+          key: ['key'],
           original: 'key = test',
-          translation: [{ string: translation, errors: [], warnings: [] }],
+          translation: { string: translation, errors: [], warnings: [] },
           project: { contact: '' },
           comment: '',
         },
         {
           pk: 13,
-          format: 'simple',
-          key: 'plural',
-          original: 'original',
-          original_plural: 'original plural',
-          translation: [
-            { string: 'one', errors: [], warnings: [] },
-            { string: 'other', errors: [], warnings: [] },
-          ],
+          format: 'gettext',
+          key: ['plural'],
+          original:
+            '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}',
+          translation: {
+            string:
+              '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}',
+            errors: [],
+            warnings: [],
+          },
           project: { contact: '' },
           comment: '',
         },
@@ -82,10 +84,7 @@ describe('<EditorProvider>', () => {
     mountSpy(Spy, 'simple', 'message');
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: {
-        id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: 'message' }] } },
-      },
+      initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
       fields: [
         {
           id: '',
@@ -106,13 +105,10 @@ describe('<EditorProvider>', () => {
       result = useContext(EditorResult);
       return null;
     };
-    mountSpy(Spy, 'ftl', 'key = message');
+    mountSpy(Spy, 'fluent', 'key = message');
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: {
-        id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: 'message' }] } },
-      },
+      initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
       fields: [
         {
           id: '',
@@ -141,16 +137,16 @@ describe('<EditorProvider>', () => {
           }
 
       `;
-    mountSpy(Spy, 'ftl', source);
+    mountSpy(Spy, 'fluent', source);
 
-    const entry = parseEntry(source);
-    const fields = editMessageEntry(parseEntry(source)).map((field) => ({
+    const entry = parseEntry('fluent', source);
+    const fields = editMessageEntry(entry).map((field) => ({
       ...field,
       handle: { current: { value: field.handle.current.value } },
     }));
     expect(editor).toMatchObject({ sourceView: false, initial: entry, fields });
     expect(result).toMatchObject([
-      { name: '', keys: [{ type: 'nmtoken', value: 'one' }], value: 'ONE' },
+      { name: '', keys: [{ type: 'literal', value: 'one' }], value: 'ONE' },
       { name: '', keys: [{ type: '*', value: 'other' }], value: 'OTHER' },
     ]);
   });
@@ -163,13 +159,13 @@ describe('<EditorProvider>', () => {
       return null;
     };
     const source = '## comment\n';
-    mountSpy(Spy, 'ftl', source);
+    mountSpy(Spy, 'fluent', source);
 
     expect(editor).toMatchObject({
       sourceView: true,
       initial: {
         id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: '## comment\n' }] } },
+        value: { type: 'message', pattern: ['## comment\n'] },
       },
       fields: [
         {
@@ -184,13 +180,13 @@ describe('<EditorProvider>', () => {
     expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
   });
 
-  it('updates state on entity and plural form changes', () => {
+  it('updates state on entity change', () => {
     let editor, result, location, entity;
     const Spy = () => {
       editor = useContext(EditorData);
       result = useContext(EditorResult);
       location = useContext(Location);
-      entity = useContext(EntityView);
+      entity = useContext(EntityView).entity;
       return null;
     };
     const wrapper = mountSpy(Spy, 'simple', 'translated');
@@ -199,23 +195,16 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
-      initial: {
-        value: { pattern: { body: [{ type: 'text', value: 'one' }] } },
-      },
-      fields: [{ handle: { current: { value: 'one' } } }],
+      initial: parseEntry('gettext', entity.translation.string),
+      fields: [
+        { handle: { current: { value: 'trans one' } } },
+        { handle: { current: { value: 'trans other' } } },
+      ],
     });
-    expect(result).toMatchObject([{ value: 'one' }]);
-
-    act(() => entity.setPluralForm(1));
-    wrapper.update();
-
-    expect(editor).toMatchObject({
-      initial: {
-        value: { pattern: { body: [{ type: 'text', value: 'other' }] } },
-      },
-      fields: [{ handle: { current: { value: 'other' } } }],
-    });
-    expect(result).toMatchObject([{ value: 'other' }]);
+    expect(result).toMatchObject([
+      { value: 'trans one' },
+      { value: 'trans other' },
+    ]);
   });
 
   it('clears a rich Fluent value', () => {
@@ -232,7 +221,7 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    const wrapper = mountSpy(Spy, 'ftl', source);
+    const wrapper = mountSpy(Spy, 'fluent', source);
     act(() => actions.clearEditor());
     wrapper.update();
 
@@ -242,7 +231,7 @@ describe('<EditorProvider>', () => {
         {
           handle: { current: { value: '' } },
           id: '|one',
-          keys: [{ type: 'nmtoken', value: 'one' }],
+          keys: [{ type: 'literal', value: 'one' }],
           labels: [{ label: 'one', plural: true }],
           name: '',
         },
@@ -265,7 +254,7 @@ describe('<EditorProvider>', () => {
       actions = useContext(EditorActions);
       return null;
     };
-    const wrapper = mountSpy(Spy, 'ftl', `key = VALUE\n`);
+    const wrapper = mountSpy(Spy, 'fluent', `key = VALUE\n`);
 
     const source = ftl`
       key =
@@ -283,7 +272,7 @@ describe('<EditorProvider>', () => {
         {
           handle: { current: { value: 'ONE' } },
           id: '|one',
-          keys: [{ type: 'nmtoken', value: 'one' }],
+          keys: [{ type: 'literal', value: 'one' }],
           labels: [{ label: 'one', plural: true }],
           name: '',
         },
@@ -297,7 +286,7 @@ describe('<EditorProvider>', () => {
       ],
     });
     expect(result).toMatchObject([
-      { keys: [{ type: 'nmtoken', value: 'one' }], name: '', value: 'ONE' },
+      { keys: [{ type: 'literal', value: 'one' }], name: '', value: 'ONE' },
       { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
     ]);
   });
@@ -317,7 +306,7 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    const wrapper = mountSpy(Spy, 'ftl', source);
+    const wrapper = mountSpy(Spy, 'fluent', source);
     act(() => actions.toggleSourceView());
     wrapper.update();
 
@@ -340,7 +329,7 @@ describe('<EditorProvider>', () => {
 
     expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
     expect(result).toMatchObject([
-      { keys: [{ type: 'nmtoken', value: 'one' }], name: '', value: 'ONE' },
+      { keys: [{ type: 'literal', value: 'one' }], name: '', value: 'ONE' },
       { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
     ]);
   });

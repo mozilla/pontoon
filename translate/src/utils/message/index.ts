@@ -1,22 +1,21 @@
-import type { Message } from 'messageformat';
+import type { Model } from 'messageformat';
 
 export type MessageEntry =
   | {
       id: string;
-      value: Message;
+      value: Model.Message;
       attributes?: never;
     }
   | {
       id: string;
-      value: Message | null;
-      attributes: Map<string, Message>;
+      value: Model.Message | null;
+      attributes: Map<string, Model.Message>;
     };
 
 export { buildMessageEntry } from './buildMessageEntry';
 export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
 export { getEmptyMessageEntry } from './getEmptyMessage';
 export { getPlainMessage } from './getPlainMessage';
-export { getSimplePreview } from './getSimplePreview';
 export { editMessageEntry, editSource } from './editMessageEntry';
 export { findPluralSelectors } from './findPluralSelectors';
 export { parseEntry } from './parseEntry';

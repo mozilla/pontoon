@@ -5,7 +5,7 @@ import { parseEntry } from './parseEntry';
 describe('findPluralSelectors', () => {
   it('returns [] for non-select messages', () => {
     const input = 'my-entry = Hello!';
-    const entry = parseEntry(input);
+    const entry = parseEntry('fluent', input);
     expect(findPluralSelectors(entry.value)).toMatchObject([]);
   });
 
@@ -17,7 +17,7 @@ describe('findPluralSelectors', () => {
              *[two] World!
           }
       `;
-    const entry = parseEntry(input);
+    const entry = parseEntry('fluent', input);
     expect(findPluralSelectors(entry.value)).toMatchObject([0]);
   });
 
@@ -29,7 +29,7 @@ describe('findPluralSelectors', () => {
              *[2] World!
           }
       `;
-    const entry = parseEntry(input);
+    const entry = parseEntry('fluent', input);
     expect(findPluralSelectors(entry.value)).toMatchObject([0]);
   });
 
@@ -42,7 +42,7 @@ describe('findPluralSelectors', () => {
              *[1] World!
           }
       `;
-    const entry = parseEntry(input);
+    const entry = parseEntry('fluent', input);
     expect(findPluralSelectors(entry.value)).toMatchObject([0]);
   });
 
@@ -54,7 +54,7 @@ describe('findPluralSelectors', () => {
              *[other] World!
           }
       `;
-    const entry = parseEntry(input);
+    const entry = parseEntry('fluent', input);
     expect(findPluralSelectors(entry.value)).toMatchObject([]);
   });
 });

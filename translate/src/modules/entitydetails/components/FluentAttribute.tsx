@@ -16,11 +16,11 @@ type Props = {
 export function FluentAttribute({
   entity: { format, original },
 }: Props): null | React.ReactElement {
-  if (format !== 'ftl') {
+  if (format !== 'fluent') {
     return null;
   }
 
-  const entry = parseEntry(original);
+  const entry = parseEntry(format, original);
   if (!entry || entry.value || entry.attributes?.size !== 1) {
     return null;
   }

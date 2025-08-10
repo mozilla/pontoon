@@ -14,76 +14,63 @@ describe('parseEntry', () => {
               [feminine] her
           }
       `;
-    const entry = parseEntry(input);
+    const entry = parseEntry('fluent', input);
     expect(entry).toEqual({
       id: 'my-entry',
       value: {
         type: 'select',
-        declarations: [],
-        selectors: [
+        declarations: [
           {
-            type: 'expression',
-            name: 'NUMBER',
-            operand: { type: 'variable', name: 'num' },
+            type: 'input',
+            name: 'num',
+            value: {
+              type: 'expression',
+              arg: { type: 'variable', name: 'num' },
+              functionRef: { type: 'function', name: 'number' },
+            },
           },
+          {
+            type: 'input',
+            name: 'gender',
+            value: {
+              type: 'expression',
+              arg: { type: 'variable', name: 'gender' },
+              functionRef: { type: 'function', name: 'string' },
+            },
+          },
+        ],
+        selectors: [
+          { type: 'variable', name: 'num' },
           { type: 'variable', name: 'gender' },
         ],
         variants: [
           {
             keys: [
-              { type: 'nmtoken', value: 'one' },
-              { type: 'nmtoken', value: 'feminine' },
-            ],
-            value: {
-              body: [
-                {
-                  type: 'text',
-                  value: 'There is one email for { $awesome } her',
-                },
-              ],
-            },
-          },
-          {
-            keys: [
-              { type: 'nmtoken', value: 'one' },
+              { type: 'literal', value: 'one' },
               { type: '*', value: 'masculine' },
             ],
-            value: {
-              body: [
-                {
-                  type: 'text',
-                  value: 'There is one email for { $awesome } him',
-                },
-              ],
-            },
+            value: ['There is one email for { $awesome } him'],
           },
           {
             keys: [
-              { type: '*', value: 'other' },
-              { type: 'nmtoken', value: 'feminine' },
+              { type: 'literal', value: 'one' },
+              { type: 'literal', value: 'feminine' },
             ],
-            value: {
-              body: [
-                {
-                  type: 'text',
-                  value: 'There are { $num } emails for { $awesome } her',
-                },
-              ],
-            },
+            value: ['There is one email for { $awesome } her'],
           },
           {
             keys: [
               { type: '*', value: 'other' },
               { type: '*', value: 'masculine' },
             ],
-            value: {
-              body: [
-                {
-                  type: 'text',
-                  value: 'There are { $num } emails for { $awesome } him',
-                },
-              ],
-            },
+            value: ['There are { $num } emails for { $awesome } him'],
+          },
+          {
+            keys: [
+              { type: '*', value: 'other' },
+              { type: 'literal', value: 'feminine' },
+            ],
+            value: ['There are { $num } emails for { $awesome } her'],
           },
         ],
       },

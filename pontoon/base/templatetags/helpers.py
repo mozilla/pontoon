@@ -54,23 +54,23 @@ def return_url(request):
 
 @library.global_function
 def user_theme(user):
-    """Get user's theme or return 'dark' if user is not authenticated."""
+    """Get user's theme or return 'system' if user is not authenticated."""
     if user.is_authenticated:
         return user.profile.theme
-    return "dark"
+    return "system"
 
 
 @library.global_function
 def theme_class(request):
     """Get theme class name based on user preferences and system settings."""
-    theme = "dark"
+    theme = "system"
     user = request.user
 
     if user.is_authenticated:
         theme = user.profile.theme
 
-        if theme == "system":
-            theme = request.COOKIES.get("system_theme", "system")
+    if theme == "system":
+        theme = request.COOKIES.get("system_theme", "system")
 
     return f"{theme}-theme"
 
@@ -313,3 +313,10 @@ def default_if_empty(value, default=""):
 
     # Mark as safe to include HTML tags
     return value if value else mark_safe(default)
+
+
+@library.filter
+def is_old_notification(notification):
+    """Return boolean indicating whether a notification is older than 7 days"""
+
+    return notification.timestamp < timezone.now() - timedelta(days=7)

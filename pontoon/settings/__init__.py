@@ -11,7 +11,7 @@ except ImportError:
 
 
 # Import test settings
-TEST = len(sys.argv) > 1 and sys.argv[1] == "test"
+TEST = "pytest" in sys.modules
 if TEST:
     try:
         from .test import *  # noqa
@@ -20,7 +20,7 @@ if TEST:
 
 
 # Import settings that are helpful during the process of development.
-if DEV:  # noqa
+if DEV and not TEST:  # noqa
     try:
         from .dev import *  # noqa
     except ImportError:

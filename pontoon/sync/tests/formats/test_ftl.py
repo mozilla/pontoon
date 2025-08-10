@@ -1,101 +1,50 @@
-import shutil
-import tempfile
+from datetime import datetime
+from textwrap import dedent
+from unittest import TestCase
 
-from pontoon.base.tests import TestCase, assert_attributes_equal, create_named_tempfile
-from pontoon.sync.formats import ftl
-from pontoon.sync.tests.formats import FormatTestsMixin
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
+
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
-class FTLResourceTests(FormatTestsMixin, TestCase):
-    def setUp(self):
-        super().setUp()
-        self.tempdir = tempfile.mkdtemp()
+class FTLTests(TestCase):
+    def test_fluent(self):
+        src = dedent("""
+            # Sample comment
+            SourceString = Translated String
 
-    def tearDown(self):
-        super().tearDown()
-        shutil.rmtree(self.tempdir)
+            # First comment
+            # Second comment
+            MultipleComments = Translated Multiple Comments
 
-    def test_parse_with_no_source_path(self):
-        contents = "text = Arise, awake and do not stop until the goal is reached."
-        path = create_named_tempfile(
-            contents,
-            prefix="strings",
-            suffix=".ftl",
-            directory=self.tempdir,
+            NoCommentsOrSources = Translated No Comments or Sources
+            """)
+
+        res = parse_resource(Format.fluent, src)
+        e0, e1, e2 = (
+            as_entity(Format.fluent, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
-        assert ftl.parse(path)
+        t0, t1, t2 = as_vcs_translations(res)
 
+        # basic
+        assert e0.comment == "Sample comment"
+        assert e0.key == ["SourceString"]
+        assert e0.string == "SourceString = Translated String\n"
+        assert t0.key == ("SourceString",)
+        assert t0.string == "SourceString = Translated String\n"
 
-BASE_FTL_FILE = """
-# Sample comment
-SourceString = Translated String
+        # multiple comments
+        assert e1.comment == "First comment\nSecond comment"
+        assert e1.key == ["MultipleComments"]
+        assert e1.string == "MultipleComments = Translated Multiple Comments\n"
+        assert t1.key == ("MultipleComments",)
+        assert t1.string == "MultipleComments = Translated Multiple Comments\n"
 
-# First comment
-# Second comment
-MultipleComments = Translated Multiple Comments
-
-NoCommentsOrSources = Translated No Comments or Sources
-"""
-
-
-class FTLTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(ftl.parse)
-    supports_keys = False
-    supports_source = False
-    supports_source_string = False
-
-    def setUp(self):
-        super().setUp()
-        self.tempdir = tempfile.mkdtemp()
-
-    def tearDown(self):
-        super().tearDown()
-        shutil.rmtree(self.tempdir)
-
-    def key(self, source_string):
-        """FTL keys can't contain spaces."""
-        return super().key(source_string).replace(" ", "")
-
-    def test_parse_basic(self):
-        input_string = BASE_FTL_FILE
-        translation_index = 0
-        _, translations = self.parse_string(input_string)
-
-        assert_attributes_equal(
-            translations[translation_index],
-            comments=["Sample comment"],
-            key=self.key("Source String"),
-            strings={None: "SourceString = Translated String\n"},
-            fuzzy=False,
-            order=translation_index,
-        )
-
-    def test_parse_multiple_comments(self):
-        input_string = BASE_FTL_FILE
-        translation_index = 1
-        _, translations = self.parse_string(input_string)
-
-        assert_attributes_equal(
-            translations[translation_index],
-            comments=["First comment\nSecond comment"],
-            source=[],
-            key=self.key("Multiple Comments"),
-            strings={None: "MultipleComments = Translated Multiple Comments\n"},
-            fuzzy=False,
-            order=translation_index,
-        )
-
-    def test_parse_no_comments_no_sources(self):
-        input_string = BASE_FTL_FILE
-        translation_index = 2
-        _, translations = self.parse_string(input_string)
-
-        assert_attributes_equal(
-            translations[translation_index],
-            comments=[],
-            source=[],
-            key=self.key("No Comments Or Sources"),
-            strings={None: "NoCommentsOrSources = Translated No Comments or Sources\n"},
-            fuzzy=False,
-            order=translation_index,
-        )
+        # no comments or sources
+        assert e2.comment == ""
+        assert e2.key == ["NoCommentsOrSources"]
+        assert e2.string == "NoCommentsOrSources = Translated No Comments or Sources\n"
+        assert t2.key == ("NoCommentsOrSources",)
+        assert t2.string == "NoCommentsOrSources = Translated No Comments or Sources\n"

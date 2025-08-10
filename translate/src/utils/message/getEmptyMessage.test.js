@@ -7,30 +7,33 @@ const LOCALE = { code: 'sl' };
 
 describe('getEmptyMessage', () => {
   it('empties a simple value', () => {
-    const source = parseEntry('my-message = Some value');
+    const source = parseEntry('fluent', 'my-message = Some value');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('ftl', entry)).toEqual('my-message = { "" }\n');
+    expect(serializeEntry('fluent', entry)).toEqual('my-message = { "" }\n');
   });
 
   it('empties a value with multiple elements', () => {
-    const source = parseEntry('my-message = Hello { $small } World');
+    const source = parseEntry('fluent', 'my-message = Hello { $small } World');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('ftl', entry)).toEqual('my-message = { "" }\n');
+    expect(serializeEntry('fluent', entry)).toEqual('my-message = { "" }\n');
   });
 
   it('empties a single simple attribute', () => {
-    const source = parseEntry('my-message =\n    .my-attr = Hello');
+    const source = parseEntry('fluent', 'my-message =\n    .my-attr = Hello');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('ftl', entry)).toEqual(
+    expect(serializeEntry('fluent', entry)).toEqual(
       'my-message =\n    .my-attr = { "" }\n',
     );
   });
 
   it('empties both value and attributes', () => {
-    const source = parseEntry('my-message = Some value\n    .my-attr = Hello');
+    const source = parseEntry(
+      'fluent',
+      'my-message = Some value\n    .my-attr = Hello',
+    );
     const entry = getEmptyMessageEntry(source, LOCALE);
 
-    expect(serializeEntry('ftl', entry)).toBe(ftl`
+    expect(serializeEntry('fluent', entry)).toBe(ftl`
       my-message = { "" }
           .my-attr = { "" }
 
@@ -38,13 +41,16 @@ describe('getEmptyMessage', () => {
   });
 
   it('empties message with no value and several attributes', () => {
-    const source = parseEntry(ftl`
+    const source = parseEntry(
+      'fluent',
+      ftl`
       my-message =
           .my-attr = Hello
           .title = Title
-      `);
+      `,
+    );
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('ftl', entry)).toBe(ftl`
+    expect(serializeEntry('fluent', entry)).toBe(ftl`
       my-message =
           .my-attr = { "" }
           .title = { "" }
@@ -53,15 +59,18 @@ describe('getEmptyMessage', () => {
   });
 
   it('empties a select expression', () => {
-    const source = parseEntry(ftl`
+    const source = parseEntry(
+      'fluent',
+      ftl`
       my-entry =
           { PLATFORM() ->
               [variant] Hello!
              *[another-variant] { reference } World!
           }
-      `);
+      `,
+    );
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('ftl', entry)).toBe(ftl`
+    expect(serializeEntry('fluent', entry)).toBe(ftl`
       my-entry =
           { PLATFORM() ->
               [variant] { "" }
@@ -72,7 +81,9 @@ describe('getEmptyMessage', () => {
   });
 
   it('empties custom plural variants and creates empty default locale plural variants', () => {
-    const source = parseEntry(ftl`
+    const source = parseEntry(
+      'fluent',
+      ftl`
       my-entry =
           { $num ->
               [0] Yo!
@@ -80,9 +91,10 @@ describe('getEmptyMessage', () => {
              *[other] { reference } World!
           }
 
-      `);
+      `,
+    );
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('ftl', entry)).toBe(ftl`
+    expect(serializeEntry('fluent', entry)).toBe(ftl`
       my-entry =
           { $num ->
               [0] { "" }
@@ -96,7 +108,9 @@ describe('getEmptyMessage', () => {
   });
 
   it('handles messages with multiple selectors correctly', () => {
-    const source = parseEntry(ftl`
+    const source = parseEntry(
+      'fluent',
+      ftl`
       selector-multi =
         There { $num ->
             [one] is one email
@@ -105,30 +119,31 @@ describe('getEmptyMessage', () => {
            *[masculine] him
             [feminine] her
         }
-      `);
+      `,
+    );
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('ftl', entry)).toBe(ftl`
+    expect(serializeEntry('fluent', entry)).toBe(ftl`
       selector-multi =
           { $num ->
               [one]
                   { $gender ->
-                      [feminine] { "" }
                      *[masculine] { "" }
+                      [feminine] { "" }
                   }
               [two]
                   { $gender ->
-                      [feminine] { "" }
                      *[masculine] { "" }
+                      [feminine] { "" }
                   }
               [few]
                   { $gender ->
-                      [feminine] { "" }
                      *[masculine] { "" }
+                      [feminine] { "" }
                   }
              *[other]
                   { $gender ->
-                      [feminine] { "" }
                      *[masculine] { "" }
+                      [feminine] { "" }
                   }
           }
 
@@ -136,30 +151,36 @@ describe('getEmptyMessage', () => {
   });
 
   it('handles plural messages for locales with no plurals', () => {
-    const source = parseEntry(ftl`
+    const source = parseEntry(
+      'fluent',
+      ftl`
       selector-multi =
         { $num ->
             [one] ONE
            *[other] OTHER
         }
-      `);
+      `,
+    );
     const entry = getEmptyMessageEntry(source, { code: 'zh' });
-    expect(serializeEntry('ftl', entry)).toBe(ftl`
+    expect(serializeEntry('fluent', entry)).toBe(ftl`
       selector-multi = { "" }
 
       `);
   });
 
   it('handles plural messages for special locales', () => {
-    const source = parseEntry(ftl`
+    const source = parseEntry(
+      'fluent',
+      ftl`
       selector-multi =
         { $num ->
             [one] ONE
            *[other] OTHER
         }
-      `);
+      `,
+    );
     const entry = getEmptyMessageEntry(source, { code: 'pl' });
-    expect(serializeEntry('ftl', entry)).toBe(ftl`
+    expect(serializeEntry('fluent', entry)).toBe(ftl`
       selector-multi =
           { $num ->
               [one] { "" }

@@ -106,13 +106,11 @@ class Translation(DirtyFieldsMixin, models.Model):
     locale = models.ForeignKey(Locale, models.CASCADE)
     user = models.ForeignKey(User, models.SET_NULL, null=True, blank=True)
     string = models.TextField()
-    # Index of Locale.cldr_plurals_list()
-    plural_form = models.SmallIntegerField(null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
 
     # Active translations are displayed in the string list and as the first
     # entry in the History tab. There can only be one active translation for
-    # each (entity, locale, plural_form) combination. See bug 1481175.
+    # each (entity, locale) combination. See bug 1481175.
     active = models.BooleanField(default=False)
 
     pretranslated = models.BooleanField(default=False)
@@ -186,15 +184,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         ]
         constraints = [
             models.UniqueConstraint(
-                name="entity_locale_plural_form_active",
-                fields=["entity", "locale", "plural_form", "active"],
-                condition=Q(active=True),
-            ),
-            # The rule above doesn't catch the plural_form = None case
-            models.UniqueConstraint(
                 name="entity_locale_active",
                 fields=["entity", "locale", "active"],
-                condition=Q(active=True, plural_form__isnull=True),
+                condition=Q(active=True),
             ),
         ]
 
@@ -247,7 +239,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def tm_source(self):
         source = self.entity.string
 
-        if self.entity.resource.format == Resource.Format.FTL:
+        if self.entity.resource.format == Resource.Format.FLUENT:
             return get_simple_preview(source)
 
         return source
@@ -256,7 +248,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def tm_target(self):
         target = self.string
 
-        if self.entity.resource.format == Resource.Format.FTL:
+        if self.entity.resource.format == Resource.Format.FLUENT:
             return get_simple_preview(target)
 
         return target
@@ -280,7 +272,6 @@ class Translation(DirtyFieldsMixin, models.Model):
             approved_translations = Translation.objects.filter(
                 entity=self.entity,
                 locale=self.locale,
-                plural_form=self.plural_form,
                 rejected=False,
             ).exclude(pk=self.pk)
 

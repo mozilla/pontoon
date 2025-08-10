@@ -2,6 +2,7 @@ from os import makedirs
 from os.path import join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
+from typing import Any, cast
 from unittest.mock import Mock
 
 import pytest
@@ -11,6 +12,7 @@ from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
+    ChangedEntityLocale,
     Entity,
     TranslatedResource,
     Translation,
@@ -52,7 +54,7 @@ def test_update_ftl_translations():
         res = {}
         for id in ["a", "b", "c"]:
             res[id] = ResourceFactory.create(
-                project=project, path=f"{id}.ftl", format="ftl", total_strings=3
+                project=project, path=f"{id}.ftl", format="fluent", total_strings=3
             )
             TranslatedResourceFactory.create(
                 locale=locale, resource=res[id], total_strings=3
@@ -60,7 +62,9 @@ def test_update_ftl_translations():
             for i in [0, 1, 2]:
                 key = f"key-{id}-{i}"
                 string = f"{key} = Message {id} {i}\n"
-                entity = EntityFactory.create(resource=res[id], string=string, key=key)
+                entity = EntityFactory.create(
+                    resource=res[id], string=string, key=[key]
+                )
                 if not (id == "c" and i == 2):
                     TranslationFactory.create(
                         entity=entity,
@@ -70,7 +74,7 @@ def test_update_ftl_translations():
                         approved=True,
                     )
         TranslationFactory.create(
-            entity=Entity.objects.get(resource=res["c"], key="key-c-1"),
+            entity=Entity.objects.get(resource=res["c"], key=["key-c-1"]),
             locale=locale,
             string="key-c-1 = New translation c 1\n",
         )
@@ -109,19 +113,19 @@ def test_update_ftl_translations():
 
         # Test sync
         removed_resources, updated_translations = sync_translations_from_repo(
-            project, locale_map, checkouts, paths, [], now
+            project, locale_map, checkouts, paths, cast(Any, []), now
         )
         assert (removed_resources, updated_translations) == (0, 3)
         translations = Translation.objects.filter(
             entity__resource=res["c"], locale=locale
         )
-        assert set((trans.entity.key, trans.approved) for trans in translations) == {
+        assert set((*trans.entity.key, trans.approved) for trans in translations) == {
             ("key-c-0", False),
             ("key-c-1", False),
             ("key-c-1", True),
             ("key-c-2", True),
         }
-        tr_c2 = next(trans for trans in translations if trans.entity.key == "key-c-2")
+        tr_c2 = next(trans for trans in translations if trans.entity.key == ["key-c-2"])
         assert not tr_c2.user
 
         # Test actions
@@ -152,6 +156,71 @@ def test_update_ftl_translations():
 
 
 @pytest.mark.django_db
+def test_ini_translations():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-ini-trans",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
+        )
+        res = ResourceFactory.create(project=project, path="file.ini", format="ini")
+        TranslatedResourceFactory.create(locale=locale, resource=res)
+        ent = EntityFactory.create(
+            resource=res, key=["Strings", "key"], string="Source"
+        )
+        TranslationFactory.create(
+            entity=ent,
+            locale=locale,
+            string="Target",
+            active=True,
+            approved=True,
+        )
+        ChangedEntityLocale.objects.filter(entity__resource__project=project).delete()
+
+        # Filesystem setup
+        file_ini = dedent(
+            """
+            [Strings]
+            key = Target
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"file.ini": ""},
+                "fr-Test": {"file.ini": file_ini},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("fr-Test", "file.ini")],
+            removed=[],
+        )
+        checkouts = Checkouts(mock_checkout, mock_checkout)
+        paths = find_paths(project, checkouts)
+
+        # Test sync
+        removed_resources, updated_translations = sync_translations_from_repo(
+            project, locale_map, checkouts, paths, cast(Any, []), now
+        )
+        assert (removed_resources, updated_translations) == (0, 0)
+        translations = Translation.objects.filter(entity__resource=res, locale=locale)
+        assert set((*trans.entity.key, trans.approved) for trans in translations) == {
+            ("Strings", "key", True),
+        }
+
+
+@pytest.mark.django_db
 def test_remove_po_target_resource():
     with TemporaryDirectory() as root:
         # Database setup
@@ -168,13 +237,15 @@ def test_remove_po_target_resource():
         res = {}
         for id in ["a", "b", "c"]:
             res[id] = ResourceFactory.create(
-                project=project, path=f"{id}.po", format="po", total_strings=3
+                project=project, path=f"{id}.po", format="gettext", total_strings=3
             )
             TranslatedResourceFactory.create(locale=locale, resource=res[id])
             for i in range(3):
                 key = f"key-{id}-{i}"
                 string = f"Message {id} {i}"
-                entity = EntityFactory.create(resource=res[id], string=string, key=key)
+                entity = EntityFactory.create(
+                    resource=res[id], string=string, key=[key]
+                )
                 TranslationFactory.create(
                     entity=entity,
                     locale=locale,
@@ -205,7 +276,7 @@ def test_remove_po_target_resource():
 
         # Test sync
         removed_resources, updated_translations = sync_translations_from_repo(
-            project, locale_map, checkouts, paths, [], now
+            project, locale_map, checkouts, paths, cast(Any, []), now
         )
         assert (removed_resources, updated_translations) == (1, 0)
         assert not TranslatedResource.objects.filter(locale=locale, resource=res["b"])

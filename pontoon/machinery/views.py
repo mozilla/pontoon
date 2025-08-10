@@ -269,11 +269,7 @@ def caighdean(request):
         )
 
     try:
-        text = entity.translation_set.get(
-            locale__code="gd",
-            plural_form=None if entity.string_plural == "" else 0,
-            approved=True,
-        ).string
+        text = entity.translation_set.get(locale__code="gd", approved=True).string
     except Translation.DoesNotExist:
         return JsonResponse({})
 

@@ -666,7 +666,7 @@ header nav .right .sign-in-header button {
   background: transparent;
   border: 1.5px solid var(--status-translated);
   border-radius: 2px;
-  color: white;
+  color: var(--white-1);
   font-size: 14px;
   font-weight: 300;
   height: 40px;
@@ -851,7 +851,8 @@ header .right .select .menu {
 
 /* End message styling */
 
-.notifications .menu li.notification-item .timeago {
+.notifications .menu li.notification-item .timeago,
+.notifications .menu li.notification-item .old-notification {
   color: var(--light-grey-2);
   font-size: 11px;
   font-weight: normal;

@@ -57,11 +57,7 @@ function mountSpy(format, history, editor) {
 
 const mockMessageEntry = (value) => ({
   id: 'msg',
-  value: {
-    type: 'message',
-    declarations: [],
-    pattern: { body: [{ type: 'text', value }] },
-  },
+  value: { type: 'message', declarations: [], pattern: [value] },
 });
 
 const mockEditorMessage = (value) => [
@@ -86,8 +82,8 @@ describe('useExistingTranslation', () => {
   });
 
   it('finds identical Fluent initial/active translation', () => {
-    const entry = parseEntry('msg = something');
-    const res = mountSpy('ftl', HISTORY_FLUENT, {
+    const entry = parseEntry('fluent', 'msg = something');
+    const res = mountSpy('fluent', HISTORY_FLUENT, {
       entry,
       fields: editMessageEntry(entry),
       initial: entry,
@@ -129,20 +125,20 @@ describe('useExistingTranslation', () => {
   });
 
   it('finds identical Fluent translation in history', () => {
-    const entry = parseEntry('msg = something');
+    const entry = parseEntry('fluent', 'msg = something');
     const prev0 = HISTORY_FLUENT.translations[0];
-    const res0 = mountSpy('ftl', HISTORY_FLUENT, {
+    const res0 = mountSpy('fluent', HISTORY_FLUENT, {
       entry,
-      fields: editMessageEntry(parseEntry(prev0.string)),
+      fields: editMessageEntry(parseEntry('fluent', prev0.string)),
       initial: entry,
     });
 
     expect(res0).toBe(prev0);
 
     const prev1 = HISTORY_FLUENT.translations[1];
-    const res1 = mountSpy('ftl', HISTORY_FLUENT, {
+    const res1 = mountSpy('fluent', HISTORY_FLUENT, {
       entry,
-      fields: editMessageEntry(parseEntry(prev1.string)),
+      fields: editMessageEntry(parseEntry('fluent', prev1.string)),
       initial: entry,
     });
 
@@ -161,8 +157,8 @@ describe('useExistingTranslation', () => {
   });
 
   it('finds a Fluent translation in history', () => {
-    const entry = parseEntry('msg = something');
-    const res = mountSpy('ftl', HISTORY_FLUENT, {
+    const entry = parseEntry('fluent', 'msg = something');
+    const res = mountSpy('fluent', HISTORY_FLUENT, {
       entry,
       fields: mockEditorMessage('Come on Morty!'),
       initial: entry,

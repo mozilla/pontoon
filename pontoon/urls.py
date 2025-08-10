@@ -53,7 +53,6 @@ urlpatterns = [
     ),
     # Legacy
     path("in-context/", RedirectView.as_view(url="/", permanent=True)),
-    path("intro/", RedirectView.as_view(url="/", permanent=True)),
     # Include URL configurations from installed apps
     path("terminology/", include("pontoon.terminology.urls")),
     path("translations/", include("pontoon.translations.urls")),
@@ -66,13 +65,24 @@ urlpatterns = [
     path("", include("pontoon.machinery.urls")),
     path("", include("pontoon.insights.urls")),
     path("", include("pontoon.contributors.urls")),
-    path("", include("pontoon.localizations.urls")),
     path("", include("pontoon.base.urls")),
     path("", include("pontoon.api.urls")),
+    path("", include("pontoon.localizations.urls")),
     path("", include("pontoon.translate.urls")),
     path("", include("pontoon.batch.urls")),
     path("", include("pontoon.homepage.urls")),
     path("", include("pontoon.uxactionlog.urls")),
-    # Team page: Must be at the end
+]
+
+# Conditionally include Django Debug Toolbar
+try:
+    import debug_toolbar
+
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
+except ModuleNotFoundError:
+    pass  # debug_toolbar not installed, skip it
+
+# Team page: Must be at the end
+urlpatterns += [
     path("<locale:locale>/", team, name="pontoon.teams.team"),
 ]

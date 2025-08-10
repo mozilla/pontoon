@@ -27,9 +27,9 @@ function mountForm(string) {
 
   const entity = {
     pk: 0,
-    key: 'key',
+    key: ['key'],
     original: 'Hello',
-    translation: [{ string }],
+    translation: { string },
   };
 
   let actions, result;
@@ -43,7 +43,7 @@ function mountForm(string) {
     () => (
       <Locale.Provider value={DEFAULT_LOCALE}>
         <MockLocalizationProvider>
-          <EntityView.Provider value={{ entity, pluralForm: 0 }}>
+          <EntityView.Provider value={{ entity }}>
             <EditorProvider>
               <Spy />
               <TranslationForm />

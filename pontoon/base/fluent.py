@@ -69,12 +69,10 @@ def get_simple_preview(content):
 def is_plural_expression(expression):
     from pontoon.base.models import Locale
 
-    CLDR_PLURALS = [c for _, c in Locale.CLDR_PLURALS]
-
     if isinstance(expression, ast.SelectExpression):
         return all(
             isinstance(variant.key, ast.NumberLiteral)
-            or variant.key.name in CLDR_PLURALS
+            or variant.key.name in Locale.CLDR_PLURALS
             for variant in expression.variants
         )
 

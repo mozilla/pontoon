@@ -200,7 +200,6 @@ class RepositoryInline(admin.TabularInline):
         "url",
         "branch",
         "website",
-        "permalink_prefix",
         "last_synced_revisions",
         "source_repo",
     )
@@ -248,6 +247,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     "can_be_requested",
                     "date_created",
                     "date_disabled",
+                    "date_modified",
                     "system_project",
                     "visibility",
                     "pretranslation_enabled",
@@ -285,7 +285,7 @@ class TranslatedResourceAdmin(admin.ModelAdmin):
 
 
 class EntityAdmin(admin.ModelAdmin):
-    search_fields = ["string", "string_plural"]
+    search_fields = ["string"]
     autocomplete_fields = ("resource",)
 
 

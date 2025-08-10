@@ -1,72 +1,65 @@
-from pontoon.base.tests import TestCase, assert_attributes_equal
-from pontoon.sync.formats import json_extensions
-from pontoon.sync.tests.formats import FormatTestsMixin
+from datetime import datetime
+from textwrap import dedent
+from unittest import TestCase
+
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
+
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
-BASE_JSON_FILE = """
-{
-  "SourceString": {
-    "message": "Translated String",
-    "description": "Sample comment"
-  },
+class JsonExtensionsTests(TestCase):
+    def test_webext(self):
+        src = dedent("""
+            {
+              "SourceString": {
+                "message": "Translated String",
+                "description": "Sample comment"
+              },
 
-  "MultipleComments": {
-    "message": "Translated Multiple Comments",
-    "description": "First comment",
-    "description": "Second comment"
-  },
+              "MultipleComments": {
+                "message": "Translated Multiple Comments",
+                "description": "First comment",
+                "description": "Second comment"
+              },
 
-  "NoCommentsorSources": {
-    "message": "Translated No Comments or Sources"
-  },
+              "NoCommentsorSources": {
+                "message": "Translated No Comments or Sources"
+              },
 
-  "placeholder": {
-    "message": "Hello $YOUR_NAME$",
-    "description": "Peer greeting",
-    "placeholders": {
-      "your_name": {
-        "content": "$1",
-        "example": "Cira"
-      }
-    }
-  }
-}
-"""
+              "placeholder": {
+                "message": "Hello $YOUR_NAME$",
+                "description": "Peer greeting",
+                "placeholders": {
+                  "your_name": {
+                    "content": "$1",
+                    "example": "Cira"
+                  }
+                }
+              }
+            }
+            """)
 
-
-class JsonExtensionsTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(json_extensions.parse)
-    supports_keys = False
-    supports_source = False
-    supports_source_string = False
-
-    def key(self, source_string):
-        """JSON keys can't contain spaces."""
-        return super().key(source_string).replace(" ", "")
-
-    def test_parse_basic(self):
-        self.run_parse_basic(BASE_JSON_FILE, 0)
-
-    def test_parse_multiple_comments(self):
-        self.run_parse_multiple_comments(
-            BASE_JSON_FILE,
-            1,
-            comments=["Second comment"],
+        res = parse_resource(Format.webext, src)
+        e0, e1, e2, e3 = (
+            as_entity(Format.webext, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
+        t0, t1, t2, t3 = as_vcs_translations(res)
 
-    def test_parse_no_comments_no_sources(self):
-        self.run_parse_no_comments_no_sources(BASE_JSON_FILE, 2)
+        assert e0.comment == "Sample comment"
+        assert t0.string == "Translated String"
 
-    def test_parse_placeholder(self):
-        input_string = BASE_JSON_FILE
-        translation_index = 3
-        _, translations = self.parse_string(input_string)
-        assert_attributes_equal(
-            translations[translation_index],
-            comments=["Peer greeting"],
-            source={"your_name": {"content": "$1", "example": "Cira"}},
-            key=self.key("placeholder"),
-            strings={None: "Hello $YOUR_NAME$"},
-            fuzzy=False,
-            order=translation_index,
-        )
+        assert e1.comment == "Second comment"
+
+        assert t2.string == "Translated No Comments or Sources"
+
+        assert e3.key == ["placeholder"]
+        assert e3.string == "Hello $YOUR_NAME$"
+        assert e3.comment == "Peer greeting"
+        assert e3.meta == [
+            ["placeholders", '{"YOUR_NAME": {"content": "$1", "example": "Cira"}}'],
+        ]
+
+        assert t3.key == ("placeholder",)
+        assert t3.string == "Hello $YOUR_NAME$"

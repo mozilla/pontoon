@@ -38,7 +38,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
-  const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
+  const { entity } = useContext(EntityView);
   const pushNextTranslatable = usePushNextTranslatable();
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const { setFailedChecks } = useContext(FailedChecksData);
@@ -64,10 +64,6 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       entity.pk,
       translation,
       locale.code,
-      // Gettext messages with plural forms in the original
-      // need to use index 0 for the "plural form" of translations
-      // to locales that do not use plural forms.
-      hasPluralForms ? pluralForm : entity.original_plural ? 0 : -1,
       entity.original,
       forceSuggestions,
       location.resource,
@@ -82,9 +78,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       // Ignore existing unsavedchanges because they are saved now.
       resetUnsavedChanges(true);
 
-      dispatch(
-        updateEntityTranslation(entity.pk, pluralForm, content.translation),
-      );
+      dispatch(updateEntityTranslation(entity.pk, content.translation));
 
       const badgeLevel = content.badge_update?.level;
       const badgeName = content.badge_update?.name;
@@ -108,7 +102,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
         );
       }
 
-      // The change did work, we want to move on to the next Entity or pluralForm.
+      // The change did work, we want to move on to the next Entity.
       pushNextTranslatable();
     } else if (content.failedChecks) {
       setFailedChecks(content.failedChecks, 'submitted');

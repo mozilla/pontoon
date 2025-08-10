@@ -15,9 +15,8 @@ ENV PYTHONPATH /app
 RUN apt-get update \
     # Enable downloading packages over https
     && apt-get install -y apt-transport-https \
-    # Add source for node.js
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
+    # Add NodeSource v24.x and install nodejs
+    && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     # Install software
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -30,7 +29,7 @@ RUN apt-get update \
     && apt-get autoremove -y
 
 # Install uv (version should match the one used in Python GitHub workflows)
-COPY --from=ghcr.io/astral-sh/uv:0.5.31 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.7.16 /uv /bin/uv
 
 WORKDIR /app
 

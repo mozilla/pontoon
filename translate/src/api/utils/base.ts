@@ -22,7 +22,7 @@ export function GET(
 
 export function POST(
   url: string,
-  body: FormData,
+  body: FormData | URLSearchParams,
   options: FetchOptions = {},
 ): Promise<any> {
   const fullUrl = new URL(url, window.location.origin);

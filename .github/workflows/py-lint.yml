@@ -27,13 +27,13 @@ jobs:
         with:
           python-version: '3.11'
       - name: Set up uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           cache-dependency-glob: |
             **/requirements/*.txt
           # Version should match the one used in docker/Dockerfile
-          version: "0.5.31"
+          version: "0.7.16"
       - name: Install Dependencies
         run: uv pip install -r requirements/lint.txt
         env:

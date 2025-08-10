@@ -54,7 +54,7 @@ def test_view_project_tag_locales_ajax(client, project_a, tag_a):
         "pontoon.tags.ajax.teams",
         kwargs=dict(project=project_a.slug, tag=tag_a.slug),
     )
-    project_a.tag_set.add(tag_a)
+    project_a.tags.add(tag_a)
     tag_a.priority = Priority.NORMAL
     tag_a.save()
     response = client.get(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
@@ -81,7 +81,7 @@ def test_view_project_tag_ajax(client, project_a, tag_a):
         "pontoon.projects.ajax.tags",
         kwargs=dict(slug=project_a.slug),
     )
-    project_a.tag_set.add(tag_a)
+    project_a.tags.add(tag_a)
     tag_a.priority = Priority.NORMAL
     tag_a.save()
 

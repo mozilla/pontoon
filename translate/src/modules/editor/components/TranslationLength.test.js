@@ -20,7 +20,7 @@ describe('<TranslationLength>', () => {
     const context = new Map([
       [EditorData, { sourceView: false }],
       [EditorResult, [{ value }]],
-      [EntityView, { entity: { comment, format, original }, pluralForm: 0 }],
+      [EntityView, { entity: { comment, format, original } }],
     ]);
     React.useContext.callsFake((key) => context.get(key));
 
@@ -45,7 +45,7 @@ describe('<TranslationLength>', () => {
 
   it('shows translation length and FTL original string length', () => {
     const wrapper = mountTranslationLength(
-      'ftl',
+      'fluent',
       'key = 123456',
       '1234567',
       '',

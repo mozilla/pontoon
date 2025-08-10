@@ -23,6 +23,17 @@
 {% endif %}
 {% endmacro %}
 
+{% macro notification_time(notification) %}
+
+{% if notification|is_old_notification %}
+  <time class="old-notification" datetime="{{ notification.timestamp }}">
+    {{ notification.timestamp|format_datetime("date") }}
+  </time>
+{% else %}
+  <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }}</time>
+{% endif %}
+
+{% endmacro %}
 
 {% macro list(notifications, no_title="No new notifications.", no_description="Here you’ll see updates for localizations you contribute to.") %}
 <ul class="notification-list">
@@ -48,7 +59,7 @@
         {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
           <span class="description">{{ description|safe }}</span>
 
-          <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
+          {{ notification_time(notification) }}
 
         {% elif target and target.resource %}
 
@@ -64,9 +75,9 @@
           <span class="target">
             {{ target.resource.project.name }}
           </span>
-
-          <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
-
+          
+          {{ notification_time(notification) }}
+          
           <div class="message trim">{{ description|linkify|safe }}</div>
 
         {% else %}
@@ -84,8 +95,8 @@
               <a href="{{ full_url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
             </span>
           {% endif %}
-
-          <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
+          
+          {{ notification_time(notification )}}
 
           {% set description = notification.description %}
           {% if description %}

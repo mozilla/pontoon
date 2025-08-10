@@ -16,37 +16,25 @@ import { Location } from './Location';
 
 const emptyEntity: Entity = {
   pk: 0,
+  key: [],
   original: '',
-  original_plural: '',
   machinery_original: '',
   comment: '',
   group_comment: '',
   resource_comment: '',
-  key: '',
-  context: '',
+  meta: [],
   format: '',
   path: '',
   project: {},
-  source: [],
-  translation: [],
+  translation: undefined,
   readonly: true,
   isSibling: false,
   date_created: '',
 };
 
-export type EntityView = {
-  entity: Entity;
-  hasPluralForms: boolean;
-  pluralForm: number;
-  setPluralForm(pluralForm: number): void;
-};
+export type EntityView = { entity: Entity };
 
-const initEntityView: EntityView = {
-  entity: emptyEntity,
-  hasPluralForms: false,
-  pluralForm: 0,
-  setPluralForm: () => {},
-};
+const initEntityView: EntityView = { entity: emptyEntity };
 
 export const EntityView = createContext(initEntityView);
 
@@ -56,61 +44,31 @@ export function EntityViewProvider({
   children: React.ReactElement;
 }) {
   const pk = useContext(Location).entity;
-  const pluralCount = useContext(Locale).cldrPlurals.length;
   const entities = useAppSelector((state) => state[ENTITIES].entities);
 
   const entity = entities.find((entity) => entity.pk === pk) ?? emptyEntity;
 
-  const [state, setState] = useState<EntityView>({
-    entity,
-    hasPluralForms: false,
-    pluralForm: 0,
-    setPluralForm: () => {},
-  });
+  const [state, setState] = useState<EntityView>({ entity });
 
   useEffect(() => setState((prev) => ({ ...prev, entity })), [entity]);
 
   useEffect(() => {
-    const hasPluralForms =
-      pluralCount > 1 && !!entity.original_plural && entity.format !== 'ftl';
-
-    const setPluralForm = hasPluralForms
-      ? (next: number) => {
-          const pluralForm =
-            next >= pluralCount ? 0 : next < 0 ? pluralCount - 1 : next;
-          setState((prev) => ({ ...prev, pluralForm }));
-        }
-      : () => {};
-
-    setState((prev) => ({
-      entity: prev.entity,
-      hasPluralForms,
-      pluralForm: 0,
-      setPluralForm,
-    }));
-  }, [pk, entity.original_plural, entity.format, pluralCount]);
+    setState((prev) => ({ entity: prev.entity }));
+  }, [pk, entity.format]);
 
   return <EntityView.Provider value={state}>{children}</EntityView.Provider>;
 }
 
 /**
- * Return the active translation for the given entity and current plural form.
+ * Return the active translation for the given entity.
  *
  * The active translation is either the approved one, the fuzzy one, or the
  * most recent non-rejected one.
  */
 export function useActiveTranslation(): EntityTranslation | null {
-  const { entity, pluralForm } = useContext(EntityView);
+  const { entity } = useContext(EntityView);
   return useMemo(() => {
-    const tx = entity.translation[pluralForm];
+    const tx = entity.translation;
     return tx && !tx.rejected ? tx : null;
-  }, [entity, pluralForm]);
-}
-
-export function useEntitySource(): string {
-  const { entity, pluralForm } = useContext(EntityView);
-  return useMemo(
-    () => (pluralForm > 0 && entity.original_plural) || entity.original,
-    [entity, pluralForm],
-  );
+  }, [entity]);
 }

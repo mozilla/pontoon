@@ -17,8 +17,7 @@ This guide assumes you have already installed and set up the following:
 1. `Git <https://git-scm.com>`__
 2. `Python 3.11 <https://www.python.org>`__
 3. `uv <https://docs.astral.sh/uv/getting-started/installation/#standalone-installer>`_
-4. `Node.js 18 <https://nodejs.org>`__ and `npm 9 <https://www.npmjs.com>`__ or
-   later
+4. `Node.js <https://nodejs.org>`__ and `npm <https://www.npmjs.com>`__
 5. `PostgreSQL 15 <http://www.postgresql.org>`__
 
 These docs assume a Unix-like operating system, although the site should, in
@@ -140,14 +139,7 @@ Installation
    Make sure that the email address you use for the superuser account matches
    the email that you will log in with via Firefox Accounts.
 
-8. Pull the latest strings from version control for the Pontoon Intro project
-   (which is automatically created for you during the database migrations):
-
-   .. code-block:: bash
-
-      python manage.py sync_projects --projects=pontoon-intro --no-commit
-
-9. After you've provided credentials for your django-allauth provider, you have to update them in database,
+8. After you've provided credentials for your django-allauth provider, you have to update them in database,
    because it's required by django-allauth. You will have to call this command after every change in your
    django-allauth settings (e.g. client key):
 
@@ -155,13 +147,13 @@ Installation
 
       python manage.py update_auth_providers
 
-10. Install the required Node libraries using ``npm``:
+9. Install the required Node libraries using ``npm``:
 
    .. code-block:: bash
 
       npm install
 
-11. Build the client:
+10. Build the client:
 
    .. code-block:: bash
 

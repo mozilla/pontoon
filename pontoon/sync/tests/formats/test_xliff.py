@@ -1,102 +1,77 @@
-from difflib import Differ
+from datetime import datetime
 from textwrap import dedent
+from unittest import TestCase
 
-import pytest
+from moz.l10n.formats import Format
+from moz.l10n.model import Entry
+from moz.l10n.resource import parse_resource
 
-from pontoon.base.tests import TestCase
-from pontoon.sync.formats import xliff
-from pontoon.sync.formats.common import ParseError
-from pontoon.sync.tests.formats import FormatTestsMixin
-
-
-BASE_XLIFF_FILE = """
-<xliff>
-    <file original="filename" source-language="en" datatype="plaintext" target-language="en">
-        <body>
-            <trans-unit id="Source String Key">
-                <source>Source String</source>
-                <target>Translated String</target>
-                <note>Sample comment</note>
-            </trans-unit>
-            <trans-unit id="Multiple Comments Key">
-                <source>Multiple Comments</source>
-                <target>Translated Multiple Comments</target>
-                <note>First comment</note>
-                <note>Second comment</note>
-            </trans-unit>
-            <trans-unit id="No Comments or Sources Key">
-                <source>No Comments or Sources</source>
-                <target>Translated No Comments or Sources</target>
-            </trans-unit>
-            <trans-unit id="Missing Translation Key">
-                <source>Missing Translation</source>
-            </trans-unit>
-        </body>
-    </file>
-</xliff>
-"""
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
-XLIFF_TEMPLATE = """
-<xliff>
-    <file original="filename" source-language="en" datatype="plaintext" {attr}>
-        <body>
-            {body}
-        </body>
-    </file>
-</xliff>
-"""
+class XLIFFTests(TestCase):
+    def test_xliff(self):
+        src = dedent("""
+            <xliff version="1.2">
+                <file original="filename" source-language="en" datatype="plaintext" target-language="en">
+                    <body>
+                        <trans-unit id="Source String Key">
+                            <source>Source &lt;b&gt;String&lt;/b&gt;</source>
+                            <target>Translated &lt;b&gt;String&lt;/b&gt;</target>
+                            <note>Sample comment</note>
+                        </trans-unit>
+                        <trans-unit id="Multiple Comments Key">
+                            <source>Multiple Comments</source>
+                            <target>Translated Multiple Comments</target>
+                            <note>First comment</note>
+                            <note>Second comment</note>
+                        </trans-unit>
+                        <trans-unit id="No Comments or Sources Key">
+                            <source>No Comments or Sources</source>
+                            <target>Translated No Comments or Sources</target>
+                        </trans-unit>
+                        <trans-unit id="Missing Translation Key">
+                            <source>Missing Translation</source>
+                        </trans-unit>
+                    </body>
+                </file>
+            </xliff>
+            """)
 
+        res = parse_resource(Format.xliff, src)
+        e0, e1, e2, e3 = (
+            as_entity(Format.xliff, section.id, entry, date_created=datetime.now())
+            for section in res.sections
+            for entry in section.entries
+            if isinstance(entry, Entry)
+        )
+        t0, t1, t2 = as_vcs_translations(res)
 
-class XLIFFTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(xliff.parse)
-    supports_keys = True
-    supports_source = False
-    supports_source_string = True
+        # basic
+        assert e0.comment == "Sample comment"
+        assert e0.key == ["filename", "Source String Key"]
+        assert e0.string == "Source <b>String</b>"
 
-    def key(self, source_string):
-        """XLIFF keys are prefixed with the file name."""
-        return "filename\x04" + super().key(source_string)
+        assert t0.key == ("filename", "Source String Key")
+        assert t0.string == "Translated <b>String</b>"
 
-    def assert_file_content(self, file_path, expected_content):
-        """
-        Compare XML file contents as XML rather than direct strings.
-        """
-        with open(file_path) as f:
-            file_content = f.read()
+        # multiple comments
+        assert e1.comment == "First comment\n\nSecond comment"
+        assert e1.key == ["filename", "Multiple Comments Key"]
+        assert e1.string == "Multiple Comments"
 
-            # Generate a diff for the error message.
-            result = Differ().compare(
-                file_content.splitlines(1), expected_content.splitlines(1)
-            )
-            msg = "XML strings are not equal:\n" + "".join(result)
+        assert t1.key == ("filename", "Multiple Comments Key")
+        assert t1.string == "Translated Multiple Comments"
 
-            self.assertXMLEqual(file_content, expected_content, msg)
+        # no comments or sources
+        assert e2.comment == ""
+        assert e2.key == ["filename", "No Comments or Sources Key"]
+        assert e2.string == "No Comments or Sources"
 
-    def test_parse_basic(self):
-        self.run_parse_basic(BASE_XLIFF_FILE, 0)
+        assert t2.key == ("filename", "No Comments or Sources Key")
+        assert t2.string == "Translated No Comments or Sources"
 
-    def test_parse_multiple_comments(self):
-        self.run_parse_multiple_comments(BASE_XLIFF_FILE, 1)
-
-    def test_parse_no_comments_no_sources(self):
-        self.run_parse_no_comments_no_sources(BASE_XLIFF_FILE, 2)
-
-    def test_parse_missing_translation(self):
-        self.run_parse_missing_translation(BASE_XLIFF_FILE, 3)
-
-    def test_parse_invalid_translation(self):
-        """
-        If a resource has an invalid translation, raise a ParseError.
-        """
-        with pytest.raises(ParseError):
-            self.parse_string(
-                dedent(
-                    """
-                <trans-unit id="Source String Key"
-                    <source>Source String</source>
-                    <target>Translated String</target>
-                </trans-unit>
-            """
-                )
-            )
+        # missing translation
+        assert e3.comment == ""
+        assert e3.key == ["filename", "Missing Translation Key"]
+        assert e3.string == "Missing Translation"

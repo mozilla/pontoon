@@ -65,7 +65,7 @@ the ``URL`` will need to include both the PAT and username, e.g.
 JavaScript setup
 ================
 
-For working on the front-end, you need at least Node.js 14 and npm 7
+For working on the front-end, you need the latest versions of Node.js and npm
 (`installation instructions <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>`_).
 Parts of the front-end use `npm workspaces <https://docs.npmjs.com/cli/v7/using-npm/workspaces>`_,
 which are not supported by earlier npm versions.
@@ -74,7 +74,6 @@ which are not supported by earlier npm versions.
 Database
 ========
 
-By default, you will have default data loaded for only the Pontoon Intro project.
 If you have a database dump, you can load it into your PostgreSQL database.
 
 Make sure you backup your existing database first:
@@ -94,7 +93,7 @@ can start just the postgresql container by running:
 
 .. code-block:: shell
 
-    $ docker-compose run postgresql -d
+    $ docker-compose up -d postgresql
 
 
 Interactive shell
@@ -139,7 +138,7 @@ To format the Python and the JavaScript code at once you can use:
 
 Code formatting is explained in more detail in the following sections.
 
-To run the required linters on the Python and the Javascript code at once you can use:
+To run the required linters on the Python and the JavaScript code at once you can use:
 
 .. code-block:: shell
 
@@ -167,10 +166,10 @@ ignore that error (see `documentation <https://docs.astral.sh/ruff/linter/#error
 Note that in most cases, it is better to fix the issues than ignoring them.
 
 
-Javascript code conventions
+JavaScript code conventions
 ===========================
 
-Our Javascript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>`_.
+Our JavaScript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>`_.
 We enforce that in our Continuous Integration, so you will need to run
 prettier on your code before sending it for review.
 

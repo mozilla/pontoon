@@ -5,7 +5,7 @@ import pytest
 
 from fluent.syntax import FluentParser, FluentSerializer
 
-from pontoon.pretranslation.pretranslate import get_pretranslations
+from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.test.factories import (
     EntityFactory,
     ResourceFactory,
@@ -19,42 +19,42 @@ serializer = FluentSerializer()
 
 @pytest.fixture
 def fluent_resource(project_a):
-    return ResourceFactory(project=project_a, path="resource.ftl", format="ftl")
+    return ResourceFactory(project=project_a, path="resource.ftl", format="fluent")
 
 
 @pytest.mark.django_db
 def test_get_pretranslations_no_match(entity_a, locale_b):
     # 100% TM match does not exist and locale.google_translate_code is None
-    response = get_pretranslations(entity_a, locale_b)
-    assert response == []
+    with pytest.raises(ValueError):
+        get_pretranslation(entity_a, locale_b)
 
 
 @pytest.mark.django_db
-def test_get_pretranslations_empty_string(entity_a, locale_b, tm_user):
+def test_get_pretranslations_empty_string(entity_a, locale_b):
     # Entity.string is an empty string
     entity_a.string = ""
-    response = get_pretranslations(entity_a, locale_b)
-    assert response == [("", None, tm_user)]
+    response = get_pretranslation(entity_a, locale_b)
+    assert response == ("", "tm")
 
 
 @pytest.mark.django_db
-def test_get_pretranslations_whitespace(entity_a, locale_b, tm_user):
+def test_get_pretranslations_whitespace(entity_a, locale_b):
     # Entity.string is an empty string
     entity_a.string = " "
-    response = get_pretranslations(entity_a, locale_b)
-    assert response == [(" ", None, tm_user)]
+    response = get_pretranslation(entity_a, locale_b)
+    assert response == (" ", "tm")
 
     entity_a.string = "\t"
-    response = get_pretranslations(entity_a, locale_b)
-    assert response == [("\t", None, tm_user)]
+    response = get_pretranslation(entity_a, locale_b)
+    assert response == ("\t", "tm")
 
     entity_a.string = "\n"
-    response = get_pretranslations(entity_a, locale_b)
-    assert response == [("\n", None, tm_user)]
+    response = get_pretranslation(entity_a, locale_b)
+    assert response == ("\n", "tm")
 
 
 @pytest.mark.django_db
-def test_get_pretranslations_tm_match(entity_a, entity_b, locale_b, tm_user):
+def test_get_pretranslations_tm_match(entity_a, entity_b, locale_b):
     # 100% TM match exists
     TranslationMemoryFactory.create(
         entity=entity_b,
@@ -63,44 +63,21 @@ def test_get_pretranslations_tm_match(entity_a, entity_b, locale_b, tm_user):
         locale=locale_b,
     )
 
-    response = get_pretranslations(entity_a, locale_b)
-    assert response == [("tm_translation", None, tm_user)]
+    response = get_pretranslation(entity_a, locale_b)
+    assert response == ("tm_translation", "tm")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
-def test_get_pretranslations_gt_match(
-    gt_mock, entity_a, google_translate_locale, gt_user
-):
+def test_get_pretranslations_gt_match(gt_mock, entity_a, google_translate_locale):
     # 100% TM match does not exist and locale.google_translate_code is not None
     gt_mock.return_value = {
         "status": True,
         "translation": "gt_translation",
     }
 
-    response = get_pretranslations(entity_a, google_translate_locale)
-    assert response == [("gt_translation", None, gt_user)]
-
-
-@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
-@pytest.mark.django_db
-def test_get_pretranslations_plurals(
-    gt_mock, entity_a, google_translate_locale, gt_user
-):
-    # Entity.string_plural is not None
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
-
-    entity_a.string_plural = entity_a.string
-    google_translate_locale.cldr_plurals = "1,2"
-
-    response = get_pretranslations(entity_a, google_translate_locale)
-    assert response == [
-        ("gt_translation", 0, gt_user),
-        ("gt_translation", 1, gt_user),
-    ]
+    response = get_pretranslation(entity_a, google_translate_locale)
+    assert response == ("gt_translation", "gt")
 
 
 @pytest.mark.django_db
@@ -109,14 +86,14 @@ def test_get_pretranslations_fluent_no_match(fluent_resource, locale_b):
     fluent_string = "hello-world = Hello World!"
     fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
 
-    response = get_pretranslations(fluent_entity, locale_b)
-    assert response == []
+    with pytest.raises(ValueError):
+        get_pretranslation(fluent_entity, locale_b)
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_simple(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Entity.string is a simple Fluent string
     gt_mock.return_value = {
@@ -128,14 +105,14 @@ def test_get_pretranslations_fluent_simple(
     fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
     pretranslated_string = "hello-world = gt_translation\n"
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_empty(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Entity.string is an empty Fluent string
     gt_mock.return_value = {
@@ -143,18 +120,17 @@ def test_get_pretranslations_fluent_empty(
         "translation": "gt_translation",
     }
 
-    fluent_string = 'hello-world = { "" }'
+    fluent_string = 'hello-world = { "" }\n'
     fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
-    pretranslated_string = "hello-world = gt_translation\n"
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (fluent_string, "tm")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_no_attribute_source(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Pretranslate accesskeys if the message has no value or required attributes
     input_string = dedent(
@@ -175,21 +151,21 @@ def test_get_pretranslations_fluent_accesskeys_no_attribute_source(
         """
         title =
             .foo = gt_translation
-            .accesskey = gt_translation
+            .accesskey = B
     """
     )
 
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_opt_out(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # For locales that opt-out of accesskey localization, do not pretranslate them
     google_translate_locale.accesskey_localization = False
@@ -218,14 +194,14 @@ def test_get_pretranslations_fluent_accesskeys_opt_out(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_value(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Generate accesskeys if the message has a value
     input_string = dedent(
@@ -251,14 +227,14 @@ def test_get_pretranslations_fluent_accesskeys_value(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_label_attribute(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Generate accesskeys if the message has a label attribute
     input_string = dedent(
@@ -290,14 +266,14 @@ def test_get_pretranslations_fluent_accesskeys_label_attribute(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_value_attribute(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Generate accesskeys if the message has a value attribute
     input_string = dedent(
@@ -327,14 +303,14 @@ def test_get_pretranslations_fluent_accesskeys_value_attribute(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_aria_label_attribute(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Generate accesskeys if the message has a aria-label attribute
     input_string = dedent(
@@ -362,14 +338,14 @@ def test_get_pretranslations_fluent_accesskeys_aria_label_attribute(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_prefixed_label_attribute(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Generate accesskeys if the message has a prefixed label attribute
     input_string = dedent(
@@ -397,20 +373,20 @@ def test_get_pretranslations_fluent_accesskeys_prefixed_label_attribute(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_ignore_placeables(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
-    # Ignore placeables whene generating accesskeys
+    # Ignore placeables when generating accesskeys
     input_string = dedent(
         """
         title = Title
-            .label = { brand } string with placeables
+            .label = { $brand } string with placeables
             .accesskey = B
     """
     )
@@ -418,13 +394,18 @@ def test_get_pretranslations_fluent_accesskeys_ignore_placeables(
 
     gt_mock.return_value = {
         "status": True,
-        "translation": "{ brand } gt_translation",
+        "translation": "{ $0 } gt_translation",
     }
 
+    # The `title` value here is hacky, but demonstrates that
+    # a Google Translate response that includes an unexpected `{$0}`
+    # does not cause a failure, just odd output.
+    # For the `.label` it's expected,
+    # and therefore replaced with the correct placeholder.
     expected = dedent(
         """
-        title = { brand } gt_translation
-            .label = { brand } gt_translation
+        title = {$0} gt_translation
+            .label = { $brand } gt_translation
             .accesskey = g
     """
     )
@@ -432,14 +413,14 @@ def test_get_pretranslations_fluent_accesskeys_ignore_placeables(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_select_expression_source(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Generate accesskeys from SelectExpression source
     input_string = dedent(
@@ -475,14 +456,14 @@ def test_get_pretranslations_fluent_accesskeys_select_expression_source(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_select_expression_accesskey(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Generate accesskeys for each SelectExpression variant
     input_string = dedent(
@@ -518,13 +499,13 @@ def test_get_pretranslations_fluent_accesskeys_select_expression_accesskey(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_select_expression_source_and_accesskey(
-    fluent_resource, entity_a, google_translate_locale, tm_user
+    fluent_resource, entity_a, google_translate_locale
 ):
     # Generate accesskeys for each SelectExpression variant
     input_string = dedent(
@@ -576,14 +557,14 @@ def test_get_pretranslations_fluent_accesskeys_select_expression_source_and_acce
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, tm_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "tm")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_number_literal_source(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Generate accesskeys from SelectExpression source with variant keys of type NumberLiteral
     input_string = dedent(
@@ -622,14 +603,12 @@ def test_get_pretranslations_fluent_accesskeys_number_literal_source(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @pytest.mark.django_db
-def test_get_pretranslations_fluent_multiline(
-    fluent_resource, entity_b, locale_b, tm_user
-):
+def test_get_pretranslations_fluent_multiline(fluent_resource, entity_b, locale_b):
     input_string = dedent(
         """
         multiline =
@@ -643,8 +622,8 @@ def test_get_pretranslations_fluent_multiline(
     # 100% TM match exists
     tm = TranslationMemoryFactory.create(
         entity=entity_b,
-        source="Multi Line Message",
-        target="TM: Multi Line Message",
+        source="Multi\nLine\nMessage",
+        target="TM: Multi\nLine\nMessage",
         locale=locale_b,
     )
 
@@ -653,14 +632,14 @@ def test_get_pretranslations_fluent_multiline(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, locale_b)
-    assert response == [(pretranslated_string, None, tm_user)]
+    response = get_pretranslation(fluent_entity, locale_b)
+    assert response == (pretranslated_string, "tm")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_plural(
-    gt_mock, fluent_resource, google_translate_locale, gt_user
+    gt_mock, fluent_resource, google_translate_locale
 ):
     # Various types of whitespace should be preserved
     gt_mock.return_value = {
@@ -698,14 +677,14 @@ def test_get_pretranslations_fluent_plural(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, gt_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_complex(
-    gt_mock, entity_a, fluent_resource, google_translate_locale, tm_user
+    gt_mock, entity_a, fluent_resource, google_translate_locale
 ):
     # Entity.string is a complex Fluent string.
     # - Uplift selector and repeat shared parts within variants.
@@ -755,39 +734,81 @@ def test_get_pretranslations_fluent_complex(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, tm_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "tm")
+
+
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_placeholders(
+    gt_mock, fluent_resource, google_translate_locale
+):
+    # Tests for various Fluent placeholders.
+    # - Placeholders are replaced by {$0}, {$1}, ... when passing to Google Translate.
+    # - Original placeholders are retained in final result.
+    def gt_mock_fn(**kwargs):
+        return {"status": True, "translation": f"GT: {kwargs['text']}"}
+
+    gt_mock.side_effect = gt_mock_fn
+
+    fluent_string = dedent(
+        """
+        batman = The { $dark } Knight
+            .weapon = Brain and { -wayne-enterprise }
+            .history = Lost { 2 } parents, has { 1 } "$alfred"
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+
+    expected = dedent(
+        """
+        batman = GT: The { $dark } Knight
+            .weapon = GT: Brain and { -wayne-enterprise }
+            .history = GT: Lost { 2 } parents, has { 1 } "$alfred"
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
+    assert [call[1]["text"] for call in gt_mock.call_args_list] == [
+        "The {$0} Knight",
+        "Brain and {$0}",
+        'Lost {$0} parents, has {$1} "$alfred"',
+    ]
 
 
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_sibling_selectors(
-    entity_a, fluent_resource, google_translate_locale, tm_user
+    entity_a, fluent_resource, google_translate_locale
 ):
     # Entity.string is a Fluent string with two sibling selectors.
     # - Move any text outside selectors into selector variants.
     # - Keep leading/trailing whitespace outside selector variants.
     TranslationMemoryFactory.create(
         entity=entity_a,
-        source="{ $key_count } key",
-        target="TM: { $key_count } key",
+        source="{ $key_count } key and { $lock_count } lock",
+        target="TM: { $key_count } key and { $lock_count } lock",
         locale=google_translate_locale,
     )
     TranslationMemoryFactory.create(
         entity=entity_a,
-        source="{ $key_count } keys",
-        target="TM: { $key_count } keys",
+        source="{ $key_count } key and { $lock_count } locks",
+        target="TM: { $key_count } key and { $lock_count } locks",
         locale=google_translate_locale,
     )
     TranslationMemoryFactory.create(
         entity=entity_a,
-        source="and { $lock_count } lock",
-        target="TM: and { $lock_count } lock",
+        source="{ $key_count } keys and { $lock_count } lock",
+        target="TM: { $key_count } keys and { $lock_count } lock",
         locale=google_translate_locale,
     )
     TranslationMemoryFactory.create(
         entity=entity_a,
-        source="and { $lock_count } locks",
-        target="TM: and { $lock_count } locks",
+        source="{ $key_count } keys and { $lock_count } locks",
+        target="TM: { $key_count } keys and { $lock_count } locks",
         locale=google_translate_locale,
     )
 
@@ -809,11 +830,16 @@ def test_get_pretranslations_fluent_sibling_selectors(
         """
         sibling-selector =
             { $key_count ->
-                [one] TM: { $key_count } key
-                *[other] TM: { $key_count } keys
-            }{" "}{ $lock_count ->
-                [one] TM: and { $lock_count } lock
-                *[other] TM: and { $lock_count } locks
+                [one]
+                    { $lock_count ->
+                        [one] TM: { $key_count } key and { $lock_count } lock
+                        *[other] TM: { $key_count } key and { $lock_count } locks
+                    }
+               *[other]
+                    { $lock_count ->
+                        [one] TM: { $key_count } keys and { $lock_count } lock
+                        *[other] TM: { $key_count } keys and { $lock_count } locks
+                    }
             }
     """
     )
@@ -822,5 +848,5 @@ def test_get_pretranslations_fluent_sibling_selectors(
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
     google_translate_locale.cldr_plurals = "1,5"
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, tm_user)]
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "tm")

@@ -76,7 +76,7 @@ class UnsupportedStringError(Exception):
     pass
 
 
-def cast_to_compare_locales(resource_ext, entity, string):
+def cast_to_compare_locales(format, entity, string):
     """
     Cast a Pontoon's translation object into Entities supported by `compare-locales`.
 
@@ -86,33 +86,22 @@ def cast_to_compare_locales(resource_ext, entity, string):
     :return: source entity and translation entity that will be compatible with
         a compare-locales checker. Type of those entities depends on the resource_ext.
     """
-    if resource_ext == ".properties":
+    cl_key = entity.key[0] if entity and entity.key else ""
+    if format == "properties":
         return (
             ComparePropertiesEntity(
-                entity.key, entity.string, CommentEntity(entity.comment)
+                cl_key, entity.string, CommentEntity(entity.comment)
             ),
-            ComparePropertiesEntity(
-                entity.key,
-                string,
-                CommentEntity(entity.comment),
-            ),
+            ComparePropertiesEntity(cl_key, string, CommentEntity(entity.comment)),
         )
 
-    elif resource_ext == ".dtd":
+    elif format == "dtd":
         return (
-            CompareDTDEntity(
-                entity.key,
-                entity.string,
-                CommentEntity(entity.comment),
-            ),
-            CompareDTDEntity(
-                entity.key,
-                string,
-                CommentEntity(entity.comment),
-            ),
+            CompareDTDEntity(cl_key, entity.string, CommentEntity(entity.comment)),
+            CompareDTDEntity(cl_key, string, CommentEntity(entity.comment)),
         )
 
-    elif resource_ext == ".ftl":
+    elif format == "fluent":
         parser = FluentParser()
 
         parser.readUnicode(entity.string)
@@ -122,14 +111,14 @@ def cast_to_compare_locales(resource_ext, entity, string):
         trEntity = list(parser)[0] if list(parser) else None
 
         if not trEntity or isinstance(trEntity, Junk):
-            raise UnsupportedStringError(resource_ext)
+            raise UnsupportedStringError(format)
 
         return (
             refEntity,
             trEntity,
         )
 
-    elif resource_ext == ".xml":
+    elif format == "android":
         parser = AndroidParser()
 
         content = """<?xml version="1.0" encoding="utf-8"?>
@@ -138,7 +127,7 @@ def cast_to_compare_locales(resource_ext, entity, string):
                 <string name="{key}"><![CDATA[{translation}]]></string>
             </resources>
         """.format(
-            key=entity.key,
+            key=cl_key,
             original=entity.string.replace("'", "\\'"),
             translation=string.replace("'", "\\'"),
         )
@@ -150,14 +139,14 @@ def cast_to_compare_locales(resource_ext, entity, string):
         trEntity = parsed_objects[1]
 
         if isinstance(trEntity, Junk):
-            raise UnsupportedStringError(resource_ext)
+            raise UnsupportedStringError(format)
 
         return (
             refEntity,
             trEntity,
         )
 
-    raise UnsupportedResourceTypeError(resource_ext)
+    raise UnsupportedResourceTypeError(format)
 
 
 def run_checks(entity, locale_code, string):
@@ -178,10 +167,8 @@ def run_checks(entity, locale_code, string):
         }
         Both keys are optional.
     """
-    resource_ext = f".{entity.resource.format}"
-
     source_ent, translation_ent = cast_to_compare_locales(
-        resource_ext,
+        entity.resource.format,
         entity,
         string,
     )
@@ -197,7 +184,7 @@ def run_checks(entity, locale_code, string):
     if checker.needs_reference:
         references = KeyedTuple(
             CompareDTDEntity(
-                e.key,
+                e.key[0] if e.key else "",
                 e.string,
                 e.comment,
             )

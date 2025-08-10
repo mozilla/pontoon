@@ -7,9 +7,9 @@ asgiref==3.8.1 \
     #   -c requirements/default.txt
     #   django
     #   django-stubs
-django==4.2.20 \
-    --hash=sha256:213381b6e4405f5c8703fffc29cd719efdf189dec60c67c04f76272b3dc845b9 \
-    --hash=sha256:92bac5b4432a64532abb73b2ac27203f485e40225d2640a7fbef2b62b876e789
+django==4.2.22 \
+    --hash=sha256:0a32773b5b7f4e774a155ee253ab24a841fed7e9e9061db08bf2ce9711da404d \
+    --hash=sha256:e726764b094407c313adba5e2e866ab88f00436cad85c540a5bf76dc0a912c9e
     # via
     #   -c requirements/default.txt
     #   django-debug-toolbar

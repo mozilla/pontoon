@@ -1,98 +1,63 @@
+from datetime import datetime
 from textwrap import dedent
+from unittest import TestCase
 
-from pontoon.base.tests import TestCase, assert_attributes_equal
-from pontoon.sync.formats import json_keyvalue
-from pontoon.sync.tests.formats import FormatTestsMixin
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
 
-
-BASE_JSON_FILE = """
-{
-  "No Comments or Sources": "Translated No Comments or Sources",
-  "Nested": {
-    "key": "value"
-  }
-}
-"""
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
-class JsonKeyValueTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(json_keyvalue.parse)
-    supports_keys = False
-    supports_source = False
-    supports_source_string = False
-
-    def test_parse_no_comments_no_sources(self):
-        _, translations = self.parse_string(BASE_JSON_FILE)
-        assert_attributes_equal(
-            translations[0],
-            comments=[],
-            source=[],
-            key=self.key('["No Comments or Sources"]'),
-            strings={None: "Translated No Comments or Sources"},
-            source_string_plural="",
-            fuzzy=False,
-            order=0,
-        )
-
-    # Validate nested values internal key format
-    def test_parse_nested(self):
-        _, translations = self.parse_string(BASE_JSON_FILE)
-        assert_attributes_equal(
-            translations[1],
-            comments=[],
-            source=[],
-            # Nested keys are internally using "\200" as a separator
-            key=self.key('["Nested", "key"]'),
-            strings={None: "value"},
-            fuzzy=False,
-            order=1,
-        )
-
-    # Validate if the key is formated in json and context in dot representation
-    def test_key_and_context_format(self):
-        input_string = dedent(
-            """
+class JsonKeyValueTests(TestCase):
+    def test_plain_json(self):
+        src = dedent("""
             {
-                "Source": {
-                  "String": "Source String"
-                }
+              "No Comments or Sources": "Translated No Comments or Sources",
+              "Nested": {
+                "key": "value"
+              }
             }
-        """
+            """)
+
+        res = parse_resource(Format.plain_json, src)
+        e0, e1 = (
+            as_entity(Format.plain_json, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
-        _, translations = self.parse_string(input_string)
-        assert_attributes_equal(
-            translations[0],
-            key='["Source", "String"]',
-            context="Source.String",
-        )
+        t0, t1 = as_vcs_translations(res)
+
+        assert e0.key == ["No Comments or Sources"]
+        assert e0.string == "Translated No Comments or Sources"
+
+        assert t0.key == ("No Comments or Sources",)
+        assert t0.string == "Translated No Comments or Sources"
+
+        assert e1.key == ["Nested", "key"]
+        assert e1.string == "value"
+
+        assert t1.key == ("Nested", "key")
+        assert t1.string == "value"
 
     def test_key_conflict(self):
-        input_string = dedent(
-            """
-          {
-            "Source": { "String": "foo" },
-            "Source.String": "bar",
-            "[\\"Source\\", \\"String\\"]": "eek"
-          }
-      """
+        src = dedent("""
+            {
+                "Source": { "String": "foo" },
+                "Source.String": "bar",
+                "[\\"Source\\", \\"String\\"]": "eek"
+            }
+            """)
+
+        res = parse_resource(Format.plain_json, src)
+        e0, e1, e2 = (
+            as_entity(Format.plain_json, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
 
-        _, translations = self.parse_string(input_string)
-        assert_attributes_equal(
-            translations[0],
-            key='["Source", "String"]',
-            context="Source.String",
-            strings={None: "foo"},
-        )
-        assert_attributes_equal(
-            translations[1],
-            key='["Source.String"]',
-            context="Source.String",
-            strings={None: "bar"},
-        )
-        assert_attributes_equal(
-            translations[2],
-            key='["[\\"Source\\", \\"String\\"]"]',
-            context='["Source", "String"]',
-            strings={None: "eek"},
-        )
+        assert e0.key == ["Source", "String"]
+        assert e0.string == "foo"
+
+        assert e1.key == ["Source.String"]
+        assert e1.string == "bar"
+
+        assert e2.key == ['["Source", "String"]']
+        assert e2.string == "eek"

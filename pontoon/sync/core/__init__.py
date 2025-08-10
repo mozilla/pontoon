@@ -7,7 +7,7 @@ from django.utils import timezone
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
 from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.core.checkout import checkout_repos
-from pontoon.sync.core.entities import sync_entities_from_repo
+from pontoon.sync.core.entities import sync_resources_from_repo
 from pontoon.sync.core.paths import find_paths
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
@@ -43,7 +43,7 @@ def sync_project(
         lc.code: lc for lc in project.locales.order_by("code")
     }
     paths.locales = list(locale_map.keys())
-    added_entities_count, changed_paths, removed_paths = sync_entities_from_repo(
+    added_entities_count, changed_paths, removed_paths = sync_resources_from_repo(
         project, locale_map, checkouts.source, paths, now
     )
 

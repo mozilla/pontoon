@@ -2,6 +2,8 @@ from collections import defaultdict
 
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
+from moz.l10n.formats.mf2 import mf2_parse_message
+from moz.l10n.model import PatternMessage
 
 
 parser = FluentParser()
@@ -40,20 +42,32 @@ def run_checks(entity, original, string):
     :arg basestring string: a translation
     """
     checks = defaultdict(list)
-    resource_ext = entity.resource.format
+    format = entity.resource.format
 
     # Bug 1599056: Original and translation must either both end in a newline,
     # or none of them should.
-    if resource_ext == "po":
+    if format == "gettext":
         if original.endswith("\n") != string.endswith("\n"):
             checks["pErrors"].append("Ending newline mismatch")
+        if string != "":
+            try:
+                msg = mf2_parse_message(string)
+                patterns = (
+                    (msg.pattern,)
+                    if isinstance(msg, PatternMessage)
+                    else msg.variants.values()
+                )
+                if any(not pattern or pattern == [""] for pattern in patterns):
+                    checks["pErrors"].append("Empty translations are not allowed")
+            except ValueError as e:
+                checks["pErrors"].append(f"Parse error: {e}")
 
     # Prevent empty translation submissions if not supported
     if string == "" and not entity.resource.allows_empty_translations:
         checks["pErrors"].append("Empty translations are not allowed")
 
     # FTL checks
-    if resource_ext == "ftl" and string != "":
+    if format == "fluent" and string != "":
         translation_ast = parser.parse_entry(string)
         entity_ast = parser.parse_entry(entity.string)
 

@@ -4,36 +4,30 @@ Parser for the xliff translation format.
 
 from __future__ import annotations
 
-from lxml import etree
+from html import unescape
+from typing import Any
 
-from translate.storage import xliff
+from moz.l10n.formats import Format
+from moz.l10n.message import serialize_message
+from moz.l10n.model import Entry, Id as L10nId, Message
 
-from .common import ParseError, VCSTranslation
+from pontoon.base.models import Entity
+
+from .common import VCSTranslation
 
 
-def parse_xml_unit(unit: xliff.xliffunit, order: int):
-    key = unit.getid()
-    rich_target = unit.get_rich_target()
-    target_string = str(rich_target[0]) if rich_target else None
-    notes = unit.getnotes()
-    return VCSTranslation(
-        key=key,
-        context=unit.xmlelement.get("id"),
-        order=order,
-        strings={None: target_string} if target_string else {},
-        source_string=str(unit.rich_source[0]),
-        comments=notes.split("\n") if notes else None,
+def xliff_as_translation(section_id: L10nId, entry: Entry):
+    string = unescape(serialize_message(Format.xliff, entry.value))
+    return VCSTranslation(key=section_id + entry.id, string=string) if string else None
+
+
+def xliff_as_entity(
+    section_id: L10nId, entry: Entry[Message], kwargs: dict[str, Any]
+) -> Entity:
+    return Entity(
+        key=list(section_id + entry.id),
+        string=entry.get_meta("source") or "",
+        comment=entry.comment,
+        meta=[[m.key, m.value] for m in entry.meta],
+        **kwargs,
     )
-
-
-def parse(path: str):
-    try:
-        with open(path) as f:
-            xml = f.read().encode("utf-8")
-            xliff_file = xliff.xlifffile(xml)
-            return [
-                parse_xml_unit(unit, order)
-                for order, unit in enumerate(xliff_file.units)
-            ]
-    except (OSError, etree.XMLSyntaxError) as err:
-        raise ParseError(f"Failed to parse {path}: {err}")

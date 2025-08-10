@@ -9,7 +9,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { OriginalString } from './OriginalString';
 
 const ENTITY = {
-  format: 'ftl',
+  format: 'fluent',
   original: ftl`
     header =
         .page-title = Hello
@@ -22,7 +22,7 @@ function mountOriginalString(spy) {
   const store = createReduxStore({ user: { isAuthenticated: true } });
   return mountComponentWithStore(
     () => (
-      <EntityView.Provider value={{ entity: ENTITY, hasPluralForms: false }}>
+      <EntityView.Provider value={{ entity: ENTITY }}>
         <EditorActions.Provider value={{ setEditorSelection: spy }}>
           <OriginalString terms={{}} />
         </EditorActions.Provider>

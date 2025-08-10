@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
 
@@ -5,6 +6,8 @@ from django.utils import timezone
 class Resource(models.Model):
     project = models.ForeignKey("Project", models.CASCADE, related_name="resources")
     path = models.TextField()  # Path to localization file
+    meta = ArrayField(ArrayField(models.TextField(), size=2), default=list)
+    comment = models.TextField(blank=True)
 
     order = models.PositiveIntegerField(default=0)
     """
@@ -22,16 +25,16 @@ class Resource(models.Model):
 
     # Format
     class Format(models.TextChoices):
+        ANDROID = "android", "android"
         DTD = "dtd", "dtd"
-        FTL = "ftl", "ftl"
-        INC = "inc", "inc"
+        FLUENT = "fluent", "fluent"
+        GETTEXT = "gettext", "gettext"
         INI = "ini", "ini"
-        JSON = "json", "json"
-        PO = "po", "po"
+        PLAIN_JSON = "plain_json", "plain_json"
         PROPERTIES = "properties", "properties"
-        XLF = "xlf", "xliff"
+        WEBEXT = "webext", "webext"
+        XCODE = "xcode", "xcode"
         XLIFF = "xliff", "xliff"
-        XML = "xml", "xml"
 
     format = models.CharField(
         "Format", max_length=20, blank=True, choices=Format.choices
@@ -42,7 +45,6 @@ class Resource(models.Model):
     # Formats that allow empty translations
     EMPTY_TRANSLATION_FORMATS = {
         Format.DTD,
-        Format.INC,
         Format.INI,
         Format.PROPERTIES,
     }

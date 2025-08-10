@@ -14,7 +14,7 @@ const ORIGINAL = ftl`
 
 describe('<RichString>', () => {
   it('renders value and each attribute correctly', () => {
-    const message = editMessageEntry(parseEntry(ORIGINAL));
+    const message = editMessageEntry(parseEntry('fluent', ORIGINAL));
     const wrapper = mount(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('Highlight')).toHaveLength(3);
@@ -40,7 +40,7 @@ describe('<RichString>', () => {
           }
       `;
 
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('fluent', input));
     const wrapper = mount(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('Highlight')).toHaveLength(2);
@@ -67,7 +67,7 @@ describe('<RichString>', () => {
               }
       `;
 
-    const message = editMessageEntry(parseEntry(input));
+    const message = editMessageEntry(parseEntry('fluent', input));
     const wrapper = mount(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('label')).toHaveLength(4);
@@ -87,7 +87,7 @@ describe('<RichString>', () => {
   });
 
   it('calls the onClick function on click on .original', () => {
-    const message = editMessageEntry(parseEntry(ORIGINAL));
+    const message = editMessageEntry(parseEntry('fluent', ORIGINAL));
     const spy = sinon.spy();
     const wrapper = mount(
       <RichString message={message} onClick={spy} terms={{}} />,

@@ -59,7 +59,7 @@ def translation_pontoon_error(translation_a):
 
     resource = translation.entity.resource
     resource.path = "test.po"
-    resource.format = Resource.Format.PO
+    resource.format = Resource.Format.GETTEXT
     resource.save()
 
     translation.string = ""

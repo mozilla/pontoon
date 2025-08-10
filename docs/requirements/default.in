@@ -10,7 +10,7 @@ markupsafe==2.1.5
 packaging==24.1
 pygments==2.18.0
 readthedocs-sphinx-search==0.3.2
-requests==2.32.3
+requests==2.32.4
 snowballstemmer==2.2.0
 sphinx==7.4
 sphinx-rtd-theme==2.0.0
@@ -20,4 +20,4 @@ sphinxcontrib-htmlhelp==2.1.0
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==2.0.0
 sphinxcontrib-serializinghtml==2.0.0
-urllib3==2.2.3
+urllib3==2.5.0

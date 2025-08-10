@@ -1,12 +1,9 @@
-from unittest.mock import call, patch
-
 import pytest
 
 from pontoon.base.models import (
     Entity,
     TranslatedResource,
     Translation,
-    get_word_count,
 )
 from pontoon.test.factories import (
     EntityFactory,
@@ -32,37 +29,30 @@ def entity_test_search(admin, resource_a, locale_a):
     entity_args = [
         {
             "string": "First entity string",
-            "string_plural": "First plural string",
             "comment": "random notes",
         },
         {
             "string": "Second entity string",
-            "string_plural": "Second plural string",
             "comment": "random",
         },
         {
             "string": "Third entity string with some twist: ZAŻÓŁĆ GĘŚLĄ",
-            "string_plural": "Third plural",
             "comment": "even more random notes",
         },
         {
             "string": "Entity with first string",
-            "string_plural": "Entity with plural first string",
             "comment": "random notes",
         },
         {
             "string": "First Entity",
-            "string_plural": "First plural entity",
             "comment": "random notes",
         },
         {
             "string": "First Entity with string",
-            "string_plural": "First plural entity",
             "comment": "random notes",
         },
         {
             "string": 'Entity with quoted "string"',
-            "string_plural": "plural entity",
             "comment": "random notes",
         },
     ]
@@ -70,7 +60,6 @@ def entity_test_search(admin, resource_a, locale_a):
         EntityFactory(
             resource=resource_a,
             string=x["string"],
-            string_plural=x["string_plural"],
             comment=x["comment"],
             order=i,
         )
@@ -133,53 +122,6 @@ def test_mgr_entity_filter_translated(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_translated_plurals(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 3)
-    ]
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=0,
-        approved=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=1,
-        approved=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        plural_form=0,
-        approved=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=0,
-        approved=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=1,
-        approved=True,
-    )
-    assert set(
-        Entity.objects.filter(Entity.objects.translated(locale_a, resource_a.project))
-    ) == {entities[0], entities[2]}
-
-
-@pytest.mark.django_db
 def test_mgr_entity_filter_errors(resource_a, locale_a):
     entities = [
         EntityFactory.create(resource=resource_a, string="testentity%s" % i)
@@ -202,50 +144,6 @@ def test_mgr_entity_filter_errors(resource_a, locale_a):
         entities[0],
         entities[2],
     }
-
-
-@pytest.mark.django_db
-def test_mgr_entity_filter_errors_plural(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 3)
-    ]
-
-    translation00 = TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=1,
-        approved=True,
-    )
-    translation20 = TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=0,
-        approved=True,
-    )
-    translation21 = TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=1,
-        approved=True,
-    )
-
-    ErrorFactory.create(translation=translation00)
-    ErrorFactory.create(translation=translation20)
-    ErrorFactory.create(translation=translation21)
-
-    assert set(Entity.objects.filter(Entity.objects.errors(locale_a))) == {entities[2]}
 
 
 @pytest.mark.django_db
@@ -280,50 +178,6 @@ def test_mgr_entity_filter_warnings(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_warnings_plural(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 3)
-    ]
-
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=1,
-        pretranslated=True,
-    )
-    translation20 = TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=0,
-        pretranslated=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=1,
-        pretranslated=True,
-    )
-
-    WarningFactory.create(translation=translation20)
-
-    assert set(Entity.objects.filter(Entity.objects.warnings(locale_a))) == {
-        entities[2]
-    }
-
-
-@pytest.mark.django_db
 def test_mgr_entity_filter_fuzzy(resource_a, locale_a):
     entities = [
         EntityFactory.create(
@@ -345,55 +199,6 @@ def test_mgr_entity_filter_fuzzy(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
-        fuzzy=True,
-    )
-    assert set(Entity.objects.filter(Entity.objects.fuzzy(locale_a))) == {
-        entities[0],
-        entities[2],
-    }
-
-
-@pytest.mark.django_db
-def test_mgr_entity_filter_fuzzy_plurals(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 3)
-    ]
-
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=0,
-        fuzzy=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=1,
-        fuzzy=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        plural_form=0,
-        fuzzy=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=0,
-        fuzzy=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=1,
         fuzzy=True,
     )
     assert set(Entity.objects.filter(Entity.objects.fuzzy(locale_a))) == {
@@ -433,55 +238,6 @@ def test_mgr_entity_filter_pretranslated(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_pretranslated_plurals(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 3)
-    ]
-
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=0,
-        pretranslated=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=1,
-        pretranslated=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        plural_form=0,
-        pretranslated=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=0,
-        pretranslated=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        plural_form=1,
-        pretranslated=True,
-    )
-    assert set(Entity.objects.filter(Entity.objects.pretranslated(locale_a))) == {
-        entities[0],
-        entities[2],
-    }
-
-
-@pytest.mark.django_db
 def test_mgr_entity_filter_missing(resource_a, locale_a):
     entities = [
         EntityFactory.create(
@@ -507,43 +263,6 @@ def test_mgr_entity_filter_missing(resource_a, locale_a):
     )
     assert set(resource_a.entities.filter(Entity.objects.missing(locale_a))) == {
         entities[1]
-    }
-
-
-@pytest.mark.django_db
-def test_mgr_entity_filter_partially_translated_plurals(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="Unchanged string",
-            string_plural="Unchanged plural string",
-        )
-        for i in range(0, 3)
-    ]
-
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=0,
-        approved=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        plural_form=1,
-        approved=True,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        plural_form=0,
-        approved=True,
-    )
-    assert set(resource_a.entities.filter(Entity.objects.missing(locale_a))) == {
-        entities[1],
-        entities[2],
     }
 
 
@@ -632,162 +351,6 @@ def test_mgr_entity_filter_unchanged(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_missing_plural(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 3)
-    ]
-
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        pretranslated=True,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        pretranslated=True,
-        plural_form=1,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        approved=True,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        approved=True,
-        plural_form=1,
-    )
-    assert set(resource_a.entities.filter(Entity.objects.missing(locale_a))) == {
-        entities[1]
-    }
-
-
-@pytest.mark.django_db
-def test_mgr_entity_filter_unreviewed_plural(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 3)
-    ]
-
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        approved=False,
-        pretranslated=False,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        approved=False,
-        pretranslated=False,
-        plural_form=1,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        approved=False,
-        pretranslated=False,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        approved=False,
-        pretranslated=False,
-        plural_form=1,
-    )
-    assert set(Entity.objects.filter(Entity.objects.unreviewed(locale_a))) == {
-        entities[0],
-        entities[2],
-    }
-
-
-@pytest.mark.django_db
-def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="Unchanged string",
-            string_plural="Unchanged plural string",
-        )
-        for i in range(0, 3)
-    ]
-
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        active=True,
-        approved=True,
-        plural_form=0,
-        string="Unchanged string",
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        active=True,
-        approved=True,
-        plural_form=1,
-        string="Unchanged plural string",
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        active=False,
-        pretranslated=True,
-        plural_form=0,
-        string="Unchanged string",
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        active=False,
-        pretranslated=True,
-        plural_form=1,
-        string="Unchanged plural string",
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        active=True,
-        pretranslated=True,
-        plural_form=0,
-        string="Unchanged string",
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        active=True,
-        pretranslated=True,
-        plural_form=1,
-        string="Unchanged plural string",
-    )
-    assert set(Entity.objects.filter(Entity.objects.unchanged(locale_a))) == {
-        entities[0],
-        entities[2],
-    }
-
-
-@pytest.mark.django_db
 def test_mgr_entity_filter_rejected(resource_a, locale_a):
     entities = [
         EntityFactory.create(
@@ -835,72 +398,6 @@ def test_mgr_entity_filter_rejected(resource_a, locale_a):
     assert set(Entity.objects.filter(Entity.objects.rejected(locale_a))) == {
         entities[0],
         entities[1],
-    }
-
-
-@pytest.mark.django_db
-def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 3)
-    ]
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        approved=True,
-        fuzzy=False,
-        rejected=False,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        approved=True,
-        fuzzy=False,
-        rejected=False,
-        plural_form=1,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        approved=True,
-        fuzzy=False,
-        rejected=False,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        approved=False,
-        fuzzy=False,
-        rejected=True,
-        plural_form=1,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        approved=False,
-        fuzzy=False,
-        rejected=True,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        approved=False,
-        fuzzy=False,
-        rejected=True,
-        plural_form=1,
-    )
-    assert set(Entity.objects.filter(Entity.objects.rejected(locale_a))) == {
-        entities[1],
-        entities[2],
     }
 
 
@@ -963,72 +460,6 @@ def test_mgr_entity_filter_missing_without_unreviewed(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_missing_without_unreviewed_plural(resource_a, locale_a):
-    locale_a.cldr_plurals = "1,5"
-    locale_a.save()
-    entities = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity%s" % i,
-            string_plural="testpluralentity%s" % i,
-        )
-        for i in range(0, 4)
-    ]
-
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        approved=False,
-        fuzzy=False,
-        rejected=True,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[0],
-        approved=False,
-        fuzzy=False,
-        rejected=True,
-        plural_form=1,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        approved=True,
-        fuzzy=False,
-        rejected=False,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[1],
-        approved=False,
-        fuzzy=False,
-        rejected=True,
-        plural_form=1,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        approved=False,
-        fuzzy=False,
-        rejected=False,
-        plural_form=0,
-    )
-    TranslationFactory.create(
-        locale=locale_a,
-        entity=entities[2],
-        approved=True,
-        fuzzy=False,
-        rejected=False,
-        plural_form=1,
-    )
-    assert set(
-        resource_a.entities.filter(Entity.objects.missing_without_unreviewed(locale_a))
-    ) == {entities[0], entities[1], entities[3]}
-
-
-@pytest.mark.django_db
 def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
     """
     All filters should be joined by AND instead of OR.
@@ -1084,7 +515,7 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
 def test_mgr_entity_option_match_case(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
-            key="key %s" % i,
+            key=["key %s" % i],
             resource=resource_a,
             string="TestEntity%s" % i,
         )
@@ -1183,7 +614,7 @@ def test_mgr_entity_option_match_whole_word(admin, resource_a, locale_a, user_a)
 def test_mgr_entity_option_identifiers(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
-            key="key %s" % i,
+            key=["key %s" % i],
             resource=resource_a,
             string="TestEntity%s" % i,
         )
@@ -1328,7 +759,7 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
 
     entities = [
         EntityFactory.create(
-            key="key %s" % i,
+            key=["key %s" % i],
             resource=resource_a,
             string="TestEntity%s" % i,
         )
@@ -1559,78 +990,3 @@ def test_lookup_collation(resource_a, locale_a):
     assert set(Translation.objects.filter(string__icontains="string")) == {
         translations[n] for n in [0, 2, 3, 4]
     }
-
-
-@pytest.mark.parametrize(
-    "input, expected_count",
-    [
-        ("There are 7 words in this string", 7),
-        ("String 123 =+& string hh-gg object.string", 5),
-    ],
-)
-def test_get_word_count(input, expected_count):
-    """
-    How many words are in given strings
-    """
-    assert get_word_count(input) == expected_count
-
-
-@pytest.mark.django_db
-@patch("pontoon.base.models.entity.get_word_count")
-def test_mgr_get_or_create(get_word_count_mock, admin, resource_a, locale_a):
-    """
-    Get or create entities method works and counts words
-    """
-    get_word_count_mock.return_value = 2
-
-    testEntitiesQuerySet = Entity.for_project_locale(
-        admin, resource_a.project, locale_a
-    )
-    arguments = {
-        "resource": resource_a,
-        "string": "simple string",
-    }
-    obj, created = testEntitiesQuerySet.get_or_create(**arguments)
-
-    assert created
-    assert get_word_count_mock.called
-    assert get_word_count_mock.call_args == call(arguments["string"])
-
-
-@pytest.mark.django_db
-@patch("pontoon.base.models.entity.get_word_count")
-def test_mgr_bulk_update(get_word_count_mock, admin, resource_a, locale_a):
-    """
-    Update entities method works and updates word_count field
-    """
-    get_word_count_mock.return_value = 2
-
-    objs = [
-        EntityFactory.create(
-            resource=resource_a,
-            string="testentity %s" % i,
-        )
-        for i in range(0, 2)
-    ]
-
-    assert get_word_count_mock.call_count == 2
-
-    testEntitiesQuerySet = Entity.for_project_locale(
-        admin, resource_a.project, locale_a
-    )
-    testEntitiesQuerySet.bulk_update(
-        objs,
-        fields=[
-            "resource",
-            "string",
-            "string_plural",
-            "key",
-            "comment",
-            "group_comment",
-            "resource_comment",
-            "order",
-            "source",
-        ],
-    )
-
-    assert get_word_count_mock.call_count == 4

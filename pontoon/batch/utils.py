@@ -96,7 +96,7 @@ def find_and_replace(translations, find, replace, user):
         # Cache the old value to identify changed translations
         new_translation = deepcopy(translation)
 
-        if translation.entity.resource.format == Resource.Format.FTL:
+        if translation.entity.resource.format == Resource.Format.FLUENT:
             new_translation.string = ftl_find_and_replace(
                 translation.string, find, replace
             )

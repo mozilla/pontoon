@@ -42,13 +42,13 @@ jobs:
         with:
           python-version: '3.11'
       - name: Set up uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           cache-dependency-glob: |
             **/requirements/*.txt
           # Version should match the one used in docker/Dockerfile
-          version: "0.5.31"
+          version: "0.7.16"
       - name: Install requirements
         run: >
           uv pip install
@@ -61,7 +61,7 @@ jobs:
       - name: Check licenses
         run: |
           pip-licenses
-          pip-licenses --fail-on="GNU General Public License (GPL)" --ignore-packages text-unidecode translate-toolkit silme
+          pip-licenses --fail-on="GNU General Public License (GPL)" --ignore-packages text-unidecode translate-toolkit
       # Set environment variables
       - run: uv pip install pytest-dotenv
       - run: >
@@ -78,6 +78,18 @@ jobs:
       # Check if there are missing migrations
       - name: Verify missing migrations
         run: python manage.py makemigrations --check
+
+      # Confirm that requirements have been correctly compiled.
+      # Ignore comments and empty lines.
+      - name: Check compiled requirements
+        run: |
+          bash docker/compile_requirements.sh
+          for file in requirements/*.txt; do
+            if ! diff <(grep -vE '^\s*#|^\s*$' "$file") <(git show HEAD:"$file" | grep -vE '^\s*#|^\s*$'); then
+              echo "Error: $file is not up to date. Please run 'make requirements' and commit the changes."
+              exit 1
+            fi
+          done
 
       - name: Run tests
         run: pytest --cov-report=xml:pontoon/coverage.xml --cov=.

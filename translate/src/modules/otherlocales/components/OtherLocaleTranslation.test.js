@@ -21,6 +21,10 @@ const FLUENT_TRANSLATION = {
   translation: 'key = Un cheval, un cheval ! Mon royaume pour un cheval !',
   locale: LOCALE,
 };
+const MF2_TRANSLATION = {
+  translation: '{{Un cheval, un cheval ! Mon royaume pour un cheval !}}',
+  locale: LOCALE,
+};
 
 function createTranslation(format, translation, setEditorFromHelpers) {
   const store = createReduxStore();
@@ -65,11 +69,17 @@ describe('<OtherLocaleTranslationComponent>', () => {
   });
 
   it('renders a Fluent translation correctly', () => {
-    const wrapper = createTranslation('ftl', FLUENT_TRANSLATION);
+    const wrapper = createTranslation('fluent', FLUENT_TRANSLATION);
 
-    const ft = wrapper.find('FluentTranslation');
-    expect(ft.props().content).toMatch(/^key = Un cheval/);
-    expect(ft.children().props().children).toMatch(/^Un cheval/);
+    const gt = wrapper.find('GenericTranslation');
+    expect(gt.props().content).toMatch(/^Un cheval/);
+  });
+
+  it('renders an MF2 translation correctly', () => {
+    const wrapper = createTranslation('gettext', MF2_TRANSLATION);
+
+    const gt = wrapper.find('GenericTranslation');
+    expect(gt.props().content).toMatch(/^Un cheval/);
   });
 
   it('sets editor value for a plain translation', () => {
@@ -86,7 +96,7 @@ describe('<OtherLocaleTranslationComponent>', () => {
 
   it('sets editor value for a Fluent translation', () => {
     const spy = jest.fn();
-    const wrapper = createTranslation('ftl', FLUENT_TRANSLATION, spy);
+    const wrapper = createTranslation('fluent', FLUENT_TRANSLATION, spy);
 
     const { onClick } = wrapper.find('li').props();
     act(() => onClick());

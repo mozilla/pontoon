@@ -168,7 +168,7 @@ def test_translation_save_latest_update_for_system_project(locale_a, system_proj
     resource = ResourceFactory.create(
         project=system_project_a,
         path="resource.po",
-        format="po",
+        format="gettext",
     )
     tr = TranslatedResourceFactory.create(locale=locale_a, resource=resource)
     entity = EntityFactory.create(resource=resource, string="Entity X")

@@ -1,101 +1,87 @@
-import shutil
-import tempfile
-
+from datetime import datetime
 from textwrap import dedent
+from unittest import TestCase
 
-from pontoon.base.tests import TestCase, assert_attributes_equal, create_named_tempfile
-from pontoon.sync.formats import xml
-from pontoon.sync.tests.formats import FormatTestsMixin
+from moz.l10n.formats import Format
+from moz.l10n.resource import parse_resource
 
-
-BASE_ANDROID_XML_FILE = """<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Sample comment -->
-    <string name="Source String">Translated String</string>
-
-    <!-- First comment -->
-    <!-- Second comment -->
-    <string name="Multiple Comments">Translated Multiple Comments</string>
-
-    <string name="No Comments or Sources">Translated No Comments or Sources</string>
-    <string name="Empty Translation"></string>
-</resources>
-"""
+from pontoon.sync.formats import as_entity, as_vcs_translations
 
 
-class AndroidXMLTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(xml.parse)
-    supports_keys = False
-    supports_source = False
-    supports_source_string = False
+class AndroidXMLTests(TestCase):
+    def test_android(self):
+        src = dedent("""
+            <?xml version="1.0" encoding="utf-8"?>
+            <resources>
+                <!-- Sample comment -->
+                <string name="Source String">Translated &lt;b&gt;String&lt;/b&gt;</string>
 
-    def setUp(self):
-        super().setUp()
-        self.tempdir = tempfile.mkdtemp()
+                <!-- First comment -->
+                <!-- Second comment -->
+                <string name="Multiple Comments">Translated Multiple Comments</string>
 
-    def tearDown(self):
-        super().tearDown()
-        shutil.rmtree(self.tempdir)
+                <string name="No Comments or Sources">Translated No Comments or Sources</string>
+                <string name="Empty Translation"></string>
+            </resources>
+            """).strip()
 
-    def parse_string(
-        self,
-        string,
-        source_string=None,
-        locale=None,
-        path=None,
-        source_path=None,
-    ):
-        """Android XML files must contain the word 'strings'."""
-        path = create_named_tempfile(
-            string,
-            prefix="strings",
-            suffix=".xml",
-            directory=self.tempdir,
+        res = parse_resource(Format.android, src)
+        e0, e1, e2, e3 = (
+            as_entity(Format.android, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
         )
-        if source_string is not None:
-            source_path = create_named_tempfile(
-                source_string,
-                prefix="strings",
-                suffix=".xml",
-                directory=self.tempdir,
-            )
-        return super().parse_string(
-            string,
-            source_string=source_string,
-            locale=locale,
-            path=path,
-            source_path=source_path,
-        )
+        t0, t1, t2, t3 = as_vcs_translations(res)
 
-    def test_parse_basic(self):
-        self.run_parse_basic(BASE_ANDROID_XML_FILE, 0)
+        # basic
+        assert e0.comment == "Sample comment"
+        assert e0.key == ["Source String"]
+        assert e0.string == "Translated <b>String</b>"
 
-    def test_parse_multiple_comments(self):
-        self.run_parse_multiple_comments(BASE_ANDROID_XML_FILE, 1)
+        assert t0.key == ("Source String",)
+        assert t0.string == "Translated <b>String</b>"
 
-    def test_parse_no_comments_no_sources(self):
-        self.run_parse_no_comments_no_sources(BASE_ANDROID_XML_FILE, 2)
+        # multiple comments
+        assert e1.comment == "First comment\n\nSecond comment"
+        assert e1.key == ["Multiple Comments"]
+        assert e1.string == "Translated Multiple Comments"
 
-    def test_parse_empty_translation(self):
-        self.run_parse_empty_translation(BASE_ANDROID_XML_FILE, 3)
+        assert t1.key == ("Multiple Comments",)
+        assert t1.string == "Translated Multiple Comments"
 
-    def test_quotes(self):
-        tempdir = tempfile.mkdtemp()
+        # no comments or sources
+        assert e2.comment == ""
+        assert e2.key == ["No Comments or Sources"]
+        assert e2.string == "Translated No Comments or Sources"
 
-        path = create_named_tempfile(
-            dedent(
-                """<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="String">\'</string>
-</resources>
-        """
-            ),
-            prefix="strings",
-            suffix=".xml",
-            directory=tempdir,
-        )
+        assert t2.key == ("No Comments or Sources",)
+        assert t2.string == "Translated No Comments or Sources"
 
-        translations = self.parse(path)
+        # empty translation
+        assert e3.comment == ""
+        assert e3.key == ["Empty Translation"]
+        assert e3.string == ""
 
-        # Unescape quotes when parsing
-        assert_attributes_equal(translations[0], strings={None: "'"})
+        assert t3.key == ("Empty Translation",)
+        assert t3.string == ""
+
+    def test_android_quotes(self):
+        src = dedent("""
+            <?xml version="1.0" encoding="utf-8"?>
+            <resources>
+                <string name="String">\'</string>
+            </resources>
+            """).strip()
+        res = parse_resource(Format.android, src)
+        (t0,) = as_vcs_translations(res)
+        assert t0.string == "'"
+
+    def test_android_escapes_and_trimming(self):
+        src = dedent("""\
+            <?xml version="1.0" encoding="utf-8"?>
+            <resources>
+                <string name="key"> \\u0020\\u000a </string>
+            </resources>
+            """)
+        res = parse_resource(Format.android, src)
+        (t0,) = as_vcs_translations(res)
+        assert t0.string == " \\n\n"

@@ -107,13 +107,6 @@ entitydetails-Metadata--placeholder =
     .title = EXEMPLES BOUCHE-TROUS
 
 
-## Entity Details PluralString
-## Shows the original string of an entity with plural forms
-
-entitydetails-PluralString--plural = PLURIEL
-entitydetails-PluralString--singular = SINGULIER
-
-
 ## History
 ## Shows a list of translations for a specific entity
 

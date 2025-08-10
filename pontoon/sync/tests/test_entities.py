@@ -21,7 +21,7 @@ from pontoon.base.tests import (
     TranslationFactory,
 )
 from pontoon.sync.core.checkout import Checkout, Checkouts
-from pontoon.sync.core.entities import sync_entities_from_repo
+from pontoon.sync.core.entities import sync_resources_from_repo
 from pontoon.sync.core.paths import find_paths
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.tests.utils import build_file_tree
@@ -31,7 +31,7 @@ now = timezone.now()
 
 
 def test_no_changes():
-    assert sync_entities_from_repo(
+    assert sync_resources_from_repo(
         Mock(Project),
         {},
         Mock(Checkout, changed=[], removed=[], renamed=[]),
@@ -51,9 +51,9 @@ def test_remove_resource():
         project = ProjectFactory.create(
             name="test-rm", locales=[locale], repositories=[repo]
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -76,7 +76,7 @@ def test_remove_resource():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
-        assert sync_entities_from_repo(
+        assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (0, set(), {"c.ftl"})
         assert {res.path for res in project.resources.all()} == {"a.ftl", "b.po"}
@@ -95,9 +95,9 @@ def test_rename_resource():
         project = ProjectFactory.create(
             name="test-mv", locales=[locale], repositories=[repo]
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -120,7 +120,7 @@ def test_rename_resource():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
-        assert sync_entities_from_repo(
+        assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (0, {"d.ftl"}, set())
         assert {res.path for res in project.resources.all()} == {
@@ -143,8 +143,8 @@ def test_add_resource():
         project = ProjectFactory.create(
             name="test-add", locales=[locale], repositories=[repo]
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        ResourceFactory.create(project=project, path="b.po", format="po")
+        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        ResourceFactory.create(project=project, path="b.po", format="gettext")
 
         # Filesystem setup
         c_ftl = dedent(
@@ -174,15 +174,15 @@ def test_add_resource():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
-        assert sync_entities_from_repo(
+        assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (3, set(), set())
         res_c = project.resources.get(path="c.ftl")
         TranslatedResource.objects.get(resource=res_c)
-        assert set(ent.key for ent in Entity.objects.filter(resource=res_c)) == {
-            "key-1",
-            "key-2",
-            "key-3",
+        assert set(tuple(ent.key) for ent in Entity.objects.filter(resource=res_c)) == {
+            ("key-1",),
+            ("key-2",),
+            ("key-3",),
         }
 
 
@@ -200,12 +200,12 @@ def test_update_resource():
         res = {}
         for n in ("a", "b", "c"):
             res[n] = ResourceFactory.create(
-                project=project, path=f"{n}.ftl", format="ftl", total_strings=3
+                project=project, path=f"{n}.ftl", format="fluent", total_strings=3
             )
             for i in (1, 2, 3):
                 entity = EntityFactory.create(
                     resource=res[n],
-                    key=f"key-{n}-{i}",
+                    key=[f"key-{n}-{i}"],
                     string=f"key-{n}-{i} = Message {i}\n",
                 )
                 TranslationFactory.create(
@@ -243,11 +243,11 @@ def test_update_resource():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test sync
-        assert sync_entities_from_repo(
+        assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (1, {"c.ftl"}, set())
         assert set(
-            (ent.key, ent.obsolete) for ent in Entity.objects.filter(resource=res["c"])
+            (*ent.key, ent.obsolete) for ent in Entity.objects.filter(resource=res["c"])
         ) == {
             ("key-c-1", True),
             ("key-c-2", False),
@@ -276,12 +276,12 @@ def test_change_entities():
             visibility="public",
         )
         res = ResourceFactory.create(
-            project=project, path="res.ftl", format="ftl", total_strings=3
+            project=project, path="res.ftl", format="fluent", total_strings=3
         )
         for i in (1, 2, 3):
             entity = EntityFactory.create(
                 resource=res,
-                key=f"key-{i}",
+                key=[f"key-{i}"],
                 string=f"key-{i} = Message {i}\n",
             )
             TranslationFactory.create(
@@ -321,7 +321,7 @@ def test_change_entities():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test sync
-        assert sync_entities_from_repo(
+        assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (0, {"res.ftl"}, set())
         assert set(

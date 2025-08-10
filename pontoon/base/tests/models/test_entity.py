@@ -3,7 +3,9 @@ import pytest
 from pontoon.base.models import ChangedEntityLocale, Entity, Project
 from pontoon.test.factories import (
     EntityFactory,
+    ProjectLocaleFactory,
     ResourceFactory,
+    SectionFactory,
     TermFactory,
     TranslationFactory,
 )
@@ -13,8 +15,8 @@ from pontoon.test.factories import (
 def entity_test_models(translation_a, locale_b):
     """This fixture provides:
 
-    - 2 translations of a plural entity
-    - 1 translation of a non-plural entity
+    - 2 translations of one entity
+    - 1 translation of another entity
     """
 
     entity_a = translation_a.entity
@@ -23,7 +25,6 @@ def entity_test_models(translation_a, locale_b):
 
     locale_a.cldr_plurals = "0,1"
     locale_a.save()
-    translation_a.plural_form = 0
     translation_a.active = True
     translation_a.save()
     resourceX = ResourceFactory(
@@ -32,22 +33,20 @@ def entity_test_models(translation_a, locale_b):
         order=1,
     )
     entity_a.string = "Entity zero"
-    entity_a.key = entity_a.string
-    entity_a.string_plural = "Plural %s" % entity_a.string
+    entity_a.key = [entity_a.string]
     entity_a.order = 0
     entity_a.save()
     entity_b = EntityFactory(
         resource=resourceX,
         string="entity_b",
-        key="Key\x04entity_b",
+        key=["Key", "entity_b"],
         order=0,
     )
-    translation_a_pl = TranslationFactory(
+    translation_a_alt = TranslationFactory(
         entity=entity_a,
         locale=locale_a,
-        plural_form=1,
-        active=True,
-        string="Plural %s" % translation_a.string,
+        active=False,
+        string="Alternative %s" % translation_a.string,
     )
     translationX = TranslationFactory(
         entity=entity_b,
@@ -55,7 +54,7 @@ def entity_test_models(translation_a, locale_b):
         active=True,
         string="Translation %s" % entity_b.string,
     )
-    return translation_a, translation_a_pl, translationX
+    return translation_a, translation_a_alt, translationX
 
 
 @pytest.fixture
@@ -242,7 +241,7 @@ def test_entity_project_locale_filter(admin, entity_test_models, locale_b, proje
     """
     Evaluate entities filtering by locale, project, obsolete.
     """
-    tr0, tr0pl, trX = entity_test_models
+    tr0, tr0alt, trX = entity_test_models
     locale_a = tr0.locale
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
@@ -267,69 +266,48 @@ def test_entity_project_locale_no_paths(
     If paths not specified, return all project entities along with their
     translations for locale.
     """
-    tr0, tr0pl, trX = entity_test_models
+    tr0, tr0alt, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     entity_a = tr0.entity
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
-    entities = Entity.map_entities(
+    e0, e1 = Entity.map_entities(
         locale_a,
         preferred_source_locale,
         Entity.for_project_locale(admin, project_a, locale_a),
     )
-    assert len(entities) == 2
-    assert entities[0]["path"] == resource0.path
-    assert entities[0]["original"] == entity_a.string
-    assert entities[0]["translation"][0]["string"] == tr0.string
-    assert entities[1]["path"] == trX.entity.resource.path
-    assert entities[1]["original"] == trX.entity.string
-    assert entities[1]["translation"][0]["string"] == trX.string
 
-    # Ensure all attributes are assigned correctly
-    expected = {
+    assert e0 == {
         "comment": "",
         "group_comment": "",
         "resource_comment": "",
-        "format": "po",
+        "format": "gettext",
         "obsolete": False,
-        "key": "",
-        "context": "",
-        "path": str(resource0.path),
+        "key": ["Entity zero"],
+        "path": resource0.path,
         "project": project_a.serialize(),
-        "translation": [
-            {
-                "pk": tr0.pk,
-                "pretranslated": False,
-                "fuzzy": False,
-                "string": str(tr0.string),
-                "approved": False,
-                "rejected": False,
-                "warnings": [],
-                "errors": [],
-            },
-            {
-                "pk": tr0pl.pk,
-                "pretranslated": False,
-                "fuzzy": False,
-                "string": str(tr0pl.string),
-                "approved": False,
-                "rejected": False,
-                "warnings": [],
-                "errors": [],
-            },
-        ],
-        "order": 0,
-        "source": [],
-        "original_plural": str(entity_a.string_plural),
+        "translation": {
+            "pk": tr0.pk,
+            "pretranslated": False,
+            "fuzzy": False,
+            "string": tr0.string,
+            "approved": False,
+            "rejected": False,
+            "warnings": [],
+            "errors": [],
+        },
+        "meta": [],
         "pk": entity_a.pk,
-        "original": str(entity_a.string),
+        "original": entity_a.string,
         "machinery_original": str(entity_a.string),
         "readonly": False,
         "is_sibling": False,
         "date_created": entity_a.date_created,
     }
-    assert entities[0] == expected
+    assert e1["path"] == trX.entity.resource.path
+    assert e1["original"] == trX.entity.string
+    assert e1["translation"]["string"] == trX.string
 
 
 @pytest.mark.django_db
@@ -338,7 +316,7 @@ def test_entity_project_locale_paths(admin, entity_test_models):
     If paths specified, return project entities from these paths only along
     with their translations for locale.
     """
-    tr0, tr0pl, trX = entity_test_models
+    tr0, tr0alt, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     project_a = tr0.entity.resource.project
@@ -356,20 +334,17 @@ def test_entity_project_locale_paths(admin, entity_test_models):
     assert len(entities) == 1
     assert entities[0]["path"] == trX.entity.resource.path
     assert entities[0]["original"] == trX.entity.string
-    assert entities[0]["translation"][0]["string"] == trX.string
+    assert entities[0]["translation"]["string"] == trX.string
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_plurals(
+def test_entity_project_locale_multiple_translations(
     admin,
     entity_test_models,
     locale_b,
     project_b,
 ):
-    """
-    For pluralized strings, return all available plural forms.
-    """
-    tr0, tr0pl, trX = entity_test_models
+    tr0, tr0alt, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     entity_a = tr0.entity
@@ -384,9 +359,7 @@ def test_entity_project_locale_plurals(
         ),
     )
     assert entities[0]["original"] == entity_a.string
-    assert entities[0]["original_plural"] == entity_a.string_plural
-    assert entities[0]["translation"][0]["string"] == tr0.string
-    assert entities[0]["translation"][1]["string"] == tr0pl.string
+    assert entities[0]["translation"]["string"] == tr0.string
 
 
 @pytest.mark.django_db
@@ -422,11 +395,7 @@ def test_entity_project_locale_order(admin, entity_test_models):
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_cleaned_key(admin, entity_test_models):
-    """
-    If key contanis source string and Translate Toolkit separator,
-    remove them.
-    """
+def test_entity_project_locale_key(admin, entity_test_models):
     resource0 = entity_test_models[0].entity.resource
     locale_a = entity_test_models[0].locale
     preferred_source_locale = ""
@@ -440,8 +409,8 @@ def test_entity_project_locale_cleaned_key(admin, entity_test_models):
             locale_a,
         ),
     )
-    assert entities[0]["key"] == ""
-    assert entities[1]["key"] == "Key"
+    assert entities[0]["key"] == ["Entity zero"]
+    assert entities[1]["key"] == ["Key", "entity_b"]
 
 
 @pytest.mark.django_db
@@ -467,6 +436,34 @@ def test_entity_project_locale_tags(admin, entity_a, locale_a, tag_a):
         tag=tag_a.slug,
     )
     assert entity_a not in entities
+
+
+@pytest.mark.django_db
+def test_entity_project_comments(admin, resource_a, locale_a):
+    resource_a.comment = "rc"
+    resource_a.save()
+    ProjectLocaleFactory.create(project=resource_a.project, locale=locale_a)
+    s0 = SectionFactory(resource=resource_a, key=[], comment="s0 comment")
+    s1 = SectionFactory(resource=resource_a, key=[], comment="s1 comment")
+    s2 = SectionFactory(resource=resource_a, key=[], comment="")
+    EntityFactory(resource=resource_a, section=s0, string="e0")
+    EntityFactory(resource=resource_a, section=s0, string="e1")
+    EntityFactory(resource=resource_a, section=s1, string="e2")
+    EntityFactory(resource=resource_a, section=s2, string="e3")
+    EntityFactory(resource=resource_a, section=None, string="e4")
+
+    assert set(
+        (e["original"], e["group_comment"], e["resource_comment"])
+        for e in Entity.map_entities(
+            locale_a, "", Entity.objects.filter(resource=resource_a)
+        )
+    ) == {
+        ("e0", "s0 comment", "rc"),
+        ("e1", "s0 comment", "rc"),
+        ("e2", "s1 comment", "rc"),
+        ("e3", "", "rc"),
+        ("e4", "", "rc"),
+    }
 
 
 @pytest.mark.django_db

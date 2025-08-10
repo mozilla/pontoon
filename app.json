@@ -125,7 +125,7 @@
   },
   "buildpacks": [
     {
-      "url": "https://github.com/gerywahyunugraha/heroku-google-application-credentials-buildpack.git"
+      "url": "https://github.com/gerynugrh/heroku-google-application-credentials-buildpack.git"
     },
     {
       "url": "https://github.com/Osmose/heroku-buildpack-ssh"

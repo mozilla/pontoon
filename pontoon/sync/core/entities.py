@@ -2,27 +2,34 @@ import logging
 
 from collections import defaultdict
 from datetime import datetime
-from os.path import exists, isfile, join, relpath, splitext
-from typing import Optional
+from os.path import exists, isfile, join, relpath
+from typing import Any
 
+from moz.l10n.formats import Format as L10nFormat
+from moz.l10n.formats.xliff import xliff_is_xcode
+from moz.l10n.model import Entry, Id as L10nId, Message, Resource as L10nResource
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
+from moz.l10n.resource import parse_resource
 
 from django.db import transaction
 from django.db.models import Q
 
-from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
-from pontoon.base.models.entity import get_word_count
+from pontoon.base.models import (
+    Entity,
+    Locale,
+    Project,
+    Resource,
+    Section,
+    TranslatedResource,
+)
 from pontoon.sync.core.checkout import Checkout
-from pontoon.sync.formats import parse_translations
-from pontoon.sync.formats.common import ParseError, VCSTranslation
+from pontoon.sync.formats import as_entity
 
 
 log = logging.getLogger(__name__)
 
-BILINGUAL_FORMATS = {"po", "xliff"}
 
-
-def sync_entities_from_repo(
+def sync_resources_from_repo(
     project: Project,
     locale_map: dict[str, Locale],
     checkout: Checkout,
@@ -34,28 +41,29 @@ def sync_entities_from_repo(
         return 0, set(), set()
     log.info(f"[{project.slug}] Syncing entities from repo...")
     # db_path -> parsed_resource
-    updates: dict[str, list[VCSTranslation]] = {}
+    updates: dict[str, L10nResource[Message]] = {}
     source_paths = set(paths.ref_paths)
+    source_plurals = ["one", "other"]
     for co_path in checkout.changed:
         path = join(checkout.path, co_path)
         if path in source_paths and exists(path):
             db_path = get_db_path(paths, path)
             try:
-                translations = parse_translations(path)
-            except ParseError as error:
+                res = parse_resource(
+                    path, gettext_plurals=source_plurals, gettext_skip_obsolete=True
+                )
+                assert res.format
+                try:
+                    Resource.Format(res.format.name)
+                    updates[db_path] = res
+                except ValueError:
+                    log.error(
+                        f"[{project.slug}:{db_path}] Skipping resource with unsupported format: {res.format.name}"
+                    )
+            except Exception as error:
                 log.error(
                     f"[{project.slug}:{db_path}] Skipping resource with parse error: {error}"
                 )
-                translations = []
-            except ValueError as error:
-                if str(error).startswith("Translation format"):
-                    log.warning(
-                        f"[{project.slug}:{db_path}] Skipping resource with unsupported format"
-                    )
-                    translations = []
-                else:
-                    raise error
-            updates[db_path] = translations
 
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)
@@ -116,71 +124,126 @@ def remove_resources(
 
 def update_resources(
     project: Project,
-    updates: dict[str, list[VCSTranslation]],
+    updates: dict[str, L10nResource[Message]],
     now: datetime,
 ) -> tuple[int, set[str]]:
-    changed_resources = (
-        list(project.resources.filter(path__in=updates.keys())) if updates else None
+    changed_resources: dict[int, Resource] | None = (
+        {res.pk: res for res in project.resources.filter(path__in=updates.keys())}
+        if updates
+        else None
     )
     if not changed_resources:
         return 0, set()
-    log.info(
-        f"[{project.slug}] Changed source files: {', '.join(res.path for res in changed_resources)}"
-    )
+    changed_res_paths: set[str] = set(res.path for res in changed_resources.values())
+    log.info(f"[{project.slug}] Changed source files: {', '.join(changed_res_paths)}")
 
-    prev_entities: dict[tuple[str, str], Entity] = {
-        (e.resource.path, e.key or e.string): e
-        for e in Entity.objects.filter(resource__in=changed_resources, obsolete=False)
-        .select_related("resource")
-        .iterator()
+    prev_entities: dict[tuple[str, L10nId], Entity] = {
+        (changed_resources[e.resource_id].path, tuple(e.key)): e
+        for e in Entity.objects.filter(
+            resource__in=changed_resources, obsolete=False
+        ).iterator()
     }
-    next_entities: dict[tuple[str, str], Entity] = {
-        (path, entity.key or entity.string): entity
-        for path, entity in (
-            (cr.path, entity_from_source(cr, now, 0, tx))
-            for cr in changed_resources
-            for tx in updates[cr.path]
-        )
+    prev_sections: dict[tuple[str, L10nId, str], Section] = {
+        (changed_resources[s.resource_id].path, tuple(s.key), s.comment): s
+        for s in Section.objects.filter(resource__in=changed_resources).iterator()
     }
-    prev_not_next = prev_entities.keys() - next_entities.keys()
-    prev_and_next = prev_entities.keys() & next_entities.keys()
-    next_not_prev = next_entities.keys() - prev_entities.keys()
+
+    mod_resources: list[Resource] = []
+    new_sections: list[Section] = []
+    mod_sections: list[Section] = []
+    keep_sections: list[Section] = []
+    next_entities: dict[tuple[str, L10nId], Entity] = {}
+    for db_res in changed_resources.values():
+        l10n_res = updates[db_res.path]
+        if (
+            model_update(db_res, "format", get_res_format(l10n_res))
+            + model_update(db_res, "comment", l10n_res.comment)
+            + model_update(db_res, "meta", [[m.key, m.value] for m in l10n_res.meta])
+        ):
+            mod_resources.append(db_res)
+
+        idx = 0
+        for l10n_section in l10n_res.sections:
+            section_key = (db_res.path, l10n_section.id, l10n_section.comment)
+            section_meta = [[m.key, m.value] for m in l10n_section.meta]
+            db_section = prev_sections.get(section_key, None)
+            if db_section is None:
+                db_section = Section(
+                    resource=db_res,
+                    key=l10n_section.id,
+                    meta=section_meta,
+                    comment=l10n_section.comment,
+                )
+                new_sections.append(db_section)
+            elif db_section.meta != section_meta:
+                db_section.meta = section_meta
+                mod_sections.append(db_section)
+            has_entries = False
+            for entry in l10n_section.entries:
+                if isinstance(entry, Entry):
+                    entity = as_entity(
+                        l10n_res.format,
+                        l10n_section.id,
+                        entry,
+                        date_created=now,
+                        order=idx,
+                        resource=db_res,
+                        section=db_section,
+                    )
+                    next_entities[db_res.path, l10n_section.id + entry.id] = entity
+                    idx += 1
+                    has_entries = True
+            if has_entries:
+                if db_section.pk:
+                    keep_sections.append(db_section)
+            elif not db_section.pk:
+                new_sections.pop()
 
     obsolete_entities: list[Entity] = []
     log_rm: dict[str, list[str]] = defaultdict(list)
     for key, prev_ent in prev_entities.items():
-        if key in prev_not_next:
+        if key not in next_entities:
             prev_ent.obsolete = True
             prev_ent.date_obsoleted = now
+            prev_ent.section = None
             obsolete_entities.append(prev_ent)
             key_path, key_entity = key
-            log_rm[key_path].append(key_entity)
-    Entity.objects.bulk_update(obsolete_entities, ["obsolete", "date_obsoleted"])
+            log_rm[key_path].append("/".join(key_entity))
+    Entity.objects.bulk_update(
+        obsolete_entities, ["obsolete", "date_obsoleted", "section"]
+    )
 
-    mod_fields = [
-        "string",
-        "string_plural",
-        "comment",
-        "source",
-        "group_comment",
-        "resource_comment",
-        "context",
+    Resource.objects.bulk_update(mod_resources, ["format", "meta", "comment"])
+
+    # Order matters here: Sections can be simultaneously modified and deleted.
+    Section.objects.bulk_update(mod_sections, ["meta"])
+    del_section_ids = [
+        section.pk for section in prev_sections.values() if section not in keep_sections
     ]
+    if del_section_ids:
+        Section.objects.filter(pk__in=del_section_ids).delete()
+
+    # The Section.pk values need to be set before we modify or create Entities.
+    Section.objects.bulk_create(new_sections)
+
     mod_entities: list[Entity] = []
     added_entities: list[Entity] = []
     log_mod: dict[str, list[str]] = defaultdict(list)
     log_add: dict[str, list[str]] = defaultdict(list)
     for key, next_ent in next_entities.items():
         key_path, key_entity = key
-        if key in prev_and_next:
-            mod_ent = entity_update(prev_entities[key], next_ent, mod_fields)
-            if mod_ent is not None:
-                mod_entities.append(mod_ent)
-                log_mod[key_path].append(key_entity)
-        elif key in next_not_prev:
+        prev_ent = prev_entities.get(key, None)
+        if prev_ent is None:
             added_entities.append(next_ent)
-            log_add[key_path].append(key_entity)
-    Entity.objects.bulk_update(mod_entities, mod_fields)
+            log_add[key_path].append("/".join(key_entity))
+        elif (
+            model_update(prev_ent, "string", next_ent.string)
+            + model_update(prev_ent, "comment", next_ent.comment)
+            + model_update(prev_ent, "meta", next_ent.meta)
+        ):
+            mod_entities.append(prev_ent)
+            log_mod[key_path].append("/".join(key_entity))
+    Entity.objects.bulk_update(mod_entities, ["string", "comment", "meta"])
 
     # FIXME: Entity order should be updated on insertion
     # https://github.com/mozilla/pontoon/issues/2115
@@ -199,39 +262,63 @@ def update_resources(
                     scope = f"[{project.slug}:{path}]"
                     names = ", ".join(ls).replace("\n", "¶")
                     log.info(f"{scope} {desc} entities ({len(ls)}): {names}")
-    return add_count, set(res.path for res in changed_resources)
+    return add_count, changed_res_paths
 
 
 def add_resources(
     project: Project,
-    updates: dict[str, list[VCSTranslation]],
+    updates: dict[str, L10nResource[Message]],
     changed_paths: set[str],
     now: datetime,
 ) -> tuple[int, set[str]]:
-    added_resources = [
-        Resource(project=project, path=db_path, format=get_path_format(db_path))
-        for db_path, translations in updates.items()
-        if translations and db_path not in changed_paths
+    new_resources = [
+        Resource(project=project, path=db_path, format=get_res_format(res))
+        for db_path, res in updates.items()
+        if next(res.all_entries(), None) and db_path not in changed_paths
     ]
-    if not added_resources:
+    if not new_resources:
         return 0, set()
 
-    added_resources = Resource.objects.bulk_create(added_resources)
+    Resource.objects.bulk_create(new_resources)
     ordered_resources = project.resources.order_by("path")
     for idx, r in enumerate(ordered_resources):
         r.order = idx
     Resource.objects.bulk_update(ordered_resources, ["order"])
 
-    added_entities = Entity.objects.bulk_create(
-        (
-            entity_from_source(resource, now, idx, tx)
-            for resource in added_resources
-            for idx, tx in enumerate(updates[resource.path])
-        )
-    )
+    new_sections: list[Section] = []
+    new_entities: list[Entity] = []
+    for db_res in new_resources:
+        l10n_res = updates[db_res.path]
+        idx = 0
+        for l10n_section in l10n_res.sections:
+            db_section = Section(
+                resource=db_res,
+                key=l10n_section.id,
+                meta=[[m.key, m.value] for m in l10n_section.meta],
+                comment=l10n_section.comment,
+            )
+            has_entries = False
+            for entry in l10n_section.entries:
+                if isinstance(entry, Entry):
+                    entity = as_entity(
+                        l10n_res.format,
+                        l10n_section.id,
+                        entry,
+                        date_created=now,
+                        order=idx,
+                        resource=db_res,
+                        section=db_section,
+                    )
+                    new_entities.append(entity)
+                    idx += 1
+                    has_entries = True
+            if has_entries:
+                new_sections.append(db_section)
+    Section.objects.bulk_create(new_sections)
+    Entity.objects.bulk_create(new_entities)
 
-    ent_count = len(added_entities)
-    added_paths = {ar.path for ar in added_resources}
+    ent_count = len(new_entities)
+    added_paths = {ar.path for ar in new_resources}
     log.info(
         f"[{project.slug}] New source files with {ent_count} entities: {', '.join(added_paths)}"
     )
@@ -288,8 +375,9 @@ def is_translated_resource(
 ) -> bool:
     if locale is None:
         return False
-    if resource.format in BILINGUAL_FORMATS:
-        # For bilingual formats, only create TranslatedResource
+
+    if resource.format == Resource.Format.GETTEXT:
+        # For gettext, only create TranslatedResource
         # if the resource exists for the locale.
         target, _ = paths.target(resource.path)
         if target is None:
@@ -299,38 +387,12 @@ def is_translated_resource(
     return True
 
 
-def entity_from_source(
-    resource: Resource, now: datetime, idx: int, tx: VCSTranslation
-) -> Entity:
-    comments = getattr(tx, "comments", None)
-    group_comments = getattr(tx, "group_comments", None)
-    resource_comments = getattr(tx, "resource_comments", None)
-    return Entity(
-        string=tx.source_string,
-        string_plural=tx.source_string_plural,
-        key=tx.key,
-        comment="\n".join(comments) if comments else "",
-        order=tx.order or idx,
-        source=tx.source,
-        resource=resource,
-        date_created=now,
-        group_comment="\n".join(group_comments) if group_comments else "",
-        resource_comment="\n".join(resource_comments) if resource_comments else "",
-        context=tx.context,
-        word_count=get_word_count(tx.source_string),
-    )
-
-
-def entity_update(
-    current: Entity, update_from: Entity, fields: list[str]
-) -> Optional[Entity]:
-    updated = False
-    for field in fields:
-        value = getattr(update_from, field)
-        if getattr(current, field) != value:
-            setattr(current, field, value)
-            updated = True
-    return current if updated else None
+def model_update(model: Resource | Entity, field: str, value: Any) -> bool:
+    prev = getattr(model, field)
+    if value != prev:
+        setattr(model, field, value)
+        return True
+    return False
 
 
 def get_db_path(paths: L10nConfigPaths | L10nDiscoverPaths, file_path: str) -> str:
@@ -342,14 +404,9 @@ def get_db_path(paths: L10nConfigPaths | L10nDiscoverPaths, file_path: str) -> s
     )
 
 
-def get_path_format(path: str) -> str:
-    _, extension = splitext(path)
-    path_format = extension[1:].lower()
-
-    # Special case: pot files are considered the po format
-    if path_format == "pot":
-        return "po"
-    elif path_format == "xlf":
-        return "xliff"
+def get_res_format(res: L10nResource[Message]) -> Resource.Format:
+    if res.format == L10nFormat.xliff and xliff_is_xcode(res):
+        return Resource.Format.XCODE
     else:
-        return path_format
+        assert res.format
+        return Resource.Format(res.format.name)

@@ -16,7 +16,7 @@ import { pojoEquals } from '~/utils/pojo';
 export function useExistingTranslationGetter() {
   const activeTranslation = useActiveTranslation();
   const { translations } = useContext(HistoryData);
-  const { entity } = useContext(EntityView);
+  const { format } = useContext(EntityView).entity;
   const { initial } = useContext(EditorData);
   const entry = useEditorMessageEntry();
 
@@ -30,11 +30,11 @@ export function useExistingTranslationGetter() {
     }
 
     let test: (value: HistoryTranslation) => boolean;
-    if (entity.format === 'ftl') {
-      test = (t) => pojoEquals(entry, parseEntry(t.string));
+    if (format === 'fluent') {
+      test = (t) => pojoEquals(entry, parseEntry(format, t.string));
     } else {
       try {
-        const str = serializeEntry(entity.format, entry);
+        const str = serializeEntry(format, entry);
         test = (t) => t.string === str;
       } catch {
         return undefined;

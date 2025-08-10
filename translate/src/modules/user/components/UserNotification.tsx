@@ -11,6 +11,38 @@ type Props = {
   notification: Record<string, any>;
 };
 
+interface DateDisplayProps {
+  date: string;
+  date_iso: string;
+}
+
+const DateDisplay: React.FC<DateDisplayProps> = ({ date, date_iso }) => {
+  const formattedDate: string = new Date(date).toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+  const isOld: boolean =
+    new Date(date).getTime() < new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+  return (
+    <>
+      {isOld ? (
+        <div className='date-display'>
+          <time dateTime={date_iso} title={`${date} UTC`}>
+            {formattedDate}
+          </time>
+        </div>
+      ) : (
+        <ReactTimeAgo
+          className='timeago'
+          date={new Date(date)}
+          title={`${date} UTC`}
+        />
+      )}
+    </>
+  );
+};
+
 const Suggestion = ({ date, date_iso, description }: Props['notification']) => (
   <div className='item-content'>
     <span
@@ -19,11 +51,7 @@ const Suggestion = ({ date, date_iso, description }: Props['notification']) => (
       dangerouslySetInnerHTML={{ __html: description.content }}
     />
 
-    <ReactTimeAgo
-      className='timeago'
-      date={new Date(date_iso)}
-      title={`${date} UTC`}
-    />
+    <DateDisplay date={date} date_iso={date_iso} />
   </div>
 );
 
@@ -44,11 +72,7 @@ const Comment = ({
 
     <span className='target'>{target.anchor}</span>
 
-    <ReactTimeAgo
-      className='timeago'
-      date={new Date(date_iso)}
-      title={`${date} UTC`}
-    />
+    <DateDisplay date={date} date_iso={date_iso} />
 
     <div className='message trim'>
       <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>
@@ -88,11 +112,7 @@ const Other = ({
       </span>
     )}
 
-    <ReactTimeAgo
-      className='timeago'
-      date={new Date(date_iso)}
-      title={`${date} UTC`}
-    />
+    <DateDisplay date={date} date_iso={date_iso} />
 
     {description ? (
       <div
