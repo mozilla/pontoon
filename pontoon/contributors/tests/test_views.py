@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.timezone import make_aware, now
 
+from pontoon.api.models import PersonalAccessToken
 from pontoon.base.models import User
 from pontoon.base.tests import (
     LocaleFactory,
@@ -295,3 +296,46 @@ def test_toggle_active_user_status_requires_admin(member, admin, client_superuse
     member.client.force_login(admin)
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_personal_access_token_generation(member):
+    """Test if personal access token is generated correctly."""
+    url = reverse("pontoon.contributors.generate_token")
+    member.client.force_login(member.user)
+
+    response = member.client.post(
+        url, {"name": "Test Token 1"}, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+    )
+
+    assert response.status_code == 200
+
+    try:
+        new_token_id = response.json()["data"]["new_token_id"]
+        new_token_secret = response.json()["data"]["new_token_secret"]
+
+        assert new_token_id == int(new_token_secret.split("_")[0])
+
+    except KeyError:
+        assert False, "Response does not contain 'new_token_id' or 'new_token_secret'"
+
+    assert response.json()["status"] == "success"
+    assert response.json()["message"] == "Form submitted successfully!"
+    assert response.json()["data"]["new_token_name"] == "Test Token 1"
+
+
+@pytest.mark.django_db
+def test_personal_access_token_deletion(member):
+    """Test if personal access token is deleted correctly."""
+    token = PersonalAccessToken.objects.create(
+        user=member.user, name="Test Token 1", expires_at=now() + timedelta(days=30)
+    )
+    url = reverse("pontoon.contributors.delete_token", args=[token.id])
+    member.client.force_login(member.user)
+
+    response = member.client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "success"
+    assert response.json()["message"] == "Token deleted successfully!"
+    assert not PersonalAccessToken.objects.filter(id=token.id).exists()
