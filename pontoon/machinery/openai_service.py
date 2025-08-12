@@ -68,7 +68,7 @@ class OpenAIService:
 
         # Call the OpenAI API with the constructed prompt
         response = self.client.chat.completions.create(
-            model="gpt-4-0125-preview",
+            model="gpt-4.1-2025-04-14",
             messages=[
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": user_prompt},
