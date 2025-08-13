@@ -164,7 +164,7 @@ class DeprecationWarningMiddleware:
 
         # Check if the request is for the GraphQL endpoint
         if request.path.startswith("/graphql"):
-            response["X-GraphQL-Deprecation-Warning"] = (
+            response["X-GraphQL-Deprecation"] = (
                 "Warning: The GraphQL API is deprecated and will be removed on November 5th, 2025. "
                 "Please use the REST API instead. For more information, visit: "
                 "https://github.com/mozilla/pontoon/discussions/3745"
