@@ -192,7 +192,11 @@ class TranslationMemoryEntry(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    debug = graphene.Field(DjangoDebug, name="_debug")
+    debug = graphene.Field(
+        DjangoDebug,
+        name="_debug",
+        deprecation_reason="GraphQL API will be removed on November 5, 2025. Use the REST API.",
+    )
 
     # include_disabled=True will return both active and disabled projects.
     # include_system=True will return both system and non-system projects.
@@ -200,22 +204,36 @@ class Query(graphene.ObjectType):
         Project,
         include_disabled=graphene.Boolean(False),
         include_system=graphene.Boolean(False),
+        deprecation_reason="GraphQL API will be removed on November 5, 2025. Use the REST API.",
     )
-    project = graphene.Field(Project, slug=graphene.String())
+    project = graphene.Field(
+        Project,
+        slug=graphene.String(),
+        deprecation_reason="GraphQL API will be removed on November 5, 2025. Use the REST API.",
+    )
 
-    locales = graphene.List(Locale)
-    locale = graphene.Field(Locale, code=graphene.String())
+    locales = graphene.List(
+        Locale,
+        deprecation_reason="GraphQL API will be removed on November 5, 2025. Use the REST API.",
+    )
+    locale = graphene.Field(
+        Locale,
+        code=graphene.String(),
+        deprecation_reason="GraphQL API will be removed on November 5, 2025. Use the REST API.",
+    )
 
     term_search = graphene.List(
         Term,
         search=graphene.String(required=True),
         locale=graphene.String(required=True),
+        deprecation_reason="GraphQL API will be removed on November 5, 2025. Use the REST API.",
     )
 
     tm_search = graphene.List(
         TranslationMemoryEntry,
         search=graphene.String(required=True),
         locale=graphene.String(required=True),
+        deprecation_reason="GraphQL API will be removed on November 5, 2025. Use the REST API.",
     )
 
     def resolve_projects(obj, info, include_disabled, include_system):
