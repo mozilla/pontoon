@@ -116,14 +116,14 @@ $(function () {
             .attr('data-clipboard-text', response.data['new_token_secret']),
         );
 
-          tokenCard.append(tokenHeader, tokenInfoContainer, tokenDetails);
-          tokenCard.append(
-            $('<p>')
-              .addClass('copy-message')
-              .text(
-                'Make sure to copy your personal access token now as you will not be able to see it again.',
-              ),
-          );
+        tokenCard.append(tokenHeader, tokenInfoContainer, tokenDetails);
+        tokenCard.append(
+          $('<p>')
+            .addClass('copy-message')
+            .text(
+              'Make sure to copy your personal access token now as you will not be able to see it again.',
+            ),
+        );
 
         li.append(tokenCard);
 
