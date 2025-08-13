@@ -18,7 +18,8 @@ class PersonalAccessTokenAuthentication(BaseAuthentication):
 
         try:
             token_id, unhashed_token = auth_header.split(" ")[1].split("_")
-        except ValueError:
+            token_id = int(token_id)
+        except (ValueError, TypeError):
             raise AuthenticationFailed({"detail": "Malformed token format."})
 
         try:
