@@ -151,7 +151,7 @@ class ThrottleIpMiddleware:
         return response
 
 
-class DeprecationWarningMiddleware:
+class GraphQLDeprecationMiddleware:
     """
     Middleware to add a deprecation warning to GraphQL API responses.
     """
