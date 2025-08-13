@@ -61,77 +61,42 @@ $(function () {
       },
       success: function (response) {
         if (response.status !== 'success') {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
           return;
         }
 
-        const li = $('<li>').attr(
-          'data-token-id',
-          response.data['new_token_id'],
-        );
+        const newTokenHTML = `
+        <li class="token-card created controls clearfix" data-token-id="${response.data['new_token_id']}">
+            <div class="token-header">
+              <span class="token-name">${response.data['new_token_name']}</span>
+              <div class="right">
+                <div class="status active">
+                  <span class="icon fas fa-check-circle"></span>
+                  <span class="title">Status:</span>
+                  <span class="value">Active</span>
+                </div>
+                <button class="button delete-btn far fa-trash-alt" tabindex="-1" data-token-id="${response.data['new_token_id']}"></button>
+              </div>
+            </div>
+            <div class="token-info-container">
+              <div class="token-info">
+                <span class="icon fas fa-calendar-alt"></span>
+                <span>Expires on:</span> 
+                <span class="date">${response.data['new_token_expires_at']}</span>
+              </div>
+            </div>
+            <div class="token-details">
+              <input class="token-value" type="text" value="${response.data['new_token_secret']}" readonly></input>
+              <button class="button copy-btn far fa-copy" tabindex="-1" data-clipboard-text="${response.data['new_token_secret']}" ></button>
+            </div>
+            <p class="copy-message">Make sure to copy your personal access token now as you will not be able to see it again.</p>
+        </li>
+        `;
 
-        const tokenCard = $('<div>').addClass(
-          'token-card created controls clearfix',
-        );
-        const tokenHeader = $('<div>').addClass('token-header');
-
-        tokenHeader.append(
-          $('<span>')
-            .addClass('token-name')
-            .text(response.data['new_token_name']),
-        );
-
-        const headerControls = $('<div>');
-        headerControls.append(
-          $('<button>')
-            .addClass('button delete-btn far fa-trash-alt')
-            .attr('tabindex', '-1')
-            .attr('data-token-id', response.data['new_token_id']),
-        );
-        headerControls.append($('<input>').attr('type', 'checkbox'));
-        tokenHeader.append(headerControls);
-
-        const tokenInfoContainer = $('<div>').addClass('token-info-container');
-        const tokenInfo = $('<div>').addClass('token-info');
-        tokenInfo.append($('<span>').addClass('icon fas fa-calendar-alt'));
-        tokenInfo.append($('<span>').text('Expires on:'));
-        tokenInfo.append(
-          $('<span>')
-            .addClass('date')
-            .text(response.data['new_token_expires_at']),
-        );
-        tokenInfoContainer.append(tokenInfo);
-
-        const tokenDetails = $('<div>').addClass('token-details');
-        tokenDetails.append(
-          $('<input>')
-            .addClass('token-value')
-            .attr('type', 'text')
-            .val(response.data['new_token_secret'])
-            .prop('readonly', true),
-        );
-        tokenDetails.append(
-          $('<button>')
-            .addClass('button copy-btn far fa-copy')
-            .attr('tabindex', '-1')
-            .attr('data-clipboard-text', response.data['new_token_secret']),
-        );
-
-        tokenCard.append(tokenHeader, tokenInfoContainer, tokenDetails);
-        tokenCard.append(
-          $('<p>')
-            .addClass('copy-message')
-            .text(
-              'Make sure to copy your personal access token now as you will not be able to see this again.',
-            ),
-        );
-
-        li.append(tokenCard);
-
-        // Update DOM safely
         $('.error-message').empty();
         $('.token-name-input').val('');
         $('.generate-token-btn').prop('disabled', true);
-        $('.pat-list').append(li);
+        $('.pat-list').append(newTokenHTML);
         Pontoon.endLoader('Token created.');
       },
       error: function (response) {
