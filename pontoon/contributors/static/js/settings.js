@@ -182,11 +182,7 @@ $(function () {
   });
 
   $('.token-name-input').on('input', function () {
-    if ($(this).val().trim() !== '') {
-      $('.generate-token-btn').prop('disabled', false); // Enable the button
-    } else {
-      $('.generate-token-btn').prop('disabled', true); // Disable the button
-    }
+    $('.generate-token-btn').prop('disabled', $(this).val().trim() === '');
   });
 
   // Handle checkboxes
