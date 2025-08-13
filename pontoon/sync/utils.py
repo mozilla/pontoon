@@ -138,7 +138,7 @@ def parse_pontoon_message(
     """
     Parse an Entity.string or a Translation.string as a moz.l10n Message.
 
-    This function should be removed once the string message representations are removed.
+    TODO: This function should be removed once the string message representations are removed.
     """
     xliff_is_xcode = False
     match db_format:
