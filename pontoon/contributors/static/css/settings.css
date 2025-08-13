@@ -313,7 +313,7 @@
 }
 
 input.token-name-input {
-  width: 100%;
+  flex-grow: 1;
   margin-right: 10px;
 }
 
