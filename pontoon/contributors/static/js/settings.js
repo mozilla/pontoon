@@ -61,6 +61,7 @@ $(function () {
       },
       success: function (response) {
         if (response.status !== 'success') {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
           return;
         }
 
