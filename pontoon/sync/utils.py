@@ -1,9 +1,17 @@
 import re
 
+from html import escape
 from io import BytesIO
+from json import loads
 from os.path import basename, exists, join, relpath
+from re import compile
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
+
+from moz.l10n.formats import Format
+from moz.l10n.formats.android import android_serialize_message
+from moz.l10n.message import parse_message
+from moz.l10n.model import Message, PatternMessage
 
 from django.core.files import File
 from django.utils import timezone
@@ -118,3 +126,42 @@ def import_uploaded_file(
         return badge_name, badge_level
     else:
         raise Exception("Upload failed.")
+
+
+android_nl = compile(r"\s*\n\s*")
+android_esc = compile(r"(?<!\\)\\([nt])\s*")
+
+
+def parse_pontoon_message(
+    db_format: str, string: str, meta: list[list[str]]
+) -> Message:
+    """
+    Parse an Entity.string or a Translation.string as a moz.l10n Message.
+
+    TODO: This function should be removed once the string message representations are removed.
+    """
+    xliff_is_xcode = False
+    match db_format:
+        case "webext":
+            ph = next((loads(v) for k, v in meta if k == "placeholders"), None)
+            return parse_message(Format.webext, string, webext_placeholders=ph)
+        case "lang" | "properties" | "":
+            return PatternMessage([string])
+
+        case "android":
+            format = Format.android
+            string = android_nl.sub(" ", string)
+            string = android_esc.sub(lambda m: "\n" if m[1] == "n" else "\t", string)
+            string = android_serialize_message(string, allow_cdata=True)
+        case "gettext":
+            format = Format.mf2
+        case "xcode":
+            format = Format.xliff
+            string = escape(string)
+            xliff_is_xcode = True
+        case "xliff":
+            format = Format.xliff
+            string = escape(string)
+        case _:
+            format = Format[db_format]
+    return parse_message(format, string, xliff_is_xcode=xliff_is_xcode)

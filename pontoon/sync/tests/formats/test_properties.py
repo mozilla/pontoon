@@ -34,6 +34,7 @@ class PropertiesTests(TestCase):
         assert e0.comment == "Sample comment"
         assert e0.key == ["SourceString"]
         assert e0.string == "Translated String "
+        assert e0.value == ["Translated String "]
 
         assert t0.key == ("SourceString",)
         assert t0.string == "Translated String "
@@ -42,6 +43,7 @@ class PropertiesTests(TestCase):
         assert e1.comment == "First comment\nSecond comment"
         assert e1.key == ["MultipleComments"]
         assert e1.string == "Translated Multiple Comments"
+        assert e1.value == ["Translated Multiple Comments"]
 
         assert t1.key == ("MultipleComments",)
         assert t1.string == "Translated Multiple Comments"
@@ -50,6 +52,7 @@ class PropertiesTests(TestCase):
         assert e2.comment == ""
         assert e2.key == ["NoCommentsorSources"]
         assert e2.string == "Translated No Comments or Sources"
+        assert e2.value == ["Translated No Comments or Sources"]
 
         assert t2.key == ("NoCommentsorSources",)
         assert t2.string == "Translated No Comments or Sources"
@@ -58,6 +61,7 @@ class PropertiesTests(TestCase):
         assert e3.comment == ""
         assert e3.key == ["EmptyTranslation"]
         assert e3.string == ""
+        assert e3.value == []
 
         assert t3.key == ("EmptyTranslation",)
         assert t3.string == ""

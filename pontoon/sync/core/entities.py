@@ -50,7 +50,10 @@ def sync_resources_from_repo(
             db_path = get_db_path(paths, path)
             try:
                 res = parse_resource(
-                    path, gettext_plurals=source_plurals, gettext_skip_obsolete=True
+                    path,
+                    gettext_plurals=source_plurals,
+                    gettext_skip_obsolete=True,
+                    xliff_source_entries=True,
                 )
                 assert res.format
                 try:
@@ -156,6 +159,8 @@ def update_resources(
     for db_res in changed_resources.values():
         l10n_res = updates[db_res.path]
         if (
+            # In practice, the resource format can only change when an XCode XLIFF file
+            # has been migrated (base/0096) as `XLIFF`, but is later re-parsed as `XCODE`.
             model_update(db_res, "format", get_res_format(l10n_res))
             + model_update(db_res, "comment", l10n_res.comment)
             + model_update(db_res, "meta", [[m.key, m.value] for m in l10n_res.meta])
@@ -181,7 +186,7 @@ def update_resources(
             has_entries = False
             for entry in l10n_section.entries:
                 if isinstance(entry, Entry):
-                    entity = as_entity(
+                    next_entities[db_res.path, l10n_section.id + entry.id] = as_entity(
                         l10n_res.format,
                         l10n_section.id,
                         entry,
@@ -190,7 +195,6 @@ def update_resources(
                         resource=db_res,
                         section=db_section,
                     )
-                    next_entities[db_res.path, l10n_section.id + entry.id] = entity
                     idx += 1
                     has_entries = True
             if has_entries:
@@ -237,13 +241,17 @@ def update_resources(
             added_entities.append(next_ent)
             log_add[key_path].append("/".join(key_entity))
         elif (
-            model_update(prev_ent, "string", next_ent.string)
+            model_update(prev_ent, "value", next_ent.value)
+            + model_update(prev_ent, "properties", next_ent.properties)
+            + model_update(prev_ent, "string", next_ent.string)
             + model_update(prev_ent, "comment", next_ent.comment)
             + model_update(prev_ent, "meta", next_ent.meta)
         ):
             mod_entities.append(prev_ent)
             log_mod[key_path].append("/".join(key_entity))
-    Entity.objects.bulk_update(mod_entities, ["string", "comment", "meta"])
+    Entity.objects.bulk_update(
+        mod_entities, ["value", "properties", "string", "comment", "meta"]
+    )
 
     # FIXME: Entity order should be updated on insertion
     # https://github.com/mozilla/pontoon/issues/2115

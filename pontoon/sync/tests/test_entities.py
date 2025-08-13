@@ -324,12 +324,13 @@ def test_change_entities():
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (0, {"res.ftl"}, set())
-        assert set(
-            (ent.string, ent.comment) for ent in Entity.objects.filter(resource=res)
-        ) == {
-            ("key-1 = Message 1\n", ""),
-            ("key-2 = Fixed message 2\n", ""),
-            ("key-3 = Message 3\n", "New comment"),
+        assert {
+            tuple(ent.key): (ent.value, ent.comment)
+            for ent in Entity.objects.filter(resource=res)
+        } == {
+            ("key-1",): (["Message 1"], ""),
+            ("key-2",): (["Fixed message 2"], ""),
+            ("key-3",): (["Message 3"], "New comment"),
         }
 
         # Test stats

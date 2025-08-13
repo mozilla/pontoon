@@ -12,7 +12,7 @@ from fluent.syntax import FluentSerializer
 from moz.l10n.formats import Format, detect_format, l10n_extensions
 from moz.l10n.formats.fluent import fluent_astify_entry
 from moz.l10n.formats.webext import webext_serialize_message
-from moz.l10n.message import serialize_message
+from moz.l10n.message import message_to_json, serialize_message
 from moz.l10n.model import Entry, Id as L10nId, Message, Resource as MozL10nResource
 
 from pontoon.base.models import Entity
@@ -114,6 +114,7 @@ def as_entity(
                 meta.append(["placeholders", dumps(placeholders)])
             return Entity(
                 key=list(section_id + entry.id),
+                value=message_to_json(entry.value),
                 string=string,
                 comment=entry.comment,
                 meta=meta,
@@ -124,6 +125,15 @@ def as_entity(
         case _:
             return Entity(
                 key=list(section_id + entry.id),
+                value=message_to_json(entry.value),
+                properties=(
+                    {
+                        name: message_to_json(value)
+                        for name, value in entry.properties.items()
+                    }
+                    if entry.properties
+                    else None
+                ),
                 string=_as_string(format, entry),
                 comment=entry.comment,
                 meta=[[m.key, m.value] for m in entry.meta],
