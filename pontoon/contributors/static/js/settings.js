@@ -120,7 +120,7 @@ $(function () {
             $('<p>')
               .addClass('copy-message')
               .text(
-                'Make sure to copy your personal access token now as you will not be able to see this again.',
+                'Make sure to copy your personal access token now as you will not be able to see it again.',
               ),
           );
 
