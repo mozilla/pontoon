@@ -8,6 +8,7 @@ from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
+from pontoon.api.models import PersonalAccessToken
 from pontoon.base import utils
 from pontoon.base.models import (
     Locale,
@@ -397,3 +398,23 @@ class AddCommentForm(forms.Form):
     entity = forms.IntegerField(required=False)
     comment = HtmlField()
     translation = forms.IntegerField(required=False)
+
+
+class CreateTokenForm(forms.ModelForm):
+    """
+    Form for creating Personal Access Tokens.
+    """
+
+    class Meta:
+        model = PersonalAccessToken
+        fields = ("name",)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if PersonalAccessToken.objects.filter(name=name, user=self.user).exists():
+            raise ValidationError("You already have a token with this name.")
+        return name

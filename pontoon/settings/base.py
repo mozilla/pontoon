@@ -722,6 +722,7 @@ PIPELINE_JS = {
             "js/lib/jquery-ui-1.13.2.js",
             "js/multiple_team_selector.js",
             "js/team_selector.js",
+            "js/lib/clipboard.min.js",
             "js/settings.js",
         ),
         "output_filename": "js/settings.min.js",
@@ -1185,6 +1186,9 @@ ONBOARDING_EMAIL_3_DELAY = os.environ.get("ONBOARDING_EMAIL_3_DELAY", 7)
 INACTIVE_CONTRIBUTOR_PERIOD = os.environ.get("INACTIVE_CONTRIBUTOR_PERIOD", 6)
 INACTIVE_TRANSLATOR_PERIOD = os.environ.get("INACTIVE_TRANSLATOR_PERIOD", 2)
 INACTIVE_MANAGER_PERIOD = os.environ.get("INACTIVE_MANAGER_PERIOD", 2)
+
+# Maximum number of personal access tokens user can simultaneously use
+PERSONAL_ACCESS_TOKEN_MAX_COUNT = 10
 
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
