@@ -22,35 +22,47 @@ class OpenAIService:
                 f"The target language '{target_language_name}' is not supported."
             )
 
+        common_rules = textwrap.dedent(
+            """1) ENDING PUNCTUATION — SEMANTICS, NOT LITERAL CHAR:
+                - Detect the English ending: none, ".", "?", "!", "…".
+                - The translation MUST express the same ending SEMANTIC:
+                    • if English ends with "?" → translation ends with a question.
+                    • if English ends with "!" → translation ends with an exclamation.
+                    • if English ends with "…" → translation ends with an ellipsis.
+                    • if English has NO closing punctuation → translation MUST NOT end with ".", "?", "!", or "…".
+                - Do not add a final period if the English has none.
+                - Respect orthographic and typographic rules of the target language regarding punctuation, like using non-breaking spaces in French, adding opening "¿" or "¡" in Spanish, etc.
+            2) Preserve all HTML tags and their order. Do not add, remove, or reorder tags."""
+        )
+
         informal = textwrap.dedent(
             f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
-            Your objective is to revise the {target_language} translation to ensure it utilizes simpler language. Adhere to the following guidelines to achieve this:
-            - Clarity is Key: Ensure the translation conveys the original message in the clearest possible manner, without ambiguity or unnecessary complexity.
-            - Consistent Simplicity: Maintain a consistent level of simplicity throughout the translation.
-            - Preserve All HTML Tags: Ensure that all HTML tags present in the original text are retained in the translation.
-            - Avoid adding closing punctuation if it's not present in the original text.
-            The goal is to produce a translation that accurately reflects the original English text, but in a way that is more approachable and easier to understand for all {target_language} speakers."""
+            Revise the {target_language} translation to use simpler language,
+            Follow these rules IN ORDER OF PRIORITY:
+            {common_rules}
+            3) Clarity and Simplicity: keep wording straightforward and consistent.
+            Output only the revised translation."""
         )
 
         formal = textwrap.dedent(
             f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
-            Your objective is to revise the {target_language} translation to ensure it utilizes a higher level of formality. Adhere to the following guidelines to achieve this:
-            - Adjust the Tone: Ensure the tone is respectful, polished, and devoid of colloquialisms or informal expressions commonly used in casual conversation.
-            - Formal Addressing: Where applicable, use formal modes of address.
-            - Consistency: Maintain a consistent level of formality throughout the translation, avoiding shifts in tone or style.
-            - Preserve All HTML Tags: Ensure that all HTML tags present in the original text are retained in the translation.
-            - Avoid adding closing punctuation if it's not present in the original text.
-            Your goal is to produce a translation that not only accurately conveys the meaning of the English text but also meets the expectations for formality in {target_language}-speaking professional or formal settings."""
+            Revise the {target_language} translation to use a higher level of formality.
+            Follow these rules IN ORDER OF PRIORITY:
+            {common_rules}
+            3) Consistency: maintain a consistent level of formality throughout; do not mix formal and informal modes.
+            4) Preserve all HTML tags and their order. Do not add, remove, or reorder tags.
+            5) Clarity and Precision: keep wording clear and unambiguous while remaining formal.
+            Output only the revised translation."""
         )
 
         rephrased = textwrap.dedent(
             f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
-            Your objective is to provide an alternative translation. Adhere to the following guidelines to achieve this:
-            - Cultural Nuances: Pay attention to cultural nuances and idiomatic expressions, ensuring they are appropriately translated for the {target_language}-speaking audience.
-            - Clarification and Accuracy: Where the source text is ambiguous or idiomatic, offer clarifications or alternative expressions in {target_language}.
-            - Preserve All HTML Tags: Ensure that all HTML tags present in the original text are retained in the translation.
-            - Avoid adding closing punctuation if it's not present in the original text.
-            Just provide the text for the alternative translation."""
+            Provide an alternative translation that preserves the original meaning while varying the wording.
+            Follow these rules IN ORDER OF PRIORITY:
+            {common_rules}
+            3) Cultural and Idiomatic Fit: adapt idioms and culturally marked expressions appropriately for {target_language}; you may restructure sentences but must not introduce new information or omit essential meaning.
+            4) Clarity and Naturalness: ensure the result reads naturally and is easy to understand.
+            Output only the alternative translation."""
         )
 
         system_messages = {
