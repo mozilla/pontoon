@@ -43,7 +43,7 @@ jsonfield==3.1.0
 markupsafe==2.0.1
 moz.l10n[xml]==0.9.1
 newrelic==9.6.0
-openai==1.47.1
+openai==1.99.9
 psycopg2==2.9.6
 PyJWT==2.9.0
 python-dateutil==2.9.0
