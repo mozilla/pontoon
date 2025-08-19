@@ -49,52 +49,43 @@ export async function updateLocale(locale: Locale, code: string) {
   const { set } = locale;
   set({ ...locale, fetching: true });
 
-  const query = `{
-    locale(code: "${code}") {
-      code
-      name
-      cldrPlurals
-      pluralRule
-      direction
-      script
-      teamDescription
-      googleTranslateCode
-      msTranslatorCode
-      systranTranslateCode
-      msTerminologyCode
-      localizations {
-        totalStrings
-        approvedStrings
-        stringsWithWarnings
-        project {
-          slug
-          name
-        }
-      }
-    }
-  }`;
+  let res = await GET(`/api/v2/locales/${code}`);
 
-  const search = new URLSearchParams({ query });
-  // const res = await GET('/graphql', search);
-  const res = await GET(`/api/v2/locales/${code}`);
+  let localizations = [];
+  for (const project of res.projects) {
+    const localization = await GET(`/api/v2/${code}/${project}`);
+    localizations.push({
+      totalStrings: localization.total_strings,
+      approvedStrings: localization.approved_strings,
+      stringsWithWarnings: localization.strings_with_warnings,
+      project: { slug: project, name: localization.project.name },
+    });
+  }
 
-  const next = res as Omit<Locale, 'cldr_plurals'> & {
-    cldr_plurals: string;
+  res = {
+    code: res.code,
+    name: res.name,
+    cldrPlurals: res.cldr_plurals,
+    pluralRule: res.plural_rule,
+    direction: res.direction.toUpperCase(),
+    script: res.script,
+    teamDescription: res.team_description,
+    googleTranslateCode: res.google_translate_code,
+    msTranslatorCode: res.ms_translator_code,
+    systranTranslateCode: res.systran_translate_code,
+    msTerminologyCode: res.ms_terminology_code,
+    localizations: localizations,
   };
-  const cldrPlurals = next.cldr_plurals
-    .split(',')
-    .map((i: string) => parseInt(i, 10));
-  const direction = next.direction.toLowerCase();
 
   console.log(res);
 
-  // const next = res.data.locale as Omit<Locale, 'cldrPlurals'> & {
-  //   cldrPlurals: string;
-  // };
-  // const cldrPlurals = next.cldrPlurals
-  //   .split(',')
-  //   .map((i: string) => parseInt(i, 10));
-  // const direction = next.direction.toLowerCase();
+  const next = res as Omit<Locale, 'cldrPlurals'> & {
+    cldrPlurals: string;
+  };
+  const cldrPlurals = next.cldrPlurals
+    .split(',')
+    .map((i: string) => parseInt(i, 10));
+  const direction = next.direction.toLowerCase();
 
   set({ ...next, cldrPlurals, direction, fetching: false, set });
 }
