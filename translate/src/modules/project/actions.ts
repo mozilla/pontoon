@@ -28,7 +28,6 @@ export const getProject = (slug: string) => async (dispatch: AppDispatch) => {
   if (slug !== 'all-projects') {
     dispatch({ type: REQUEST });
     const { info, name, slug: slug_, tags } = await fetchProject(slug);
-
     dispatch({
       type: RECEIVE,
       slug: slug_,
