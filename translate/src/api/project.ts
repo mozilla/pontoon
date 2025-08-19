@@ -14,5 +14,5 @@ export type Project = {
 };
 
 export async function fetchProject(slug: string): Promise<Project> {
-  return GET(`/api/v2/projects/${slug}`);
+  return await GET(`/api/v2/projects/${slug}`);
 }

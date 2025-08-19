@@ -77,8 +77,6 @@ export async function updateLocale(locale: Locale, code: string) {
     localizations: localizations,
   };
 
-  console.log(res);
-
   const next = res as Omit<Locale, 'cldrPlurals'> & {
     cldrPlurals: string;
   };
