@@ -125,10 +125,9 @@ def get_recipients(form):
 
     translations = Translation.objects.all()
     if form.cleaned_data.get("contributors"):
-        non_contributors = User.objects.filter(
-            pk__in=manager_ids
-        ) | User.objects.filter(pk__in=translator_ids)
-        recipients = User.objects.exclude(Q(pk__in=non_contributors) | Q(pk=-1))
+        recipients = User.objects.exclude(
+            Q(pk__in=manager_ids) | Q(pk__in=translator_ids) | Q(pk=-1)
+        )
 
     if form.cleaned_data.get("managers"):
         recipients = recipients | User.objects.filter(pk__in=manager_ids)
