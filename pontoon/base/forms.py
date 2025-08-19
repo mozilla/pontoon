@@ -418,7 +418,7 @@ class CreateTokenForm(forms.ModelForm):
 
         name = self.cleaned_data.get("name")
         if any(symbol in name for symbol in invalid_symbols):
-            raise ValidationError("Name cannot contain &, <, >, \", or '.")
+            raise ValidationError("Name cannot contain < or >.")
         if PersonalAccessToken.objects.filter(name=name, user=self.user).exists():
             raise ValidationError("You already have a token with this name.")
         return name
