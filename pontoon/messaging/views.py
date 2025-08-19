@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
@@ -104,8 +104,12 @@ def get_recipients(form):
     - Translators of selected Locales
     - Email/Notification opt-in status
     """
-    locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
-    project_ids = form.cleaned_data.get("projects")
+    locale_ids = Locale.objects.available().values_list("id", flat=True)
+    project_ids = Project.objects.available().values_list("id", flat=True)
+    if form.cleaned_data.get("locale_toggle"):
+        locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
+    if form.cleaned_data.get("project_toggle"):
+        project_ids = form.cleaned_data.get("projects")
 
     locales = Locale.objects.filter(pk__in=locale_ids)
     manager_ids = (
@@ -120,9 +124,10 @@ def get_recipients(form):
     )
 
     translations = Translation.objects.all()
-
     if form.cleaned_data.get("contributors"):
-        recipients = User.objects.exclude(pk=-1)
+        recipients = User.objects.exclude(
+            Q(pk__in=manager_ids) | Q(pk__in=translator_ids) | Q(pk=-1)
+        )
 
     if form.cleaned_data.get("managers"):
         recipients = recipients | User.objects.filter(pk__in=manager_ids)
