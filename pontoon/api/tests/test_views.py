@@ -45,7 +45,7 @@ def test_locale(django_assert_num_queries):
     translated_resource_a.unreviewed_strings = 5
     translated_resource_a.save()
 
-    with django_assert_num_queries(2):
+    with django_assert_num_queries(4):
         response = APIClient().get(
             f"/api/v2/locales/{locale_a.code}/", HTTP_ACCEPT="application/json"
         )
@@ -74,6 +74,22 @@ def test_locale(django_assert_num_queries):
         "unreviewed_strings": 5,
         "complete": False,
         "projects": ["terminology"],
+        "localizations": [
+            {
+                "terminology": {
+                    "approved_strings": 0,
+                    "complete": True,
+                    "locale": "kg",
+                    "missing_strings": 0,
+                    "pretranslated_strings": 0,
+                    "project_name": "Terminology",
+                    "strings_with_errors": 0,
+                    "strings_with_warnings": 0,
+                    "total_strings": 0,
+                    "unreviewed_strings": 0,
+                }
+            }
+        ],
     }
 
 

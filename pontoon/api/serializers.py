@@ -116,12 +116,31 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class ProjectLocaleSerializer(TranslationStatsMixin, serializers.ModelSerializer):
     locale = serializers.SlugRelatedField(read_only=True, slug_field="code")
+    project = serializers.SlugRelatedField(read_only=True, slug_field="slug")
 
     class Meta:
         model = ProjectLocale
         fields = [
             "locale",
+            "project",
         ] + TRANSLATION_STATS_FIELDS
+
+
+class CompactProjectLocaleSerializer(ProjectLocaleSerializer):
+    locale_name = serializers.SerializerMethodField()
+    project_name = serializers.SerializerMethodField()
+
+    class Meta(ProjectLocaleSerializer.Meta):
+        fields = ProjectLocaleSerializer.Meta.fields + [
+            "locale_name",
+            "project_name",
+        ]
+
+    def get_locale_name(self, obj):
+        return obj.locale.name if obj.locale else None
+
+    def get_project_name(self, obj):
+        return obj.project.name if obj.project else None
 
 
 class NestedProjectSerializer(TranslationStatsMixin, ProjectSerializer):
@@ -148,10 +167,12 @@ class NestedIndividualProjectSerializer(TranslationStatsMixin, ProjectSerializer
             return None
 
         project_locales = obj.project_locale.stats_data(project=obj)
-        serialized = ProjectLocaleSerializer(project_locales, many=True).data
+        serialized = CompactProjectLocaleSerializer(project_locales, many=True).data
 
         return {
-            item["locale"]: {k: v for k, v in item.items() if k != "locale"}
+            item["locale"]: {
+                k: v for k, v in item.items() if k not in ["locale", "project_name"]
+            }
             for item in serialized
         }
 
@@ -164,6 +185,35 @@ class NestedLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
 
     def get_projects(self, obj):
         return [pl.project.slug for pl in getattr(obj, "fetched_project_locales", [])]
+
+
+class NestedIndividualLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
+    projects = serializers.SerializerMethodField()
+    localizations = serializers.SerializerMethodField()
+
+    class Meta(LocaleSerializer.Meta):
+        fields = LocaleSerializer.Meta.fields + ["projects", "localizations"]
+
+    def get_projects(self, obj):
+        return [pl.project.slug for pl in getattr(obj, "fetched_project_locales", [])]
+
+    def get_localizations(self, obj):
+        request = self.context.get("request")
+        if not request:
+            return None
+
+        project_locales = obj.project_locale.stats_data(locale=obj)
+        project_locales_serialized = CompactProjectLocaleSerializer(
+            project_locales, many=True
+        ).data
+        return [
+            {
+                item["project"]: {
+                    k: v for k, v in item.items() if k not in ["project", "locale_name"]
+                }
+            }
+            for item in project_locales_serialized
+        ]
 
 
 class NestedProjectLocaleSerializer(ProjectLocaleSerializer):

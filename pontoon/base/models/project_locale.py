@@ -29,11 +29,20 @@ class ProjectLocaleQuerySet(models.QuerySet):
             project__system_project=False,
         ).distinct()
 
-    def stats_data(self, project):
-        query = self.filter(
-            locale__translatedresources__resource__project=project
-        ).prefetch_related("locale")
-        tr = "locale__translatedresources"
+    def stats_data(self, project=None, locale=None):
+        if project:
+            query = self.filter(
+                locale__translatedresources__resource__project=project
+            ).prefetch_related("locale")
+            tr = "locale__translatedresources"
+        elif locale:
+            query = self.filter(
+                project__resources__translatedresources__locale=locale,
+                project__resources__translatedresources__resource__project__disabled=False,
+                project__resources__translatedresources__resource__project__system_project=False,
+                project__resources__translatedresources__resource__project__visibility="public",
+            ).prefetch_related("project")
+            tr = "project__resources__translatedresources"
         return query.annotate(
             total=Sum(f"{tr}__total_strings", default=0),
             approved=Sum(f"{tr}__approved_strings", default=0),

@@ -52,13 +52,18 @@ export async function updateLocale(locale: Locale, code: string) {
   let res = await GET(`/api/v2/locales/${code}`);
 
   let localizations = [];
-  for (const project of res.projects) {
-    const localization = await GET(`/api/v2/${code}/${project}`);
+  for (const localization of res.localizations) {
+    // Each item is an object with one key
+    const [slug, object] = Object.entries(localization)[0] as [
+      string,
+      Record<string, unknown>,
+    ];
+
     localizations.push({
-      totalStrings: localization.total_strings,
-      approvedStrings: localization.approved_strings,
-      stringsWithWarnings: localization.strings_with_warnings,
-      project: { slug: project, name: localization.project.name },
+      totalStrings: object.total_strings,
+      approvedStrings: object.approved_strings,
+      stringsWithWarnings: object.strings_with_warnings,
+      project: { slug: slug, name: object.project_name },
     });
   }
 

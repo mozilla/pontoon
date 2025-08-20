@@ -27,6 +27,7 @@ from pontoon.terminology.models import (
 )
 
 from .serializers import (
+    NestedIndividualLocaleSerializer,
     NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
@@ -222,7 +223,7 @@ class LocaleListView(generics.ListAPIView):
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
-    serializer_class = NestedLocaleSerializer
+    serializer_class = NestedIndividualLocaleSerializer
     lookup_field = "code"
 
     def get_queryset(self):
