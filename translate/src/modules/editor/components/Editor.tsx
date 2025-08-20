@@ -6,6 +6,8 @@ import './Editor.css';
 import { EditorMenu } from './EditorMenu';
 import { NewContributorTooltip } from './NewContributorTooltip';
 import { MachinerySourceIndicator } from './MachinerySourceIndicator';
+import { FailedChecks } from './FailedChecks';
+import { FailedChecksProvider } from '~/context/FailedChecksData';
 
 export const Editor = () => (
   <div className='editor'>
@@ -13,5 +15,8 @@ export const Editor = () => (
     <TranslationForm />
     <MachinerySourceIndicator />
     <EditorMenu />
+    <FailedChecksProvider>
+      <FailedChecks />
+    </FailedChecksProvider>
   </div>
 );
