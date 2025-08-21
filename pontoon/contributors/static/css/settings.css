@@ -336,7 +336,7 @@
     }
 
     .token-card.created {
-      border: 2px solid var(--status-translated);
+      background: var(--dark-grey-2);
     }
   }
 
