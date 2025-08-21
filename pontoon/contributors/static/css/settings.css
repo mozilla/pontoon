@@ -246,56 +246,76 @@
       margin-bottom: 20px;
 
       .token-header {
-        font-size: 1.2rem;
-        font-weight: 300;
-        margin-bottom: 0px;
-        text-align: left;
         display: flex;
         justify-content: space-between;
+        margin-bottom: 20px;
 
-        .delete-btn {
-          background: var(--button-background-2);
-          width: 33px;
-          height: 33px;
+        .token-name {
           font-size: 18px;
+          font-weight: bold;
+          padding-top: 3px;
         }
 
-        .delete-btn:hover {
-          background: var(--status-error);
+        .right {
+          display: flex;
+
+          .status {
+            border: 1px solid var(--main-border-1);
+            border-radius: 3px;
+            margin-right: 10px;
+            padding: 7px;
+            text-align: left;
+            width: 120px;
+
+            .icon {
+              padding-right: 2px;
+            }
+          }
+
+          .status.active {
+            .icon, .value {
+              color: var(--status-translated);
+            }
+          }
+
+          .status.expired {
+            .icon, .value {
+              color: var(--status-warning);
+            }
+          }
+
+          .status.revoked {
+            .icon, .value {
+              color: var(--status-error);
+            }
+          }
+
+          .delete-btn {
+            background: var(--button-background-2);
+            width: 33px;
+            height: 33px;
+            font-size: 18px;
+          }
+
+          .delete-btn:hover {
+            background: var(--status-error);
+          }
         }
       }
 
       .token-info-container {
         display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        flex-wrap: wrap;
-        row-gap: 4px;
-        column-gap: 40px;
+        justify-content: space-between;
 
         .token-info {
-          display: flex;
-          align-items: center;
-          width: 220px;
-          gap: 6px;
           color: var(--light-grey-7);
-          margin: 5px 0;
+
+          .icon {
+            padding-right: 2px;
+          }
 
           .date {
             color: var(--white-1);
-            margin-left: auto;
-          }
-
-          .active {
-            color: var(--status-translated);
-          }
-
-          .warning {
-            color: var(--status-warning);
-          }
-
-          .revoked {
-            color: var(--status-error);
           }
         }
       }
@@ -315,6 +335,7 @@
           border-radius: 3px 0 0 3px;
           box-sizing: border-box;
           margin-bottom: 0px;
+          padding-left: 6px;
         }
 
         .copy-btn {
@@ -342,7 +363,7 @@
     .token-card.created {
       background: var(--dark-grey-2);
 
-      .delete-btn {
+      .token-header .delete-btn {
         background: var(--button-background-1);
       }
     }
@@ -364,15 +385,15 @@
       font-weight: 400;
       color: var(--black-3);
       font-size: 14px;
-      padding: 6px;
+      padding: 6px 12px;
       text-align: center;
       text-transform: uppercase;
-      -moz-box-sizing: border-box;
       box-sizing: border-box;
     }
 
     .generate-token-btn:disabled {
-      background: var(--light-grey-2);
+      background: var(--button-background-1);
+      color: var(--light-grey-7);
       cursor: not-allowed;
     }
   }
