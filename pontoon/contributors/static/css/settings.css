@@ -229,157 +229,148 @@
 /* hide personal access token implementation temporarily */
 #pat-settings {
   display: none;
-}
 
-.pat-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+  .pat-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 
-.token-card {
-  background-color: var(--input-background-1);
-  padding: 15px;
-  border-radius: 3px;
-  max-width: 620px;
-  display: flex;
-  flex-direction: column;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
+    .token-card {
+      background-color: var(--input-background-1);
+      padding: 15px;
+      border-radius: 3px;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+      margin-bottom: 20px;
 
-.created {
-  border: 2px solid var(--status-translated);
-}
+      .token-header {
+        font-size: 1.2rem;
+        font-weight: 300;
+        margin-bottom: 0px;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
 
-.token-card .token-header {
-  font-size: 1.2rem;
-  font-weight: 300;
-  margin-bottom: 0px;
-  text-align: left;
-  display: flex;
-  justify-content: space-between;
-}
+        .delete-btn {
+          align-self: center;
+          width: 33px;
+          height: 33px;
+          font-size: 18px;
+        }
+      }
 
-.token-card .token-info-container {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-wrap: wrap;
-  row-gap: 4px;
-  column-gap: 40px;
-}
+      .token-info-container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        row-gap: 4px;
+        column-gap: 40px;
 
-.token-card .token-info {
-  display: flex;
-  align-items: center;
-  width: 220px;
-  gap: 6px;
-  color: var(--light-grey-7);
-  margin: 5px 0;
-}
+        .token-info {
+          display: flex;
+          align-items: center;
+          width: 220px;
+          gap: 6px;
+          color: var(--light-grey-7);
+          margin: 5px 0;
 
-.token-card .date {
-  color: var(--white-1);
-  margin-left: auto;
-}
+          .date {
+            color: var(--white-1);
+            margin-left: auto;
+          }
 
-.token-card .active {
-  color: var(--status-translated);
-}
+          .active {
+            color: var(--status-translated);
+          }
 
-.token-card .warning {
-  color: var(--status-warning);
-}
+          .warning {
+            color: var(--status-warning);
+          }
 
-.token-card .revoked {
-  color: var(--status-error);
-}
+          .revoked {
+            color: var(--status-error);
+          }
+        }
+      }
 
-.token-card .delete-btn {
-  align-self: center;
-  width: 33px;
-  height: 33px;
-  font-size: 18px;
-}
+      .token-details {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
 
-.token-card input[type='checkbox'] {
-  display: none;
-}
+        .token-value {
+          color: var(--white-1);
+          font-size: 16px;
+          text-align: left;
+          height: 33px;
+          width: 100%;
+          background-color: var(--black-3);
+          border-radius: 3px 0 0 3px;
+          box-sizing: border-box;
+          margin-bottom: 0px;
+        }
 
-.generate-token {
-  display: flex;
-  justify-content: right;
-}
+        .copy-btn {
+          align-self: center;
+          width: 33px;
+          height: 33px;
+          font-size: 18px;
+          border-radius: 0 3px 3px 0;
+          border-left: none;
+          border-right: 1px solid #4d5967;
+          border-bottom: 1px solid #4d5967;
+          border-top: 1px solid #4d5967;
+        }
+      }
 
-input.token-name-input {
-  flex-grow: 1;
-  margin-right: 10px;
-}
+      .copy-message {
+        font-size: 14px;
+        color: var(--light-grey-2);
+        font-style: italic;
+        text-align: left;
+        margin: 5px 0 0 0px;
+      }
+    }
 
-.generate-token-btn {
-  background: var(--status-translated);
-  border: none;
-  border-radius: 3px;
-  font-weight: 400;
-  color: var(--black-3);
-  font-size: 14px;
-  padding: 6px;
-  text-align: center;
-  text-transform: uppercase;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
+    .token-card.created {
+      border: 2px solid var(--status-translated);
+    }
+  }
 
-.generate-token-btn:disabled {
-  background: var(--light-grey-2);
-  cursor: not-allowed;
-}
+  .generate-token {
+    display: flex;
+    justify-content: right;
 
-.token-details {
-  display: flex;
-  align-items: center;
-  margin-top: 15px;
-}
+    .token-name-input {
+      flex-grow: 1;
+      margin-right: 10px;
+    }
 
-input.token-value {
-  color: var(--white-1);
-  font-size: 16px;
-  text-align: left;
-  height: 33px;
-  width: 100%;
-  background-color: var(--black-3);
-  border-radius: 3px 0 0 3px;
-  box-sizing: border-box;
-  margin-bottom: 0px;
-}
+    .generate-token-btn {
+      background: var(--status-translated);
+      border: none;
+      border-radius: 3px;
+      font-weight: 400;
+      color: var(--black-3);
+      font-size: 14px;
+      padding: 6px;
+      text-align: center;
+      text-transform: uppercase;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
 
-.token-card button.copy-btn {
-  align-self: center;
-  width: 33px;
-  height: 33px;
-  font-size: 18px;
-  border-radius: 0 3px 3px 0;
-  border-left: none;
-  border-right: 1px solid #4d5967;
-  border-bottom: 1px solid #4d5967;
-  border-top: 1px solid #4d5967;
-}
+    .generate-token-btn:disabled {
+      background: var(--light-grey-2);
+      cursor: not-allowed;
+    }
+  }
 
-.clipboard-success {
-  float: left;
-  color: var(--status-translated);
-}
-
-p.copy-message {
-  font-size: 14px;
-  color: var(--light-grey-2);
-  font-style: italic;
-  text-align: left;
-  margin: 5px 0 0 0px;
-}
-
-.error-message {
-  color: var(--status-error);
-  font-style: italic;
+  .error-message {
+    color: var(--status-error);
+    font-style: italic;
+  }
 }
