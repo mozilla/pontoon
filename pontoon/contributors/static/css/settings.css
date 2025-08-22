@@ -273,19 +273,22 @@
           }
 
           .status.active {
-            .icon, .value {
+            .icon,
+            .value {
               color: var(--status-translated);
             }
           }
 
           .status.expired {
-            .icon, .value {
+            .icon,
+            .value {
               color: var(--status-warning);
             }
           }
 
           .status.revoked {
-            .icon, .value {
+            .icon,
+            .value {
               color: var(--status-error);
             }
           }
