@@ -38,9 +38,9 @@ class ProjectLocaleQuerySet(models.QuerySet):
         elif locale:
             query = self.filter(
                 project__resources__translatedresources__locale=locale,
-                project__resources__translatedresources__resource__project__disabled=False,
-                project__resources__translatedresources__resource__project__system_project=False,
-                project__resources__translatedresources__resource__project__visibility="public",
+                project__disabled=False,
+                project__system_project=False,
+                project__visibility="public",
             ).prefetch_related("project")
             tr = "project__resources__translatedresources"
         return query.annotate(
