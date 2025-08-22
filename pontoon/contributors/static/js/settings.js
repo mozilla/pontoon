@@ -112,7 +112,7 @@ $(function () {
     });
   });
 
-  $(document).on('click', '.delete-btn', function (e) {
+  $('pat-list').on('click', '.delete-btn', function (e) {
     e.preventDefault();
 
     const tokenId = $(this).data('token-id');
