@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 import { GET } from '~/api/utils/base';
+import { keysToCamelCase } from '~/api/utils/keysToCamelCase';
 
 export type Localization = Readonly<{
   project: Readonly<{ slug: string; name: string }>;
@@ -49,41 +50,16 @@ export async function updateLocale(locale: Locale, code: string) {
   const { set } = locale;
   set({ ...locale, fetching: true });
 
-  const query = `{
-    locale(code: "${code}") {
-      code
-      name
-      cldrPlurals
-      pluralRule
-      direction
-      script
-      teamDescription
-      googleTranslateCode
-      msTranslatorCode
-      systranTranslateCode
-      msTerminologyCode
-      localizations {
-        totalStrings
-        approvedStrings
-        stringsWithWarnings
-        project {
-          slug
-          name
-        }
-      }
-    }
-  }`;
+  let res = await GET(`/api/v2/locales/${code}`);
 
-  const search = new URLSearchParams({ query });
-  const res = await GET('/graphql', search);
+  res = keysToCamelCase(res);
 
-  const next = res.data.locale as Omit<Locale, 'cldrPlurals'> & {
+  const next = res as Omit<Locale, 'cldrPlurals'> & {
     cldrPlurals: string;
   };
   const cldrPlurals = next.cldrPlurals
     .split(',')
     .map((i: string) => parseInt(i, 10));
-  const direction = next.direction.toLowerCase();
 
-  set({ ...next, cldrPlurals, direction, fetching: false, set });
+  set({ ...next, cldrPlurals, fetching: false, set });
 }
