@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 import { GET } from '~/api/utils/base';
+import { keysToCamelCase } from '~/api/utils/keysToCamelCase';
 
 export type Localization = Readonly<{
   project: Readonly<{ slug: string; name: string }>;
@@ -51,36 +52,7 @@ export async function updateLocale(locale: Locale, code: string) {
 
   let res = await GET(`/api/v2/locales/${code}`);
 
-  let localizations = [];
-  for (const localization of res.localizations) {
-    // Each item is an object with one key
-    const [slug, object] = Object.entries(localization)[0] as [
-      string,
-      Record<string, unknown>,
-    ];
-
-    localizations.push({
-      totalStrings: object.total_strings,
-      approvedStrings: object.approved_strings,
-      stringsWithWarnings: object.strings_with_warnings,
-      project: { slug: slug, name: object.project_name },
-    });
-  }
-
-  res = {
-    code: res.code,
-    name: res.name,
-    cldrPlurals: res.cldr_plurals,
-    pluralRule: res.plural_rule,
-    direction: res.direction.toUpperCase(),
-    script: res.script,
-    teamDescription: res.team_description,
-    googleTranslateCode: res.google_translate_code,
-    msTranslatorCode: res.ms_translator_code,
-    systranTranslateCode: res.systran_translate_code,
-    msTerminologyCode: res.ms_terminology_code,
-    localizations: localizations,
-  };
+  res = keysToCamelCase(res);
 
   const next = res as Omit<Locale, 'cldrPlurals'> & {
     cldrPlurals: string;
@@ -88,7 +60,6 @@ export async function updateLocale(locale: Locale, code: string) {
   const cldrPlurals = next.cldrPlurals
     .split(',')
     .map((i: string) => parseInt(i, 10));
-  const direction = next.direction.toLowerCase();
 
-  set({ ...next, cldrPlurals, direction, fetching: false, set });
+  set({ ...next, cldrPlurals, fetching: false, set });
 }

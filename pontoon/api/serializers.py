@@ -114,9 +114,27 @@ class ProjectSerializer(serializers.ModelSerializer):
         return None
 
 
+class CompactProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = [
+            "slug",
+            "name",
+        ]
+
+
+class CompactLocaleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Locale
+        fields = [
+            "code",
+            "name",
+        ]
+
+
 class ProjectLocaleSerializer(TranslationStatsMixin, serializers.ModelSerializer):
-    locale = serializers.SlugRelatedField(read_only=True, slug_field="code")
-    project = serializers.SlugRelatedField(read_only=True, slug_field="slug")
+    locale = CompactLocaleSerializer(read_only=True)
+    project = CompactProjectSerializer(read_only=True)
 
     class Meta:
         model = ProjectLocale
@@ -124,23 +142,6 @@ class ProjectLocaleSerializer(TranslationStatsMixin, serializers.ModelSerializer
             "locale",
             "project",
         ] + TRANSLATION_STATS_FIELDS
-
-
-class CompactProjectLocaleSerializer(ProjectLocaleSerializer):
-    locale_name = serializers.SerializerMethodField()
-    project_name = serializers.SerializerMethodField()
-
-    class Meta(ProjectLocaleSerializer.Meta):
-        fields = ProjectLocaleSerializer.Meta.fields + [
-            "locale_name",
-            "project_name",
-        ]
-
-    def get_locale_name(self, obj):
-        return obj.locale.name if obj.locale else None
-
-    def get_project_name(self, obj):
-        return obj.project.name if obj.project else None
 
 
 class NestedProjectSerializer(TranslationStatsMixin, ProjectSerializer):
@@ -167,14 +168,10 @@ class NestedIndividualProjectSerializer(TranslationStatsMixin, ProjectSerializer
             return None
 
         project_locales = obj.project_locale.stats_data(project=obj)
-        serialized = CompactProjectLocaleSerializer(project_locales, many=True).data
-
-        return {
-            item["locale"]: {
-                k: v for k, v in item.items() if k not in ["locale", "project_name"]
-            }
-            for item in serialized
-        }
+        serialized = ProjectLocaleSerializer(project_locales, many=True).data
+        return [
+            {k: v for k, v in item.items() if k != "project"} for item in serialized
+        ]
 
 
 class NestedLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
@@ -203,17 +200,8 @@ class NestedIndividualLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
             return None
 
         project_locales = obj.project_locale.stats_data(locale=obj)
-        project_locales_serialized = CompactProjectLocaleSerializer(
-            project_locales, many=True
-        ).data
-        return [
-            {
-                item["project"]: {
-                    k: v for k, v in item.items() if k not in ["project", "locale_name"]
-                }
-            }
-            for item in project_locales_serialized
-        ]
+        serialized = ProjectLocaleSerializer(project_locales, many=True).data
+        return [{k: v for k, v in item.items() if k != "locale"} for item in serialized]
 
 
 class NestedProjectLocaleSerializer(ProjectLocaleSerializer):

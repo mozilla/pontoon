@@ -24,26 +24,27 @@ def test_locale(django_assert_num_queries):
         code="kg",
         name="Klingon",
     )
-    project_a = ProjectFactory(
-        slug="project_a",
-        name="Project A",
-        repositories=[],
-    )
-    resource_a = ResourceFactory(project=project_a, path="resource_a.po", format="po")
+    project_terminology = Project.objects.get(slug="terminology")
 
-    translated_resource_a = TranslatedResourceFactory.create(
-        locale=locale_a,
-        resource=resource_a,
+    resource = ResourceFactory.create(
+        project=project_terminology,
+        path=f"resource_{project_terminology.slug}_1.po",
+        format="po",
     )
 
-    translated_resource_a.total_strings = 25
-    translated_resource_a.approved_strings = 15
-    translated_resource_a.pretranslated_strings = 0
-    translated_resource_a.strings_with_errors = 3
-    translated_resource_a.strings_with_warnings = 2
-    translated_resource_a.missing_strings = 5
-    translated_resource_a.unreviewed_strings = 5
-    translated_resource_a.save()
+    # append extra TranslatedResource to simulate multiple Translated Resources per project
+    translated_resource = TranslatedResourceFactory.create(
+        locale=locale_a, resource=resource
+    )
+
+    translated_resource.total_strings = 25
+    translated_resource.approved_strings = 15
+    translated_resource.pretranslated_strings = 0
+    translated_resource.strings_with_errors = 3
+    translated_resource.strings_with_warnings = 2
+    translated_resource.missing_strings = 5
+    translated_resource.unreviewed_strings = 5
+    translated_resource.save()
 
     with django_assert_num_queries(4):
         response = APIClient().get(
@@ -51,6 +52,8 @@ def test_locale(django_assert_num_queries):
         )
 
     assert response.status_code == 200
+
+    localizations = response.data.pop("localizations", None)
 
     assert response.data == {
         "code": "kg",
@@ -74,23 +77,22 @@ def test_locale(django_assert_num_queries):
         "unreviewed_strings": 5,
         "complete": False,
         "projects": ["terminology"],
-        "localizations": [
-            {
-                "terminology": {
-                    "approved_strings": 0,
-                    "complete": True,
-                    "locale": "kg",
-                    "missing_strings": 0,
-                    "pretranslated_strings": 0,
-                    "project_name": "Terminology",
-                    "strings_with_errors": 0,
-                    "strings_with_warnings": 0,
-                    "total_strings": 0,
-                    "unreviewed_strings": 0,
-                }
-            }
-        ],
     }
+
+    assert {
+        "project": {
+            "slug": "terminology",
+            "name": "Terminology",
+        },
+        "total_strings": 25,
+        "approved_strings": 15,
+        "pretranslated_strings": 0,
+        "strings_with_warnings": 2,
+        "strings_with_errors": 3,
+        "missing_strings": 5,
+        "unreviewed_strings": 5,
+        "complete": False,
+    } in localizations
 
 
 @pytest.mark.django_db
@@ -194,49 +196,74 @@ def test_locales(django_assert_num_queries):
 
 @pytest.mark.django_db
 def test_project(django_assert_num_queries):
+    locale_af = Locale.objects.get(code="af")
     locale_a = LocaleFactory(
         code="kg",
         name="Klingon",
     )
-    project_a = ProjectFactory(
-        slug="project_a",
-        name="Project A",
-        repositories=[],
-    )
-    resource_a = ResourceFactory(project=project_a, path="resource_a.po", format="po")
+    project = Project.objects.get(slug="terminology")
+    # append extra Resource to simulate multiple resource per project
+    resources = [
+        ResourceFactory.create(
+            project=project, path=f"resource_{project.slug}_1.po", format="po"
+        ),
+        ResourceFactory.create(
+            project=project, path=f"resource_{project.slug}_2.po", format="po"
+        ),
+    ]
 
-    translated_resource_a = TranslatedResourceFactory.create(
-        locale=locale_a,
-        resource=resource_a,
-    )
+    # append extra TranslatedResource to simulate multiple Translated Resources per project
+    translated_resources = [
+        TranslatedResourceFactory.create(locale=locale_af, resource=resources[0]),
+        TranslatedResourceFactory.create(locale=locale_a, resource=resources[1]),
+    ]
 
-    translated_resource_a.total_strings = 25
-    translated_resource_a.approved_strings = 15
-    translated_resource_a.pretranslated_strings = 0
-    translated_resource_a.strings_with_errors = 3
-    translated_resource_a.strings_with_warnings = 2
-    translated_resource_a.missing_strings = 5
-    translated_resource_a.unreviewed_strings = 5
-    translated_resource_a.save()
+    for translated_resource in translated_resources:
+        translated_resource.total_strings = 25
+        translated_resource.approved_strings = 15
+        translated_resource.pretranslated_strings = 0
+        translated_resource.strings_with_errors = 3
+        translated_resource.strings_with_warnings = 2
+        translated_resource.missing_strings = 5
+        translated_resource.unreviewed_strings = 5
+        translated_resource.save()
 
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(5):
         response = APIClient().get(
-            f"/api/v2/projects/{project_a.slug}/", HTTP_ACCEPT="application/json"
+            f"/api/v2/projects/{project.slug}/", HTTP_ACCEPT="application/json"
         )
 
     assert response.status_code == 200
+
+    localizations = response.data.pop("localizations", None)
     assert response.data == {
-        "slug": "project_a",
-        "name": "Project A",
+        "slug": "terminology",
+        "name": "Terminology",
         "priority": 1,
         "deadline": None,
         "visibility": "public",
         "contact": None,
-        "info": "",
+        "info": "A project used to localize terminology.",
         "system_project": False,
         "disabled": False,
-        "sync_disabled": False,
+        "sync_disabled": True,
         "pretranslation_enabled": False,
+        "total_strings": 50,
+        "approved_strings": 30,
+        "pretranslated_strings": 0,
+        "strings_with_warnings": 4,
+        "strings_with_errors": 6,
+        "missing_strings": 10,
+        "unreviewed_strings": 10,
+        "complete": False,
+        "tags": [],
+    }
+
+    assert {
+        "locale": {
+            "code": "kg",
+            "name": "Klingon",
+        },
         "total_strings": 25,
         "approved_strings": 15,
         "pretranslated_strings": 0,
@@ -245,9 +272,22 @@ def test_project(django_assert_num_queries):
         "missing_strings": 5,
         "unreviewed_strings": 5,
         "complete": False,
-        "tags": [],
-        "localizations": {},
-    }
+    } in localizations
+
+    assert {
+        "locale": {
+            "code": "af",
+            "name": "Afrikaans",
+        },
+        "total_strings": 25,
+        "approved_strings": 15,
+        "pretranslated_strings": 0,
+        "strings_with_warnings": 2,
+        "strings_with_errors": 3,
+        "missing_strings": 5,
+        "unreviewed_strings": 5,
+        "complete": False,
+    } in localizations
 
 
 @pytest.mark.django_db
