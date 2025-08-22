@@ -75,7 +75,7 @@ $(function () {
                   <span class="title">Status:</span>
                   <span class="value">Active</span>
                 </div>
-                <button class="button delete-btn far fa-trash-alt" tabindex="-1" data-token-id="${response.data['new_token_id']}"></button>
+                <button type="button" class="button delete-btn far fa-trash-alt" tabindex="-1" data-token-id="${response.data['new_token_id']}"></button>
               </div>
             </div>
             <div class="token-info-container">
@@ -87,7 +87,7 @@ $(function () {
             </div>
             <div class="token-details">
               <input class="token-value" type="text" value="${response.data['new_token_secret']}" readonly></input>
-              <button class="button copy-btn far fa-copy" tabindex="-1" data-clipboard-text="${response.data['new_token_secret']}" ></button>
+              <button type="button" class="button copy-btn far fa-copy" tabindex="-1" data-clipboard-text="${response.data['new_token_secret']}" ></button>
             </div>
             <p class="copy-message">Make sure to copy your personal access token now as you will not be able to see it again.</p>
         </li>
@@ -112,7 +112,7 @@ $(function () {
     });
   });
 
-  $('pat-list').on('click', '.delete-btn', function (e) {
+  $(document).on('click', '.delete-btn', function (e) {
     e.preventDefault();
 
     const tokenId = $(this).data('token-id');
