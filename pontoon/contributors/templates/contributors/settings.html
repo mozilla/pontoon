@@ -6,7 +6,6 @@
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'teams/widgets/team_selector.html' as team_selector %}
 
-
 {% block title %}Settings{% endblock %}
 
 {% block heading %}
@@ -303,12 +302,68 @@
 
         <section>
             <h3>Preferred locales to get suggestions from</h3>
-            {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order',
-            sortable=True) }}
+            <div>
+                {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order',
+                sortable=True) }}
+            </div>
+        </section>
+
+        <section id="pat-settings">
+            <h3>Personal Access Tokens</h3>
+            <ul class="pat-list">
+                {% for token in personal_access_tokens %}
+                {% set status = 'Active' %}
+                {% set status_icon = 'fa-check-circle' %}
+                {% if token.revoked %}
+                    {% set status = 'Revoked' %}
+                    {% set status_icon = 'fa-ban' %}
+                {% elif token.expires_at < now %}
+                    {% set status = 'Expired' %}
+                    {% set status_icon = 'fa-exclamation-triangle' %}
+                {% endif %}
+                <li class="token-card controls clearfix" data-token-id="{{ token.id }}">
+                    <div class="token-header">
+                        <span class="token-name">{{ token.name }}</span>
+                        <div class="right">
+                            <div class="status {{ status | lower }}">
+                                <span class="icon fas {{ status_icon }}"></span>
+                                <span class="title">Status:</span>
+                                <span class="value">{{ status }}</span>
+                            </div>
+                            <button type="button" class="button delete-btn far fa-trash-alt" tabindex="-1" data-token-id="{{ token.id }}"></button>
+                        </div>
+                    </div>
+                    <div class="token-info-container">
+                        <div class="token-info">
+                            {% if token.expires_at < now %}
+                                <span class="icon fas fa-calendar-alt"></span>
+                                <span>Expired on:</span>
+                                <span class="date warning">{{ token.expires_at|date("F, d, Y") }}</span>
+                            {% else %}
+                                <span class="icon fas fa-calendar-alt"></span>
+                                <span>Expires on:</span>
+                                <span class="date">{{ token.expires_at|date("F, d, Y") }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="token-info">
+                            <span class="icon fas fa-calendar-alt"></span>
+                            <span>Last used:</span>
+                            <span class="date">
+                                {{ token.last_used|date("F, d, Y") if token.last_used is not none else "Never" }}
+                            </span>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="generate-token controls field">
+                <input class="token-name-input" type="text" placeholder="Enter token name"/>
+                <button class="generate-token-btn" disabled>Generate Token</button>
+            </div>
+            <div class="error-message"></div>
         </section>
 
         <div class="controls">
-            <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
             <button class="submit button active">Save</button>
         </div>
     </form>
