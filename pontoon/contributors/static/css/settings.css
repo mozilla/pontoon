@@ -228,7 +228,7 @@
 
 /* hide personal access token implementation temporarily */
 #pat-settings {
-  display: block;
+  display: none;
 
   .pat-list {
     list-style: none;
