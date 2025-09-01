@@ -26,6 +26,7 @@ from pontoon.terminology.models import (
 )
 
 from .serializers import (
+    NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
     NestedProjectSerializer,
@@ -265,7 +266,7 @@ class ProjectListView(generics.ListAPIView):
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
-    serializer_class = NestedProjectSerializer
+    serializer_class = NestedIndividualProjectSerializer
     lookup_field = "slug"
 
     def get_queryset(self):

@@ -203,7 +203,7 @@ def test_project(django_assert_num_queries):
     translated_resource_a.unreviewed_strings = 5
     translated_resource_a.save()
 
-    with django_assert_num_queries(3):
+    with django_assert_num_queries(4):
         response = APIClient().get(
             f"/api/v2/projects/{project_a.slug}/", HTTP_ACCEPT="application/json"
         )
@@ -230,7 +230,7 @@ def test_project(django_assert_num_queries):
         "unreviewed_strings": 5,
         "complete": False,
         "tags": [],
-        "locales": [],
+        "localizations": {},
     }
 
 
