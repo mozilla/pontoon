@@ -1,21 +1,10 @@
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.serializer import serialize_expression
 
+from pontoon.base.models import Resource
+
 
 parser = FluentParser()
-
-
-def get_default_variant(variants):
-    """Return default variant from the list of variants."""
-    for variant in variants:
-        if variant.default:
-            return variant
-
-
-def get_variant_key(variant):
-    """Return the key of the variant as represented in the syntax."""
-    key = variant.key
-    return key.value if isinstance(key, ast.NumberLiteral) else key.name
 
 
 def serialize_value(value):
@@ -32,7 +21,11 @@ def serialize_value(value):
 
         elif isinstance(element, ast.Placeable):
             if isinstance(element.expression, ast.SelectExpression):
-                default_variant = get_default_variant(element.expression.variants)
+                default_variant = next(
+                    variant
+                    for variant in element.expression.variants
+                    if variant.default
+                )
                 response += serialize_value(default_variant.value)
             else:
                 response += "{ " + serialize_expression(element.expression) + " }"
@@ -40,7 +33,7 @@ def serialize_value(value):
     return response
 
 
-def get_simple_preview(content):
+def get_simple_preview(format: str, string: str):
     """
     Return content without modifications if it isn't a valid Fluent message.
 
@@ -48,11 +41,14 @@ def get_simple_preview(content):
     most pertinent content that can be found in the message, without the ID, attributes
     or selectors.
     """
-    translation_ast = parser.parse_entry(content)
+    if format != Resource.Format.FLUENT:
+        return string
+
+    translation_ast = parser.parse_entry(string)
 
     # Non-FTL string or string with an error
     if isinstance(translation_ast, ast.Junk):
-        return content
+        return string
 
     # Value: use entire AST
     if translation_ast.value:
@@ -64,16 +60,3 @@ def get_simple_preview(content):
         tree = translation_ast.attributes[0]
 
     return serialize_value(tree.value)
-
-
-def is_plural_expression(expression):
-    from pontoon.base.models import Locale
-
-    if isinstance(expression, ast.SelectExpression):
-        return all(
-            isinstance(variant.key, ast.NumberLiteral)
-            or variant.key.name in Locale.CLDR_PLURALS
-            for variant in expression.variants
-        )
-
-    return False

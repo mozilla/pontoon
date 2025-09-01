@@ -8,14 +8,13 @@ from django.utils import timezone
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
-from pontoon.base.fluent import get_simple_preview
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
-from pontoon.base.models.resource import Resource
 from pontoon.base.models.user import User
+from pontoon.base.simple_preview import get_simple_preview
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 
@@ -237,21 +236,11 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     @property
     def tm_source(self):
-        source = self.entity.string
-
-        if self.entity.resource.format == Resource.Format.FLUENT:
-            return get_simple_preview(source)
-
-        return source
+        return get_simple_preview(self.entity.resource.format, self.entity.string)
 
     @property
     def tm_target(self):
-        target = self.string
-
-        if self.entity.resource.format == Resource.Format.FLUENT:
-            return get_simple_preview(target)
-
-        return target
+        return get_simple_preview(self.entity.resource.format, self.string)
 
     def __str__(self):
         return self.string
