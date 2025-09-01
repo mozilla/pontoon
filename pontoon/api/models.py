@@ -4,7 +4,7 @@ from pontoon.base.models.user import User
 
 
 class PersonalAccessToken(models.Model):
-    token_hash = models.CharField(max_length=128)  # SHA-256
+    token_hash = models.CharField(max_length=128)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="personal_access_tokens"
     )
