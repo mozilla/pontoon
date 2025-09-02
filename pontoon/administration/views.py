@@ -42,7 +42,9 @@ def admin(request):
         raise PermissionDenied
 
     projects = Project.objects.prefetch_related(
-        "latest_translation__user", "latest_translation__approved_user"
+        "latest_translation__entity__resource",
+        "latest_translation__user",
+        "latest_translation__approved_user",
     ).order_by("name")
 
     enabled_projects = projects.filter(disabled=False)

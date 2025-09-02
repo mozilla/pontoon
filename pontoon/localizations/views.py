@@ -82,7 +82,10 @@ def ajax_resources(request, code, slug):
         )
         .order_by("resource__path")
         .prefetch_related(
-            "resource", "latest_translation__user", "latest_translation__approved_user"
+            "resource",
+            "latest_translation__entity__resource",
+            "latest_translation__user",
+            "latest_translation__approved_user",
         )
         .distinct()
     )

@@ -24,7 +24,7 @@ from django.utils.html import escape
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
 
-from pontoon.base.fluent import get_simple_preview
+from pontoon.base.simple_preview import get_simple_preview
 
 
 register = template.Library()
@@ -262,13 +262,13 @@ def dict_html_attrs(dict_obj):
 
 
 @library.filter
-def as_plain_message(source):
+def as_plain_message(translation):
     """
     Return a plain string representation of a given message.
 
     Complex FTL strings are transformed into single-value strings.
     """
-    return get_simple_preview(source)
+    return get_simple_preview(translation.entity.resource.format, translation.string)
 
 
 @library.filter

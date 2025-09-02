@@ -58,7 +58,9 @@ log = logging.getLogger(__name__)
 def teams(request):
     """List all active localization teams."""
     locales = Locale.objects.available().prefetch_related(
-        "latest_translation__user", "latest_translation__approved_user"
+        "latest_translation__entity__resource",
+        "latest_translation__user",
+        "latest_translation__approved_user",
     )
 
     form = LocaleRequestForm()
@@ -126,6 +128,7 @@ def ajax_projects(request, locale):
             ),
         )
         .select_related("user", "approved_user")
+        .prefetch_related("entity__resource")
         .annotate(project_id=F("entity__resource__project__id"))
     }
 
