@@ -283,7 +283,6 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
-    queryset = ProjectLocale.objects.all().prefetch_related("project", "locale")
     serializer_class = NestedProjectLocaleSerializer
 
     def get_object(self):
