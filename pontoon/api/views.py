@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -127,6 +128,8 @@ def get_user_actions(request, date, slug):
 
 
 class UserActionsView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, date, slug):
         try:
             start_date = make_aware(datetime.strptime(date, "%Y-%m-%d"))
