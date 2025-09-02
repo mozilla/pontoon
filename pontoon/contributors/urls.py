@@ -110,4 +110,16 @@ urlpatterns = [
         views.toggle_active_user_status,
         name="pontoon.contributors.toggle_active_user_status",
     ),
+    # AJAX: Generate a new personal access token
+    path(
+        "generate-token/",
+        views.generate_token,
+        name="pontoon.contributors.generate_token",
+    ),
+    # AJAX: Delete a personal access token
+    path(
+        "delete-token/<int:token_id>/",
+        views.delete_token,
+        name="pontoon.contributors.delete_token",
+    ),
 ]

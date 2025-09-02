@@ -225,3 +225,184 @@
 #notification-email-frequency {
   margin-top: 20px;
 }
+
+/* hide personal access token implementation temporarily */
+#pat-settings {
+  display: none;
+
+  .pat-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    .token-card {
+      background-color: var(--input-background-1);
+      padding: 15px;
+      border-radius: 3px;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+      margin-bottom: 20px;
+
+      .token-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        .token-name {
+          font-size: 18px;
+          font-weight: bold;
+          padding-top: 3px;
+        }
+
+        .right {
+          display: flex;
+
+          .status {
+            border: 1px solid var(--main-border-1);
+            border-radius: 3px;
+            margin-right: 10px;
+            padding: 7px;
+            text-align: left;
+            width: 120px;
+
+            .icon {
+              padding-right: 2px;
+            }
+          }
+
+          .status.active {
+            .icon,
+            .value {
+              color: var(--status-translated);
+            }
+          }
+
+          .status.expired {
+            .icon,
+            .value {
+              color: var(--status-warning);
+            }
+          }
+
+          .status.revoked {
+            .icon,
+            .value {
+              color: var(--status-error);
+            }
+          }
+
+          .delete-btn {
+            background: var(--button-background-2);
+            width: 33px;
+            height: 33px;
+            font-size: 18px;
+          }
+
+          .delete-btn:hover {
+            background: var(--status-error);
+          }
+        }
+      }
+
+      .token-info-container {
+        display: flex;
+        justify-content: space-between;
+
+        .token-info {
+          color: var(--light-grey-7);
+
+          .icon {
+            padding-right: 2px;
+          }
+
+          .date {
+            color: var(--white-1);
+          }
+        }
+      }
+
+      .token-details {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+
+        .token-value {
+          color: var(--white-1);
+          font-size: 16px;
+          text-align: left;
+          height: 33px;
+          width: 100%;
+          background-color: var(--black-3);
+          border-radius: 3px 0 0 3px;
+          box-sizing: border-box;
+          margin-bottom: 0px;
+          padding-left: 6px;
+        }
+
+        .copy-btn {
+          align-self: center;
+          width: 33px;
+          height: 33px;
+          font-size: 18px;
+          border-radius: 0 3px 3px 0;
+          border-left: none;
+          border-right: 1px solid #4d5967;
+          border-bottom: 1px solid #4d5967;
+          border-top: 1px solid #4d5967;
+        }
+      }
+
+      .copy-message {
+        font-size: 14px;
+        color: var(--light-grey-2);
+        font-style: italic;
+        text-align: left;
+        margin: 5px 0 0 0px;
+      }
+    }
+
+    .token-card.created {
+      background: var(--dark-grey-2);
+
+      .token-header .delete-btn {
+        background: var(--button-background-1);
+      }
+    }
+  }
+
+  .generate-token {
+    display: flex;
+    justify-content: right;
+
+    .token-name-input {
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+
+    .generate-token-btn {
+      background: var(--status-translated);
+      border: none;
+      border-radius: 3px;
+      font-weight: 400;
+      color: var(--black-3);
+      font-size: 14px;
+      padding: 6px 12px;
+      text-align: center;
+      text-transform: uppercase;
+      box-sizing: border-box;
+    }
+
+    .generate-token-btn:disabled {
+      background: var(--button-background-1);
+      color: var(--light-grey-7);
+      cursor: not-allowed;
+    }
+  }
+
+  .error-message {
+    color: var(--status-error);
+    font-style: italic;
+  }
+}

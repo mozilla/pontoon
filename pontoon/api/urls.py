@@ -58,6 +58,8 @@ api_v2_patterns = [
         name="user-actions",
     ),
 ]
+
+
 urlpatterns = [
     # GraphQL endpoint. Serves the GraphiQL IDE if accessed with Accept: text/html.
     # Explicitly support URLs with or without trailing slash in order to support curl requests.
