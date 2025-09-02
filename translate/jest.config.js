@@ -13,7 +13,7 @@ module.exports = {
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}',
   ],
-  testEnvironment: 'jsdom',
+  testEnvironment: './jest-jsdom-fix.mjs',
   preset: 'ts-jest',
   transform: {
     '\\.jsx?$': ['babel-jest', { configFile: '../babel.config.json' }],

@@ -1,7 +1,6 @@
 import type { Model } from 'messageformat';
 
 import type { Locale } from '~/context/Locale';
-import { pojoCopy } from '../pojo';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
 import { getPluralCategories } from './getPluralCategories';
@@ -38,7 +37,7 @@ function getEmptyMessage(
   source: Model.Message,
   { code }: Locale,
 ): Model.Message {
-  const declarations = pojoCopy(source.declarations);
+  const declarations = structuredClone(source.declarations);
 
   if (source.type === 'message') {
     return { type: 'message', declarations, pattern: [''] };

@@ -1,6 +1,5 @@
 import type { Model } from 'messageformat';
 import type { EditorResult } from '~/context/Editor';
-import { pojoCopy } from '../pojo';
 import type { MessageEntry } from '.';
 
 /** Get a `MessageEntry` corresponding to `edit`, based on `base`. */
@@ -8,7 +7,7 @@ export function buildMessageEntry(
   base: MessageEntry,
   next: EditorResult,
 ): MessageEntry {
-  const res = pojoCopy(base);
+  const res = structuredClone(base);
   setMessage(res.value, '', next);
   if (res.attributes) {
     for (const [name, msg] of res.attributes) {
