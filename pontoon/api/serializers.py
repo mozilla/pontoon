@@ -157,10 +157,14 @@ class NestedProjectSerializer(TranslationStatsMixin, ProjectSerializer):
 
 class NestedIndividualProjectSerializer(TranslationStatsMixin, ProjectSerializer):
     tags = TagSerializer(many=True, read_only=True)
+    locales = serializers.SerializerMethodField()
     localizations = serializers.SerializerMethodField()
 
     class Meta(ProjectSerializer.Meta):
-        fields = ProjectSerializer.Meta.fields + ["tags", "localizations"]
+        fields = ProjectSerializer.Meta.fields + ["tags", "locales", "localizations"]
+
+    def get_locales(self, obj):
+        return [pl.locale.code for pl in getattr(obj, "fetched_project_locales", [])]
 
     def get_localizations(self, obj):
         request = self.context.get("request")

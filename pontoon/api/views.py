@@ -211,7 +211,7 @@ class LocaleListView(generics.ListAPIView):
     serializer_class = NestedLocaleSerializer
 
     def get_queryset(self):
-        locales = Locale.objects.prefetch_related(
+        queryset = Locale.objects.prefetch_related(
             Prefetch(
                 "project_locale",
                 queryset=ProjectLocale.objects.visible().select_related("project"),
@@ -219,7 +219,7 @@ class LocaleListView(generics.ListAPIView):
             )
         ).distinct()
 
-        return locales.stats_data().order_by("code")
+        return queryset.stats_data().order_by("code")
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
@@ -227,14 +227,14 @@ class LocaleIndividualView(generics.RetrieveAPIView):
     lookup_field = "code"
 
     def get_queryset(self):
-        locales = Locale.objects.prefetch_related(
+        queryset = Locale.objects.prefetch_related(
             Prefetch(
                 "project_locale",
                 queryset=ProjectLocale.objects.visible().select_related("project"),
                 to_attr="fetched_project_locales",
             )
         ).distinct()
-        return locales.stats_data()
+        return queryset.stats_data()
 
 
 class ProjectListView(generics.ListAPIView):
@@ -275,12 +275,20 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         queryset = (
-            Project.objects.all()
-            .prefetch_related("project_locale", "contact", "tags")
-            .stats_data()
-        )
+            Project.objects.visible()
+            .visible_for(self.request.user)
+            .prefetch_related(
+                Prefetch(
+                    "project_locale",
+                    queryset=ProjectLocale.objects.visible().select_related("locale"),
+                    to_attr="fetched_project_locales",
+                ),
+                "contact",
+                "tags",
+            )
+        ).distinct()
 
-        return queryset
+        return queryset.stats_data()
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
