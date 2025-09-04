@@ -13,11 +13,11 @@ module.exports = {
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}',
   ],
-  testEnvironment: 'jsdom',
+  testEnvironment: './jest-jsdom-fix.mjs',
   preset: 'ts-jest',
   transform: {
     '\\.jsx?$': ['babel-jest', { configFile: '../babel.config.json' }],
-    '\\.tsx?$': ['ts-jest', { isolatedModules: true }],
+    '\\.tsx?$': 'ts-jest',
   },
   transformIgnorePatterns: ['/node_modules/(?!@?messageformat/).+\\.(c?js)$'],
   resetMocks: true,
@@ -27,9 +27,5 @@ module.exports = {
     '\\.svg$': '<rootDir>/__mocks__/svg.js',
     '~(.*)$': '<rootDir>/src/$1',
   },
-  watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname',
-  ],
   testTimeout: 10000, // optional
 };

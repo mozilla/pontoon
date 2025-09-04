@@ -1,37 +1,4 @@
 /**
- * Deeply copy a POJO value.
- *
- * Supports primitives, arrays, Maps, Sets, and plain objects.
- * For objects, only enumerable properties are copied.
- * Functions and Map keys will retain identity.
- */
-export function pojoCopy<T>(node: T): T {
-  if (!node || typeof node !== 'object') {
-    return node;
-  } else if (Array.isArray(node)) {
-    return node.map(pojoCopy) as T;
-  } else if (node instanceof Map) {
-    const res = new Map();
-    for (const [key, value] of node) {
-      res.set(key, pojoCopy(value));
-    }
-    return res as T;
-  } else if (node instanceof Set) {
-    const res = new Set();
-    for (const value of node) {
-      res.add(pojoCopy(value));
-    }
-    return res as T;
-  } else {
-    const res: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(node)) {
-      res[key] = pojoCopy(value);
-    }
-    return res as T;
-  }
-}
-
-/**
  * Deeply compare two POJO values.
  *
  * Supports primitives, arrays, Maps, Sets, and plain objects.
