@@ -27,9 +27,5 @@ module.exports = {
     '\\.svg$': '<rootDir>/__mocks__/svg.js',
     '~(.*)$': '<rootDir>/src/$1',
   },
-  watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname',
-  ],
   testTimeout: 10000, // optional
 };
