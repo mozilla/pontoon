@@ -53,8 +53,9 @@ select,
 input,
 textarea,
 button {
-  font-family: 'Open Sans', 'Lucida Sans', 'Lucida Grande',
-    'Lucida Sans Unicode', Verdana, sans-serif;
+  font-family:
+    'Open Sans', 'Lucida Sans', 'Lucida Grande', 'Lucida Sans Unicode', Verdana,
+    sans-serif;
 }
 
 body {
