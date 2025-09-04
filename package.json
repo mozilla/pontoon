@@ -76,7 +76,6 @@
     "globals": "^15.9.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.3.1",
-    "jest-each": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
     "jest-watch-typeahead": "^2.2.1",
     "prettier": "^3.3.3",
