@@ -1,9 +1,9 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
-import { EditorData } from '~/context/Editor';
+import { EditorData } from '../../../../src/context/Editor';
 
-import { useAppSelector } from '~/hooks';
-import { useTranslator } from '~/hooks/useTranslator';
+import { useAppSelector } from '../../../../src/hooks';
+import { useTranslator } from '../../../../src/hooks/useTranslator';
 
 import { useExistingTranslationGetter } from '../hooks/useExistingTranslationGetter';
 import { useSendTranslation } from '../hooks/useSendTranslation';

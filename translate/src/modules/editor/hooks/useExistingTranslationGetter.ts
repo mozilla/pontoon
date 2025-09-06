@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import type { HistoryTranslation } from '~/api/translation';
-import { EditorData, useEditorMessageEntry } from '~/context/Editor';
-import { EntityView, useActiveTranslation } from '~/context/EntityView';
-import { HistoryData } from '~/context/HistoryData';
-import { parseEntry, serializeEntry } from '~/utils/message';
-import { pojoEquals } from '~/utils/pojo';
+import type { HistoryTranslation } from '../../../../src/api/translation';
+import { EditorData, useEditorMessageEntry } from '../../../../src/context/Editor';
+import { EntityView, useActiveTranslation } from '../../../../src/context/EntityView';
+import { HistoryData } from '../../../../src/context/HistoryData';
+import { parseEntry, serializeEntry } from '../../../../src/utils/message';
+import { pojoEquals } from '../../../../src/utils/pojo';
 
 /**
  * Return a Translation identical to the one currently in the Editor.

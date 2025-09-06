@@ -4,15 +4,15 @@ import {
   markAllNotificationsAsRead,
   updateUserSetting,
   updateUserTheme,
-} from '~/api/user';
-import { NotificationMessage } from '~/context/Notification';
+} from '../../api/user';
+import { NotificationMessage } from '../../context/Notification';
 import {
   CHECKS_DISABLED,
   CHECKS_ENABLED,
   SUGGESTIONS_DISABLED,
   SUGGESTIONS_ENABLED,
-} from '~/modules/notification/messages';
-import type { AppThunk } from '~/store';
+} from '../../modules/notification/messages';
+import type { AppThunk } from '../../store';
 
 export const UPDATE = 'user/UPDATE';
 export const UPDATE_SETTINGS = 'user/UPDATE_SETTINGS';

@@ -1,7 +1,7 @@
 import ftl from '@fluent/dedent';
 
 import { parseFlatFluent } from './parseFlatFluent';
-
+import {describe,it,expect} from "vitest";
 describe('parseFlatFluent', () => {
   it('does not modify value with single element', () => {
     const res = parseFlatFluent('title = My Title');

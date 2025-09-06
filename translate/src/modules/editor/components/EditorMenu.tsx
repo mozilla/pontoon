@@ -1,13 +1,13 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
-import { EditorActions } from '~/context/Editor';
-import { EntityView } from '~/context/EntityView';
-import { ShowNotification } from '~/context/Notification';
-import * as user from '~/modules/user';
-import { saveSetting } from '~/modules/user/actions';
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import { UnsavedChangesPopup } from '~/modules/unsavedchanges/components/UnsavedChangesPopup';
+import { EditorActions } from '../../../../src/context/Editor';
+import { EntityView } from '../../../../src/context/EntityView';
+import { ShowNotification } from '../../../../src/context/Notification';
+import * as user from '../../../../src/modules/user';
+import { saveSetting } from '../../../../src/modules/user/actions';
+import { useAppDispatch, useAppSelector } from '../../../../src/hooks';
+import { UnsavedChangesPopup } from '../../../../src/modules/unsavedchanges/components/UnsavedChangesPopup';
 
 import { useCopyOriginalIntoEditor } from '../hooks/useCopyOriginalIntoEditor';
 import { EditorMainAction } from './EditorMainAction';

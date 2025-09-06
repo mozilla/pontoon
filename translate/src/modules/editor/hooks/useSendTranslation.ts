@@ -1,29 +1,29 @@
 import NProgress from 'nprogress';
 import { useContext } from 'react';
 
-import { createTranslation } from '~/api/translation';
+import { createTranslation } from '../../../../src/api/translation';
 import {
   EditorActions,
   EditorData,
   useEditorMessageEntry,
-} from '~/context/Editor';
-import { EntityView } from '~/context/EntityView';
-import { FailedChecksData } from '~/context/FailedChecksData';
-import { Locale } from '~/context/Locale';
-import { Location } from '~/context/Location';
-import { ShowNotification } from '~/context/Notification';
-import { UnsavedActions } from '~/context/UnsavedChanges';
-import { updateEntityTranslation } from '~/modules/entities/actions';
-import { usePushNextTranslatable } from '~/modules/entities/hooks';
+} from '../../../../src/context/Editor';
+import { EntityView } from '../../../../src/context/EntityView';
+import { FailedChecksData } from '../../../../src/context/FailedChecksData';
+import { Locale } from '../../../../src/context/Locale';
+import { Location } from '../../../../src/context/Location';
+import { ShowNotification } from '../../../../src/context/Notification';
+import { UnsavedActions } from '../../../../src/context/UnsavedChanges';
+import { updateEntityTranslation } from '../../../../src/modules/entities/actions';
+import { usePushNextTranslatable } from '../../../../src/modules/entities/hooks';
 import {
   SAME_TRANSLATION,
   TRANSLATION_SAVED,
-} from '~/modules/notification/messages';
-import { updateResource } from '~/modules/resource/actions';
-import { updateStats } from '~/modules/stats/actions';
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import { serializeEntry, getPlainMessage } from '~/utils/message';
-import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
+} from '../../../../src/modules/notification/messages';
+import { updateResource } from '../../../../src/modules/resource/actions';
+import { updateStats } from '../../../../src/modules/stats/actions';
+import { useAppDispatch, useAppSelector } from '../../../../src/hooks';
+import { serializeEntry, getPlainMessage } from '../../../../src/utils/message';
+import { ShowBadgeTooltip } from '../../../../src/context/BadgeTooltip';
 
 /**
  * Return a function to send a translation to the server.

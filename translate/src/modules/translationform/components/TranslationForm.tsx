@@ -7,12 +7,12 @@ import React, {
   useState,
 } from 'react';
 
-import { EditFieldHandle, EditorData } from '~/context/Editor';
-import { EntityView } from '~/context/EntityView';
-import { Locale } from '~/context/Locale';
-import { usePluralExamples } from '~/hooks/usePluralExamples';
-import { searchBoxHasFocus } from '~/modules/search/components/SearchBox';
-import { CLDR_PLURALS } from '~/utils/constants';
+import { EditFieldHandle, EditorData } from '../../../../src/context/Editor';
+import { EntityView } from '../../../../src/context/EntityView';
+import { Locale } from '../../../../src/context/Locale';
+import { usePluralExamples } from '../../../../src/hooks/usePluralExamples';
+import { searchBoxHasFocus } from '../../../../src/modules/search/components/SearchBox';
+import { CLDR_PLURALS } from '../../../../src/utils/constants';
 
 import { EditAccesskey } from './EditAccesskey';
 import { EditField } from './EditField';

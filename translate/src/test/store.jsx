@@ -4,15 +4,13 @@
  * Notably, this one doesn't have any logging, and supports an initialState.
  */
 
-import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
-
-import { LocationProvider } from '~/context/Location';
-import { UPDATE } from '~/modules/user/actions';
-import { reducer } from '~/rootReducer';
+import {render} from '@testing-library/react';
+import { LocationProvider } from '../context/Location';
+import { UPDATE } from '../modules/user/actions';
+import { reducer } from '../rootReducer';
 
 import { MockLocalizationProvider } from './utils';
 
@@ -42,7 +40,7 @@ export const mountComponentWithStore = (
   props = {},
   history,
 ) =>
-  mount(
+  render(
     <MockStore store={store} history={history}>
       <Component {...props} />
     </MockStore>,

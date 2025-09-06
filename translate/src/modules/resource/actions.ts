@@ -1,5 +1,5 @@
-import { fetchAllResources } from '~/api/resource';
-import type { AppDispatch } from '~/store';
+import { fetchAllResources } from '../../../src/api/resource';
+import type { AppDispatch } from '../../store';
 
 export const RECEIVE_RESOURCES = 'resource/RECEIVE';
 export const UPDATE_RESOURCE = 'resource/UPDATE';

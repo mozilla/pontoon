@@ -1,11 +1,12 @@
 import ftl from '@fluent/dedent';
 import { createMemoryHistory } from 'history';
-import React, { useContext } from 'react';
+import  { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
-
-import { createReduxStore, mountComponentWithStore } from '~/test/store';
-import { editMessageEntry, parseEntry } from '~/utils/message';
-
+import {describe,it,expect} from "vitest"
+import { createReduxStore } from '../test/store';
+import { editMessageEntry, parseEntry } from '../utils/message';
+import {render} from "@testing-library/react";
+import {Provider} from "react-redux";
 import {
   EditorActions,
   EditorData,
@@ -16,7 +17,7 @@ import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
 
-function mountSpy(Spy, format, translation) {
+function renderWithProviders(Spy, format, translation) {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
   });
@@ -59,7 +60,7 @@ function mountSpy(Spy, format, translation) {
   };
   const store = createReduxStore(initialState);
 
-  const Wrapper = () => (
+   return render(
     <LocationProvider history={history}>
       <Locale.Provider value={{ code: 'sl', cldrPlurals: [1, 2, 3, 5] }}>
         <EntityViewProvider>
@@ -68,9 +69,9 @@ function mountSpy(Spy, format, translation) {
           </EditorProvider>
         </EntityViewProvider>
       </Locale.Provider>
-    </LocationProvider>
+    </LocationProvider>,
+    { wrapper: ({ children }) => <Provider store={store}>{children}</Provider> }
   );
-  return mountComponentWithStore(Wrapper, store, {}, history);
 }
 
 describe('<EditorProvider>', () => {
@@ -81,7 +82,7 @@ describe('<EditorProvider>', () => {
       result = useContext(EditorResult);
       return null;
     };
-    mountSpy(Spy, 'simple', 'message');
+    renderWithProviders(Spy, 'simple', 'message');
     expect(editor).toMatchObject({
       sourceView: false,
       initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
@@ -105,7 +106,7 @@ describe('<EditorProvider>', () => {
       result = useContext(EditorResult);
       return null;
     };
-    mountSpy(Spy, 'fluent', 'key = message');
+    renderWithProviders(Spy, 'fluent', 'key = message');
     expect(editor).toMatchObject({
       sourceView: false,
       initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
@@ -137,7 +138,7 @@ describe('<EditorProvider>', () => {
           }
 
       `;
-    mountSpy(Spy, 'fluent', source);
+    renderWithProviders(Spy, 'fluent', source);
 
     const entry = parseEntry('fluent', source);
     const fields = editMessageEntry(entry).map((field) => ({
@@ -159,7 +160,7 @@ describe('<EditorProvider>', () => {
       return null;
     };
     const source = '## comment\n';
-    mountSpy(Spy, 'fluent', source);
+    renderWithProviders(Spy, 'fluent', source);
 
     expect(editor).toMatchObject({
       sourceView: true,
@@ -189,10 +190,9 @@ describe('<EditorProvider>', () => {
       entity = useContext(EntityView).entity;
       return null;
     };
-    const wrapper = mountSpy(Spy, 'simple', 'translated');
+    renderWithProviders(Spy, 'simple', 'translated');
 
     act(() => location.push({ entity: 13 }));
-    wrapper.update();
 
     expect(editor).toMatchObject({
       initial: parseEntry('gettext', entity.translation.string),
@@ -221,9 +221,8 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    const wrapper = mountSpy(Spy, 'fluent', source);
+    renderWithProviders(Spy, 'fluent', source);
     act(() => actions.clearEditor());
-    wrapper.update();
 
     expect(editor).toMatchObject({
       sourceView: false,
@@ -254,7 +253,7 @@ describe('<EditorProvider>', () => {
       actions = useContext(EditorActions);
       return null;
     };
-    const wrapper = mountSpy(Spy, 'fluent', `key = VALUE\n`);
+    renderWithProviders(Spy, 'fluent', `key = VALUE\n`);
 
     const source = ftl`
       key =
@@ -264,7 +263,6 @@ describe('<EditorProvider>', () => {
           }
       `;
     act(() => actions.setEditorFromHistory(source));
-    wrapper.update();
 
     expect(editor).toMatchObject({
       sourceView: false,
@@ -306,9 +304,8 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    const wrapper = mountSpy(Spy, 'fluent', source);
+    renderWithProviders(Spy, 'fluent', source);
     act(() => actions.toggleSourceView());
-    wrapper.update();
 
     expect(editor).toMatchObject({
       sourceView: true,
@@ -325,7 +322,6 @@ describe('<EditorProvider>', () => {
     expect(result).toMatchObject([{ keys: [], name: '', value: source }]);
 
     act(() => actions.toggleSourceView());
-    wrapper.update();
 
     expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
     expect(result).toMatchObject([

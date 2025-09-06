@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { SEARCH_OPTIONS } from '../constants';
 import type { SearchState, SearchType } from './SearchBox';
 
-import { useOnDiscard } from '~/utils';
+import { useOnDiscard } from '../../../../src/utils';
 
 import './SearchPanel.css';
 

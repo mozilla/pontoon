@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 
-import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions, UnsavedChanges } from '../../../../src/context/UnsavedChanges';
 
 import './UnsavedChangesPopup.css';
 

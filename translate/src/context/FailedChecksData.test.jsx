@@ -1,23 +1,24 @@
-import { mount } from 'enzyme';
-import React, { useContext } from 'react';
-import Sinon from 'sinon';
-
+import { useContext } from 'react';
+import {render} from "@testing-library/react"
 import * as EntityView from './EntityView';
 import { FailedChecksData, FailedChecksProvider } from './FailedChecksData';
+import {describe,it,expect, afterEach, beforeEach } from 'vitest';
 
 describe('FailedChecksProvider', () => {
-  beforeAll(() => Sinon.stub(EntityView, 'useActiveTranslation'));
-  afterAll(() => EntityView.useActiveTranslation.restore());
+  let spy;
+  beforeEach(() => { 
+    spy = vi.spyOn(EntityView, 'useActiveTranslation')});
+  afterEach(() => {vi.restoreAllMocks();});
 
   it('shows failed checks for approved translations with errors or warnings', () => {
-    EntityView.useActiveTranslation.returns({ errors: [], warnings: [] });
+    spy.mockReturnValue({ errors: [], warnings: [] });
 
     let failedChecks;
     const Spy = () => {
       failedChecks = useContext(FailedChecksData);
       return null;
     };
-    const wrapper = mount(
+    render(
       <FailedChecksProvider>
         <Spy />
       </FailedChecksProvider>,
@@ -29,12 +30,16 @@ describe('FailedChecksProvider', () => {
       source: null,
     });
 
-    EntityView.useActiveTranslation.returns({
+    spy.mockReturnValue({
       errors: ['Error1'],
       warnings: ['Warning1'],
       approved: true,
     });
-    wrapper.setProps({});
+     render(
+      <FailedChecksProvider>
+        <Spy />
+      </FailedChecksProvider>
+    );
 
     expect(failedChecks).toMatchObject({
       errors: ['Error1'],
@@ -44,7 +49,7 @@ describe('FailedChecksProvider', () => {
   });
 
   it('hides failed checks for pretranslated translations without errors or warnings', () => {
-    EntityView.useActiveTranslation.returns({
+    spy.mockReturnValue({
       errors: [],
       warnings: [],
       pretranslated: [],
@@ -55,7 +60,7 @@ describe('FailedChecksProvider', () => {
       failedChecks = useContext(FailedChecksData);
       return null;
     };
-    mount(
+    render(
       <FailedChecksProvider>
         <Spy />
       </FailedChecksProvider>,

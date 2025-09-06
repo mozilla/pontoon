@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
-import { EntityView } from '~/context/EntityView';
-import { USER } from '~/modules/user';
-import { useAppSelector } from '~/hooks';
+import { EntityView } from '../../src/context/EntityView';
+import { USER } from '../../src/modules/user';
+import { useAppSelector } from '../../src/hooks';
 
 export function useReadonlyEditor(): boolean {
   const { entity } = useContext(EntityView);

@@ -1,5 +1,5 @@
-import { fetchProject, Tag } from '~/api/project';
-import type { AppDispatch } from '~/store';
+import { fetchProject, Tag } from '../../../src/api/project';
+import type { AppDispatch } from '../../store';
 
 export const RECEIVE = 'project/RECEIVE';
 export const REQUEST = 'project/REQUEST';

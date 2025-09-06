@@ -1,4 +1,4 @@
-import type { Author } from '~/api/filter';
+import type { Author } from '../../../src/api/filter';
 
 import { Action, UPDATE } from './actions';
 

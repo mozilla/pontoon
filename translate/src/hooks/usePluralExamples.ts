@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { Locale } from '~/context/Locale';
+import type { Locale } from '../../src/context/Locale';
 
 /**
  * A map of examples for the current locale's cldrPlurals.

@@ -1,6 +1,6 @@
 import React from 'react';
 import sinon from 'sinon';
-import * as Hooks from '~/hooks';
+import * as Hooks from '../../src/hooks';
 import { useReadonlyEditor } from './useReadonlyEditor';
 
 beforeAll(() => {

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { fetchConcordanceResults, MachineryTranslation } from '~/api/machinery';
+import { fetchConcordanceResults, MachineryTranslation } from '../../src/api/machinery';
 import { EntityView } from './EntityView';
 
 import { Locale } from './Locale';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../src/hooks';
 
 import { getUserData, markAllNotificationsAsRead_ } from '../actions';
 import { USER } from '../reducer';

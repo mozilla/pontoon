@@ -1,5 +1,5 @@
-import { FilterData, fetchFilterData } from '~/api/filter';
-import type { AppDispatch } from '~/store';
+import { FilterData, fetchFilterData } from '../../../src/api/filter';
+import type { AppDispatch } from '../../store';
 
 export const UPDATE = 'search/UPDATE';
 

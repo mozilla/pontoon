@@ -3,12 +3,12 @@ import {
   EntitySiblings,
   fetchEntities,
   fetchSiblingEntities,
-} from '~/api/entity';
-import { EntityTranslation } from '~/api/translation';
-import { logUXAction } from '~/api/uxaction';
-import { Location } from '~/context/Location';
-import { updateStats } from '~/modules/stats/actions';
-import type { AppDispatch } from '~/store';
+} from '../../../src/api/entity';
+import { EntityTranslation } from '../../../src/api/translation';
+import { logUXAction } from '../../../src/api/uxaction';
+import { Location } from '../../../src/context/Location';
+import { updateStats } from '../../../src/modules/stats/actions';
+import type { AppDispatch } from '../../../src/store';
 
 export const RECEIVE_ENTITIES = 'entities/RECEIVE';
 export const REQUEST_ENTITIES = 'entities/REQUEST';

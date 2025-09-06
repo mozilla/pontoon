@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getCSRFToken } from '~/api/utils/csrfToken';
+import { getCSRFToken } from '../../api/utils/csrfToken';
 
 /*
  * Render element with CSRF token needed in POST forms.

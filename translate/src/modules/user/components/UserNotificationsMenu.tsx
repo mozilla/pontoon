@@ -1,8 +1,8 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { logUXAction } from '~/api/uxaction';
-import { useOnDiscard } from '~/utils';
+import { logUXAction } from '../../../../src/api/uxaction';
+import { useOnDiscard } from '../../../../src/utils';
 
 import type { Notification, UserState } from '../index';
 import { UserNotification } from './UserNotification';

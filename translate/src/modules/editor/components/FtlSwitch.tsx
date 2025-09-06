@@ -2,16 +2,16 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo } from 'react';
 
-import { EditorActions, EditorData, EditorResult } from '~/context/Editor';
-import { ShowNotification } from '~/context/Notification';
-import { FTL_NOT_SUPPORTED_RICH_EDITOR } from '~/modules/notification/messages';
-import { USER } from '~/modules/user';
-import { requiresSourceView, parseEntry } from '~/utils/message';
-import { useAppSelector } from '~/hooks';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { EditorActions, EditorData, EditorResult } from '../../../../src/context/Editor';
+import { ShowNotification } from '../../../../src/context/Notification';
+import { FTL_NOT_SUPPORTED_RICH_EDITOR } from '../../../../src/modules/notification/messages';
+import { USER } from '../../../../src/modules/user';
+import { requiresSourceView, parseEntry } from '../../../../src/utils/message';
+import { useAppSelector } from '../../../../src/hooks';
+import { useReadonlyEditor } from '../../../../src/hooks/useReadonlyEditor';
 
 import './FtlSwitch.css';
-import { EntityView } from '~/context/EntityView';
+import { EntityView } from '../../../../src/context/EntityView';
 
 /**
  * Show a button to allow switching to the source editor,

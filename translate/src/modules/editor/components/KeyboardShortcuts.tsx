@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useState } from 'react';
 
-import { useOnDiscard } from '~/utils';
+import { useOnDiscard } from '../../../../src/utils';
 
 import './KeyboardShortcuts.css';
 

@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 
-import { EditorActions } from '~/context/Editor';
-import { EntityView } from '~/context/EntityView';
+import { EditorActions } from '../../../../src/context/Editor';
+import { EntityView } from '../../../../src/context/EntityView';
 
 /**
  * Return a function to copy the original translation into the editor.

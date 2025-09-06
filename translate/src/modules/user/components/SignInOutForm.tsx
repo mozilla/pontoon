@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CSRFToken } from '~/utils';
+import { CSRFToken } from '../../../../src/utils';
 
 type Props = {
   children?: React.ReactNode;

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import type { ApiFailedChecks } from '~/api/translation';
+import type { ApiFailedChecks } from '../../src/api/translation';
 import { useActiveTranslation } from './EntityView';
 
 // Not using Readonly<{ ... }> due to https://github.com/microsoft/TypeScript/issues/48636

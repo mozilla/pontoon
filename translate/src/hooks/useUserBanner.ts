@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 
-import { Locale } from '~/context/Locale';
-import { Location } from '~/context/Location';
-import { USER } from '~/modules/user';
-import { useAppSelector } from '~/hooks';
+import { Locale } from '../../src/context/Locale';
+import { Location } from '../../src/context/Location';
+import { USER } from '../../src/modules/user';
+import { useAppSelector } from '../../src/hooks';
 
 /**
  * Return the user's status banner within the given locale, to display on the user banner

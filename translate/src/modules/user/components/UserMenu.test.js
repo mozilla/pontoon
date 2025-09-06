@@ -2,9 +2,9 @@ import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-import { EntityView } from '~/context/EntityView';
-import { Location } from '~/context/Location';
-import * as Translator from '~/hooks/useTranslator';
+import { EntityView } from '../../../../src/context/EntityView';
+import { Location } from '../../../../src/context/Location';
+import * as Translator from '../../../../src/hooks/useTranslator';
 
 import {
   findLocalizedById,

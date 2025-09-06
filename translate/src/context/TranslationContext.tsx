@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useRef } from 'react';
-import { type MachineryTranslation, fetchGPTTransform } from '~/api/machinery';
+import { type MachineryTranslation, fetchGPTTransform } from '../../src/api/machinery';
 
 type SelState = {
   loading: boolean;

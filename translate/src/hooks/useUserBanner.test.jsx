@@ -1,35 +1,45 @@
 import React from 'react';
-import sinon from 'sinon';
-
-import { USER } from '~/modules/user';
-import * as Hooks from '~/hooks';
-
+import {describe,it,expect,vi,beforeAll,afterAll} from "vitest";
+import { Locale } from "../../src/context/Locale";
+import { Location } from "../../src/context/Location";
+import { USER } from '../modules/user';
+import * as Hooks from '../hooks';
+import {renderHook} from '@testing-library/react-hooks';
 import { useUserBanner } from './useUserBanner';
-
+let useAppSelectorSpy;
+let useContextSpy;
 beforeAll(() => {
-  sinon.stub(Hooks, 'useAppSelector');
-  sinon
-    .stub(React, 'useContext')
-    .returns({ code: 'mylocale', project: 'myproject' });
+  useAppSelectorSpy = vi.spyOn(Hooks,"useAppSelector");
+  useContextSpy = vi.spyOn(React,"useContext").mockReturnValue({ code: 'mylocale', project: 'myproject' })
+
 });
 afterAll(() => {
-  Hooks.useAppSelector.restore();
-  React.useContext.restore();
+  useAppSelectorSpy.mockRestore();
+  useContextSpy.mockRestore();
 });
 
 const fakeSelector = (user) => (sel) =>
   sel({
     [USER]: user,
   });
-
+ function wrapper({ children }) {
+    return (
+      <Locale.Provider value={{ code: "mylocale" }}>
+        <Location.Provider value={{ project: "myproject" }}>
+          {children}
+        </Location.Provider>
+      </Locale.Provider>
+    );
+  }
 describe('useUserBanner', () => {
   it('returns empty parameters for non-authenticated users', () => {
-    (Hooks.useAppSelector.callsFake(fakeSelector({ isAuthenticated: false })),
-      expect(useUserBanner()).toStrictEqual(['', '']));
+  useAppSelectorSpy.mockImplementation(fakeSelector({ isAuthenticated: false }));
+  const {result} = renderHook(() => useUserBanner());
+    expect(result.current).toStrictEqual(['', '']);
   });
 
   it('returns [ADMIN, Admin] if user has admin permissions', () => {
-    Hooks.useAppSelector.callsFake(
+    useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         isAdmin: true,
@@ -38,11 +48,12 @@ describe('useUserBanner', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['ADMIN', 'Admin']);
+    const {result} = renderHook(() => useUserBanner());
+    expect(result.current).toStrictEqual(['ADMIN', 'Admin']);
   });
 
   it('returns [PM, Project Manager] if user is a project manager for the project', () => {
-    Hooks.useAppSelector.callsFake(
+    useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: ['myproject'],
@@ -50,11 +61,12 @@ describe('useUserBanner', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['PM', 'Project Manager']);
+    const {result} = renderHook(() => useUserBanner(),{wrapper});
+    expect(result.current).toStrictEqual(['PM', 'Project Manager']);
   });
 
   it('returns [PM, Project Manager] if user is a project manager for the project, even if user is an Admin', () => {
-    Hooks.useAppSelector.callsFake(
+     useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         isAdmin: true,
@@ -63,11 +75,12 @@ describe('useUserBanner', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['PM', 'Project Manager']);
+    const {result} = renderHook(() => useUserBanner(),{wrapper});
+    expect(result.current).toStrictEqual(['PM', 'Project Manager']);
   });
 
   it('returns [MNGR, Manager] if user is a manager of the locale', () => {
-    Hooks.useAppSelector.callsFake(
+    useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: [],
@@ -75,11 +88,12 @@ describe('useUserBanner', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['MNGR', 'Team Manager']);
+    const {result} = renderHook(() => useUserBanner(),{wrapper});
+    expect(result.current).toStrictEqual(['MNGR', 'Team Manager']);
   });
 
   it('returns [MNGR, Manager] if user is a manager of the locale, even if user is an Admin', () => {
-    Hooks.useAppSelector.callsFake(
+    useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         isAdmin: true,
@@ -88,11 +102,12 @@ describe('useUserBanner', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['MNGR', 'Team Manager']);
+    const {result} = renderHook(() => useUserBanner(),{wrapper});
+    expect(result.current).toStrictEqual(['MNGR', 'Team Manager']);
   });
 
   it('returns [MNGR, Manager] if user is a manager of the locale, even if user is a Project Manager', () => {
-    Hooks.useAppSelector.callsFake(
+     useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: ['myproject'],
@@ -100,11 +115,12 @@ describe('useUserBanner', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['MNGR', 'Team Manager']);
+    const {result} = renderHook(() => useUserBanner(),{wrapper});
+    expect(result.current).toStrictEqual(['MNGR', 'Team Manager']);
   });
 
   it('returns [TRNSL, Translator] if user is a translator for the locale', () => {
-    Hooks.useAppSelector.callsFake(
+    useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: [],
@@ -112,13 +128,14 @@ describe('useUserBanner', () => {
         translatorForLocales: ['mylocale'],
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['TRNSL', 'Translator']);
+    const {result} = renderHook(() => useUserBanner(),{wrapper});
+    expect(result.current).toStrictEqual(['TRNSL', 'Translator']);
   });
 
   it('returns [NEW, New User] if user created their account within the last 3 months', () => {
     const dateJoined = new Date();
     dateJoined.setMonth(dateJoined.getMonth() - 2);
-    Hooks.useAppSelector.callsFake(
+    useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: [],
@@ -127,11 +144,12 @@ describe('useUserBanner', () => {
         dateJoined: dateJoined,
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['NEW', 'New User']);
+    const {result} = renderHook(() => useUserBanner(),{wrapper});
+    expect(result.current).toStrictEqual(['NEW', 'New User']);
 
     // Set join date to be 6 months ago (no longer a new user)
     dateJoined.setMonth(dateJoined.getMonth() - 6);
-    Hooks.useAppSelector.callsFake(
+    useAppSelectorSpy.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: [],
@@ -140,6 +158,7 @@ describe('useUserBanner', () => {
         dateJoined: dateJoined,
       }),
     );
-    expect(useUserBanner()).toStrictEqual(['', '']);
+    const {result: result2} = renderHook(() => useUserBanner(),{wrapper});
+    expect(result2.current).toStrictEqual(['', '']);
   });
 });

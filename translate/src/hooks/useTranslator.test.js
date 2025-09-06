@@ -1,9 +1,9 @@
 import React from 'react';
 import sinon from 'sinon';
 
-import { PROJECT } from '~/modules/project';
-import { USER } from '~/modules/user';
-import * as Hooks from '~/hooks';
+import { PROJECT } from '../../src/modules/project';
+import { USER } from '../../src/modules/user';
+import * as Hooks from '../../src/hooks';
 
 import { useTranslator } from './useTranslator';
 

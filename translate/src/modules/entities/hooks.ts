@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 
-import type { Entity } from '~/api/entity';
-import { EntityView } from '~/context/EntityView';
-import { HistoryData } from '~/context/HistoryData';
-import { Locale } from '~/context/Locale';
-import { Location } from '~/context/Location';
-import { useAppSelector } from '~/hooks';
+import type { Entity } from '../../../src/api/entity';
+import { EntityView } from '../../../src/context/EntityView';
+import { HistoryData } from '../../../src/context/HistoryData';
+import { Locale } from '../../../src/context/Locale';
+import { Location } from '../../../src/context/Location';
+import { useAppSelector } from '../../../src/hooks';
 
 import { ENTITIES } from './reducer';
 

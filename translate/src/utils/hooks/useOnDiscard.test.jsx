@@ -2,7 +2,7 @@ import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
-
+import {describe,expect,it,vi} from "vitest"
 import { useOnDiscard } from './useOnDiscard';
 
 function TestComponent({ onDiscard }) {
@@ -34,7 +34,7 @@ describe('useOnDiscard', () => {
   });
 
   it('runs discard callback upon outside click', () => {
-    const onDiscardSpy = sinon.spy();
+    const onDiscardSpy = vi.fn();
     act(() => {
       render(<TestComponent onDiscard={onDiscardSpy} />, root);
     });
@@ -43,11 +43,11 @@ describe('useOnDiscard', () => {
     const outside = document.getElementById('js-outside');
     outside.dispatchEvent(click);
 
-    expect(onDiscardSpy.calledOnce).toBe(true);
+    expect(onDiscardSpy).toHaveBeenCalledOnce(true);
   });
 
   it('does not run discard callback upon inside click', () => {
-    const onDiscardSpy = sinon.spy();
+    const onDiscardSpy = vi.fn();
     act(() => {
       render(<TestComponent onDiscard={onDiscardSpy} />, root);
     });
@@ -56,6 +56,6 @@ describe('useOnDiscard', () => {
     const inside = document.getElementById('js-inside');
     inside.dispatchEvent(click);
 
-    expect(onDiscardSpy.callCount).toBe(0);
+    expect(onDiscardSpy).toHaveBeenCalledTimes(0);
   });
 });
