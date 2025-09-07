@@ -2,17 +2,17 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
-import type { MachineryTranslation, SourceType } from '~/api/machinery';
-import { logUXAction } from '~/api/uxaction';
-import { EditorActions } from '~/context/Editor';
-import { HelperSelection } from '~/context/HelperSelection';
-import { Locale } from '~/context/Locale';
-import { GenericTranslation } from '~/modules/translation';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import type { MachineryTranslation, SourceType } from '../../../api/machinery';
+import { logUXAction } from '../../../api/uxaction';
+import { EditorActions } from '../../../context/Editor';
+import { HelperSelection } from '../../../context/HelperSelection';
+import { Locale } from '../../../context/Locale';
+import { GenericTranslation } from '../../../modules/translation';
+import { useReadonlyEditor } from '../../../hooks/useReadonlyEditor';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { MachineryTranslationSource } from './MachineryTranslationSource';
-import { useLLMTranslation } from '~/context/TranslationContext';
+import { useLLMTranslation } from '../../../context/TranslationContext';
 
 import './ConcordanceSearch.css';
 import './MachineryTranslation.css';

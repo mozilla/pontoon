@@ -1,12 +1,12 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
-import { EntityView } from '~/context/EntityView';
-import { HistoryData, useDeleteTranslation } from '~/context/HistoryData';
-import { useUpdateTranslationStatus } from '~/modules/editor';
-import { USER } from '~/modules/user';
-import { useAppSelector } from '~/hooks';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { EntityView } from '../../../context/EntityView';
+import { HistoryData, useDeleteTranslation } from '../../../context/HistoryData';
+import { useUpdateTranslationStatus } from '../../../modules/editor';
+import { USER } from '../../../modules/user';
+import { useAppSelector } from '../../../hooks';
+import { useReadonlyEditor } from '../../../hooks/useReadonlyEditor';
 
 import './History.css';
 import { HistoryTranslationComponent } from './HistoryTranslation';

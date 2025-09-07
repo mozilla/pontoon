@@ -1,8 +1,10 @@
-import { mount } from 'enzyme';
-import React from 'react';
+import { render, screen } from '@testing-library/react';
 import { UserNotification } from './UserNotification';
+import { describe, it, expect, vi } from 'vitest';
 
-jest.mock('react-time-ago', () => () => null);
+vi.mock('react-time-ago', () => ({
+  default: () => <span>time-ago</span>,
+}));
 
 const notificationBase = {
   id: 0,
@@ -22,11 +24,11 @@ describe('<UserNotification>', () => {
       ...notificationBase,
       description: { content: 'Unreviewed suggestions: <b id="foo">foo</b>' },
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
 
-    // https://github.com/enzymejs/enzyme/issues/419
-    const desc = wrapper.find('span.description').render();
-    expect(desc.find('b#foo')).toHaveLength(1);
+    render(<UserNotification notification={notification} />);
+
+    expect(screen.getByText('foo')).toBeInTheDocument();
+    expect(screen.getByText('Unreviewed suggestions:', { exact: false })).toBeInTheDocument();
   });
 
   it('shows a "has reviewed suggestions" notification', () => {
@@ -35,11 +37,11 @@ describe('<UserNotification>', () => {
       description: { content: 'Reviewed: <b id="bar">bar</b>' },
       verb: 'has reviewed suggestions',
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
 
-    // https://github.com/enzymejs/enzyme/issues/419
-    const desc = wrapper.find('span.description').render();
-    expect(desc.find('b#bar')).toHaveLength(1);
+    render(<UserNotification notification={notification} />);
+
+    expect(screen.getByText('bar')).toBeInTheDocument();
+    expect(screen.getByText('Reviewed:', { exact: false })).toBeInTheDocument();
   });
 
   it('shows a comment notification', () => {
@@ -50,9 +52,11 @@ describe('<UserNotification>', () => {
         is_comment: true,
       },
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
 
-    expect(wrapper.find('.message.trim b#baz')).toHaveLength(1);
+    render(<UserNotification notification={notification} />);
+
+    expect(screen.getByText('baz')).toBeInTheDocument();
+    expect(screen.getByText('Comment:', { exact: false })).toBeInTheDocument();
   });
 
   it('shows other notification with description', () => {
@@ -60,11 +64,11 @@ describe('<UserNotification>', () => {
       ...notificationBase,
       description: { content: 'Other: <b id="fuzz">fuzz</b>' },
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
 
-    // https://github.com/enzymejs/enzyme/issues/419
-    const desc = wrapper.find('.message').render();
-    expect(desc.find('b#fuzz')).toHaveLength(1);
+    render(<UserNotification notification={notification} />);
+
+    expect(screen.getByText('fuzz')).toBeInTheDocument();
+    expect(screen.getByText('Other:', { exact: false })).toBeInTheDocument();
   });
 
   it('shows other notification without description', () => {
@@ -73,9 +77,10 @@ describe('<UserNotification>', () => {
       description: { content: null },
       verb: 'is Other',
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
 
-    expect(wrapper.find('.message').text()).toBe('');
-    expect(wrapper.find('.verb').text()).toBe('is Other');
+    render(<UserNotification notification={notification} />);
+
+    expect(document.querySelector('.message')?.textContent).toBe('');
+    expect(screen.getByText('is Other')).toBeInTheDocument();
   });
 });

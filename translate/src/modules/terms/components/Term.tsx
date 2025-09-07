@@ -2,10 +2,10 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 
-import type { TermType } from '~/api/terminology';
-import { EditorActions } from '~/context/Editor';
-import { Locale } from '~/context/Locale';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import type { TermType } from '../../../api/terminology';
+import { EditorActions } from '../../../context/Editor';
+import { Locale } from '../../../context/Locale';
+import { useReadonlyEditor } from '../../../hooks/useReadonlyEditor';
 
 import './Term.css';
 

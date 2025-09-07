@@ -1,12 +1,12 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect } from 'react';
 
-import { EntitiesList } from '~/context/EntitiesList';
-import { Location } from '~/context/Location';
-import { ShowNotification } from '~/context/Notification';
-import { UnsavedActions } from '~/context/UnsavedChanges';
-import { useNextEntity, usePreviousEntity } from '~/modules/entities/hooks';
-import { STRING_LINK_COPIED } from '~/modules/notification/messages';
+import { EntitiesList } from '../../../context/EntitiesList';
+import { Location } from '../../../context/Location';
+import { ShowNotification } from '../../../context/Notification';
+import { UnsavedActions } from '../../../context/UnsavedChanges';
+import { useNextEntity, usePreviousEntity } from '../../../modules/entities/hooks';
+import { STRING_LINK_COPIED } from '../../../modules/notification/messages';
 
 import './EntityNavigation.css';
 

@@ -3,15 +3,15 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
 
-import type { Entity } from '~/api/entity';
-import type { ChangeOperation, HistoryTranslation } from '~/api/translation';
-import { EditorActions } from '~/context/Editor';
-import { Locale } from '~/context/Locale';
-import { CommentsList } from '~/modules/comments/components/CommentsList';
-import { Translation } from '~/modules/translation';
-import { UserAvatar, UserState } from '~/modules/user';
-import { withActionsDisabled } from '~/utils';
-import { useTranslator } from '~/hooks/useTranslator';
+import type { Entity } from '../../../api/entity';
+import type { ChangeOperation, HistoryTranslation } from '../../../api/translation';
+import { EditorActions } from '../../../context/Editor';
+import { Locale } from '../../../context/Locale';
+import { CommentsList } from '../../../modules/comments/components/CommentsList';
+import { Translation } from '../../../modules/translation';
+import { UserAvatar, UserState } from '../../../modules/user';
+import { withActionsDisabled } from '../../../utils';
+import { useTranslator } from '../../../hooks/useTranslator';
 
 import './HistoryTranslation.css';
 

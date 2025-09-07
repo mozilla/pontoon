@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
-import { MachineryTranslations } from '~/context/MachineryTranslations';
-import { SearchData } from '~/context/SearchData';
+import { MachineryTranslations } from '../../../context/MachineryTranslations';
+import { SearchData } from '../../../context/SearchData';
 
 export function MachineryCount(): React.ReactElement<'span'> | null {
   const { translations } = useContext(MachineryTranslations);

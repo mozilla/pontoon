@@ -1,26 +1,31 @@
-import { mount, shallow } from 'enzyme';
 import React from 'react';
-import sinon from 'sinon';
+import { render, fireEvent } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import * as api from '../../../../src/api/uxaction';
 
-import * as api from '~/api/uxaction';
-
-import { UserNotification } from './UserNotification';
 import {
   UserNotificationsMenu,
   UserNotificationsMenuDialog,
 } from './UserNotificationsMenu';
 
+vi.mock('@fluent/react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    Localized: ({ children }) => <>{children}</>,
+  };
+});
 describe('<UserNotificationsMenuDialog>', () => {
   it('shows empty notifications menu if user has no notifications', () => {
     const notifications = [];
-    const wrapper = shallow(
-      <UserNotificationsMenuDialog notifications={notifications} />,
-    );
+    render(<UserNotificationsMenuDialog notifications={notifications} />);
 
-    expect(wrapper.find('.notification-list .user-notification')).toHaveLength(
-      0,
-    );
-    expect(wrapper.find('.notification-list .no')).toHaveLength(1);
+    expect(
+      document.querySelectorAll('.notification-list .user-notification')
+    ).toHaveLength(0);
+    expect(
+      document.querySelectorAll('.notification-list .no')
+    ).toHaveLength(1);
   });
 
   it('shows a notification in the notifications menu', () => {
@@ -44,19 +49,18 @@ describe('<UserNotificationsMenuDialog>', () => {
       },
     ];
 
-    const wrapper = shallow(
-      <UserNotificationsMenuDialog notifications={notifications} />,
-    );
+    render(<UserNotificationsMenuDialog notifications={notifications} />);
 
-    expect(wrapper.find('.notification-list .no')).toHaveLength(0);
-    expect(wrapper.find(UserNotification)).toHaveLength(1);
+    expect(document.querySelectorAll('.notification-list .no')).toHaveLength(0);
+    expect(document.querySelectorAll('.user-notification')).toHaveLength(1);
   });
 });
 
 describe('<UserNotificationsMenu>', () => {
-  const sandbox = sinon.createSandbox();
-  beforeEach(() => sandbox.spy(api, 'logUXAction'));
-  afterEach(() => sandbox.restore());
+  beforeEach(() => {
+    vi.spyOn(api,'logUXAction').mockImplementation(() => {});
+  })
+  afterEach(() => vi.restoreAllMocks());
 
   it('hides the notifications icon when the user is logged out', () => {
     const user = {
@@ -65,9 +69,9 @@ describe('<UserNotificationsMenu>', () => {
         has_unread: false,
       },
     };
-    const wrapper = shallow(<UserNotificationsMenu user={user} />);
+        render(<UserNotificationsMenu user={user} />);
 
-    expect(wrapper.find('.user-notifications-menu')).toHaveLength(0);
+    expect(document.querySelectorAll('.user-notifications-menu')).toHaveLength(0);
   });
 
   it('shows the notifications icon when the user is logged in', () => {
@@ -77,9 +81,9 @@ describe('<UserNotificationsMenu>', () => {
         notifications: [],
       },
     };
-    const wrapper = shallow(<UserNotificationsMenu user={user} />);
+    render(<UserNotificationsMenu user={user} />);
 
-    expect(wrapper.find('.user-notifications-menu')).toHaveLength(1);
+    expect(document.querySelectorAll('.user-notifications-menu')).toHaveLength(1);
   });
 
   it('shows the notifications badge when the user has unread notifications and call logUxAction', () => {
@@ -91,35 +95,32 @@ describe('<UserNotificationsMenu>', () => {
         unread_count: '5',
       },
     };
-    const wrapper = mount(<UserNotificationsMenu user={user} />);
+ render(<UserNotificationsMenu user={user} />);
 
-    expect(wrapper.find('.user-notifications-menu .badge').text()).toEqual('5');
-    expect(api.logUXAction.called).toEqual(true);
+    expect(
+      document.querySelector('.user-notifications-menu .badge').textContent
+    ).toEqual('5');
+    expect(api.logUXAction).toHaveBeenCalled();
   });
 
   it('calls the logUxAction function on click on the icon if menu not visible', () => {
-    const markAllNotificationsAsRead = sinon.spy();
+    const markAllNotificationsAsRead = vi.fn();
     const user = {
-      isAuthenticated: true,
-      notifications: {
+        isAuthenticated: true,
+        notifications: {
         has_unread: true,
         notifications: [],
       },
     };
-    const wrapper = shallow(
+    render(
       <UserNotificationsMenu
         markAllNotificationsAsRead={markAllNotificationsAsRead}
         user={user}
-      />,
+      />
     );
 
-    // shallow() does not handle useEffect()
-    expect(api.logUXAction.called).toEqual(false);
-
-    wrapper.find('.selector').simulate('click', {});
-    expect(api.logUXAction.calledOnce).toEqual(true);
-
-    wrapper.find('.selector').simulate('click', {});
-    expect(api.logUXAction.calledOnce).toEqual(true);
+    expect(api.logUXAction).toHaveBeenCalledTimes(1);
+     fireEvent.click(document.querySelector('.selector'));
+    expect(api.logUXAction).toHaveBeenCalledTimes(2);
   });
 });

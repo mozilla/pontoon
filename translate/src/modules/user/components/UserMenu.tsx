@@ -79,7 +79,7 @@ export function UserMenuDialog({
   };
 
   return (
-    <ul ref={ref} className='menu'>
+    <ul  ref={ref} className='menu'>
       {user.isAuthenticated && (
         <>
           <li className='details'>
@@ -310,7 +310,7 @@ export function UserMenu(props: Props): React.ReactElement<'div'> {
       </div>
 
       {visible && (
-        <UserMenuDialog {...props} onDiscard={() => setVisible(false)} />
+        <UserMenuDialog {...props}  onDiscard={() => setVisible(false)} />
       )}
     </div>
   );

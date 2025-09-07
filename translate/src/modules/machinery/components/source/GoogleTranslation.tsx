@@ -1,9 +1,9 @@
 import React, { useState, useRef, useContext } from 'react';
 import { Localized } from '@fluent/react';
-import type { MachineryTranslation } from '~/api/machinery';
-import { Locale } from '~/context/Locale';
-import { logUXAction } from '~/api/uxaction';
-import { useLLMTranslation } from '~/context/TranslationContext';
+import type { MachineryTranslation } from '../../../../api/machinery';
+import { Locale } from '../../../../context/Locale';
+import { logUXAction } from '../../../../api/uxaction';
+import { useLLMTranslation } from '../../../../context/TranslationContext';
 
 type Props = {
   isOpenAIChatGPTSupported: boolean;

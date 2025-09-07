@@ -71,10 +71,8 @@ export function sleep(ms) {
  *
  * Source: https://github.com/mozilla/testpilot/blob/93c9ea7aa6104fbbdc21508e44d486d7ca7c77aa/frontend/test/app/util.js
  */
-export function findLocalizedById(wrapper, id) {
-  return wrapper.findWhere(
-    (elem) => elem.type() === Localized && elem.prop('id') === id,
-  );
+export function findLocalizedById(container, id) {
+  return container.querySelector(`[data-l10n-id="${id}"]`);
 }
 
 /*

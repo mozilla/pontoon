@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
-import { EditorData, EditorResult } from '~/context/Editor';
+import { EditorData, EditorResult } from '../../../context/Editor';
 
 import './MachinerySourceIndicator.css';
 

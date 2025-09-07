@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getPlainMessage } from '~/utils/message';
+import { getPlainMessage } from '../../../utils/message';
 
 import { GenericTranslation } from './GenericTranslation';
 
