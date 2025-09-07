@@ -11,7 +11,7 @@ import {render} from '@testing-library/react';
 import { LocationProvider } from '../context/Location';
 import { UPDATE } from '../modules/user/actions';
 import { reducer } from '../rootReducer';
-
+import {mount} from "enzyme"
 import { MockLocalizationProvider } from './utils';
 
 const HISTORY = createMemoryHistory({
@@ -40,12 +40,24 @@ export const mountComponentWithStore = (
   props = {},
   history,
 ) =>
-  render(
+  mount(
     <MockStore store={store} history={history}>
       <Component {...props} />
     </MockStore>,
   );
 
+export const renderComponentWithStore = (
+  Component,
+  store,
+  props = {},
+  history,
+) =>
+  render(
+    <MockStore store={store} history={history}>
+      <Component {...props} />
+    </MockStore>,
+  );
+  
 export function createDefaultUser(store, initial = {}) {
   const data = {
     settings: { force_suggestions: false },
