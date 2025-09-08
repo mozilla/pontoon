@@ -7,14 +7,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useTranslator } from './useTranslator';
 
 // Import real context + constants
-import { Locale } from '../../src/context/Locale';
-import { USER } from '../../src/modules/user';
+import { Locale } from '~/context/Locale';
+import { USER } from '~/modules/user';
 
 // Mock `useProject` hook
-vi.mock('../../src/modules/project', () => ({
+vi.mock('~/modules/project', () => ({
   useProject: vi.fn(),
 }));
-import { useProject } from '../../src/modules/project';
+import { useProject } from '~/modules/project';
 
 // Create wrapper for renderHook
 const makeWrapper = (userState, { locale = 'mylocale', project = 'myproject' } = {}) => {

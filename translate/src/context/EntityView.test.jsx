@@ -7,9 +7,9 @@ import {
   EntityView,
   EntityViewProvider,
   useActiveTranslation
-} from '../../src/context/EntityView';
-import { Locale } from '../../src/context/Locale';
-import { Location } from '../../src/context/Location';
+} from '~/context/EntityView';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
 
 const ENTITIES = [
   { pk: 1, original: 'hello' },

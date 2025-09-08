@@ -1,5 +1,5 @@
 import { batchEditEntities, fetchEntities, fetchEntityIds } from '~/api/entity';
-import type { Location } from '../../context/Location';
+import type { Location } from '~/context/Location';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';

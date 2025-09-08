@@ -1,9 +1,7 @@
-import React from 'react';
 import sinon from 'sinon';
-import { render, screen,waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { MentionUsers } from '../../../context/MentionUsers';
-import { createReduxStore, mountComponentWithStore , renderComponentWithStore} from '../../../test/store';
+
+import { MentionUsers } from '~/context/MentionUsers';
+import { createReduxStore, mountComponentWithStore , renderComponentWithStore} from '~/test/store';
 import { AddComment } from './AddComment';
 
 const USER = {
