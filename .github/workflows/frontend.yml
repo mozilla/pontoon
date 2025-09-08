@@ -20,8 +20,8 @@ jobs:
     name: TypeScript
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with: { node-version: '22' }
       - name: Install dependencies
         run: npm ci
@@ -35,8 +35,8 @@ jobs:
   licenses:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with: { node-version: '22' }
       - name: Install globals
         run: npm install --global license-checker-rseidelsohn@4.4.2
@@ -53,8 +53,8 @@ jobs:
   jest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with: { node-version: '22' }
       - name: Install globals
         run: npm install --global npm@8
