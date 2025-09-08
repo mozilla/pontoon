@@ -7,9 +7,9 @@ import React, {
   useState,
 } from 'react';
 
-import type { SourceType } from '../../src/api/machinery';
-import { useReadonlyEditor } from '../../src/hooks/useReadonlyEditor';
-import { useTranslationStatus } from '../../src/modules/entities/useTranslationStatus';
+import type { SourceType } from '~/api/machinery';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
 import {
   buildMessageEntry,
   editMessageEntry,
@@ -19,8 +19,8 @@ import {
   MessageEntry,
   parseEntry,
   serializeEntry,
-} from '../../src/utils/message';
-import { pojoEquals } from '../../src/utils/pojo';
+} from '~/utils/message';
+import { pojoEquals } from '~/utils/pojo';
 
 import { EntityView, useActiveTranslation } from './EntityView';
 import { FailedChecksData } from './FailedChecksData';

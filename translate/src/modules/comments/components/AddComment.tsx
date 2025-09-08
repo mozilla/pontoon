@@ -26,11 +26,11 @@ import {
   withReact,
 } from 'slate-react';
 
-import type { MentionUser } from '../../../../src/api/user';
-import { MentionUsers } from '../../../../src/context/MentionUsers';
-import type { UserState } from '../../../../src/modules/user';
-import { UserAvatar } from '../../../../src/modules/user';
-import { useUserBanner } from '../../../../src/hooks/useUserBanner';
+import type { MentionUser } from '~/api/user';
+import { MentionUsers } from '~/context/MentionUsers';
+import type { UserState } from '~/modules/user';
+import { UserAvatar } from '~/modules/user';
+import { useUserBanner } from '~/hooks/useUserBanner';
 
 import './AddComment.css';
 import { MentionList } from './MentionList';

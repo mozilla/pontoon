@@ -6,26 +6,26 @@ import React, {
   useState,
 } from 'react';
 
-import { EntityView, useActiveTranslation } from '../../../../src/context/EntityView';
-import { Locale } from '../../../../src/context/Locale';
-import { Location } from '../../../../src/context/Location';
-import { UnsavedActions } from '../../../../src/context/UnsavedChanges';
-import { Editor } from '../../../../src/modules/editor/components/Editor';
-import { OriginalString } from '../../../../src/modules/originalstring';
-import { TERM } from '../../../../src/modules/terms';
-import { get as getTerms } from '../../../../src/modules/terms/actions';
-import { USER } from '../../../../src/modules/user';
-import { useAppDispatch, useAppSelector, useAppStore } from '../../../../src/hooks';
-import { History } from '../../../../src/modules/history/components/History';
-import { OTHERLOCALES } from '../../../../src/modules/otherlocales';
-import { get as getOtherLocales } from '../../../../src/modules/otherlocales/actions';
-import { TEAM_COMMENTS } from '../../../../src/modules/teamcomments';
+import { EntityView, useActiveTranslation } from '~/context/EntityView';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
+import { UnsavedActions } from '~/context/UnsavedChanges';
+import { Editor } from '~/modules/editor/components/Editor';
+import { OriginalString } from '~/modules/originalstring';
+import { TERM } from '~/modules/terms';
+import { get as getTerms } from '~/modules/terms/actions';
+import { USER } from '~/modules/user';
+import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { History } from '~/modules/history/components/History';
+import { OTHERLOCALES } from '~/modules/otherlocales';
+import { get as getOtherLocales } from '~/modules/otherlocales/actions';
+import { TEAM_COMMENTS } from '~/modules/teamcomments';
 import {
   get as getTeamComments,
   request as requestTeamComments,
   togglePinnedStatus as togglePinnedTeamCommentStatus,
-} from '../../../../src/modules/teamcomments/actions';
-import { getPlainMessage } from '../../../../src/utils/message';
+} from '~/modules/teamcomments/actions';
+import { getPlainMessage } from '~/utils/message';
 
 import { ContextIssueButton } from './ContextIssueButton';
 import { EntityNavigation } from './EntityNavigation';

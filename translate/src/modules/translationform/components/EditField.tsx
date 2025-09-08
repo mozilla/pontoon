@@ -12,12 +12,12 @@ import React, {
   useState,
 } from 'react';
 
-import { EditFieldHandle, EditorActions } from '../../../../src/context/Editor';
-import { Locale } from '../../../../src/context/Locale';
-import { useReadonlyEditor } from '../../../../src/hooks/useReadonlyEditor';
+import { EditFieldHandle, EditorActions } from '~/context/Editor';
+import { Locale } from '~/context/Locale';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { getExtensions, useKeyHandlers } from '../utils/editFieldExtensions';
-import { EntityView } from '../../../../src/context/EntityView';
+import { EntityView } from '~/context/EntityView';
 
 export type EditFieldProps = {
   index: number;

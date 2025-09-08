@@ -1,8 +1,8 @@
 import React from 'react';
 import { Localized } from '@fluent/react';
 
-import type { Entity } from '../../../api/entity';
-import { parseEntry } from '../../../utils/message';
+import type { Entity } from '~/api/entity';
+import { parseEntry } from '~/utils/message';
 
 import { Property } from './Property';
 

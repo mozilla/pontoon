@@ -1,16 +1,16 @@
 import NProgress from 'nprogress';
 import { useContext } from 'react';
 
-import { ChangeOperation, setTranslationStatus } from '../../../../src/api/translation';
-import { EditorActions } from '../../../../src/context/Editor';
-import { EntityView } from '../../../../src/context/EntityView';
-import { FailedChecksData } from '../../../../src/context/FailedChecksData';
-import { HistoryData } from '../../../../src/context/HistoryData';
-import { Location } from '../../../../src/context/Location';
-import { ShowNotification } from '../../../../src/context/Notification';
-import { ShowBadgeTooltip } from '../../../../src/context/BadgeTooltip';
-import { updateEntityTranslation } from '../../../../src/modules/entities/actions';
-import { usePushNextTranslatable } from '../../../../src/modules/entities/hooks';
+import { ChangeOperation, setTranslationStatus } from '~/api/translation';
+import { EditorActions } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
+import { FailedChecksData } from '~/context/FailedChecksData';
+import { HistoryData } from '~/context/HistoryData';
+import { Location } from '~/context/Location';
+import { ShowNotification } from '~/context/Notification';
+import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
+import { updateEntityTranslation } from '~/modules/entities/actions';
+import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
   TRANSLATION_APPROVED,
   TRANSLATION_REJECTED,
@@ -20,10 +20,10 @@ import {
   UNABLE_TO_REJECT_TRANSLATION,
   UNABLE_TO_UNAPPROVE_TRANSLATION,
   UNABLE_TO_UNREJECT_TRANSLATION,
-} from '../../../../src/modules/notification/messages';
-import { updateResource } from '../../../../src/modules/resource/actions';
-import { updateStats } from '../../../../src/modules/stats/actions';
-import { useAppDispatch } from '../../../../src/hooks';
+} from '~/modules/notification/messages';
+import { updateResource } from '~/modules/resource/actions';
+import { updateStats } from '~/modules/stats/actions';
+import { useAppDispatch } from '~/hooks';
 
 /**
  * Return a function to update the status (approved, rejected... ) of a translation.

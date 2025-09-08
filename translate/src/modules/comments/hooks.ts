@@ -1,14 +1,14 @@
 import NProgress from 'nprogress';
 import { useCallback, useContext } from 'react';
 
-import { addComment } from '../../../src/api/comment';
-import type { HistoryTranslation } from '../../../src/api/translation';
-import { HistoryData } from '../../../src/context/HistoryData';
-import { Location } from '../../../src/context/Location';
-import { ShowNotification } from '../../../src/context/Notification';
-import { COMMENT_ADDED } from '../../../src/modules/notification/messages';
-import { useAppDispatch } from '../../../src/hooks';
-import { get as getTeamComments } from '../../../src/modules/teamcomments/actions';
+import { addComment } from '~/api/comment';
+import type { HistoryTranslation } from '~/api/translation';
+import { HistoryData } from '~/context/HistoryData';
+import { Location } from '~/context/Location';
+import { ShowNotification } from '~/context/Notification';
+import { COMMENT_ADDED } from '~/modules/notification/messages';
+import { useAppDispatch } from '~/hooks';
+import { get as getTeamComments } from '~/modules/teamcomments/actions';
 
 export function useAddCommentAndRefresh(
   translation: HistoryTranslation | null,

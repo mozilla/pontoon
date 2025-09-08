@@ -1,13 +1,13 @@
-import * as entities from '../src/modules/entities/reducer';
-import * as project from '../src/modules/project/reducer';
-import * as resource from '../src/modules/resource/reducer';
-import * as stats from '../src/modules/stats/reducer';
-import * as term from '../src/modules/terms/reducer';
-import * as user from '../src/modules/user/reducer';
-import * as batchactions from '../src/modules/batchactions/reducer';
-import * as otherlocales from '../src/modules/otherlocales/reducer';
-import * as search from '../src/modules/search/reducer';
-import * as teamcomments from '../src/modules/teamcomments/reducer';
+import * as entities from '~/modules/entities/reducer';
+import * as project from '~/modules/project/reducer';
+import * as resource from '~/modules/resource/reducer';
+import * as stats from '~/modules/stats/reducer';
+import * as term from '~/modules/terms/reducer';
+import * as user from '~/modules/user/reducer';
+import * as batchactions from '~/modules/batchactions/reducer';
+import * as otherlocales from '~/modules/otherlocales/reducer';
+import * as search from '~/modules/search/reducer';
+import * as teamcomments from '~/modules/teamcomments/reducer';
 
 // Combine reducers from all modules, using their NAME constant as key.
 export const reducer = {

@@ -6,10 +6,10 @@ import React, {
   useState,
 } from 'react';
 
-import type { Entity } from '../../src/api/entity';
-import type { EntityTranslation } from '../../src/api/translation';
-import { ENTITIES } from '../../src/modules/entities/reducer';
-import { useAppSelector } from '../../src/hooks';
+import type { Entity } from '~/api/entity';
+import type { EntityTranslation } from '~/api/translation';
+import { ENTITIES } from '~/modules/entities/reducer';
+import { useAppSelector } from '~/hooks';
 
 import { Locale } from './Locale';
 import { Location } from './Location';

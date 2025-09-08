@@ -1,17 +1,17 @@
 import { useContext } from 'react';
 
-import { EditorActions } from '../../../../src/context/Editor';
-import { EntityView } from '../../../../src/context/EntityView';
-import { FailedChecksData } from '../../../../src/context/FailedChecksData';
-import { HelperSelection } from '../../../../src/context/HelperSelection';
-import { MachineryTranslations } from '../../../../src/context/MachineryTranslations';
-import { SearchData } from '../../../../src/context/SearchData';
-import { UnsavedActions, UnsavedChanges } from '../../../../src/context/UnsavedChanges';
-import { useLLMTranslation } from '../../../../src/context/TranslationContext';
-import { Locale } from '../../../../src/context/Locale';
-import { useAppSelector } from '../../../../src/hooks';
-import { getPlainMessage } from '../../../../src/utils/message';
-import { logUXAction } from '../../../../src/api/uxaction';
+import { EditorActions } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
+import { FailedChecksData } from '~/context/FailedChecksData';
+import { HelperSelection } from '~/context/HelperSelection';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
+import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
+import { useLLMTranslation } from '~/context/TranslationContext';
+import { Locale } from '~/context/Locale';
+import { useAppSelector } from '~/hooks';
+import { getPlainMessage } from '~/utils/message';
+import { logUXAction } from '~/api/uxaction';
 
 import { useExistingTranslationGetter } from '../../editor/hooks/useExistingTranslationGetter';
 import { useSendTranslation } from '../../editor/hooks/useSendTranslation';

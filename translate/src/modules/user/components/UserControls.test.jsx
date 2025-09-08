@@ -1,4 +1,4 @@
-import { createReduxStore } from '../../../test/store';
+import { createReduxStore } from '~/test/store';
 import {describe,it,expect, vi } from 'vitest';
 import {render,screen} from "@testing-library/react"
 import { UserControls } from './UserControls';

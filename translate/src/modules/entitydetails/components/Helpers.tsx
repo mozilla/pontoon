@@ -2,18 +2,18 @@ import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 
-import type { Entity } from '../../../api/entity';
-import { HelperSelection } from '../../../context/HelperSelection';
-import type { Location } from '../../../context/Location';
-import { useWindowWidth } from '../../../hooks/useWindowWidth';
-import type { TermState } from '../../../modules/terms';
-import type { UserState } from '../../../modules/user';
-import { Machinery, MachineryCount } from '../../../modules/machinery';
-import type { LocalesState } from '../../../modules/otherlocales';
-import { OtherLocales, OtherLocalesCount } from '../../../modules/otherlocales';
-import type { TeamCommentState } from '../../../modules/teamcomments';
-import { CommentCount, TeamComments } from '../../../modules/teamcomments';
-import { TermCount, Terms } from '../../../modules/terms';
+import type { Entity } from '~/api/entity';
+import { HelperSelection } from '~/context/HelperSelection';
+import type { Location } from '~/context/Location';
+import { useWindowWidth } from '~/hooks/useWindowWidth';
+import type { TermState } from '~/modules/terms';
+import type { UserState } from '~/modules/user';
+import { Machinery, MachineryCount } from '~/modules/machinery';
+import type { LocalesState } from '~/modules/otherlocales';
+import { OtherLocales, OtherLocalesCount } from '~/modules/otherlocales';
+import type { TeamCommentState } from '~/modules/teamcomments';
+import { CommentCount, TeamComments } from '~/modules/teamcomments';
+import { TermCount, Terms } from '~/modules/terms';
 
 import './Helpers.css';
 

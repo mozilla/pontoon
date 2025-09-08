@@ -8,14 +8,14 @@ import React, {
   useState,
 } from 'react';
 
-import { Location } from '../../../../src/context/Location';
-import { UnsavedActions } from '../../../../src/context/UnsavedChanges';
-import { resetEntities } from '../../../../src/modules/entities/actions';
-import { ProjectState, useProject } from '../../../../src/modules/project';
-import { useAppDispatch, useAppSelector } from '../../../../src/hooks';
-import type { SearchAndFilters } from '../../../../src/modules/search';
-import { SEARCH } from '../../../../src/modules/search';
-import type { AppDispatch } from '../../../../src/store';
+import { Location } from '~/context/Location';
+import { UnsavedActions } from '~/context/UnsavedChanges';
+import { resetEntities } from '~/modules/entities/actions';
+import { ProjectState, useProject } from '~/modules/project';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import type { SearchAndFilters } from '~/modules/search';
+import { SEARCH } from '~/modules/search';
+import type { AppDispatch } from '~/store';
 
 import { getAuthorsAndTimeRangeData } from '../actions';
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';

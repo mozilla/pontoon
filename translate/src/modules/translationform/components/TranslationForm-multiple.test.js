@@ -2,16 +2,16 @@ import ftl from '@fluent/dedent';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 import {describe,it,expect} from "vitest";
-import { EditorActions, EditorProvider, EditorResult } from '../../../context/Editor';
-import { EntityView } from '../../../context/EntityView';
-import { Locale } from '../../../context/Locale';
+import { EditorActions, EditorProvider, EditorResult } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
+import { Locale } from '~/context/Locale';
 
 import {
   createDefaultUser,
   createReduxStore,
   mountComponentWithStore,
-} from '../../../test/store';
-import { MockLocalizationProvider } from '../../../test/utils';
+} from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
 
 import { TranslationForm } from './TranslationForm';
 

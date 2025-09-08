@@ -3,8 +3,8 @@ import { createMemoryHistory } from 'history';
 import  { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 import {describe,it,expect} from "vitest"
-import { createReduxStore } from '../test/store';
-import { editMessageEntry, parseEntry } from '../utils/message';
+import { createReduxStore } from '~/test/store';
+import { editMessageEntry, parseEntry } from '~/utils/message';
 import {render} from "@testing-library/react";
 import {Provider} from "react-redux";
 import {

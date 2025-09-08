@@ -1,4 +1,4 @@
-import type { Locale } from '../../src/context/Locale';
+import type { Locale } from '~/context/Locale';
 
 import { GET } from './utils/base';
 

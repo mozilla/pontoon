@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 
-import { Locale } from '../../src/context/Locale';
-import { useProject } from '../../src/modules/project';
-import { USER } from '../../src/modules/user';
-import { useAppSelector } from '../../src/hooks';
+import { Locale } from '~/context/Locale';
+import { useProject } from '~/modules/project';
+import { USER } from '~/modules/user';
+import { useAppSelector } from '~/hooks';
 
 /**
  * Return true if the user has translator permission for the current project

@@ -2,11 +2,11 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { Author } from '../../../../src/api/filter';
-import type { Tag } from '../../../../src/api/project';
-import type { Location } from '../../../../src/context/Location';
-import { Stats, useStats } from '../../../../src/modules/stats';
-import { asLocaleString, useOnDiscard } from '../../../../src/utils';
+import type { Author } from '~/api/filter';
+import type { Tag } from '~/api/project';
+import type { Location } from '~/context/Location';
+import { Stats, useStats } from '~/modules/stats';
+import { asLocaleString, useOnDiscard } from '~/utils';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 import './FiltersPanel.css';

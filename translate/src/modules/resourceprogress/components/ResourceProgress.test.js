@@ -1,4 +1,4 @@
-import { createReduxStore, mountComponentWithStore } from '../../../../src/test/store';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import {describe,it,expect} from "vitest"
 import { ResourceProgress } from './ResourceProgress';
 

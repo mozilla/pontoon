@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { useNotifications } from '../../src/hooks/useNotifications';
+import { useNotifications } from '~/hooks/useNotifications';
 
 type NotificationType = 'debug' | 'error' | 'info' | 'success' | 'warning';
 

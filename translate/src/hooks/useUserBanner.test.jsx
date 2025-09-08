@@ -1,9 +1,9 @@
 import React from 'react';
 import {describe,it,expect,vi,beforeAll,afterAll} from "vitest";
-import { Locale } from "../../src/context/Locale";
-import { Location } from "../../src/context/Location";
-import { USER } from '../modules/user';
-import * as Hooks from '../hooks';
+import { Locale } from "~/context/Locale";
+import { Location } from "~/context/Location";
+import { USER } from '~/modules/user';
+import * as Hooks from '~/hooks';
 import {renderHook} from '@testing-library/react-hooks';
 import { useUserBanner } from './useUserBanner';
 let useAppSelectorSpy;

@@ -1,4 +1,4 @@
-import { Location } from '../../src/context/Location';
+import { Location } from '~/context/Location';
 
 import { GET, POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';

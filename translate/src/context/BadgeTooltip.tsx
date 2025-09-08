@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { useNotifications } from '../../src/hooks/useNotifications';
+import { useNotifications } from '~/hooks/useNotifications';
 
 export type BadgeTooltipMessage = Readonly<{
   badgeName: string | null;

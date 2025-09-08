@@ -8,10 +8,10 @@ import {
   fetchSystranTranslation,
   fetchTranslationMemory,
   MachineryTranslation,
-} from '../../src/api/machinery';
-import { USER } from '../../src/modules/user';
-import { useAppSelector } from '../../src/hooks';
-import { getPlainMessage } from '../../src/utils/message';
+} from '~/api/machinery';
+import { USER } from '~/modules/user';
+import { useAppSelector } from '~/hooks';
+import { getPlainMessage } from '~/utils/message';
 
 import { EntityView } from './EntityView';
 import { Locale } from './Locale';

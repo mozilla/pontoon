@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import './App.css';
 
 import { EntitiesList as EntitiesListContext } from './context/EntitiesList';
-import { EntityViewProvider } from '../src/context/EntityView';
+import { EntityViewProvider } from '~/context/EntityView';
 import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
 import { MentionUsersProvider } from './context/MentionUsers';

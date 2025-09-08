@@ -4,10 +4,10 @@ import React, { Fragment, useContext, useLayoutEffect } from 'react';
 // @ts-expect-error Working types are unavailable for react-linkify 0.2.2
 import Linkify from 'react-linkify';
 
-import type { Entity } from '../../../api/entity';
-import type { TeamCommentState } from '../../../modules/teamcomments';
+import type { Entity } from '~/api/entity';
+import type { TeamCommentState } from '~/modules/teamcomments';
 
-import { Locale } from '../../../context/Locale';
+import { Locale } from '~/context/Locale';
 import { FluentAttribute } from './FluentAttribute';
 import { Property } from './Property';
 

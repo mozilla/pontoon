@@ -9,11 +9,11 @@ import React, {
   useState,
 } from 'react';
 
-import { EditFieldHandle, EditorActions, EditorData } from '../../../../src/context/Editor';
-import { Locale } from '../../../../src/context/Locale';
-import { useReadonlyEditor } from '../../../../src/hooks/useReadonlyEditor';
-import { useCopyOriginalIntoEditor } from '../../../../src/modules/editor';
-import { extractAccessKeyCandidates } from '../../../../src/utils/message';
+import { EditFieldHandle, EditorActions, EditorData } from '~/context/Editor';
+import { Locale } from '~/context/Locale';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useCopyOriginalIntoEditor } from '~/modules/editor';
+import { extractAccessKeyCandidates } from '~/utils/message';
 
 import { useHandleEnter, useHandleEscape } from '../utils/editFieldShortcuts';
 import type { EditFieldProps } from './EditField';

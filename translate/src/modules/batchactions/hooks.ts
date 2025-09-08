@@ -1,4 +1,4 @@
-import { useAppSelector } from '../../../src/hooks';
+import { useAppSelector } from '~/hooks';
 import { BATCHACTIONS } from './reducer';
 
 export const useBatchactions = () =>

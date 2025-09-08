@@ -4,8 +4,8 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
 
-import { EntityView } from '../../../context/EntityView';
-import { createReduxStore, mountComponentWithStore } from '../../../test/store';
+import { EntityView } from '~/context/EntityView';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { EntityDetails } from './EntityDetails';
 

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { EditorData, EditorResult } from '../../../../src/context/Editor';
-import { EntityView } from '../../../../src/context/EntityView';
-import { getPlainMessage } from '../../../../src/utils/message';
+import { EditorData, EditorResult } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
+import { getPlainMessage } from '~/utils/message';
 
 import './TranslationLength.css';
 

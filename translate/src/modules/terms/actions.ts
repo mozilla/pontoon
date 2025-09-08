@@ -1,5 +1,5 @@
-import { fetchTerms, TermType } from '../../../src/api/terminology';
-import type { AppDispatch } from '../../store';
+import { fetchTerms, TermType } from '~/api/terminology';
+import type { AppDispatch } from '~/store';
 
 export const RECEIVE = 'terms/RECEIVE';
 export const REQUEST = 'terms/REQUEST';

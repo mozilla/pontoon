@@ -8,12 +8,12 @@ import React, {
   useState,
 } from 'react';
 
-import { fetchEntityHistory } from '../../src/api/entity';
-import { deleteTranslation, HistoryTranslation } from '../../src/api/translation';
+import { fetchEntityHistory } from '~/api/entity';
+import { deleteTranslation, HistoryTranslation } from '~/api/translation';
 import {
   TRANSLATION_DELETED,
   UNABLE_TO_DELETE_TRANSLATION,
-} from '../../src/modules/notification/messages';
+} from '~/modules/notification/messages';
 
 import { EntityView } from './EntityView';
 import { Locale } from './Locale';

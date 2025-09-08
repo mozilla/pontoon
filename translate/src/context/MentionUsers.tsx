@@ -1,5 +1,5 @@
 import React, { createContext, useMemo, useState } from 'react';
-import { fetchUsersList, MentionUser } from '../../src/api/user';
+import { fetchUsersList, MentionUser } from '~/api/user';
 
 type MentionUsers = {
   /**

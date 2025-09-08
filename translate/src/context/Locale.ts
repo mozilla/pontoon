@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { GET } from '../../src/api/utils/base';
-import { keysToCamelCase } from '../../src/api/utils/keysToCamelCase';
+import { GET } from '~/api/utils/base';
+import { keysToCamelCase } from '~/api/utils/keysToCamelCase';
 
 export type Localization = Readonly<{
   project: Readonly<{ slug: string; name: string }>;

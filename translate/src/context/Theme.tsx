@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { useTheme } from '../../src/hooks/useTheme';
+import { useTheme } from '~/hooks/useTheme';
 
 export const ThemeContext = createContext({
   theme: 'dark',

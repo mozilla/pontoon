@@ -8,9 +8,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { createMemoryHistory } from 'history';
 import {render} from '@testing-library/react';
-import { LocationProvider } from '../context/Location';
-import { UPDATE } from '../modules/user/actions';
-import { reducer } from '../rootReducer';
+import { LocationProvider } from '~/context/Location';
+import { UPDATE } from '~/modules/user/actions';
+import { reducer } from '~/rootReducer';
 import {mount} from "enzyme"
 import { MockLocalizationProvider } from './utils';
 

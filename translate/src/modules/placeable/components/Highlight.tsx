@@ -1,8 +1,8 @@
 import { Localized } from '@fluent/react';
 import escapeRegExp from 'lodash.escaperegexp';
 import React, { useContext } from 'react';
-import { TermState } from '../../../modules/terms';
-import { Location } from '../../../context/Location';
+import { TermState } from '~/modules/terms';
+import { Location } from '~/context/Location';
 
 import './Highlight.css';
 import { ReactElement } from 'react';

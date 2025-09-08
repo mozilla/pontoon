@@ -1,9 +1,9 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
-import { FailedChecksData } from '../../../../src/context/FailedChecksData';
+import { FailedChecksData } from '~/context/FailedChecksData';
 
-import { useAppSelector } from '../../../../src/hooks';
-import { useTranslator } from '../../../../src/hooks/useTranslator';
+import { useAppSelector } from '~/hooks';
+import { useTranslator } from '~/hooks/useTranslator';
 import { useSendTranslation } from '../hooks/useSendTranslation';
 
 import { useUpdateTranslationStatus } from '../hooks/useUpdateTranslationStatus';

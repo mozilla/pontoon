@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import { render,screen, fireEvent } from '@testing-library/react';
-import { EntityView } from '../../../context/EntityView';
-import { Location } from '../../../context/Location';
-import * as Translator from '../../../hooks/useTranslator';
+import { render,screen } from '@testing-library/react';
+import { EntityView } from '~/context/EntityView';
+import { Location } from '~/context/Location';
+import * as Translator from '~/hooks/useTranslator';
 import {
-  findLocalizedById,
+  findLocalizedByIds,
   MockLocalizationProvider,
   mockMatchMedia,
-} from '../../../../src/test/utils';
+} from '~/test/utils';
 
 import { FileUpload } from './FileUpload';
 import { SignInOutForm } from './SignInOutForm';
@@ -71,7 +71,7 @@ describe('<UserMenuDialog>', () => {
 
     expect(screen.queryByTestId("file-upload-form")).toBeInTheDocument();
     expect(
-      findLocalizedById(container, "user-UserMenu--download-translations")
+      findLocalizedByIds(container, "user-UserMenu--download-translations")
     ).not.toBeInTheDocument();
   });
 
@@ -82,7 +82,7 @@ describe('<UserMenuDialog>', () => {
 
     expect(screen.queryByTestId("file-upload-form")).not.toBeInTheDocument();
     expect(
-      findLocalizedById(container, "user-UserMenu--download-translations")
+      findLocalizedByIds(container, "user-UserMenu--download-translations")
     ).not.toBeInTheDocument();
   });
 
@@ -112,7 +112,7 @@ describe('<UserMenuDialog>', () => {
 
     expect(screen.queryByTestId("file-upload-form")).not.toBeInTheDocument();
     expect(
-      findLocalizedById(container, "user-UserMenu--download-translations")
+      findLocalizedByIds(container, "user-UserMenu--download-translations")
     ).not.toBeInTheDocument();
   });
 

@@ -15,8 +15,8 @@ import { EditorView, keymap } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useRef } from 'react';
 
-import { EditorActions } from '../../../../src/context/Editor';
-import { useCopyOriginalIntoEditor } from '../../../../src/modules/editor';
+import { EditorActions } from '~/context/Editor';
+import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { decoratorPlugin } from './decoratorPlugin';
 import {
   useHandleCtrlShiftArrow,

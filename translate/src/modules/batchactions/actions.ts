@@ -1,9 +1,9 @@
-import { batchEditEntities, fetchEntities, fetchEntityIds } from '../../../src/api/entity';
+import { batchEditEntities, fetchEntities, fetchEntityIds } from '~/api/entity';
 import type { Location } from '../../context/Location';
-import { updateEntityTranslation } from '../../../src/modules/entities/actions';
-import { updateResource } from '../../../src/modules/resource/actions';
-import { updateStats } from '../../../src/modules/stats/actions';
-import type { AppDispatch } from '../../store';
+import { updateEntityTranslation } from '~/modules/entities/actions';
+import { updateResource } from '~/modules/resource/actions';
+import { updateStats } from '~/modules/stats/actions';
+import type { AppDispatch } from '~/store';
 
 export const CHECK_BATCHACTIONS = 'batchactions/CHECK';
 export const RECEIVE_BATCHACTIONS = 'batchactions/RECEIVE';

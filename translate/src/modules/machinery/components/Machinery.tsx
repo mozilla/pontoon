@@ -1,10 +1,10 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { MachineryTranslations } from '../../../context/MachineryTranslations';
-import { SearchData } from '../../../context/SearchData';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
 
-import { SkeletonLoader } from '../../../modules/loaders';
+import { SkeletonLoader } from '~/modules/loaders';
 
 import './Machinery.css';
 import { MachineryTranslationComponent } from './MachineryTranslation';

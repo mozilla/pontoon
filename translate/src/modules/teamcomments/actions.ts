@@ -2,8 +2,8 @@ import {
   fetchTeamComments,
   setCommentPinned,
   TeamComment,
-} from '../../../src/api/comment';
-import type { AppDispatch } from '../../store';
+} from '~/api/comment';
+import type { AppDispatch } from '~/store';
 
 export const RECEIVE = 'comments/RECEIVE';
 export const REQUEST = 'comments/REQUEST';

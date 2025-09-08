@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { NotificationMessage } from '../../src/context/Notification';
-import { BadgeTooltipMessage } from '../../src/context/BadgeTooltip';
+import { NotificationMessage } from '~/context/Notification';
+import { BadgeTooltipMessage } from '~/context/BadgeTooltip';
 
 export function useNotifications() {
   const [message, setMessage] = useState<NotificationMessage | null>(null);

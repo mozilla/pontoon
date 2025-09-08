@@ -1,9 +1,9 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { Settings } from '../../../../src/modules/user';
-import { useOnDiscard } from '../../../../src/utils';
-import { useTranslator } from '../../../../src/hooks/useTranslator';
+import type { Settings } from '~/modules/user';
+import { useOnDiscard } from '~/utils';
+import { useTranslator } from '~/hooks/useTranslator';
 
 import './EditorSettings.css';
 

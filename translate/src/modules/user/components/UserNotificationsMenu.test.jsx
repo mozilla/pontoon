@@ -1,7 +1,6 @@
-import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import * as api from '../../../../src/api/uxaction';
+import * as api from '~/api/uxaction';
 
 import {
   UserNotificationsMenu,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TranslationForm } from '../../../modules/translationform';
+import { TranslationForm } from '~/modules/translationform';
 
 import './Editor.css';
 import { EditorMenu } from './EditorMenu';

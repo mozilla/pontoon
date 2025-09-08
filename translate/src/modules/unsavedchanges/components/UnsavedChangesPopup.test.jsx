@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { UnsavedActions, UnsavedChanges } from '../../../../src/context/UnsavedChanges';
-import { MockLocalizationProvider } from '../../../../src/test/utils';
+import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
+import { MockLocalizationProvider } from '~/test/utils';
 
 import { UnsavedChangesPopup } from './UnsavedChangesPopup';
 
