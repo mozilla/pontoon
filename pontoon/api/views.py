@@ -408,8 +408,6 @@ class TranslationSearchListView(generics.ListAPIView):
 
         locale = get_object_or_404(Locale, code=locale_code)
 
-        # maybe we should check this, although if left empty/missing
-        # it doesn't matter inside for_project_locale
         data.update({"search": search})
 
         if project_slug == "all-projects":
