@@ -22,12 +22,14 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.entity import Entity
 from pontoon.terminology.models import (
     Term,
 )
 
 from .serializers import (
     NestedIndividualLocaleSerializer,
+    EntitySerializer,
     NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
@@ -291,6 +293,27 @@ class ProjectIndividualView(generics.RetrieveAPIView):
         return queryset.stats_data()
 
 
+class EntityListView(generics.ListAPIView):
+    serializer_class = EntitySerializer
+
+    def get_queryset(self):
+        return Entity.objects.all()
+
+
+class EntityIndividualView(generics.RetrieveAPIView):
+    serializer_class = EntitySerializer
+
+    def get_object(self):
+        pk = self.kwargs["pk"]
+
+        entity = get_object_or_404(
+            Entity,
+            pk=pk,
+        )
+
+        return entity
+
+
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
     serializer_class = NestedProjectLocaleSerializer
 
@@ -361,3 +384,47 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         return queryset.prefetch_related("project", "locale")
+
+
+class TranslationSearchListView(generics.ListAPIView):
+    serializer_class = EntitySerializer
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+
+        project_slug = query_params.get(
+            "project"
+        )  # to translate for, default is all projects
+        locale_code = query_params.get(
+            "locale"
+        )  # to translate to, default to first preferred locale?
+
+        search = query_params.get("search")
+        search_identifiers = query_params.get("search_identifiers")
+        search_match_case = query_params.get("search_match_case")
+        search_match_whole_word = query_params.get("search_match_whole_word")
+
+        data = {}
+
+        locale = get_object_or_404(Locale, code=locale_code)
+
+        # maybe we should check this, although if left empty/missing
+        # it doesn't matter inside for_project_locale
+        data.update({"search": search})
+
+        # locale is required
+        if project_slug == "all-projects":
+            project = Project(slug=project_slug)
+        else:
+            project = get_object_or_404(Project, slug=project_slug)
+
+        if search_identifiers is not None:
+            data.update({"search_identifiers": True})
+
+        if search_match_case is not None:
+            data.update({"search_match_case": True})
+
+        if search_match_whole_word is not None:
+            data.update({"search_match_whole_word": True})
+
+        return Entity.for_project_locale(self.request.user, project, locale, **data)
