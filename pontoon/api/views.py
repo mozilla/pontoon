@@ -30,6 +30,7 @@ from pontoon.terminology.models import (
 from .serializers import (
     NestedIndividualLocaleSerializer,
     EntitySerializer,
+    NestedIndividualLocaleSerializer,
     NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
