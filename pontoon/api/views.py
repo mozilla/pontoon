@@ -412,7 +412,6 @@ class TranslationSearchListView(generics.ListAPIView):
         # it doesn't matter inside for_project_locale
         data.update({"search": search})
 
-        # locale is required
         if project_slug == "all-projects":
             project = Project(slug=project_slug)
         else:
