@@ -28,7 +28,9 @@ from pontoon.terminology.models import (
 )
 
 from .serializers import (
+    EntitySearchSerializer,
     EntitySerializer,
+    NestedEntitySerializer,
     NestedIndividualLocaleSerializer,
     NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
@@ -301,7 +303,7 @@ class EntityListView(generics.ListAPIView):
 
 
 class EntityIndividualView(generics.RetrieveAPIView):
-    serializer_class = EntitySerializer
+    serializer_class = NestedEntitySerializer
 
     def get_object(self):
         pk = self.kwargs["pk"]
@@ -387,7 +389,7 @@ class TranslationMemorySearchListView(generics.ListAPIView):
 
 
 class TranslationSearchListView(generics.ListAPIView):
-    serializer_class = EntitySerializer
+    serializer_class = EntitySearchSerializer
 
     def get_queryset(self):
         query_params = self.request.query_params

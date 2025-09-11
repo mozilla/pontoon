@@ -269,7 +269,7 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
         return None
 
 
-class MiniTranslationSerializer(serializers.ModelSerializer):
+class CompactTranslationSerializer(serializers.ModelSerializer):
     locale = serializers.SerializerMethodField()
     editor_url = serializers.SerializerMethodField()
 
@@ -296,7 +296,7 @@ class MiniTranslationSerializer(serializers.ModelSerializer):
         return f"{os.environ.get('SITE_URL')}/{obj.locale.code}/{entity.resource.project.slug}/{entity.resource.path}/?string={entity.pk}"
 
 
-class MiniResourceSerializer(serializers.ModelSerializer):
+class CompactResourceSerializer(serializers.ModelSerializer):
     repository_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -320,10 +320,7 @@ class MiniResourceSerializer(serializers.ModelSerializer):
 
 class EntitySerializer(serializers.ModelSerializer):
     project = serializers.SerializerMethodField()
-    resource = MiniResourceSerializer(read_only=True)
-    translations = MiniTranslationSerializer(
-        source="translation_set", many=True, read_only=True
-    )
+    resource = CompactResourceSerializer(read_only=True)
 
     class Meta:
         model = Entity
@@ -333,8 +330,25 @@ class EntitySerializer(serializers.ModelSerializer):
             "key",
             "project",
             "resource",
-            "translations",
         ]
+
+    def get_project(self, obj):
+        if not obj.resource.project:
+            return None
+
+        return {
+            "slug": obj.resource.project.slug,
+            "name": obj.resource.project.name,
+        }
+
+
+class NestedEntitySerializer(EntitySerializer):
+    translations = CompactTranslationSerializer(
+        source="translation_set", many=True, read_only=True
+    )
+
+    class Meta(EntitySerializer.Meta):
+        fields = EntitySerializer.Meta.fields + ["translations"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -348,11 +362,24 @@ class EntitySerializer(serializers.ModelSerializer):
                 if include_translations is None:
                     self.fields.pop("translations")
 
-    def get_project(self, obj):
-        if not obj.resource.project:
+
+class EntitySearchSerializer(EntitySerializer):
+    translation = serializers.SerializerMethodField()
+
+    class Meta(EntitySerializer.Meta):
+        fields = EntitySerializer.Meta.fields + ["translation"]
+
+    def get_translation(self, obj):
+        request = self.context.get("request")
+
+        if not request:
             return None
 
-        return {
-            "slug": obj.resource.project.slug,
-            "name": obj.resource.project.name,
-        }
+        locale_code = request.query_params.get("locale")
+
+        if not locale_code:
+            return None
+
+        translation = obj.translation_set.filter(locale__code=locale_code).first()
+
+        return CompactTranslationSerializer(translation).data
