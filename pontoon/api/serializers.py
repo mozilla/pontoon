@@ -1,6 +1,5 @@
-import os
-
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 from pontoon.base.models import (
     Locale,
@@ -291,9 +290,25 @@ class CompactTranslationSerializer(serializers.ModelSerializer):
         }
 
     def get_editor_url(self, obj):
+        request = self.context.get("request")
+
+        if not request:
+            return None
+
         entity = Entity.objects.get(pk=obj.entity.pk)
 
-        return f"{os.environ.get('SITE_URL')}/{obj.locale.code}/{entity.resource.project.slug}/{entity.resource.path}/?string={entity.pk}"
+        return (
+            reverse(
+                "pontoon.translate",
+                kwargs={
+                    "locale": obj.locale.code,
+                    "project": entity.resource.project.slug,
+                    "resource": entity.resource.path,
+                },
+                request=request,
+            )
+            + f"?string={entity.pk}"
+        )
 
 
 class CompactResourceSerializer(serializers.ModelSerializer):
