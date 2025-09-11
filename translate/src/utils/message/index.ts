@@ -1,15 +1,15 @@
-import type { Model } from 'messageformat';
+import type { Message } from '@mozilla/l10n';
 
 export type MessageEntry =
   | {
       id: string;
-      value: Model.Message;
+      value: Message;
       attributes?: never;
     }
   | {
       id: string;
-      value: Model.Message | null;
-      attributes: Map<string, Model.Message>;
+      value: Message | null;
+      attributes: Map<string, Message>;
     };
 
 export { buildMessageEntry } from './buildMessageEntry';
@@ -17,7 +17,6 @@ export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
 export { getEmptyMessageEntry } from './getEmptyMessage';
 export { getPlainMessage } from './getPlainMessage';
 export { editMessageEntry, editSource } from './editMessageEntry';
-export { findPluralSelectors } from './findPluralSelectors';
 export { parseEntry } from './parseEntry';
 export { requiresSourceView } from './requiresSourceView';
 export { serializeEntry } from './serializeEntry';

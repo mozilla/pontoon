@@ -1,8 +1,12 @@
-import { Resource } from '@fluent/syntax';
-import { fluentToResourceData } from '@messageformat/fluent';
-import { parseMessage } from 'messageformat';
+import {
+  fluentParseEntry,
+  mf2ParseMessage,
+  serializePattern,
+  type FormatKey,
+  type Message,
+  type Pattern,
+} from '@mozilla/l10n';
 import type { MessageEntry } from '.';
-import { parseFlatFluent } from './parseFlatFluent';
 
 /**
  * Parse `'fluent'` or `'gettext'` message source as a {@link MessageEntry}.
@@ -13,22 +17,40 @@ export function parseEntry(
   format: string,
   source: string,
 ): MessageEntry | null {
-  switch (format) {
-    case 'fluent': {
-      const fluentEntry = parseFlatFluent(source);
-      const { data } = fluentToResourceData(new Resource([fluentEntry]));
-      for (const [id, attributes] of data) {
-        const value = attributes.get('') ?? null;
-        if (value && attributes.size === 1) {
-          return { id, value };
+  try {
+    switch (format) {
+      case 'fluent': {
+        const [id, entry] = fluentParseEntry(source);
+        const value = entry['='] ? flatMessage('fluent', entry['=']) : null;
+        if (entry['+']) {
+          const attributes = new Map<string, Message>();
+          for (const [name, value] of Object.entries(entry['+'])) {
+            attributes.set(name, flatMessage('fluent', value));
+          }
+          return { id, value, attributes };
         }
-        attributes.delete('');
-        return { id, value, attributes };
+        return value ? { id, value } : null;
       }
-      break;
+
+      case 'gettext':
+        return { id: '', value: mf2ParseMessage(source) };
     }
-    case 'gettext':
-      return { id: '', value: parseMessage(source) };
-  }
+  } catch {}
   return null;
+}
+
+/**
+ * Empty Fluent string literals `{ "" }` are dropped.
+ */
+function flatMessage(format: FormatKey, msg: Message): Message {
+  const flatPattern = (pat: Pattern) => [
+    serializePattern(format, pat).replace(/{ "" }/g, ''),
+  ];
+  if (Array.isArray(msg)) return flatPattern(msg);
+  if (msg.msg) return { decl: msg.decl, msg: flatPattern(msg.msg) };
+  const flatAlt = msg.alt.map((v) => ({
+    keys: v.keys,
+    pat: flatPattern(v.pat),
+  }));
+  return { decl: msg.decl, sel: msg.sel, alt: flatAlt };
 }

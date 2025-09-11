@@ -1,6 +1,4 @@
-import { serializeExpression } from '@fluent/syntax';
-import { messageToFluent } from '@messageformat/fluent';
-import type { Model } from 'messageformat';
+import { fluentSerializePattern, Pattern, type Message } from '@mozilla/l10n';
 import type { MessageEntry } from '.';
 import { parseEntry } from './parseEntry';
 
@@ -45,37 +43,21 @@ export function getPlainMessage(
   return '';
 }
 
-function previewMessage(message: Model.Message): string {
+function previewMessage(message: Message): string {
   // Presumes that the last variant is the most appropriate
   // to use as a generic representation of the message.
-  if (message.type === 'select') {
-    const vc = message.variants.length;
-    if (vc) {
-      const { value } = message.variants[vc - 1];
-      message = {
-        type: 'message',
-        declarations: message.declarations,
-        pattern: value,
-      };
-    }
+
+  let pattern: Pattern;
+  if (Array.isArray(message)) pattern = message;
+  else if (message.msg) pattern = message.msg;
+  else {
+    pattern = message.alt.find((v) =>
+      v.keys.every((key) => typeof key !== 'string'),
+    )!.pat;
   }
 
-  const functionMap = new Proxy(
-    {},
-    { get: (_, prop) => String(prop).toUpperCase() },
-  );
-  const { elements } = messageToFluent(message, { functionMap });
-
-  let res = '';
-  for (const elt of elements) {
-    if (elt.type === 'TextElement') {
-      res += elt.value;
-    } else {
-      const expression = serializeExpression(elt.expression);
-      if (expression !== '""') {
-        res += `{ ${expression} }`;
-      }
-    }
-  }
-  return res;
+  return fluentSerializePattern(pattern, {
+    escapeSyntax: false,
+    onError: () => {},
+  });
 }

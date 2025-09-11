@@ -84,7 +84,7 @@ describe('<EditorProvider>', () => {
     mountSpy(Spy, 'simple', 'message');
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
+      initial: { id: 'key', value: ['message'] },
       fields: [
         {
           id: '',
@@ -108,7 +108,7 @@ describe('<EditorProvider>', () => {
     mountSpy(Spy, 'fluent', 'key = message');
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: { id: 'key', value: { type: 'message', pattern: ['message'] } },
+      initial: { id: 'key', value: ['message'] },
       fields: [
         {
           id: '',
@@ -146,8 +146,8 @@ describe('<EditorProvider>', () => {
     }));
     expect(editor).toMatchObject({ sourceView: false, initial: entry, fields });
     expect(result).toMatchObject([
-      { name: '', keys: [{ type: 'literal', value: 'one' }], value: 'ONE' },
-      { name: '', keys: [{ type: '*', value: 'other' }], value: 'OTHER' },
+      { name: '', keys: ['one'], value: 'ONE' },
+      { name: '', keys: [{ '*': 'other' }], value: 'OTHER' },
     ]);
   });
 
@@ -163,10 +163,7 @@ describe('<EditorProvider>', () => {
 
     expect(editor).toMatchObject({
       sourceView: true,
-      initial: {
-        id: 'key',
-        value: { type: 'message', pattern: ['## comment\n'] },
-      },
+      initial: { id: 'key', value: ['## comment\n'] },
       fields: [
         {
           handle: { current: { value: '## comment' } },
@@ -231,14 +228,14 @@ describe('<EditorProvider>', () => {
         {
           handle: { current: { value: '' } },
           id: '|one',
-          keys: [{ type: 'literal', value: 'one' }],
+          keys: ['one'],
           labels: [{ label: 'one', plural: true }],
           name: '',
         },
         {
           handle: { current: { value: '' } },
           id: '|other',
-          keys: [{ type: '*', value: 'other' }],
+          keys: [{ '*': 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
         },
@@ -272,22 +269,22 @@ describe('<EditorProvider>', () => {
         {
           handle: { current: { value: 'ONE' } },
           id: '|one',
-          keys: [{ type: 'literal', value: 'one' }],
+          keys: ['one'],
           labels: [{ label: 'one', plural: true }],
           name: '',
         },
         {
           handle: { current: { value: 'OTHER' } },
           id: '|other',
-          keys: [{ type: '*', value: 'other' }],
+          keys: [{ '*': 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
         },
       ],
     });
     expect(result).toMatchObject([
-      { keys: [{ type: 'literal', value: 'one' }], name: '', value: 'ONE' },
-      { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
+      { keys: ['one'], name: '', value: 'ONE' },
+      { keys: [{ '*': 'other' }], name: '', value: 'OTHER' },
     ]);
   });
 
@@ -329,8 +326,8 @@ describe('<EditorProvider>', () => {
 
     expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
     expect(result).toMatchObject([
-      { keys: [{ type: 'literal', value: 'one' }], name: '', value: 'ONE' },
-      { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
+      { keys: ['one'], name: '', value: 'ONE' },
+      { keys: [{ '*': 'other' }], name: '', value: 'OTHER' },
     ]);
   });
 });
