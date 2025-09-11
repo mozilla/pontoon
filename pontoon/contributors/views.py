@@ -508,6 +508,16 @@ def generate_token(request):
 def delete_token(request, token_id):
     try:
         token = PersonalAccessToken.objects.get(id=token_id)
+
+        if token.user != request.user:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "You are not authorized to delete this token.",
+                },
+                status=403,
+            )
+
         token.delete()
 
         return JsonResponse(
@@ -519,7 +529,7 @@ def delete_token(request, token_id):
 
     except PersonalAccessToken.DoesNotExist:
         return JsonResponse(
-            {"status": "error", "message": "Token not found."}, status=404
+            {"status": "error", "message": "Unable to delete the token."}, status=404
         )
 
 
