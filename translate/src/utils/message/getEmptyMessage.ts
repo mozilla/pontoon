@@ -1,9 +1,8 @@
-import type { Model } from 'messageformat';
-
 import type { Locale } from '~/context/Locale';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
 import { getPluralCategories } from './getPluralCategories';
+import type { CatchallKey, Message } from '@mozilla/l10n';
 
 /**
  * Return a copy of a given MessageEntry with all its patterns empty.
@@ -24,7 +23,7 @@ export function getEmptyMessageEntry(
 ): MessageEntry {
   if (source.attributes) {
     const value = source.value ? getEmptyMessage(source.value, locale) : null;
-    const attributes = new Map<string, Model.Message>();
+    const attributes = new Map<string, Message>();
     for (const [key, message] of source.attributes) {
       attributes.set(key, getEmptyMessage(message, locale));
     }
@@ -33,55 +32,47 @@ export function getEmptyMessageEntry(
   return { id: source.id, value: getEmptyMessage(source.value, locale) };
 }
 
-function getEmptyMessage(
-  source: Model.Message,
-  { code }: Locale,
-): Model.Message {
-  const declarations = structuredClone(source.declarations);
+function getEmptyMessage(source: Message, { code }: Locale): Message {
+  if (Array.isArray(source)) return [''];
 
-  if (source.type === 'message') {
-    return { type: 'message', declarations, pattern: [''] };
-  }
+  const decl = structuredClone(source.decl);
+  if (source.msg) return { decl, msg: [''] };
 
+  const sel: string[] = [];
   const plurals = findPluralSelectors(source);
-  const selectors: Model.VariableRef[] = [];
-  let variantKeys: Array<Model.Variant['keys']> = [];
-  for (let i = 0; i < source.selectors.length; ++i) {
-    let keys: Model.Variant['keys'];
-    if (plurals.includes(i)) {
-      const keyValues = source.variants
-        .map((v) => v.keys[i].value as string)
+  let variantKeys: (string | CatchallKey)[][] = [];
+  for (let i = 0; i < source.sel.length; ++i) {
+    let keys: (string | CatchallKey)[];
+    if (plurals.has(i)) {
+      const keyValues = source.alt
+        .map((v) => {
+          const key = v.keys[i];
+          return typeof key === 'string' ? key : key['*'];
+        })
         .filter((value) => value && /^[0-9]+$/.test(value))
         .concat(getPluralCategories(code));
-      keys = Array.from(new Set(keyValues), (value) => ({
-        type: 'literal',
-        value,
-      }));
-      keys.at(-1)!.type = '*';
+      keys = Array.from(new Set(keyValues));
+      keys.push({ '*': keys.pop() as string });
     } else {
       const keyValues = new Set<string>();
       let catchall: string | undefined;
-      for (const v of source.variants) {
+      for (const v of source.alt) {
         const k = v.keys[i];
-        if (k.type === '*') {
-          catchall = k.value || 'other';
-          keyValues.add(catchall);
+        if (typeof k === 'string') {
+          keyValues.add(k);
         } else {
-          keyValues.add(k.value);
+          catchall = k['*'] || 'other';
+          keyValues.add(catchall);
         }
       }
-      keys = Array.from(keyValues, (value) => ({
-        type: value === catchall ? '*' : 'literal',
-        value,
-      }));
-      if (catchall === undefined) {
-        keys.push({ type: '*' });
-      }
+      keys = Array.from(keyValues, (value) =>
+        value === catchall ? { '*': value } : value,
+      );
+      if (catchall === undefined) keys.push({ '*': '' });
     }
 
     if (keys.length > 1) {
-      const sel = source.selectors[i];
-      selectors.push({ type: 'variable', name: sel.name });
+      sel.push(source.sel[i]);
       if (variantKeys.length === 0) {
         variantKeys = keys.map((key) => [key]);
       } else {
@@ -96,10 +87,8 @@ function getEmptyMessage(
     }
   }
 
-  if (selectors.length === 0) {
-    return { type: 'message', declarations, pattern: [''] };
-  }
+  if (sel.length === 0) return { decl, msg: [''] };
 
-  const variants = variantKeys.map((keys) => ({ keys, value: [''] }));
-  return { type: 'select', declarations, selectors, variants };
+  const alt = variantKeys.map((keys) => ({ keys, pat: [''] }));
+  return { decl, sel: sel, alt };
 }
