@@ -16,6 +16,7 @@ from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
+from pontoon.base import forms
 from pontoon.base.models import (
     Locale,
     Project,
@@ -394,36 +395,33 @@ class TranslationSearchListView(generics.ListAPIView):
     def get_queryset(self):
         query_params = self.request.query_params
 
-        project_slug = query_params.get(
-            "project"
-        )  # to translate for, default is all projects
-        locale_code = query_params.get(
-            "locale"
-        )  # to translate to, default to first preferred locale?
+        form = forms.GetEntitiesForm(query_params)
+        if not form.is_valid():
+            raise ValidationError(form.errors)
 
-        search = query_params.get("search")
-        search_identifiers = query_params.get("search_identifiers")
-        search_match_case = query_params.get("search_match_case")
-        search_match_whole_word = query_params.get("search_match_whole_word")
+        locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
 
-        data = {}
-
-        locale = get_object_or_404(Locale, code=locale_code)
-
-        data.update({"search": search})
-
+        project_slug = form.cleaned_data["project"]
         if project_slug == "all-projects":
             project = Project(slug=project_slug)
         else:
             project = get_object_or_404(Project, slug=project_slug)
 
-        if search_identifiers is not None:
-            data.update({"search_identifiers": True})
+        restrict_to_keys = (
+            "search",
+            "search_identifiers",
+            "search_match_case",
+            "search_match_whole_word",
+        )
+        form_data = {
+            k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data
+        }
 
-        if search_match_case is not None:
-            data.update({"search_match_case": True})
+        try:
+            entities = Entity.for_project_locale(
+                self.request.user, project, locale, **form_data
+            )
+        except ValueError as error:
+            raise ValueError(error)
 
-        if search_match_whole_word is not None:
-            data.update({"search_match_whole_word": True})
-
-        return Entity.for_project_locale(self.request.user, project, locale, **data)
+        return entities
