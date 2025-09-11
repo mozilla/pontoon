@@ -3,13 +3,13 @@ import { findPluralSelectors } from './findPluralSelectors';
 import { parseEntry } from './parseEntry';
 
 describe('findPluralSelectors', () => {
-  it('returns [] for non-select messages', () => {
+  it('returns {} for non-select messages', () => {
     const input = 'my-entry = Hello!';
     const entry = parseEntry('fluent', input);
-    expect(findPluralSelectors(entry.value)).toMatchObject([]);
+    expect(findPluralSelectors(entry.value)).toMatchObject(new Set());
   });
 
-  it('returns [0] if all variant keys are CLDR plurals', () => {
+  it('returns {0} if all variant keys are CLDR plurals', () => {
     const input = ftl`
       my-entry =
           { $num ->
@@ -18,10 +18,10 @@ describe('findPluralSelectors', () => {
           }
       `;
     const entry = parseEntry('fluent', input);
-    expect(findPluralSelectors(entry.value)).toMatchObject([0]);
+    expect(findPluralSelectors(entry.value)).toMatchObject(new Set([0]));
   });
 
-  it('returns [0] if all variant keys are numbers', () => {
+  it('returns {0} if all variant keys are numbers', () => {
     const input = ftl`
       my-entry =
           { $num ->
@@ -30,10 +30,10 @@ describe('findPluralSelectors', () => {
           }
       `;
     const entry = parseEntry('fluent', input);
-    expect(findPluralSelectors(entry.value)).toMatchObject([0]);
+    expect(findPluralSelectors(entry.value)).toMatchObject(new Set([0]));
   });
 
-  it('returns [0] if one variant key is a CLDR plural and the other is a number', () => {
+  it('returns {0} if one variant key is a CLDR plural and the other is a number', () => {
     const input = ftl`
       my-entry =
           { $num ->
@@ -43,10 +43,10 @@ describe('findPluralSelectors', () => {
           }
       `;
     const entry = parseEntry('fluent', input);
-    expect(findPluralSelectors(entry.value)).toMatchObject([0]);
+    expect(findPluralSelectors(entry.value)).toMatchObject(new Set([0]));
   });
 
-  it('returns [] if one variant key is a CLDR plural and the other is neither a CLDR plural nor a number', () => {
+  it('returns {} if one variant key is a CLDR plural and the other is neither a CLDR plural nor a number', () => {
     const input = ftl`
       my-entry =
           { $num ->
@@ -55,6 +55,6 @@ describe('findPluralSelectors', () => {
           }
       `;
     const entry = parseEntry('fluent', input);
-    expect(findPluralSelectors(entry.value)).toMatchObject([]);
+    expect(findPluralSelectors(entry.value)).toMatchObject(new Set([]));
   });
 });

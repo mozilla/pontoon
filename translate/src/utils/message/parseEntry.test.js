@@ -2,8 +2,87 @@ import ftl from '@fluent/dedent';
 
 import { parseEntry } from './parseEntry';
 
-describe('parseEntry', () => {
-  it('flattens values surrounding a select expression and select expression variants', () => {
+describe('parseEntry:fluent', () => {
+  it('simple value', () => {
+    const res = parseEntry('fluent', 'title = My Title');
+    expect(res).toEqual({ id: 'title', value: ['My Title'] });
+  });
+
+  it('attribute', () => {
+    const res = parseEntry('fluent', 'title =\n  .foo = Bar');
+    expect(res).toEqual({
+      id: 'title',
+      value: null,
+      attributes: new Map([['foo', ['Bar']]]),
+    });
+  });
+
+  it('select expression', () => {
+    const input = ftl`
+      my-entry =
+          { PLATFORM() ->
+              [variant] Hello!
+             *[another-variant] World!
+          }
+      `;
+    const res = parseEntry('fluent', input);
+    expect(res).toEqual({
+      id: 'my-entry',
+      value: {
+        decl: { _1: { fn: 'platform' } },
+        sel: ['_1'],
+        alt: [
+          { keys: ['variant'], pat: ['Hello!'] },
+          { keys: [{ '*': 'another-variant' }], pat: ['World!'] },
+        ],
+      },
+    });
+  });
+
+  it('placeholder in value', () => {
+    const res = parseEntry('fluent', 'title = My { $awesome } Title');
+    expect(res).toEqual({ id: 'title', value: ['My { $awesome } Title'] });
+  });
+
+  it('placeholder in attribute', () => {
+    const res = parseEntry('fluent', 'title =\n  .foo = Bar {-foo} Baz');
+    expect(res).toEqual({
+      id: 'title',
+      value: null,
+      attributes: new Map([['foo', ['Bar { -foo } Baz']]]),
+    });
+  });
+
+  it('value and attributes', () => {
+    const input = ftl`
+      batman = The { $dark } Knight
+          .weapon = Brain and { -wayne-enterprise }
+          .history = Lost { 2 } parents, has { 1 } "$alfred"
+      `;
+    const res = parseEntry('fluent', input);
+    expect(res).toEqual({
+      id: 'batman',
+      value: ['The { $dark } Knight'],
+      attributes: new Map([
+        ['weapon', ['Brain and { -wayne-enterprise }']],
+        ['history', ['Lost { 2 } parents, has { 1 } "$alfred"']],
+      ]),
+    });
+  });
+
+  it('term', () => {
+    const res = parseEntry(
+      'fluent',
+      '-term = My { $awesome } term\n .attr = { "" }',
+    );
+    expect(res).toEqual({
+      id: '-term',
+      value: ['My { $awesome } term'],
+      attributes: new Map([['attr', ['']]]),
+    });
+  });
+
+  it('multiple select expressions', () => {
     const input = ftl`
       my-entry =
           There { NUMBER($num) ->
@@ -18,59 +97,27 @@ describe('parseEntry', () => {
     expect(entry).toEqual({
       id: 'my-entry',
       value: {
-        type: 'select',
-        declarations: [
+        decl: {
+          num_1: { $: 'num', fn: 'number' },
+          gender: { $: 'gender', fn: 'string' },
+        },
+        sel: ['num_1', 'gender'],
+        alt: [
           {
-            type: 'input',
-            name: 'num',
-            value: {
-              type: 'expression',
-              arg: { type: 'variable', name: 'num' },
-              functionRef: { type: 'function', name: 'number' },
-            },
+            keys: ['one', { '*': 'masculine' }],
+            pat: ['There is one email for { $awesome } him'],
           },
           {
-            type: 'input',
-            name: 'gender',
-            value: {
-              type: 'expression',
-              arg: { type: 'variable', name: 'gender' },
-              functionRef: { type: 'function', name: 'string' },
-            },
-          },
-        ],
-        selectors: [
-          { type: 'variable', name: 'num' },
-          { type: 'variable', name: 'gender' },
-        ],
-        variants: [
-          {
-            keys: [
-              { type: 'literal', value: 'one' },
-              { type: '*', value: 'masculine' },
-            ],
-            value: ['There is one email for { $awesome } him'],
+            keys: ['one', 'feminine'],
+            pat: ['There is one email for { $awesome } her'],
           },
           {
-            keys: [
-              { type: 'literal', value: 'one' },
-              { type: 'literal', value: 'feminine' },
-            ],
-            value: ['There is one email for { $awesome } her'],
+            keys: [{ '*': 'other' }, { '*': 'masculine' }],
+            pat: ['There are { $num } emails for { $awesome } him'],
           },
           {
-            keys: [
-              { type: '*', value: 'other' },
-              { type: '*', value: 'masculine' },
-            ],
-            value: ['There are { $num } emails for { $awesome } him'],
-          },
-          {
-            keys: [
-              { type: '*', value: 'other' },
-              { type: 'literal', value: 'feminine' },
-            ],
-            value: ['There are { $num } emails for { $awesome } her'],
+            keys: [{ '*': 'other' }, 'feminine'],
+            pat: ['There are { $num } emails for { $awesome } her'],
           },
         ],
       },

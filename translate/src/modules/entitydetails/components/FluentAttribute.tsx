@@ -5,6 +5,7 @@ import type { Entity } from '~/api/entity';
 import { parseEntry } from '~/utils/message';
 
 import { Property } from './Property';
+import { isSelectMessage } from '@mozilla/l10n';
 
 type Props = {
   readonly entity: Entity;
@@ -26,7 +27,7 @@ export function FluentAttribute({
   }
 
   const [[name, attr]] = entry.attributes;
-  return attr.type === 'message' ? (
+  return !isSelectMessage(attr) ? (
     <Localized id='entitydetails-Metadata--attribute' attrs={{ title: true }}>
       <Property title='Attribute' className='attribute'>
         {name}
