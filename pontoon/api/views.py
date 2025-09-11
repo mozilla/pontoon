@@ -93,6 +93,7 @@ def get_user_actions(request, date, slug):
             "user": {
                 "pk": user.pk,
                 "name": user.display_name,
+                "username": user.username,
                 "system_user": user.profile.system_user,
             },
             "locale": {
