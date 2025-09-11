@@ -1,6 +1,6 @@
 import { EditorView } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
-
+import {describe,it,expect} from "vitest"
 import { getExtensions } from './editFieldExtensions';
 
 const div = document.createElement('div');
@@ -34,7 +34,7 @@ function getAncestorWith(node: Node | null, attribute: string) {
 }
 
 describe('spellcheck', () => {
-  test('fluent mode', () => {
+  it('fluent mode', () => {
     const view = tempView('foo { $bar }', 'fluent');
 
     const text = getAncestorWith(view.domAtPos(1).node, 'spellcheck');
@@ -44,7 +44,7 @@ describe('spellcheck', () => {
     expect(ph?.getAttribute('spellcheck')).toBe('false');
   });
 
-  test('common mode', () => {
+  it('common mode', () => {
     const view = tempView('%1$s foo', 'common');
 
     const text = getAncestorWith(view.domAtPos(7).node, 'spellcheck');
@@ -57,7 +57,7 @@ describe('spellcheck', () => {
 
 describe('keyword', () => {
   describe('common mode', () => {
-    test('i18next format', () => {
+    it('i18next format', () => {
       const view1 = tempView('{{name}} foo', 'common');
       const nameEl = getAncestorWith(view1.domAtPos(1).node, 'dir');
       expect(nameEl?.textContent).toBe('{{name}}');

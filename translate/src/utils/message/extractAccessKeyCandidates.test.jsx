@@ -2,7 +2,7 @@ import ftl from '@fluent/dedent';
 import { editMessageEntry } from './editMessageEntry';
 import { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
 import { parseEntry } from './parseEntry';
-
+import {vi,expect,describe,it} from "vitest"
 describe('extractAccessKeyCandidates', () => {
   it('returns an empty list if the message has no label attribute or value', () => {
     const input = ftl`

@@ -1,6 +1,6 @@
 import { reducer } from './reducer';
 import { RECEIVE_RESOURCES, UPDATE_RESOURCE } from './actions';
-
+import {describe,it,expect} from "vitest"
 describe('reducer', () => {
   const RESOURCES = [
     {

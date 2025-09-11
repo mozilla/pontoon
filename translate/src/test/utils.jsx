@@ -76,6 +76,9 @@ export function findLocalizedById(wrapper, id) {
     (elem) => elem.type() === Localized && elem.prop('id') === id,
   );
 }
+export function findLocalizedByIds(container, id) {
+  return container.querySelector(`[data-l10n-id="${id}"]`);
+}
 
 /*
  * Mock window.matchMedia, which is not implemented in JSDOM.

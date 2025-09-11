@@ -1,5 +1,5 @@
 import ftl from '@fluent/dedent';
-
+import {describe,expect,it} from "vitest"
 import { serializeEntry } from './serializeEntry';
 
 describe('serializeEntry("simple", ...)', () => {

@@ -20,7 +20,7 @@ export function SignInOutForm({
   parsedUrl.searchParams.set('next', pathname + search);
 
   return (
-    <form action={parsedUrl.toString()} method='post'>
+    <form data-testid="sign-in-out-form" action={parsedUrl.toString()} method='post'>
       <CSRFToken />
       <button type='submit'>{children}</button>
     </form>

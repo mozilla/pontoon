@@ -1,7 +1,6 @@
 import { Localized } from '@fluent/react';
 import React, { useContext, useRef, useState } from 'react';
 
-import { EntityView } from '~/context/EntityView';
 import { useTheme } from '~/hooks/useTheme';
 import { Location } from '~/context/Location';
 import { useOnDiscard } from '~/utils';
@@ -12,6 +11,7 @@ import { FileUpload } from './FileUpload';
 import { SignInOutForm } from './SignInOutForm';
 
 import './UserMenu.css';
+import { EntityView } from '~/context/EntityView';
 
 type Props = {
   user: UserState;

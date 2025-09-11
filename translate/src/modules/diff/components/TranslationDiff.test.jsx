@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-
+import {describe,it,expect} from "vitest"
 import { TranslationDiff } from './TranslationDiff';
 
 describe('<TranslationDiff>', () => {

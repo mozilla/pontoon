@@ -1,9 +1,7 @@
-import React from 'react';
 import sinon from 'sinon';
 
 import { MentionUsers } from '~/context/MentionUsers';
-import { createReduxStore, mountComponentWithStore } from '~/test/store';
-
+import { createReduxStore, mountComponentWithStore , renderComponentWithStore} from '~/test/store';
 import { AddComment } from './AddComment';
 
 const USER = {
@@ -13,9 +11,8 @@ const USER = {
 };
 
 describe('<AddComment>', () => {
-  it('calls submitComment function', () => {
-    const store = createReduxStore();
-    const submitCommentFn = sinon.spy();
+  it('calls submitComment function',async () => {
+ const submitCommentFn = sinon.spy();
     const Wrapper = () => (
       <MentionUsers.Provider
         value={{ initMentions: sinon.spy(), mentionUsers: [] }}
@@ -33,16 +30,19 @@ describe('<AddComment>', () => {
     expect(submitCommentFn.calledOnce).toBeTruthy;
   });
 
-  it('fetches mentionable users on render', () => {
-    const initMentions = sinon.spy();
+  it.only('fetches mentionable users on render', () => {
+    const initMentions = vi.fn();
     const store = createReduxStore();
-    const Wrapper = () => (
-      <MentionUsers.Provider value={{ initMentions, mentionUsers: [] }}>
-        <AddComment user={USER} />
-      </MentionUsers.Provider>
-    );
-    mountComponentWithStore(Wrapper, store);
 
-    expect(initMentions.calledOnce).toBeTruthy;
+     renderComponentWithStore(
+      ({ ...props }) => (
+        <MentionUsers.Provider value={{ initMentions, mentionUsers: [] }}>
+          <AddComment {...props} />
+        </MentionUsers.Provider>
+      ),
+      store,
+      { user: USER }
+    );
+    expect(initMentions).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,6 +1,7 @@
 import ftl from '@fluent/dedent';
 import { findPluralSelectors } from './findPluralSelectors';
 import { parseEntry } from './parseEntry';
+import {describe,it,expect} from "vitest";
 
 describe('findPluralSelectors', () => {
   it('returns [] for non-select messages', () => {

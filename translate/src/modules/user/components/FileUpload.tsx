@@ -22,6 +22,7 @@ export function FileUpload({ parameters }: Props): React.ReactElement<'form'> {
 
   return (
     <form
+      data-testid="file-upload-form"
       action='/upload/'
       className='file-upload'
       encType='multipart/form-data'

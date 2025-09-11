@@ -1,5 +1,5 @@
 import ftl from '@fluent/dedent';
-
+import {describe,it,expect} from "vitest"
 import { parseEntry } from './parseEntry';
 
 describe('parseEntry', () => {

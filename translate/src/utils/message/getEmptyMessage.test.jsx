@@ -2,6 +2,7 @@ import ftl from '@fluent/dedent';
 import { getEmptyMessageEntry } from './getEmptyMessage';
 import { parseEntry } from './parseEntry';
 import { serializeEntry } from './serializeEntry';
+import {describe,it,expect} from "vitest"
 
 const LOCALE = { code: 'sl' };
 
