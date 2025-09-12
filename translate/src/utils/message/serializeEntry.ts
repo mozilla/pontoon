@@ -26,6 +26,7 @@ export function serializeEntry(entry: MessageEntry | null): string {
       );
     }
 
+    case 'android':
     case 'gettext':
       return entry.value ? mf2SerializeMessage(entry.value) : '';
 

@@ -5,6 +5,8 @@ from fluent.syntax.visitor import Visitor
 from moz.l10n.formats.mf2 import mf2_parse_message
 from moz.l10n.model import PatternMessage
 
+from pontoon.base.models import Resource
+
 
 parser = FluentParser()
 
@@ -46,7 +48,7 @@ def run_checks(entity, original, string):
 
     # Bug 1599056: Original and translation must either both end in a newline,
     # or none of them should.
-    if format == "gettext":
+    if format == Resource.Format.GETTEXT:
         if original.endswith("\n") != string.endswith("\n"):
             checks["pErrors"].append("Ending newline mismatch")
         if string != "":
@@ -67,7 +69,7 @@ def run_checks(entity, original, string):
         checks["pErrors"].append("Empty translations are not allowed")
 
     # FTL checks
-    if format == "fluent" and string != "":
+    if format == Resource.Format.FLUENT and string != "":
         translation_ast = parser.parse_entry(string)
         entity_ast = parser.parse_entry(entity.string)
 

@@ -2,7 +2,6 @@
 Parsing resource files.
 """
 
-from html import unescape
 from json import dumps
 from os.path import splitext
 from re import Match, compile
@@ -39,12 +38,6 @@ def are_compatible_files(file_a, file_b):
 
 
 _fluent_serializer = FluentSerializer()
-_android_esc_u = compile(r"(?<!\\)\\u[0-9A-Fa-f]{4}")
-_android_esc_char = compile(r"(?<!\\)\\([^nt])")
-_android_esc_nl = compile(r"(?<!\\)\\n\s*")
-_android_ws_around_outer_tag = compile(r"^\s+(?=<)|(?<=>)\s+$")
-_android_ws_before_block = compile(r"\s+(?=<(br|label|li|p|/?ul)\b)")
-_android_ws_after_block = compile(r"((?<=<br>)|(?<=<br/>)|(?<=</ul>)|(?<=\\n))\s+")
 _prop_esc_u = compile(r"(?<!\\)\\u(?!0000)[0-9A-Fa-f]{4}")
 _prop_esc_ws = compile(r"(?<!\\)\\([^\S\n])")
 
@@ -59,15 +52,7 @@ def _as_string(format: Format | None, entry: Entry[Message]) -> str:
             fluent_entry = fluent_astify_entry(entry, lambda _: "")
             return _fluent_serializer.serialize_entry(fluent_entry)
         case Format.android:
-            string = serialize_message(Format.android, entry.value)
-            string = unescape(string)
-            string = _android_esc_u.sub(_unicode_unescape, string)
-            string = _android_esc_char.sub(r"\1", string)
-            string = _android_esc_nl.sub(r"\\n\n", string)
-            string = _android_ws_around_outer_tag.sub("", string)
-            string = _android_ws_before_block.sub("\n", string)
-            string = _android_ws_after_block.sub("\n", string)
-            return string
+            return serialize_message(Format.mf2, entry.value)
         case Format.properties:
             string = serialize_message(Format.properties, entry.value)
             string = _prop_esc_u.sub(_unicode_unescape, string)

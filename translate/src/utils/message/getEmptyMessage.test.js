@@ -181,7 +181,7 @@ describe('getEmptyMessage', () => {
       `,
       );
       const entry = getEmptyMessageEntry(source, { code });
-      expect(serializeEntry('fluent', entry)).toBe(ftl`
+      expect(serializeEntry(entry)).toBe(ftl`
       selector-multi =
           { $num ->
               [one] { "" }

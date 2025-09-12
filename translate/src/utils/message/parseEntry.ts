@@ -9,7 +9,7 @@ import {
 import type { MessageEntry } from '.';
 
 /**
- * Parse `'fluent'` or `'gettext'` message source as a {@link MessageEntry}.
+ * Parse a `'fluent'`, `'android'`, or `'gettext'` message source as a {@link MessageEntry}.
  *
  * @returns `null` on parse error or unsupported format
  */
@@ -32,6 +32,7 @@ export function parseEntry(
         return value ? { format, id, value } : null;
       }
 
+      case 'android':
       case 'gettext':
         return { format, id: '', value: mf2ParseMessage(source) };
     }

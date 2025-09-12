@@ -16,7 +16,7 @@ import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
 
-function mountSpy(Spy, format, translation) {
+function mountSpy(Spy, format, translation, original) {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
   });
@@ -28,7 +28,7 @@ function mountSpy(Spy, format, translation) {
           pk: 42,
           format,
           key: ['key'],
-          original: 'key = test',
+          original: original ?? 'key = test',
           translation: { string: translation, errors: [], warnings: [] },
           project: { contact: '' },
           comment: '',
@@ -177,6 +177,75 @@ describe('<EditorProvider>', () => {
     expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
   });
 
+  it('provides a simple Android value', () => {
+    let editor, result;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      return null;
+    };
+    mountSpy(
+      Spy,
+      'android',
+      'Hei, {$arg1 :string @source=|%1$s|}!',
+      'Hello, {$arg1 :string @source=|%1$s|}!',
+    );
+    const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
+    expect(editor).toMatchObject({
+      sourceView: false,
+      initial: { id: '', value: ['Hei, ', arg1, '!'] },
+      placeholders: new Map([['%1$s', arg1]]),
+      fields: [
+        {
+          id: '',
+          keys: [],
+          labels: [],
+          name: '',
+          handle: { current: { value: 'Hei, %1$s!' } },
+        },
+      ],
+    });
+    expect(result).toMatchObject([{ name: '', keys: [], value: 'Hei, %1$s!' }]);
+  });
+
+  it('provides a rich Android value', () => {
+    let editor, result;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      return null;
+    };
+    const trans = ftl`
+      .input {$quantity :number}
+      .match $quantity
+      one {{trans:ONE}}
+      * {{trans:OTHER}}
+      `;
+    const source = ftl`
+      .input {$quantity :number}
+      .match $quantity
+      one {{src:ONE}}
+      * {{src:OTHER}}
+      `;
+    mountSpy(Spy, 'android', trans, source);
+
+    const entry = parseEntry('android', trans);
+    const fields = editMessageEntry(entry).map((field) => ({
+      ...field,
+      handle: { current: { value: field.handle.current.value } },
+    }));
+    expect(editor).toMatchObject({
+      sourceView: false,
+      initial: entry,
+      placeholders: null,
+      fields,
+    });
+    expect(result).toMatchObject([
+      { name: '', keys: ['one'], value: 'trans:ONE' },
+      { name: '', keys: [{ '*': '' }], value: 'trans:OTHER' },
+    ]);
+  });
+
   it('updates state on entity change', () => {
     let editor, result, location, entity;
     const Spy = () => {
@@ -236,6 +305,44 @@ describe('<EditorProvider>', () => {
           handle: { current: { value: '' } },
           id: '|other',
           keys: [{ '*': 'other' }],
+          labels: [{ label: 'other', plural: true }],
+          name: '',
+        },
+      ],
+    });
+  });
+
+  it('clears a rich Android value', () => {
+    let editor, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source = ftl`
+      .input {$quantity :number}
+      .match $quantity
+      one {{ONE}}
+      * {{OTHER}}
+      `;
+    const wrapper = mountSpy(Spy, 'android', source, source);
+    act(() => actions.clearEditor());
+    wrapper.update();
+
+    expect(editor).toMatchObject({
+      sourceView: false,
+      fields: [
+        {
+          handle: { current: { value: '' } },
+          id: '|one',
+          keys: ['one'],
+          labels: [{ label: 'one', plural: true }],
+          name: '',
+        },
+        {
+          handle: { current: { value: '' } },
+          id: '|*',
+          keys: [{ '*': '' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
         },

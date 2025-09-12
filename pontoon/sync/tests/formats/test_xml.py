@@ -35,7 +35,7 @@ class AndroidXMLTests(TestCase):
         # basic
         assert e0.comment == "Sample comment"
         assert e0.key == ["Source String"]
-        assert e0.string == "Translated <b>String</b>"
+        assert e0.string == "Translated {|<b>| :html}String{|</b>| :html}"
         assert e0.value == [
             "Translated ",
             {"_": "<b>", "fn": "html"},
@@ -44,7 +44,7 @@ class AndroidXMLTests(TestCase):
         ]
 
         assert t0.key == ("Source String",)
-        assert t0.string == "Translated <b>String</b>"
+        assert t0.string == "Translated {|<b>| :html}String{|</b>| :html}"
 
         # multiple comments
         assert e1.comment == "First comment\n\nSecond comment"
@@ -93,4 +93,4 @@ class AndroidXMLTests(TestCase):
             """)
         res = parse_resource(Format.android, src)
         (t0,) = as_vcs_translations(res)
-        assert t0.string == " \\n\n"
+        assert t0.string == " \n"

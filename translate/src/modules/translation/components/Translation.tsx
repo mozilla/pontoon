@@ -21,7 +21,7 @@ export function Translation({
     return null;
   }
 
-  if (format === 'fluent' || format === 'gettext') {
+  if (format === 'fluent' || format === 'android' || format === 'gettext') {
     content = getPlainMessage(content, format);
     diffTarget &&= getPlainMessage(diffTarget, format);
   }
