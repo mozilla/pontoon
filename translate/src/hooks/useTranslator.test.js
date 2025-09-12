@@ -24,8 +24,8 @@ const fakeSelector = (user) => (sel) =>
 
 describe('useTranslator', () => {
   it('returns false for non-authenticated users', () => {
-    Hooks.useAppSelector.callsFake(fakeSelector({ isAuthenticated: false })),
-      expect(useTranslator()).toBeFalsy();
+    (Hooks.useAppSelector.callsFake(fakeSelector({ isAuthenticated: false })),
+      expect(useTranslator()).toBeFalsy());
   });
 
   it('returns true if user is a manager of the locale', () => {
