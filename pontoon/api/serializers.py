@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 from pontoon.base.models import (
     Locale,
@@ -6,6 +7,10 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.entity import Entity
+from pontoon.base.models.repository import Repository
+from pontoon.base.models.resource import Resource
+from pontoon.base.models.translation import Translation
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import (
     Term,
@@ -261,3 +266,135 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
         if obj.project:
             return obj.project.slug
         return None
+
+
+class CompactTranslationSerializer(serializers.ModelSerializer):
+    locale = serializers.SerializerMethodField()
+    editor_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Translation
+        fields = [
+            "locale",
+            "string",
+            "editor_url",
+        ]
+
+    def get_locale(self, obj):
+        if not obj.locale:
+            return None
+
+        return {
+            "code": obj.locale.code,
+            "name": obj.locale.name,
+        }
+
+    def get_editor_url(self, obj):
+        request = self.context.get("request")
+
+        if not request:
+            return None
+
+        entity = Entity.objects.get(pk=obj.entity.pk)
+
+        return (
+            reverse(
+                "pontoon.translate",
+                kwargs={
+                    "locale": obj.locale.code,
+                    "project": entity.resource.project.slug,
+                    "resource": entity.resource.path,
+                },
+                request=request,
+            )
+            + f"?string={entity.pk}"
+        )
+
+
+class CompactResourceSerializer(serializers.ModelSerializer):
+    repository_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Resource
+        fields = [
+            "path",
+            "repository_url",
+        ]
+
+    def get_repository_url(self, obj):
+        repositories = Repository.objects.filter(project=obj.project)
+
+        if not repositories:
+            return None
+
+        for repository in repositories:
+            if repository.source_repo:
+                return repository.url
+        return repositories.first().url
+
+
+class EntitySerializer(serializers.ModelSerializer):
+    project = serializers.SerializerMethodField()
+    resource = CompactResourceSerializer(read_only=True)
+
+    class Meta:
+        model = Entity
+        fields = [
+            "id",
+            "string",
+            "key",
+            "project",
+            "resource",
+        ]
+
+    def get_project(self, obj):
+        if not obj.resource.project:
+            return None
+
+        return {
+            "slug": obj.resource.project.slug,
+            "name": obj.resource.project.name,
+        }
+
+
+class NestedEntitySerializer(EntitySerializer):
+    translations = CompactTranslationSerializer(
+        source="translation_set", many=True, read_only=True
+    )
+
+    class Meta(EntitySerializer.Meta):
+        fields = EntitySerializer.Meta.fields + ["translations"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if "context" in kwargs:
+            if "request" in kwargs["context"]:
+                include_translations = kwargs["context"]["request"].query_params.get(
+                    "include_translations"
+                )
+
+                if include_translations is None:
+                    self.fields.pop("translations")
+
+
+class EntitySearchSerializer(EntitySerializer):
+    translation = serializers.SerializerMethodField()
+
+    class Meta(EntitySerializer.Meta):
+        fields = EntitySerializer.Meta.fields + ["translation"]
+
+    def get_translation(self, obj):
+        request = self.context.get("request")
+
+        if not request:
+            return None
+
+        locale_code = request.query_params.get("locale")
+
+        if not locale_code:
+            return None
+
+        translation = obj.translation_set.filter(locale__code=locale_code).first()
+
+        return CompactTranslationSerializer(translation).data

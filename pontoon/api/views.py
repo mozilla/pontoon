@@ -16,17 +16,22 @@ from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
+from pontoon.base import forms
 from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.entity import Entity
 from pontoon.terminology.models import (
     Term,
 )
 
 from .serializers import (
+    EntitySearchSerializer,
+    EntitySerializer,
+    NestedEntitySerializer,
     NestedIndividualLocaleSerializer,
     NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
@@ -292,6 +297,27 @@ class ProjectIndividualView(generics.RetrieveAPIView):
         return queryset.stats_data()
 
 
+class EntityListView(generics.ListAPIView):
+    serializer_class = EntitySerializer
+
+    def get_queryset(self):
+        return Entity.objects.all()
+
+
+class EntityIndividualView(generics.RetrieveAPIView):
+    serializer_class = NestedEntitySerializer
+
+    def get_object(self):
+        pk = self.kwargs["pk"]
+
+        entity = get_object_or_404(
+            Entity,
+            pk=pk,
+        )
+
+        return entity
+
+
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
     serializer_class = NestedProjectLocaleSerializer
 
@@ -362,3 +388,41 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         return queryset.prefetch_related("project", "locale")
+
+
+class TranslationSearchListView(generics.ListAPIView):
+    serializer_class = EntitySearchSerializer
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+
+        form = forms.GetEntitiesForm(query_params)
+        if not form.is_valid():
+            raise ValidationError(form.errors)
+
+        locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
+
+        project_slug = form.cleaned_data["project"]
+        if project_slug == "all-projects":
+            project = Project(slug=project_slug)
+        else:
+            project = get_object_or_404(Project, slug=project_slug)
+
+        restrict_to_keys = (
+            "search",
+            "search_identifiers",
+            "search_match_case",
+            "search_match_whole_word",
+        )
+        form_data = {
+            k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data
+        }
+
+        try:
+            entities = Entity.for_project_locale(
+                self.request.user, project, locale, **form_data
+            )
+        except ValueError as error:
+            raise ValueError(error)
+
+        return entities
