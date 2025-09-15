@@ -1,8 +1,8 @@
-import type { Model } from 'messageformat';
 import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
 import { serializeEntry } from './serializeEntry';
+import { CatchallKey, isSelectMessage, Message, Pattern } from '@mozilla/l10n';
 
 const emptyHandleRef = (value: string) => ({
   current: {
@@ -55,42 +55,38 @@ export function editMessageEntry(entry: MessageEntry): EditorField[] {
 }
 
 function* genPatterns(
-  msg: Model.Message,
+  msg: Message,
 ): Generator<
-  [Model.Variant['keys'], Array<{ label: string; plural: boolean }>, string]
+  [(string | CatchallKey)[], Array<{ label: string; plural: boolean }>, string]
 > {
-  switch (msg.type) {
-    case 'message':
-      yield [[], [], patternAsString(msg.pattern)];
-      break;
-    case 'select': {
-      const plurals = findPluralSelectors(msg);
-      for (const { keys, value } of msg.variants) {
-        const labels = keys.map((key, i) => ({
-          label: key.value || 'other',
-          plural: plurals.includes(i),
-        }));
-        yield [keys, labels, patternAsString(value)];
-      }
-      break;
+  if (isSelectMessage(msg)) {
+    const plurals = findPluralSelectors(msg);
+    for (const { keys, pat } of msg.alt) {
+      const labels = keys.map((key, i) => ({
+        label: (typeof key === 'string' ? key : key['*']) || 'other',
+        plural: plurals.has(i),
+      }));
+      yield [keys, labels, patternAsString(pat)];
     }
+  } else {
+    yield [[], [], patternAsString(Array.isArray(msg) ? msg : msg.msg)];
   }
 }
 
-export function patternAsString(pattern: Model.Pattern) {
+export function patternAsString(pattern: Pattern) {
   switch (pattern.length) {
     case 0:
       return '';
     case 1:
-      if (typeof pattern[0] === 'string') {
-        return pattern[0];
-      } else {
-        throw new Error(`Unsupported message element ${pattern[0].type}`);
-      }
+      if (typeof pattern[0] === 'string') return pattern[0];
+      throw new Error('Unsupported message element');
   }
   throw new Error(`Unsupported message pattern length ${pattern.length}`);
 }
 
-function getId(name: string, keys: Model.Variant['keys']) {
-  return [name, ...keys.map((key) => key.value ?? '*')].join('|');
+function getId(name: string, keys: (string | CatchallKey)[]) {
+  return [
+    name,
+    ...keys.map((key) => (typeof key === 'string' ? key : key['*'] || '*')),
+  ].join('|');
 }

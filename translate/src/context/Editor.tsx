@@ -1,4 +1,4 @@
-import type { Model } from 'messageformat';
+import { CatchallKey } from '@mozilla/l10n';
 import React, {
   createContext,
   useContext,
@@ -43,7 +43,7 @@ export type EditorField = {
   name: string;
 
   /** Selector keys, or empty array for single-pattern messages */
-  keys: Model.Variant['keys'];
+  keys: (string | CatchallKey)[];
 
   labels: Array<{ label: string; plural: boolean }>;
 
@@ -89,7 +89,7 @@ export type EditorResult = Array<{
   name: string;
 
   /** Selector keys, or empty array for single-pattern messages */
-  keys: Model.Variant['keys'];
+  keys: (string | CatchallKey)[];
 
   /**
    * A flattened representation of a single message pattern,
@@ -136,10 +136,7 @@ function parseEntryFromFluentSource(base: MessageEntry, source: string) {
 const createSimpleMessageEntry = (
   key: string[],
   value: string,
-): MessageEntry => ({
-  id: key[0] ?? '',
-  value: { type: 'message', declarations: [], pattern: [value] },
-});
+): MessageEntry => ({ id: key[0] ?? '', value: [value] });
 
 const initEditorData: EditorData = {
   pk: 0,
@@ -307,12 +304,6 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         sourceView = true;
       }
     } else {
-      if (format === 'fluent' && !source.endsWith('\n')) {
-        // Some Fluent translations may be stored without a terminal newline.
-        // If the data is cleaned up, this conditional may be removed.
-        // https://github.com/mozilla/pontoon/issues/2216
-        source += '\n';
-      }
       const entry_ = parseEntry(format, source);
       if (entry_) {
         entry = entry_;

@@ -19,7 +19,6 @@ import {
 import { Extension } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
-import type { Model } from 'messageformat';
 import { useContext, useEffect, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
@@ -34,6 +33,7 @@ import {
   useHandleEscape,
 } from './editFieldShortcuts';
 import { fluentMode, commonMode } from './editFieldModes';
+import { Message } from '@mozilla/l10n';
 
 /**
  * Key handlers depend on application state,
@@ -172,9 +172,10 @@ function* entryPatterns(format: string, source: string) {
   }
 }
 
-function* msgPatterns(msg: Model.Message) {
-  if (msg.type === 'message') yield patternAsString(msg.pattern);
-  else for (const v of msg.variants) yield patternAsString(v.value);
+function* msgPatterns(msg: Message) {
+  if (Array.isArray(msg)) yield patternAsString(msg);
+  else if (msg.msg) yield patternAsString(msg.msg);
+  else for (const v of msg.alt) yield patternAsString(v.pat);
 }
 
 function completePlaceholder(

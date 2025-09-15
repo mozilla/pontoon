@@ -1,3 +1,4 @@
+import { isSelectMessage } from '@mozilla/l10n';
 import type { MessageEntry } from '.';
 
 const MAX_RICH_VARIANTS = 15;
@@ -16,13 +17,13 @@ export function requiresSourceView(
 
   let fieldCount = !entry.value
     ? 0
-    : entry.value.type === 'select'
-      ? entry.value.variants.length
+    : isSelectMessage(entry.value)
+      ? entry.value.alt.length
       : 1;
 
   if (entry.attributes) {
     for (const attr of entry.attributes.values()) {
-      fieldCount += attr.type === 'select' ? attr.variants.length : 1;
+      fieldCount += isSelectMessage(attr) ? attr.alt.length : 1;
     }
   }
 

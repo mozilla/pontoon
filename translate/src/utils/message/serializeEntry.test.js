@@ -2,92 +2,32 @@ import ftl from '@fluent/dedent';
 
 import { serializeEntry } from './serializeEntry';
 
-describe('serializeEntry("simple", ...)', () => {
-  it('serializes an empty value', () => {
-    const entry = {
-      id: 'key',
-      value: { type: 'message', declarations: [], pattern: [] },
-    };
-    expect(serializeEntry('simple', entry)).toEqual('');
-  });
-
-  it('serializes a simple value', () => {
-    const entry = {
-      id: 'key',
-      value: { type: 'message', declarations: [], pattern: ['foo'] },
-    };
-    expect(serializeEntry('simple', entry)).toEqual('foo');
-  });
-
-  it('serializes a value with multiple elements', () => {
-    const entry = {
-      id: 'key',
-      value: {
-        type: 'message',
-        declarations: [],
-        pattern: ['foo', 'bar'],
-      },
-    };
-    expect(serializeEntry('simple', entry)).toEqual('foobar');
-  });
-
+describe('serializeEntry("fluent", ...)', () => {
   it('serialises a Fluent message with selectors', () => {
     const entry = {
       id: 'my-entry',
       value: {
-        type: 'select',
-        declarations: [
+        decl: {
+          num: { $: 'num', fn: 'number' },
+          gender: { $: 'gender', fn: 'string' },
+        },
+        sel: ['num', 'gender'],
+        alt: [
           {
-            type: 'input',
-            name: 'num',
-            value: {
-              type: 'expression',
-              arg: { type: 'variable', name: 'num' },
-              functionRef: { type: 'function', name: 'number' },
-            },
+            keys: ['one', { '*': 'masculine' }],
+            pat: ['There is one email for { $awesome } him'],
           },
           {
-            type: 'input',
-            name: 'gender',
-            value: {
-              type: 'expression',
-              arg: { type: 'variable', name: 'gender' },
-              functionRef: { type: 'function', name: 'string' },
-            },
-          },
-        ],
-        selectors: [
-          { type: 'variable', name: 'num' },
-          { type: 'variable', name: 'gender' },
-        ],
-        variants: [
-          {
-            keys: [
-              { type: 'literal', value: 'one' },
-              { type: '*', value: 'masculine' },
-            ],
-            value: ['There is one email for { $awesome } him'],
+            keys: ['one', 'feminine'],
+            pat: ['There is one email for { $awesome } her'],
           },
           {
-            keys: [
-              { type: 'literal', value: 'one' },
-              { type: 'literal', value: 'feminine' },
-            ],
-            value: ['There is one email for { $awesome } her'],
+            keys: [{ '*': 'other' }, { '*': 'masculine' }],
+            pat: ['There are { $num } emails for { $awesome } him'],
           },
           {
-            keys: [
-              { type: '*', value: 'other' },
-              { type: '*', value: 'masculine' },
-            ],
-            value: ['There are { $num } emails for { $awesome } him'],
-          },
-          {
-            keys: [
-              { type: '*', value: 'other' },
-              { type: 'literal', value: 'feminine' },
-            ],
-            value: ['There are { $num } emails for { $awesome } her'],
+            keys: [{ '*': 'other' }, 'feminine'],
+            pat: ['There are { $num } emails for { $awesome } her'],
           },
         ],
       },
@@ -109,11 +49,28 @@ describe('serializeEntry("simple", ...)', () => {
 
       `);
   });
+});
+
+describe('serializeEntry("simple", ...)', () => {
+  it('serialises an empty value', () => {
+    const entry = { id: 'key', value: [] };
+    expect(serializeEntry('simple', entry)).toEqual('');
+  });
+
+  it('serialises a plain value', () => {
+    const entry = { id: 'key', value: ['foo'] };
+    expect(serializeEntry('simple', entry)).toEqual('foo');
+  });
+
+  it('serialises a value with multiple elements', () => {
+    const entry = { id: 'key', value: ['foo', 'bar'] };
+    expect(serializeEntry('simple', entry)).toEqual('foobar');
+  });
 
   it('ignores attributes', () => {
     const entry = {
       id: 'key',
-      value: { type: 'message', declarations: [], pattern: ['foo'] },
+      value: ['foo'],
       attributes: new Map([['key', { type: 'junk' }]]),
     };
     expect(serializeEntry('simple', entry)).toEqual('foo');
@@ -122,35 +79,28 @@ describe('serializeEntry("simple", ...)', () => {
   it('complains about missing value', () => {
     const entry = { id: 'key' };
     expect(() => serializeEntry('simple', entry)).toThrow(
-      /^Unsupported simple message type: undefined/,
+      /^Unsupported simple message/,
     );
   });
 
   it('complains about junk', () => {
     const entry = { id: 'key', value: { type: 'junk' } };
     expect(() => serializeEntry('simple', entry)).toThrow(
-      /^Unsupported simple message type: junk/,
+      /^Unsupported simple message/,
     );
   });
 
-  it('complains about select', () => {
-    const entry = { id: 'key', value: { type: 'select' } };
+  it('complains about non-array values', () => {
+    const entry = { id: 'key', value: {} };
     expect(() => serializeEntry('simple', entry)).toThrow(
-      /^Unsupported simple message type: select/,
+      /^Unsupported simple message/,
     );
   });
 
   it('complains about non-text pattern elements', () => {
-    const entry = {
-      id: 'key',
-      value: {
-        type: 'message',
-        declarations: [],
-        pattern: ['foo', { type: 'expression', arg: 'bar' }],
-      },
-    };
+    const entry = { id: 'key', value: ['foo', { _: 'bar' }] };
     expect(() => serializeEntry('simple', entry)).toThrow(
-      /^Unsupported simple element type: expression/,
+      /Unsupported pattern part/,
     );
   });
 });

@@ -1,37 +1,10 @@
-import {
-  FluentSerializer,
-  Pattern as FluentPattern,
-  Placeable,
-  StringLiteral,
-  TextElement,
-  Transformer,
-} from '@fluent/syntax';
-import { resourceToFluent } from '@messageformat/fluent';
-import { type Model, stringifyMessage } from 'messageformat';
 import type { MessageEntry } from '.';
+import {
+  fluentSerializeEntry,
+  mf2SerializeMessage,
+  serializePattern,
+} from '@mozilla/l10n';
 
-class SerializeTransformer extends Transformer {
-  visitPattern(node: FluentPattern) {
-    if (node.elements.length === 0) {
-      node.elements.push(new Placeable(new StringLiteral('')));
-      return node;
-    } else {
-      return this.genericVisit(node);
-    }
-  }
-  visitTextElement(node: TextElement) {
-    return node.value === '' ? new Placeable(new StringLiteral('')) : node;
-  }
-}
-
-const serializer = new FluentSerializer();
-const transformer = new SerializeTransformer();
-
-/**
- * The default `FluentSerializer` produces source that cannot be re-parsed
- * for message values & attributes as well as selector variants with empty contents.
- * This custom wrapper will emit an empty escaped literal `{ "" }` for such cases.
- */
 export function serializeEntry(
   format: string,
   entry: MessageEntry | null,
@@ -42,49 +15,28 @@ export function serializeEntry(
 
   switch (format) {
     case 'fluent': {
-      const data = new Map<string, Model.Message>();
-      if (entry.value) {
-        data.set('', entry.value);
-      }
-      if (entry.attributes) {
-        for (const [name, attr] of entry.attributes) {
-          data.set(name, attr);
-        }
-      }
-      const resource = new Map([[entry.id, data]]);
-      const functionMap = new Proxy(
-        {},
-        { get: (_, prop) => String(prop).toUpperCase() },
+      const attr = entry.attributes
+        ? Object.fromEntries(entry.attributes)
+        : undefined;
+      let msg = entry.value;
+      // Ensure that an entry with a non-null value serializes with a non-empty pattern,
+      // even if the entry has attributes and would be valid with an empty value.
+      if (Array.isArray(msg) && msg.every((p) => p === '')) msg = [{ _: '' }];
+      return fluentSerializeEntry(
+        entry.id,
+        { '=': msg!, '+': attr },
+        { escapeSyntax: false },
       );
-      try {
-        const fr = resourceToFluent(resource, { functionMap });
-        transformer.visit(fr);
-        return serializer.serialize(fr);
-      } catch {
-        return '';
-      }
     }
 
     case 'gettext':
-      return entry.value ? stringifyMessage(entry.value) : '';
+      return entry.value ? mf2SerializeMessage(entry.value) : '';
 
-    default: {
-      if (entry.value?.type !== 'message') {
-        throw new Error(
-          `Unsupported ${format} message type: ${entry.value?.type} [${entry.id}]`,
-        );
+    default:
+      if (Array.isArray(entry.value)) {
+        return serializePattern('plain', entry.value);
       }
-      let res = '';
-      for (const el of entry.value.pattern) {
-        if (typeof el === 'string') {
-          res += el;
-        } else {
-          throw new Error(
-            `Unsupported ${format} element type: ${el.type} [${entry.id}]`,
-          );
-        }
-      }
-      return res;
-    }
   }
+
+  throw new Error(`Unsupported ${format} message [${entry.id}]`);
 }
