@@ -27,13 +27,13 @@ export function parseEntry(
           for (const [name, value] of Object.entries(entry['+'])) {
             attributes.set(name, flatMessage('fluent', value));
           }
-          return { id, value, attributes };
+          return { format, id, value, attributes };
         }
-        return value ? { id, value } : null;
+        return value ? { format, id, value } : null;
       }
 
       case 'gettext':
-        return { id: '', value: mf2ParseMessage(source) };
+        return { format, id: '', value: mf2ParseMessage(source) };
     }
   } catch {}
   return null;

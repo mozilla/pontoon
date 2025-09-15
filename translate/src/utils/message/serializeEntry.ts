@@ -5,15 +5,12 @@ import {
   serializePattern,
 } from '@mozilla/l10n';
 
-export function serializeEntry(
-  format: string,
-  entry: MessageEntry | null,
-): string {
+export function serializeEntry(entry: MessageEntry | null): string {
   if (!entry) {
     return '';
   }
 
-  switch (format) {
+  switch (entry.format) {
     case 'fluent': {
       const attr = entry.attributes
         ? Object.fromEntries(entry.attributes)
@@ -38,5 +35,5 @@ export function serializeEntry(
       }
   }
 
-  throw new Error(`Unsupported ${format} message [${entry.id}]`);
+  throw new Error(`Unsupported ${entry.format} message [${entry.id}]`);
 }

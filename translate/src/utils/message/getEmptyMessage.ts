@@ -27,9 +27,13 @@ export function getEmptyMessageEntry(
     for (const [key, message] of source.attributes) {
       attributes.set(key, getEmptyMessage(message, locale));
     }
-    return { id: source.id, value, attributes };
+    return { format: source.format, id: source.id, value, attributes };
   }
-  return { id: source.id, value: getEmptyMessage(source.value, locale) };
+  return {
+    format: source.format,
+    id: source.id,
+    value: getEmptyMessage(source.value, locale),
+  };
 }
 
 function getEmptyMessage(source: Message, { code }: Locale): Message {

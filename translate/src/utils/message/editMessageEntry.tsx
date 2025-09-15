@@ -18,7 +18,7 @@ const emptyHandleRef = (value: string) => ({
 /** Get an `EditorField[]` for the source view */
 export function editSource(source: string | MessageEntry): EditorField[] {
   const value = (
-    typeof source === 'string' ? source : serializeEntry('fluent', source)
+    typeof source === 'string' ? source : serializeEntry(source)
   ).trim();
   const handle = emptyHandleRef(value);
   return [{ id: '', name: '', keys: [], labels: [], handle }];

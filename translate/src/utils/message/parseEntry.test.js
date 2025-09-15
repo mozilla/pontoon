@@ -5,12 +5,13 @@ import { parseEntry } from './parseEntry';
 describe('parseEntry:fluent', () => {
   it('simple value', () => {
     const res = parseEntry('fluent', 'title = My Title');
-    expect(res).toEqual({ id: 'title', value: ['My Title'] });
+    expect(res).toEqual({ format: 'fluent', id: 'title', value: ['My Title'] });
   });
 
   it('attribute', () => {
     const res = parseEntry('fluent', 'title =\n  .foo = Bar');
     expect(res).toEqual({
+      format: 'fluent',
       id: 'title',
       value: null,
       attributes: new Map([['foo', ['Bar']]]),
@@ -27,6 +28,7 @@ describe('parseEntry:fluent', () => {
       `;
     const res = parseEntry('fluent', input);
     expect(res).toEqual({
+      format: 'fluent',
       id: 'my-entry',
       value: {
         decl: { _1: { fn: 'platform' } },
@@ -41,12 +43,17 @@ describe('parseEntry:fluent', () => {
 
   it('placeholder in value', () => {
     const res = parseEntry('fluent', 'title = My { $awesome } Title');
-    expect(res).toEqual({ id: 'title', value: ['My { $awesome } Title'] });
+    expect(res).toEqual({
+      format: 'fluent',
+      id: 'title',
+      value: ['My { $awesome } Title'],
+    });
   });
 
   it('placeholder in attribute', () => {
     const res = parseEntry('fluent', 'title =\n  .foo = Bar {-foo} Baz');
     expect(res).toEqual({
+      format: 'fluent',
       id: 'title',
       value: null,
       attributes: new Map([['foo', ['Bar { -foo } Baz']]]),
@@ -61,6 +68,7 @@ describe('parseEntry:fluent', () => {
       `;
     const res = parseEntry('fluent', input);
     expect(res).toEqual({
+      format: 'fluent',
       id: 'batman',
       value: ['The { $dark } Knight'],
       attributes: new Map([
@@ -76,6 +84,7 @@ describe('parseEntry:fluent', () => {
       '-term = My { $awesome } term\n .attr = { "" }',
     );
     expect(res).toEqual({
+      format: 'fluent',
       id: '-term',
       value: ['My { $awesome } term'],
       attributes: new Map([['attr', ['']]]),
@@ -95,6 +104,7 @@ describe('parseEntry:fluent', () => {
       `;
     const entry = parseEntry('fluent', input);
     expect(entry).toEqual({
+      format: 'fluent',
       id: 'my-entry',
       value: {
         decl: {

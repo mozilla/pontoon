@@ -3,11 +3,13 @@ import type { Message } from '@mozilla/l10n';
 export type MessageEntry =
   | {
       id: string;
+      format: 'fluent' | 'gettext' | 'plain';
       value: Message;
       attributes?: never;
     }
   | {
       id: string;
+      format: 'fluent';
       value: Message | null;
       attributes: Map<string, Message>;
     };

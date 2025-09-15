@@ -42,7 +42,7 @@ describe('getPlainMessage', () => {
 
     it('returns an empty string for an empty literal value in a message', () => {
       const entry = parseEntry('fluent', 'empty = { "" }\n');
-      serializeEntry('fluent', entry);
+      serializeEntry(entry);
       const res = getPlainMessage(entry, 'fluent');
       expect(res).toEqual('');
     });
