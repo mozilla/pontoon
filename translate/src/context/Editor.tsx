@@ -307,12 +307,6 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         sourceView = true;
       }
     } else {
-      if (format === 'fluent' && !source.endsWith('\n')) {
-        // Some Fluent translations may be stored without a terminal newline.
-        // If the data is cleaned up, this conditional may be removed.
-        // https://github.com/mozilla/pontoon/issues/2216
-        source += '\n';
-      }
       const entry_ = parseEntry(format, source);
       if (entry_) {
         entry = entry_;
