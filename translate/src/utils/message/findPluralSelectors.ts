@@ -1,27 +1,23 @@
-import type { Model } from 'messageformat';
-
 import { CLDR_PLURALS } from '../constants';
+import { isSelectMessage, type Message } from '@mozilla/l10n';
 
 /**
  * Returns an array of selector indices for which the message
  * appears to contain a plural selector.
  */
-export function findPluralSelectors(message: Model.Message): number[] {
-  const res: number[] = [];
-  if (message.type === 'select') {
-    const { selectors, variants } = message;
+export function findPluralSelectors(message: Message): Set<number> {
+  const res = new Set<number>();
+  if (isSelectMessage(message)) {
+    const { sel: selectors, alt: variants } = message;
     for (let i = 0; i < selectors.length; ++i) {
       if (
         variants.every((v) => {
           const key = v.keys[i];
-          return (
-            !key.value ||
-            CLDR_PLURALS.includes(key.value) ||
-            /^[0-9]+$/.test(key.value)
-          );
+          const kv = typeof key === 'string' ? key : key['*'];
+          return !kv || CLDR_PLURALS.includes(kv) || /^[0-9]+$/.test(kv);
         })
       ) {
-        res.push(i);
+        res.add(i);
       }
     }
   }
