@@ -8,8 +8,6 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
 )
 from pontoon.base.models.entity import Entity
-from pontoon.base.models.repository import Repository
-from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation import Translation
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import (
@@ -311,27 +309,8 @@ class CompactTranslationSerializer(serializers.ModelSerializer):
         )
 
 
-class CompactResourceSerializer(serializers.ModelSerializer):
-    repository_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Resource
-        fields = [
-            "repository_url",
-        ]
-
-    def get_repository_url(self, obj):
-        repositories = Repository.objects.filter(project=obj.project)
-
-        if not repositories:
-            return None
-
-        return f"{repositories.first().website}/blob/main/{obj.path}"
-
-
 class EntitySerializer(serializers.ModelSerializer):
     project = serializers.SerializerMethodField()
-    resource = CompactResourceSerializer(read_only=True)
 
     class Meta:
         model = Entity
@@ -340,7 +319,6 @@ class EntitySerializer(serializers.ModelSerializer):
             "string",
             "key",
             "project",
-            "resource",
         ]
 
     def get_project(self, obj):
@@ -393,4 +371,4 @@ class EntitySearchSerializer(EntitySerializer):
 
         translation = obj.translation_set.filter(locale__code=locale_code).first()
 
-        return CompactTranslationSerializer(translation).data
+        return CompactTranslationSerializer(translation, context=self.context).data

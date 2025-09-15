@@ -424,4 +424,7 @@ class TranslationSearchListView(generics.ListAPIView):
         except ValueError as error:
             raise ValueError(error)
 
+        # exclude entities
+        entities = entities.filter(translation__locale=locale)
+
         return entities
