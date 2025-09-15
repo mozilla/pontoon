@@ -168,7 +168,31 @@ describe('getEmptyMessage', () => {
       `);
   });
 
-  it('handles plural messages for special locales', () => {
+  for (const code of ['fr', 'fr-BE', 'ca-valencia']) {
+    it(`handles plural messages for Romance locales (${code})`, () => {
+      const source = parseEntry(
+        'fluent',
+        ftl`
+      selector-multi =
+        { $num ->
+            [one] ONE
+           *[other] OTHER
+        }
+      `,
+      );
+      const entry = getEmptyMessageEntry(source, { code });
+      expect(serializeEntry('fluent', entry)).toBe(ftl`
+      selector-multi =
+          { $num ->
+              [one] { "" }
+             *[other] { "" }
+          }
+
+      `);
+    });
+  }
+
+  it('handles plural messages for Slavic locales', () => {
     const source = parseEntry(
       'fluent',
       ftl`
