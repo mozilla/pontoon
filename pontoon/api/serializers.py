@@ -317,7 +317,6 @@ class CompactResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
         fields = [
-            "path",
             "repository_url",
         ]
 
@@ -327,10 +326,7 @@ class CompactResourceSerializer(serializers.ModelSerializer):
         if not repositories:
             return None
 
-        for repository in repositories:
-            if repository.source_repo:
-                return repository.url
-        return repositories.first().url
+        return f"{repositories.first().website}/blob/main/{obj.path}"
 
 
 class EntitySerializer(serializers.ModelSerializer):
