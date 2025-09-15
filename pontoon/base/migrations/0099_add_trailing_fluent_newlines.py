@@ -12,9 +12,9 @@ def add_trailing_fluent_newlines(apps, schema_editor):
         entity.string += "\n"
     Entity.objects.bulk_update(entities, ["string"])
 
-    translations = Translation.objects.filter(entity__resource__format="fluent").exclude(
-        string__endswith="\n"
-    )
+    translations = Translation.objects.filter(
+        entity__resource__format="fluent"
+    ).exclude(string__endswith="\n")
     for trans in translations:
         trans.string += "\n"
     Translation.objects.bulk_update(translations, ["string"], batch_size=10_000)
