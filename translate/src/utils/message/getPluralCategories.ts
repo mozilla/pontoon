@@ -2,7 +2,7 @@ import { CLDR_PLURALS } from '../constants';
 
 export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
   // These special cases should be occasionally pruned on CLDR updates
-  switch (code) {
+  switch (new Intl.Locale(code).language) {
     case 'ace': // Acehnese
     case 'ilo': // Iloko
     case 'meh': // Mixteco Yucuhiti
@@ -24,17 +24,10 @@ export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
 
     // For the following, deliberately ignore the `many` rule for millions
     case 'ca': // Catalan
-    case 'ca-valencia': // Catalan (Valencian)
     case 'es': // Spanish
-    case 'es-AR': // Spanish (Argentina)
-    case 'es-CL': // Spanish (Spain)
-    case 'es-ES': // Spanish (Chile)
-    case 'es-MX': // Spanish (Mexico)
     case 'fr': // French
     case 'it': // Italian
     case 'pt': // Portuguese
-    case 'pt-BR': // Portuguese (Brazil)
-    case 'pt-PT': // Portuguese (Portugal)
       return ['one', 'other'];
   }
 
