@@ -1,4 +1,10 @@
-import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
+import {
+  acceptCompletion,
+  autocompletion,
+  closeBrackets,
+  closeBracketsKeymap,
+  type CompletionSource,
+} from '@codemirror/autocomplete';
 import {
   history,
   historyKeymap,
@@ -13,10 +19,14 @@ import {
 import { Extension } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
+import type { Model } from 'messageformat';
 import { useContext, useEffect, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
+import { placeholder } from '~/modules/placeable/placeholder';
+import { parseEntry } from '~/utils/message';
+import { patternAsString } from '~/utils/message/editMessageEntry';
 import { decoratorPlugin } from './decoratorPlugin';
 import {
   useHandleCtrlShiftArrow,
@@ -78,10 +88,11 @@ const style = HighlightStyle.define([
 
 export const getExtensions = (
   format: string,
+  orig: string,
   ref: ReturnType<typeof useKeyHandlers>,
 ): Extension[] => [
   history(),
-  closeBrackets(),
+  autocompletePlaceholders(format, orig) ?? closeBrackets(),
   EditorView.lineWrapping,
   StreamLanguage.define<any>(format === 'fluent' ? fluentMode : commonMode),
   syntaxHighlighting(style),
@@ -94,6 +105,7 @@ export const getExtensions = (
     },
     { key: 'Mod-Enter', run: insertNewlineAndIndent },
     { key: 'Escape', run: () => ref.current.onEscape() },
+    { key: 'Tab', run: acceptCompletion },
     {
       key: 'Shift-Ctrl-ArrowDown',
       run: () => ref.current.onCtrlShiftArrow('ArrowDown'),
@@ -112,3 +124,72 @@ export const getExtensions = (
     ...historyKeymap,
   ]),
 ];
+
+/**
+ * Autocomplete placeholders, and sequences of placeholders.
+ *
+ * For a source like
+ *
+ *     <foo>{$bar}</foo> baz
+ *
+ * generates completions for:
+ * - `<foo>`
+ * - `<foo>{$bar}`
+ * - `<foo>{$bar}</foo>`
+ * - `{$bar}`
+ * - `{$bar}</foo>`
+ * - `</foo>`
+ *
+ * If no autocompletions are found, bracket auto-closing is enabled.
+ */
+function autocompletePlaceholders(format: string, source: string) {
+  const override: CompletionSource[] = [];
+  for (const pattern of entryPatterns(format, source)) {
+    const highlights: [start: number, ends: number[]][] = [];
+    for (const match of pattern.matchAll(placeholder)) {
+      const label = match[0].trimEnd();
+      if (label.length > 1) {
+        const start = match.index;
+        const end = start + label.length;
+        for (const hl of highlights) {
+          if (hl[1].includes(start)) hl[1].push(end);
+        }
+        highlights.push([start, [end]]);
+      }
+    }
+    for (const hl of highlights) {
+      override.push(completePlaceholder(pattern, ...hl));
+    }
+  }
+  return override.length ? autocompletion({ override }) : null;
+}
+
+function* entryPatterns(format: string, source: string) {
+  const entry = parseEntry(format, source);
+  if (entry?.value) yield* msgPatterns(entry.value);
+  if (entry?.attributes) {
+    for (const msg of entry.attributes.values()) yield* msgPatterns(msg);
+  }
+}
+
+function* msgPatterns(msg: Model.Message) {
+  if (msg.type === 'message') yield patternAsString(msg.pattern);
+  else for (const v of msg.variants) yield patternAsString(v.value);
+}
+
+function completePlaceholder(
+  orig: string,
+  start: number,
+  ends: number[],
+): CompletionSource {
+  const esc = (chars: string) => chars.replace(/[^\w\s]/g, '\\$&');
+  const rest = new Set(orig.substring(start + 1, ends[0]));
+  const restChars = Array.from(rest).join('');
+  const match = new RegExp(`[${esc(orig[start])}][${esc(restChars)}]*$`);
+  const options = ends.map((end) => ({ label: orig.substring(start, end) }));
+  return (context) => {
+    const token = context.matchBefore(match);
+    if (token) return { from: token.from, options };
+    else return context.explicit ? { from: context.pos, options } : null;
+  };
+}

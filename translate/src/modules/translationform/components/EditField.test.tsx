@@ -37,7 +37,15 @@ function MockEditField({
       <MockStore store={store}>
         <Locale.Provider value={{ code: 'kg' } as Locale}>
           <EntityView.Provider
-            value={{ entity: { format, translation: {} } } as EntityView}
+            value={
+              {
+                entity: {
+                  format,
+                  original: `key = ${defaultValue}`,
+                  translation: {},
+                },
+              } as EntityView
+            }
           >
             <EditorActions.Provider
               value={{ setResultFromInput } as EditorActions}

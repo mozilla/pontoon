@@ -77,7 +77,7 @@ function* genPatterns(
   }
 }
 
-function patternAsString(pattern: Model.Pattern) {
+export function patternAsString(pattern: Model.Pattern) {
   switch (pattern.length) {
     case 0:
       return '';
