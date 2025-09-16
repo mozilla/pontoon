@@ -116,6 +116,16 @@
   height: 22px;
 }
 
+.cm-editor
+  .cm-tooltip-autocomplete
+  ul
+  li
+  .cm-completionLabel
+  .cm-completionMatchedText {
+  text-decoration: none;
+  color: var(--search-color);
+}
+
 .cm-editor .cm-tooltip-autocomplete ul li[aria-selected] {
   background: var(--dark-grey-2);
   color: var(--white-1);
