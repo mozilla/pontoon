@@ -103,13 +103,22 @@
 }
 
 .cm-editor .cm-tooltip {
-  border: 1px solid #bbb;
-  background-color: #f5f5f5;
+  border: 1px solid var(--main-border-1);
+  background-color: var(--black-3);
+  padding: 10px 12px;
+}
+
+.cm-editor .cm-tooltip-autocomplete ul li {
+  align-items: center;
+  color: var(--light-grey-7);
+  display: flex;
+  font-size: 13px;
+  height: 26px;
 }
 
 .cm-editor .cm-tooltip-autocomplete ul li[aria-selected] {
-  background: #17c;
-  color: white;
+  background: var(--dark-grey-2);
+  color: var(--white-1);
 }
 
 .singlefield .cm-content,
