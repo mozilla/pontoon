@@ -187,6 +187,7 @@ function completePlaceholder(
   const rest = new Set(orig.substring(start + 1, ends[0]));
   const restChars = Array.from(rest).join('');
   const match = new RegExp(`[${esc(orig[start])}][${esc(restChars)}]*$`);
+  // Deprioritize closing tags, as they otherwise show up first in the list.
   const boost = orig.substring(start, start + 2) === '</' ? -1 : 0;
   const options = ends.map((end) => ({
     label: orig.substring(start, end),
