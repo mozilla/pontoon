@@ -113,7 +113,7 @@
   color: var(--light-grey-7);
   display: flex;
   font-size: 13px;
-  height: 26px;
+  height: 22px;
 }
 
 .cm-editor .cm-tooltip-autocomplete ul li[aria-selected] {
