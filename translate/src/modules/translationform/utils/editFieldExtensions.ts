@@ -187,7 +187,11 @@ function completePlaceholder(
   const rest = new Set(orig.substring(start + 1, ends[0]));
   const restChars = Array.from(rest).join('');
   const match = new RegExp(`[${esc(orig[start])}][${esc(restChars)}]*$`);
-  const options = ends.map((end) => ({ label: orig.substring(start, end) }));
+  const boost = orig.substring(start, start + 2) === '</' ? -1 : 0;
+  const options = ends.map((end) => ({
+    label: orig.substring(start, end),
+    boost,
+  }));
   return (context) => {
     const token = context.matchBefore(match);
     if (token) return { from: token.from, options };

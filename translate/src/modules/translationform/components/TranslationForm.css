@@ -98,6 +98,10 @@
   padding: 0 8px 0 4px;
 }
 
+.cm-editor .cm-completionIcon {
+  display: none;
+}
+
 .singlefield .cm-content,
 .singlefield .cm-gutter {
   min-height: calc(100px - 12px);
