@@ -231,6 +231,10 @@ Pseudo-localization turns every supported string into a different version of its
 
 You can read [more about pseudo-localization on Wikipedia](https://en.wikipedia.org/wiki/Pseudolocalization).
 
+### Localizing Pontoon
+
+At this stage, only the translation workspace is localizable. Until the full application becomes localizable, Pontoon will not be available for localization on [pontoon.mozilla.org](https://pontoon.mozilla.org) and we will not be accepting translations for it.
+
 ## Development resources
 
 ### Integration between Django and React
