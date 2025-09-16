@@ -102,6 +102,16 @@
   display: none;
 }
 
+.cm-editor .cm-tooltip {
+  border: 1px solid #bbb;
+  background-color: #f5f5f5;
+}
+
+.cm-editor .cm-tooltip-autocomplete ul li[aria-selected] {
+  background: #17c;
+  color: white;
+}
+
 .singlefield .cm-content,
 .singlefield .cm-gutter {
   min-height: calc(100px - 12px);
