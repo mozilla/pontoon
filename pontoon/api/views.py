@@ -24,6 +24,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
 )
 from pontoon.base.models.entity import Entity
+from pontoon.base.models.translation import Translation
 from pontoon.terminology.models import (
     Term,
 )
@@ -300,17 +301,26 @@ class EntityListView(generics.ListAPIView):
     serializer_class = EntitySerializer
 
     def get_queryset(self):
-        return Entity.objects.all()
+        return Entity.objects.prefetch_related(
+            "resource",
+            "resource__project",
+        )
 
 
 class EntityIndividualView(generics.RetrieveAPIView):
     serializer_class = NestedEntitySerializer
 
+    def get_queryset(self):
+        return Entity.objects.prefetch_related(
+            "translation_set__locale",
+        )
+
     def get_object(self):
+        queryset = self.get_queryset()
         pk = self.kwargs["pk"]
 
         entity = get_object_or_404(
-            Entity,
+            queryset,
             pk=pk,
         )
 
@@ -405,7 +415,8 @@ class TranslationSearchListView(generics.ListAPIView):
         if not form.is_valid():
             raise ValidationError(form.errors)
 
-        locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
+        locale_code = form.cleaned_data["locale"]
+        locale = get_object_or_404(Locale, code=locale_code)
 
         project_slug = form.cleaned_data["project"]
 
@@ -425,13 +436,25 @@ class TranslationSearchListView(generics.ListAPIView):
         }
 
         try:
-            entities = Entity.for_project_locale(
-                self.request.user, project, locale, **form_data
+            entities = (
+                Entity.for_project_locale(
+                    self.request.user, project, locale, **form_data
+                )
+                .filter(translation__locale=locale)
+                .prefetch_related(
+                    (
+                        Prefetch(
+                            "translation_set",
+                            queryset=Translation.objects.filter(
+                                locale__code=locale_code
+                            ).select_related("locale"),
+                            to_attr="filtered_translations",
+                        )
+                    ),
+                    "resource__project",
+                )
             )
         except ValueError as error:
             raise ValueError(error)
-
-        # exclude entities
-        entities = entities.filter(translation__locale=locale)
 
         return entities

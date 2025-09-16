@@ -294,19 +294,17 @@ class CompactTranslationSerializer(serializers.ModelSerializer):
         if not request:
             return None
 
-        entity = Entity.objects.get(pk=obj.entity.pk)
-
         return (
             reverse(
                 "pontoon.translate",
                 kwargs={
                     "locale": obj.locale.code,
-                    "project": entity.resource.project.slug,
-                    "resource": entity.resource.path,
+                    "project": obj.entity.resource.project.slug,
+                    "resource": obj.entity.resource.path,
                 },
                 request=request,
             )
-            + f"?string={entity.pk}"
+            + f"?string={obj.entity.pk}"
         )
 
 
@@ -381,11 +379,8 @@ class EntitySearchSerializer(EntitySerializer):
         if not request:
             return None
 
-        locale_code = request.query_params.get("locale")
-
-        if not locale_code:
-            return None
-
-        translation = obj.translation_set.filter(locale__code=locale_code).first()
+        translation = (
+            obj.filtered_translations[0] if obj.filtered_translations else None
+        )
 
         return CompactTranslationSerializer(translation, context=self.context).data

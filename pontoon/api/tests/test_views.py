@@ -589,6 +589,8 @@ def test_disabled_projects(
     assert response.data["count"] == 4
     assert results == expected_results
 
+def test_entity(django_assert_num_queries):
+    pass
 
 @pytest.mark.django_db
 def test_project_locale(django_assert_num_queries):
