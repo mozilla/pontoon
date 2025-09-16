@@ -8,6 +8,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
 )
 from pontoon.base.models.entity import Entity
+from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation import Translation
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import (
@@ -309,17 +310,33 @@ class CompactTranslationSerializer(serializers.ModelSerializer):
         )
 
 
+class CompactResourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resource
+        fields = [
+            "path",
+        ]
+
+
 class EntitySerializer(serializers.ModelSerializer):
+    entity = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
+    resource = CompactResourceSerializer(read_only=True)
 
     class Meta:
         model = Entity
         fields = [
-            "id",
-            "string",
-            "key",
+            "entity",
             "project",
+            "resource",
         ]
+
+    def get_entity(self, obj):
+        return {
+            "id": obj.id,
+            "string": obj.string,
+            "key": obj.key,
+        }
 
     def get_project(self, obj):
         if not obj.resource.project:

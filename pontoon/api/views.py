@@ -393,17 +393,24 @@ class TranslationSearchListView(generics.ListAPIView):
     serializer_class = EntitySearchSerializer
 
     def get_queryset(self):
-        query_params = self.request.query_params
+        query_params = self.request.query_params.copy()
+        if "text" in query_params:
+            query_params["search"] = query_params.get("text")
+            query_params.pop("text")
+
+        query_params["project"] = query_params.get("project") or "all-projects"
 
         form = forms.GetEntitiesForm(query_params)
+
         if not form.is_valid():
             raise ValidationError(form.errors)
 
         locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
 
         project_slug = form.cleaned_data["project"]
+
         if project_slug == "all-projects":
-            project = Project(slug=project_slug)
+            project = Project(slug="all-projects")
         else:
             project = get_object_or_404(Project, slug=project_slug)
 
