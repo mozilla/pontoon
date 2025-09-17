@@ -11,10 +11,12 @@ from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
 from pontoon.terminology.models import Term, TermTranslation
 from pontoon.test.factories import (
+    EntityFactory,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
     TranslatedResourceFactory,
+    TranslationFactory,
 )
 
 
@@ -589,8 +591,124 @@ def test_disabled_projects(
     assert response.data["count"] == 4
     assert results == expected_results
 
+
+@pytest.mark.django_db
 def test_entity(django_assert_num_queries):
-    pass
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+
+    resource = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+    )
+
+    entity = EntityFactory.create(string="Test String", resource=resource)
+
+    with django_assert_num_queries(4):
+        response = APIClient().get(
+            f"/api/v2/entities/{entity.pk}/", HTTP_ACCEPT="application/json"
+        )
+    assert response.status_code == 200
+
+    assert response.data == {
+        "entity": {"id": entity.pk, "key": [], "string": "Test String"},
+        "project": {"name": "Project A", "slug": "project_a"},
+        "resource": {"path": "resource_project_a.po"},
+    }
+
+
+@pytest.mark.django_db
+def test_entity_with_translations(django_assert_num_queries):
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+
+    locales = [
+        LocaleFactory(
+            code="kg",
+            name="Klingon",
+        ),
+        LocaleFactory(code="hut", name="Huttese"),
+        LocaleFactory(code="gs", name="Geonosian"),
+    ]
+
+    resource = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+    )
+
+    entity = EntityFactory.create(string="Test String", resource=resource)
+
+    for locale in locales:
+        TranslationFactory.create(
+            entity=entity, locale=locale, string=f"translation_{locale.name}"
+        )
+
+    with django_assert_num_queries(5):
+        response = APIClient().get(
+            f"/api/v2/entities/{entity.pk}/?include_translations",
+            HTTP_ACCEPT="application/json",
+        )
+    assert response.status_code == 200
+
+    assert response.data == {
+        "entity": {"id": entity.pk, "string": "Test String", "key": []},
+        "project": {"slug": "project_a", "name": "Project A"},
+        "resource": {"path": "resource_project_a.po"},
+        "translations": [
+            {
+                "locale": {"code": "kg", "name": "Klingon"},
+                "string": "translation_Klingon",
+                "editor_url": f"http://testserver/kg/project_a/resource_project_a.po/?string={entity.pk}",
+            },
+            {
+                "locale": {"code": "hut", "name": "Huttese"},
+                "string": "translation_Huttese",
+                "editor_url": f"http://testserver/hut/project_a/resource_project_a.po/?string={entity.pk}",
+            },
+            {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project_a/resource_project_a.po/?string={entity.pk}",
+            },
+        ],
+    }
+
+
+@pytest.mark.django_db
+def test_entities(django_assert_num_queries):
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+
+    resource_a = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+    )
+
+    entities = [
+        EntityFactory.create(string="Test String A", resource=resource_a),
+        EntityFactory.create(string="Test String B", resource=resource_a),
+        EntityFactory.create(string="Test String C", resource=resource_a),
+    ]
+
+    with django_assert_num_queries(4):
+        response = APIClient().get("/api/v2/entities/", HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+
+    expected_data = [
+        {
+            "entity": {"id": entity.pk, "string": entity.string, "key": entity.key},
+            "project": {"slug": "project_a", "name": "Project A"},
+            "resource": {"path": "resource_project_a.po"},
+        }
+        for entity in entities
+    ]
+
+    for entity in expected_data:
+        assert entity in response.data["results"]
+
 
 @pytest.mark.django_db
 def test_project_locale(django_assert_num_queries):
