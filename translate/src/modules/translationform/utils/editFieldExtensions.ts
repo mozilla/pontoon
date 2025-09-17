@@ -17,7 +17,7 @@ import {
   syntaxHighlighting,
 } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
-import { EditorView, keymap } from '@codemirror/view';
+import { EditorView, keymap, tooltips } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useRef } from 'react';
 
@@ -92,6 +92,11 @@ export const getExtensions = (
   ref: ReturnType<typeof useKeyHandlers>,
 ): Extension[] => [
   history(),
+  // .main-column sets overflow-y:auto, which disables overflow-x:visible,
+  // and so an absolute-positioned tooltip in the .editor would introduce
+  // horizontal scrolling if it overflows the right edge of .main-column.
+  // We avoid this by placing tooltips in its parent container.
+  tooltips({ parent: document.querySelector('.panel-content') as HTMLElement }),
   autocompletePlaceholders(format, orig) ?? closeBrackets(),
   EditorView.lineWrapping,
   StreamLanguage.define<any>(format === 'fluent' ? fluentMode : commonMode),
