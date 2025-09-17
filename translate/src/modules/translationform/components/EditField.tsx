@@ -47,7 +47,11 @@ export const EditField = memo(
       const initView = useCallback(
         (parent: HTMLDivElement | null) => {
           if (parent) {
-            const extensions = getExtensions(entity.format, keyHandlers);
+            const extensions = getExtensions(
+              entity.format,
+              entity.original,
+              keyHandlers,
+            );
             if (readOnly) {
               extensions.push(
                 EditorState.readOnly.of(true),

@@ -98,6 +98,34 @@
   padding: 0 8px 0 4px;
 }
 
+.cm-completionIcon {
+  display: none !important;
+}
+
+.cm-tooltip {
+  border: 1px solid var(--main-border-1) !important;
+  background-color: var(--black-3) !important;
+  padding: 10px 12px;
+}
+
+.cm-tooltip-autocomplete ul li {
+  align-items: center;
+  color: var(--light-grey-7) !important;
+  display: flex;
+  font-size: 13px;
+  height: 22px;
+}
+
+.cm-tooltip-autocomplete ul li .cm-completionLabel .cm-completionMatchedText {
+  text-decoration: none;
+  color: var(--search-color);
+}
+
+.cm-tooltip-autocomplete ul li[aria-selected] {
+  background: var(--dark-grey-2) !important;
+  color: var(--white-1) !important;
+}
+
 .singlefield .cm-content,
 .singlefield .cm-gutter {
   min-height: calc(100px - 12px);
