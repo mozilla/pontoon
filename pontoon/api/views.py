@@ -451,8 +451,9 @@ class TranslationSearchListView(generics.ListAPIView):
                             to_attr="filtered_translations",
                         )
                     ),
-                    "resource__project",
                 )
+                .select_related("resource__project")
+                .distinct()
             )
         except ValueError as error:
             raise ValueError(error)
