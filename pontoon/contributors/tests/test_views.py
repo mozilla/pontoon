@@ -339,3 +339,20 @@ def test_personal_access_token_deletion(member):
     assert response.json()["status"] == "success"
     assert response.json()["message"] == "Token deleted successfully!"
     assert not PersonalAccessToken.objects.filter(id=token.id).exists()
+
+
+@pytest.mark.django_db
+def test_personal_access_token_deletion_correct_permissions(member, user_b):
+    """Test if personal access token is deleted correctly."""
+    token = PersonalAccessToken.objects.create(
+        user=user_b, name="Test Token 1", expires_at=now() + timedelta(days=30)
+    )
+    url = reverse("pontoon.contributors.delete_token", args=[token.id])
+    member.client.force_login(member.user)
+
+    response = member.client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+
+    assert response.status_code == 403
+    assert response.json()["status"] == "error"
+    assert response.json()["message"] == "You are not authorized to delete this token."
+    assert PersonalAccessToken.objects.filter(id=token.id).exists()
