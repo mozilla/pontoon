@@ -33,4 +33,9 @@
   .check-box-wrapper:hover {
     color: var(--white-1);
   }
+
+  .check-box .fas {
+    margin-left: 23px;
+    margin-right: 0;
+  }
 }
