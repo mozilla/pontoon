@@ -53,8 +53,8 @@ batchactions-RejectAll--default = AVVISA ALLA FÖRSLAG
 batchactions-RejectAll--confirmation = ÄR DU SÄKER?
 batchactions-RejectAll--success =
     { $changedCount ->
-        [one] { $changedCount } STRÄNG AVVISADES
-       *[other] { $changedCount } STRÄNGAR AVVISADES
+        [one] { $changedCount } STRÄNG AVVISAD
+       *[other] { $changedCount } STRÄNGAR AVVISADE
     }
 batchactions-RejectAll--invalid = { $invalidCount } MISSLYCKADES
 batchactions-RejectAll--error = HOPPSAN, NÅGOT GICK FEL
@@ -67,7 +67,7 @@ batchactions-ReplaceAll--default = ERSÄTT ALLA
 batchactions-ReplaceAll--success =
     { $changedCount ->
         [one] { $changedCount } STRÄNG ERSATT
-       *[other] { $changedCount } STRÄNGAR ERSÄTTA
+       *[other] { $changedCount } STRÄNGAR ERSATTA
     }
 batchactions-ReplaceAll--invalid = { $invalidCount } MISSLYCKADES
 batchactions-ReplaceAll--error = HOPPSAN, NÅGOT GICK FEL
@@ -79,7 +79,7 @@ batchactions-ReplaceAll--error = HOPPSAN, NÅGOT GICK FEL
 resourceprogress-ResourceProgress--all-strings = ALLA STRÄNGAR
 resourceprogress-ResourceProgress--unreviewed = OGRANSKADE
 resourceprogress-ResourceProgress--translated = ÖVERSATTA
-resourceprogress-ResourceProgress--pretranslated = FÖRHANDSÖVERSATTA
+resourceprogress-ResourceProgress--pretranslated = FÖRÖVERSATTA
 resourceprogress-ResourceProgress--warnings = VARNINGAR
 resourceprogress-ResourceProgress--errors = FEL
 resourceprogress-ResourceProgress--missing = SAKNAS
@@ -163,7 +163,7 @@ editor-FailedChecks--approve-anyway = GODKÄNN ÄNDÅ
 ## Shows a list of keyboard shortcuts.
 
 editor-KeyboardShortcuts--button =
-    .title = Keyboard Shortcuts
+    .title = Tangentbordsgenvägar
 
 editor-KeyboardShortcuts--overlay-title = TANGENTBORDSGENVÄGAR
 
@@ -652,7 +652,7 @@ search-FiltersPanel--heading-extra = EXTRAFILTER
 search-FiltersPanel--heading-authors = UPPHOVSPERSONER FÖR ÖVERSÄTTNING
 search-FiltersPanel--status-name-all = Alla
 search-FiltersPanel--status-name-translated = Översatta
-search-FiltersPanel--status-name-pretranslated = Förhandsöversatta
+search-FiltersPanel--status-name-pretranslated = Föröversatta
 search-FiltersPanel--status-name-warnings = Varningar
 search-FiltersPanel--status-name-errors = Fel
 search-FiltersPanel--status-name-missing = Saknas
@@ -719,9 +719,9 @@ user-SignIn--sign-in = Logga in
 user-SignOut--sign-out = <glyph></glyph>Logga ut
 
 user-UserMenu--appearance-title = Välj utseende
-user-UserMenu--appearance-dark = <glyph></glyph> Mörk
+user-UserMenu--appearance-dark = <glyph></glyph> Mörkt
     .title = Använd ett mörkt tema
-user-UserMenu--appearance-light = <glyph></glyph> Ljus
+user-UserMenu--appearance-light = <glyph></glyph> Ljust
     .title = Använd ett ljust tema
 user-UserMenu--appearance-system = <glyph></glyph> System
     .title = Använd ett tema som matchar dina systeminställningar
