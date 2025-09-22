@@ -11,6 +11,11 @@
     [type='checkbox'] {
       display: none;
     }
+
+    .fas {
+      margin-left: 23px;
+      margin-right: 0;
+    }
   }
 
   .check-box:last-child {
@@ -32,10 +37,5 @@
   .check-box.hover .check-box-wrapper,
   .check-box-wrapper:hover {
     color: var(--white-1);
-  }
-
-  .check-box .fas {
-    margin-left: 23px;
-    margin-right: 0;
   }
 }
