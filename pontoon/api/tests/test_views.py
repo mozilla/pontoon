@@ -906,8 +906,6 @@ def test_tm_search(django_assert_num_queries):
 
 @pytest.mark.django_db
 def test_translation_search(django_assert_num_queries):
-    # this is gonna be long
-
     locale_a = LocaleFactory(code="gs", name="Geonosian")
 
     locale_b = LocaleFactory(code="kg", name="Klingon")
@@ -988,33 +986,18 @@ def test_translation_search(django_assert_num_queries):
             entity=entity, locale=locale_a, string=f"translation_{locale_a.name}"
         )
 
-    TranslationFactory.create(
-        entity=entities["entity_c"],
-        locale=locale_b,
-        string=f"translation_{locale_b.name}",
-    )
-
-    TranslationFactory.create(
-        entity=entities["entity_g"],
-        locale=locale_b,
-        string=f"translation_{locale_b.name}",
-    )
-
-    TranslationFactory.create(
-        entity=entities["entity_h"],
-        locale=locale_b,
-        string=f"translation_{locale_b.name}",
-    )
-    TranslationFactory.create(
-        entity=entities["entity_k"],
-        locale=locale_b,
-        string=f"translation_{locale_b.name}",
-    )
-    TranslationFactory.create(
-        entity=entities["entity_l"],
-        locale=locale_b,
-        string=f"translation_{locale_b.name}",
-    )
+    for entity in (
+        entities["entity_c"],
+        entities["entity_g"],
+        entities["entity_h"],
+        entities["entity_k"],
+        entities["entity_l"],
+    ):
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale_b,
+            string=f"translation_{locale_b.name}",
+        )
 
     # geonosian, project a, text the%20test, match whole words, match case
     with django_assert_num_queries(7):

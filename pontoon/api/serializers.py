@@ -267,7 +267,7 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
         return None
 
 
-class CompactTranslationSerializer(serializers.ModelSerializer):
+class TranslationSerializer(serializers.ModelSerializer):
     locale = serializers.SerializerMethodField()
     editor_url = serializers.SerializerMethodField()
 
@@ -308,7 +308,7 @@ class CompactTranslationSerializer(serializers.ModelSerializer):
         )
 
 
-class CompactResourceSerializer(serializers.ModelSerializer):
+class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
         fields = [
@@ -319,7 +319,7 @@ class CompactResourceSerializer(serializers.ModelSerializer):
 class EntitySerializer(serializers.ModelSerializer):
     entity = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
-    resource = CompactResourceSerializer(read_only=True)
+    resource = ResourceSerializer(read_only=True)
 
     class Meta:
         model = Entity
@@ -347,7 +347,7 @@ class EntitySerializer(serializers.ModelSerializer):
 
 
 class NestedEntitySerializer(EntitySerializer):
-    translations = CompactTranslationSerializer(
+    translations = TranslationSerializer(
         source="translation_set", many=True, read_only=True
     )
 
@@ -383,4 +383,4 @@ class EntitySearchSerializer(EntitySerializer):
             obj.filtered_translations[0] if obj.filtered_translations else None
         )
 
-        return CompactTranslationSerializer(translation, context=self.context).data
+        return TranslationSerializer(translation, context=self.context).data

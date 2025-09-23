@@ -408,7 +408,7 @@ class TranslationSearchListView(generics.ListAPIView):
             query_params["search"] = query_params.get("text")
             query_params.pop("text")
 
-        query_params["project"] = query_params.get("project") or "all-projects"
+        query_params["project"] = query_params.get("project", "all-projects")
 
         form = forms.GetEntitiesForm(query_params)
 
