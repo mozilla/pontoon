@@ -80,6 +80,7 @@ def fix_projectlocale_insights_again(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
+        ("base", "0009_change_pontoon_users_emails"),
         ("insights", "0016_delete_projectinsightssnapshot"),
     ]
 

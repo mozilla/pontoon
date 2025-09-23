@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("base", "0008_add_systran_locales"),
+        ("sync", "0002_change_pontoon_sync_email"),
     ]
 
     operations = [

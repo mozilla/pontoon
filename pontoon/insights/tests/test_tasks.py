@@ -34,9 +34,7 @@ def now_times():
 
 
 @pytest.mark.django_db
-def test_count_activities(
-    sync_user, user_a, user_b, locale_a, project_locale_a, resource_a
-):
+def test_count_activities(user_a, user_b, locale_a, project_locale_a, resource_a):
     now, t = now_times()
     tr = TranslationFactory.create(
         entity__resource=resource_a,
