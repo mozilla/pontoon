@@ -1013,9 +1013,7 @@ def test_translation_search(django_assert_num_queries):
         "text": ["This field is required."],
     }
 
-    # Search parameters:
-    # - Locale: None
-    # - Text: test
+    # Test search without locale parameter
     with django_assert_num_queries(0):
         response = APIClient().get(
             "/api/v2/search/translations/?text=test",
