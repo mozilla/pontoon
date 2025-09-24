@@ -362,11 +362,13 @@ class TermSearchListView(generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
-        # Enforce required query parameters
-        if not text or not locale:
-            raise ValidationError(
-                {"detail": "Both 'text' and 'locale' query parameters are required."}
-            )
+        errors = {}
+        if not text:
+            errors["text"] = ["This field is required."]
+        if not locale:
+            errors["locale"] = ["This field is required."]
+        if errors:
+            raise ValidationError(errors)
 
         return Term.objects.all()
 
@@ -386,11 +388,13 @@ class TranslationMemorySearchListView(generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
-        # Enforce required query parameters
-        if not text or not locale:
-            raise ValidationError(
-                {"detail": "Both 'text' and 'locale' query parameters are required."}
-            )
+        errors = {}
+        if not text:
+            errors["text"] = ["This field is required."]
+        if not locale:
+            errors["locale"] = ["This field is required."]
+        if errors:
+            raise ValidationError(errors)
 
         return TranslationMemoryEntry.objects.all()
 
@@ -404,8 +408,16 @@ class TranslationSearchListView(generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params.copy()
-        if "text" not in query_params:
-            raise ValidationError({"text": ["This field is required."]})
+        text = query_params.get("text")
+        code = query_params.get("locale")
+        
+        errors = {}
+        if not text:
+            errors["text"] = ["This field is required."]
+        if not code:
+            errors["locale"] = ["This field is required."]
+        if errors:
+            raise ValidationError(errors)
 
         query_params["search"] = query_params.pop("text")[0]
         query_params["project"] = query_params.get("project", "all-projects")
