@@ -1,9 +1,10 @@
 from moz.l10n.formats.mf2 import mf2_parse_message, mf2_serialize_pattern
 from moz.l10n.model import CatchallKey, Pattern, PatternMessage, SelectMessage
 
-from pontoon.base.models import Resource
+from pontoon.base.models import Entity, Resource
 
-from . import compare_locales, pontoon_db, pontoon_non_db, translate_toolkit
+from . import compare_locales, translate_toolkit
+from .custom import run_custom_checks
 
 
 def as_gettext(pattern: Pattern) -> str:
@@ -12,28 +13,21 @@ def as_gettext(pattern: Pattern) -> str:
 
 
 def run_checks(
-    entity,
-    locale_code,
-    original,
-    string,
-    use_tt_checks,
-):
+    entity: Entity,
+    locale_code: str,
+    original: str,
+    string: str,
+    use_tt_checks: bool,
+) -> dict[str, list[str]]:
     """
     Main function that performs all quality checks from frameworks handled in Pontoon.
 
-    :arg pontoon.base.models.Entity entity: Source entity
-    :arg basestring locale_code: Locale code of a translation
-    :arg basestring original: an original string
-    :arg basestring string: a translation
     :arg bool use_tt_checks: use Translate Toolkit checks
 
-    :return: Return types:
-        * JsonResponse - If there are errors
-        * None - If there's no errors and non-omitted warnings.
+    :return: Non-empty dict if there are errors or warnings
     """
-    checks = {}
-    checks.update(pontoon_db.run_checks(entity, original, string))
-    checks.update(pontoon_non_db.run_checks(entity, string))
+    checks: dict[str, list[str]] = {}
+    checks.update(run_custom_checks(entity, original, string))
 
     try:
         cl_checks = compare_locales.run_checks(entity, locale_code, string)

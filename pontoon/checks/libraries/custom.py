@@ -5,7 +5,7 @@ from fluent.syntax.visitor import Visitor
 from moz.l10n.formats.mf2 import mf2_parse_message
 from moz.l10n.model import PatternMessage
 
-from pontoon.base.models import Resource
+from pontoon.base.models import Entity, Resource
 
 
 parser = FluentParser()
@@ -36,14 +36,13 @@ class IsEmptyVisitor(Visitor):
             self.is_pattern_empty = False
 
 
-def run_checks(entity, original, string):
+def run_custom_checks(
+    entity: Entity, original: str, string: str
+) -> dict[str, list[str]]:
     """
     Group all checks related to the base UI that get stored in the DB
-    :arg pontoon.base.models.Entity entity: Source entity
-    :arg basestring original: an original string
-    :arg basestring string: a translation
     """
-    checks = defaultdict(list)
+    checks: dict[str, list[str]] = defaultdict(list)
     format = entity.resource.format
 
     # Bug 1599056: Original and translation must either both end in a newline,
@@ -64,9 +63,12 @@ def run_checks(entity, original, string):
             except ValueError as e:
                 checks["pErrors"].append(f"Parse error: {e}")
 
-    # Prevent empty translation submissions if not supported
-    if string == "" and not entity.resource.allows_empty_translations:
-        checks["pErrors"].append("Empty translations are not allowed")
+    if string == "":
+        if entity.resource.allows_empty_translations:
+            checks["pndbWarnings"].append("Empty translation")
+        else:
+            # Prevent empty translation submissions if not supported
+            checks["pErrors"].append("Empty translations are not allowed")
 
     # FTL checks
     if format == Resource.Format.FLUENT and string != "":
