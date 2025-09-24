@@ -999,7 +999,9 @@ def test_translation_search(django_assert_num_queries):
             string=f"translation_{locale_b.name}",
         )
 
-    # no query parameters set
+    # Search parameters:
+    # - Locale: None
+    # - Text: None
     with django_assert_num_queries(0):
         response = APIClient().get(
             "/api/v2/search/translations/",
@@ -1010,7 +1012,9 @@ def test_translation_search(django_assert_num_queries):
 
     assert response.data == {"text": ["This field is required."]}
 
-    # text test
+    # Search parameters:
+    # - Locale: None
+    # - Text: test
     with django_assert_num_queries(0):
         response = APIClient().get(
             "/api/v2/search/translations/?text=test",
@@ -1021,7 +1025,40 @@ def test_translation_search(django_assert_num_queries):
 
     assert response.data == {"locale": ["This field is required."]}
 
-    # text test, geonosian, match whole words
+    # Search parameters:
+    # - Locale: Geonosian
+    # - Text: Flibbertigibbetelle
+    # - Projects: All Projects
+    with django_assert_num_queries(6):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?text=Flibbertigibbetelle&locale={locale_a.code}",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_l"].id,
+                "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
+                "key": [],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_l'].id}",
+            },
+        }
+    ]
+
+    # Search parameters:
+    # - Locale: Geonosian
+    # - Text: Flibbertigibbet
+    # - Projects: All Projects
+    # - Match whole words: True
     with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/search/translations/?text=Flibbertigibbet&locale={locale_a.code}&search_match_whole_word=True",
@@ -1103,7 +1140,11 @@ def test_translation_search(django_assert_num_queries):
         },
     ]
 
-    # text test, geonosian, match case
+    # Search parameters:
+    # - Locale: Geonosian
+    # - Text: Dinglehopper
+    # - Projects: All Projects
+    # - Match case: True
     with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_match_case=True",
@@ -1129,7 +1170,11 @@ def test_translation_search(django_assert_num_queries):
         }
     ]
 
-    # text test, geonosian, include search identifiers
+    # Search parameters:
+    # - Locale: Geonosian
+    # - Text: Dinglehopper
+    # - Projects: All Projects
+    # - Search identifiers: True
     with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_identifiers=True",
@@ -1225,7 +1270,12 @@ def test_translation_search(django_assert_num_queries):
         },
     ]
 
-    # geonosian, project a, text the%20test, match whole words, match case
+    # Search parameters:
+    # - Locale: Geonosian
+    # - Text: the%20Test
+    # - Projects: Project A
+    # - Match whole words: True
+    # - Match case: True
     with django_assert_num_queries(7):
         response = APIClient().get(
             f"/api/v2/search/translations/?locale={locale_a.code}&project={project_a.slug}&text=the%20Test&search_match_whole_word=True&search_match_case=True",
@@ -1265,7 +1315,11 @@ def test_translation_search(django_assert_num_queries):
         },
     ]
 
-    # geonosian, project a, text squibb, include search identifiers, default each word
+    # Search parameters:
+    # - Locale: Geonosian
+    # - Text: quibb%20Key_C
+    # - Projects: Project A
+    # - Search identifiers: True
     with django_assert_num_queries(7):
         response = APIClient().get(
             f"/api/v2/search/translations/?locale={locale_a.code}&project={project_a.slug}&text=squibb%20Key_C&search_identifiers=True",
@@ -1291,7 +1345,11 @@ def test_translation_search(django_assert_num_queries):
         },
     ]
 
-    # klingon, all projects, text "Test Flibbertigibbet", match case
+    # Search parameters:
+    # - Locale: Klingon
+    # - Text: "Test Flibbertigibbet"
+    # - Projects: All
+    # - Match case: True
     with django_assert_num_queries(6):
         response = APIClient().get(
             f'/api/v2/search/translations/?locale={locale_b.code}&text="Test Flibbertigibbet"&search_match_case=True',
@@ -1331,7 +1389,11 @@ def test_translation_search(django_assert_num_queries):
         },
     ]
 
-    # klingon, all projects, text dinglehopper, include search identifiers, match whole word
+    # Search parameters:
+    # - Locale: Klingon
+    # - Text: dinglehopper
+    # - Search identifiers: True
+    # - Match whole word: True
     with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/search/translations/?locale={locale_b.code}&text=dinglehopper&search_identifiers=True&search_match_whole_word=True",
