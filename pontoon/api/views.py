@@ -409,12 +409,12 @@ class TranslationSearchListView(generics.ListAPIView):
     def get_queryset(self):
         query_params = self.request.query_params.copy()
         text = query_params.get("text")
-        code = query_params.get("locale")
+        locale = query_params.get("locale")
 
         errors = {}
         if not text:
             errors["text"] = ["This field is required."]
-        if not code:
+        if not locale:
             errors["locale"] = ["This field is required."]
         if errors:
             raise ValidationError(errors)
