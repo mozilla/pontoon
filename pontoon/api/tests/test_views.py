@@ -999,7 +999,7 @@ def test_translation_search(django_assert_num_queries):
             string=f"translation_{locale_b.name}",
         )
 
-    # Test translation search without any parameters
+    # Test search without any parameters
     with django_assert_num_queries(0):
         response = APIClient().get(
             "/api/v2/search/translations/",
