@@ -1050,11 +1050,7 @@ def test_translation_search(django_assert_num_queries):
         }
     ]
 
-    # Search parameters:
-    # - Locale: Geonosian
-    # - Text: Flibbertigibbet
-    # - Projects: All Projects
-    # - Match whole words: True
+    # Test search_match_whole_word parameter
     with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/search/translations/?text=Flibbertigibbet&locale={locale_a.code}&search_match_whole_word=True",
