@@ -1010,7 +1010,10 @@ def test_translation_search(django_assert_num_queries):
 
     assert response.status_code == 400
 
-    assert response.data == {"text": ["This field is required."]}
+    assert response.data == {
+        "locale": ["This field is required."],
+        "text": ["This field is required."],
+    }
 
     # Search parameters:
     # - Locale: None
