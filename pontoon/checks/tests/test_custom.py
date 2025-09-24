@@ -1,41 +1,41 @@
 from unittest.mock import MagicMock
 
-import pytest
-
 from pontoon.checks.libraries.custom import run_custom_checks
 
 
-@pytest.fixture()
-def get_entity_mock():
-    """
-    Create an entity mock with comment, resource.path and extension.
-    """
-
-    def _f(format, comment="", string="", allows_empty_translations=False):
-        match format:
-            case "fluent":
-                ext = "ftl"
-            case "gettext":
-                ext = "po"
-            case _:
-                ext = format
-        entity = MagicMock()
-        entity.comment = comment
-        entity.string = string
-        entity.resource.format = format
-        entity.resource.path = f"test.{ext}"
-        entity.resource.allows_empty_translations = allows_empty_translations
-        return entity
-
-    yield _f
+def mock_entity(
+    format: str,
+    *,
+    string: str = "",
+    allows_empty_translations: bool = False,
+):
+    match format:
+        case "android":
+            ext = "xml"
+        case "fluent":
+            ext = "ftl"
+        case "gettext":
+            ext = "po"
+        case _:
+            ext = format
+    entity = MagicMock()
+    entity.string = string
+    entity.resource.format = format
+    entity.resource.path = f"test.{ext}"
+    entity.resource.allows_empty_translations = allows_empty_translations
+    return entity
 
 
-def test_ending_newline(get_entity_mock):
+empty_error = ["Empty translations are not allowed"]
+plural_error = ["Plural translation requires plural source"]
+
+
+def test_ending_newline():
     """
     Original and translation in a PO file must either both end
     in a newline, or none of them should.
     """
-    po_entity = get_entity_mock("gettext")
+    po_entity = mock_entity("gettext")
     assert run_custom_checks(po_entity, "Original", "Translation\n") == {
         "pErrors": ["Ending newline mismatch"]
     }
@@ -46,48 +46,43 @@ def test_ending_newline(get_entity_mock):
     assert run_custom_checks(po_entity, "Original", "Translation") == {}
 
 
-def test_empty_translations_allowed(get_entity_mock):
+def test_empty_translations_allowed():
     """
     Empty translations should be allowed but noted for some extensions.
     """
     assert run_custom_checks(
-        get_entity_mock("properties", allows_empty_translations=True), "", ""
+        mock_entity("properties", allows_empty_translations=True), "", ""
     ) == {"pndbWarnings": ["Empty translation"]}
 
 
-def test_empty_translations_not_allowed(get_entity_mock):
+def test_empty_translations_not_allowed():
     """
     Empty translations shouldn't be allowed for some extensions.
     """
-    po_entity = get_entity_mock("gettext")
-    empty_error = {"pErrors": ["Empty translations are not allowed"]}
-    assert run_custom_checks(po_entity, "", "") == empty_error
-    assert run_custom_checks(po_entity, "", "{{}}") == empty_error
-    assert (
-        run_custom_checks(po_entity, "", ".input {$n :number} .match $n * {{}}")
-        == empty_error
-    )
-    assert (
-        run_custom_checks(
-            po_entity, "", ".input {$n :number} .match $n 1 {{}} * {{other}}"
-        )
-        == empty_error
-    )
+    po_entity = mock_entity("gettext")
+    assert run_custom_checks(po_entity, "", "") == {"pErrors": empty_error}
+    assert run_custom_checks(po_entity, "", "{{}}") == {"pErrors": empty_error}
+    assert run_custom_checks(po_entity, "", ".input {$n :number} .match $n * {{}}") == {
+        "pErrors": empty_error + plural_error
+    }
+    assert run_custom_checks(
+        po_entity, "", ".input {$n :number} .match $n 1 {{}} * {{other}}"
+    ) == {"pErrors": empty_error + plural_error}
     assert run_custom_checks(po_entity, "", "{{{||}}}") == {}
 
     assert run_custom_checks(
-        get_entity_mock("fluent", string="key = value"), "", 'key = { "" }'
+        mock_entity("fluent", string="key = value"), "", 'key = { "" }'
     ) == {"pndbWarnings": ["Empty translation"]}
 
     assert (
         run_custom_checks(
-            get_entity_mock("fluent", string="key = value"), "", 'key = { "x" }'
+            mock_entity("fluent", string="key = value"), "", 'key = { "x" }'
         )
         == {}
     )
 
     assert run_custom_checks(
-        get_entity_mock("fluent", string="key =\n  .attr = value"),
+        mock_entity("fluent", string="key =\n  .attr = value"),
         "",
         """key =
               { $var ->
@@ -99,7 +94,7 @@ def test_empty_translations_not_allowed(get_entity_mock):
     ) == {"pndbWarnings": ["Empty translation"]}
 
     assert run_custom_checks(
-        get_entity_mock("fluent", string="key =\n  .attr = value"),
+        mock_entity("fluent", string="key =\n  .attr = value"),
         "",
         """key =
               { $var ->
@@ -111,7 +106,7 @@ def test_empty_translations_not_allowed(get_entity_mock):
     ) == {"pndbWarnings": ["Empty translation"]}
 
     assert run_custom_checks(
-        get_entity_mock("fluent", string="key =\n  .attr = value"),
+        mock_entity("fluent", string="key =\n  .attr = value"),
         "",
         """key =
               { $var ->
@@ -124,7 +119,7 @@ def test_empty_translations_not_allowed(get_entity_mock):
 
     assert (
         run_custom_checks(
-            get_entity_mock("fluent", string="key =\n  .attr = value"),
+            mock_entity("fluent", string="key =\n  .attr = value"),
             "",
             """key =
               { $var ->
@@ -138,28 +133,49 @@ def test_empty_translations_not_allowed(get_entity_mock):
     )
 
 
-def test_po_newlines(get_entity_mock):
-    assert run_custom_checks(get_entity_mock("gettext"), "", "aaa\nbbb") == {}
+def test_android_simple():
+    assert run_custom_checks(mock_entity("android"), "source", "target") == {}
 
 
-def test_ftl_parse_error(get_entity_mock):
+def test_android_plural():
+    assert (
+        run_custom_checks(
+            mock_entity("android"),
+            ".input {$n :number} .match $n one {{s1}} * {{s*}}",
+            ".input {$n :number} .match $n one {{t1}} * {{t*}}",
+        )
+        == {}
+    )
+
+    assert run_custom_checks(
+        mock_entity("android"),
+        "source",
+        ".input {$n :number} .match $n one {{t1}} * {{t*}}",
+    ) == {"pErrors": plural_error}
+
+
+def test_po_newlines():
+    assert run_custom_checks(mock_entity("gettext"), "", "aaa\nbbb") == {}
+
+
+def test_ftl_parse_error():
     """Invalid FTL strings are not allowed"""
-    ftl_entity = get_entity_mock("fluent", string="key = value")
+    ftl_entity = mock_entity("fluent", string="key = value")
     assert run_custom_checks(ftl_entity, "", "key =") == {
         "pErrors": ['Expected message "key" to have a value or attributes']
     }
     assert run_custom_checks(ftl_entity, "", "key = translation") == {}
 
 
-def test_ftl_non_localizable_entries(get_entity_mock):
+def test_ftl_non_localizable_entries():
     """Non-localizable entries are not allowed"""
     assert run_custom_checks(
-        get_entity_mock("fluent", string="key = value"), "", "[[foo]]"
+        mock_entity("fluent", string="key = value"), "", "[[foo]]"
     ) == {"pErrors": ["Expected an entry start"]}
 
 
-def test_ftl_id_missmatch(get_entity_mock):
+def test_ftl_id_missmatch():
     """ID of the source string and translation must be the same"""
     assert run_custom_checks(
-        get_entity_mock("fluent", string="key = value"), "", "key1 = translation"
+        mock_entity("fluent", string="key = value"), "", "key1 = translation"
     ) == {"pErrors": ["Translation key needs to match source string key"]}

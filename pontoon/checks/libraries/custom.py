@@ -1,7 +1,7 @@
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
 from moz.l10n.formats.mf2 import mf2_parse_message
-from moz.l10n.model import PatternMessage
+from moz.l10n.model import PatternMessage, SelectMessage
 
 from pontoon.base.models import Entity, Resource
 
@@ -50,12 +50,7 @@ def run_custom_checks(
     errors: list[str] = []
     warnings: list[str] = []
     match entity.resource.format:
-        case Resource.Format.GETTEXT:
-            # Bug 1599056: Original and translation must either both end in a newline,
-            # or none of them should.
-            if original.endswith("\n") != string.endswith("\n"):
-                errors.append("Ending newline mismatch")
-
+        case Resource.Format.ANDROID | Resource.Format.GETTEXT:
             try:
                 msg = mf2_parse_message(string)
                 patterns = (
@@ -63,10 +58,25 @@ def run_custom_checks(
                     if isinstance(msg, PatternMessage)
                     else msg.variants.values()
                 )
-                if any(not pattern or pattern == [""] for pattern in patterns):
+                if any(all(el == "" for el in pattern) for pattern in patterns):
                     errors.append("Empty translations are not allowed")
             except ValueError as e:
+                msg = None
                 errors.append(f"Parse error: {e}")
+
+            if isinstance(msg, SelectMessage):
+                try:
+                    orig_msg = mf2_parse_message(original)
+                except ValueError:
+                    orig_msg = None
+                if not isinstance(orig_msg, SelectMessage):
+                    errors.append("Plural translation requires plural source")
+
+            if entity.resource.format == Resource.Format.GETTEXT:
+                # Bug 1599056: Original and translation must either both end in a newline,
+                # or none of them should.
+                if original.endswith("\n") != string.endswith("\n"):
+                    errors.append("Ending newline mismatch")
 
         case Resource.Format.FLUENT:
             translation_ast = parser.parse_entry(string)
