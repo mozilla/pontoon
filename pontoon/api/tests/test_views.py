@@ -1024,10 +1024,7 @@ def test_translation_search(django_assert_num_queries):
 
     assert response.data == {"locale": ["This field is required."]}
 
-    # Search parameters:
-    # - Locale: Geonosian
-    # - Text: Flibbertigibbetelle
-    # - Projects: All Projects
+    # Test search with required parameters only
     with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/search/translations/?text=Flibbertigibbetelle&locale={locale_a.code}",
