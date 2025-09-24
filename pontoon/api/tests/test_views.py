@@ -1132,11 +1132,7 @@ def test_translation_search(django_assert_num_queries):
         },
     ]
 
-    # Search parameters:
-    # - Locale: Geonosian
-    # - Text: Dinglehopper
-    # - Projects: All Projects
-    # - Match case: True
+    # Test search_match_case parameter
     with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_match_case=True",
