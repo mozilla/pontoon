@@ -94,3 +94,37 @@ class AndroidXMLTests(TestCase):
         res = parse_resource(Format.android, src)
         (t0,) = as_vcs_translations(res)
         assert t0.string == " \n"
+
+    def test_android_xliffg(self):
+        src = dedent("""\
+            <?xml version="1.0" encoding="utf-8"?>
+            <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+                <string name="shortcuts_additional_settings"><xliff:g id="vendor" example="Xiaomi">%1$s</xliff:g> additional settings</string>
+            </resources>
+            """)
+        res = parse_resource(Format.android, src)
+
+        (e0,) = (
+            as_entity(Format.android, (), entry, date_created=datetime.now())
+            for entry in res.all_entries()
+        )
+        (t0,) = as_vcs_translations(res)
+
+        assert (
+            e0.string
+            == "{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings"
+        )
+        assert e0.value == [
+            {
+                "$": "vendor",
+                "fn": "xliff:g",
+                "opt": {"example": "Xiaomi", "id": "vendor"},
+                "attr": {"source": "%1$s", "translate": "no"},
+            },
+            " additional settings",
+        ]
+
+        assert (
+            t0.string
+            == "{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings"
+        )

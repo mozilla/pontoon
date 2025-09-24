@@ -192,5 +192,12 @@ describe('getPlainMessage', () => {
       const res = getPlainMessage(message, 'gettext');
       expect(res).toEqual('Thanos has {number} Stones');
     });
+
+    it('strips Android <xliff:g> wrappers', () => {
+      const message =
+        '{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings';
+      const res = getPlainMessage(message, 'android');
+      expect(res).toEqual('%1$s additional settings');
+    });
   });
 });
