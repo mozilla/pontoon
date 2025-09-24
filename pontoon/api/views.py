@@ -404,10 +404,10 @@ class TranslationSearchListView(generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params.copy()
-        if "text" in query_params:
-            query_params["search"] = query_params.get("text")
-            query_params.pop("text")
+        if "text" not in query_params:
+            raise ValidationError({"text": ["This field is required."]})
 
+        query_params["search"] = query_params.pop("text")[0]
         query_params["project"] = query_params.get("project", "all-projects")
 
         form = forms.GetEntitiesForm(query_params)

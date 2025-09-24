@@ -999,6 +999,232 @@ def test_translation_search(django_assert_num_queries):
             string=f"translation_{locale_b.name}",
         )
 
+    # no query parameters set
+    with django_assert_num_queries(0):
+        response = APIClient().get(
+            "/api/v2/search/translations/",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 400
+
+    assert response.data == {"text": ["This field is required."]}
+
+    # text test
+    with django_assert_num_queries(0):
+        response = APIClient().get(
+            "/api/v2/search/translations/?text=test",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 400
+
+    assert response.data == {"locale": ["This field is required."]}
+
+    # text test, geonosian, match whole words
+    with django_assert_num_queries(6):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?text=Flibbertigibbet&locale={locale_a.code}&search_match_whole_word=True",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_f"].id,
+                "string": "the project_a Flibbertigibbet Test",
+                "key": [],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_f'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_g"].id,
+                "string": "the project_a test Flibbertigibbet",
+                "key": ["TestKey_G dinglehopperite"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_g'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_h"].id,
+                "string": "the project_aTest Flibbertigibbet",
+                "key": ["Test_H_dinglehopper"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_h'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_j"].id,
+                "string": "theproject_b Test Flibbertigibbet dinglehopper",
+                "key": ["TestKey_J_squibble"],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_j'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_k"].id,
+                "string": "the project_btest Flibbertigibbet dinglehopper",
+                "key": ["TestKey_K_squibb"],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_k'].id}",
+            },
+        },
+    ]
+
+    # text test, geonosian, match case
+    with django_assert_num_queries(6):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_match_case=True",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_l"].id,
+                "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
+                "key": [],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_l'].id}",
+            },
+        }
+    ]
+
+    # text test, geonosian, include search identifiers
+    with django_assert_num_queries(6):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_identifiers=True",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_c"].id,
+                "string": "theproject_aTestsquibb",
+                "key": ["TestKey_C dinglehopper"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_1.po"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-a/resource_project-a_1.po/?string={entities['entity_c'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_g"].id,
+                "string": "the project_a test Flibbertigibbet",
+                "key": ["TestKey_G dinglehopperite"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_g'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_h"].id,
+                "string": "the project_aTest Flibbertigibbet",
+                "key": ["Test_H_dinglehopper"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_h'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_j"].id,
+                "string": "theproject_b Test Flibbertigibbet dinglehopper",
+                "key": ["TestKey_J_squibble"],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_j'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_k"].id,
+                "string": "the project_btest Flibbertigibbet dinglehopper",
+                "key": ["TestKey_K_squibb"],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_k'].id}",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_l"].id,
+                "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
+                "key": [],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_l'].id}",
+            },
+        },
+    ]
+
     # geonosian, project a, text the%20test, match whole words, match case
     with django_assert_num_queries(7):
         response = APIClient().get(
@@ -1042,41 +1268,13 @@ def test_translation_search(django_assert_num_queries):
     # geonosian, project a, text squibb, include search identifiers, default each word
     with django_assert_num_queries(7):
         response = APIClient().get(
-            f"/api/v2/search/translations/?locale={locale_a.code}&project={project_a.slug}&text=squibb&search_identifiers=True",
+            f"/api/v2/search/translations/?locale={locale_a.code}&project={project_a.slug}&text=squibb%20Key_C&search_identifiers=True",
             HTTP_ACCEPT="application/json",
         )
 
     assert response.status_code == 200
 
     assert response.data["results"] == [
-        {
-            "entity": {
-                "id": entities["entity_a"].id,
-                "string": "the project_a test",
-                "key": ["TestKey_A_squibble"],
-            },
-            "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_1.po"},
-            "translation": {
-                "locale": {"code": "gs", "name": "Geonosian"},
-                "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_1.po/?string={entities['entity_a'].id}",
-            },
-        },
-        {
-            "entity": {
-                "id": entities["entity_b"].id,
-                "string": "the project_a Test",
-                "key": ["TestKey_B_squibb"],
-            },
-            "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_1.po"},
-            "translation": {
-                "locale": {"code": "gs", "name": "Geonosian"},
-                "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_1.po/?string={entities['entity_b'].id}",
-            },
-        },
         {
             "entity": {
                 "id": entities["entity_c"].id,
