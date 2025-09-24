@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
 from moz.l10n.formats.mf2 import mf2_parse_message
@@ -42,15 +40,22 @@ def run_custom_checks(
     """
     Group all checks related to the base UI that get stored in the DB
     """
-    checks: dict[str, list[str]] = defaultdict(list)
-    format = entity.resource.format
+    if not string:
+        if entity.resource.allows_empty_translations:
+            return {"pndbWarnings": ["Empty translation"]}
+        else:
+            # Prevent empty translation submissions if not supported
+            return {"pErrors": ["Empty translations are not allowed"]}
 
-    # Bug 1599056: Original and translation must either both end in a newline,
-    # or none of them should.
-    if format == Resource.Format.GETTEXT:
-        if original.endswith("\n") != string.endswith("\n"):
-            checks["pErrors"].append("Ending newline mismatch")
-        if string != "":
+    errors: list[str] = []
+    warnings: list[str] = []
+    match entity.resource.format:
+        case Resource.Format.GETTEXT:
+            # Bug 1599056: Original and translation must either both end in a newline,
+            # or none of them should.
+            if original.endswith("\n") != string.endswith("\n"):
+                errors.append("Ending newline mismatch")
+
             try:
                 msg = mf2_parse_message(string)
                 patterns = (
@@ -59,42 +64,37 @@ def run_custom_checks(
                     else msg.variants.values()
                 )
                 if any(not pattern or pattern == [""] for pattern in patterns):
-                    checks["pErrors"].append("Empty translations are not allowed")
+                    errors.append("Empty translations are not allowed")
             except ValueError as e:
-                checks["pErrors"].append(f"Parse error: {e}")
+                errors.append(f"Parse error: {e}")
 
-    if string == "":
-        if entity.resource.allows_empty_translations:
-            checks["pndbWarnings"].append("Empty translation")
-        else:
-            # Prevent empty translation submissions if not supported
-            checks["pErrors"].append("Empty translations are not allowed")
+        case Resource.Format.FLUENT:
+            translation_ast = parser.parse_entry(string)
+            entity_ast = parser.parse_entry(entity.string)
 
-    # FTL checks
-    if format == Resource.Format.FLUENT and string != "":
-        translation_ast = parser.parse_entry(string)
-        entity_ast = parser.parse_entry(entity.string)
+            # Parse error
+            if isinstance(translation_ast, ast.Junk):
+                errors.append(translation_ast.annotations[0].message)
 
-        # Parse error
-        if isinstance(translation_ast, ast.Junk):
-            checks["pErrors"].append(translation_ast.annotations[0].message)
+            # Not a localizable entry
+            elif not isinstance(translation_ast, (ast.Message, ast.Term)):
+                errors.append("Translation needs to be a valid localizable entry")
 
-        # Not a localizable entry
-        elif not isinstance(translation_ast, (ast.Message, ast.Term)):
-            checks["pErrors"].append(
-                "Translation needs to be a valid localizable entry"
-            )
+            # Message ID mismatch
+            elif entity_ast.id.name != translation_ast.id.name:
+                errors.append("Translation key needs to match source string key")
 
-        # Message ID mismatch
-        elif entity_ast.id.name != translation_ast.id.name:
-            checks["pErrors"].append("Translation key needs to match source string key")
+            # Empty translation entry warning; set here rather than pontoon_non_db.py
+            # to avoid needing to parse the Fluent message twice.
+            else:
+                visitor = IsEmptyVisitor()
+                visitor.visit(translation_ast)
+                if visitor.is_empty:
+                    warnings.append("Empty translation")
 
-        # Empty translation entry warning; set here rather than pontoon_non_db.py
-        # to avoid needing to parse the Fluent message twice.
-        else:
-            visitor = IsEmptyVisitor()
-            visitor.visit(translation_ast)
-            if visitor.is_empty:
-                checks["pndbWarnings"].append("Empty translation")
-
+    checks: dict[str, list[str]] = {}
+    if errors:
+        checks["pErrors"] = errors
+    if warnings:
+        checks["pndbWarnings"] = warnings
     return checks
