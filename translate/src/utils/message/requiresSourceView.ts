@@ -4,14 +4,11 @@ import type { MessageEntry } from '.';
 const MAX_RICH_VARIANTS = 15;
 
 /** If `true`, the message can only be shown in an FTL source editor.  */
-export function requiresSourceView(
-  format: string,
-  entry: MessageEntry | null,
-): boolean {
-  if (format !== 'fluent') {
+export function requiresSourceView(entry: MessageEntry): boolean {
+  if (entry.format !== 'fluent') {
     return false;
   }
-  if (!entry || !entry.id) {
+  if (!entry.id) {
     return true;
   }
 

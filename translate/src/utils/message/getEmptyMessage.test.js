@@ -9,19 +9,19 @@ describe('getEmptyMessage', () => {
   it('empties a simple value', () => {
     const source = parseEntry('fluent', 'my-message = Some value');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('fluent', entry)).toEqual('my-message = { "" }\n');
+    expect(serializeEntry(entry)).toEqual('my-message = { "" }\n');
   });
 
   it('empties a value with multiple elements', () => {
     const source = parseEntry('fluent', 'my-message = Hello { $small } World');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('fluent', entry)).toEqual('my-message = { "" }\n');
+    expect(serializeEntry(entry)).toEqual('my-message = { "" }\n');
   });
 
   it('empties a single simple attribute', () => {
     const source = parseEntry('fluent', 'my-message =\n    .my-attr = Hello');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('fluent', entry)).toEqual(
+    expect(serializeEntry(entry)).toEqual(
       'my-message =\n    .my-attr = { "" }\n',
     );
   });
@@ -33,7 +33,7 @@ describe('getEmptyMessage', () => {
     );
     const entry = getEmptyMessageEntry(source, LOCALE);
 
-    expect(serializeEntry('fluent', entry)).toBe(ftl`
+    expect(serializeEntry(entry)).toBe(ftl`
       my-message = { "" }
           .my-attr = { "" }
 
@@ -50,7 +50,7 @@ describe('getEmptyMessage', () => {
       `,
     );
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('fluent', entry)).toBe(ftl`
+    expect(serializeEntry(entry)).toBe(ftl`
       my-message =
           .my-attr = { "" }
           .title = { "" }
@@ -70,7 +70,7 @@ describe('getEmptyMessage', () => {
       `,
     );
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('fluent', entry)).toBe(ftl`
+    expect(serializeEntry(entry)).toBe(ftl`
       my-entry =
           { PLATFORM() ->
               [variant] { "" }
@@ -94,7 +94,7 @@ describe('getEmptyMessage', () => {
       `,
     );
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('fluent', entry)).toBe(ftl`
+    expect(serializeEntry(entry)).toBe(ftl`
       my-entry =
           { $num ->
               [0] { "" }
@@ -122,7 +122,7 @@ describe('getEmptyMessage', () => {
       `,
     );
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry('fluent', entry)).toBe(ftl`
+    expect(serializeEntry(entry)).toBe(ftl`
       selector-multi =
           { $num ->
               [one]
@@ -162,7 +162,7 @@ describe('getEmptyMessage', () => {
       `,
     );
     const entry = getEmptyMessageEntry(source, { code: 'zh' });
-    expect(serializeEntry('fluent', entry)).toBe(ftl`
+    expect(serializeEntry(entry)).toBe(ftl`
       selector-multi = { "" }
 
       `);
@@ -181,7 +181,7 @@ describe('getEmptyMessage', () => {
       `,
       );
       const entry = getEmptyMessageEntry(source, { code });
-      expect(serializeEntry('fluent', entry)).toBe(ftl`
+      expect(serializeEntry(entry)).toBe(ftl`
       selector-multi =
           { $num ->
               [one] { "" }
@@ -204,7 +204,7 @@ describe('getEmptyMessage', () => {
       `,
     );
     const entry = getEmptyMessageEntry(source, { code: 'pl' });
-    expect(serializeEntry('fluent', entry)).toBe(ftl`
+    expect(serializeEntry(entry)).toBe(ftl`
       selector-multi =
           { $num ->
               [one] { "" }

@@ -386,7 +386,7 @@ def test_android():
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="translated \n escaped \\n newlines",
+            string="translated escaped \n newlines",
             active=True,
             approved=True,
         )
@@ -407,14 +407,14 @@ def test_android():
         sync_project_task(project.pk)
         assert set(ent.string for ent in Entity.objects.filter(resource=res)) == {
             "'Hello' \"source\"",
-            "literal escaped \\n\nnewlines",
+            "literal escaped \n newlines",
         }
         with open(join(repo.checkout_path, "de-Test", "strings.xml")) as file:
             assert file.read() == dedent("""\
                 <?xml version="1.0" encoding="utf-8"?>
                 <resources>
                   <string name="quotes">\\'Hello\\' \\"translation\\"</string>
-                  <string name="newline">translated escaped \\nnewlines</string>
+                  <string name="newline">translated escaped \\n newlines</string>
                 </resources>
                 """)
 

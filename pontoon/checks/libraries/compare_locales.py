@@ -8,6 +8,10 @@ from compare_locales.parser.dtd import DTDEntityMixin
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
 from compare_locales.paths import File
+from moz.l10n.formats.android import android_serialize_message
+from moz.l10n.formats.mf2 import mf2_parse_message
+
+from pontoon.base.models.entity import Entity
 
 
 CommentEntity = namedtuple("Comment", ("all",))
@@ -76,7 +80,7 @@ class UnsupportedStringError(Exception):
     pass
 
 
-def cast_to_compare_locales(format, entity, string):
+def cast_to_compare_locales(format: str, entity: Entity, string: str):
     """
     Cast a Pontoon's translation object into Entities supported by `compare-locales`.
 
@@ -119,19 +123,28 @@ def cast_to_compare_locales(format, entity, string):
         )
 
     elif format == "android":
-        parser = AndroidParser()
+        try:
+            src_str = android_serialize_message(
+                mf2_parse_message(entity.string), allow_cdata=True
+            )
+        except ValueError:
+            src_str = entity.string
 
-        content = """<?xml version="1.0" encoding="utf-8"?>
+        try:
+            tgt_str = android_serialize_message(
+                mf2_parse_message(string), allow_cdata=True
+            )
+        except ValueError:
+            tgt_str = string
+
+        content = f"""<?xml version="1.0" encoding="utf-8"?>
             <resources>
-                <string name="{key}"><![CDATA[{original}]]></string>
-                <string name="{key}"><![CDATA[{translation}]]></string>
+                <string name="{cl_key}">{src_str}</string>
+                <string name="{cl_key}">{tgt_str}</string>
             </resources>
-        """.format(
-            key=cl_key,
-            original=entity.string.replace("'", "\\'"),
-            translation=string.replace("'", "\\'"),
-        )
+        """
 
+        parser = AndroidParser()
         parser.readUnicode(content)
         parsed_objects = list(parser.parse())
 

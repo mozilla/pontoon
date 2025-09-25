@@ -42,7 +42,7 @@ describe('getPlainMessage', () => {
 
     it('returns an empty string for an empty literal value in a message', () => {
       const entry = parseEntry('fluent', 'empty = { "" }\n');
-      serializeEntry('fluent', entry);
+      serializeEntry(entry);
       const res = getPlainMessage(entry, 'fluent');
       expect(res).toEqual('');
     });
@@ -191,6 +191,13 @@ describe('getPlainMessage', () => {
       * {{Thanos has \\{number\\} Stones}}`;
       const res = getPlainMessage(message, 'gettext');
       expect(res).toEqual('Thanos has {number} Stones');
+    });
+
+    it('strips Android <xliff:g> wrappers', () => {
+      const message =
+        '{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings';
+      const res = getPlainMessage(message, 'android');
+      expect(res).toEqual('%1$s additional settings');
     });
   });
 });

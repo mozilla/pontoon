@@ -1,12 +1,19 @@
-import { fluentSerializePattern, Pattern, type Message } from '@mozilla/l10n';
+import {
+  fluentSerializePattern,
+  FormatKey,
+  Pattern,
+  serializePattern,
+  type Message,
+} from '@mozilla/l10n';
 import type { MessageEntry } from '.';
 import { parseEntry } from './parseEntry';
+import { androidEditPattern } from './android';
 
 /**
  * Return a plain string representation of a given message.
  *
  * @param format The format of the file of the concerned entity.
- * @returns If the format is `'fluent'` or `'gettext'`, return a simplified
+ * @returns If the format is `'fluent'`, `'android'`, or `'gettext'`, return a simplified
  *   version of the translation. Otherwise, return the original translation.
  */
 export function getPlainMessage(
@@ -28,12 +35,12 @@ export function getPlainMessage(
   }
 
   if (entry.value) {
-    return previewMessage(entry.value);
+    return previewMessage(format, entry.value);
   }
 
   if (entry.attributes) {
     for (const attr of entry.attributes.values()) {
-      const preview = previewMessage(attr);
+      const preview = previewMessage(format, attr);
       if (preview) {
         return preview;
       }
@@ -43,21 +50,26 @@ export function getPlainMessage(
   return '';
 }
 
-function previewMessage(message: Message): string {
-  // Presumes that the last variant is the most appropriate
-  // to use as a generic representation of the message.
-
+function previewMessage(format: string, message: Message): string {
   let pattern: Pattern;
   if (Array.isArray(message)) pattern = message;
   else if (message.msg) pattern = message.msg;
   else {
-    pattern = message.alt.find((v) =>
-      v.keys.every((key) => typeof key !== 'string'),
-    )!.pat;
+    const catchall =
+      message.alt.find((v) => v.keys.every((key) => typeof key !== 'string')) ??
+      message.alt.at(-1)!;
+    pattern = catchall.pat;
   }
 
-  return fluentSerializePattern(pattern, {
-    escapeSyntax: false,
-    onError: () => {},
-  });
+  switch (format) {
+    case 'fluent':
+      return fluentSerializePattern(pattern, {
+        escapeSyntax: false,
+        onError: () => {},
+      });
+    case 'android':
+      return androidEditPattern(pattern);
+    default:
+      return serializePattern('plain', pattern);
+  }
 }

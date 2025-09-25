@@ -9,7 +9,7 @@ import {
 import type { MessageEntry } from '.';
 
 /**
- * Parse `'fluent'` or `'gettext'` message source as a {@link MessageEntry}.
+ * Parse a `'fluent'`, `'android'`, or `'gettext'` message source as a {@link MessageEntry}.
  *
  * @returns `null` on parse error or unsupported format
  */
@@ -27,13 +27,14 @@ export function parseEntry(
           for (const [name, value] of Object.entries(entry['+'])) {
             attributes.set(name, flatMessage('fluent', value));
           }
-          return { id, value, attributes };
+          return { format, id, value, attributes };
         }
-        return value ? { id, value } : null;
+        return value ? { format, id, value } : null;
       }
 
+      case 'android':
       case 'gettext':
-        return { id: '', value: mf2ParseMessage(source) };
+        return { format, id: '', value: mf2ParseMessage(source) };
     }
   } catch {}
   return null;
