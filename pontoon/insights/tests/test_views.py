@@ -45,9 +45,7 @@ class MonthlyQualityEntry:
 
 
 @pytest.mark.django_db
-def test_default_empty(
-    client, clear_cache, sync_user, tm_user, locale_a, project_a, user_a
-):
+def test_default_empty(client, clear_cache, locale_a, project_a, user_a):
     url = reverse("pontoon.insights")
     with patch.object(views, "render", wraps=render) as mock_render:
         response = client.get(url)
@@ -100,9 +98,7 @@ def test_default_empty(
 
 
 @pytest.mark.django_db
-def test_default_with_data(
-    client, clear_cache, sync_user, tm_user, locale_a, project_a, user_a
-):
+def test_default_with_data(client, clear_cache, tm_user, locale_a, project_a, user_a):
     entries = [
         MonthlyQualityEntry(months_ago=0, approved=1, rejected=0),
         MonthlyQualityEntry(months_ago=1, approved=0, rejected=1),
