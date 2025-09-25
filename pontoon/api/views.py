@@ -314,7 +314,7 @@ class EntityIndividualView(generics.RetrieveAPIView):
         return Entity.objects.prefetch_related(
             Prefetch(
                 "translation_set",
-                queryset=Translation.objects.filter(active=True).select_related(
+                queryset=Translation.objects.filter(approved=True).select_related(
                     "locale"
                 ),
                 to_attr="filtered_translations",
@@ -466,7 +466,7 @@ class TranslationSearchListView(generics.ListAPIView):
                         Prefetch(
                             "translation_set",
                             queryset=Translation.objects.filter(
-                                locale__code=locale_code, active=True
+                                locale__code=locale_code, approved=True
                             ).select_related("locale"),
                             to_attr="filtered_translations",
                         )

@@ -646,7 +646,7 @@ def test_entity_with_translations(django_assert_num_queries):
                 entity=entity,
                 locale=locale,
                 string=f"approved_translation_{locale.name}",
-                active=True,
+                approved=True,
             ),
         )
         TranslationFactory.create(
@@ -996,7 +996,7 @@ def test_translation_search(django_assert_num_queries):
             entity=entity,
             locale=locale_a,
             string=f"translation_{locale_a.name}",
-            active=True,
+            approved=True,
         )
 
     for entity in (
@@ -1010,7 +1010,7 @@ def test_translation_search(django_assert_num_queries):
             entity=entity,
             locale=locale_b,
             string=f"translation_{locale_b.name}",
-            active=True,
+            approved=True,
         )
 
     # Test search without any parameters
