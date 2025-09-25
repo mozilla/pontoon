@@ -6,6 +6,21 @@ from django.db import migrations
 from pontoon.insights.tasks import count_activities
 
 
+def fix_sync_user(apps, schema_editor):
+    """
+    This repeats changes from `("base", "0009_change_pontoon_users_emails")`
+    which did not previously declare its dependency on
+    `("sync", "0002_change_pontoon_sync_email")` like it should have.
+
+    It should only have an effect on systems set up after August 2020
+    but before this migration is run.
+    """
+    User = apps.get_model("auth", "User")
+    User.objects.filter(email="pontoon-sync@mozilla.com").update(
+        email="pontoon-sync@example.com"
+    )
+
+
 def fix_projectlocale_insights_again(apps, schema_editor):
     ProjectLocaleInsightsSnapshot = apps.get_model(
         "insights", "ProjectLocaleInsightsSnapshot"
@@ -85,6 +100,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(fix_sync_user, reverse_code=migrations.RunPython.noop),
         migrations.RunPython(
             fix_projectlocale_insights_again, reverse_code=migrations.RunPython.noop
         ),
