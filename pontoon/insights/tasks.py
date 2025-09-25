@@ -80,7 +80,7 @@ def count_activities(dt_max: datetime):
     `projectlocale_id -> Activity`
 
     Fetch and prepare activity data.
-    
+
     Note that this function is also called from
     pontoon.insights.migrations.0017_fix_projectlocale_insights_again,
     which may need a local copy if the behaviour here is modified.
