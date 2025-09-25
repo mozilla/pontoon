@@ -11,7 +11,7 @@ from dateutil.relativedelta import relativedelta
 from sacrebleu.metrics import CHRF
 
 from django.contrib.auth.models import User
-from django.db.models import Avg, Count, F, FilteredRelation, Q, Sum
+from django.db.models import Avg, Count, F, Sum
 from django.db.models.functions import Extract, Now
 from django.utils import timezone
 
@@ -168,6 +168,9 @@ def query_actions(dt_max: datetime):
             created_at__lt=dt_max,
             translation__entity__resource__project__system_project=False,
             translation__entity__resource__project__visibility="public",
+            translation__entity__resource__project__project_locale__locale=F(
+                "translation__locale"
+            ),
         )
         .values(
             "action_type",
@@ -183,14 +186,7 @@ def query_actions(dt_max: datetime):
             approved_date=F("translation__approved_date"),
             rejected_date=F("translation__rejected_date"),
             project=F("translation__entity__resource__project"),
-            projectlocale=FilteredRelation(
-                "translation__entity__resource__project__project_locale",
-                condition=Q(
-                    translation__entity__resource__project__project_locale__locale=F(
-                        "translation__locale"
-                    )
-                ),
-            ),
+            projectlocale=F("translation__entity__resource__project__project_locale"),
         )
         .order_by("translation__locale")
     )
@@ -246,22 +242,20 @@ def count_created_entities(dt_max: datetime) -> dict[int, tuple[int, int]]:
                 resource__project__disabled=False,
                 resource__project__system_project=False,
                 resource__project__visibility="public",
+                resource__translatedresources__locale__project_locale__project=F(
+                    "resource__project"
+                ),
             )
             .distinct()
             .values(
-                projectlocale=FilteredRelation(
-                    "resource__translatedresources__locale__project_locale",
-                    condition=Q(
-                        resource__translatedresources__locale__project_locale__project=F(
-                            "resource__project"
-                        )
-                    ),
-                )
+                projectlocale=F(
+                    "resource__translatedresources__locale__project_locale"
+                ),
+                locale=F(
+                    "resource__translatedresources__locale__project_locale__locale"
+                ),
             )
-            .annotate(
-                locale=F("projectlocale__locale"),
-                count=Count("*"),
-            )
+            .annotate(count=Count("*"))
         )
     }
 
@@ -273,14 +267,9 @@ def count_projectlocale_stats() -> Iterable[dict[str, int]]:
             resource__project__system_project=False,
             resource__project__visibility="public",
         )
-        .values(
-            projectlocale=FilteredRelation(
-                "resource__project__project_locale",
-                condition=Q(resource__project__project_locale__locale=F("locale")),
-            )
-        )
+        .filter(resource__project__project_locale__locale=F("locale"))
+        .values("locale", projectlocale=F("resource__project__project_locale"))
         .annotate(
-            locale=F("projectlocale__locale"),
             total=Sum("total_strings", default=0),
             approved=Sum("approved_strings", default=0),
             pretranslated=Sum("pretranslated_strings", default=0),
