@@ -605,7 +605,7 @@ def test_entity(django_assert_num_queries):
 
     entity = EntityFactory.create(string="Test String", resource=resource)
 
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(5):
         response = APIClient().get(
             f"/api/v2/entities/{entity.pk}/", HTTP_ACCEPT="application/json"
         )
@@ -641,11 +641,21 @@ def test_entity_with_translations(django_assert_num_queries):
     entity = EntityFactory.create(string="Test String", resource=resource)
 
     for locale in locales:
+        (
+            TranslationFactory.create(
+                entity=entity,
+                locale=locale,
+                string=f"approved_translation_{locale.name}",
+                active=True,
+            ),
+        )
         TranslationFactory.create(
-            entity=entity, locale=locale, string=f"translation_{locale.name}"
+            entity=entity,
+            locale=locale,
+            string=f"suggested_translation_{locale.name}",
         )
 
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/entities/{entity.pk}/?include_translations",
             HTTP_ACCEPT="application/json",
@@ -659,17 +669,17 @@ def test_entity_with_translations(django_assert_num_queries):
         "translations": [
             {
                 "locale": {"code": "kg", "name": "Klingon"},
-                "string": "translation_Klingon",
+                "string": "approved_translation_Klingon",
                 "editor_url": f"http://testserver/kg/project_a/resource_project_a.po/?string={entity.pk}",
             },
             {
                 "locale": {"code": "hut", "name": "Huttese"},
-                "string": "translation_Huttese",
+                "string": "approved_translation_Huttese",
                 "editor_url": f"http://testserver/hut/project_a/resource_project_a.po/?string={entity.pk}",
             },
             {
                 "locale": {"code": "gs", "name": "Geonosian"},
-                "string": "translation_Geonosian",
+                "string": "approved_translation_Geonosian",
                 "editor_url": f"http://testserver/gs/project_a/resource_project_a.po/?string={entity.pk}",
             },
         ],
@@ -983,7 +993,10 @@ def test_translation_search(django_assert_num_queries):
 
     for entity in entities.values():
         TranslationFactory.create(
-            entity=entity, locale=locale_a, string=f"translation_{locale_a.name}"
+            entity=entity,
+            locale=locale_a,
+            string=f"translation_{locale_a.name}",
+            active=True,
         )
 
     for entity in (
@@ -997,6 +1010,7 @@ def test_translation_search(django_assert_num_queries):
             entity=entity,
             locale=locale_b,
             string=f"translation_{locale_b.name}",
+            active=True,
         )
 
     # Test translation search without any parameters

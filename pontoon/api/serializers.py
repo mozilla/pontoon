@@ -347,9 +347,7 @@ class EntitySerializer(serializers.ModelSerializer):
 
 
 class NestedEntitySerializer(EntitySerializer):
-    translations = TranslationSerializer(
-        source="translation_set", many=True, read_only=True
-    )
+    translations = serializers.SerializerMethodField()
 
     class Meta(EntitySerializer.Meta):
         fields = EntitySerializer.Meta.fields + ["translations"]
@@ -365,6 +363,16 @@ class NestedEntitySerializer(EntitySerializer):
 
                 if include_translations is None:
                     self.fields.pop("translations")
+
+    def get_translations(self, obj):
+        request = self.context.get("request")
+
+        if not request:
+            return None
+
+        return TranslationSerializer(
+            obj.filtered_translations, many=True, context=self.context
+        ).data
 
 
 class EntitySearchSerializer(EntitySerializer):

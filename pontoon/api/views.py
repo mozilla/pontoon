@@ -312,6 +312,15 @@ class EntityIndividualView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return Entity.objects.prefetch_related(
+            Prefetch(
+                "translation_set",
+                queryset=Translation.objects.filter(active=True).select_related(
+                    "locale"
+                ),
+                to_attr="filtered_translations",
+            ),
+            "resource",
+            "resource__project",
             "translation_set__locale",
         )
 
@@ -452,20 +461,18 @@ class TranslationSearchListView(generics.ListAPIView):
                 Entity.for_project_locale(
                     self.request.user, project, locale, **form_data
                 )
-                .filter(translation__locale=locale)
                 .prefetch_related(
                     (
                         Prefetch(
                             "translation_set",
                             queryset=Translation.objects.filter(
-                                locale__code=locale_code
+                                locale__code=locale_code, active=True
                             ).select_related("locale"),
                             to_attr="filtered_translations",
                         )
                     ),
                 )
                 .select_related("resource__project")
-                .distinct()
             )
         except ValueError as error:
             raise ValueError(error)
