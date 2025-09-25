@@ -459,7 +459,7 @@ class TranslationSearchListView(generics.ListAPIView):
         try:
             entities = (
                 Entity.for_project_locale(
-                    self.request.user, project, locale, **form_data
+                    self.request.user, project, locale, status="translated", **form_data
                 )
                 .prefetch_related(
                     (
