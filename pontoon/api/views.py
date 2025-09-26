@@ -319,9 +319,9 @@ class EntityIndividualView(generics.RetrieveAPIView):
                 ),
                 to_attr="filtered_translations",
             ),
-            "resource",
-            "resource__project",
-            "translation_set__locale",
+            # "resource",
+            # "resource__project",
+            # "translation_set__locale",
         )
 
     def get_object(self):

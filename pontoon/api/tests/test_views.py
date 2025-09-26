@@ -605,7 +605,7 @@ def test_entity(django_assert_num_queries):
 
     entity = EntityFactory.create(string="Test String", resource=resource)
 
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(4):
         response = APIClient().get(
             f"/api/v2/entities/{entity.pk}/", HTTP_ACCEPT="application/json"
         )
@@ -655,7 +655,7 @@ def test_entity_with_translations(django_assert_num_queries):
             string=f"suggested_translation_{locale.name}",
         )
 
-    with django_assert_num_queries(6):
+    with django_assert_num_queries(4):
         response = APIClient().get(
             f"/api/v2/entities/{entity.pk}/?include_translations",
             HTTP_ACCEPT="application/json",
