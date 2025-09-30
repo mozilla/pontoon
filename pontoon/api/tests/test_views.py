@@ -670,17 +670,14 @@ def test_entity_with_translations(django_assert_num_queries):
             {
                 "locale": {"code": "kg", "name": "Klingon"},
                 "string": "approved_translation_Klingon",
-                "editor_url": f"http://testserver/kg/project_a/resource_project_a.po/?string={entity.pk}",
             },
             {
                 "locale": {"code": "hut", "name": "Huttese"},
                 "string": "approved_translation_Huttese",
-                "editor_url": f"http://testserver/hut/project_a/resource_project_a.po/?string={entity.pk}",
             },
             {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "approved_translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project_a/resource_project_a.po/?string={entity.pk}",
             },
         ],
     }
@@ -1059,7 +1056,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_l'].id}",
             },
         }
     ]
@@ -1085,7 +1081,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_f'].id}",
             },
         },
         {
@@ -1099,7 +1094,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_g'].id}",
             },
         },
         {
@@ -1113,7 +1107,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_h'].id}",
             },
         },
         {
@@ -1127,7 +1120,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_j'].id}",
             },
         },
         {
@@ -1141,7 +1133,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_k'].id}",
             },
         },
     ]
@@ -1167,7 +1158,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_l'].id}",
             },
         }
     ]
@@ -1193,7 +1183,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_1.po/?string={entities['entity_c'].id}",
             },
         },
         {
@@ -1207,7 +1196,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_g'].id}",
             },
         },
         {
@@ -1221,7 +1209,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_h'].id}",
             },
         },
         {
@@ -1235,7 +1222,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_j'].id}",
             },
         },
         {
@@ -1249,7 +1235,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_k'].id}",
             },
         },
         {
@@ -1263,7 +1248,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-b/resource_project-b_3.ftl/?string={entities['entity_l'].id}",
             },
         },
     ]
@@ -1289,7 +1273,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_1.po/?string={entities['entity_b'].id}",
             },
         },
         {
@@ -1303,7 +1286,6 @@ def test_translation_search(django_assert_num_queries):
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
-                "editor_url": f"http://testserver/gs/project-a/resource_project-a_2.ini/?string={entities['entity_f'].id}",
             },
         },
     ]

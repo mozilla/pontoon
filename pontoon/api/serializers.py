@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.reverse import reverse
 
 from pontoon.base.models import (
     Locale,
@@ -269,14 +268,12 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
 
 class TranslationSerializer(serializers.ModelSerializer):
     locale = serializers.SerializerMethodField()
-    editor_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Translation
         fields = [
             "locale",
             "string",
-            "editor_url",
         ]
 
     def get_locale(self, obj):
@@ -287,25 +284,6 @@ class TranslationSerializer(serializers.ModelSerializer):
             "code": obj.locale.code,
             "name": obj.locale.name,
         }
-
-    def get_editor_url(self, obj):
-        request = self.context.get("request")
-
-        if not request:
-            return None
-
-        return (
-            reverse(
-                "pontoon.translate",
-                kwargs={
-                    "locale": obj.locale.code,
-                    "project": obj.entity.resource.project.slug,
-                    "resource": obj.entity.resource.path,
-                },
-                request=request,
-            )
-            + f"?string={obj.entity.pk}"
-        )
 
 
 class ResourceSerializer(serializers.ModelSerializer):
