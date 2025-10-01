@@ -308,17 +308,12 @@ class EntityListView(generics.ListAPIView):
 
         queryset = Entity.objects.filter(resource__project__disabled=False)
 
-        if (project and resource and entity):
+        if project and resource and entity:
             queryset = queryset.filter(
                 resource__project__slug=project,
                 resource__path=resource,
                 key__overlap=[entity],
             )
-
-        return queryset.prefetch_related(
-            "resource",
-            "resource__project",
-        )
 
         return queryset.prefetch_related(
             "resource",
