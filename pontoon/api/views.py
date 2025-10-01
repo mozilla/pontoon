@@ -31,7 +31,6 @@ from pontoon.terminology.models import (
 
 from .serializers import (
     EntitySearchSerializer,
-    EntitySerializer,
     NestedEntitySerializer,
     NestedIndividualLocaleSerializer,
     NestedIndividualProjectSerializer,
@@ -298,7 +297,7 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
 
 class EntityListView(generics.ListAPIView):
-    serializer_class = EntitySerializer
+    serializer_class = NestedEntitySerializer
 
     def get_queryset(self):
         query_params = self.request.query_params
@@ -316,6 +315,13 @@ class EntityListView(generics.ListAPIView):
             )
 
         return queryset.prefetch_related(
+            Prefetch(
+                "translation_set",
+                queryset=Translation.objects.filter(approved=True).select_related(
+                    "locale"
+                ),
+                to_attr="filtered_translations",
+            ),
             "resource",
             "resource__project",
         )

@@ -700,7 +700,7 @@ def test_entities(django_assert_num_queries):
         EntityFactory.create(string="Test String C", resource=resource_a),
     ]
 
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(5):
         response = APIClient().get("/api/v2/entities/", HTTP_ACCEPT="application/json")
     assert response.status_code == 200
 
