@@ -9,6 +9,7 @@ from pontoon.base.models import (
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation import Translation
+from pontoon.base.simple_preview import get_simple_preview
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import (
     Term,
@@ -268,6 +269,7 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
 
 class TranslationSerializer(serializers.ModelSerializer):
     locale = serializers.SerializerMethodField()
+    string = serializers.SerializerMethodField()
 
     class Meta:
         model = Translation
@@ -284,6 +286,9 @@ class TranslationSerializer(serializers.ModelSerializer):
             "code": obj.locale.code,
             "name": obj.locale.name,
         }
+
+    def get_string(self, obj):
+        return get_simple_preview(obj.entity.resource.format, obj.string)
 
 
 class ResourceSerializer(serializers.ModelSerializer):
@@ -310,7 +315,7 @@ class EntitySerializer(serializers.ModelSerializer):
     def get_entity(self, obj):
         return {
             "id": obj.id,
-            "string": obj.string,
+            "string": get_simple_preview(obj.resource.format, obj.string),
             "key": obj.key,
         }
 
