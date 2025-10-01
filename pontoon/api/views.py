@@ -308,27 +308,16 @@ class EntityListView(generics.ListAPIView):
 
         queryset = Entity.objects.filter(resource__project__disabled=False)
 
-        if not project and not resource and not entity:
-            return queryset.prefetch_related(
-                "resource",
-                "resource__project",
+        if (project and resource and entity):
+            queryset = queryset.filter(
+                resource__project__slug=project,
+                resource__path=resource,
+                key__overlap=[entity],
             )
 
-        if not (project and resource and entity):
-            errors = {}
-            if not project:
-                errors["project"] = ["This field is required."]
-            if not resource:
-                errors["resource"] = ["This field is required."]
-            if not entity:
-                errors["entity"] = ["This field is required."]
-            if errors:
-                raise ValidationError(errors)
-
-        queryset = queryset.filter(
-            resource__project__slug=project,
-            resource__path=resource,
-            key__overlap=[entity],
+        return queryset.prefetch_related(
+            "resource",
+            "resource__project",
         )
 
         return queryset.prefetch_related(
