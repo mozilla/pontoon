@@ -301,7 +301,9 @@ class EntityListView(generics.ListAPIView):
     serializer_class = EntitySerializer
 
     def get_queryset(self):
-        return Entity.objects.prefetch_related(
+        return Entity.objects.filter(
+            resource__project__disabled=False
+        ).prefetch_related(
             "resource",
             "resource__project",
         )
@@ -311,7 +313,9 @@ class EntityIndividualView(generics.RetrieveAPIView):
     serializer_class = NestedEntitySerializer
 
     def get_queryset(self):
-        return Entity.objects.prefetch_related(
+        return Entity.objects.filter(
+            resource__project__disabled=False
+        ).prefetch_related(
             Prefetch(
                 "translation_set",
                 queryset=Translation.objects.filter(approved=True).select_related(
