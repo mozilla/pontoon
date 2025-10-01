@@ -82,7 +82,8 @@ def count_activities(dt_max: datetime):
     Fetch and prepare activity data.
 
     Note that this function is also called from
-    pontoon.insights.migrations.0017_fix_projectlocale_insights_again,
+    pontoon.insights.migrations.0017_fix_projectlocale_insights_again and
+    pontoon.insights.migrations.0018_fix_locale_insights,
     which may need a local copy if the behaviour here is modified.
     """
     res: dict[int, Activity] = dict()
@@ -231,6 +232,10 @@ def count_created_entities(dt_max: datetime) -> dict[int, tuple[int, int]]:
     `projectlocale_id -> (locale_id, count)`
 
     Count entities created on the previous day for each projectlocale.
+
+    Note that this function is also called from
+    pontoon.insights.migrations.0018_fix_locale_insights,
+    which may need a local copy if the behaviour here is modified.
     """
     return {
         d["projectlocale"]: (d["locale"], d["count"])
@@ -261,6 +266,11 @@ def count_created_entities(dt_max: datetime) -> dict[int, tuple[int, int]]:
 
 
 def count_projectlocale_stats() -> Iterable[dict[str, int]]:
+    """
+    Note that this function is also called from
+    pontoon.insights.migrations.0018_fix_locale_insights,
+    which may need a local copy if the behaviour here is modified.
+    """
     return (
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
@@ -277,6 +287,7 @@ def count_projectlocale_stats() -> Iterable[dict[str, int]]:
             warnings=Sum("strings_with_warnings", default=0),
             unreviewed=Sum("unreviewed_strings", default=0),
         )
+        .order_by("locale")
     )
 
 
@@ -332,6 +343,11 @@ def locale_insights(
     new_entities: dict[int, tuple[int, int]],
     pl_stats: Iterable[dict[str, int]],
 ) -> Iterator[LocaleInsightsSnapshot]:
+    """
+    Note that this function is also called from
+    pontoon.insights.migrations.0018_fix_locale_insights,
+    which may need a local copy if the behaviour here is modified.
+    """
     privileged_users = get_privileged_users()
     contributors = get_contributors()
     active_users_actions = get_active_users_actions(dt_max)
@@ -351,7 +367,7 @@ def locale_insights(
                 lc_translators,
                 contributors.get(locale, set()),
                 active_users_actions.get(locale, []),
-                suggestion_ages.get(locale, None),
+                suggestion_ages.get(locale, timedelta()),
             )
         )
 
@@ -453,7 +469,7 @@ def get_locale_insights_snapshot(
     translators: set[int],
     contributors: set[int],
     active_users_actions: list[dict[str, Any]],
-    avg_suggestion_age: timedelta | None,
+    avg_suggestion_age: timedelta,
 ):
     """Create LocaleInsightsSnapshot instance for the given locale and day using given data."""
     avg_suggestion_review_age, avg_pt_review_age = get_review_ages(activities)

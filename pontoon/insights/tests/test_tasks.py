@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 
 from dateutil.relativedelta import relativedelta
@@ -192,3 +194,4 @@ def test_locale_insights(locale_a, project_a, project_b, resource_a, resource_b)
     assert li.human_translations == 4
     assert li.new_source_strings == 5
     assert li.time_to_review_suggestions == (t[2] - t[1] + t[3] - t[1]) / 2
+    assert li.unreviewed_suggestions_lifespan == timedelta()
