@@ -345,7 +345,7 @@ class NestedEntitySerializer(EntitySerializer):
                 )
 
                 if include_translations is None:
-                    self.fields.pop("translations")
+                    self.fields.pop("translations", None)
 
     def get_translations(self, obj):
         request = self.context.get("request")
@@ -356,6 +356,20 @@ class NestedEntitySerializer(EntitySerializer):
         return TranslationSerializer(
             obj.filtered_translations, many=True, context=self.context
         ).data
+
+
+class NestedEntityListSerializer(NestedEntitySerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if "context" in kwargs:
+            if "request" in kwargs["context"]:
+                project = kwargs["context"]["request"].query_params.get("project")
+                resource = kwargs["context"]["request"].query_params.get("resource")
+                entity = kwargs["context"]["request"].query_params.get("entity")
+
+                if not (project and resource and entity):
+                    self.fields.pop("translations", None)
 
 
 class EntitySearchSerializer(EntitySerializer):
