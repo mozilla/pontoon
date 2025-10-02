@@ -31,7 +31,7 @@ from pontoon.terminology.models import (
 
 from .serializers import (
     EntitySearchSerializer,
-    NestedEntityListSerializer,
+    EntitySerializer,
     NestedEntitySerializer,
     NestedIndividualLocaleSerializer,
     NestedIndividualProjectSerializer,
@@ -298,31 +298,12 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
 
 class EntityListView(generics.ListAPIView):
-    serializer_class = NestedEntityListSerializer
+    serializer_class = EntitySerializer
 
     def get_queryset(self):
-        query_params = self.request.query_params
-        project = query_params.get("project")
-        resource = query_params.get("resource")
-        entity = query_params.get("entity")
-
-        queryset = Entity.objects.filter(resource__project__disabled=False)
-
-        if project and resource and entity:
-            queryset = queryset.filter(
-                resource__project__slug=project,
-                resource__path=resource,
-                key__overlap=[entity],
-            )
-
-        return queryset.prefetch_related(
-            Prefetch(
-                "translation_set",
-                queryset=Translation.objects.filter(approved=True).select_related(
-                    "locale"
-                ),
-                to_attr="filtered_translations",
-            ),
+        return Entity.objects.filter(
+            resource__project__disabled=False
+        ).prefetch_related(
             "resource",
             "resource__project",
         )
@@ -346,14 +327,15 @@ class EntityIndividualView(generics.RetrieveAPIView):
 
     def get_object(self):
         queryset = self.get_queryset()
-        pk = self.kwargs["pk"]
+        if "pk" in self.kwargs:
+            return get_object_or_404(queryset, pk=self.kwargs["pk"])
 
-        entity = get_object_or_404(
+        return get_object_or_404(
             queryset,
-            pk=pk,
+            resource__project__slug=self.kwargs["project_slug"],
+            resource__path=self.kwargs["resource"],
+            key__overlap=[self.kwargs["key"]],
         )
-
-        return entity
 
 
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):

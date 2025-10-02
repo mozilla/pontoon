@@ -41,7 +41,12 @@ api_v2_patterns = [
     path(
         "entities/<int:pk>/",
         views.EntityIndividualView.as_view(),
-        name="entity-individual",
+        name="entity-individual-id",
+    ),
+    path(
+        "entities/<slug:project_slug>/<path:resource>/<str:key>/",
+        views.EntityIndividualView.as_view(),
+        name="entity-individual-project-resource-entity",
     ),
     path(
         # Terminology Search
