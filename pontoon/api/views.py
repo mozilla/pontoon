@@ -332,9 +332,9 @@ class EntityIndividualView(generics.RetrieveAPIView):
 
         return get_object_or_404(
             queryset,
-            resource__project__slug=self.kwargs["project_slug"],
+            resource__project__slug=self.kwargs["project"],
             resource__path=self.kwargs["resource"],
-            key__overlap=[self.kwargs["key"]],
+            key__overlap=[self.kwargs["entity"]],
         )
 
 
