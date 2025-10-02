@@ -44,7 +44,7 @@ api_v2_patterns = [
         name="entity-individual-id",
     ),
     path(
-        "entities/<slug:project_slug>/<path:resource>/<str:key>/",
+        "entities/<slug:project>/<path:resource>/<str:entity>/",
         views.EntityIndividualView.as_view(),
         name="entity-individual-project-resource-entity",
     ),
