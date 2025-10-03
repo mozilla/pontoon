@@ -24,7 +24,7 @@ import { useContext, useEffect, useRef } from 'react';
 import { EditorActions } from '~/context/Editor';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
-import { parseEntry } from '~/utils/message';
+import { MessageEntry, parseEntry } from '~/utils/message';
 import { patternAsString } from '~/utils/message/editMessageEntry';
 import { decoratorPlugin } from './decoratorPlugin';
 import {
@@ -171,16 +171,20 @@ function autocompletePlaceholders(format: string, source: string) {
 
 function* entryPatterns(format: string, source: string) {
   const entry = parseEntry(format, source);
-  if (entry?.value) yield* msgPatterns(entry.value);
-  if (entry?.attributes) {
-    for (const msg of entry.attributes.values()) yield* msgPatterns(msg);
+  if (entry) {
+    if (entry.value) yield* msgPatterns(entry.format, entry.value);
+    if (entry.attributes) {
+      for (const msg of entry.attributes.values()) {
+        yield* msgPatterns(entry.format, msg);
+      }
+    }
   }
 }
 
-function* msgPatterns(msg: Message) {
-  if (Array.isArray(msg)) yield patternAsString(msg);
-  else if (msg.msg) yield patternAsString(msg.msg);
-  else for (const v of msg.alt) yield patternAsString(v.pat);
+function* msgPatterns(format: MessageEntry['format'], msg: Message) {
+  if (Array.isArray(msg)) yield patternAsString(format, msg);
+  else if (msg.msg) yield patternAsString(format, msg.msg);
+  else for (const v of msg.alt) yield patternAsString(format, v.pat);
 }
 
 function completePlaceholder(

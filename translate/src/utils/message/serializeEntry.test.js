@@ -2,9 +2,10 @@ import ftl from '@fluent/dedent';
 
 import { serializeEntry } from './serializeEntry';
 
-describe('serializeEntry("fluent", ...)', () => {
+describe('serialize fluent entry', () => {
   it('serialises a Fluent message with selectors', () => {
     const entry = {
+      format: 'fluent',
       id: 'my-entry',
       value: {
         decl: {
@@ -32,7 +33,7 @@ describe('serializeEntry("fluent", ...)', () => {
         ],
       },
     };
-    expect(serializeEntry('fluent', entry)).toEqual(ftl`
+    expect(serializeEntry(entry)).toEqual(ftl`
       my-entry =
           { $num ->
               [one]
@@ -51,56 +52,49 @@ describe('serializeEntry("fluent", ...)', () => {
   });
 });
 
-describe('serializeEntry("simple", ...)', () => {
+describe('serialize plain entry', () => {
   it('serialises an empty value', () => {
-    const entry = { id: 'key', value: [] };
-    expect(serializeEntry('simple', entry)).toEqual('');
+    const entry = { format: 'plain', id: 'key', value: [] };
+    expect(serializeEntry(entry)).toEqual('');
   });
 
   it('serialises a plain value', () => {
-    const entry = { id: 'key', value: ['foo'] };
-    expect(serializeEntry('simple', entry)).toEqual('foo');
+    const entry = { format: 'plain', id: 'key', value: ['foo'] };
+    expect(serializeEntry(entry)).toEqual('foo');
   });
 
   it('serialises a value with multiple elements', () => {
-    const entry = { id: 'key', value: ['foo', 'bar'] };
-    expect(serializeEntry('simple', entry)).toEqual('foobar');
+    const entry = { format: 'plain', id: 'key', value: ['foo', 'bar'] };
+    expect(serializeEntry(entry)).toEqual('foobar');
   });
 
   it('ignores attributes', () => {
     const entry = {
+      format: 'plain',
       id: 'key',
       value: ['foo'],
       attributes: new Map([['key', { type: 'junk' }]]),
     };
-    expect(serializeEntry('simple', entry)).toEqual('foo');
+    expect(serializeEntry(entry)).toEqual('foo');
   });
 
   it('complains about missing value', () => {
-    const entry = { id: 'key' };
-    expect(() => serializeEntry('simple', entry)).toThrow(
-      /^Unsupported simple message/,
-    );
+    const entry = { format: 'plain', id: 'key' };
+    expect(() => serializeEntry(entry)).toThrow(/^Unsupported plain message/);
   });
 
   it('complains about junk', () => {
-    const entry = { id: 'key', value: { type: 'junk' } };
-    expect(() => serializeEntry('simple', entry)).toThrow(
-      /^Unsupported simple message/,
-    );
+    const entry = { format: 'plain', id: 'key', value: { type: 'junk' } };
+    expect(() => serializeEntry(entry)).toThrow(/^Unsupported plain message/);
   });
 
   it('complains about non-array values', () => {
-    const entry = { id: 'key', value: {} };
-    expect(() => serializeEntry('simple', entry)).toThrow(
-      /^Unsupported simple message/,
-    );
+    const entry = { format: 'plain', id: 'key', value: {} };
+    expect(() => serializeEntry(entry)).toThrow(/^Unsupported plain message/);
   });
 
   it('complains about non-text pattern elements', () => {
-    const entry = { id: 'key', value: ['foo', { _: 'bar' }] };
-    expect(() => serializeEntry('simple', entry)).toThrow(
-      /Unsupported pattern part/,
-    );
+    const entry = { format: 'plain', id: 'key', value: ['foo', { _: 'bar' }] };
+    expect(() => serializeEntry(entry)).toThrow(/Unsupported pattern part/);
   });
 });

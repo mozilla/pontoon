@@ -100,7 +100,7 @@ function InnerOriginalString({
 
   let source = original;
   const entry = parseEntry(format, source);
-  if (entry && !requiresSourceView(format, entry)) {
+  if (entry && !requiresSourceView(entry)) {
     const msg = editMessageEntry(entry);
     if (msg.length === 1) {
       source = msg[0].handle.current.value;

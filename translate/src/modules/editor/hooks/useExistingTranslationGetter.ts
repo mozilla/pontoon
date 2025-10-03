@@ -34,7 +34,7 @@ export function useExistingTranslationGetter() {
       test = (t) => pojoEquals(entry, parseEntry(format, t.string));
     } else {
       try {
-        const str = serializeEntry(format, entry);
+        const str = serializeEntry(entry);
         test = (t) => t.string === str;
       } catch {
         return undefined;

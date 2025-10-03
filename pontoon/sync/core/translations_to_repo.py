@@ -331,8 +331,6 @@ def set_translations(
             ]
 
 
-android_nl = compile(r"\s*\n\s*")
-android_esc = compile(r"(?<!\\)\\([nt])\s*")
 webext_placeholder = compile(r"\$([a-zA-Z0-9_@]+)\$|(\$[1-9])|\$(\$+)")
 
 
@@ -355,14 +353,7 @@ def set_translation(
             return False
 
     match format:
-        case Format.android:
-            # Literal newlines \n and tabs \t are included in the string
-            entry.value = android_esc.sub(
-                lambda m: "\n" if m[1] == "n" else "\t",
-                android_nl.sub(" ", tx.string),
-            )
-
-        case Format.gettext:
+        case Format.android | Format.gettext:
             msg = parse_message(Format.mf2, tx.string)
             if isinstance(entry.value, SelectMessage):
                 entry.value.variants = (
@@ -374,12 +365,13 @@ def set_translation(
                 assert isinstance(entry.value, PatternMessage)
                 assert isinstance(msg, PatternMessage)
                 entry.value = msg
-            fuzzy_flag = Metadata("flag", "fuzzy")
-            if tx.fuzzy:
-                if fuzzy_flag not in entry.meta:
-                    entry.meta.insert(0, fuzzy_flag)
-            elif fuzzy_flag in entry.meta:
-                entry.meta = [m for m in entry.meta if m != fuzzy_flag]
+            if format == Format.gettext:
+                fuzzy_flag = Metadata("flag", "fuzzy")
+                if tx.fuzzy:
+                    if fuzzy_flag not in entry.meta:
+                        entry.meta.insert(0, fuzzy_flag)
+                elif fuzzy_flag in entry.meta:
+                    entry.meta = [m for m in entry.meta if m != fuzzy_flag]
 
         case Format.webext if (
             isinstance(entry.value, PatternMessage) and entry.value.declarations

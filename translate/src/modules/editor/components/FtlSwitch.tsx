@@ -35,9 +35,9 @@ export function FtlSwitch() {
   const hasError = useMemo(() => {
     if (sourceView && entity.format === 'fluent') {
       const source = edit[0].value;
-      return (
-        !source || requiresSourceView('fluent', parseEntry('fluent', source))
-      );
+      if (!source) return true;
+      const entry = parseEntry('fluent', source);
+      return entry && requiresSourceView(entry);
     } else {
       return false;
     }

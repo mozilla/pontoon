@@ -3,6 +3,7 @@ import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
 import { serializeEntry } from './serializeEntry';
 import { CatchallKey, isSelectMessage, Message, Pattern } from '@mozilla/l10n';
+import { androidEditPattern } from './android';
 
 const emptyHandleRef = (value: string) => ({
   current: {
@@ -17,10 +18,8 @@ const emptyHandleRef = (value: string) => ({
 
 /** Get an `EditorField[]` for the source view */
 export function editSource(source: string | MessageEntry): EditorField[] {
-  const value = (
-    typeof source === 'string' ? source : serializeEntry('fluent', source)
-  ).trim();
-  const handle = emptyHandleRef(value);
+  const value = typeof source === 'string' ? source : serializeEntry(source);
+  const handle = emptyHandleRef(value.trim());
   return [{ id: '', name: '', keys: [], labels: [], handle }];
 }
 
@@ -29,7 +28,10 @@ export function editMessageEntry(entry: MessageEntry): EditorField[] {
   const res: EditorField[] = [];
   if (entry.value) {
     const hasAttributes = !!entry.attributes?.size;
-    for (const [keys, labels, value] of genPatterns(entry.value)) {
+    for (const [keys, labels, value] of genPatterns(
+      entry.format,
+      entry.value,
+    )) {
       if (hasAttributes) {
         labels.unshift({ label: 'Value', plural: false });
       }
@@ -41,7 +43,7 @@ export function editMessageEntry(entry: MessageEntry): EditorField[] {
   if (entry.attributes) {
     const hasMultiple = entry.attributes.size > 1 || !!entry.value;
     for (const [name, msg] of entry.attributes) {
-      for (const [keys, labels, value] of genPatterns(msg)) {
+      for (const [keys, labels, value] of genPatterns(entry.format, msg)) {
         if (hasMultiple) {
           labels.unshift({ label: name, plural: false });
         }
@@ -55,6 +57,7 @@ export function editMessageEntry(entry: MessageEntry): EditorField[] {
 }
 
 function* genPatterns(
+  format: MessageEntry['format'],
   msg: Message,
 ): Generator<
   [(string | CatchallKey)[], Array<{ label: string; plural: boolean }>, string]
@@ -66,14 +69,18 @@ function* genPatterns(
         label: (typeof key === 'string' ? key : key['*']) || 'other',
         plural: plurals.has(i),
       }));
-      yield [keys, labels, patternAsString(pat)];
+      yield [keys, labels, patternAsString(format, pat)];
     }
   } else {
-    yield [[], [], patternAsString(Array.isArray(msg) ? msg : msg.msg)];
+    yield [[], [], patternAsString(format, Array.isArray(msg) ? msg : msg.msg)];
   }
 }
 
-export function patternAsString(pattern: Pattern) {
+export function patternAsString(
+  format: MessageEntry['format'],
+  pattern: Pattern,
+) {
+  if (format === 'android') return androidEditPattern(pattern);
   switch (pattern.length) {
     case 0:
       return '';
