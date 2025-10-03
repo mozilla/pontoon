@@ -34,6 +34,21 @@ api_v2_patterns = [
         name="project-individual",
     ),
     path(
+        "entities/",
+        views.EntityListView.as_view(),
+        name="entity-list",
+    ),
+    path(
+        "entities/<int:pk>/",
+        views.EntityIndividualView.as_view(),
+        name="entity-individual",
+    ),
+    path(
+        "entities/<slug:project>/<path:resource>/<str:entity>/",
+        views.EntityIndividualView.as_view(),
+        name="entity-individual-alternate",
+    ),
+    path(
         # Terminology Search
         "search/terminology/",
         views.TermSearchListView.as_view(),
@@ -44,6 +59,12 @@ api_v2_patterns = [
         "search/tm/",
         views.TranslationMemorySearchListView.as_view(),
         name="translation-memory-search",
+    ),
+    path(
+        # Entity Translation Search
+        "search/translations/",
+        views.TranslationSearchListView.as_view(),
+        name="entity-translation-search",
     ),
     path(
         # ProjectLocale

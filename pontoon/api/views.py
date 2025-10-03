@@ -16,17 +16,23 @@ from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
+from pontoon.base import forms
 from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.entity import Entity
+from pontoon.base.models.translation import Translation
 from pontoon.terminology.models import (
     Term,
 )
 
 from .serializers import (
+    EntitySearchSerializer,
+    EntitySerializer,
+    NestedEntitySerializer,
     NestedIndividualLocaleSerializer,
     NestedIndividualProjectSerializer,
     NestedLocaleSerializer,
@@ -292,6 +298,49 @@ class ProjectIndividualView(generics.RetrieveAPIView):
         return queryset.stats_data()
 
 
+class EntityListView(generics.ListAPIView):
+    serializer_class = EntitySerializer
+
+    def get_queryset(self):
+        return (
+            Entity.objects.filter(resource__project__disabled=False)
+            .prefetch_related(
+                "resource",
+                "resource__project",
+            )
+            .order_by("id")
+        )
+
+
+class EntityIndividualView(generics.RetrieveAPIView):
+    serializer_class = NestedEntitySerializer
+
+    def get_queryset(self):
+        return Entity.objects.filter(
+            resource__project__disabled=False
+        ).prefetch_related(
+            Prefetch(
+                "translation_set",
+                queryset=Translation.objects.filter(approved=True).select_related(
+                    "locale"
+                ),
+                to_attr="filtered_translations",
+            ),
+        )
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        if "pk" in self.kwargs:
+            return get_object_or_404(queryset, pk=self.kwargs["pk"])
+
+        return get_object_or_404(
+            queryset,
+            resource__project__slug=self.kwargs["project"],
+            resource__path=self.kwargs["resource"],
+            key__overlap=[self.kwargs["entity"]],
+        )
+
+
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
     serializer_class = NestedProjectLocaleSerializer
 
@@ -327,11 +376,13 @@ class TermSearchListView(generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
-        # Enforce required query parameters
-        if not text or not locale:
-            raise ValidationError(
-                {"detail": "Both 'text' and 'locale' query parameters are required."}
-            )
+        errors = {}
+        if not text:
+            errors["text"] = ["This field is required."]
+        if not locale:
+            errors["locale"] = ["This field is required."]
+        if errors:
+            raise ValidationError(errors)
 
         return Term.objects.all()
 
@@ -351,14 +402,84 @@ class TranslationMemorySearchListView(generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
-        # Enforce required query parameters
-        if not text or not locale:
-            raise ValidationError(
-                {"detail": "Both 'text' and 'locale' query parameters are required."}
-            )
+        errors = {}
+        if not text:
+            errors["text"] = ["This field is required."]
+        if not locale:
+            errors["locale"] = ["This field is required."]
+        if errors:
+            raise ValidationError(errors)
 
         return TranslationMemoryEntry.objects.all()
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         return queryset.prefetch_related("project", "locale")
+
+
+class TranslationSearchListView(generics.ListAPIView):
+    serializer_class = EntitySearchSerializer
+
+    def get_queryset(self):
+        query_params = self.request.query_params.copy()
+        text = query_params.get("text")
+        locale = query_params.get("locale")
+
+        errors = {}
+        if not text:
+            errors["text"] = ["This field is required."]
+        if not locale:
+            errors["locale"] = ["This field is required."]
+        if errors:
+            raise ValidationError(errors)
+
+        query_params["search"] = query_params.pop("text")[0]
+        query_params["project"] = query_params.get("project", "all-projects")
+
+        form = forms.GetEntitiesForm(query_params)
+
+        if not form.is_valid():
+            raise ValidationError(form.errors)
+
+        locale_code = form.cleaned_data["locale"]
+        locale = get_object_or_404(Locale, code=locale_code)
+
+        project_slug = form.cleaned_data["project"]
+
+        if project_slug == "all-projects":
+            project = Project(slug="all-projects")
+        else:
+            project = get_object_or_404(Project, slug=project_slug)
+
+        restrict_to_keys = (
+            "search",
+            "search_identifiers",
+            "search_match_case",
+            "search_match_whole_word",
+        )
+        form_data = {
+            k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data
+        }
+
+        try:
+            entities = (
+                Entity.for_project_locale(
+                    self.request.user, project, locale, status="translated", **form_data
+                )
+                .prefetch_related(
+                    (
+                        Prefetch(
+                            "translation_set",
+                            queryset=Translation.objects.filter(
+                                locale__code=locale_code, approved=True
+                            ).select_related("locale"),
+                            to_attr="filtered_translations",
+                        )
+                    ),
+                )
+                .select_related("resource__project")
+            )
+        except ValueError as error:
+            raise ValueError(error)
+
+        return entities

@@ -6,6 +6,10 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.entity import Entity
+from pontoon.base.models.resource import Resource
+from pontoon.base.models.translation import Translation
+from pontoon.base.simple_preview import get_simple_preview
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import (
     Term,
@@ -261,3 +265,113 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
         if obj.project:
             return obj.project.slug
         return None
+
+
+class TranslationSerializer(serializers.ModelSerializer):
+    locale = serializers.SerializerMethodField()
+    string = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Translation
+        fields = [
+            "locale",
+            "string",
+        ]
+
+    def get_locale(self, obj):
+        if not obj.locale:
+            return None
+
+        return {
+            "code": obj.locale.code,
+            "name": obj.locale.name,
+        }
+
+    def get_string(self, obj):
+        return get_simple_preview(obj.entity.resource.format, obj.string)
+
+
+class ResourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resource
+        fields = [
+            "path",
+        ]
+
+
+class EntitySerializer(serializers.ModelSerializer):
+    entity = serializers.SerializerMethodField()
+    project = serializers.SerializerMethodField()
+    resource = ResourceSerializer(read_only=True)
+
+    class Meta:
+        model = Entity
+        fields = [
+            "entity",
+            "project",
+            "resource",
+        ]
+
+    def get_entity(self, obj):
+        return {
+            "id": obj.id,
+            "string": get_simple_preview(obj.resource.format, obj.string),
+            "key": obj.key,
+        }
+
+    def get_project(self, obj):
+        if not obj.resource.project:
+            return None
+
+        return {
+            "slug": obj.resource.project.slug,
+            "name": obj.resource.project.name,
+        }
+
+
+class NestedEntitySerializer(EntitySerializer):
+    translations = serializers.SerializerMethodField()
+
+    class Meta(EntitySerializer.Meta):
+        fields = EntitySerializer.Meta.fields + ["translations"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if "context" in kwargs:
+            if "request" in kwargs["context"]:
+                include_translations = kwargs["context"]["request"].query_params.get(
+                    "include_translations"
+                )
+
+                if include_translations is None:
+                    self.fields.pop("translations", None)
+
+    def get_translations(self, obj):
+        request = self.context.get("request")
+
+        if not request:
+            return None
+
+        return TranslationSerializer(
+            obj.filtered_translations, many=True, context=self.context
+        ).data
+
+
+class EntitySearchSerializer(EntitySerializer):
+    translation = serializers.SerializerMethodField()
+
+    class Meta(EntitySerializer.Meta):
+        fields = EntitySerializer.Meta.fields + ["translation"]
+
+    def get_translation(self, obj):
+        request = self.context.get("request")
+
+        if not request:
+            return None
+
+        translation = (
+            obj.filtered_translations[0] if obj.filtered_translations else None
+        )
+
+        return TranslationSerializer(translation, context=self.context).data

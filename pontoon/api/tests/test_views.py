@@ -11,10 +11,12 @@ from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
 from pontoon.terminology.models import Term, TermTranslation
 from pontoon.test.factories import (
+    EntityFactory,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
     TranslatedResourceFactory,
+    TranslationFactory,
 )
 
 
@@ -591,6 +593,183 @@ def test_disabled_projects(
 
 
 @pytest.mark.django_db
+def test_entity(django_assert_num_queries):
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+
+    resource = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+    )
+
+    entity = EntityFactory.create(string="Test String", resource=resource)
+
+    with django_assert_num_queries(4):
+        response = APIClient().get(
+            f"/api/v2/entities/{entity.pk}/", HTTP_ACCEPT="application/json"
+        )
+    assert response.status_code == 200
+
+    assert response.data == {
+        "entity": {"id": entity.pk, "key": [], "string": "Test String"},
+        "project": {"name": "Project A", "slug": "project_a"},
+        "resource": {"path": "resource_project_a.po"},
+    }
+
+
+@pytest.mark.django_db
+def test_entity_with_translations(django_assert_num_queries):
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+
+    locales = [
+        LocaleFactory(
+            code="kg",
+            name="Klingon",
+        ),
+        LocaleFactory(code="hut", name="Huttese"),
+        LocaleFactory(code="gs", name="Geonosian"),
+    ]
+
+    resource = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+    )
+
+    entity = EntityFactory.create(string="Test String", resource=resource)
+
+    for locale in locales:
+        (
+            TranslationFactory.create(
+                entity=entity,
+                locale=locale,
+                string=f"approved_translation_{locale.name}",
+                approved=True,
+            ),
+        )
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string=f"suggested_translation_{locale.name}",
+        )
+
+    with django_assert_num_queries(4):
+        response = APIClient().get(
+            f"/api/v2/entities/{entity.pk}/?include_translations",
+            HTTP_ACCEPT="application/json",
+        )
+    assert response.status_code == 200
+
+    assert response.data == {
+        "entity": {"id": entity.pk, "string": "Test String", "key": []},
+        "project": {"slug": "project_a", "name": "Project A"},
+        "resource": {"path": "resource_project_a.po"},
+        "translations": [
+            {
+                "locale": {"code": "kg", "name": "Klingon"},
+                "string": "approved_translation_Klingon",
+            },
+            {
+                "locale": {"code": "hut", "name": "Huttese"},
+                "string": "approved_translation_Huttese",
+            },
+            {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "approved_translation_Geonosian",
+            },
+        ],
+    }
+
+
+@pytest.mark.django_db
+def test_entity_alternate(django_assert_num_queries):
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+
+    project_b = ProjectFactory(
+        slug="project_b",
+        name="Project B",
+    )
+
+    resource_a = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+    )
+
+    resource_b = ResourceFactory.create(
+        project=project_b, path=f"resource_{project_b.slug}.po", format="po"
+    )
+
+    entities = [
+        EntityFactory.create(
+            string="Test String A",
+            resource=resource_a,
+            key=["entityKey1", "entityKey2"],
+        ),
+        EntityFactory.create(
+            string="Test String B", resource=resource_a, key=["entityKey3"]
+        ),
+        EntityFactory.create(
+            string="Test String C", resource=resource_b, key=["entityKey4"]
+        ),
+    ]
+
+    with django_assert_num_queries(4):
+        response = APIClient().get(
+            f"/api/v2/entities/{project_a.slug}/{resource_a.path}/{entities[0].key[0]}/",
+            HTTP_ACCEPT="application/json",
+        )
+    assert response.status_code == 200
+
+    assert response.data == {
+        "entity": {
+            "id": entities[0].pk,
+            "key": ["entityKey1", "entityKey2"],
+            "string": "Test String A",
+        },
+        "project": {"name": "Project A", "slug": "project_a"},
+        "resource": {"path": "resource_project_a.po"},
+    }
+
+
+@pytest.mark.django_db
+def test_entities(django_assert_num_queries):
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+
+    resource_a = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+    )
+
+    entities = [
+        EntityFactory.create(string="Test String A", resource=resource_a),
+        EntityFactory.create(string="Test String B", resource=resource_a),
+        EntityFactory.create(string="Test String C", resource=resource_a),
+    ]
+
+    with django_assert_num_queries(4):
+        response = APIClient().get("/api/v2/entities/", HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+
+    expected_data = [
+        {
+            "entity": {"id": entity.pk, "string": entity.string, "key": entity.key},
+            "project": {"slug": "project_a", "name": "Project A"},
+            "resource": {"path": "resource_project_a.po"},
+        }
+        for entity in entities
+    ]
+
+    for entity in expected_data:
+        assert entity in response.data["results"]
+
+
+@pytest.mark.django_db
 def test_project_locale(django_assert_num_queries):
     locale_af = Locale.objects.get(code="af")
     locale_a = LocaleFactory(
@@ -782,3 +961,383 @@ def test_tm_search(django_assert_num_queries):
             }
         ],
     }
+
+
+@pytest.mark.django_db
+def test_translation_search(django_assert_num_queries):
+    locale_a = LocaleFactory(code="gs", name="Geonosian")
+
+    locale_b = LocaleFactory(code="kg", name="Klingon")
+
+    project_a = ProjectFactory(slug="project-a", name="Project A")
+
+    project_b = ProjectFactory(slug="project-b", name="Project B")
+
+    resources = {
+        "resource_a": ResourceFactory.create(
+            project=project_a, path=f"resource_{project_a.slug}_1.po", format="po"
+        ),
+        "resource_b": ResourceFactory.create(
+            project=project_a, path=f"resource_{project_a.slug}_2.ini", format="ini"
+        ),
+        "resource_c": ResourceFactory.create(
+            project=project_b, path=f"resource_{project_b.slug}_3.ftl", format="ftl"
+        ),
+    }
+
+    entities = {
+        "entity_a": EntityFactory.create(
+            string="the project_a test",
+            resource=resources["resource_a"],
+            key=["TestKey_A_squibble"],
+        ),
+        "entity_b": EntityFactory.create(
+            string="the project_a Test",
+            resource=resources["resource_a"],
+            key=["TestKey_B_squibb"],
+        ),
+        "entity_c": EntityFactory.create(
+            string="theproject_aTestsquibb",
+            resource=resources["resource_a"],
+            key=["TestKey_C dinglehopper"],
+        ),
+        "entity_d": EntityFactory.create(
+            string="theproject_a Test", resource=resources["resource_a"]
+        ),
+        "entity_e": EntityFactory.create(
+            string="the project_a test", resource=resources["resource_b"]
+        ),
+        "entity_f": EntityFactory.create(
+            string="the project_a Flibbertigibbet Test",
+            resource=resources["resource_b"],
+        ),
+        "entity_g": EntityFactory.create(
+            string="the project_a test Flibbertigibbet",
+            resource=resources["resource_b"],
+            key=["TestKey_G dinglehopperite"],
+        ),
+        "entity_h": EntityFactory.create(
+            string="the project_aTest Flibbertigibbet",
+            resource=resources["resource_b"],
+            key=["Test_H_dinglehopper"],
+        ),
+        "entity_i": EntityFactory.create(
+            string="the project_b Test", resource=resources["resource_c"]
+        ),
+        "entity_j": EntityFactory.create(
+            string="theproject_b Test Flibbertigibbet dinglehopper",
+            resource=resources["resource_c"],
+            key=["TestKey_J_squibble"],
+        ),
+        "entity_k": EntityFactory.create(
+            string="the project_btest Flibbertigibbet dinglehopper",
+            resource=resources["resource_c"],
+            key=["TestKey_K_squibb"],
+        ),
+        "entity_l": EntityFactory.create(
+            string="the project_b Test Flibbertigibbetelle Dinglehopper",
+            resource=resources["resource_c"],
+        ),
+    }
+
+    for entity in entities.values():
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale_a,
+            string=f"translation_{locale_a.name}",
+            approved=True,
+        )
+
+    for entity in (
+        entities["entity_c"],
+        entities["entity_g"],
+        entities["entity_h"],
+        entities["entity_k"],
+        entities["entity_l"],
+    ):
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale_b,
+            string=f"translation_{locale_b.name}",
+            approved=True,
+        )
+
+    # Test search without any parameters
+    with django_assert_num_queries(0):
+        response = APIClient().get(
+            "/api/v2/search/translations/",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 400
+
+    assert response.data == {
+        "locale": ["This field is required."],
+        "text": ["This field is required."],
+    }
+
+    # Test search without locale parameter
+    with django_assert_num_queries(0):
+        response = APIClient().get(
+            "/api/v2/search/translations/?text=test",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 400
+
+    assert response.data == {"locale": ["This field is required."]}
+
+    # Test search with required parameters only
+    with django_assert_num_queries(6):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?text=Flibbertigibbetelle&locale={locale_a.code}",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_l"].id,
+                "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
+                "key": [],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        }
+    ]
+
+    # Test search_match_whole_word parameter
+    with django_assert_num_queries(6):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?text=Flibbertigibbet&locale={locale_a.code}&search_match_whole_word=True",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_f"].id,
+                "string": "the project_a Flibbertigibbet Test",
+                "key": [],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_g"].id,
+                "string": "the project_a test Flibbertigibbet",
+                "key": ["TestKey_G dinglehopperite"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_h"].id,
+                "string": "the project_aTest Flibbertigibbet",
+                "key": ["Test_H_dinglehopper"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_j"].id,
+                "string": "theproject_b Test Flibbertigibbet dinglehopper",
+                "key": ["TestKey_J_squibble"],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_k"].id,
+                "string": "the project_btest Flibbertigibbet dinglehopper",
+                "key": ["TestKey_K_squibb"],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+    ]
+
+    # Test search_match_case parameter
+    with django_assert_num_queries(6):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_match_case=True",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_l"].id,
+                "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
+                "key": [],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        }
+    ]
+
+    # Test search_identifiers parameter
+    with django_assert_num_queries(6):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_identifiers=True",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_c"].id,
+                "string": "theproject_aTestsquibb",
+                "key": ["TestKey_C dinglehopper"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_1.po"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_g"].id,
+                "string": "the project_a test Flibbertigibbet",
+                "key": ["TestKey_G dinglehopperite"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_h"].id,
+                "string": "the project_aTest Flibbertigibbet",
+                "key": ["Test_H_dinglehopper"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_j"].id,
+                "string": "theproject_b Test Flibbertigibbet dinglehopper",
+                "key": ["TestKey_J_squibble"],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_k"].id,
+                "string": "the project_btest Flibbertigibbet dinglehopper",
+                "key": ["TestKey_K_squibb"],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_l"].id,
+                "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
+                "key": [],
+            },
+            "project": {"slug": "project-b", "name": "Project B"},
+            "resource": {"path": "resource_project-b_3.ftl"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+    ]
+
+    # Test search with multiple parameters
+    with django_assert_num_queries(7):
+        response = APIClient().get(
+            f"/api/v2/search/translations/?locale={locale_a.code}&project={project_a.slug}&text=the%20Test&search_match_whole_word=True&search_match_case=True",
+            HTTP_ACCEPT="application/json",
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["results"] == [
+        {
+            "entity": {
+                "id": entities["entity_b"].id,
+                "string": "the project_a Test",
+                "key": ["TestKey_B_squibb"],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_1.po"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+        {
+            "entity": {
+                "id": entities["entity_f"].id,
+                "string": "the project_a Flibbertigibbet Test",
+                "key": [],
+            },
+            "project": {"slug": "project-a", "name": "Project A"},
+            "resource": {"path": "resource_project-a_2.ini"},
+            "translation": {
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "translation_Geonosian",
+            },
+        },
+    ]
