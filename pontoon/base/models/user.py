@@ -486,6 +486,7 @@ def is_subscribed_to_notification(self, notification):
     category = notification.data.get("category") if notification.data else None
 
     CATEGORY_TO_FIELD = {
+        "direct_message": True,
         "new_string": profile.new_string_notifications_email,
         "project_deadline": profile.project_deadline_notifications_email,
         "comment": profile.comment_notifications_email,
