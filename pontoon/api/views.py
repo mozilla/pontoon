@@ -301,11 +301,13 @@ class EntityListView(generics.ListAPIView):
     serializer_class = EntitySerializer
 
     def get_queryset(self):
-        return Entity.objects.filter(
-            resource__project__disabled=False
-        ).prefetch_related(
-            "resource",
-            "resource__project",
+        return (
+            Entity.objects.filter(resource__project__disabled=False)
+            .prefetch_related(
+                "resource",
+                "resource__project",
+            )
+            .order_by("id")
         )
 
 
