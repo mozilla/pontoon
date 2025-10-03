@@ -684,6 +684,58 @@ def test_entity_with_translations(django_assert_num_queries):
 
 
 @pytest.mark.django_db
+def test_entity_alternate(django_assert_num_queries):
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+
+    project_b = ProjectFactory(
+        slug="project_b",
+        name="Project B",
+    )
+
+    resource_a = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+    )
+
+    resource_b = ResourceFactory.create(
+        project=project_b, path=f"resource_{project_b.slug}.po", format="po"
+    )
+
+    entities = [
+        EntityFactory.create(
+            string="Test String A",
+            resource=resource_a,
+            key=["entityKey1", "entityKey2"],
+        ),
+        EntityFactory.create(
+            string="Test String B", resource=resource_a, key=["entityKey3"]
+        ),
+        EntityFactory.create(
+            string="Test String C", resource=resource_b, key=["entityKey4"]
+        ),
+    ]
+
+    with django_assert_num_queries(4):
+        response = APIClient().get(
+            f"/api/v2/entities/{project_a.slug}/{resource_a.path}/{entities[0].key[0]}/",
+            HTTP_ACCEPT="application/json",
+        )
+    assert response.status_code == 200
+
+    assert response.data == {
+        "entity": {
+            "id": entities[0].pk,
+            "key": ["entityKey1", "entityKey2"],
+            "string": "Test String A",
+        },
+        "project": {"name": "Project A", "slug": "project_a"},
+        "resource": {"path": "resource_project_a.po"},
+    }
+
+
+@pytest.mark.django_db
 def test_entities(django_assert_num_queries):
     project_a = ProjectFactory(
         slug="project_a",
