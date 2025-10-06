@@ -7,7 +7,9 @@ from moz.l10n.message import serialize_message
 from moz.l10n.model import (
     CatchallKey,
     Expression,
+    Markup,
     Message,
+    Pattern,
     PatternMessage,
     SelectMessage,
     VariableRef,
@@ -65,31 +67,36 @@ def as_pattern_message(msg: Message) -> PatternMessage:
         return msg
 
 
-def android_simple_preview(msg: Message) -> str:
+def android_simple_preview(msg: Message | Pattern) -> str:
     """
     Matches the JS androidEditPattern() from translate/src/utils/message/android.ts
     """
-    msg = as_pattern_message(msg)
     preview = ""
-    for part in msg.pattern:
-        if isinstance(part, str):
-            preview += part
-        elif isinstance(ps := part.attributes.get("source", None), str):
-            preview += ps
-        elif isinstance(part, Expression):
-            if part.function == "html" and isinstance(part.arg, str):
-                preview += part.arg
-            elif part.function == "entity" and isinstance(part.arg, VariableRef):
-                preview += part.arg.name
-        elif part.kind == "open":
-            preview += "<" + part.name
-            for name, val in part.options.items():
-                valstr = dumps(val) if isinstance(val, str) else "$" + val.name
-                preview += f" {name}={valstr}"
-            preview += ">"
-        elif part.kind == "close" and not part.options:
-            preview += f"</{part.name}>"
-        else:
-            # Fallback; this is an error
-            preview += mf2_serialize_message(PatternMessage([part]))
+    pattern = msg if isinstance(msg, list) else as_pattern_message(msg).pattern
+    for part in pattern:
+        preview += android_placeholder_preview(part)
     return preview
+
+
+def android_placeholder_preview(part: str | Expression | Markup) -> str:
+    if isinstance(part, str):
+        return part
+    if isinstance(ps := part.attributes.get("source", None), str):
+        return ps
+    if isinstance(part, Expression):
+        if part.function == "html" and isinstance(part.arg, str):
+            return part.arg
+        elif part.function == "entity" and isinstance(part.arg, VariableRef):
+            return part.arg.name
+    elif part.kind == "open":
+        res = "<" + part.name
+        for name, val in part.options.items():
+            valstr = dumps(val) if isinstance(val, str) else "$" + val.name
+            res += f" {name}={valstr}"
+        res += ">"
+        return res
+    elif part.kind == "close" and not part.options:
+        return f"</{part.name}>"
+
+    # Fallback; this is an error
+    return mf2_serialize_message(PatternMessage([part]))

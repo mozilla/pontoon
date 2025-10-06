@@ -15,7 +15,6 @@ from pontoon.checks.libraries.compare_locales import (
 def mock_entity(
     format,
     resource_entities=None,
-    resource_path=None,
     **entity_data,
 ):
     """
@@ -25,19 +24,14 @@ def mock_entity(
     entity = MagicMock()
     entity.key = ["entity_a"]
     entity.resource.format = format
-    if resource_path:
-        entity.resource.path = resource_path
-    else:
-        match format:
-            case "android":
-                ext = "xml"
-            case "fluent":
-                ext = "ftl"
-            case "gettext":
-                ext = "po"
-            case _:
-                ext = format
-        entity.resource.path = f"resource1.{ext}"
+    match format:
+        case "fluent":
+            ext = "ftl"
+        case "gettext":
+            ext = "po"
+        case _:
+            ext = format
+    entity.resource.path = f"resource1.{ext}"
     entity.comment = ""
     res_entities = []
 
@@ -352,35 +346,3 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
 )
 def test_invalid_ftl_translations(quality_check_args, failed_checks):
     assert run_checks(**quality_check_args) == failed_checks
-
-
-def test_android_apostrophes():
-    original = "Source string"
-    translation = "Translation with a straight '"
-    entity = mock_entity("android", resource_path="strings.xml", string=original)
-    assert run_checks(entity, "en-US", translation) == {}
-
-
-def test_android_same_placeholder():
-    original = "Source string with a {$arg1 :string @source=|%1$s|}"
-    translation = "Translation with a {$arg1 :string @source=|%1$s|}"
-    entity = mock_entity("android", resource_path="strings.xml", string=original)
-    assert run_checks(entity, "en-US", translation) == {}
-
-
-def test_android_missing_placeholder():
-    original = "Source string with a {$arg1 :string @source=|%1$s|}"
-    translation = "Translation"
-    entity = mock_entity("android", resource_path="strings.xml", string=original)
-    assert run_checks(entity, "en-US", translation) == {
-        "clWarnings": ["Formatter %1$s not found in translation"]
-    }
-
-
-def test_android_extra_placeholder():
-    original = "Source string"
-    translation = "Translation with a {$arg1 :string @source=|%1$s|}"
-    entity = mock_entity("android", resource_path="strings.xml", string=original)
-    assert run_checks(entity, "en-US", translation) == {
-        "clErrors": ["Formatter %1$s not found in reference"]
-    }

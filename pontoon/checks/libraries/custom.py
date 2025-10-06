@@ -1,9 +1,23 @@
+from typing import Iterable, Iterator
+
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
+from moz.l10n.formats.android import android_parse_message
 from moz.l10n.formats.mf2 import mf2_parse_message
-from moz.l10n.model import PatternMessage, SelectMessage
+from moz.l10n.model import (
+    Expression,
+    Markup,
+    Message,
+    Pattern,
+    PatternMessage,
+    SelectMessage,
+)
 
 from pontoon.base.models import Entity, Resource
+from pontoon.base.simple_preview import (
+    android_placeholder_preview,
+    android_simple_preview,
+)
 
 
 parser = FluentParser()
@@ -50,14 +64,54 @@ def run_custom_checks(
     errors: list[str] = []
     warnings: list[str] = []
     match entity.resource.format:
-        case Resource.Format.ANDROID | Resource.Format.GETTEXT:
+        case Resource.Format.ANDROID:
             try:
                 msg = mf2_parse_message(string)
-                patterns = (
-                    (msg.pattern,)
-                    if isinstance(msg, PatternMessage)
-                    else msg.variants.values()
+                patterns = get_patterns(msg)
+            except ValueError as e:
+                msg = None
+                patterns = ()
+                errors.append(f"Parse error: {e}")
+            try:
+                orig_msg = mf2_parse_message(original)
+                orig_ph_iter = (
+                    el
+                    for pattern in get_patterns(orig_msg)
+                    for el in pattern
+                    if not isinstance(el, str)
                 )
+                orig_ps = {android_placeholder_preview(ph) for ph in orig_ph_iter}
+            except ValueError:
+                orig_msg = None
+                orig_ps = set()
+
+            if any(all(el == "" for el in pattern) for pattern in patterns):
+                errors.append("Empty translations are not allowed")
+
+            if isinstance(msg, SelectMessage) and not isinstance(
+                orig_msg, SelectMessage
+            ):
+                errors.append("Plural translation requires plural source")
+
+            # Inlined Android checks from compare-locales to support <plurals>
+            found_ps: set[str] = set()
+            for pattern in patterns:
+                android_msg = android_parse_message(android_simple_preview(pattern))
+                for el in android_msg.pattern:
+                    if not isinstance(el, str):
+                        ps = android_placeholder_preview(el)
+                        if ps in orig_ps:
+                            found_ps.add(ps)
+                        else:
+                            errors.append(f"Placeholder {ps} not found in reference")
+            for ps in orig_ps:
+                if ps not in found_ps:
+                    warnings.append(f"Placeholder {ps} not found in translation")
+
+        case Resource.Format.GETTEXT:
+            try:
+                msg = mf2_parse_message(string)
+                patterns = get_patterns(msg)
                 if any(all(el == "" for el in pattern) for pattern in patterns):
                     errors.append("Empty translations are not allowed")
             except ValueError as e:
@@ -72,11 +126,10 @@ def run_custom_checks(
                 if not isinstance(orig_msg, SelectMessage):
                     errors.append("Plural translation requires plural source")
 
-            if entity.resource.format == Resource.Format.GETTEXT:
-                # Bug 1599056: Original and translation must either both end in a newline,
-                # or none of them should.
-                if original.endswith("\n") != string.endswith("\n"):
-                    errors.append("Ending newline mismatch")
+            # Bug 1599056: Original and translation must either both end in a newline,
+            # or none of them should.
+            if original.endswith("\n") != string.endswith("\n"):
+                errors.append("Ending newline mismatch")
 
         case Resource.Format.FLUENT:
             translation_ast = parser.parse_entry(string)
@@ -108,3 +161,11 @@ def run_custom_checks(
     if warnings:
         checks["pndbWarnings"] = warnings
     return checks
+
+
+def get_patterns(msg: Message) -> Iterable[Pattern]:
+    return (msg.pattern,) if isinstance(msg, PatternMessage) else msg.variants.values()
+
+
+def get_placeholders(patterns: Iterable[Pattern]) -> Iterator[Expression | Markup]:
+    return (el for pattern in patterns for el in pattern if not isinstance(el, str))

@@ -179,3 +179,44 @@ def test_ftl_id_missmatch():
     assert run_custom_checks(
         mock_entity("fluent", string="key = value"), "", "key1 = translation"
     ) == {"pErrors": ["Translation key needs to match source string key"]}
+
+
+def test_android_apostrophes():
+    original = "Source string"
+    translation = "Translation with a straight '"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {}
+
+
+def test_android_same_placeholder():
+    original = "Source string with a {$arg1 :string @source=|%1$s|}"
+    translation = "Translation with a {$arg1 :string @source=|%1$s|}"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {}
+
+
+def test_android_missing_placeholder():
+    original = "Source string with a {$arg1 :string @source=|%1$s|}"
+    translation = "Translation"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {
+        "pndbWarnings": ["Placeholder %1$s not found in translation"]
+    }
+
+
+def test_android_extra_placeholder():
+    original = "Source string"
+    translation = "Translation with a {$arg1 :string @source=|%1$s|}"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {
+        "pErrors": ["Placeholder %1$s not found in reference"]
+    }
+
+
+def test_android_extra_placeholder_as_literal():
+    original = "Source string"
+    translation = "Translation with a %1$s"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {
+        "pErrors": ["Placeholder %1$s not found in reference"]
+    }

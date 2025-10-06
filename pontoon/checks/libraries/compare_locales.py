@@ -2,14 +2,11 @@ from collections import namedtuple
 
 from compare_locales.checks import getChecker
 from compare_locales.keyedtuple import KeyedTuple
-from compare_locales.parser.android import AndroidParser
 from compare_locales.parser.base import Junk
 from compare_locales.parser.dtd import DTDEntityMixin
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
 from compare_locales.paths import File
-from moz.l10n.formats.android import android_serialize_message
-from moz.l10n.formats.mf2 import mf2_parse_message
 
 from pontoon.base.models.entity import Entity
 
@@ -115,43 +112,6 @@ def cast_to_compare_locales(format: str, entity: Entity, string: str):
         trEntity = list(parser)[0] if list(parser) else None
 
         if not trEntity or isinstance(trEntity, Junk):
-            raise UnsupportedStringError(format)
-
-        return (
-            refEntity,
-            trEntity,
-        )
-
-    elif format == "android":
-        try:
-            src_str = android_serialize_message(
-                mf2_parse_message(entity.string), allow_cdata=True
-            )
-        except ValueError:
-            src_str = entity.string
-
-        try:
-            tgt_str = android_serialize_message(
-                mf2_parse_message(string), allow_cdata=True
-            )
-        except ValueError:
-            tgt_str = string
-
-        content = f"""<?xml version="1.0" encoding="utf-8"?>
-            <resources>
-                <string name="{cl_key}">{src_str}</string>
-                <string name="{cl_key}">{tgt_str}</string>
-            </resources>
-        """
-
-        parser = AndroidParser()
-        parser.readUnicode(content)
-        parsed_objects = list(parser.parse())
-
-        refEntity = parsed_objects[0]
-        trEntity = parsed_objects[1]
-
-        if isinstance(trEntity, Junk):
             raise UnsupportedStringError(format)
 
         return (

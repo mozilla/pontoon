@@ -2,6 +2,7 @@ from moz.l10n.formats.mf2 import mf2_parse_message, mf2_serialize_pattern
 from moz.l10n.model import CatchallKey, Pattern, PatternMessage, SelectMessage
 
 from pontoon.base.models import Entity, Resource
+from pontoon.base.simple_preview import android_simple_preview
 
 from . import compare_locales, translate_toolkit
 from .custom import run_custom_checks
@@ -70,26 +71,45 @@ def run_checks(
                 )
 
         tt_patterns: list[tuple[str, str]] = []
-        if res_format in {Resource.Format.ANDROID, Resource.Format.GETTEXT}:
-            src_msg = mf2_parse_message(original)
-            tgt_msg = mf2_parse_message(string)
-            if isinstance(src_msg, SelectMessage):
-                s0 = as_gettext(src_msg.variants[(CatchallKey(),)])
-                if isinstance(tgt_msg, SelectMessage):
+        match res_format:
+            case Resource.Format.ANDROID:
+                src_msg = mf2_parse_message(original)
+                tgt_msg = mf2_parse_message(string)
+                src0 = android_simple_preview(src_msg)
+                if isinstance(src_msg, SelectMessage) and isinstance(
+                    tgt_msg, SelectMessage
+                ):
                     for keys, pattern in tgt_msg.variants.items():
-                        if keys == ("one",):
-                            src = as_gettext(src_msg.variants[keys])
-                        else:
-                            src = s0
-                        tt_patterns.append((src, as_gettext(pattern)))
+                        src = (
+                            android_simple_preview(src_msg.variants[keys])
+                            if keys == ("one",)
+                            else src0
+                        )
+                        tt_patterns.append((src, android_simple_preview(pattern)))
                 else:
-                    tt_patterns.append((s0, as_gettext(tgt_msg.pattern)))
-            elif isinstance(tgt_msg, PatternMessage):
-                tt_patterns.append(
-                    (as_gettext(src_msg.pattern), as_gettext(tgt_msg.pattern))
-                )
-        else:
-            tt_patterns.append((original, string))
+                    tt_patterns.append((src0, android_simple_preview(tgt_msg)))
+
+            case Resource.Format.GETTEXT:
+                src_msg = mf2_parse_message(original)
+                tgt_msg = mf2_parse_message(string)
+                if isinstance(src_msg, SelectMessage):
+                    src0 = as_gettext(src_msg.variants[(CatchallKey(),)])
+                    if isinstance(tgt_msg, SelectMessage):
+                        for keys, pattern in tgt_msg.variants.items():
+                            if keys == ("one",):
+                                src = as_gettext(src_msg.variants[keys])
+                            else:
+                                src = src0
+                            tt_patterns.append((src, as_gettext(pattern)))
+                    else:
+                        tt_patterns.append((src0, as_gettext(tgt_msg.pattern)))
+                elif isinstance(tgt_msg, PatternMessage):
+                    tt_patterns.append(
+                        (as_gettext(src_msg.pattern), as_gettext(tgt_msg.pattern))
+                    )
+
+            case _:
+                tt_patterns.append((original, string))
         tt_warnings = {}
         for src, tgt in tt_patterns:
             tt_checks = translate_toolkit.run_checks(
