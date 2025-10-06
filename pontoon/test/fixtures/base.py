@@ -23,8 +23,7 @@ def client_superuser(client, admin):
 
 @pytest.fixture
 def sync_user():
-    """Add the sync user to the test data."""
-    return factories.UserFactory(email="pontoon-sync@example.com")
+    return User.objects.get(email="pontoon-sync@example.com")
 
 
 @pytest.fixture

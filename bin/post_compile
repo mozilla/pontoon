@@ -14,8 +14,13 @@ npm ci
 echo "Building translate..."
 npm run build:prod
 
-echo "Running migrations..."
-./manage.py migrate --noinput
+# Run migrations unless they are explicitly disabled
+if [ "$DISABLE_MIGRATIONS" = True ]; then
+  echo "Skipping migrations (DISABLE_MIGRATIONS is True)."
+else
+  echo "Running migrations..."
+  python manage.py migrate --noinput
+fi
 
 echo "Collecting static files..."
 ./manage.py collectstatic --noinput
