@@ -11,7 +11,7 @@
     "@fluent/langneg": "^0.7.0",
     "@fluent/react": "^0.15.1",
     "@lezer/highlight": "^1.1.6",
-    "@mozilla/l10n": "^0.9.0",
+    "@mozilla/l10n": "^0.10.0",
     "@reduxjs/toolkit": "^1.6.1",
     "classnames": "^2.3.1",
     "date-and-time": "^0.14.2",
