@@ -1,0 +1,104 @@
+#heading .banner .title {
+  color: var(--status-translated-alt);
+}
+
+#heading .legend {
+  width: 360px;
+}
+
+#heading .legend li,
+#heading .legend li.unreviewed {
+  padding-left: 0;
+}
+
+#heading .legend li.banner {
+  padding: 0;
+}
+
+body.top-contributors #heading .legend li .status.fas {
+  display: none;
+}
+
+.controls .submenu .links {
+  text-align: right;
+}
+
+.contributor {
+  display: inline-block;
+  position: relative;
+  width: 670px;
+}
+
+.contributor img {
+  margin-right: 5px;
+}
+
+.contributor p {
+  overflow: hidden;
+  padding-left: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 520px;
+
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.contributor p.name {
+  display: inline-block;
+  font-size: 1.5em;
+  height: 1.5em;
+}
+
+.contributor p.role {
+  color: var(--white-1);
+  left: 67px;
+  position: absolute;
+  top: 42px;
+}
+
+.details div {
+  display: inline-block;
+  /* width: 90px; */
+}
+
+.details div span {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.details div p {
+  color: var(--white-1);
+}
+
+th:last-child,
+.stats .details {
+  text-align: center;
+  width: 270px;
+}
+
+th:last-child {
+  position: relative;
+}
+
+th:last-child sup {
+  top: 7px;
+  position: absolute;
+}
+
+.stats .details div {
+  border: none;
+}
+
+.stats .details div.approved {
+  color: var(--status-translated-alt);
+}
+
+.stats .details div.unreviewed {
+  color: var(--status-unreviewed);
+}
+
+.stats .details div p {
+  font-size: 20px;
+  padding: 3px 0 0;
+}
