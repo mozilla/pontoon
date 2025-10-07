@@ -255,6 +255,7 @@ INSTALLED_APPS = (
     "pontoon.machinery",
     "pontoon.messaging",
     "pontoon.projects",
+    "pontoon.search",
     "pontoon.sync",
     "pontoon.tags",
     "pontoon.teams",
@@ -594,6 +595,13 @@ PIPELINE_CSS = {
             "css/messaging.css",
         ),
         "output_filename": "css/messaging.min.css",
+    },
+    "search": {
+        "source_filenames": (
+            "css/heading_info.css",
+            "css/search.css",
+        ),
+        "output_filename": "css/search.min.css",
     },
 }
 
