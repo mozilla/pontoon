@@ -1,3 +1,4 @@
+from html import escape
 from typing import Iterable, Iterator
 
 from fluent.syntax import FluentParser, ast
@@ -95,18 +96,25 @@ def run_custom_checks(
 
             # Inlined Android checks from compare-locales to support <plurals>
             found_ps: set[str] = set()
-            for pattern in patterns:
-                android_msg = android_parse_message(android_simple_preview(pattern))
-                for el in android_msg.pattern:
-                    if not isinstance(el, str):
-                        ps = android_placeholder_preview(el)
-                        if ps in orig_ps:
-                            found_ps.add(ps)
-                        else:
-                            errors.append(f"Placeholder {ps} not found in reference")
-            for ps in orig_ps:
-                if ps not in found_ps:
-                    warnings.append(f"Placeholder {ps} not found in translation")
+            try:
+                for pattern in patterns:
+                    android_msg = android_parse_message(
+                        escape(android_simple_preview(pattern))
+                    )
+                    for el in android_msg.pattern:
+                        if not isinstance(el, str):
+                            ps = android_placeholder_preview(el)
+                            if ps in orig_ps:
+                                found_ps.add(ps)
+                            else:
+                                errors.append(
+                                    f"Placeholder {ps} not found in reference"
+                                )
+                for ps in orig_ps:
+                    if ps not in found_ps:
+                        warnings.append(f"Placeholder {ps} not found in translation")
+            except Exception as e:
+                errors.append(f"Parse error: {e}")
 
         case Resource.Format.GETTEXT:
             try:

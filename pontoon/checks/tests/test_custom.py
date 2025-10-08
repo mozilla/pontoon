@@ -220,3 +220,38 @@ def test_android_extra_placeholder_as_literal():
     assert run_custom_checks(entity, original, translation) == {
         "pErrors": ["Placeholder %1$s not found in reference"]
     }
+
+
+def test_android_protections():
+    original = "Source {$string :xliff:g id=string @translate=no @source=String} with {$variable :xliff:g id=variable example=5 @translate=no @source=|%1$s|}"
+    translation = "Translation String with %1$s"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {
+        "pndbWarnings": ["Placeholder String not found in translation"]
+    }
+
+
+def test_android_good_html():
+    original = "Source with a {|<b>| :html}line{|<br>| :html}break{|</b>| :html}"
+    translation = (
+        "Translation with a {|<b>| :html}line{|<br>| :html}break{|</b>| :html}"
+    )
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {}
+
+
+def test_android_good_html_as_literal():
+    original = "Source with a {|<b>| :html}line{|<br>| :html}break{|</b>| :html}"
+    translation = "Translation with a <b>line<br>break</b>"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {}
+
+
+def test_android_bad_html():
+    original = "Source {|<b>| :html}string{|</b>| :html}"
+    translation = "Translation with a <a>tag mismatch{|</b>| :html}"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {
+        "pErrors": ["Placeholder <a> not found in reference"],
+        "pndbWarnings": ["Placeholder <b> not found in translation"],
+    }
