@@ -58,7 +58,6 @@ def create_translation(request):
     entity = form.cleaned_data["entity"]
     string = form.cleaned_data["translation"]
     locale = form.cleaned_data["locale"]
-    original = form.cleaned_data["original"]
     ignore_warnings = form.cleaned_data["ignore_warnings"]
     approve = form.cleaned_data["approve"]
     force_suggestions = form.cleaned_data["force_suggestions"]
@@ -95,7 +94,6 @@ def create_translation(request):
         failed_checks = run_checks(
             entity,
             locale.code,
-            original,
             string,
             user.profile.quality_checks,
         )
@@ -284,7 +282,6 @@ def approve_translation(request):
         failed_checks = run_checks(
             entity,
             locale.code,
-            entity.string,
             translation.string,
             user.profile.quality_checks,
         )

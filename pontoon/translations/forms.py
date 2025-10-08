@@ -15,9 +15,7 @@ class CreateTranslationForm(forms.Form):
     entity = forms.IntegerField()
     locale = forms.CharField()
 
-    # Some file formats allow empty original strings and translations.
-    # We must allow both here. Validation is handled in pontoon.checks module.
-    original = forms.CharField(required=False)
+    # Some file formats allow empty translations.
     translation = forms.CharField(required=False)
 
     ignore_warnings = forms.BooleanField(required=False)
@@ -34,23 +32,18 @@ class CreateTranslationForm(forms.Form):
             return self.data.get("paths[]") or []
 
     def clean_entity(self):
+        pk = self.cleaned_data["entity"]
         try:
-            return Entity.objects.get(pk=self.cleaned_data["entity"])
+            return Entity.objects.get(pk=pk)
         except Entity.DoesNotExist:
-            raise forms.ValidationError(
-                f"Entity `{self.cleaned_data['entity']}` could not be found"
-            )
+            raise forms.ValidationError(f"Entity `{pk}` could not be found")
 
     def clean_locale(self):
+        code = self.cleaned_data["locale"]
         try:
-            return Locale.objects.get(code=self.cleaned_data["locale"])
+            return Locale.objects.get(code=code)
         except Locale.DoesNotExist:
-            raise forms.ValidationError(
-                f"Locale `{self.cleaned_data['locale']}` could not be found"
-            )
-
-    def clean_original(self):
-        return self.data.get("original", "")
+            raise forms.ValidationError(f"Locale `{code}` could not be found")
 
     def clean_translation(self):
         return self.data.get("translation", "")

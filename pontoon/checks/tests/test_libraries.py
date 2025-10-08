@@ -102,7 +102,6 @@ def test_ignore_warnings(
     assert run_checks(
         entity_properties_plurals_mock,
         "en-US",
-        entity_properties_plurals_mock.string,
         "plural1;plural2;plural3;plural4;plural5",
         True,
     ) == {
@@ -114,7 +113,6 @@ def test_ignore_warnings(
     assert run_checks(
         entity_properties_plurals_mock,
         "en-US",
-        entity_properties_plurals_mock.string,
         "plural1;plural2;plural3;plural4;plural5",
         False,
     ) == {"clWarnings": ["expecting 2 plurals, found 5"]}
@@ -130,7 +128,6 @@ def test_invalid_resource_compare_locales(
         run_checks(
             entity_invalid_resource_mock,
             "en-US",
-            entity_invalid_resource_mock.string,
             "Translation",
             False,
         )
@@ -149,7 +146,6 @@ def test_tt_disabled_checks(
     assert run_checks(
         entity_properties_mock,
         "en-US",
-        entity_properties_mock.string,
         "invalid translation \\q",
         True,
     ) == {"clWarnings": ["unknown escape sequence, \\q"]}
@@ -172,7 +168,6 @@ def test_tt_disabled_checks(
         run_checks(
             entity_dtd_mock,
             "en-US",
-            entity_properties_mock.string,
             "Translated string",
             True,
         )
@@ -200,9 +195,7 @@ def test_tt_gettext_checks():
         one {{One user}}
         two {{two: %(count)s Users }}
         * {{other: %(count)s Users}}""")
-    checks = run_checks(
-        entity, "en-US", original=entity.string, string=string, use_tt_checks=True
-    )
+    checks = run_checks(entity, "en-US", string=string, use_tt_checks=True)
 
     # one: Unchanged
     # two: Ending whitespace, Starting punctuation

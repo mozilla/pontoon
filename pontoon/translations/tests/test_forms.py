@@ -26,7 +26,6 @@ def test_create_translation_form_clean_entity(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": locale_a.code,
-            "original": "hello",
         }
     )
     assert form.is_valid()
@@ -40,7 +39,6 @@ def test_create_translation_form_clean_entity_invalid(locale_a):
             "entity": 42,
             "translation": "salut",
             "locale": locale_a.code,
-            "original": "hello",
         }
     )
     assert not form.is_valid()
@@ -54,7 +52,6 @@ def test_create_translation_form_clean_locale_invalid(entity_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": "invalid",
-            "original": "hello",
         }
     )
     assert not form.is_valid()
@@ -68,7 +65,6 @@ def test_create_translation_form_clean_locale(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": locale_a.code,
-            "original": "hello",
         }
     )
     assert form.is_valid()
@@ -82,7 +78,6 @@ def test_create_translation_form_clean_paths(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": locale_a.code,
-            "original": "hello",
         }
     )
     assert form.is_valid()
@@ -93,7 +88,6 @@ def test_create_translation_form_clean_paths(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": "salut",
             "locale": locale_a.code,
-            "original": "hello",
             "paths[]": ["a/d.ext", "foo/bar"],
         }
     )
@@ -108,7 +102,6 @@ def test_create_translation_form_clean_translation(entity_a, locale_a):
             "entity": entity_a.pk,
             "translation": " salut ",
             "locale": locale_a.code,
-            "original": "hello",
         }
     )
     assert form.is_valid()

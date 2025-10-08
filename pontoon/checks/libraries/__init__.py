@@ -16,7 +16,6 @@ def as_gettext(pattern: Pattern) -> str:
 def run_checks(
     entity: Entity,
     locale_code: str,
-    original: str,
     string: str,
     use_tt_checks: bool,
 ) -> dict[str, list[str]]:
@@ -28,7 +27,7 @@ def run_checks(
     :return: Non-empty dict if there are errors or warnings
     """
     checks: dict[str, list[str]] = {}
-    checks.update(run_custom_checks(entity, original, string))
+    checks.update(run_custom_checks(entity, string))
 
     try:
         cl_checks = compare_locales.run_checks(entity, locale_code, string)
@@ -73,7 +72,7 @@ def run_checks(
         tt_patterns: list[tuple[str, str]] = []
         match res_format:
             case Resource.Format.ANDROID:
-                src_msg = mf2_parse_message(original)
+                src_msg = mf2_parse_message(entity.string)
                 tgt_msg = mf2_parse_message(string)
                 src0 = android_simple_preview(src_msg)
                 if isinstance(src_msg, SelectMessage) and isinstance(
@@ -90,7 +89,7 @@ def run_checks(
                     tt_patterns.append((src0, android_simple_preview(tgt_msg)))
 
             case Resource.Format.GETTEXT:
-                src_msg = mf2_parse_message(original)
+                src_msg = mf2_parse_message(entity.string)
                 tgt_msg = mf2_parse_message(string)
                 if isinstance(src_msg, SelectMessage):
                     src0 = as_gettext(src_msg.variants[(CatchallKey(),)])
@@ -109,7 +108,7 @@ def run_checks(
                     )
 
             case _:
-                tt_patterns.append((original, string))
+                tt_patterns.append((entity.string, string))
         tt_warnings = {}
         for src, tgt in tt_patterns:
             tt_checks = translate_toolkit.run_checks(
