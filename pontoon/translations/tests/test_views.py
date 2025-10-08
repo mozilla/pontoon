@@ -331,7 +331,6 @@ def test_approve_translation_basic(translation_a, client_superuser):
     url = reverse("pontoon.translations.approve")
     params = {
         "translation": translation_a.pk,
-        "paths": [],
         "ignore_warnings": "true",
     }
 
@@ -362,7 +361,6 @@ def test_approve_translation_rejects_previous_approved(
     url = reverse("pontoon.translations.approve")
     params = {
         "translation": translation_a.pk,
-        "paths": [],
         "ignore_warnings": "true",
     }
 
@@ -388,10 +386,7 @@ def test_approve_translation_rejects_previous_approved(
 def test_unapprove_translation(approved_translation, member):
     """Check if unapprove view works properly."""
     url = reverse("pontoon.translations.unapprove")
-    params = {
-        "translation": approved_translation.pk,
-        "paths": [],
-    }
+    params = {"translation": approved_translation.pk}
 
     response = member.client.post(url, params)
     assert response.status_code == 400
@@ -441,10 +436,7 @@ def test_unapprove_translation(approved_translation, member):
 def test_unreject_translation(member, rejected_translation):
     """Check if unreject view works properly."""
     url = reverse("pontoon.translations.unreject")
-    params = {
-        "translation": rejected_translation.pk,
-        "paths": [],
-    }
+    params = {"translation": rejected_translation.pk}
 
     response = member.client.post(url, params)
     assert response.status_code == 400
