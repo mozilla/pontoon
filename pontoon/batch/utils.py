@@ -121,7 +121,6 @@ def find_and_replace(translations, find, replace, user):
             errors = run_checks(
                 new_translation.entity,
                 new_translation.locale.code,
-                new_translation.entity.string,
                 new_translation.string,
                 use_tt_checks=False,
             )

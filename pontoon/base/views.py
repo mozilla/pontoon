@@ -752,9 +752,8 @@ def get_users(request):
 def perform_checks(request):
     """Perform quality checks and return a list of any failed ones."""
     try:
-        entity = request.POST["entity"]
+        entity_id = request.POST["entity"]
         locale_code = request.POST["locale_code"]
-        original = request.POST["original"]
         string = request.POST["string"]
         ignore_warnings = request.POST.get("ignore_warnings", "false") == "true"
     except MultiValueDictKeyError as e:
@@ -764,7 +763,7 @@ def perform_checks(request):
         )
 
     try:
-        entity = Entity.objects.get(pk=entity)
+        entity = Entity.objects.get(pk=entity_id)
     except Entity.DoesNotExist as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
@@ -774,7 +773,6 @@ def perform_checks(request):
     failed_checks = run_checks(
         entity,
         locale_code,
-        original,
         string,
         request.user.profile.quality_checks,
     )

@@ -21,7 +21,6 @@ def bulk_run_checks(translations):
             run_checks(
                 translation.entity,
                 translation.locale.code,
-                translation.entity.string,
                 translation.string,
                 use_tt_checks=False,
             ),

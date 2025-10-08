@@ -82,7 +82,6 @@ export function createTranslation(
   entityId: number,
   translation: string,
   localeCode: string,
-  original: string,
   forceSuggestions: boolean,
   resource: string,
   ignoreWarnings: boolean,
@@ -92,7 +91,6 @@ export function createTranslation(
     entity: String(entityId),
     translation,
     locale: localeCode,
-    original,
     force_suggestions: String(forceSuggestions),
     machinery_sources: String(machinerySources),
   });
