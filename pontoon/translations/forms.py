@@ -21,15 +21,10 @@ class CreateTranslationForm(forms.Form):
     ignore_warnings = forms.BooleanField(required=False)
     approve = forms.BooleanField(required=False)
     force_suggestions = forms.BooleanField(required=False)
-    paths = forms.MultipleChoiceField(required=False)
     machinery_sources = SimpleArrayField(forms.CharField(max_length=30), required=False)
-
-    def clean_paths(self):
-        try:
-            return self.data.getlist("paths[]")
-        except AttributeError:
-            # If the data source is not a QueryDict, it won't have a `getlist` method.
-            return self.data.get("paths[]") or []
+    stats = forms.ChoiceField(
+        choices=[("all", "all"), ("resource", "resource")], required=False
+    )
 
     def clean_entity(self):
         pk = self.cleaned_data["entity"]
