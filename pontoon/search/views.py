@@ -23,7 +23,9 @@ def translation_search(request):
     }
 
     # Extract query parameters dynamically
-    query_params = {key: request.GET.get(key, default) for key, default in expected_params.items()}
+    query_params = {
+        key: request.GET.get(key, default) for key, default in expected_params.items()
+    }
 
     # Example: Use the extracted parameters
     if query_params["search"]:
@@ -31,10 +33,7 @@ def translation_search(request):
         pass
 
     # Build the API URL or perform further logic
-    api_url = f"{BASE_URL}/search/translations/"
     return render(request, "search/results.html", {"query_params": query_params})
-
-
 
 
 def entity(request, pk):
