@@ -46,13 +46,13 @@ jobs:
         with:
           python-version: '3.11'
       - name: Set up uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-dependency-glob: |
             **/requirements/*.txt
           # Version should match the one used in docker/Dockerfile
-          version: "0.7.16"
+          version: "0.9.0"
       - name: Install requirements
         run: >
           uv pip install
@@ -97,7 +97,7 @@ jobs:
 
       - name: Run tests
         run: pytest --cov-report=xml:pontoon/coverage.xml --cov=.
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           flags: backend
         env:
