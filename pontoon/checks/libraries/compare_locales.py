@@ -2,12 +2,13 @@ from collections import namedtuple
 
 from compare_locales.checks import getChecker
 from compare_locales.keyedtuple import KeyedTuple
-from compare_locales.parser.android import AndroidParser
 from compare_locales.parser.base import Junk
 from compare_locales.parser.dtd import DTDEntityMixin
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
 from compare_locales.paths import File
+
+from pontoon.base.models.entity import Entity
 
 
 CommentEntity = namedtuple("Comment", ("all",))
@@ -76,7 +77,7 @@ class UnsupportedStringError(Exception):
     pass
 
 
-def cast_to_compare_locales(format, entity, string):
+def cast_to_compare_locales(format: str, entity: Entity, string: str):
     """
     Cast a Pontoon's translation object into Entities supported by `compare-locales`.
 
@@ -111,34 +112,6 @@ def cast_to_compare_locales(format, entity, string):
         trEntity = list(parser)[0] if list(parser) else None
 
         if not trEntity or isinstance(trEntity, Junk):
-            raise UnsupportedStringError(format)
-
-        return (
-            refEntity,
-            trEntity,
-        )
-
-    elif format == "android":
-        parser = AndroidParser()
-
-        content = """<?xml version="1.0" encoding="utf-8"?>
-            <resources>
-                <string name="{key}"><![CDATA[{original}]]></string>
-                <string name="{key}"><![CDATA[{translation}]]></string>
-            </resources>
-        """.format(
-            key=cl_key,
-            original=entity.string.replace("'", "\\'"),
-            translation=string.replace("'", "\\'"),
-        )
-
-        parser.readUnicode(content)
-        parsed_objects = list(parser.parse())
-
-        refEntity = parsed_objects[0]
-        trEntity = parsed_objects[1]
-
-        if isinstance(trEntity, Junk):
             raise UnsupportedStringError(format)
 
         return (

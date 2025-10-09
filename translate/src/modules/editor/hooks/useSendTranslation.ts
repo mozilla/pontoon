@@ -54,7 +54,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
     NProgress.start();
     setEditorBusy(true);
 
-    const translation = serializeEntry(entity.format, entry);
+    const translation = serializeEntry(entry);
     const normalizedTranslation = getPlainMessage(translation, entity.format);
     const sources =
       machinery && machinery.translation === normalizedTranslation

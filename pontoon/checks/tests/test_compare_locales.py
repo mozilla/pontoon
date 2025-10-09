@@ -12,11 +12,9 @@ from pontoon.checks.libraries.compare_locales import (
 )
 
 
-def mock_quality_check_args(
+def mock_entity(
     format,
-    translation="",
     resource_entities=None,
-    resource_path=None,
     **entity_data,
 ):
     """
@@ -26,19 +24,14 @@ def mock_quality_check_args(
     entity = MagicMock()
     entity.key = ["entity_a"]
     entity.resource.format = format
-    if resource_path:
-        entity.resource.path = resource_path
-    else:
-        match format:
-            case "android":
-                ext = "xml"
-            case "fluent":
-                ext = "ftl"
-            case "gettext":
-                ext = "po"
-            case _:
-                ext = format
-        entity.resource.path = f"resource1.{ext}"
+    match format:
+        case "fluent":
+            ext = "ftl"
+        case "gettext":
+            ext = "po"
+        case _:
+            ext = format
+    entity.resource.path = f"resource1.{ext}"
     entity.comment = ""
     res_entities = []
 
@@ -55,9 +48,15 @@ def mock_quality_check_args(
 
     for k, v in entity_data.items():
         setattr(entity, k, v)
+    return entity
 
+
+def mock_quality_check_args(format, translation="", **entity_data):
+    """
+    Generate a dictionary of arguments ready to use by get_quality_check function.
+    """
     return {
-        "entity": entity,
+        "entity": mock_entity(format, **entity_data),
         "locale_code": "en-US",
         "string": translation,
     }
@@ -347,15 +346,3 @@ def test_invalid_dtd_translations(quality_check_args, failed_checks):
 )
 def test_invalid_ftl_translations(quality_check_args, failed_checks):
     assert run_checks(**quality_check_args) == failed_checks
-
-
-def test_android_apostrophes():
-    quality_check_args = mock_quality_check_args(
-        "android",
-        resource_path="strings.xml",
-        key=["test"],
-        string="Source string",
-        comment="Some comment",
-        translation="Translation with a straight '",
-    )
-    assert run_checks(**quality_check_args) == {}
