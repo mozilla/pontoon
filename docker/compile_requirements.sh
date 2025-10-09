@@ -5,7 +5,11 @@
 
 export CUSTOM_COMPILE_COMMAND="./docker/compile_requirements.sh"
 
-uv pip compile --generate-hashes --no-strip-extras $@ requirements/default.in -o requirements/default.txt
-uv pip compile --generate-hashes --no-strip-extras $@ requirements/dev.in -o requirements/dev.txt
-uv pip compile --generate-hashes --no-strip-extras $@ requirements/lint.in -o requirements/lint.txt
-uv pip compile --generate-hashes --no-strip-extras $@ requirements/test.in -o requirements/test.txt
+# Run compile command from the requirements directory
+cd "$(dirname "$0")/../requirements"
+
+requirement_files=(default dev lint test)
+
+for name in "${requirement_files[@]}"; do
+  uv pip compile --generate-hashes --no-strip-extras $@ "$name.in" -o "$name.txt"
+done
