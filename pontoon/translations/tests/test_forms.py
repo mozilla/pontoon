@@ -25,6 +25,7 @@ def test_create_translation_form_clean_entity(entity_a, locale_a):
         {
             "entity": entity_a.pk,
             "translation": "salut",
+            "value": ["salut"],
             "locale": locale_a.code,
         }
     )
@@ -38,6 +39,7 @@ def test_create_translation_form_clean_entity_invalid(locale_a):
         {
             "entity": 42,
             "translation": "salut",
+            "value": ["salut"],
             "locale": locale_a.code,
         }
     )
@@ -51,6 +53,7 @@ def test_create_translation_form_clean_locale_invalid(entity_a):
         {
             "entity": entity_a.pk,
             "translation": "salut",
+            "value": ["salut"],
             "locale": "invalid",
         }
     )
@@ -64,6 +67,7 @@ def test_create_translation_form_clean_locale(entity_a, locale_a):
         {
             "entity": entity_a.pk,
             "translation": "salut",
+            "value": ["salut"],
             "locale": locale_a.code,
         }
     )
@@ -76,6 +80,7 @@ def test_create_translation_form_clean_stats(entity_a, locale_a):
     data = {
         "entity": entity_a.pk,
         "translation": "salut",
+        "value": ["salut"],
         "locale": locale_a.code,
     }
     form = CreateTranslationForm(data)
@@ -103,8 +108,11 @@ def test_create_translation_form_clean_translation(entity_a, locale_a):
         {
             "entity": entity_a.pk,
             "translation": " salut ",
+            "value": [" salut "],
             "locale": locale_a.code,
         }
     )
     assert form.is_valid()
     assert form.cleaned_data["translation"] == " salut "
+    assert form.cleaned_data["value"] == [" salut "]
+    assert form.cleaned_data["properties"] is None

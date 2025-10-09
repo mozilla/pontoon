@@ -7,6 +7,7 @@ from os.path import join, relpath, splitext
 
 from fluent.syntax import FluentParser
 from moz.l10n.formats import l10n_extensions
+from moz.l10n.message import message_to_json
 from moz.l10n.model import Id as L10nId
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
 from moz.l10n.resource import parse_resource
@@ -32,13 +33,13 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
-from pontoon.sync.formats import as_repo_translations
+from pontoon.sync.formats import RepoTranslation, as_repo_translations
 
 
 log = logging.getLogger(__name__)
 
-Updates = dict[tuple[int, int], tuple[str | None, bool]]
-""" (entity.id, locale.id) -> (string, fuzzy) """
+Updates = dict[tuple[int, int], RepoTranslation | None]
+""" (entity.id, locale.id) -> RepoTranslation """
 
 
 def sync_translations_from_repo(
@@ -129,7 +130,7 @@ def find_db_updates(
     db_changes: Iterable[ChangedEntityLocale],
 ) -> Updates | None:
     """
-    `(entity.id, locale.id) -> (string|None, fuzzy)`
+    `(entity.id, locale.id) -> RepoTranslation`
 
     Translations in changed resources, excluding:
     - Exact matches with previous approved or pretranslated translations
@@ -140,8 +141,8 @@ def find_db_updates(
     resource_paths: set[str] = set()
     # db_path -> {locale.id}
     translated_resources: dict[str, set[int]] = defaultdict(set)
-    # (db_path, tx.key, locale.id) -> (string|None, fuzzy)
-    translations: dict[tuple[str, L10nId, int], tuple[str | None, bool]] = {}
+    # (db_path, tx.key, locale.id) -> RepoTranslation|None
+    translations: dict[tuple[str, L10nId, int], RepoTranslation | None] = {}
     for target_path in changed_target_paths:
         ref = paths.find_reference(target_path)
         if ref:
@@ -161,8 +162,8 @@ def find_db_updates(
                     resource_paths.add(db_path)
                     translated_resources[db_path].add(locale.pk)
                     translations.update(
-                        ((db_path, tx.key, locale.pk), (tx.string, tx.fuzzy))
-                        for tx in as_repo_translations(l10n_res)
+                        ((db_path, rt.key, locale.pk), rt)
+                        for rt in as_repo_translations(l10n_res)
                     )
                 except Exception as error:
                     scope = f"[{project.slug}:{db_path}, {locale.code}]"
@@ -215,18 +216,18 @@ def find_db_updates(
                     trans_values["locale_id"],
                 )
                 if key in translations:
-                    string, _ = translations[key]
-                    if translations_equal(
+                    rt = translations[key]
+                    if rt is not None and translations_equal(
                         project,
                         key[0],
                         trans_values["entity__resource__format"],
-                        string,
+                        rt.string,
                         trans_values["string"],
                     ):
                         del translations[key]
                 else:
                     # The translation has been removed from the repo
-                    translations[key] = (None, False)
+                    translations[key] = None
             if paginator.num_pages > 3:
                 log.debug(
                     f"[{project.slug}] Filtering matches from translations... {page_number}/{paginator.num_pages}"
@@ -258,10 +259,10 @@ def find_db_updates(
         .iterator()
     }
     updates: Updates = {}
-    for (db_path, ent_key, locale_id), tx in translations.items():
+    for (db_path, ent_key, locale_id), rt in translations.items():
         entity_id = entities.get((db_path, ent_key), None)
         if entity_id is not None:
-            updates[(entity_id, locale_id)] = tx
+            updates[(entity_id, locale_id)] = rt
     log.debug(f"[{project.slug}] Compiling updates... Found {len(updates)}")
     return updates
 
@@ -302,14 +303,14 @@ def update_db_translations(
     # Approve matching suggestions
     matching_suggestions_q = Q()
     repo_rm_count = 0
-    for (entity_id, locale_id), (string, _) in repo_translations.items():
-        if string is None:
+    for (entity_id, locale_id), rt in repo_translations.items():
+        if rt is None:
             # The translation has been removed from the repo
             translations_to_reject |= Q(entity_id=entity_id, locale_id=locale_id)
             repo_rm_count += 1
         else:
             matching_suggestions_q |= Q(
-                entity_id=entity_id, locale_id=locale_id, string=string
+                entity_id=entity_id, locale_id=locale_id, string=rt.string
             )
     # (entity_id, locale_id) => translation
     suggestions: dict[tuple[int, int], Translation] = (
@@ -325,7 +326,8 @@ def update_db_translations(
     update_fields: set[str] = set()
     approve_count = 0
     for tx in suggestions.values():
-        _, fuzzy = repo_translations[(tx.entity_id, tx.locale_id)]
+        rt = repo_translations[(tx.entity_id, tx.locale_id)]
+        fuzzy = rt.fuzzy if rt is not None else False
         if fuzzy and tx.fuzzy:
             # Keep fuzzy suggestions unchanged
             continue
@@ -371,17 +373,24 @@ def update_db_translations(
     new_translations: list[Translation] = []
     if repo_translations:
         # Add new approved translations for the remainder
-        for (entity_id, locale_id), (string, fuzzy) in repo_translations.items():
-            if string is not None:
+        for (entity_id, locale_id), rt in repo_translations.items():
+            if rt is not None:
+                json_properties = (
+                    {key: message_to_json(msg) for key, msg in rt.properties.items()}
+                    if rt.properties
+                    else None
+                )
                 tx = Translation(
                     entity_id=entity_id,
                     locale_id=locale_id,
-                    string=string,
+                    string=rt.string,
+                    value=message_to_json(rt.value),
+                    properties=json_properties,
                     date=now,
                     active=True,
                     user=user,
                 )
-                if fuzzy:
+                if rt.fuzzy:
                     tx.fuzzy = True
                 else:
                     tx.approved = True
