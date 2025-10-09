@@ -1,0 +1,34 @@
+{% import "widgets/menu.html" as Menu %}
+
+{# Widget to display list of contributors. #}
+{% macro list_translations(translations, title="Translations") %}
+  <table class="striped">
+    <thead>
+      <tr>
+        <th>Locale Code</th>
+        <th>Translation</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for translation in translations %}
+      <tr>
+        <td class="contributor">
+            <p class="name">{{ translation.locale.code }}</p>
+        </td>
+        <td class="stats">
+          <div class="details">
+            <div class="total">
+              <p>{{ translation.string|intcomma }}</p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+{# Widget to display notification if no translations are available. #}
+{% macro no_translations() %}
+  <p class="no-results">No translations found.</p>
+{% endmacro %}
