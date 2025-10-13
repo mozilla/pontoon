@@ -188,7 +188,7 @@ def test_android_literal_newline():
     original = "Source string"
     translation = r"Translation with an escaped \\n newline"
     entity = mock_entity("android", string=original)
-    assert run_custom_checks(entity, original, translation) == {}
+    assert run_custom_checks(entity, translation) == {}
 
 
 def test_android_same_placeholder():
