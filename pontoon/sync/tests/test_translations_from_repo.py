@@ -156,6 +156,132 @@ def test_update_ftl_translations():
 
 
 @pytest.mark.django_db
+def test_android_translation_changes():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-sync-android-spaces",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
+        )
+        res = ResourceFactory.create(
+            project=project, path="strings.xml", format="android"
+        )
+        TranslatedResourceFactory.create(locale=locale, resource=res)
+
+        e1 = EntityFactory.create(resource=res, string="source", key=["k1"])
+        TranslationFactory.create(
+            entity=e1,
+            locale=locale,
+            string="target same",
+            active=True,
+            approved=True,
+        )
+        e2 = EntityFactory.create(resource=res, string="source", key=["k2"])
+        TranslationFactory.create(
+            entity=e2,
+            locale=locale,
+            string="target spaces changed from normalized",
+            active=True,
+            approved=True,
+        )
+
+        e3 = EntityFactory.create(resource=res, string="source", key=["k3"])
+        TranslationFactory.create(
+            entity=e3,
+            locale=locale,
+            string="target \t spaces  \n  changed from not normalized",
+            active=True,
+            approved=True,
+        )
+
+        e4 = EntityFactory.create(resource=res, string="source", key=["k4"])
+        TranslationFactory.create(
+            entity=e4,
+            locale=locale,
+            string="target value previous",
+            active=True,
+            approved=True,
+        )
+
+        project.refresh_from_db()
+
+        # Filesystem setup
+        strings_xml = dedent(
+            """\
+            <?xml version="1.0" encoding="utf-8"?>
+            <resources>
+              <string name="k1">target same</string>
+              <string name="k2">target \t spaces  changed from normalized</string>
+              <string name="k3">target spaces changed from not normalized</string>
+              <string name="k4">target value changed</string>
+            </resources>
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"strings.xml": ""},
+                "fr-Test": {"strings.xml": strings_xml},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("fr-Test", "strings.xml")],
+            removed=[],
+        )
+        checkouts = Checkouts(mock_checkout, mock_checkout)
+        paths = find_paths(project, checkouts)
+
+        # Test sync
+        removed_resources, updated_translations = sync_translations_from_repo(
+            project, locale_map, checkouts, paths, cast(Any, []), now
+        )
+        assert (removed_resources, updated_translations) == (0, 2)
+
+        translations = Translation.objects.filter(entity__resource=res, locale=locale)
+        assert set(
+            (*trans.entity.key, trans.approved, trans.string) for trans in translations
+        ) == {
+            ("k1", True, "target same"),
+            ("k2", True, "target spaces changed from normalized"),
+            ("k3", False, "target \t spaces  \n  changed from not normalized"),
+            ("k3", True, "target spaces changed from not normalized"),
+            ("k4", False, "target value previous"),
+            ("k4", True, "target value changed"),
+        }
+        tr_k4 = next(
+            trans
+            for trans in translations
+            if trans.entity.key == ["k4"] and trans.approved
+        )
+        assert not tr_k4.user
+
+        # Test actions
+        assert {
+            (action.translation.string, action.action_type)
+            for action in ActionLog.objects.filter(translation__in=translations)
+        } == {
+            (
+                "target \t spaces  \n  changed from not normalized",
+                "translation:rejected",
+            ),
+            ("target spaces changed from not normalized", "translation:created"),
+            ("target value previous", "translation:rejected"),
+            ("target value changed", "translation:created"),
+        }
+
+
+@pytest.mark.django_db
 def test_ini_translations():
     with TemporaryDirectory() as root:
         # Database setup
