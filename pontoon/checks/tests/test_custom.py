@@ -188,6 +188,13 @@ def test_android_apostrophes():
     assert run_custom_checks(entity, original, translation) == {}
 
 
+def test_android_literal_newline():
+    original = "Source string"
+    translation = r"Translation with an escaped \\n newline"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original, translation) == {}
+
+
 def test_android_same_placeholder():
     original = "Source string with a {$arg1 :string @source=|%1$s|}"
     translation = "Translation with a {$arg1 :string @source=|%1$s|}"
