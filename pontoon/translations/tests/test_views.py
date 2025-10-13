@@ -9,37 +9,22 @@ from pontoon.checks.models import FailedCheck, Warning
 from pontoon.test.factories import TranslationFactory
 
 
-@pytest.fixture
-def request_create_translation():
-    """
-    Return a function to call the create_translation view with default parameters.
-    """
-
-    def func(client, **args):
-        update_params = {
-            "translation": "approved translation",
-            "ignore_warnings": "true",
-        }
-        update_params.update(args)
-
-        return client.post(
-            reverse("pontoon.translations.create"),
-            update_params,
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-
-    return func
+def request_create_translation(client, **args):
+    update_params = {"ignore_warnings": "true"}
+    update_params.update(args)
+    return client.post(
+        reverse("pontoon.translations.create"),
+        update_params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
 
 
 @pytest.mark.django_db
-def test_create_translation_success(
-    member, entity_a, locale_a, project_locale_a, request_create_translation
-):
+def test_create_translation_success(member, entity_a, locale_a, project_locale_a):
     content = "Bonjour !"
     response = request_create_translation(
         member.client,
         entity=entity_a.pk,
-        original=entity_a.string,
         locale=locale_a.code,
         translation=content,
     )
@@ -52,13 +37,10 @@ def test_create_translation_success(
 
 
 @pytest.mark.django_db
-def test_create_translation_not_logged_in(
-    client, entity_a, locale_a, request_create_translation
-):
+def test_create_translation_not_logged_in(client, entity_a, locale_a):
     response = request_create_translation(
         client,
         entity=entity_a.pk,
-        original=entity_a.string,
         locale=locale_a.code,
         translation="",
     )
@@ -67,11 +49,7 @@ def test_create_translation_not_logged_in(
 
 @pytest.mark.django_db
 def test_create_translation_force_suggestions(
-    project_locale_a,
-    translation_a,
-    locale_a,
-    member,
-    request_create_translation,
+    project_locale_a, translation_a, locale_a, member
 ):
     """
     Save/suggest button should always do what the current label says and
@@ -84,7 +62,6 @@ def test_create_translation_force_suggestions(
     response = request_create_translation(
         member.client,
         entity=translation_a.entity.pk,
-        original=translation_a.entity.string,
         locale=locale_a.code,
         translation="approved 0",
     )
@@ -94,7 +71,6 @@ def test_create_translation_force_suggestions(
     response = request_create_translation(
         member.client,
         entity=translation_a.entity.pk,
-        original=translation_a.entity.string,
         locale=locale_a.code,
         translation="approved translation 0",
         force_suggestions="false",
@@ -105,7 +81,6 @@ def test_create_translation_force_suggestions(
     response = request_create_translation(
         member.client,
         entity=translation_a.entity.pk,
-        original=translation_a.entity.string,
         locale=locale_a.code,
         translation="unapproved translation 0",
         force_suggestions="true",
@@ -144,7 +119,6 @@ def test_run_checks_during_translation_update(
     member,
     locale_a,
     project_locale_a,
-    request_create_translation,
 ):
     """
     The backend shouldn't allow to post translations with critical errors.
@@ -154,7 +128,6 @@ def test_run_checks_during_translation_update(
         locale=locale_a.code,
         entity=properties_entity.pk,
         translation="bad  suggestion",
-        original=properties_entity.string,
         ignore_warnings="false",
     )
 
@@ -171,7 +144,6 @@ def test_run_checks_during_translation_update(
     response = request_create_translation(
         member.client,
         entity=properties_entity.pk,
-        original=properties_entity.string,
         locale=locale_a.code,
         translation="bad suggestion \\q %q",
         ignore_warnings="true",
@@ -190,7 +162,6 @@ def test_run_checks_during_translation_update(
     response = request_create_translation(
         member.client,
         entity=properties_entity.pk,
-        original=properties_entity.string,
         locale=locale_a.code,
         translation="bad suggestion",
         ignore_warnings="true",
@@ -220,7 +191,6 @@ def test_notify_managers_on_first_contribution(
     user_a,
     user_b,
     project_locale_a,
-    request_create_translation,
 ):
     """
     Test that managers are notified when a user makes their first contribution
@@ -243,7 +213,6 @@ def test_notify_managers_on_first_contribution(
     response = request_create_translation(
         member.client,
         entity=translation.entity.pk,
-        original=translation.entity.string,
         locale=translation.locale.code,
         translation="First translation",
     )
@@ -271,7 +240,6 @@ def test_notify_managers_on_first_contribution(
     response = request_create_translation(
         member.client,
         entity=second_translation.entity.pk,
-        original=second_translation.entity.string,
         locale=second_translation.locale.code,
         translation="Second translation",
     )
@@ -363,7 +331,6 @@ def test_approve_translation_basic(translation_a, client_superuser):
     url = reverse("pontoon.translations.approve")
     params = {
         "translation": translation_a.pk,
-        "paths": [],
         "ignore_warnings": "true",
     }
 
@@ -394,7 +361,6 @@ def test_approve_translation_rejects_previous_approved(
     url = reverse("pontoon.translations.approve")
     params = {
         "translation": translation_a.pk,
-        "paths": [],
         "ignore_warnings": "true",
     }
 
@@ -420,10 +386,7 @@ def test_approve_translation_rejects_previous_approved(
 def test_unapprove_translation(approved_translation, member):
     """Check if unapprove view works properly."""
     url = reverse("pontoon.translations.unapprove")
-    params = {
-        "translation": approved_translation.pk,
-        "paths": [],
-    }
+    params = {"translation": approved_translation.pk}
 
     response = member.client.post(url, params)
     assert response.status_code == 400
@@ -473,10 +436,7 @@ def test_unapprove_translation(approved_translation, member):
 def test_unreject_translation(member, rejected_translation):
     """Check if unreject view works properly."""
     url = reverse("pontoon.translations.unreject")
-    params = {
-        "translation": rejected_translation.pk,
-        "paths": [],
-    }
+    params = {"translation": rejected_translation.pk}
 
     response = member.client.post(url, params)
     assert response.status_code == 400

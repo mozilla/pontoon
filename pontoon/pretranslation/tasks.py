@@ -122,7 +122,6 @@ def pretranslate(project: Project, paths: set[str] | None):
             failed_checks = run_checks(
                 entity,
                 locale.code,
-                entity.string,
                 pretranslation[0],
                 use_tt_checks=False,
             )

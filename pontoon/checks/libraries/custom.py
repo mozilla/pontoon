@@ -49,9 +49,7 @@ class IsEmptyVisitor(Visitor):
             self.is_pattern_empty = False
 
 
-def run_custom_checks(
-    entity: Entity, original: str, string: str
-) -> dict[str, list[str]]:
+def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
     """
     Group all checks related to the base UI that get stored in the DB
     """
@@ -74,7 +72,7 @@ def run_custom_checks(
                 patterns = ()
                 errors.append(f"Parse error: {e}")
             try:
-                orig_msg = mf2_parse_message(original)
+                orig_msg = mf2_parse_message(entity.string)
                 orig_ph_iter = (
                     el
                     for pattern in get_patterns(orig_msg)
@@ -128,7 +126,7 @@ def run_custom_checks(
 
             if isinstance(msg, SelectMessage):
                 try:
-                    orig_msg = mf2_parse_message(original)
+                    orig_msg = mf2_parse_message(entity.string)
                 except ValueError:
                     orig_msg = None
                 if not isinstance(orig_msg, SelectMessage):
@@ -136,7 +134,7 @@ def run_custom_checks(
 
             # Bug 1599056: Original and translation must either both end in a newline,
             # or none of them should.
-            if original.endswith("\n") != string.endswith("\n"):
+            if entity.string.endswith("\n") != string.endswith("\n"):
                 errors.append("Ending newline mismatch")
 
         case Resource.Format.FLUENT:

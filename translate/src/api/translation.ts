@@ -82,7 +82,6 @@ export function createTranslation(
   entityId: number,
   translation: string,
   localeCode: string,
-  original: string,
   forceSuggestions: boolean,
   resource: string,
   ignoreWarnings: boolean,
@@ -92,14 +91,10 @@ export function createTranslation(
     entity: String(entityId),
     translation,
     locale: localeCode,
-    original,
     force_suggestions: String(forceSuggestions),
     machinery_sources: String(machinerySources),
+    stats: resource == 'all-resources' ? 'all' : 'resource',
   });
-
-  if (resource !== 'all-resources') {
-    payload.append('paths[]', resource);
-  }
 
   if (ignoreWarnings) {
     payload.append('ignore_warnings', ignoreWarnings.toString());
@@ -133,10 +128,10 @@ export function setTranslationStatus(
 ): Promise<SetTranslationResponse> {
   const url = `/translations/${change}/`;
 
-  const payload = new URLSearchParams({ translation: String(id) });
-  if (resource !== 'all-resources') {
-    payload.append('paths[]', resource);
-  }
+  const payload = new URLSearchParams({
+    translation: String(id),
+    stats: resource == 'all-resources' ? 'all' : 'resource',
+  });
   if (change === 'approve' && ignoreWarnings) {
     payload.append('ignore_warnings', 'true');
   }

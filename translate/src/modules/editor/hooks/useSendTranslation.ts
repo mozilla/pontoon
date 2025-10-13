@@ -64,7 +64,6 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       entity.pk,
       translation,
       locale.code,
-      entity.original,
       forceSuggestions,
       location.resource,
       ignoreWarnings,

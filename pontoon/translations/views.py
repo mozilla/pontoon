@@ -23,6 +23,14 @@ from pontoon.messaging.notifications import send_badge_notification
 from pontoon.translations import forms
 
 
+def _add_stats(response_data, resource, locale, stats):
+    if stats:
+        paths = [resource.path] if stats == "resource" else []
+        response_data["stats"] = TranslatedResource.objects.query_stats(
+            resource.project, paths, locale
+        )
+
+
 def _add_badge_data(response_data, user, badge_name, badge_level):
     response_data["badge_update"] = {
         "name": badge_name,
@@ -58,14 +66,14 @@ def create_translation(request):
     entity = form.cleaned_data["entity"]
     string = form.cleaned_data["translation"]
     locale = form.cleaned_data["locale"]
-    original = form.cleaned_data["original"]
     ignore_warnings = form.cleaned_data["ignore_warnings"]
     approve = form.cleaned_data["approve"]
     force_suggestions = form.cleaned_data["force_suggestions"]
-    paths = form.cleaned_data["paths"]
     machinery_sources = form.cleaned_data["machinery_sources"]
+    stats = form.cleaned_data["stats"]
 
-    project = entity.resource.project
+    resource = entity.resource
+    project = resource.project
 
     # Read-only translations cannot saved
     if utils.readonly_exists(project, locale):
@@ -95,7 +103,6 @@ def create_translation(request):
         failed_checks = run_checks(
             entity,
             locale.code,
-            original,
             string,
             user.profile.quality_checks,
         )
@@ -156,11 +163,8 @@ def create_translation(request):
                 category="new_contributor",
             )
 
-    response_data = {
-        "status": True,
-        "translation": translation.serialize(),
-        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
-    }
+    response_data = {"status": True, "translation": translation.serialize()}
+    _add_stats(response_data, resource, locale, stats)
 
     # Send Translation Champion Badge notification information
     translation_count = user.badges_translation_count
@@ -234,7 +238,7 @@ def approve_translation(request):
     try:
         t = request.POST["translation"]
         ignore_warnings = request.POST.get("ignore_warnings", "false") == "true"
-        paths = request.POST.getlist("paths[]")
+        stats = request.POST.get("stats", "")
     except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
@@ -243,7 +247,8 @@ def approve_translation(request):
 
     translation = get_object_or_404(Translation, pk=t)
     entity = translation.entity
-    project = entity.resource.project
+    resource = entity.resource
+    project = resource.project
     locale = translation.locale
     user = request.user
 
@@ -284,7 +289,6 @@ def approve_translation(request):
         failed_checks = run_checks(
             entity,
             locale.code,
-            entity.string,
             translation.string,
             user.profile.quality_checks,
         )
@@ -298,12 +302,10 @@ def approve_translation(request):
 
     log_action(ActionLog.ActionType.TRANSLATION_APPROVED, user, translation=translation)
 
-    active_translation = translation.entity.reset_active_translation(locale=locale)
+    active_translation = entity.reset_active_translation(locale=locale)
 
-    response_data = {
-        "translation": active_translation.serialize(),
-        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
-    }
+    response_data = {"translation": active_translation.serialize()}
+    _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
     review_count = user.badges_review_count
@@ -322,7 +324,7 @@ def unapprove_translation(request):
     """Unapprove given translation."""
     try:
         t = request.POST["translation"]
-        paths = request.POST.getlist("paths[]")
+        stats = request.POST.get("stats", "")
     except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
@@ -330,7 +332,9 @@ def unapprove_translation(request):
         )
 
     translation = get_object_or_404(Translation, pk=t)
-    project = translation.entity.resource.project
+    entity = translation.entity
+    resource = entity.resource
+    project = resource.project
     locale = translation.locale
 
     # Read-only translations cannot be un-approved
@@ -363,14 +367,11 @@ def unapprove_translation(request):
         translation=translation,
     )
 
-    active_translation = translation.entity.reset_active_translation(locale=locale)
+    active_translation = entity.reset_active_translation(locale=locale)
 
-    return JsonResponse(
-        {
-            "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.query_stats(project, paths, locale),
-        }
-    )
+    response_data = {"translation": active_translation.serialize()}
+    _add_stats(response_data, resource, locale, stats)
+    return JsonResponse(response_data)
 
 
 @utils.require_AJAX
@@ -380,7 +381,7 @@ def reject_translation(request):
     """Reject given translation."""
     try:
         t = request.POST["translation"]
-        paths = request.POST.getlist("paths[]")
+        stats = request.POST.get("stats", "")
     except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
@@ -388,7 +389,9 @@ def reject_translation(request):
         )
 
     translation = get_object_or_404(Translation, pk=t)
-    project = translation.entity.resource.project
+    entity = translation.entity
+    resource = entity.resource
+    project = resource.project
     locale = translation.locale
 
     # Read-only translations cannot be rejected
@@ -427,12 +430,10 @@ def reject_translation(request):
         ActionLog.ActionType.TRANSLATION_REJECTED, request.user, translation=translation
     )
 
-    active_translation = translation.entity.reset_active_translation(locale=locale)
+    active_translation = entity.reset_active_translation(locale=locale)
 
-    response_data = {
-        "translation": active_translation.serialize(),
-        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
-    }
+    response_data = {"translation": active_translation.serialize()}
+    _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
     review_count = request.user.badges_review_count
@@ -451,7 +452,7 @@ def unreject_translation(request):
     """Unreject given translation."""
     try:
         t = request.POST["translation"]
-        paths = request.POST.getlist("paths[]")
+        stats = request.POST.get("stats", "")
     except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
@@ -459,7 +460,9 @@ def unreject_translation(request):
         )
 
     translation = get_object_or_404(Translation, pk=t)
-    project = translation.entity.resource.project
+    entity = translation.entity
+    resource = entity.resource
+    project = resource.project
     locale = translation.locale
 
     # Read-only translations cannot be un-rejected
@@ -494,9 +497,6 @@ def unreject_translation(request):
 
     active_translation = translation.entity.reset_active_translation(locale=locale)
 
-    return JsonResponse(
-        {
-            "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.query_stats(project, paths, locale),
-        }
-    )
+    response = {"translation": active_translation.serialize()}
+    _add_stats(response, resource, locale, stats)
+    return JsonResponse(response)
