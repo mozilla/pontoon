@@ -23,7 +23,8 @@ const DateDisplay: React.FC<DateDisplayProps> = ({ date, date_iso }) => {
     year: 'numeric',
   });
   const isOld: boolean =
-    new Date(date).getTime() < new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+    new Date(date_iso).getTime() <
+    new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
   return (
     <>
       {isOld ? (
@@ -35,7 +36,7 @@ const DateDisplay: React.FC<DateDisplayProps> = ({ date, date_iso }) => {
       ) : (
         <ReactTimeAgo
           className='timeago'
-          date={new Date(date)}
+          date={new Date(date_iso)}
           title={`${date} UTC`}
         />
       )}
