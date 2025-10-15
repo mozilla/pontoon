@@ -456,7 +456,7 @@ def get_average_suggestion_ages() -> dict[int, timedelta]:
         .values("locale")
         .annotate(avg_age=Avg(Extract(Now(), "epoch") - Extract(F("date"), "epoch")))
     )
-    return {s["locale"]: timedelta(s["avg_age"]) for s in suggestions}
+    return {s["locale"]: timedelta(seconds=s["avg_age"]) for s in suggestions}
 
 
 def get_locale_insights_snapshot(

@@ -139,7 +139,9 @@ def test_projectlocale_insights(locale_a, project_locale_a, resource_a):
 
 
 @pytest.mark.django_db
-def test_locale_insights(locale_a, project_a, project_b, resource_a, resource_b):
+def test_locale_insights(
+    locale_a, project_a, project_b, resource_a, resource_b, entity_a
+):
     now, t = now_times()
     pla = ProjectLocaleFactory(project=project_a, locale=locale_a)
     plb = ProjectLocaleFactory(project=project_b, locale=locale_a)
@@ -195,3 +197,8 @@ def test_locale_insights(locale_a, project_a, project_b, resource_a, resource_b)
     assert li.new_source_strings == 5
     assert li.time_to_review_suggestions == (t[2] - t[1] + t[3] - t[1]) / 2
     assert li.unreviewed_suggestions_lifespan == timedelta()
+
+    TranslationFactory.create(entity=entity_a, locale=locale_a, date=t[0])
+    (li,) = locale_insights(now, activities, new_entities, pl_stats)
+    assert li.unreviewed_suggestions_lifespan >= timedelta(days=1)
+    assert li.unreviewed_suggestions_lifespan <= timedelta(days=2)
