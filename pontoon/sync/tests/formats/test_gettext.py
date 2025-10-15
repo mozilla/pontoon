@@ -5,7 +5,7 @@ from unittest import TestCase
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_entity, as_vcs_translations
+from pontoon.sync.formats import as_entity, as_repo_translations
 
 
 class GettextTests(TestCase):
@@ -69,7 +69,7 @@ class GettextTests(TestCase):
             as_entity(Format.gettext, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
-        t0, t1, t2, t3, t4, t6, t7 = as_vcs_translations(res)
+        t0, t1, t2, t3, t4, t6, t7 = as_repo_translations(res)
 
         # basic
         assert e0.comment == "Sample comment"
@@ -237,7 +237,7 @@ class GettextTests(TestCase):
             as_entity(Format.gettext, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
-        assert list(as_vcs_translations(res)) == []
+        assert list(as_repo_translations(res)) == []
 
         assert e0.key == ["Source", "Main context"]
         assert e0.string == "Source"

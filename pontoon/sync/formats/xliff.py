@@ -13,13 +13,17 @@ from moz.l10n.model import Entry, Id as L10nId, Message
 
 from pontoon.base.models import Entity
 
-from .common import VCSTranslation
+from .common import RepoTranslation
 
 
 def xliff_as_translation(section_id: L10nId, entry: Entry):
     # Here, entry.value is from the <target>
     string = unescape(serialize_message(Format.xliff, entry.value))
-    return VCSTranslation(key=section_id + entry.id, string=string) if string else None
+    return (
+        RepoTranslation(key=section_id + entry.id, string=string, value=entry.value)
+        if string
+        else None
+    )
 
 
 def xliff_as_entity(
