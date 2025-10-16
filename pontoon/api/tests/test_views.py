@@ -404,6 +404,33 @@ def test_project(django_assert_num_queries):
 
 
 @pytest.mark.django_db
+def test_system_project(django_assert_num_queries):
+    project = Project.objects.get(slug="tutorial")
+
+    with django_assert_num_queries(5):
+        response = APIClient().get(
+            f"/api/v2/projects/{project.slug}/", HTTP_ACCEPT="application/json"
+        )
+
+    assert response.status_code == 200
+
+    assert response.data["slug"] == "tutorial"
+    assert response.data["name"] == "Tutorial"
+
+
+@pytest.mark.django_db
+def test_disabled_project(django_assert_num_queries):
+    project = ProjectFactory.create(slug="disabled-1", disabled=True)
+
+    with django_assert_num_queries(1):
+        response = APIClient().get(
+            f"/api/v2/projects/{project.slug}/", HTTP_ACCEPT="application/json"
+        )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
 def test_projects(django_assert_num_queries):
     locale_a = LocaleFactory(
         code="kg",

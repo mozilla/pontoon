@@ -282,7 +282,7 @@ class ProjectIndividualView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         queryset = (
-            Project.objects.visible()
+            Project.objects.available()
             .visible_for(self.request.user)
             .prefetch_related(
                 Prefetch(
