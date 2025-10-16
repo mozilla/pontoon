@@ -303,13 +303,11 @@
         <section>
             <h3>Default locales</h3>
             <div id="locale-settings" class="clearfix">
-                <div id="homepage">
-                    <span class="label">Homepage</span>
-                    {{ team_selector.locale(locales, locale) }}
+                <div id="locale-selector">
+                    {{ team_selector.locale(locales, preferred_locale) }}
                 </div>
-                <div id="preferred-locale">
-                    <span class="label">Preferred source locale</span>
-                    {{ team_selector.locale(preferred_locales, preferred_locale) }}
+                <div id="project-selector">
+                    {{ team_selector.locale(projects, preferred_project) }}
                 </div>
             </div>
         </section>

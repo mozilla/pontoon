@@ -31,3 +31,34 @@
   </div>
 </div>
 {% endmacro %}
+
+<!-- Project selector -->
+{% macro project(projects_list, project_selected) %}
+<div class="locale-selector">
+  <div class="locale select">
+    <div class="button selector noselect">
+      <span class="selected-project" data-slug="{{ project_selected.serialize().slug }}">{{ project_selected.name }}</span>
+    </div>
+
+    <div class="menu">
+      <div class="search-wrapper clearfix">
+        <div class="icon fas fa-search"></div>
+        <input type="search" autocomplete="off" autofocus>
+      </div>
+
+      <ul>
+        {% for p in projects_list %}
+          <li class="clearfix">
+            <span class="selected-project"
+            data-slug="{{ p.serialize().slug }}"
+            >
+              {{ p.name }}
+            </span>
+          </li>
+        {% endfor %}
+        <li class="no-match">No results</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endmacro %}

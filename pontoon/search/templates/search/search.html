@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% import "search/widgets/entity_list.html" as Entities %}
+{% import 'heading.html' as Heading %}
+{% import 'teams/widgets/team_selector.html' as team_selector %}
+{% import "widgets/checkbox.html" as Checkbox %}
+
+{% block title %}Search{% endblock %}
+
+{% block class %}search{% endblock %}
+
+{% block heading %}
+  {{ Heading.heading(title='Translation Search', subtitle='Search engine for entity translations') }}
+{% endblock %}
+
+{% block bottom %}
+<section id="main">
+  <div class="container">
+    <menu class="controls">
+      <div id="search" class="search-wrapper big clearfix">
+        <div class="icon fas fa-search"></div>
+        <!-- <div class="icon fas fa-cog fa-spin"></div> -->
+        <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Search Translations">
+      </div>
+      <button class="button search-button">Search</button>
+
+    <div class="check-list">
+
+        {{ Checkbox.checkbox('Include Search Identifiers', class='field search-identifiers-enabled', attribute='search-identifiers-enabled',
+            is_enabled=False) }}
+        {{ Checkbox.checkbox('Match Case', class='field match-case-enabled', attribute='match-case-enabled',
+            is_enabled=False) }}
+        {{ Checkbox.checkbox('Match Whole Word', class='field match-whole-word-enabled', attribute='match-whole-word-enabled',
+            is_enabled=False) }}
+    </div>
+    <div class="selector-list">
+      <div id="locale-selector">
+        {{ team_selector.locale(locales, preferred_locale) }}
+      </div>
+      <div id="project-selector">
+        {{ team_selector.project(projects, preferred_project) }}
+      </div>
+    </div>
+    </menu>
+
+    <section>
+        {% if entities %}
+          {{ Entities.list_entities(entities) }}
+        {% else %}
+        {% endif %}
+      </div>
+    </section>
+
+    <div id="helpers">
+      <section class="machinery">
+        <ul></ul>
+      </section>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'search' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'search' %}
+{% endblock %}
