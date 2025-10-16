@@ -1,0 +1,49 @@
+
+{% macro list_entities(entities) %}
+<ul class="notification-list">
+  {% for entity in entities %}
+    <li class="notification-item"">
+      <div class="item-content">
+
+        <span class="description">{{ entity.entity.string }}</span>
+        <span class="description">{{ entity.entity.key }}</span>
+
+
+          <span class="actor">
+            {{ entity.project.slug }}
+          </span>
+          <span class="actor">
+            {{ entity.project.name }}
+          </span>
+
+          <span class="verb">
+            <a>{{ entity.resource.path }}</a>
+          </span>
+
+          <span class="target">
+            {{ entity.translation.locale.code }}
+          </span>
+          <span class="target">
+            {{ entity.translation.locale.name }}
+          </span>
+                    
+          <div class="message trim">{{ entity.translation.string }}</div>
+      </div>
+    </li>
+
+    <b>------------------------------------------------------------------------------------<b>
+
+    {% if not loop.last %}
+      <li class="horizontal-separator"></li>
+    {% endif %}
+  {% endfor %}
+
+  {% if entities|length == 0 %}
+    <li class="no">
+      <i class="icon fas fa-bell fa-fw"></i>
+      <p class="title">{{ no_title }}</p>
+      <p class="description">{{ no_description }}</p>
+    </li>
+  {% endif %}
+</ul>
+{% endmacro %}
