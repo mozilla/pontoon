@@ -589,6 +589,7 @@ PIPELINE_CSS = {
     "search": {
         "source_filenames": (
             "css/heading_info.css",
+            "css/team_selector.css",
             "css/search.css",
         ),
         "output_filename": "css/search.min.css",
@@ -757,6 +758,13 @@ PIPELINE_JS = {
             "js/messaging.js",
         ),
         "output_filename": "js/messaging.min.js",
+    },
+    "search": {
+        "source_filenames": (
+            "js/search.js",
+            "js/team_selector.js",
+        ),
+        "output_filename": "js/search.min.js",
     },
 }
 

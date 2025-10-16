@@ -1,67 +1,127 @@
-from rest_framework.request import Request
+from urllib.parse import urlencode
 
+import requests
+
+from requests.exceptions import RequestException
+
+from django.db.models import Prefetch
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from pontoon.api.views import EntityIndividualView
+from pontoon.base import utils
 from pontoon.base.models.entity import Entity
-
-
-BASE_URL = "http://localhost:8000/api/v2"
+from pontoon.base.models.locale import Locale
+from pontoon.base.models.project import Project
+from pontoon.base.models.project_locale import ProjectLocale
+from pontoon.settings.base import SITE_URL
 
 
 def translation_search(request):
     """Get corresponding entity given entity."""
-    expected_params = {
-        "search": None,
-        "p": None,
-        "l": None,
-        "identifiers": None,
-        "match_case": None,
-        "match_word": None,
-    }
 
-    # Extract query parameters dynamically
     query_params = {
-        key: request.GET.get(key, default) for key, default in expected_params.items()
+        "text": request.GET.get("search"),
+        "project": request.GET.get("project"),
+        "locale": request.GET.get("locale"),
+        "search_identifiers": request.GET.get("search_identifiers"),
+        "search_match_case": request.GET.get("search_match_case"),
+        "search_match_whole_word": request.GET.get("search_match_whole_word"),
     }
 
-    # Example: Use the extracted parameters
-    if query_params["search"]:
-        # Do something with query_params["search"]
-        pass
+    # find locales, locale, projects, project
+    preferred_project = Project(name="All Projects", slug="all-projects")
+    projects = list(
+        Project.objects.visible()
+        .visible_for(request.user)
+        .prefetch_related(
+            Prefetch(
+                "project_locale",
+                queryset=ProjectLocale.objects.visible().select_related("locale"),
+                to_attr="fetched_project_locales",
+            ),
+            "contact",
+            "tags",
+        )
+    )
+    projects.insert(0, preferred_project)
 
-    # Build the API URL or perform further logic
-    return render(request, "search/results.html", {"query_params": query_params})
+    locale = utils.get_project_locale_from_request(request, Locale.objects) or "en-GB"
+    locales = list(
+        Locale.objects.prefetch_related(
+            Prefetch(
+                "project_locale",
+                queryset=ProjectLocale.objects.visible().select_related("project"),
+                to_attr="fetched_project_locales",
+            )
+        ).distinct()
+    )
+
+    if not query_params["text"]:
+        return render(
+            request,
+            "search/search.html",
+            {
+                "locales": locales,
+                "preferred_locale": Locale.objects.get(code=locale),
+                "projects": projects,
+                "preferred_project": preferred_project,
+            },
+        )
+
+    query_params = {
+        key: value for key, value in query_params.items() if value is not None
+    }
+
+    api_url = f"{SITE_URL}/api/v2/search/translations/?{urlencode(query_params)}"
+
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()
+    except RequestException:
+        raise Http404
+
+    if response.status_code == 200:
+        entities = response.json()["results"]
+        return render(
+            request,
+            "search/search.html",
+            {
+                "entities": entities,
+                "locales": locales,
+                "preferred_locale": Locale.objects.get(code=locale),
+                "projects": projects,
+                "preferred_project": preferred_project,
+            },
+        )
+
+    else:
+        raise Http404
 
 
 def entity(request, pk):
-    """Get corresponding entity given entity."""
-
-    # Modify the request object to include translations
-    drf_request = Request(request)
-    query_params = drf_request.query_params.copy()
-    query_params["include_translations"] = ""
-    drf_request._request.GET = query_params
-
-    entity_view = EntityIndividualView.as_view()
-    response = entity_view(request, pk=pk)
+    """Get corresponding entity given entity id."""
+    api_url = f"{SITE_URL}/api/v2/entities/{pk}/?include_translations"
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()
+    except RequestException:
+        raise Http404
 
     if response.status_code == 200:
-        entity_data = response.data
+        entity = response.json()
         return render(
             request,
             "search/entity.html",
             {
-                "entity": entity_data.get("entity", []),
-                "project": entity_data.get("project", []),
-                "resource": entity_data.get("resource", []),
-                "translations": entity_data.get("translations", []),
+                "entity": entity.get("entity", []),
+                "project": entity.get("project", []),
+                "resource": entity.get("resource", []),
+                "translations": entity.get("translations", []),
             },
         )
     else:
-        raise Http404("Entity not found")
+        raise Http404
 
 
 def entity_alternate(request, project, resource, entity):
