@@ -20,7 +20,6 @@ $(function () {
       searchOptions['project'] = selectedProject;
     }
 
-    // create url params here
     const currentUrl = new URL(window.location.href);
     currentUrl.search = '';
     const params = currentUrl.searchParams;
