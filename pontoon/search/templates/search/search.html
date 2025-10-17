@@ -19,18 +19,18 @@
       <div id="search" class="search-wrapper big clearfix">
         <div class="icon fas fa-search"></div>
         <!-- <div class="icon fas fa-cog fa-spin"></div> -->
-        <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Search Translations">
+        <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Search Translations" value="{{ search }}">
       </div>
       <button class="button search-button">Search</button>
 
     <div class="check-list">
 
         {{ Checkbox.checkbox('Include Search Identifiers', class='field search-identifiers-enabled', attribute='search-identifiers-enabled',
-            is_enabled=False) }}
+            is_enabled=search_identifiers_enabled) }}
         {{ Checkbox.checkbox('Match Case', class='field match-case-enabled', attribute='match-case-enabled',
-            is_enabled=False) }}
+            is_enabled=match_case_enabled) }}
         {{ Checkbox.checkbox('Match Whole Word', class='field match-whole-word-enabled', attribute='match-whole-word-enabled',
-            is_enabled=False) }}
+            is_enabled=match_whole_word_enabled) }}
     </div>
     <div class="selector-list">
       <div id="locale-selector">

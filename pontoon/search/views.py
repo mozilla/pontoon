@@ -20,17 +20,17 @@ from pontoon.settings.base import SITE_URL
 def translation_search(request):
     """Get corresponding entity given entity."""
 
-    query_params = {
-        "text": request.GET.get("search"),
-        "project": request.GET.get("project"),
-        "locale": request.GET.get("locale"),
-        "search_identifiers": request.GET.get("search_identifiers"),
-        "search_match_case": request.GET.get("search_match_case"),
-        "search_match_whole_word": request.GET.get("search_match_whole_word"),
-    }
+    search = request.GET.get("search")
+    locale = request.GET.get("locale")
+    project = request.GET.get("project")
+    search_identifiers = request.GET.get("search_identifiers")
+    search_match_case = request.GET.get("search_match_case")
+    search_match_whole_word = request.GET.get("search_match_whole_word")
 
-    # find locales, locale, projects, project
-    preferred_project = Project(name="All Projects", slug="all-projects")
+    search_match_case = search_match_case == "true" or False
+    search_identifiers = search_identifiers == "true" or False
+    search_match_whole_word = search_match_whole_word == "true" or False
+
     projects = list(
         Project.objects.visible()
         .visible_for(request.user)
@@ -44,9 +44,16 @@ def translation_search(request):
             "tags",
         )
     )
-    projects.insert(0, preferred_project)
 
-    locale = utils.get_project_locale_from_request(request, Locale.objects) or "en-GB"
+    default_project = Project(name="All Projects", slug="all-projects")
+    projects.insert(0, default_project)
+
+    if not project or not Project.objects.filter(slug=project).exists():
+        preferred_project = default_project
+        project = None
+    else:
+        preferred_project = Project.objects.get(slug=project)
+
     locales = list(
         Locale.objects.prefetch_related(
             Prefetch(
@@ -57,20 +64,42 @@ def translation_search(request):
         ).distinct()
     )
 
-    if not query_params["text"]:
+    if not locale or not Locale.objects.filter(code=locale).exists():
+        locale = (
+            utils.get_project_locale_from_request(request, Locale.objects) or "en-GB"
+        )
+
+    preferred_locale = Locale.objects.get(code=locale)
+
+    if not search:
         return render(
             request,
             "search/search.html",
             {
+                "search": "",
                 "locales": locales,
-                "preferred_locale": Locale.objects.get(code=locale),
                 "projects": projects,
+                "preferred_locale": preferred_locale,
                 "preferred_project": preferred_project,
+                "search_identifiers_enabled": search_identifiers,
+                "match_case_enabled": search_match_case,
+                "match_whole_word_enabled": search_match_whole_word,
             },
         )
 
     query_params = {
-        key: value for key, value in query_params.items() if value is not None
+        "text": search,
+        "project": project,
+        "locale": locale,
+        "search_identifiers": search_identifiers,
+        "search_match_case": search_match_case,
+        "search_match_whole_word": search_match_whole_word,
+    }
+
+    query_params = {
+        key: value
+        for key, value in query_params.items()
+        if value is not None and not False
     }
 
     api_url = f"{SITE_URL}/api/v2/search/translations/?{urlencode(query_params)}"
@@ -88,10 +117,14 @@ def translation_search(request):
             "search/search.html",
             {
                 "entities": entities,
+                "search": search,
                 "locales": locales,
-                "preferred_locale": Locale.objects.get(code=locale),
                 "projects": projects,
+                "preferred_locale": preferred_locale,
                 "preferred_project": preferred_project,
+                "search_identifiers_enabled": search_identifiers,
+                "match_case_enabled": search_match_case,
+                "match_whole_word_enabled": search_match_whole_word,
             },
         )
 
