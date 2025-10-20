@@ -1,0 +1,8 @@
+.errors {
+  p {
+    color: var(--status-error);
+    font-size: 13px;
+    padding-top: 5px;
+    text-transform: uppercase;
+  }
+}

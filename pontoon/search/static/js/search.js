@@ -2,7 +2,19 @@ $(function () {
   $('.search-button').click(function () {
     const searchOptions = {};
 
+    const errors = {
+      emptySearch: 'Search term cannot be empty.',
+      shortSearch: 'Search term should be at least 2 characters long.',
+    };
+
     searchOptions['search'] = $('.search-input').val();
+    if (!searchOptions['search']) {
+      $('.errors').html($('<p>').text(errors.emptySearch));
+      return;
+    } else if (searchOptions['search'].length < 2) {
+      $('.errors').html($('<p>').text(errors.shortSearch));
+      return;
+    }
 
     $('.check-box').each(function () {
       const self = $(this);

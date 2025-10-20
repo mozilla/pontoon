@@ -71,11 +71,19 @@ def translation_search(request):
 
     preferred_locale = Locale.objects.get(code=locale)
 
+    # validation
+    errors = []
     if not search:
+        errors.append("Search term cannot be empty.")
+    elif len(search) < 2:
+        errors.append("Search term must be at least 2 characters long.")
+
+    if errors:
         return render(
             request,
             "search/search.html",
             {
+                "entities": [],
                 "search": "",
                 "locales": locales,
                 "projects": projects,
@@ -84,6 +92,7 @@ def translation_search(request):
                 "search_identifiers_enabled": search_identifiers,
                 "match_case_enabled": search_match_case,
                 "match_whole_word_enabled": search_match_whole_word,
+                "errors": errors,
             },
         )
 
