@@ -22,6 +22,11 @@
         <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Search Translations" value="{{ search }}">
       </div>
       <button class="button search-button">Search</button>
+      <div class="errors">
+        {% for error in errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
 
     <div class="check-list">
 
@@ -43,9 +48,10 @@
     </menu>
 
     <section>
-        {% if entities %}
+        {% if entities and search %}
           {{ Entities.list_entities(entities) }}
-        {% else %}
+        {% elif not entities and search %}
+          <div>No Results Found.</div>
         {% endif %}
       </div>
     </section>
