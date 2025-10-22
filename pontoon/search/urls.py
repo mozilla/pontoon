@@ -1,6 +1,11 @@
 from django.urls import path
 
-from pontoon.search.views import entity, entity_alternate, translation_search
+from pontoon.search.views import (
+    entity,
+    entity_alternate,
+    more_translations,
+    translation_search,
+)
 
 
 urlpatterns = [
@@ -15,4 +20,5 @@ urlpatterns = [
         entity_alternate,
         name="pontoon.entity.alternate",
     ),
+    path("ajax/more-translations/", more_translations, name="pontoon.entity.more"),
 ]

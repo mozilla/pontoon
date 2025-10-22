@@ -5,16 +5,50 @@ import requests
 from requests.exceptions import RequestException
 
 from django.db.models import Prefetch
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from pontoon.base import utils
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
+from pontoon.base.utils import get_project_locale_from_request, require_AJAX
 from pontoon.settings.base import SITE_URL
+
+
+def create_api_url(
+    search,
+    project,
+    locale,
+    search_identifiers,
+    search_match_case,
+    search_match_whole_word,
+    page=None,
+):
+    search_match_case = str(search_match_case == "true").lower()
+    search_identifiers = str(search_identifiers == "true").lower()
+    search_match_whole_word = str(search_match_whole_word == "true").lower()
+
+    query_params = {
+        "text": search,
+        "project": project,
+        "locale": locale,
+        "search_identifiers": search_identifiers,
+        "search_match_case": search_match_case,
+        "search_match_whole_word": search_match_whole_word,
+    }
+
+    query_params = {
+        key: value
+        for key, value in query_params.items()
+        if value is not None and value != "" and value != "false"
+    }
+
+    if page:
+        query_params["page"] = page
+
+    return f"{SITE_URL}/api/v2/search/translations/?{urlencode(query_params)}"
 
 
 def translation_search(request):
@@ -26,10 +60,6 @@ def translation_search(request):
     search_identifiers = request.GET.get("search_identifiers")
     search_match_case = request.GET.get("search_match_case")
     search_match_whole_word = request.GET.get("search_match_whole_word")
-
-    search_match_case = search_match_case == "true" or False
-    search_identifiers = search_identifiers == "true" or False
-    search_match_whole_word = search_match_whole_word == "true" or False
 
     projects = list(
         Project.objects.visible()
@@ -65,9 +95,7 @@ def translation_search(request):
     )
 
     if not locale or not Locale.objects.filter(code=locale).exists():
-        locale = (
-            utils.get_project_locale_from_request(request, Locale.objects) or "en-GB"
-        )
+        locale = get_project_locale_from_request(request, Locale.objects) or "en-GB"
 
     preferred_locale = Locale.objects.get(code=locale)
 
@@ -89,29 +117,21 @@ def translation_search(request):
                 "projects": projects,
                 "preferred_locale": preferred_locale,
                 "preferred_project": preferred_project,
-                "search_identifiers_enabled": search_identifiers,
-                "match_case_enabled": search_match_case,
-                "match_whole_word_enabled": search_match_whole_word,
+                "search_identifiers_enabled": search_identifiers == "true",
+                "match_case_enabled": search_match_case == "true",
+                "match_whole_word_enabled": search_match_whole_word == "true",
                 "errors": errors,
             },
         )
 
-    query_params = {
-        "text": search,
-        "project": project,
-        "locale": locale,
-        "search_identifiers": search_identifiers,
-        "search_match_case": search_match_case,
-        "search_match_whole_word": search_match_whole_word,
-    }
-
-    query_params = {
-        key: value
-        for key, value in query_params.items()
-        if value is not None and not False
-    }
-
-    api_url = f"{SITE_URL}/api/v2/search/translations/?{urlencode(query_params)}"
+    api_url = create_api_url(
+        search,
+        project,
+        locale,
+        search_identifiers,
+        search_match_case,
+        search_match_whole_word,
+    )
 
     try:
         response = requests.get(api_url)
@@ -121,6 +141,7 @@ def translation_search(request):
 
     if response.status_code == 200:
         entities = response.json()["results"]
+        has_more = response.json()["next"]
         return render(
             request,
             "search/search.html",
@@ -131,14 +152,53 @@ def translation_search(request):
                 "projects": projects,
                 "preferred_locale": preferred_locale,
                 "preferred_project": preferred_project,
-                "search_identifiers_enabled": search_identifiers,
-                "match_case_enabled": search_match_case,
-                "match_whole_word_enabled": search_match_whole_word,
+                "search_identifiers_enabled": search_identifiers == "true",
+                "match_case_enabled": search_match_case == "true",
+                "match_whole_word_enabled": search_match_whole_word == "true",
+                "has_more": has_more,
             },
         )
 
     else:
         raise Http404
+
+
+@require_AJAX
+def more_translations(request):
+    page = request.GET.get("page")
+
+    search = request.GET.get("search")
+    locale = request.GET.get("locale")
+    project = request.GET.get("project")
+    search_identifiers = request.GET.get("search_identifiers")
+    search_match_case = request.GET.get("search_match_case")
+    search_match_whole_word = request.GET.get("search_match_whole_word")
+
+    if not locale or not Locale.objects.filter(code=locale).exists():
+        locale = get_project_locale_from_request(request, Locale.objects) or "en-GB"
+
+    api_url = create_api_url(
+        search,
+        project,
+        locale,
+        search_identifiers,
+        search_match_case,
+        search_match_whole_word,
+        page=page,
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()
+    except RequestException:
+        raise Http404
+
+    if response.status_code == 200:
+        entities = response.json()["results"]
+        has_more = response.json()["next"] is not None
+        return JsonResponse(
+            {"entities": entities, "has_more": has_more},
+        )
+
+    return JsonResponse({"error": "No results found."}, status=404)
 
 
 def entity(request, pk):
