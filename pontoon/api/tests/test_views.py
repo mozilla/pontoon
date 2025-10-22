@@ -1261,7 +1261,7 @@ def test_translation_search(django_assert_num_queries):
     # Test search_match_whole_word parameter
     with django_assert_num_queries(6):
         response = APIClient().get(
-            f"/api/v2/search/translations/?text=Flibbertigibbet&locale={locale_a.code}&search_match_whole_word=True",
+            f"/api/v2/search/translations/?text=Flibbertigibbet&locale={locale_a.code}&search_match_whole_word=true",
             HTTP_ACCEPT="application/json",
         )
 
@@ -1338,7 +1338,7 @@ def test_translation_search(django_assert_num_queries):
     # Test search_match_case parameter
     with django_assert_num_queries(6):
         response = APIClient().get(
-            f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_match_case=True",
+            f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_match_case=true",
             HTTP_ACCEPT="application/json",
         )
 
@@ -1363,7 +1363,7 @@ def test_translation_search(django_assert_num_queries):
     # Test search_identifiers parameter
     with django_assert_num_queries(6):
         response = APIClient().get(
-            f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_identifiers=True",
+            f"/api/v2/search/translations/?text=Dinglehopper&locale={locale_a.code}&search_identifiers=true",
             HTTP_ACCEPT="application/json",
         )
 
@@ -1453,7 +1453,7 @@ def test_translation_search(django_assert_num_queries):
     # Test search with multiple parameters
     with django_assert_num_queries(7):
         response = APIClient().get(
-            f"/api/v2/search/translations/?locale={locale_a.code}&project={project_a.slug}&text=the%20Test&search_match_whole_word=True&search_match_case=True",
+            f"/api/v2/search/translations/?locale={locale_a.code}&project={project_a.slug}&text=the%20Test&search_match_whole_word=true&search_match_case=true",
             HTTP_ACCEPT="application/json",
         )
 
