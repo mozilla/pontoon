@@ -1,9 +1,9 @@
-<!-- Locale selector -->
-{% macro locale(locales_list, locale_selected) %}
+<!-- Project selector -->
+{% macro project(projects_list, project_selected) %}
 <div class="locale-selector">
   <div class="locale select">
     <div class="button selector noselect">
-      <span class="language" {{ locale_selected.serialize() | dict_html_attrs }}>{{ locale_selected.name }}</span><span class="code">{{ locale_selected.code }}</span>
+      <span class="selected-project" data-slug="{{ project_selected.serialize().slug }}">{{ project_selected.name }}</span>
     </div>
 
     <div class="menu">
@@ -13,15 +13,12 @@
       </div>
 
       <ul>
-        {% for l in locales_list %}
+        {% for p in projects_list %}
           <li class="clearfix">
-            <span class="language"
-              {{ l.serialize() | dict_html_attrs }}
+            <span class="selected-project"
+            data-slug="{{ p.serialize().slug }}"
             >
-              {{ l.name }}
-            </span>
-            <span class="code">
-              {{ l.code }}
+              {{ p.name }}
             </span>
           </li>
         {% endfor %}
