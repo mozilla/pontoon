@@ -1,49 +1,31 @@
 
-{% macro list_entities(entities, has_more) %}
+{% macro list_entities(entities, entities_url, has_more) %}
 <ul class="entity-list" data-has-more="{{ 'true' if has_more else 'false' }}">
   {% for entity in entities %}
-    <li class="entity-item"">
-      <div class="item-content">
-
-        <span class="description">{{ entity.entity.string }}</span>
-        <span class="description">{{ entity.entity.key }}</span>
-
-
-          <span class="actor">
-            {{ entity.project.slug }}
-          </span>
-          <span class="actor">
-            {{ entity.project.name }}
-          </span>
-
-          <span class="verb">
+    <li class="entity-item">
+        <span>{{ entity.string }}</span>
+        <span>{{ entity.key }}</span>
+        <span>Entity URL:</span>
+        <a href="{{ entities_url }}/{{ entity.id }}">/entities/{{ entity.id }}</a>
+        <div>
+            <span>{{ entity.project.slug }}</span>
+            <span>{{ entity.project.name }}</span>
+        </div>
+    
+        <div>
             <a>{{ entity.resource.path }}</a>
-          </span>
-
-          <span class="target">
-            {{ entity.translation.locale.code }}
-          </span>
-          <span class="target">
-            {{ entity.translation.locale.name }}
-          </span>
-                    
-          <div class="message trim">{{ entity.translation.string }}</div>
-      </div>
+        </div>
+    
+        <div>
+            <span>{{ entity.translation.locale.code }}</span>
+            <span>{{ entity.translation.locale.name }}</span>
+        </div>
+    
+        <div>{{ entity.translation.string }}</div>
     </li>
-
-    <b>------------------------------------------------------------------------------------<b>
-
     {% if not loop.last %}
       <li class="horizontal-separator"></li>
     {% endif %}
   {% endfor %}
-
-  {% if entities|length == 0 %}
-    <li class="no">
-      <i class="icon fas fa-bell fa-fw"></i>
-      <p class="title">{{ no_title }}</p>
-      <p class="description">{{ no_description }}</p>
-    </li>
-  {% endif %}
 </ul>
 {% endmacro %}
