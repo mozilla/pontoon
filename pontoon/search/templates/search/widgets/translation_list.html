@@ -12,13 +12,13 @@
     <tbody>
     {% for translation in translations %}
       <tr>
-        <td class="contributor">
-            <p class="name">{{ translation.locale.code }}</p>
+        <td>
+            <p>{{ translation.locale.code }}</p>
         </td>
-        <td class="stats">
-          <div class="details">
-            <div class="total">
-              <p>{{ translation.string|intcomma }}</p>
+        <td>
+          <div>
+            <div>
+              <p>{{ translation.string }}</p>
             </div>
           </div>
         </td>
