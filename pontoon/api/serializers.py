@@ -300,24 +300,22 @@ class ResourceSerializer(serializers.ModelSerializer):
 
 
 class EntitySerializer(serializers.ModelSerializer):
-    entity = serializers.SerializerMethodField()
+    string = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
     resource = ResourceSerializer(read_only=True)
 
     class Meta:
         model = Entity
         fields = [
-            "entity",
+            "id",
+            "string",
+            "key",
             "project",
             "resource",
         ]
 
-    def get_entity(self, obj):
-        return {
-            "id": obj.id,
-            "string": get_simple_preview(obj.resource.format, obj.string),
-            "key": obj.key,
-        }
+    def get_string(self, obj):
+        return get_simple_preview(obj.resource.format, obj.string)
 
     def get_project(self, obj):
         if not obj.resource.project:
