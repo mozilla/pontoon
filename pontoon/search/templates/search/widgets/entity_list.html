@@ -1,8 +1,8 @@
 
-{% macro list_entities(entities) %}
-<ul class="notification-list">
+{% macro list_entities(entities, has_more) %}
+<ul class="entity-list" data-has-more="{{ 'true' if has_more else 'false' }}">
   {% for entity in entities %}
-    <li class="notification-item"">
+    <li class="entity-item"">
       <div class="item-content">
 
         <span class="description">{{ entity.entity.string }}</span>

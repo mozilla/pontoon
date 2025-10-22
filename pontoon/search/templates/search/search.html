@@ -18,7 +18,6 @@
     <menu class="controls">
       <div id="search" class="search-wrapper big clearfix">
         <div class="icon fas fa-search"></div>
-        <!-- <div class="icon fas fa-cog fa-spin"></div> -->
         <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Search Translations" value="{{ search }}">
       </div>
       <button class="button search-button">Search</button>
@@ -49,7 +48,7 @@
 
     <section>
         {% if entities and search %}
-          {{ Entities.list_entities(entities) }}
+          {{ Entities.list_entities(entities, has_more) }}
         {% elif not entities and search %}
           <div>No Results Found.</div>
         {% endif %}
