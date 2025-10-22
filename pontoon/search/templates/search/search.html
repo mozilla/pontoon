@@ -2,6 +2,7 @@
 {% import "search/widgets/entity_list.html" as Entities %}
 {% import 'heading.html' as Heading %}
 {% import 'teams/widgets/team_selector.html' as team_selector %}
+{% import 'projects/widgets/project_selector.html' as project_selector %}
 {% import "widgets/checkbox.html" as Checkbox %}
 
 {% block title %}Search{% endblock %}
@@ -41,7 +42,7 @@
         {{ team_selector.locale(locales, preferred_locale) }}
       </div>
       <div id="project-selector">
-        {{ team_selector.project(projects, preferred_project) }}
+        {{ project_selector.project(projects, preferred_project) }}
       </div>
     </div>
     </menu>
