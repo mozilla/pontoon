@@ -48,7 +48,7 @@
 
     <section>
         {% if entities and search %}
-          {{ Entities.list_entities(entities, has_more) }}
+          {{ Entities.list_entities(entities, entities_url, has_more) }}
         {% elif not entities and search %}
           <div>No Results Found.</div>
         {% endif %}
