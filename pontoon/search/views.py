@@ -185,6 +185,8 @@ def more_translations(request):
         search_match_case,
         search_match_whole_word,
         page=page,
+    )
+
     try:
         response = requests.get(api_url)
         response.raise_for_status()
