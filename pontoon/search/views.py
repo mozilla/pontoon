@@ -101,12 +101,11 @@ def translation_search(request):
 
     # validation
     errors = []
-    if not search:
-        errors.append("Search term cannot be empty.")
-    elif len(search) < 2:
+
+    if search and len(search) < 2:
         errors.append("Search term must be at least 2 characters long.")
 
-    if errors:
+    if errors or not search:
         return render(
             request,
             "search/search.html",
