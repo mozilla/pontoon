@@ -64,4 +64,56 @@ $(function () {
     const self = $(this);
     self.toggleClass('enabled');
   });
+
+  let currentPage = 2;
+  let hasMore = $('.entity-list').data('has-more');
+  let isLoading = false;
+  let errors = false;
+
+  if ($('.errors').children().length > 0) {
+    errors = true;
+  }
+
+  $(window).on('scroll', function () {
+    if (
+      $(window).scrollTop() + $(window).height() >=
+        $(document).height() - 100 &&
+      !isLoading &&
+      hasMore &&
+      !errors
+    ) {
+      isLoading = true;
+
+      const currentUrl = new URL(window.location.href);
+      const params = currentUrl.searchParams;
+
+      $.ajax({
+        url: '/ajax/more-translations/',
+        type: 'GET',
+        data: {
+          page: currentPage,
+          search: params.get('search'),
+          locale: params.get('locale'),
+          project: params.get('project'),
+          search_identifiers: params.get('search_identifiers'),
+          search_match_case: params.get('search_match_case'),
+          search_match_whole_word: params.get('search_match_whole_word'),
+        },
+        success: function (response) {
+          response.entities.forEach(function (entity) {
+            $('.entity-list').append(`<li>${entity.project.slug}</li>`);
+          });
+
+          hasMore = response.has_more;
+          currentPage += 1;
+        },
+        error: function () {
+          Pontoon.endLoader('Oops, something went wrong.');
+        },
+        complete: function () {
+          isLoading = false;
+        },
+      });
+    }
+  });
 });

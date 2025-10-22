@@ -408,6 +408,13 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
+        if query_params.get("search_identifiers") != "true":
+            query_params.pop("search_identifiers", None)
+        if query_params.get("search_match_case") != "true":
+            query_params.pop("search_match_case", None)
+        if query_params.get("search_match_whole_word") != "true":
+            query_params.pop("search_match_whole_word", None)
+
         errors = {}
         if not text:
             errors["text"] = ["This field is required."]
