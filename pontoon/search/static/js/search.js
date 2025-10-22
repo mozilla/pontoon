@@ -101,7 +101,31 @@ $(function () {
         },
         success: function (response) {
           response.entities.forEach(function (entity) {
-            $('.entity-list').append(`<li>${entity.project.slug}</li>`);
+            const entities_url = `/entities/${entity.id}/`;
+
+            $('.entity-list').append(`
+              <li class="entity-item">
+                <span>${entity.string}</span>
+                <span>${entity.key}</span>
+                <span>Entity URL:</span>
+                <a href="${entities_url}">${entities_url}</a>
+                <div>
+                  <span>${entity.project.slug}</span>
+                  <span>${entity.project.name}</span>
+                </div>
+
+                <div>
+                  <a>${entity.resource.path}</a>
+                </div>
+
+                <div>
+                  <span>${entity.translation.locale.code}</span>
+                  <span>${entity.translation.locale.name}</span>
+                </div>
+
+                <div>${entity.translation.string}</div>
+              </li>
+            `);
           });
 
           hasMore = response.has_more;
