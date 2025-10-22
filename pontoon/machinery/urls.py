@@ -9,10 +9,6 @@ urlpatterns = [
     path("machinery/", views.machinery, name="pontoon.machinery"),
     # Legacy: Redirect to /machinery
     path(
-        "search/",
-        RedirectView.as_view(pattern_name="pontoon.machinery", permanent=True),
-    ),
-    path(
         "terminology/",
         RedirectView.as_view(pattern_name="pontoon.machinery", permanent=True),
     ),
