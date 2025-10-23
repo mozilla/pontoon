@@ -366,8 +366,11 @@ class EntitySearchSerializer(EntitySerializer):
         fields = EntitySerializer.Meta.fields + ["translation"]
 
     def get_translation(self, obj):
-        translation = (
-            obj.filtered_translations[0] if obj.filtered_translations else None
-        )
+        request = self.context.get("request")
+
+        if not request:
+            return None
+
+        translation = obj.active_translations[0] if obj.active_translations else None
 
         return TranslationSerializer(translation, context=self.context).data
