@@ -99,13 +99,7 @@ def translation_search(request):
 
     preferred_locale = Locale.objects.get(code=locale)
 
-    # validation
-    errors = []
-
-    if search and len(search) < 2:
-        errors.append("Search term must be at least 2 characters long.")
-
-    if errors or not search:
+    if not search:
         return render(
             request,
             "search/search.html",
@@ -119,7 +113,6 @@ def translation_search(request):
                 "search_identifiers_enabled": search_identifiers == "true",
                 "match_case_enabled": search_match_case == "true",
                 "match_whole_word_enabled": search_match_whole_word == "true",
-                "errors": errors,
             },
         )
 
