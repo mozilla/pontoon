@@ -477,10 +477,10 @@ class TranslationSearchListView(generics.ListAPIView):
                     (
                         Prefetch(
                             "translation_set",
-                            queryset=Translation.objects.filter(
-                                locale__code=locale_code, approved=True
+                            queryset=(
+                                Translation.objects.filter(locale=locale, approved=True)
                             ).select_related("locale"),
-                            to_attr="filtered_translations",
+                            to_attr="active_translations",
                         )
                     ),
                 )
