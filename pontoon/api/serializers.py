@@ -388,8 +388,6 @@ class EntitySearchSerializer(EntitySerializer):
         if not request:
             return None
 
-        translation = (
-            obj.filtered_translations[0] if obj.filtered_translations else None
-        )
+        translation = obj.active_translations[0] if obj.active_translations else None
 
         return TranslationSerializer(translation, context=self.context).data
