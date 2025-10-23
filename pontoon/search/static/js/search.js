@@ -7,10 +7,6 @@ $(function () {
       const errorMessage = 'Search term cannot be empty.';
       $('.errors').html($('<p>').text(errorMessage));
       return;
-    } else if (searchOptions['search'].length < 2) {
-      const errorMessage = 'Search term should be at least 2 characters long.';
-      $('.errors').html($('<p>').text(errorMessage));
-      return;
     }
 
     $('.check-box').each(function () {
