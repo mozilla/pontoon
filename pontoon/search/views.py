@@ -26,9 +26,9 @@ def create_api_url(
     search_match_whole_word,
     page=None,
 ):
-    search_match_case = str(search_match_case == "true").lower()
-    search_identifiers = str(search_identifiers == "true").lower()
-    search_match_whole_word = str(search_match_whole_word == "true").lower()
+    search_match_case = search_match_case == "true"
+    search_identifiers = search_identifiers == "true"
+    search_match_whole_word = search_match_whole_word == "true"
 
     query_params = {
         "text": search,
@@ -42,7 +42,7 @@ def create_api_url(
     query_params = {
         key: value
         for key, value in query_params.items()
-        if value is not None and value != "" and value != "false"
+        if value is not None and value != "" and value is not False
     }
 
     if page:
