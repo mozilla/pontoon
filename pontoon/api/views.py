@@ -249,8 +249,8 @@ class ProjectListView(generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        include_disabled = query_params.get("include_disabled")
-        include_system = query_params.get("include_system")
+        include_disabled = query_params.get("include_disabled", "").lower()
+        include_system = query_params.get("include_system", "").lower()
 
         queryset = (
             Project.objects.visible()
@@ -267,9 +267,9 @@ class ProjectListView(generics.ListAPIView):
         )
 
         filters = Q()
-        if include_disabled is not None:
+        if include_disabled == "true":
             filters |= Q(disabled=True)
-        if include_system is not None:
+        if include_system == "true":
             filters |= Q(system_project=True)
         if filters:
             queryset = queryset | Project.objects.filter(filters).distinct()
