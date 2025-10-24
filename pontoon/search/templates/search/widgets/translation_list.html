@@ -14,16 +14,16 @@
     {% for translation in entity.translations %}
       <tr>
         <td>
-            <p>{{ translation.locale.code }}</p>
+            <p class="translation-locale-code">{{ translation.locale.code }}</p>
         </td>
         <td>
           <div>
-            <p>{{ translation.string }}</p>
+            <p class="translation-string">{{ translation.string }}</p>
           </div>
         </td>
         <td>
           <div>
-            <a href="{{ site_url }}/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">Link</a>
+            <a href="{{ site_url }}/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}" class="translation-url">Link</a>
           </div>
         </td>
       </tr>
