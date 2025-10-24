@@ -10,7 +10,27 @@
         <h1>
           {{ HeadingInfo.heading_item(
             title=entity.string,
-            link=url('pontoon.search'))
+            link=request.get_full_path())
+          }}
+          {{ HeadingInfo.details_item(
+          title='Keys: ',
+          class='entity-key',
+          value=", ".join(entity.key)
+          ) }}
+          {{ HeadingInfo.details_item(
+            title='Project Name: ',
+            class='project-name',
+            value=entity.project.name)
+          }}
+          {{ HeadingInfo.details_item(
+            title='Project Slug: ',
+            class='project-slug',
+            value=entity.project.slug)
+          }}
+          {{ HeadingInfo.details_item(
+            title='Resource Path: ',
+            class='resource-path',
+            value=entity.resource.path)
           }}
         </h1>
       </div>
@@ -24,8 +44,8 @@
 <section id="main">
   <div class="container">
 
-    {% if translations %}
-      {{ Translations.list_translations(translations) }}
+    {% if entity.translations %}
+      {{ Translations.list_translations(entity, site_url) }}
     {% else %}
       {{ Translations.no_translations() }}
     {% endif %}
