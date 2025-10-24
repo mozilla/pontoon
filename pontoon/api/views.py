@@ -197,8 +197,8 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        include_disabled = query_params.get("include_disabled")
-        include_system = query_params.get("include_system")
+        include_disabled = query_params.get("include_disabled", "").lower()
+        include_system = query_params.get("include_system", "").lower()
 
         qs = Project.objects.visible().visible_for(self.request.user)
 
@@ -223,9 +223,9 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
             qs = qs.prefetch_related("tags")
 
         filters = Q()
-        if include_disabled is not None:
+        if include_disabled == "true":
             filters |= Q(disabled=True)
-        if include_system is not None:
+        if include_system == "true":
             filters |= Q(system_project=True)
         if filters:
             qs = qs | Project.objects.filter(filters).distinct()

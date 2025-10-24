@@ -346,11 +346,13 @@ class NestedEntitySerializer(EntitySerializer):
 
         if "context" in kwargs:
             if "request" in kwargs["context"]:
-                include_translations = kwargs["context"]["request"].query_params.get(
-                    "include_translations"
+                include_translations = (
+                    kwargs["context"]["request"]
+                    .query_params.get("include_translations", "false")
+                    .lower()
                 )
 
-                if include_translations is None:
+                if include_translations != "true":
                     self.fields.pop("translations", None)
 
     def get_translations(self, obj):
