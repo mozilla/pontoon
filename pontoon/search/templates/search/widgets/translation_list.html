@@ -1,25 +1,29 @@
 {% import "widgets/menu.html" as Menu %}
 
 {# Widget to display list of contributors. #}
-{% macro list_translations(translations, title="Translations") %}
+{% macro list_translations(entity, site_url) %}
   <table class="striped">
     <thead>
       <tr>
         <th>Locale Code</th>
         <th>Translation</th>
+        <th>Find it on Pontoon</th>
       </tr>
     </thead>
     <tbody>
-    {% for translation in translations %}
+    {% for translation in entity.translations %}
       <tr>
         <td>
             <p>{{ translation.locale.code }}</p>
         </td>
         <td>
           <div>
-            <div>
-              <p>{{ translation.string }}</p>
-            </div>
+            <p>{{ translation.string }}</p>
+          </div>
+        </td>
+        <td>
+          <div>
+            <a href="{{ site_url }}/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">Link</a>
           </div>
         </td>
       </tr>
