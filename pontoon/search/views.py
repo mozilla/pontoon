@@ -211,10 +211,8 @@ def entity(request, pk):
             request,
             "search/entity.html",
             {
-                "entity": entity.get("entity", []),
-                "project": entity.get("project", []),
-                "resource": entity.get("resource", []),
-                "translations": entity.get("translations", []),
+                "entity": entity,
+                "site_url": SITE_URL,
             },
         )
     else:
