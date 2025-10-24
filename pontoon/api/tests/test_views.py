@@ -568,7 +568,9 @@ def test_projects(django_assert_num_queries):
     ]
 
     with django_assert_num_queries(4):
-        response = APIClient().get("/api/v2/projects/?include_system&include_disabled")
+        response = APIClient().get(
+            "/api/v2/projects/?include_system=True&include_disabled=True"
+        )
 
     assert response.status_code == 200
 
@@ -592,7 +594,7 @@ def test_system_projects(
     ProjectFactory.create_batch(3, disabled=True)
     ProjectFactory.create_batch(3, system_project=True)
     with django_assert_num_queries(4):
-        response = APIClient().get("/api/v2/projects/?include_system")
+        response = APIClient().get("/api/v2/projects/?include_system=True")
 
     assert response.status_code == 200
 
@@ -644,7 +646,7 @@ def test_disabled_projects(
     ProjectFactory.create_batch(3, disabled=True)
     ProjectFactory.create_batch(3, system_project=True)
     with django_assert_num_queries(4):
-        response = APIClient().get("/api/v2/projects/?include_disabled")
+        response = APIClient().get("/api/v2/projects/?include_disabled=True")
 
         assert response.status_code == 200
 
@@ -756,7 +758,7 @@ def test_entity_with_translations(django_assert_num_queries):
 
     with django_assert_num_queries(4):
         response = APIClient().get(
-            f"/api/v2/entities/{entity.pk}/?include_translations",
+            f"/api/v2/entities/{entity.pk}/?include_translations=True",
             HTTP_ACCEPT="application/json",
         )
     assert response.status_code == 200
