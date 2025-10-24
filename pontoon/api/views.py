@@ -408,11 +408,11 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
-        if query_params.get("search_identifiers") != "true":
+        if query_params.get("search_identifiers", "").lower() != "true":
             query_params.pop("search_identifiers", None)
-        if query_params.get("search_match_case") != "true":
+        if query_params.get("search_match_case", "").lower() != "true":
             query_params.pop("search_match_case", None)
-        if query_params.get("search_match_whole_word") != "true":
+        if query_params.get("search_match_whole_word", "").lower() != "true":
             query_params.pop("search_match_whole_word", None)
 
         errors = {}
