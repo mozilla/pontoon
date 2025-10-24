@@ -4,21 +4,21 @@
   {% for entity in entities %}
     <li class="entity-item">
         <span class="source-string">{{ entity.string }}</span>
+        <span class="entity-keys">{{ ", ".join(entity.key) }}</span>
         <span>Entity URL:</span>
         <a href="{{ entities_url }}/{{ entity.id }}">/entities/{{ entity.id }}</a>
         <div class="entity-project">
-            <span>{{ entity.project.slug }}</span>
-            <span>{{ entity.project.name }}</span>
+            <span class="entity-project-slug">{{ entity.project.slug }}</span>
+            <span class="entity-project-name">{{ entity.project.name }}</span>
         </div>
     
         <div class="entity-resource">
             <a>{{ entity.resource.path }}</a>
-            <a>{{ entity.resource.path }}</a>
         </div>
     
         <div class="entity-locale">
-            <span>{{ entity.translation.locale.code }}</span>
-            <span>{{ entity.translation.locale.name }}</span>
+            <span class="entity-locale-code">{{ entity.translation.locale.code }}</span>
+            <span class="entity-locale-name">{{ entity.translation.locale.name }}</span>
         </div>
     
         <div class="translation-string">{{ entity.translation.string }}</div>
