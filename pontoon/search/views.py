@@ -198,7 +198,7 @@ def more_translations(request):
 
 def entity(request, pk):
     """Get corresponding entity given entity id."""
-    api_url = f"{SITE_URL}/api/v2/entities/{pk}/?include_translations"
+    api_url = f"{SITE_URL}/api/v2/entities/{pk}/?include_translations=True"
     try:
         response = requests.get(api_url)
         response.raise_for_status()
