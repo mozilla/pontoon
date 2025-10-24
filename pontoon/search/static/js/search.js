@@ -73,7 +73,7 @@ $(function () {
   $(window).on('scroll', function () {
     if (
       $(window).scrollTop() + $(window).height() >=
-        $(document).height() - 100 &&
+        $(document).height() - 2000 &&
       !isLoading &&
       hasMore &&
       !errors
