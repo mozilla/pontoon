@@ -254,6 +254,7 @@ class TranslationMemorySerializer(serializers.ModelSerializer):
         fields = [
             "locale",
             "project",
+            "entity",
             "source",
             "target",
         ]

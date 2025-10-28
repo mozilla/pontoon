@@ -946,28 +946,52 @@ def test_tm_search(django_assert_num_queries):
         name="Project A",
         repositories=[],
     )
+    resource_a = ResourceFactory.create(
+        project=project_a,
+        path=f"resource_{project_a.slug}.po",
+        format="po",
+    )
+    entity_a = EntityFactory.create(
+        string="Entity A",
+        resource=resource_a,
+    )
     locale_b = LocaleFactory(
         code="gs",
         name="Geonosian",
     )
-    project_b = ProjectFactory(slug="project_b", name="Project B")
+    project_b = ProjectFactory(
+        slug="project_b",
+        name="Project B",
+    )
+    resource_b = ResourceFactory.create(
+        project=project_b,
+        path=f"resource_{project_b.slug}.po",
+        format="po",
+    )
+    entity_b = EntityFactory.create(
+        string="Entity B",
+        resource=resource_b,
+    )
     TranslationMemoryEntry.objects.create(
         source="Hello",
         target="Hola",
         locale=locale_a,
         project=project_a,
+        entity=entity_a,
     )
     TranslationMemoryEntry.objects.create(
         source="Goodbye",
         target="Adiós",
         locale=locale_a,
         project=project_b,
+        entity=entity_b,
     )
     TranslationMemoryEntry.objects.create(
         source="Hello",
         target="Bonjour",
         locale=locale_b,
         project=project_b,
+        entity=entity_b,
     )
 
     with django_assert_num_queries(4):
@@ -983,6 +1007,7 @@ def test_tm_search(django_assert_num_queries):
             {
                 "locale": "kg",
                 "project": "project_a",
+                "entity": entity_a.pk,
                 "source": "Hello",
                 "target": "Hola",
             }
