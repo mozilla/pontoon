@@ -8,7 +8,7 @@ import { accented, bidi } from './pseudolocalization';
 
 // List of available locales for the UI.
 // Use to choose which locale files to download.
-const AVAILABLE_LOCALES = ['en-US', 'kab'];
+const AVAILABLE_LOCALES = ['en-US'];
 
 /**
  * Get the UI translations for a list of locales.
