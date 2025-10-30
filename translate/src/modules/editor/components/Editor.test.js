@@ -210,7 +210,7 @@ describe('<Editor>', () => {
     expect(wrapper.find(EditField).text()).toEqual('Coucou');
   });
 
-  it('passes a reconstructed translation to sendTranslation', async () => {
+  it('passes a reconstructed translation to createTranslation', async () => {
     sinon.stub(TranslationAPI, 'createTranslation').returns({});
 
     const [wrapper, actions] = mountEditor(1);
@@ -221,6 +221,11 @@ describe('<Editor>', () => {
     await act(() => wrapper.find('.action-suggest').prop('onClick')());
 
     const { args } = TranslationAPI.createTranslation.getCalls()[0];
-    expect(args[1]).toBe('my-message = Coucou\n');
+    expect(args[1]).toMatchObject({
+      format: 'fluent',
+      id: 'my-message',
+      value: ['Coucou'],
+    });
+    expect(args[2]).toBe('my-message = Coucou\n');
   });
 });

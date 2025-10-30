@@ -16,7 +16,7 @@ from moz.l10n.model import Entry, Id as L10nId, Message, Resource as MozL10nReso
 
 from pontoon.base.models import Entity
 
-from .common import VCSTranslation
+from .common import RepoTranslation
 from .gettext import gettext_as_entity, gettext_as_translation
 from .xliff import xliff_as_entity, xliff_as_translation
 
@@ -62,7 +62,7 @@ def _as_string(format: Format | None, entry: Entry[Message]) -> str:
             return serialize_message(format, entry.value)
 
 
-def as_vcs_translations(res: MozL10nResource[Message]) -> Iterator[VCSTranslation]:
+def as_repo_translations(res: MozL10nResource[Message]) -> Iterator[RepoTranslation]:
     for section in res.sections:
         if res.format == Format.android and section.id:
             continue
@@ -74,9 +74,11 @@ def as_vcs_translations(res: MozL10nResource[Message]) -> Iterator[VCSTranslatio
                     case Format.xliff:
                         tx = xliff_as_translation(section.id, entry)
                     case _:
-                        tx = VCSTranslation(
+                        tx = RepoTranslation(
                             key=section.id + entry.id,
                             string=_as_string(res.format, entry),
+                            value=entry.value,
+                            properties=entry.properties,
                         )
                 if tx is not None:
                     yield tx
