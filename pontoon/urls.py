@@ -60,6 +60,7 @@ urlpatterns = [
     path("", include("pontoon.teams.urls")),
     path("", include("pontoon.tour.urls")),
     path("", include("pontoon.tags.urls")),
+    path("", include("pontoon.search.urls")),
     path("", include("pontoon.sync.urls")),
     path("", include("pontoon.projects.urls")),
     path("", include("pontoon.machinery.urls")),
