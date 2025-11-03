@@ -367,54 +367,16 @@ class ProjectLocaleIndividualView(generics.RetrieveAPIView):
 
 class TermSearchListView(generics.ListAPIView):
     serializer_class = TermSerializer
-
     filter_backends = [DjangoFilterBackend]
     filterset_class = TermFilter
-
-    def get_queryset(self):
-        query_params = self.request.query_params
-        text = query_params.get("text")
-        locale = query_params.get("locale")
-
-        errors = {}
-        if not text:
-            errors["text"] = ["This field is required."]
-        if not locale:
-            errors["locale"] = ["This field is required."]
-        if errors:
-            raise ValidationError(errors)
-
-        return Term.objects.all()
-
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-        return queryset.prefetch_related("translations__locale")
+    queryset = Term.objects.select_related("translations__locale")
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
     serializer_class = TranslationMemorySerializer
-
     filter_backends = [DjangoFilterBackend]
     filterset_class = TranslationMemoryFilter
-
-    def get_queryset(self):
-        query_params = self.request.query_params
-        text = query_params.get("text")
-        locale = query_params.get("locale")
-
-        errors = {}
-        if not text:
-            errors["text"] = ["This field is required."]
-        if not locale:
-            errors["locale"] = ["This field is required."]
-        if errors:
-            raise ValidationError(errors)
-
-        return TranslationMemoryEntry.objects.all()
-
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-        return queryset.prefetch_related("project", "locale")
+    queryset = TranslationMemoryEntry.objects.select_related("project", "locale")
 
 
 class TranslationSearchListView(generics.ListAPIView):

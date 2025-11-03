@@ -11,8 +11,8 @@ from pontoon.terminology.models import (
 
 
 class TermFilter(FilterSet):
-    text = CharFilter(method="filter_text")
-    locale = CharFilter(method="filter_locale")
+    text = CharFilter(method="filter_text", required=True)
+    locale = CharFilter(method="filter_locale", required=True)
 
     class Meta:
         model = Term
@@ -26,8 +26,8 @@ class TermFilter(FilterSet):
 
 
 class TranslationMemoryFilter(FilterSet):
-    text = CharFilter(method="filter_text")
-    locale = CharFilter(method="filter_locale")
+    text = CharFilter(method="filter_text", required=True)
+    locale = CharFilter(method="filter_locale", required=True)
 
     class Meta:
         model = TranslationMemoryEntry
