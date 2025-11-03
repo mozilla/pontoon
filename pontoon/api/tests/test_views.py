@@ -972,6 +972,20 @@ def test_tm_search(django_assert_num_queries):
         string="Entity B",
         resource=resource_b,
     )
+    project_private = ProjectFactory(
+        slug="project_private",
+        name="Project Private",
+        visibility="private",
+    )
+    resource_private = ResourceFactory.create(
+        project=project_private,
+        path=f"resource_{project_private.slug}.po",
+        format="po",
+    )
+    entity_private = EntityFactory.create(
+        string="Entity Private",
+        resource=resource_private,
+    )
     TranslationMemoryEntry.objects.create(
         source="Hello",
         target="Hola",
@@ -993,8 +1007,15 @@ def test_tm_search(django_assert_num_queries):
         project=project_b,
         entity=entity_b,
     )
+    TranslationMemoryEntry.objects.create(
+        source="Hello",
+        target="Hola",
+        locale=locale_a,
+        project=project_private,
+        entity=entity_private,
+    )
 
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(2):
         response = APIClient().get("/api/v2/search/tm/?text=hello&locale=kg")
 
     assert response.status_code == 200

@@ -3,6 +3,7 @@ from django_filters import CharFilter, FilterSet
 from django.db.models import Q
 
 from pontoon.base.models import (
+    Project,
     TranslationMemoryEntry,
 )
 from pontoon.terminology.models import (
@@ -40,3 +41,8 @@ class TranslationMemoryFilter(FilterSet):
 
     def filter_locale(self, queryset, name, value):
         return queryset.filter(locale__code=value)
+
+    @property
+    def qs(self):
+        qs = super().qs
+        return qs.exclude(project__visibility=Project.Visibility.PRIVATE)

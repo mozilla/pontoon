@@ -369,7 +369,7 @@ class TermSearchListView(generics.ListAPIView):
     serializer_class = TermSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = TermFilter
-    queryset = Term.objects.select_related("translations__locale")
+    queryset = Term.objects.prefetch_related("translations__locale")
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
