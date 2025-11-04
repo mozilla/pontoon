@@ -27,28 +27,23 @@ def test_dynamic_fields(django_assert_num_queries):
             "code": loc.code,
             "name": loc.name,
         }
-        for loc in sorted(
-            Locale.objects.distinct().filter(
+        for loc in (
+            Locale.objects.filter(
                 translatedresources__resource__project__disabled=False,
                 translatedresources__resource__project__system_project=False,
                 translatedresources__resource__project__visibility="public",
-            ),
-            key=lambda loc: loc.pk,
+            )
+            .order_by("code")
         )
-    ]
+    ][:100]
 
     with django_assert_num_queries(3):
         response = APIClient().get("/api/v2/locales/?fields=code,name")
 
-    assert response.status_code == 200
-
     results = sorted(response.data["results"], key=lambda loc: loc["code"])
 
-    # Split the expected results to match pagination limit of 100
-    expected_results = sorted(expected_results, key=lambda loc: loc["code"])[:100]
-
+    assert response.status_code == 200
     assert response.data["count"] == 108
-
     assert results == expected_results
 
 
