@@ -66,25 +66,21 @@ class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """
-    Serializer that takes an additional `fields` argument that
-    controls which fields should be displayed.
+    Serializer that takes an additional `fields` argument
+    to control which fields should be returned.
     """
 
     def __init__(self, *args, **kwargs):
-        fields = kwargs.pop("fields", None)
-
         super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
 
-        if "context" in kwargs:
-            if "request" in kwargs["context"]:
-                fields = kwargs["context"]["request"].query_params.get("fields")
-                if fields:
-                    fields = fields.split(",")
-
-                    allowed = set(fields)
-                    existing = set(self.fields.keys())
-                    for field_name in existing - allowed:
-                        self.fields.pop(field_name)
+        request = self.context.get("request")
+        if request:
+            fields_param = request.query_params.get("fields")
+            if fields_param:
+                allowed = set(fields_param.split(","))
+                existing = set(self.fields.keys())
+                for field_name in existing - allowed:
+                    self.fields.pop(field_name)
 
 
 class TagSerializer(serializers.ModelSerializer):
