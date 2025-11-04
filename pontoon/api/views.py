@@ -30,6 +30,7 @@ from pontoon.terminology.models import (
 )
 
 from .serializers import (
+    TRANSLATION_STATS_FIELDS,
     EntitySearchSerializer,
     EntitySerializer,
     NestedEntitySerializer,
@@ -40,7 +41,6 @@ from .serializers import (
     NestedProjectSerializer,
     TermSerializer,
     TranslationMemorySerializer,
-    TRANSLATION_STATS_FIELDS,
 )
 
 
