@@ -64,6 +64,29 @@ class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
         return obj.is_complete
 
 
+class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+    """
+    Serializer that takes an additional `fields` argument that
+    controls which fields should be displayed.
+    """
+
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop("fields", None)
+
+        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+
+        if "context" in kwargs:
+            if "request" in kwargs["context"]:
+                fields = kwargs["context"]["request"].query_params.get("fields")
+                if fields:
+                    fields = fields.split(",")
+
+                    allowed = set(fields)
+                    existing = set(self.fields.keys())
+                    for field_name in existing - allowed:
+                        self.fields.pop(field_name)
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -74,7 +97,7 @@ class TagSerializer(serializers.ModelSerializer):
         )
 
 
-class LocaleSerializer(serializers.ModelSerializer):
+class LocaleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Locale
         fields = [
@@ -93,7 +116,7 @@ class LocaleSerializer(serializers.ModelSerializer):
         ] + TRANSLATION_STATS_FIELDS
 
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(DynamicFieldsModelSerializer):
     contact = serializers.SerializerMethodField()
 
     class Meta:
@@ -220,7 +243,7 @@ class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
         fields = ProjectLocaleSerializer.Meta.fields + ["locale", "project"]
 
 
-class TermSerializer(serializers.ModelSerializer):
+class TermSerializer(DynamicFieldsModelSerializer):
     translation_text = serializers.SerializerMethodField()
 
     class Meta:
@@ -245,7 +268,7 @@ class TermSerializer(serializers.ModelSerializer):
         return term.text if term else None
 
 
-class TranslationMemorySerializer(serializers.ModelSerializer):
+class TranslationMemorySerializer(DynamicFieldsModelSerializer):
     locale = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
 
@@ -299,7 +322,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         ]
 
 
-class EntitySerializer(serializers.ModelSerializer):
+class EntitySerializer(DynamicFieldsModelSerializer):
     entity = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
     resource = ResourceSerializer(read_only=True)
