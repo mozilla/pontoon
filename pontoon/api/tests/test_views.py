@@ -32,8 +32,7 @@ def test_dynamic_fields(django_assert_num_queries):
                 translatedresources__resource__project__disabled=False,
                 translatedresources__resource__project__system_project=False,
                 translatedresources__resource__project__visibility="public",
-            )
-            .order_by("code")
+            ).order_by("code")
         )
     ][:100]
 
