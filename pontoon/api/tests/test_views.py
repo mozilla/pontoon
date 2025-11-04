@@ -42,7 +42,7 @@ def test_dynamic_fields(django_assert_num_queries):
     results = sorted(response.data["results"], key=lambda loc: loc["code"])
 
     assert response.status_code == 200
-    assert response.data["count"] == 110
+    assert response.data["count"] == 108
     assert results == expected_results
 
 

@@ -219,7 +219,7 @@ class LocaleListView(generics.ListAPIView):
     serializer_class = NestedLocaleSerializer
 
     def get_queryset(self):
-        qs = Locale.objects.all()
+        qs = Locale.objects.available()
 
         fields_param = self.request.query_params.get("fields", "")
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
