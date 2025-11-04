@@ -107,7 +107,7 @@ An example may look like this:
 $ curl --globoff "https://example.com/api/v2/locales/?page=2"
 ```
 
-The page size can also be set with the `?page_size=N` query parameter.
+The page size can also be set with the `?page_size=N` query parameter, with N reaching a maximum of 1000 items.
 
 An example may look like this:
 
