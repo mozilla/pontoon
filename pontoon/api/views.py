@@ -40,6 +40,7 @@ from .serializers import (
     NestedProjectSerializer,
     TermSerializer,
     TranslationMemorySerializer,
+    TRANSLATION_STATS_FIELDS,
 )
 
 
@@ -218,15 +219,28 @@ class LocaleListView(generics.ListAPIView):
     serializer_class = NestedLocaleSerializer
 
     def get_queryset(self):
-        queryset = Locale.objects.prefetch_related(
-            Prefetch(
-                "project_locale",
-                queryset=ProjectLocale.objects.visible().select_related("project"),
-                to_attr="fetched_project_locales",
-            )
-        ).distinct()
+        qs = Locale.objects.all()
 
-        return queryset.stats_data().order_by("code")
+        fields_param = self.request.query_params.get("fields", "")
+        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+        # Only prefetch project data when requested
+        needs_projects = not requested or requested & {"projects"}
+        if needs_projects:
+            qs = qs.prefetch_related(
+                Prefetch(
+                    "project_locale",
+                    queryset=ProjectLocale.objects.visible().select_related("project"),
+                    to_attr="fetched_project_locales",
+                )
+            )
+
+        # Only gather stats when requested
+        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
+        if needs_stats:
+            qs = qs.stats_data()
+
+        return qs.distinct().order_by("code")
 
 
 class LocaleIndividualView(generics.RetrieveAPIView):
