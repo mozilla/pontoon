@@ -85,7 +85,7 @@ This interface is especially useful for exploring the API without external tools
 
 ## Response Customization
 
-You can customize the response by specifying the fields you want to include using the `fields=field_1...field_N` query parameter. This allows you to limit the data returned to only the fields you need, reducing payload size and improving performance.
+You can customize the response by specifying the fields you want to include using the `fields=field_1,field_2,...field_N` query parameter. This allows you to limit the data returned to only the fields you need, reducing payload size and improving performance.
 
 For example, to retrieve only the `name` and `code` fields for `locales`, you can use:
 
