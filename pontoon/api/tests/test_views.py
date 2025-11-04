@@ -28,15 +28,7 @@ def test_dynamic_fields(django_assert_num_queries):
             "name": loc.name,
         }
         for loc in sorted(
-            Locale.objects.prefetch_related(
-                Prefetch(
-                    "project_locale",
-                    queryset=ProjectLocale.objects.visible().select_related("project"),
-                    to_attr="fetched_project_locales",
-                )
-            )
-            .distinct()
-            .filter(
+            Locale.objects.distinct().filter(
                 translatedresources__resource__project__disabled=False,
                 translatedresources__resource__project__system_project=False,
                 translatedresources__resource__project__visibility="public",
