@@ -53,7 +53,7 @@ def test_dynamic_fields(django_assert_num_queries):
     results = sorted(response.data["results"], key=lambda loc: loc["code"])
 
     # Split the expected results to match pagination limit of 100
-    expected_results = sorted(expected_results, key=lambda loc: loc["code"])[:100]
+    expected_results = expected_results[:100]
 
     assert response.data["count"] == 108
 
