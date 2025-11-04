@@ -36,13 +36,13 @@ def test_dynamic_fields(django_assert_num_queries):
         )
     ][:100]
 
-    with django_assert_num_queries(3):
+    with django_assert_num_queries(2):
         response = APIClient().get("/api/v2/locales/?fields=code,name")
 
     results = sorted(response.data["results"], key=lambda loc: loc["code"])
 
     assert response.status_code == 200
-    assert response.data["count"] == 108
+    assert response.data["count"] == 110
     assert results == expected_results
 
 
