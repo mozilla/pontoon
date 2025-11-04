@@ -64,6 +64,25 @@ class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
         return obj.is_complete
 
 
+class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+    """
+    Serializer that takes an additional `fields` argument
+    to control which fields should be returned.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+
+        request = self.context.get("request")
+        if request:
+            fields_param = request.query_params.get("fields")
+            if fields_param:
+                allowed = set(fields_param.split(","))
+                existing = set(self.fields.keys())
+                for field_name in existing - allowed:
+                    self.fields.pop(field_name)
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -74,7 +93,7 @@ class TagSerializer(serializers.ModelSerializer):
         )
 
 
-class LocaleSerializer(serializers.ModelSerializer):
+class LocaleSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Locale
         fields = [
@@ -93,7 +112,7 @@ class LocaleSerializer(serializers.ModelSerializer):
         ] + TRANSLATION_STATS_FIELDS
 
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(DynamicFieldsModelSerializer):
     contact = serializers.SerializerMethodField()
 
     class Meta:
@@ -220,7 +239,7 @@ class NestedProjectLocaleSerializer(ProjectLocaleSerializer):
         fields = ProjectLocaleSerializer.Meta.fields + ["locale", "project"]
 
 
-class TermSerializer(serializers.ModelSerializer):
+class TermSerializer(DynamicFieldsModelSerializer):
     translation_text = serializers.SerializerMethodField()
 
     class Meta:
@@ -245,7 +264,7 @@ class TermSerializer(serializers.ModelSerializer):
         return term.text if term else None
 
 
-class TranslationMemorySerializer(serializers.ModelSerializer):
+class TranslationMemorySerializer(DynamicFieldsModelSerializer):
     locale = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
 
@@ -300,7 +319,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         ]
 
 
-class EntitySerializer(serializers.ModelSerializer):
+class EntitySerializer(DynamicFieldsModelSerializer):
     entity = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
     resource = ResourceSerializer(read_only=True)

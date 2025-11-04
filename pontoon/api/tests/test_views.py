@@ -21,6 +21,49 @@ from pontoon.test.factories import (
 
 
 @pytest.mark.django_db
+def test_dynamic_fields(django_assert_num_queries):
+    expected_results = [
+        {
+            "code": loc.code,
+            "name": loc.name,
+        }
+        for loc in (
+            Locale.objects.filter(
+                translatedresources__resource__project__disabled=False,
+                translatedresources__resource__project__system_project=False,
+                translatedresources__resource__project__visibility="public",
+            ).order_by("code")
+        )
+    ][:100]
+
+    with django_assert_num_queries(3):
+        response = APIClient().get("/api/v2/locales/?fields=code,name")
+
+    results = sorted(response.data["results"], key=lambda loc: loc["code"])
+
+    assert response.status_code == 200
+    assert response.data["count"] == 108
+    assert results == expected_results
+
+
+@pytest.mark.django_db
+def test_dynamic_page_sizes(django_assert_num_queries):
+    for page in range(1, 3):
+        with django_assert_num_queries(3):
+            response = APIClient().get(f"/api/v2/locales/?page_size=33&page={page}")
+
+        assert response.status_code == 200
+        assert len(response.data["results"]) == 33
+
+    with django_assert_num_queries(3):
+        response = APIClient().get("/api/v2/locales/?page_size=33&page=4")
+
+    assert response.data["count"] == 108
+    assert response.status_code == 200
+    assert len(response.data["results"]) == 9
+
+
+@pytest.mark.django_db
 def test_locale(django_assert_num_queries):
     locale_a = LocaleFactory(
         code="kg",

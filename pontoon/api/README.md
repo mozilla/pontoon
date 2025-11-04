@@ -83,6 +83,18 @@ Available at any `/api/v2/` endpoint, the browsable API lets you:
 
 This interface is especially useful for exploring the API without external tools like Postman or curl.
 
+## Response Customization
+
+You can customize the response by specifying the fields you want to include using the `fields=field_1,field_2,...field_N` query parameter. This allows you to limit the data returned to only the fields you need, reducing payload size and improving performance.
+
+For example, to retrieve only the `name` and `code` fields for `locales`, you can use:
+
+```bash
+$ curl --globoff "https://example.com/api/v2/locales/?fields=name,code"
+```
+
+This will return a response containing only the specified fields for each locale.
+
 ## Pagination
 
 All list-based endpoints are paginated. By default, each page contains up to 100 items.
@@ -93,4 +105,12 @@ An example may look like this:
 
 ```bash
 $ curl --globoff "https://example.com/api/v2/locales/?page=2"
+```
+
+The page size can also be set with the `?page_size=N` query parameter, reaching a maximum of 1000 items.
+
+An example may look like this:
+
+```bash
+$ curl --globoff "https://example.com/api/v2/locales/?page_size=50"
 ```
