@@ -4,10 +4,6 @@ amqp==5.2.0 \
     --hash=sha256:827cb12fb0baa892aad844fd95258143bce4027fdac4fccddbc43330fd281637 \
     --hash=sha256:a1ecff425ad063ad42a486c902807d1482311481c8ad95a72694b2975e75f7fd
     # via kombu
-aniso8601==9.0.1 \
-    --hash=sha256:1d2b7ef82963909e93c4f24ce48d4de9e66009a21bf1c1e1c85bdd0812fe412f \
-    --hash=sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973
-    # via graphene
 annotated-types==0.7.0 \
     --hash=sha256:1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53 \
     --hash=sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89
@@ -356,7 +352,6 @@ django==4.2.25 \
     #   django-notifications-hq
     #   djangorestframework
     #   drf-spectacular
-    #   graphene-django
     #   jsonfield
 django-ace==1.32.4 \
     --hash=sha256:65c709dfdd2766b4080676541d3889762500a8c8a9150d4356285903b89b4d3a \
@@ -451,27 +446,6 @@ googleapis-common-protos[grpc]==1.65.0 \
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
-graphene==3.3 \
-    --hash=sha256:529bf40c2a698954217d3713c6041d69d3f719ad0080857d7ee31327112446b0 \
-    --hash=sha256:bb3810be33b54cb3e6969506671eb72319e8d7ba0d5ca9c8066472f75bf35a38
-    # via graphene-django
-graphene-django==3.2.2 \
-    --hash=sha256:059ccf25d9a5159f28d7ebf1a648c993ab34deb064e80b70ca096aa22a609556 \
-    --hash=sha256:0fd95c8c1cbe77ae2a5940045ce276803c3acbf200a156731e0c730f2776ae2c
-    # via -r default.in
-graphql-core==3.2.4 \
-    --hash=sha256:1604f2042edc5f3114f49cac9d77e25863be51b23a54a61a23245cf32f6476f0 \
-    --hash=sha256:acbe2e800980d0e39b4685dd058c2f4042660b89ebca38af83020fd872ff1264
-    # via
-    #   graphene
-    #   graphene-django
-    #   graphql-relay
-graphql-relay==3.2.0 \
-    --hash=sha256:1ff1c51298356e481a0be009ccdff249832ce53f30559c1338f22a0e0d17250c \
-    --hash=sha256:c9b22bd28b170ba1fe674c74384a8ff30a76c8e26f88ac3aa1584dd3179953e5
-    # via
-    #   graphene
-    #   graphene-django
 grpc-google-iam-v1==0.13.1 \
     --hash=sha256:3ff4b2fd9d990965e410965253c0da6f66205d5a8291c4c31c6ebecca18a9001 \
     --hash=sha256:c3e86151a981811f30d5e7330f271cee53e73bb87755e88cc3b6f0c7b5fe374e
@@ -983,9 +957,6 @@ portalocker==2.10.1 \
     --hash=sha256:53a5984ebc86a025552264b459b46a2086e269b21823cb572f8f28ee759e45bf \
     --hash=sha256:ef1bf844e878ab08aee7e40184156e1151f228f103aa5c6bd0724cc330960f8f
     # via sacrebleu
-promise==2.3 \
-    --hash=sha256:dfd18337c523ba4b6a58801c164c1904a9d4d1b1747c7d5dbf45b693a49d93d0
-    # via graphene-django
 prompt-toolkit==3.0.48 \
     --hash=sha256:d6623ab0477a80df74e646bdbc93621143f5caf104206aa29294d53de1a03d90 \
     --hash=sha256:f49a827f90062e411f1ce1f854f2aedb3c23353244f8108b89283587397ac10e
@@ -1647,10 +1618,6 @@ tabulate==0.9.0 \
     --hash=sha256:0095b12bf5966de529c0feb1fa08671671b3368eec77d7ef7ab114be2c068b3c \
     --hash=sha256:024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f
     # via sacrebleu
-text-unidecode==1.3 \
-    --hash=sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8 \
-    --hash=sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93
-    # via graphene-django
 toml==0.10.2 \
     --hash=sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b \
     --hash=sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f
