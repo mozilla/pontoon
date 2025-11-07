@@ -956,7 +956,7 @@ def test_terminology_search(django_assert_num_queries):
     TermTranslation.objects.create(term=term1, locale=locale_a, text="odpreti")
     TermTranslation.objects.create(term=term2, locale=locale_a, text="zapreti")
 
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(3):
         response = APIClient().get("/api/v2/search/terminology/?text=open&locale=kg")
 
     assert response.status_code == 200
