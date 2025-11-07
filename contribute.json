@@ -19,7 +19,7 @@
   },
   "urls": {
     "prod": "https://pontoon.mozilla.org",
-    "dev": "https://mozilla-pontoon-staging.herokuapp.com"
+    "dev": "https://pontoon.allizom.org"
   },
   "keywords": [
     "python",
