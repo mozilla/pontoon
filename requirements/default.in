@@ -35,9 +35,6 @@ django-notifications-hq==1.8.3
 django-pipeline==3.0.0
 drf-spectacular==0.28.0
 google-cloud-translate==3.16.0
-# When updating, check that https://localhost:8000/graphql still works
-# See https://github.com/mozilla/pontoon/issues/3292
-graphene-django==3.2.2
 gunicorn==23.0.0
 jsonfield==3.1.0
 markupsafe==2.0.1
