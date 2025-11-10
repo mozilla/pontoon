@@ -263,8 +263,8 @@ class ProjectListView(generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        include_disabled = query_params.get("include_disabled")
-        include_system = query_params.get("include_system")
+        include_disabled = query_params.get("include_disabled", "").lower()
+        include_system = query_params.get("include_system", "").lower()
 
         queryset = (
             Project.objects.visible()
@@ -281,9 +281,9 @@ class ProjectListView(generics.ListAPIView):
         )
 
         filters = Q()
-        if include_disabled is not None:
+        if include_disabled == "true":
             filters |= Q(disabled=True)
-        if include_system is not None:
+        if include_system == "true":
             filters |= Q(system_project=True)
         if filters:
             queryset = queryset | Project.objects.filter(filters).distinct()
@@ -401,6 +401,13 @@ class TranslationSearchListView(generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
+        if query_params.get("search_identifiers", "").lower() != "true":
+            query_params.pop("search_identifiers", None)
+        if query_params.get("search_match_case", "").lower() != "true":
+            query_params.pop("search_match_case", None)
+        if query_params.get("search_match_whole_word", "").lower() != "true":
+            query_params.pop("search_match_whole_word", None)
+
         errors = {}
         if not text:
             errors["text"] = ["This field is required."]
@@ -446,10 +453,10 @@ class TranslationSearchListView(generics.ListAPIView):
                     (
                         Prefetch(
                             "translation_set",
-                            queryset=Translation.objects.filter(
-                                locale__code=locale_code, approved=True
+                            queryset=(
+                                Translation.objects.filter(locale=locale, approved=True)
                             ).select_related("locale"),
-                            to_attr="filtered_translations",
+                            to_attr="active_translations",
                         )
                     ),
                 )
