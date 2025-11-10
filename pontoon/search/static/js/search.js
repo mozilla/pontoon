@@ -1,5 +1,18 @@
 $(function () {
   $('.search-button').click(function () {
+    $('.search-input').trigger('enterKey');
+  });
+
+  $('.search-input')
+    .unbind('keydown.pontoon')
+    .bind('keydown.pontoon', function (e) {
+      if (e.which === 13) {
+        $(this).trigger('enterKey');
+        return false;
+      }
+    });
+
+  $('.search-input').on('enterKey', function () {
     const searchOptions = {};
 
     searchOptions['search'] = $('.search-input').val();
@@ -135,5 +148,20 @@ $(function () {
         },
       });
     }
+  });
+
+  const clipboard = new Clipboard('.entity-list li');
+
+  clipboard.on('success', function (event) {
+    const successMessage = $('<span class="clipboard-success">Copied!</span>'),
+      $trigger = $(event.trigger);
+
+    $('.clipboard-success').remove();
+    $trigger.find('header').prepend(successMessage);
+    setTimeout(function () {
+      successMessage.fadeOut(500, function () {
+        successMessage.remove();
+      });
+    }, 1000);
   });
 });
