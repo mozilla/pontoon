@@ -16,7 +16,7 @@ WITH tm AS (
     FROM base_translationmemoryentry m
     JOIN base_translation t ON t.id = m.translation_id
     WHERE
-        m.target SIMILAR TO '%[^\S \n]%' AND
+        m.target SIMILAR TO '%[^[^[:space:]] \n]%' AND
         t.string != m.target
 )
 UPDATE base_translation AS t
