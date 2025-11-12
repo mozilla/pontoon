@@ -940,6 +940,10 @@ def test_terminology_search(django_assert_num_queries):
         code="kg",
         name="Klingon",
     )
+    locale_b = LocaleFactory(
+        code="gs",
+        name="Geonosian",
+    )
     term1 = Term.objects.create(
         text="open",
         part_of_speech="verb",
@@ -952,9 +956,23 @@ def test_terminology_search(django_assert_num_queries):
         definition="Shut or block access",
         usage="Close the door.",
     )
+    term3 = Term.objects.create(
+        text="opened",
+        part_of_speech="verb",
+        definition="Allow access (past tense)",
+        usage="Opened the door.",
+    )
+    term4 = Term.objects.create(
+        text="click",
+        part_of_speech="verb",
+        definition="press",
+        usage="Click the button.",
+    )
 
     TermTranslation.objects.create(term=term1, locale=locale_a, text="odpreti")
     TermTranslation.objects.create(term=term2, locale=locale_a, text="zapreti")
+    TermTranslation.objects.create(term=term3, locale=locale_a, text="odprto")
+    TermTranslation.objects.create(term=term4, locale=locale_b, text="klikni")
 
     with django_assert_num_queries(3):
         response = APIClient().get("/api/v2/search/terminology/?text=open&locale=kg")
@@ -962,7 +980,7 @@ def test_terminology_search(django_assert_num_queries):
     assert response.status_code == 200
 
     assert response.data == {
-        "count": 1,
+        "count": 2,
         "next": None,
         "previous": None,
         "results": [
@@ -973,7 +991,15 @@ def test_terminology_search(django_assert_num_queries):
                 "translation_text": "odpreti",
                 "usage": "Open the door.",
                 "notes": "",
-            }
+            },
+            {
+                "definition": "Allow access (past tense)",
+                "part_of_speech": "verb",
+                "text": "opened",
+                "translation_text": "odprto",
+                "usage": "Opened the door.",
+                "notes": "",
+            },
         ],
     }
 
