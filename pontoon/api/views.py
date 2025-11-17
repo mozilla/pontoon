@@ -16,7 +16,8 @@ from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.api.authentication import PersonalAccessTokenAuthentication
+
+# from pontoon.api.authentication import PersonalAccessTokenAuthentication
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base import forms
 from pontoon.base.models import (
