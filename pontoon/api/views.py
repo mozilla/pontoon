@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from types import SimpleNamespace
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
@@ -12,16 +13,19 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.api.authentication import PersonalAccessTokenAuthentication
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base import forms
 from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
+    Resource,
     TranslationMemoryEntry,
 )
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.translation import Translation
+from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.terminology.models import (
     Term,
     TermTranslation,
@@ -451,4 +455,59 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
         except ValueError as error:
             raise ValueError(error)
 
-        return qs
+        return entities
+
+
+MAX_TEXT_CHARS = 2048
+MAX_TEXT_BYTES = MAX_TEXT_CHARS * 4
+
+
+class PretranslationView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [PersonalAccessTokenAuthentication]
+
+    def post(self, request):
+        string_format = request.query_params.get("string_format")
+        locale = request.query_params.get("locale")
+        print("hello?")
+        print(string_format)
+
+        if len(request.body) > MAX_TEXT_BYTES:
+            raise ValidationError({"text": ["Payload too large."]})
+
+        try:
+            text = request.body.decode("utf-8", errors="replace")
+        except Exception:
+            raise ValidationError({"text": ["Unable to decode request body as UTF-8."]})
+
+        errors = {}
+        if not text:
+            errors["text"] = ["This field is required."]
+        elif len(text) > MAX_TEXT_CHARS:
+            errors["text"] = ["Text exceeds maximum length of 2048 characters."]
+        if not locale:
+            errors["locale"] = ["This field is required."]
+        if string_format and string_format not in {
+            Resource.Format.FLUENT,
+            Resource.Format.ANDROID,
+            Resource.Format.GETTEXT,
+        }:
+            errors["format"] = ["Choose a correct format."]
+        if errors:
+            raise ValidationError(errors)
+
+        locale = generics.get_object_or_404(Locale, code=locale)
+
+        project = SimpleNamespace(slug="temp-project")
+        resource = SimpleNamespace(project=project, format=string_format or "no-format")
+        entity = SimpleNamespace(resource=resource, string=text)
+
+        try:
+            pretranslation = get_pretranslation(entity=entity, locale=locale)
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=400,
+            )
+
+        return Response({"text": pretranslation[0], "author": pretranslation[1]})
