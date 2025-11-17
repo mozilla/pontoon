@@ -464,7 +464,7 @@ MAX_TEXT_BYTES = MAX_TEXT_CHARS * 4
 
 class PretranslationView(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [PersonalAccessTokenAuthentication]
+    # authentication_classes = [PersonalAccessTokenAuthentication]
 
     def post(self, request):
         string_format = request.query_params.get("string_format")
