@@ -4,7 +4,6 @@ import requests
 
 from requests.exceptions import RequestException
 
-from django.db.models import Prefetch
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -12,7 +11,6 @@ from django.urls import reverse
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
-from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.utils import get_project_locale_from_request, require_AJAX
 from pontoon.settings.base import SITE_URL
 
@@ -61,19 +59,7 @@ def translation_search(request):
     search_match_case = request.GET.get("search_match_case")
     search_match_whole_word = request.GET.get("search_match_whole_word")
 
-    projects = list(
-        Project.objects.visible()
-        .visible_for(request.user)
-        .prefetch_related(
-            Prefetch(
-                "project_locale",
-                queryset=ProjectLocale.objects.visible().select_related("locale"),
-                to_attr="fetched_project_locales",
-            ),
-            "contact",
-            "tags",
-        )
-    )
+    projects = list(Project.objects.visible().visible_for(request.user))
 
     default_project = Project(name="All Projects", slug="all-projects")
     projects.insert(0, default_project)
@@ -84,15 +70,7 @@ def translation_search(request):
     else:
         preferred_project = Project.objects.get(slug=project)
 
-    locales = list(
-        Locale.objects.prefetch_related(
-            Prefetch(
-                "project_locale",
-                queryset=ProjectLocale.objects.visible().select_related("project"),
-                to_attr="fetched_project_locales",
-            )
-        ).distinct()
-    )
+    locales = list(Locale.objects.available())
 
     if not locale or not Locale.objects.filter(code=locale).exists():
         locale = get_project_locale_from_request(request, Locale.objects) or "en-GB"
