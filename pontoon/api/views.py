@@ -476,8 +476,9 @@ class PretranslationView(APIView):
     def post(self, request):
         string_format = request.query_params.get("string_format")
         locale = request.query_params.get("locale")
-        print("hello?")
-        print(string_format)
+
+        if not request.body:
+            raise ValidationError({"text": ["This field is required."]})
 
         if len(request.body) > MAX_TEXT_BYTES:
             raise ValidationError({"text": ["Payload too large."]})
@@ -488,7 +489,7 @@ class PretranslationView(APIView):
             raise ValidationError({"text": ["Unable to decode request body as UTF-8."]})
 
         errors = {}
-        if not text:
+        if not text.strip():
             errors["text"] = ["This field is required."]
         elif len(text) > MAX_TEXT_CHARS:
             errors["text"] = ["Text exceeds maximum length of 2048 characters."]
