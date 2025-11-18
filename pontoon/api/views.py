@@ -472,7 +472,7 @@ MAX_TEXT_BYTES = MAX_TEXT_CHARS * 4
 
 class PretranslationView(APIView):
     permission_classes = [IsAuthenticated]
-    # authentication_classes = [PersonalAccessTokenAuthentication]
+    authentication_classes = [PersonalAccessTokenAuthentication]
 
     def post(self, request):
         string_format = request.query_params.get("string_format")
@@ -497,9 +497,16 @@ class PretranslationView(APIView):
         if not locale:
             errors["locale"] = ["This field is required."]
         if string_format and string_format not in {
-            Resource.Format.FLUENT,
             Resource.Format.ANDROID,
+            Resource.Format.DTD,
+            Resource.Format.FLUENT,
             Resource.Format.GETTEXT,
+            Resource.Format.INI,
+            Resource.Format.PLAIN_JSON,
+            Resource.Format.PROPERTIES,
+            Resource.Format.WEBEXT,
+            Resource.Format.XCODE,
+            Resource.Format.XLIFF,
         }:
             errors["format"] = ["Choose a correct format."]
         if errors:
