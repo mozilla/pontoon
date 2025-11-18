@@ -68,6 +68,14 @@ you create:
    Set to 'gitlab' if you want to use 'GitLab' (corresponding GITLAB_* settings must be set if required).
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
+``USE_X_FORWARDED_HOST``
+   Optional. If using a reverse proxy, set to True to make django-allauth redirect_url work as expected.
+   Default value is `False`.
+
+``BADGES_START_DATE``
+   Optional. Specifies the start date from which user activities count towards badge achievements.
+   This variable should be in YYYY-MM-DD format.
+
 ``BADGES_PROMOTION_THRESHOLDS``
    Optional. A comma-separated list of numeric thresholds for different levels of the
    Community Builder badge.
@@ -75,10 +83,6 @@ you create:
 ``BADGES_REVIEW_THRESHOLDS``
    Optional. A comma-separated list of numeric thresholds for different levels of the
    Review Master badge.
-
-``BADGES_START_DATE``
-   Optional. Specifies the start date from which user activities count towards badge achievements.
-   This variable should be in YYYY-MM-DD format.
 
 ``BADGES_TRANSLATION_THRESHOLDS``
    Optional. A comma-separated list of numeric thresholds for different levels of the
@@ -171,7 +175,7 @@ you create:
    Optional. Text to be shown in the footer of the non-transactional emails sent
    using the Messaging Center, just above the unsubscribe text.
 
-``+EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO``
+``EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO``
    Optional. Custom text to be shown in the Monthly activity summary emails after the
    greeting and before the stats.
 

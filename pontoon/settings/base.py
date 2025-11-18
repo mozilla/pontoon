@@ -923,6 +923,9 @@ X_FRAME_OPTIONS = "DENY"
 # Use correct header for detecting HTTPS on Heroku.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+# If using a reverse proxy, set to True to make django-allauth redirect_url work as expected.
+USE_X_FORWARDED_HOST = os.environ.get("USE_X_FORWARDED_HOST", "False") != "False"
+
 # If set to a non-zero integer value, the SecurityMiddleware sets the
 # HTTP Strict Transport Security header on all responses that do not already have it.
 SECURE_HSTS_SECONDS = 31536000  # 1 year
