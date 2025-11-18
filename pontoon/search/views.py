@@ -59,7 +59,13 @@ def translation_search(request):
     search_match_case = request.GET.get("search_match_case")
     search_match_whole_word = request.GET.get("search_match_whole_word")
 
-    projects = list(Project.objects.visible().visible_for(request.user))
+    projects = list(
+        Project.objects.visible()
+        .visible_for(request.user)
+        .prefetch_related(
+            "contact",
+        )
+    )
 
     default_project = Project(name="All Projects", slug="all-projects")
     projects.insert(0, default_project)
