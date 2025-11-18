@@ -3,5 +3,4 @@ Disallow: /a/
 Disallow: /admin/
 Disallow: /contributors/
 Disallow: /*insights/
-Disallow: /graphql/
 Disallow: /api/

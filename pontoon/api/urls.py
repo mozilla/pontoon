@@ -1,11 +1,8 @@
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerSplitView
-from graphene_django.views import GraphQLView
 
-from django.urls import include, path, re_path
-from django.views.decorators.csrf import csrf_exempt
+from django.urls import include, path
 
 from pontoon.api import views
-from pontoon.api.schema import schema
 
 
 api_v2_patterns = [
@@ -82,12 +79,6 @@ api_v2_patterns = [
 
 
 urlpatterns = [
-    # GraphQL endpoint. Serves the GraphiQL IDE if accessed with Accept: text/html.
-    # Explicitly support URLs with or without trailing slash in order to support curl requests.
-    re_path(
-        r"^graphql/?$",
-        csrf_exempt(GraphQLView.as_view(schema=schema, graphiql=True)),
-    ),
     # REST API
     path("api/v2/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

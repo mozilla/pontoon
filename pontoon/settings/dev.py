@@ -31,7 +31,6 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
             registration|
             account|
             socialaccount|
-            graphene|
             rest_framework|
             django_filters|
             drf_spectacular|
@@ -43,8 +42,6 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
     """,
     re.VERBOSE,
 )
-
-GRAPHENE = {"MIDDLEWARE": ["graphene_django.debug.DjangoDebugMiddleware"]}
 
 if base.DJANGO_DEBUG_TOOLBAR:
     DEBUG_TOOLBAR_CONFIG = {

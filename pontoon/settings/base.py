@@ -287,7 +287,6 @@ INSTALLED_APPS = (
     "allauth.socialaccount.providers.gitlab",
     "allauth.socialaccount.providers.keycloak",
     "notifications",
-    "graphene_django",
     "django_ace",
     "rest_framework",
     "drf_spectacular",
@@ -339,7 +338,6 @@ MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "pontoon.base.middleware.ThrottleIpMiddleware",
-    "pontoon.base.middleware.GraphQLDeprecationMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -371,7 +369,6 @@ TEMPLATES = [
                     registration|
                     account|
                     socialaccount|
-                    graphene|
                     rest_framework|
                     django_filters|
                     drf_spectacular|
@@ -1092,12 +1089,6 @@ CELERY_SEND_EVENTS = False  # We aren't yet monitoring events
 CELERY_TASK_SERIALIZER = "pickle"
 CELERY_RESULT_SERIALIZER = "pickle"
 CELERY_ACCEPT_CONTENT = ["pickle"]
-
-# Settings related to the CORS mechanisms.
-# For the sake of integration with other sites,
-# all origins are allowed for the GraphQL endpoint.
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_URLS_REGEX = r"^/graphql/?$"
 
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = "pontoon.base.adapter.PontoonSocialAdapter"
