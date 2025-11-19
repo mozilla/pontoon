@@ -2,6 +2,7 @@ import pytest
 
 from rest_framework.test import APIClient
 
+from django.contrib.auth.hashers import make_password
 from django.db.models import Prefetch
 from django.utils.timezone import now, timedelta
 
@@ -1485,6 +1486,7 @@ def test_translation_search(django_assert_num_queries):
             },
         },
     ]
+
 
 @pytest.mark.django_db
 def test_pretranslation_tm(django_assert_num_queries, member):
