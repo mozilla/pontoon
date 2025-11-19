@@ -87,26 +87,4 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("api/v2/", include(api_v2_patterns)),
-    # API v1
-    path(
-        "api/v1/",
-        include(
-            [
-                path(
-                    # User actions
-                    "user-actions/",
-                    include(
-                        [
-                            # In a given project
-                            path(
-                                "<str:date>/project/<slug:slug>/",
-                                views.get_user_actions,
-                                name="pontoon.api.get_user_actions.project",
-                            ),
-                        ]
-                    ),
-                ),
-            ]
-        ),
-    ),
 ]
