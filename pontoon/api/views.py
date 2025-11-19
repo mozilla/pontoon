@@ -468,14 +468,8 @@ class PretranslationView(APIView):
     authentication_classes = [PersonalAccessTokenAuthentication]
 
     def post(self, request):
-        string_format = request.query_params.get("string_format")
+        resource_format = request.query_params.get("resource_format")
         locale = request.query_params.get("locale")
-
-        if not request.body:
-            raise ValidationError({"text": ["This field is required."]})
-
-        if len(request.body) > MAX_TEXT_BYTES:
-            raise ValidationError({"text": ["Payload too large."]})
 
         try:
             text = request.body.decode("utf-8", errors="replace")
@@ -483,13 +477,15 @@ class PretranslationView(APIView):
             raise ValidationError({"text": ["Unable to decode request body as UTF-8."]})
 
         errors = {}
-        if not text.strip():
+        if not text.strip() or not request.body:
             errors["text"] = ["This field is required."]
+        elif len(request.body) > MAX_TEXT_BYTES:
+            raise ValidationError({"text": ["Payload too large."]})
         elif len(text) > MAX_TEXT_CHARS:
             errors["text"] = ["Text exceeds maximum length of 2048 characters."]
         if not locale:
             errors["locale"] = ["This field is required."]
-        if string_format and string_format not in {
+        if resource_format and resource_format not in {
             Resource.Format.ANDROID,
             Resource.Format.DTD,
             Resource.Format.FLUENT,
@@ -508,7 +504,7 @@ class PretranslationView(APIView):
         locale = generics.get_object_or_404(Locale, code=locale)
 
         project = SimpleNamespace(slug="temp-project")
-        resource = SimpleNamespace(project=project, format=string_format or None)
+        resource = SimpleNamespace(project=project, format=resource_format or None)
         entity = SimpleNamespace(resource=resource, string=text)
 
         try:
