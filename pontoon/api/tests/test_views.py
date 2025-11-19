@@ -3,7 +3,9 @@ import pytest
 from rest_framework.test import APIClient
 
 from django.db.models import Prefetch
+from django.utils.timezone import now, timedelta
 
+from pontoon.api.models import PersonalAccessToken
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
@@ -1457,3 +1459,208 @@ def test_translation_search(django_assert_num_queries):
             },
         },
     ]
+
+@pytest.mark.django_db
+def test_pretranslation_tm(django_assert_num_queries, member):
+    token = PersonalAccessToken.objects.create(
+        user=member.user,
+        name="Test Token 1",
+        token_hash="hashed_token",
+        expires_at=now() + timedelta(days=1),
+    )
+    token_id = token.id
+    token_unhashed = "unhashed-token"
+    token.token_hash = make_password(token_unhashed)
+    token.save()
+
+    locale_a = LocaleFactory(
+        code="kg",
+        name="Klingon",
+    )
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+        repositories=[],
+    )
+    resource_a = ResourceFactory.create(
+        project=project_a,
+        path=f"resource_{project_a.slug}.po",
+        format="po",
+    )
+    entity_a = EntityFactory.create(
+        string="Entity A",
+        resource=resource_a,
+    )
+    locale_b = LocaleFactory(
+        code="gs",
+        name="Geonosian",
+    )
+    project_b = ProjectFactory(
+        slug="project_b",
+        name="Project B",
+    )
+    resource_b = ResourceFactory.create(
+        project=project_b,
+        path=f"resource_{project_b.slug}.ftl",
+        format="fluent",
+    )
+    entity_b = EntityFactory.create(
+        string="Entity B",
+        resource=resource_b,
+    )
+    TranslationMemoryEntry.objects.create(
+        source="Hello",
+        target="Hola",
+        locale=locale_a,
+        project=project_a,
+        entity=entity_a,
+    )
+    TranslationMemoryEntry.objects.create(
+        source="{ -object-name } is a test",
+        target="{ -object-name } es una prueba",
+        locale=locale_a,
+        project=project_b,
+        entity=entity_b,
+    )
+    TranslationMemoryEntry.objects.create(
+        source="Hello",
+        target="Bonjour",
+        locale=locale_b,
+        project=project_b,
+        entity=entity_b,
+    )
+
+    # test no locale no text
+    response = APIClient().post(
+        "/api/v2/pretranslate/",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+    assert response.data == {
+        "locale": ["This field is required."],
+        "text": ["This field is required."],
+    }
+
+    # test corrupted input
+    corrupted_data = b"\x80\x81\x82"  # Invalid UTF-8
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg",
+        data=corrupted_data,
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+    assert response.data == {
+        "text": ["Unable to decode request body as UTF-8."],
+    }
+
+    # test string with spaces
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg",
+        data="    ",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+    assert response.data == {
+        "text": ["This field is required."],
+    }
+
+    # test empty string
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg",
+        data="",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+    assert response.data == {
+        "text": ["This field is required."],
+    }
+
+    # test massive byte payload
+    large_byte_data = "way too many bytes" * (
+        2048 * 4
+    )  # payload larger than 2048 * 4 bytes
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg",
+        data=large_byte_data,
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+    assert response.data == {
+        "text": ["Payload too large."],
+    }
+
+    # test massive character payload
+    large_char_data = "a" * 2049  # payload larger than 2048 characters
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg",
+        data=large_char_data,
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+    assert response.data == {
+        "text": ["Text exceeds maximum length of 2048 characters."],
+    }
+
+    # test bad resource format
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg&resource_format=blah",
+        data="Hello",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+    assert response.data == {
+        "resource_format": ["Choose a correct resource format."],
+    }
+
+    # test no resource format
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg",
+        data="Hello",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 200
+    assert response.data == {
+        "text": "Hola",
+        "author": "tm",
+    }
+
+    # test fluent resource format
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg&resource_format=fluent",
+        data="testing-alias = { -object-name } is a test",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 200
+    assert response.data == {
+        "text": "testing-alias = { -object-name } es una prueba\n",
+        "author": "tm",
+    }
+
+
+# Test Google AutoML

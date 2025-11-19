@@ -467,6 +467,18 @@ class TranslationSearchListView(generics.ListAPIView):
 
 MAX_TEXT_CHARS = 2048
 MAX_TEXT_BYTES = MAX_TEXT_CHARS * 4
+VALID_FORMATS = {
+    Resource.Format.ANDROID,
+    Resource.Format.DTD,
+    Resource.Format.FLUENT,
+    Resource.Format.GETTEXT,
+    Resource.Format.INI,
+    Resource.Format.PLAIN_JSON,
+    Resource.Format.PROPERTIES,
+    Resource.Format.WEBEXT,
+    Resource.Format.XCODE,
+    Resource.Format.XLIFF,
+}
 
 
 class PretranslationView(APIView):
@@ -477,33 +489,27 @@ class PretranslationView(APIView):
         resource_format = request.query_params.get("resource_format")
         locale = request.query_params.get("locale")
 
-        try:
-            text = request.body.decode("utf-8", errors="replace")
-        except Exception:
-            raise ValidationError({"text": ["Unable to decode request body as UTF-8."]})
-
         errors = {}
-        if not text.strip() or not request.body:
-            errors["text"] = ["This field is required."]
-        elif len(request.body) > MAX_TEXT_BYTES:
-            raise ValidationError({"text": ["Payload too large."]})
-        elif len(text) > MAX_TEXT_CHARS:
-            errors["text"] = ["Text exceeds maximum length of 2048 characters."]
+        try:
+            text = request.body.decode("utf-8")
+        except UnicodeDecodeError:
+            errors["text"] = ["Unable to decode request body as UTF-8."]
+            text = None
+
+        if text is not None:
+            if len(request.body) > MAX_TEXT_BYTES:
+                errors["text"] = ["Payload too large."]
+            elif len(text) > MAX_TEXT_CHARS:
+                errors["text"] = [
+                    f"Text exceeds maximum length of {MAX_TEXT_CHARS} characters."
+                ]
+            elif not text.strip():
+                errors["text"] = ["This field is required."]
+
         if not locale:
             errors["locale"] = ["This field is required."]
-        if resource_format and resource_format not in {
-            Resource.Format.ANDROID,
-            Resource.Format.DTD,
-            Resource.Format.FLUENT,
-            Resource.Format.GETTEXT,
-            Resource.Format.INI,
-            Resource.Format.PLAIN_JSON,
-            Resource.Format.PROPERTIES,
-            Resource.Format.WEBEXT,
-            Resource.Format.XCODE,
-            Resource.Format.XLIFF,
-        }:
-            errors["format"] = ["Choose a correct format."]
+        if resource_format and resource_format not in VALID_FORMATS:
+            errors["resource_format"] = ["Choose a correct resource format."]
         if errors:
             raise ValidationError(errors)
 
