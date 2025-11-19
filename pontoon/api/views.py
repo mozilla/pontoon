@@ -13,7 +13,6 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
 
 from pontoon.actionlog.models import ActionLog
-
 from pontoon.api.authentication import PersonalAccessTokenAuthentication
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base import forms
