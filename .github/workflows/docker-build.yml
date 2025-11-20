@@ -1,0 +1,57 @@
+name: Docker Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile-mozcloud
+          push: false
+          load: true
+          tags: pontoon:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Tag image for GAR
+        id: tag
+        run: |
+          # Get the short commit SHA
+          SHORT_SHA=$(git rev-parse --short HEAD)
+
+          # Construct GAR image tag
+          GAR_TAG="us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/pontoon/pontoon:${SHORT_SHA}"
+
+          # Tag the built image
+          docker tag pontoon:latest ${GAR_TAG}
+
+          # Output the tag for the push action
+          echo "image_tags=${GAR_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Push Docker image to GAR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: mozilla-it/deploy-actions/docker-push@v5
+        with:
+          image_tags: ${{ steps.tag.outputs.image_tags }}
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_pool_project_number: ${{ vars.MOZCLOUD_WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER }}

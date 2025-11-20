@@ -1,0 +1,142 @@
+# Stage 1: Python dependencies builder
+FROM python:3.11-bookworm AS python-builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install build dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libmemcached-dev \
+        postgresql-server-dev-15 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv (version should match the one used in Python GitHub workflows)
+COPY --from=ghcr.io/astral-sh/uv:0.9.0 /uv /bin/uv
+
+WORKDIR /app
+
+# Install Python dependencies to /opt/venv
+ENV VIRTUAL_ENV=/opt/venv
+RUN python -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+COPY requirements/* /app/requirements/
+# Only install production requirements
+RUN uv pip install -r requirements/default.txt
+
+
+# Stage 2: Node.js frontend builder
+FROM node:24-bookworm-slim AS node-builder
+
+WORKDIR /app
+
+# Copy root package.json for workspace configuration
+COPY package.json package-lock.json /app/
+
+# Install pontoon Node.js dependencies (terser, yuglify for compression)
+COPY pontoon/package.json /app/pontoon/package.json
+
+# Install translate frontend dependencies
+COPY translate/package.json /app/translate/package.json
+
+# Install all workspace dependencies from root
+RUN npm ci
+
+# Copy translate source code and build production frontend
+COPY translate/ /app/translate/
+RUN npm run build:prod
+
+
+# Stage 3: Static files builder
+FROM python:3.11-slim-bookworm AS static-builder
+
+ARG SECRET_KEY=foo
+ARG DATABASE_URL=postgres://pontoon:asdf@postgresql/pontoon
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=/app
+
+# Install Node.js for building frontend
+RUN apt-get update \
+    # Enable downloading packages over https
+    && apt-get install -y apt-transport-https \
+    # Add NodeSource v24.x and install nodejs
+    && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+    # Install software
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        nodejs \
+        libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy Python virtual environment from builder
+COPY --from=python-builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy Node.js dependencies for static compression (from root node_modules)
+COPY --from=node-builder /app/node_modules /app/node_modules
+
+# Copy built frontend assets
+COPY --from=node-builder /app/translate/dist /app/translate/dist
+COPY --from=node-builder /app/translate/public /app/translate/public
+
+# Copy application code
+COPY . /app/
+
+# Set up environment variables for collectstatic
+ENV YUGLIFY_BINARY=/app/node_modules/.bin/yuglify
+ENV TERSER_BINARY=/app/node_modules/.bin/terser
+
+# Collect static files (includes frontend build + Django static files)
+RUN python manage.py collectstatic --noinput
+
+
+# Stage 4: Final runtime image
+FROM python:3.11-slim-bookworm AS server
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV HGPYTHON3=1
+
+# Python environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=/app
+
+# Install only runtime dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libmemcached11 \
+        libpq5 \
+        postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create the app user
+RUN groupadd -r --gid=${GROUP_ID} pontoon && useradd --uid=${USER_ID} --no-log-init -r -m -g pontoon pontoon
+
+WORKDIR /app
+
+# Copy Python virtual environment from builder
+COPY --from=python-builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
+COPY --chown=pontoon:pontoon . /app/
+
+# Copy collected static files from static-builder
+COPY --from=static-builder --chown=pontoon:pontoon /app/static /app/static
+
+# Copy built frontend assets (needed for Django STATICFILES_DIRS)
+COPY --from=node-builder --chown=pontoon:pontoon /app/translate/dist /app/translate/dist
+COPY --from=node-builder --chown=pontoon:pontoon /app/translate/public /app/translate/public
+
+USER pontoon
+
+STOPSIGNAL SIGINT
+CMD ["/app/docker/server_run.sh"]
