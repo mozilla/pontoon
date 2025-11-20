@@ -143,4 +143,12 @@ COPY --from=node-builder --chown=pontoon:pontoon /app/translate/public /app/tran
 USER pontoon
 
 STOPSIGNAL SIGINT
-CMD ["gunicorn", "pontoon.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "pontoon.wsgi:application",    \
+     "--bind", "0.0.0.0:8000",                  \
+     "--workers", "${GUNICORN_WORKERS:-4}",     \
+     "--worker-class", "sync",                  \
+     "--worker-tmp-dir", "/dev/shm",            \
+     "--log-file", "-",                         \
+     "--access-logfile", "-",                   \
+     "--error-logfile", "-",                    \
+     "--log-level", "info"]
