@@ -27,6 +27,8 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile-mozcloud
+          build-args: |
+            GIT_REVISION=${{ github.sha }}
           push: false
           load: true
           tags: pontoon:latest

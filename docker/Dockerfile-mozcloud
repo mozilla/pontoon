@@ -53,6 +53,7 @@ FROM python:3.11-slim-bookworm AS static-builder
 
 ARG SECRET_KEY=foo
 ARG DATABASE_URL=postgres://pontoon:asdf@postgresql/pontoon
+ARG GIT_REVISION=unknown
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -93,6 +94,9 @@ ENV TERSER_BINARY=/app/node_modules/.bin/terser
 
 # Collect static files (includes frontend build + Django static files)
 RUN python manage.py collectstatic --noinput
+
+# Save git revision to static/revision.txt
+RUN echo "${GIT_REVISION}" > static/revision.txt
 
 
 # Stage 4: Final runtime image
