@@ -39,11 +39,14 @@ jobs:
         id: tag
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          # Get the short commit SHA
-          SHORT_SHA=$(git rev-parse --short HEAD)
+          # Get the short commit SHA from GitHub context
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Get branch name from GitHub context
+          BRANCH_NAME=$(echo "${{ github.ref_name }}")
 
           # Construct GAR image tag
-          GAR_TAG="us-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/pontoon/pontoon:${SHORT_SHA}"
+          GAR_TAG="us-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/pontoon/pontoon:${BRANCH_NAME}-${SHORT_SHA}"
 
           # Tag the built image
           docker tag pontoon:latest ${GAR_TAG}
