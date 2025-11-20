@@ -1,4 +1,5 @@
 .*
+!.github
 
 *-all.js
 *-min.css
