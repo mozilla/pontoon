@@ -57,4 +57,5 @@ jobs:
         with:
           image_tags: ${{ steps.tag.outputs.image_tags }}
           project_id: ${{ vars.GCP_PROJECT_ID }}
+          service_account_name: pontoon-gar-pusher
           workload_identity_pool_project_number: ${{ vars.MOZCLOUD_WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER }}
