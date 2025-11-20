@@ -143,4 +143,4 @@ COPY --from=node-builder --chown=pontoon:pontoon /app/translate/public /app/tran
 USER pontoon
 
 STOPSIGNAL SIGINT
-CMD ["/app/docker/server_run.sh"]
+CMD ["gunicorn", "pontoon.wsgi:application", "--bind", "0.0.0.0:8000"]
