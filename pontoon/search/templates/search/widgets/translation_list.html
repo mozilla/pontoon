@@ -1,0 +1,38 @@
+{% import "widgets/menu.html" as Menu %}
+
+{# Widget to display list of contributors. #}
+{% macro list_translations(entity, site_url) %}
+  <table class="striped">
+    <thead>
+      <tr>
+        <th>Locale Code</th>
+        <th>Translation</th>
+        <th>Find it on Pontoon</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for translation in entity.translations %}
+      <tr>
+        <td>
+            <p class="translation-locale-code">{{ translation.locale.code }}</p>
+        </td>
+        <td>
+          <div>
+            <p class="translation-string">{{ translation.string }}</p>
+          </div>
+        </td>
+        <td>
+          <div>
+            <a href="{{ site_url }}/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}" class="translation-url">Link</a>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+{# Widget to display notification if no translations are available. #}
+{% macro no_translations() %}
+  <p class="no-results">No translations found.</p>
+{% endmacro %}
