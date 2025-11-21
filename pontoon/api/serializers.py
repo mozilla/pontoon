@@ -314,9 +314,7 @@ class TranslationSerializer(serializers.ModelSerializer):
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
-        fields = [
-            "path",
-        ]
+        fields = ["path", "format"]
 
 
 class EntitySerializer(DynamicFieldsModelSerializer):
