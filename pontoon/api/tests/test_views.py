@@ -74,7 +74,7 @@ def test_locale(django_assert_num_queries):
     resource = ResourceFactory.create(
         project=project_terminology,
         path=f"resource_{project_terminology.slug}_1.po",
-        format="po",
+        format="gettext",
     )
 
     # append extra TranslatedResource to simulate multiple Translated Resources per project
@@ -155,10 +155,10 @@ def test_locales(django_assert_num_queries):
 
     resources = [
         ResourceFactory.create(
-            project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+            project=project_a, path=f"resource_{project_a.slug}.po", format="gettext"
         ),
         ResourceFactory.create(
-            project=project_b, path=f"resource_{project_b.slug}.po", format="po"
+            project=project_b, path=f"resource_{project_b.slug}.po", format="gettext"
         ),
     ]
 
@@ -250,10 +250,10 @@ def test_project(django_assert_num_queries):
     # append extra Resource to simulate multiple resource per project
     resources = [
         ResourceFactory.create(
-            project=project, path=f"resource_{project.slug}_1.po", format="po"
+            project=project, path=f"resource_{project.slug}_1.po", format="gettext"
         ),
         ResourceFactory.create(
-            project=project, path=f"resource_{project.slug}_2.po", format="po"
+            project=project, path=f"resource_{project.slug}_2.po", format="gettext"
         ),
     ]
 
@@ -490,10 +490,10 @@ def test_projects(django_assert_num_queries):
     # append extra Resource to simulate multiple resource per project
     resources = [
         ResourceFactory.create(
-            project=project, path=f"resource_{project.slug}.po", format="po"
+            project=project, path=f"resource_{project.slug}.po", format="gettext"
         )
         for project in Project.objects.all()
-    ] + [ResourceFactory.create(project=project_1, path="resource_a_2.po", format="po")]
+    ] + [ResourceFactory.create(project=project_1, path="resource_a_2.po", format="gettext")]
 
     # append extra TranslatedResource to simulate multiple Translated Resources per project
     translated_resources = [
@@ -672,7 +672,7 @@ def test_entity(django_assert_num_queries):
     )
 
     resource = ResourceFactory.create(
-        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+        project=project_a, path=f"resource_{project_a.slug}.po", format="gettext"
     )
 
     entity = EntityFactory.create(string="Test String", resource=resource)
@@ -688,7 +688,7 @@ def test_entity(django_assert_num_queries):
         "key": [],
         "string": "Test String",
         "project": {"name": "Project A", "slug": "project_a"},
-        "resource": {"path": "resource_project_a.po"},
+        "resource": {"path": "resource_project_a.po", "format": "gettext"},
     }
 
 
@@ -709,7 +709,7 @@ def test_entity_with_translations(django_assert_num_queries):
     ]
 
     resource = ResourceFactory.create(
-        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+        project=project_a, path=f"resource_{project_a.slug}.po", format="gettext"
     )
 
     entity = EntityFactory.create(string="Test String", resource=resource)
@@ -741,7 +741,7 @@ def test_entity_with_translations(django_assert_num_queries):
         "string": "Test String",
         "key": [],
         "project": {"slug": "project_a", "name": "Project A"},
-        "resource": {"path": "resource_project_a.po"},
+        "resource": {"path": "resource_project_a.po", "format": "gettext"},
         "translations": [
             {
                 "locale": {"code": "kg", "name": "Klingon"},
@@ -772,11 +772,11 @@ def test_entity_alternate(django_assert_num_queries):
     )
 
     resource_a = ResourceFactory.create(
-        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+        project=project_a, path=f"resource_{project_a.slug}.po", format="gettext"
     )
 
     resource_b = ResourceFactory.create(
-        project=project_b, path=f"resource_{project_b.slug}.po", format="po"
+        project=project_b, path=f"resource_{project_b.slug}.po", format="gettext"
     )
 
     entities = [
@@ -805,7 +805,7 @@ def test_entity_alternate(django_assert_num_queries):
         "key": ["entityKey1", "entityKey2"],
         "string": "Test String A",
         "project": {"name": "Project A", "slug": "project_a"},
-        "resource": {"path": "resource_project_a.po"},
+        "resource": {"path": "resource_project_a.po", "format": "gettext"},
     }
 
 
@@ -817,7 +817,7 @@ def test_entities(django_assert_num_queries):
     )
 
     resource_a = ResourceFactory.create(
-        project=project_a, path=f"resource_{project_a.slug}.po", format="po"
+        project=project_a, path=f"resource_{project_a.slug}.po", format="gettext"
     )
 
     entities = [
@@ -836,7 +836,7 @@ def test_entities(django_assert_num_queries):
             "string": entity.string,
             "key": entity.key,
             "project": {"slug": "project_a", "name": "Project A"},
-            "resource": {"path": "resource_project_a.po"},
+            "resource": {"path": "resource_project_a.po", "format": "gettext"},
         }
         for entity in entities
     ]
@@ -856,10 +856,10 @@ def test_project_locale(django_assert_num_queries):
     # append extra Resource to simulate multiple resource per project
     resources = [
         ResourceFactory.create(
-            project=project, path=f"resource_{project.slug}_1.po", format="po"
+            project=project, path=f"resource_{project.slug}_1.po", format="gettext"
         ),
         ResourceFactory.create(
-            project=project, path=f"resource_{project.slug}_2.po", format="po"
+            project=project, path=f"resource_{project.slug}_2.po", format="gettext"
         ),
     ]
 
@@ -998,7 +998,7 @@ def test_tm_search(django_assert_num_queries):
     resource_a = ResourceFactory.create(
         project=project_a,
         path=f"resource_{project_a.slug}.po",
-        format="po",
+        format="gettext",
     )
     entity_a = EntityFactory.create(
         string="Entity A",
@@ -1015,7 +1015,7 @@ def test_tm_search(django_assert_num_queries):
     resource_b = ResourceFactory.create(
         project=project_b,
         path=f"resource_{project_b.slug}.po",
-        format="po",
+        format="gettext",
     )
     entity_b = EntityFactory.create(
         string="Entity B",
@@ -1029,7 +1029,7 @@ def test_tm_search(django_assert_num_queries):
     resource_private = ResourceFactory.create(
         project=project_private,
         path=f"resource_{project_private.slug}.po",
-        format="po",
+        format="gettext",
     )
     entity_private = EntityFactory.create(
         string="Entity Private",
@@ -1097,7 +1097,7 @@ def test_translation_search(django_assert_num_queries):
 
     resources = {
         "resource_a": ResourceFactory.create(
-            project=project_a, path=f"resource_{project_a.slug}_1.po", format="po"
+            project=project_a, path=f"resource_{project_a.slug}_1.po", format="gettext"
         ),
         "resource_b": ResourceFactory.create(
             project=project_a, path=f"resource_{project_a.slug}_2.ini", format="ini"
@@ -1224,7 +1224,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
             "key": [],
             "project": {"slug": "project-b", "name": "Project B"},
-            "resource": {"path": "resource_project-b_3.ftl"},
+            "resource": {"path": "resource_project-b_3.ftl", "format": "ftl"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1247,7 +1247,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_a Flibbertigibbet Test",
             "key": [],
             "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_2.ini"},
+            "resource": {"path": "resource_project-a_2.ini", "format": "ini"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1258,7 +1258,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_a test Flibbertigibbet",
             "key": ["TestKey_G dinglehopperite"],
             "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_2.ini"},
+            "resource": {"path": "resource_project-a_2.ini", "format": "ini"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1269,7 +1269,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_aTest Flibbertigibbet",
             "key": ["Test_H_dinglehopper"],
             "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_2.ini"},
+            "resource": {"path": "resource_project-a_2.ini", "format": "ini"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1280,7 +1280,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "theproject_b Test Flibbertigibbet dinglehopper",
             "key": ["TestKey_J_squibble"],
             "project": {"slug": "project-b", "name": "Project B"},
-            "resource": {"path": "resource_project-b_3.ftl"},
+            "resource": {"path": "resource_project-b_3.ftl", "format": "ftl"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1291,7 +1291,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_btest Flibbertigibbet dinglehopper",
             "key": ["TestKey_K_squibb"],
             "project": {"slug": "project-b", "name": "Project B"},
-            "resource": {"path": "resource_project-b_3.ftl"},
+            "resource": {"path": "resource_project-b_3.ftl", "format": "ftl"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1314,7 +1314,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
             "key": [],
             "project": {"slug": "project-b", "name": "Project B"},
-            "resource": {"path": "resource_project-b_3.ftl"},
+            "resource": {"path": "resource_project-b_3.ftl", "format": "ftl"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1337,7 +1337,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "theproject_aTestsquibb",
             "key": ["TestKey_C dinglehopper"],
             "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_1.po"},
+            "resource": {"path": "resource_project-a_1.po", "format": "gettext"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1348,7 +1348,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_a test Flibbertigibbet",
             "key": ["TestKey_G dinglehopperite"],
             "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_2.ini"},
+            "resource": {"path": "resource_project-a_2.ini", "format": "ini"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1359,7 +1359,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_aTest Flibbertigibbet",
             "key": ["Test_H_dinglehopper"],
             "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_2.ini"},
+            "resource": {"path": "resource_project-a_2.ini", "format": "ini"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1370,7 +1370,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "theproject_b Test Flibbertigibbet dinglehopper",
             "key": ["TestKey_J_squibble"],
             "project": {"slug": "project-b", "name": "Project B"},
-            "resource": {"path": "resource_project-b_3.ftl"},
+            "resource": {"path": "resource_project-b_3.ftl", "format": "ftl"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1381,7 +1381,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_btest Flibbertigibbet dinglehopper",
             "key": ["TestKey_K_squibb"],
             "project": {"slug": "project-b", "name": "Project B"},
-            "resource": {"path": "resource_project-b_3.ftl"},
+            "resource": {"path": "resource_project-b_3.ftl", "format": "ftl"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1392,7 +1392,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_b Test Flibbertigibbetelle Dinglehopper",
             "key": [],
             "project": {"slug": "project-b", "name": "Project B"},
-            "resource": {"path": "resource_project-b_3.ftl"},
+            "resource": {"path": "resource_project-b_3.ftl", "format": "ftl"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1415,7 +1415,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_a Test",
             "key": ["TestKey_B_squibb"],
             "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_1.po"},
+            "resource": {"path": "resource_project-a_1.po", "format": "gettext"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
@@ -1426,7 +1426,7 @@ def test_translation_search(django_assert_num_queries):
             "string": "the project_a Flibbertigibbet Test",
             "key": [],
             "project": {"slug": "project-a", "name": "Project A"},
-            "resource": {"path": "resource_project-a_2.ini"},
+            "resource": {"path": "resource_project-a_2.ini", "format": "ini"},
             "translation": {
                 "locale": {"code": "gs", "name": "Geonosian"},
                 "string": "translation_Geonosian",
