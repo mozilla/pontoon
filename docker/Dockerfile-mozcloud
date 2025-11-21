@@ -34,7 +34,7 @@ WORKDIR /app
 # Copy root package.json for workspace configuration
 COPY package.json package-lock.json /app/
 
-# Install pontoon Node.js dependencies (terser, yuglify for compression)
+# Copy pontoon Node.js dependencies (terser, yuglify for compression)
 COPY pontoon/package.json /app/pontoon/package.json
 
 # Install translate frontend dependencies
@@ -51,8 +51,12 @@ RUN npm run build:prod
 # Stage 3: Static files builder
 FROM python:3.11-slim-bookworm AS static-builder
 
+# SECRET_KEY and DATABASE_URL are set only to prevent collectstatic from
+# failing—their actual values don’t matter. collectstatic loads settings/base.py,
+# which requires SECRET_KEY and DATABASE_URL to be set.
 ARG SECRET_KEY=foo
 ARG DATABASE_URL=postgres://pontoon:asdf@postgresql/pontoon
+
 ARG GIT_REVISION=unknown
 
 ENV PYTHONUNBUFFERED=1
