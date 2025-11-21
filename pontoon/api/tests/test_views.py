@@ -1536,6 +1536,23 @@ def test_pretranslation_tm(django_assert_num_queries, member):
         string="Entity B",
         resource=resource_b,
     )
+    project_c = ProjectFactory(
+        slug="project_c",
+        name="Project C",
+    )
+    resource_c = ResourceFactory.create(
+        project=project_c,
+        path=f"resource_{project_c.slug}.ftl",
+        format="android",
+    )
+    entity_c = EntityFactory.create(
+        string="Entity C",
+        resource=resource_c,
+    )
+    entity_d = EntityFactory.create(
+        string="Entity D",
+        resource=resource_c,
+    )
     TranslationMemoryEntry.objects.create(
         source="Hello",
         target="Hola",
@@ -1550,12 +1567,30 @@ def test_pretranslation_tm(django_assert_num_queries, member):
         project=project_b,
         entity=entity_b,
     )
+    (
+        TranslationMemoryEntry.objects.create(
+            source="Hello",
+            target="Bonjour",
+            locale=locale_b,
+            project=project_b,
+            entity=entity_b,
+        ),
+    )
+    (
+        TranslationMemoryEntry.objects.create(
+            source="The page at %1$s says:",
+            target="La página en %1$s dice:",
+            locale=locale_b,
+            project=project_b,
+            entity=entity_c,
+        ),
+    )
     TranslationMemoryEntry.objects.create(
-        source="Hello",
-        target="Bonjour",
+        source="Your app failed validation with {0} error.",
+        target="La validación de tu app ha fallado con {0} error:",
         locale=locale_b,
-        project=project_b,
-        entity=entity_b,
+        project=project_c,
+        entity=entity_d,
     )
 
     # test no locale no text
@@ -1689,6 +1724,69 @@ def test_pretranslation_tm(django_assert_num_queries, member):
         "text": "testing-alias = { -object-name } es una prueba\n",
         "author": "tm",
     }
+
+    # test incorrect format on fluent
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=kg&resource_format=fluent",
+        data="The page at %1$s says:",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+
+    # test android resource format
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=gs&resource_format=android",
+        data="The page at %1$s says:",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 200
+    assert response.data == {
+        "text": "La página en %1$s dice:",
+        "author": "tm",
+    }
+
+    # test incorrect format on android
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=gs&resource_format=android",
+        data="testing-alias = { -object-name } is a test",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
+
+    # test gettext resource format
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=gs&resource_format=gettext",
+        data="Your app failed validation with {0} error.",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 200
+    assert response.data == {
+        "text": "La validación de tu app ha fallado con \\{0\\} error:",
+        "author": "tm",
+    }
+
+    # test incorrect format on gettext
+    response = APIClient().post(
+        "/api/v2/pretranslate/?locale=gs&resource_format=gettext",
+        data="testing-alias = { -object-name } is a test",
+        content_type="text/plain",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 400
 
 
 # Test Google AutoML
