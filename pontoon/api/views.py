@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from types import SimpleNamespace
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
@@ -15,16 +16,19 @@ from django.utils.timezone import make_aware
 from django.views.decorators.http import require_GET
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.api.authentication import PersonalAccessTokenAuthentication
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base import forms
 from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
+    Resource,
     TranslationMemoryEntry,
 )
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.translation import Translation
+from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.terminology.models import (
     Term,
 )
@@ -459,3 +463,68 @@ class TranslationSearchListView(generics.ListAPIView):
             raise ValueError(error)
 
         return entities
+
+
+MAX_TEXT_CHARS = 2048
+MAX_TEXT_BYTES = MAX_TEXT_CHARS * 4
+VALID_FORMATS = {
+    Resource.Format.ANDROID,
+    Resource.Format.DTD,
+    Resource.Format.FLUENT,
+    Resource.Format.GETTEXT,
+    Resource.Format.INI,
+    Resource.Format.PLAIN_JSON,
+    Resource.Format.PROPERTIES,
+    Resource.Format.WEBEXT,
+    Resource.Format.XCODE,
+    Resource.Format.XLIFF,
+}
+
+
+class PretranslationView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [PersonalAccessTokenAuthentication]
+
+    def post(self, request):
+        resource_format = request.query_params.get("resource_format")
+        locale = request.query_params.get("locale")
+
+        errors = {}
+        try:
+            text = request.body.decode("utf-8")
+        except UnicodeDecodeError:
+            errors["text"] = ["Unable to decode request body as UTF-8."]
+            text = None
+
+        if text is not None:
+            if len(request.body) > MAX_TEXT_BYTES:
+                errors["text"] = ["Payload too large."]
+            elif len(text) > MAX_TEXT_CHARS:
+                errors["text"] = [
+                    f"Text exceeds maximum length of {MAX_TEXT_CHARS} characters."
+                ]
+            elif not text.strip():
+                errors["text"] = ["This field is required."]
+
+        if not locale:
+            errors["locale"] = ["This field is required."]
+        if resource_format and resource_format not in VALID_FORMATS:
+            errors["resource_format"] = ["Choose a correct resource format."]
+        if errors:
+            raise ValidationError(errors)
+
+        locale = generics.get_object_or_404(Locale, code=locale)
+
+        project = SimpleNamespace(slug="temp-project")
+        resource = SimpleNamespace(project=project, format=resource_format or None)
+        entity = SimpleNamespace(resource=resource, string=text)
+
+        try:
+            pretranslation = get_pretranslation(entity=entity, locale=locale)
+        except Exception:
+            return Response(
+                {"error": "Please verify the resource format and syntax."},
+                status=400,
+            )
+
+        return Response({"text": pretranslation[0], "author": pretranslation[1]})
