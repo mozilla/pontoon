@@ -520,7 +520,11 @@ def test_projects(django_assert_num_queries):
             project=project, path=f"resource_{project.slug}.po", format="gettext"
         )
         for project in Project.objects.all()
-    ] + [ResourceFactory.create(project=project_1, path="resource_a_2.po", format="gettext")]
+    ] + [
+        ResourceFactory.create(
+            project=project_1, path="resource_a_2.po", format="gettext"
+        )
+    ]
 
     # append extra TranslatedResource to simulate multiple Translated Resources per project
     translated_resources = [
