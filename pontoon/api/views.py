@@ -521,9 +521,9 @@ class PretranslationView(APIView):
 
         try:
             pretranslation = get_pretranslation(entity=entity, locale=locale)
-        except Exception as e:
+        except Exception:
             return Response(
-                {"error": str(e)},
+                {"error": "Please verify the resource format and syntax."},
                 status=400,
             )
 
