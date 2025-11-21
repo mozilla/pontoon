@@ -46,7 +46,7 @@ jobs:
           BRANCH_NAME=$(echo "${{ github.ref_name }}")
 
           # Construct GAR image tag
-          GAR_TAG="us-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/pontoon/pontoon:${BRANCH_NAME}-${SHORT_SHA}"
+          GAR_TAG="us-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/pontoon-prod/pontoon:${BRANCH_NAME}-${SHORT_SHA}"
 
           # Tag the built image
           docker tag pontoon:latest ${GAR_TAG}
