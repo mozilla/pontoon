@@ -4,7 +4,11 @@
   {% for entity in entities %}
     <li class="entity-item">
         <span class="source-string">{{ entity.string }}</span>
-        <span class="entity-keys">{{ ", ".join(entity.key) }}</span>
+        {% if entity.resource.format != "gettext" %}
+          <span class="entity-keys">{{ ", ".join(entity.key) }}</span>
+        {% else %}
+          <span class="entity-keys">N/A</span>
+        {% endif %}
         <span>Entity URL:</span>
         <a href="{{ entities_url }}/{{ entity.id }}">/entities/{{ entity.id }}</a>
         <div class="entity-project">
