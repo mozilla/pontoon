@@ -6,7 +6,7 @@ from moz.l10n.formats import Format
 from moz.l10n.model import Entry
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_entity, as_vcs_translations
+from pontoon.sync.formats import as_entity, as_repo_translations
 
 
 class XLIFFTests(TestCase):
@@ -46,7 +46,7 @@ class XLIFFTests(TestCase):
             if isinstance(entry, Entry)
         )
         t_res = parse_resource(Format.xliff, src)
-        t0, t1, t2 = as_vcs_translations(t_res)
+        t0, t1, t2 = as_repo_translations(t_res)
 
         # basic
         assert e0.comment == "Sample comment"
