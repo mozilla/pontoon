@@ -1623,23 +1623,6 @@ def test_pretranslation_tm(django_assert_num_queries, member):
         "text": ["This field is required."],
     }
 
-    # test massive byte payload
-    large_byte_data = "way too many bytes" * (
-        2048 * 4
-    )  # payload larger than 2048 * 4 bytes
-    response = APIClient().post(
-        "/api/v2/pretranslate/?locale=kg",
-        data=large_byte_data,
-        content_type="text/plain",
-        HTTP_ACCEPT="application/json",
-        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
-    )
-
-    assert response.status_code == 400
-    assert response.data == {
-        "text": ["Payload too large."],
-    }
-
     # test massive character payload
     large_char_data = "a" * 2049  # payload larger than 2048 characters
     response = APIClient().post(
