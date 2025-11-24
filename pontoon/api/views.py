@@ -460,18 +460,7 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
 
 MAX_TEXT_CHARS = 2048
 MAX_TEXT_BYTES = MAX_TEXT_CHARS * 4
-VALID_FORMATS = {
-    Resource.Format.ANDROID,
-    Resource.Format.DTD,
-    Resource.Format.FLUENT,
-    Resource.Format.GETTEXT,
-    Resource.Format.INI,
-    Resource.Format.PLAIN_JSON,
-    Resource.Format.PROPERTIES,
-    Resource.Format.WEBEXT,
-    Resource.Format.XCODE,
-    Resource.Format.XLIFF,
-}
+VALID_FORMATS = set(Resource.Format)
 
 
 class PretranslationView(APIView):
