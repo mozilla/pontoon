@@ -267,6 +267,14 @@ you create:
    Optional. Set your `OpenAI API` key to add the ability to refine machine
    translations using ChatGPT.
 
+``PERSONAL_ACCESS_TOKEN_MAX_COUNT``
+   Optional. The maximum number of personal access tokens a user can create. 
+   The default value is 10.
+
+``PRETRANSLATION_API_MAX_CHARS``
+   Optional. Specifies the maximum length of input text allowed for pretranslation API. 
+   The default value is 2048.
+
 ``PROJECT_MANAGERS``
    Optional. A list of project manager email addresses to send project requests to
 

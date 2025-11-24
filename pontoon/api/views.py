@@ -26,6 +26,7 @@ from pontoon.base.models import (
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.translation import Translation
 from pontoon.pretranslation.pretranslate import get_pretranslation
+from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
 from pontoon.terminology.models import (
     Term,
     TermTranslation,
@@ -458,8 +459,6 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
         return entities
 
 
-MAX_TEXT_CHARS = 2048
-MAX_TEXT_BYTES = MAX_TEXT_CHARS * 4
 VALID_FORMATS = set(Resource.Format)
 
 
@@ -479,11 +478,9 @@ class PretranslationView(APIView):
             text = None
 
         if text is not None:
-            if len(request.body) > MAX_TEXT_BYTES:
-                errors["text"] = ["Payload too large."]
-            elif len(text) > MAX_TEXT_CHARS:
+            if len(text) > PRETRANSLATION_API_MAX_CHARS:
                 errors["text"] = [
-                    f"Text exceeds maximum length of {MAX_TEXT_CHARS} characters."
+                    f"Text exceeds maximum length of {PRETRANSLATION_API_MAX_CHARS} characters."
                 ]
             elif not text.strip():
                 errors["text"] = ["This field is required."]
