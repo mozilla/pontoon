@@ -30,13 +30,13 @@ describe('<EntityViewProvider', () => {
     };
 
     const wrapper = mount(
-        <Location.Provider value={{ entity: 1 }}>
-          <Locale.Provider value={{ cldrPlurals: [1, 5] }}>
-            <EntityViewProvider>
-              <Spy />
-            </EntityViewProvider>
-          </Locale.Provider>
-        </Location.Provider>,
+      <Location.Provider value={{ entity: 1 }}>
+        <Locale.Provider value={{ cldrPlurals: [1, 5] }}>
+          <EntityViewProvider>
+            <Spy />
+          </EntityViewProvider>
+        </Locale.Provider>
+      </Location.Provider>,
     );
 
     expect(view).toMatchObject({ entity: ENTITIES[0] });

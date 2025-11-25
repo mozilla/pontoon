@@ -1,5 +1,5 @@
-import path from 'path'
-import { defineConfig } from 'vitest/config'
+import path from 'path';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -10,10 +10,7 @@ export default defineConfig({
       enabled: true,
       reportOnFailure: true,
       include: ['src/**/*.{js,jsx,ts,tsx}'],
-      exclude: [
-        'src/**/*.d.ts',
-        'node_modules/**',
-      ],
+      exclude: ['src/**/*.d.ts', 'node_modules/**'],
     },
     setupFiles: ['./src/setupTests.ts'],
     mockReset: true,
@@ -22,8 +19,10 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: /^~(.*)$/, replacement: path.resolve(__dirname, 'src/$1') },
-      { find: /\.svg$/, replacement: path.resolve(__dirname, '__mocks__/svg.js') },
+      {
+        find: /\.svg$/,
+        replacement: path.resolve(__dirname, '__mocks__/svg.js'),
+      },
     ],
   },
-  
-})
+});
