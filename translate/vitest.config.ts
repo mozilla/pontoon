@@ -6,7 +6,15 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    reporters: ['verbose'],
+    coverage: {
+      enabled: true,
+      reportOnFailure: true,
+      include: ['src/**/*.{js,jsx,ts,tsx}'],
+      exclude: [
+        'src/**/*.d.ts',
+        'node_modules/**',
+      ],
+    },
     setupFiles: ['./src/setupTests.ts'],
     mockReset: true,
     testTimeout: 10000,
