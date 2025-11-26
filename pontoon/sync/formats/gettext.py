@@ -14,7 +14,7 @@ from moz.l10n.model import (
 
 from pontoon.base.models import Entity
 
-from .common import VCSTranslation
+from .common import RepoTranslation
 
 
 def gettext_as_translation(entry: Entry[Message]):
@@ -22,7 +22,7 @@ def gettext_as_translation(entry: Entry[Message]):
         return None
     string = serialize_message(Format.mf2, entry.value)
     fuzzy = any(m.key == "flag" and m.value == "fuzzy" for m in entry.meta)
-    return VCSTranslation(key=entry.id, string=string, fuzzy=fuzzy)
+    return RepoTranslation(key=entry.id, string=string, value=entry.value, fuzzy=fuzzy)
 
 
 def gettext_as_entity(entry: Entry[Message], kwargs: dict[str, Any]) -> Entity:
