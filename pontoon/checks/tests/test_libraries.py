@@ -153,14 +153,12 @@ def test_tt_android_plural_checks():
     string = dedent("""\
         .input {$n :number}
         .match $n
-        one {{One user}}
+        one {{one: {$n @source=|%d|} User}}
         two {{two: {$n @source=|%d|} Users }}
         * {{other: {$n @source=|%d|} Users}}""")
     checks = run_checks(entity, "en-US", string=string, use_tt_checks=True)
 
     # one: Not in source
-    # two: Ending whitespace, Starting punctuation
+    # two: Starting punctuation, Ending whitespace
     # *: Starting punctuation
-    assert checks == {
-        "ttWarnings": ["Unchanged", "Ending whitespace", "Starting punctuation"]
-    }
+    assert checks == {"ttWarnings": ["Starting punctuation", "Ending whitespace"]}
