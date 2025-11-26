@@ -459,9 +459,6 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
         return entities
 
 
-VALID_FORMATS = set(Resource.Format)
-
-
 class PretranslationView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [PersonalAccessTokenAuthentication]
@@ -487,7 +484,7 @@ class PretranslationView(APIView):
 
         if not locale:
             errors["locale"] = ["This field is required."]
-        if resource_format and resource_format not in VALID_FORMATS:
+        if resource_format and resource_format not in set(Resource.Format):
             errors["resource_format"] = ["Choose a correct resource format."]
         if errors:
             raise ValidationError(errors)
