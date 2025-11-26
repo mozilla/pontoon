@@ -7,10 +7,8 @@ export default defineConfig({
   test: {
     globals: true,
     coverage: {
-      enabled: true,
       reportOnFailure: true,
       include: ['src/**/*.{js,jsx,ts,tsx}'],
-      exclude: ['src/**/*.d.ts', 'node_modules/**'],
     },
     setupFiles: ['./src/setupTests.ts'],
     mockReset: true,
@@ -18,10 +16,10 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      { find: /^~(.*)$/, replacement: path.resolve(__dirname, 'src/$1') },
+      { find: /^~(.*)$/, replacement: path.resolve(import.meta.dirname, 'src/$1') },
       {
         find: /\.svg$/,
-        replacement: path.resolve(__dirname, '__mocks__/svg.js'),
+        replacement: path.resolve(import.meta.dirname, '__mocks__/svg.js'),
       },
     ],
   },
