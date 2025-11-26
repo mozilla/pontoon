@@ -2,7 +2,6 @@
 Parsing resource files.
 """
 
-from json import dumps
 from os.path import splitext
 from re import Match, compile
 from typing import Iterator
@@ -10,7 +9,6 @@ from typing import Iterator
 from fluent.syntax import FluentSerializer
 from moz.l10n.formats import Format, detect_format, l10n_extensions
 from moz.l10n.formats.fluent import fluent_astify_entry
-from moz.l10n.formats.webext import webext_serialize_message
 from moz.l10n.message import message_to_json, serialize_message
 from moz.l10n.model import Entry, Id as L10nId, Message, Resource as MozL10nResource
 
@@ -51,7 +49,7 @@ def _as_string(format: Format | None, entry: Entry[Message]) -> str:
         case Format.fluent:
             fluent_entry = fluent_astify_entry(entry, lambda _: "")
             return _fluent_serializer.serialize_entry(fluent_entry)
-        case Format.android:
+        case Format.android | Format.webext:
             return serialize_message(Format.mf2, entry.value)
         case Format.properties:
             string = serialize_message(Format.properties, entry.value)
@@ -92,19 +90,6 @@ def as_entity(
     match format:
         case Format.gettext:
             return gettext_as_entity(entry, kwargs)
-        case Format.webext:
-            string, placeholders = webext_serialize_message(entry.value)
-            meta = [[m.key, m.value] for m in entry.meta]
-            if placeholders:
-                meta.append(["placeholders", dumps(placeholders)])
-            return Entity(
-                key=list(section_id + entry.id),
-                value=message_to_json(entry.value),
-                string=string,
-                comment=entry.comment,
-                meta=meta,
-                **kwargs,
-            )
         case Format.xliff:
             return xliff_as_entity(section_id, entry, kwargs)
         case _:

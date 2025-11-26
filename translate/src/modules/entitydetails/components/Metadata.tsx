@@ -12,6 +12,8 @@ import { FluentAttribute } from './FluentAttribute';
 import { Property } from './Property';
 
 import './Metadata.css';
+import { MessageEntry, parseEntry } from '~/utils/message';
+import { getPlaceholderMap } from '~/utils/message/placeholders';
 
 type Props = {
   entity: Entity;
@@ -151,23 +153,24 @@ function SourceReferences({ meta }: { meta: Entity['meta'] }) {
   return refs.length > 0 ? <ul>{refs}</ul> : null;
 }
 
-function SourcePlaceholders({ meta }: { meta: Entity['meta'] }) {
+function SourceExamples({ entry }: { readonly entry: MessageEntry | null }) {
+  if (!entry?.value || Array.isArray(entry.value)) return null;
+  const phMap = getPlaceholderMap(entry.format, entry.value);
+  if (!phMap) return null;
+  const placeholders = Array.from(phMap.values());
   const examples: string[] = [];
-  for (let [key, value] of meta) {
-    if (key === 'placeholders') {
-      try {
-        for (let [name, { example }] of Object.entries<any>(
-          JSON.parse(value),
-        )) {
-          if (example) {
-            examples.push(`$${name.toUpperCase()}$: ${example}`);
-          }
-        }
-      } catch {}
+  for (const [name, exp] of Object.entries(entry.value.decl)) {
+    const example = exp.attr?.example;
+    if (typeof example === 'string') {
+      const ph = placeholders.find((ph) => ph.$ === name);
+      const source = ph?.attr?.source;
+      if (typeof source === 'string') {
+        examples.push(`${source}: ${example}`);
+      }
     }
   }
 
-  return (
+  return examples.length ? (
     <Datum
       className='placeholder'
       id='placeholder'
@@ -175,7 +178,7 @@ function SourcePlaceholders({ meta }: { meta: Entity['meta'] }) {
     >
       {examples.join(', ')}
     </Datum>
-  );
+  ) : null;
 }
 
 const EntityContext = ({
@@ -233,6 +236,7 @@ export function Metadata({
   teamComments,
 }: Props): React.ReactElement {
   const { code } = useContext(Locale);
+  const entry = parseEntry(entity.format, entity.original);
 
   return (
     <div className='metadata'>
@@ -240,9 +244,9 @@ export function Metadata({
       <EntityComment comment={entity.comment} />
       <GroupComment comment={entity.group_comment} />
       <ResourceComment comment={entity.resource_comment} key={entity.pk} />
-      <FluentAttribute entity={entity} />
+      <FluentAttribute entry={entry} />
       <SourceReferences meta={entity.meta} />
-      <SourcePlaceholders meta={entity.meta} />
+      <SourceExamples entry={entry} />
       <EntityContext
         entity={entity}
         localeCode={code}
