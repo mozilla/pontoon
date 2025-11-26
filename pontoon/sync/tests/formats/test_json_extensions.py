@@ -55,7 +55,11 @@ class JsonExtensionsTests(TestCase):
         assert t2.string == "Translated No Comments or Sources"
 
         assert e3.key == ["placeholder"]
-        assert e3.string == "Hello $YOUR_NAME$"
+        assert (
+            e3.string
+            == ".local $YOUR_NAME = {$arg1 @source=|$1| @example=Cira}\n"
+            + "{{Hello {$YOUR_NAME @source=|$YOUR_NAME$|}}}"
+        )
         assert e3.value == {
             "decl": {
                 "YOUR_NAME": {"$": "arg1", "attr": {"example": "Cira", "source": "$1"}}
@@ -63,9 +67,11 @@ class JsonExtensionsTests(TestCase):
             "msg": ["Hello ", {"$": "YOUR_NAME", "attr": {"source": "$YOUR_NAME$"}}],
         }
         assert e3.comment == "Peer greeting"
-        assert e3.meta == [
-            ["placeholders", '{"YOUR_NAME": {"content": "$1", "example": "Cira"}}'],
-        ]
+        assert e3.meta == []
 
         assert t3.key == ("placeholder",)
-        assert t3.string == "Hello $YOUR_NAME$"
+        assert (
+            t3.string
+            == ".local $YOUR_NAME = {$arg1 @source=|$1| @example=Cira}\n"
+            + "{{Hello {$YOUR_NAME @source=|$YOUR_NAME$|}}}"
+        )

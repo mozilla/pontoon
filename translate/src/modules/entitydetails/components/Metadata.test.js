@@ -81,29 +81,29 @@ describe('<Metadata>', () => {
     );
   });
 
-  it('handles sources as an object with examples', () => {
-    const phData = {
-      arg1: { content: '', example: 'example_1' },
-      arg2: { content: '', example: 'example_2' },
-    };
+  it('finds examples for placeholders with source', () => {
     const wrapper = createMetadata({
       ...ENTITY,
-      meta: [['placeholders', JSON.stringify(phData)]],
+      format: 'webext',
+      original: `
+        .local $MAXIMUM = {$arg2 @source=|$2| @example=5}
+        .local $REMAINING = {$arg1 @source=|$1| @example=1}
+        {{{$REMAINING @source=|$REMAINING$|}/{$MAXIMUM @source=|$MAXIMUM$|} masks available.}}`,
     });
 
     expect(wrapper.find('div.placeholder .content').text()).toBe(
-      '$ARG1$: example_1, $ARG2$: example_2',
+      '$MAXIMUM$: 5, $REMAINING$: 1',
     );
   });
 
-  it('handles sources as an object without examples', () => {
-    const phData = {
-      arg1: { content: '' },
-      arg2: { content: '' },
-    };
+  it('only shows examples for placeholders with source and example', () => {
     const wrapper = createMetadata({
       ...ENTITY,
-      meta: [['placeholders', JSON.stringify(phData)]],
+      format: 'webext',
+      original: `
+        .local $MAXIMUM = {$arg2 @source=|$2|}
+        .local $REMAINING = {$arg1 @source=|$1| @example=1}
+        {{{$REMAINING}/{$MAXIMUM @source=|$MAXIMUM$|} masks available.}}`,
     });
 
     expect(wrapper.find('div.placeholder')).toHaveLength(0);

@@ -1,6 +1,7 @@
 import ftl from '@fluent/dedent';
 import { shallow } from 'enzyme';
 import React from 'react';
+import { parseEntry } from '~/utils/message';
 import { FluentAttribute } from './FluentAttribute';
 
 describe('isSimpleSingleAttributeMessage', () => {
@@ -9,9 +10,8 @@ describe('isSimpleSingleAttributeMessage', () => {
       my-entry =
           .an-atribute = Hello!
       `;
-    const wrapper = shallow(
-      <FluentAttribute entity={{ format: 'fluent', original }} />,
-    );
+    const entry = parseEntry('fluent', original);
+    const wrapper = shallow(<FluentAttribute entry={entry} />);
     expect(wrapper.isEmptyRender()).toEqual(false);
   });
 
@@ -20,9 +20,8 @@ describe('isSimpleSingleAttributeMessage', () => {
       my-entry = Something
           .an-atribute = Hello!
       `;
-    const wrapper = shallow(
-      <FluentAttribute entity={{ format: 'fluent', original }} />,
-    );
+    const entry = parseEntry('fluent', original);
+    const wrapper = shallow(<FluentAttribute entry={entry} />);
     expect(wrapper.isEmptyRender()).toEqual(true);
   });
 
@@ -32,9 +31,8 @@ describe('isSimpleSingleAttributeMessage', () => {
           .an-atribute = Hello!
           .two-attrites = World!
       `;
-    const wrapper = shallow(
-      <FluentAttribute entity={{ format: 'fluent', original }} />,
-    );
+    const entry = parseEntry('fluent', original);
+    const wrapper = shallow(<FluentAttribute entry={entry} />);
     expect(wrapper.isEmptyRender()).toEqual(true);
   });
 });

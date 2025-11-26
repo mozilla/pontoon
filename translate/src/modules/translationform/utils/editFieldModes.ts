@@ -141,3 +141,17 @@ export const commonMode: StreamParser<Array<'literal' | 'tag'>> = {
     }
   },
 };
+
+export const webextMode: StreamParser<[]> = {
+  name: 'webext',
+  languageData: { closeBrackets: { brackets: ['<'] } },
+  startState: () => [],
+  token(stream, state) {
+    if (stream.match(/\$[a-zA-Z0-9_@]+\$|\$[1-9]|\$+/)) {
+      return 'keyword';
+    } else {
+      stream.eatWhile(/[^$]+/);
+      return 'string';
+    }
+  },
+};
