@@ -241,7 +241,7 @@
 
 /* hide personal access token implementation temporarily */
 #pat-settings {
-  /* display: none; */
+  display: none;
 
   .pat-list {
     list-style: none;
