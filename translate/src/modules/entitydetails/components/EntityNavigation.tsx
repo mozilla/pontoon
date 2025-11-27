@@ -2,6 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect } from 'react';
 
 import { EntitiesList } from '~/context/EntitiesList';
+import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
@@ -20,6 +21,7 @@ export function EntityNavigation(): React.ReactElement {
   const showNotification = useContext(ShowNotification);
   const nextEntity = useNextEntity();
   const previousEntity = usePreviousEntity();
+  const { entity } = useContext(EntityView);
   const { checkUnsavedChanges } = useContext(UnsavedActions);
   const entitiesList = useContext(EntitiesList);
 
@@ -84,7 +86,13 @@ export function EntityNavigation(): React.ReactElement {
     return () => document.removeEventListener('keydown', handleShortcuts);
   }, [goToNextEntity, goToPreviousEntity]);
 
-  return (
+  return entity.obsolete ? (
+    <div className='entity-obsolete clearfix'>
+      <Localized id='entitydetails-obsolete'>
+        <span>Obsolete entity</span>
+      </Localized>
+    </div>
+  ) : (
     <div className='entity-navigation clearfix'>
       <Localized
         id='entitydetails-EntityNavigation--string-list'

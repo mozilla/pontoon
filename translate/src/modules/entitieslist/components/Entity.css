@@ -104,6 +104,10 @@
   color: var(--status-warning);
 }
 
+.entity.obsolete .status:before {
+  color: var(--status-obsolete);
+}
+
 .entity.sibling {
   background-color: var(--grey-3);
 }

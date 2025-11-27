@@ -40,3 +40,11 @@
 .entity-navigation button .fas {
   padding-right: 5px;
 }
+
+.entity-obsolete {
+  background: var(--status-obsolete);
+  color: var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
+  padding: 12px 10px 13px;
+  text-align: center;
+}

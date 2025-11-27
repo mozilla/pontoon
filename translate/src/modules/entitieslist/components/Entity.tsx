@@ -107,6 +107,7 @@ export function Entity({
     'entity',
     status,
     selected && 'selected',
+    entity.obsolete && 'obsolete',
     isTranslator && !isReadOnlyEditor && 'batch-editable',
     checkedForBatchEditing && 'checked',
     entity.isSibling && 'sibling',

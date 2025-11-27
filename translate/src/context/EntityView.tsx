@@ -24,6 +24,7 @@ const emptyEntity: Entity = {
   resource_comment: '',
   meta: [],
   format: '',
+  obsolete: false,
   path: '',
   project: {},
   translation: undefined,
