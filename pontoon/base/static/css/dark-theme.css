@@ -53,6 +53,7 @@
   --status-missing-alt: #5f7285;
   --status-unreviewed: #4fc4f6;
   --status-fuzzy: #fed271;
+  --status-obsolete: #000000;
 
   /* Translation workspace */
   --translation-background: #3f4752;
