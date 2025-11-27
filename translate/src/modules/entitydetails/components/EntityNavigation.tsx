@@ -6,7 +6,8 @@ import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
-import { useNextEntity, usePreviousEntity } from '~/modules/entities/hooks';
+import { useAppSelector } from '~/hooks';
+import { ENTITIES } from '~/modules/entities/reducer';
 import { STRING_LINK_COPIED } from '~/modules/notification/messages';
 
 import './EntityNavigation.css';
@@ -19,11 +20,21 @@ import './EntityNavigation.css';
 export function EntityNavigation(): React.ReactElement {
   const location = useContext(Location);
   const showNotification = useContext(ShowNotification);
-  const nextEntity = useNextEntity();
-  const previousEntity = usePreviousEntity();
+  const entities = useAppSelector((state) => state[ENTITIES].entities);
   const { entity } = useContext(EntityView);
   const { checkUnsavedChanges } = useContext(UnsavedActions);
   const entitiesList = useContext(EntitiesList);
+
+  let nextEntityId = 0;
+  let prevEntityId = 0;
+
+  const entityIdx = entities.indexOf(entity);
+  if (entityIdx !== -1 && entities.length >= 2) {
+    const next = (entityIdx + 1) % entities.length;
+    nextEntityId = entities[next].pk;
+    const prev = (entityIdx - 1 + entities.length) % entities.length;
+    prevEntityId = entities[prev].pk;
+  }
 
   const goToStringList = () => {
     entitiesList.show(true);
@@ -42,26 +53,17 @@ export function EntityNavigation(): React.ReactElement {
     showNotification(STRING_LINK_COPIED);
   }, [location]);
 
-  const goToEntity = useCallback(
-    (entity: number | undefined) => {
-      if (entity) {
-        checkUnsavedChanges(() => {
-          location.push({ entity });
-        });
-      }
-    },
-    [location],
-  );
+  const goToNextEntity = useCallback(() => {
+    if (nextEntityId) {
+      checkUnsavedChanges(() => location.push({ entity: nextEntityId }));
+    }
+  }, [location, nextEntityId]);
 
-  const goToNextEntity = useCallback(
-    () => goToEntity(nextEntity?.pk),
-    [goToEntity, nextEntity],
-  );
-
-  const goToPreviousEntity = useCallback(
-    () => goToEntity(previousEntity?.pk),
-    [goToEntity, previousEntity],
-  );
+  const goToPreviousEntity = useCallback(() => {
+    if (prevEntityId) {
+      checkUnsavedChanges(() => location.push({ entity: prevEntityId }));
+    }
+  }, [location, prevEntityId]);
 
   useEffect(() => {
     function handleShortcuts(ev: KeyboardEvent) {
@@ -129,7 +131,7 @@ export function EntityNavigation(): React.ReactElement {
       >
         <button
           className='next'
-          disabled={!nextEntity}
+          disabled={!nextEntityId}
           title='Go To Next String (Alt + Down)'
           onClick={goToNextEntity}
         >
@@ -143,7 +145,7 @@ export function EntityNavigation(): React.ReactElement {
       >
         <button
           className='previous'
-          disabled={!previousEntity}
+          disabled={!prevEntityId}
           title='Go To Previous String (Alt + Up)'
           onClick={goToPreviousEntity}
         >
