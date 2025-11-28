@@ -1,9 +1,9 @@
+import { CatchallKey, isSelectMessage, Message, Pattern } from '@mozilla/l10n';
 import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
+import { editablePattern } from './placeholders';
 import { serializeEntry } from './serializeEntry';
-import { CatchallKey, isSelectMessage, Message, Pattern } from '@mozilla/l10n';
-import { androidEditPattern } from './android';
 
 const emptyHandleRef = (value: string) => ({
   current: {
@@ -80,7 +80,9 @@ export function patternAsString(
   format: MessageEntry['format'],
   pattern: Pattern,
 ) {
-  if (format === 'android') return androidEditPattern(pattern);
+  if (format === 'android' || format === 'webext') {
+    return editablePattern(format, pattern);
+  }
   switch (pattern.length) {
     case 0:
       return '';

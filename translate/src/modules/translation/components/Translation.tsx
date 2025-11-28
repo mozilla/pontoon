@@ -21,7 +21,12 @@ export function Translation({
     return null;
   }
 
-  if (format === 'fluent' || format === 'android' || format === 'gettext') {
+  if (
+    format === 'fluent' ||
+    format === 'android' ||
+    format === 'gettext' ||
+    format === 'webext'
+  ) {
     content = getPlainMessage(content, format);
     diffTarget &&= getPlainMessage(diffTarget, format);
   }

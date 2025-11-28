@@ -58,7 +58,11 @@ def get_pretranslation(
             set_accesskey(entry, key, prop)
         pt_res = FluentSerializer().serialize_entry(fluent_astify_entry(entry))
     else:
-        if entity.resource.format in {Resource.Format.ANDROID, Resource.Format.GETTEXT}:
+        if entity.resource.format in {
+            Resource.Format.ANDROID,
+            Resource.Format.GETTEXT,
+            Resource.Format.WEBEXT,
+        }:
             format = Format.mf2
             msg = parse_message(format, entity.string)
         else:
@@ -82,7 +86,11 @@ class Pretranslation:
         match entity.resource.format:
             case Resource.Format.FLUENT:
                 self.format = Format.fluent
-            case Resource.Format.ANDROID | Resource.Format.GETTEXT:
+            case (
+                Resource.Format.ANDROID
+                | Resource.Format.GETTEXT
+                | Resource.Format.WEBEXT
+            ):
                 self.format = Format.mf2
             case _:
                 self.format = None

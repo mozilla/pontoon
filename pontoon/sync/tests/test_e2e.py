@@ -659,27 +659,27 @@ def test_webext():
         )
 
         entity = EntityFactory.create(
-            resource=res, key=["number"], string="Entity for $1"
+            resource=res, key=["number"], string="Entity for {$arg1 @source=|$1|}"
         )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="Translation for $1",
+            string="Translation for {$arg1 @source=|$1|}",
             active=True,
             approved=True,
         )
 
-        ph = '{"ORIGIN": {"content": "$1", "example": "developer.mozilla.org"}}'
         entity = EntityFactory.create(
             resource=res,
             key=["name"],
-            string="Entity for $ORIGIN$",
-            meta=[["placeholders", ph]],
+            string=".local $ORIGIN = {$arg1 @source=|$1| @example=developer.mozilla.org}\n"
+            + "{{Entity for {$ORIGIN @source=|$ORIGIN$|}}}",
         )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="Translation for $ORIGIN$",
+            string=".local $ORIGIN = {$arg1 @source=|$1| @example=developer.mozilla.org}\n"
+            + "{{Translation for {$ORIGIN @source=|$ORIGIN$|}}}",
             active=True,
             approved=True,
         )

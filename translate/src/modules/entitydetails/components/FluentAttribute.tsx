@@ -1,27 +1,19 @@
 import React from 'react';
 import { Localized } from '@fluent/react';
-
-import type { Entity } from '~/api/entity';
-import { parseEntry } from '~/utils/message';
-
-import { Property } from './Property';
 import { isSelectMessage } from '@mozilla/l10n';
 
-type Props = {
-  readonly entity: Entity;
-};
+import type { MessageEntry } from '~/utils/message';
+
+import { Property } from './Property';
 
 /**
  * Get attribute of a simple single-attribute Fluent message.
  */
 export function FluentAttribute({
-  entity: { format, original },
-}: Props): null | React.ReactElement {
-  if (format !== 'fluent') {
-    return null;
-  }
-
-  const entry = parseEntry(format, original);
+  entry,
+}: {
+  readonly entry: MessageEntry | null;
+}): null | React.ReactElement {
   if (!entry || entry.value || entry.attributes?.size !== 1) {
     return null;
   }

@@ -16,6 +16,8 @@ def mock_entity(
             ext = "ftl"
         case "gettext":
             ext = "po"
+        case "webext":
+            ext = "json"
         case _:
             ext = format
     entity = MagicMock()
@@ -257,4 +259,70 @@ def test_android_bad_html():
     assert run_custom_checks(entity, translation) == {
         "pErrors": ["Placeholder <a> not found in reference"],
         "pndbWarnings": ["Placeholder <b> not found in translation"],
+    }
+
+
+def test_webext_literal_index_placeholder_as_placeholder():
+    original = "Source string with a {$arg1 @source=|$1|}"
+    translation = "Translation with a {$arg1 @source=|$1|}"
+    entity = mock_entity("webext", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_webext_literal_index_placeholder_as_literal():
+    original = "Source string with a {$arg1 @source=|$1|}"
+    translation = "Translation with a $1"
+    entity = mock_entity("webext", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_webext_literal_named_placeholder_as_placeholder():
+    original = (
+        ".local $FOO = {$arg1 @source=|$1|}\n"
+        + "{{Source string with a {$FOO @source=|$FOO$|}}}"
+    )
+    translation = (
+        ".local $FOO = {$arg1 @source=|$1|}\n"
+        + "{{Translation with a {$FOO @source=|$FOO$|}}}"
+    )
+    entity = mock_entity("webext", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_webext_literal_named_placeholder_as_literal():
+    original = (
+        ".local $FOO = {$arg1 @source=|$1|}\n"
+        + "{{Source string with a {$FOO @source=|$FOO$|}}}"
+    )
+    translation = "Translation with a $FOO$"
+    entity = mock_entity("webext", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_webext_extra_index_placeholder():
+    original = "Source string"
+    translation = "Translation with a $1"
+    entity = mock_entity("webext", string=original)
+    # This should probably also be caught
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_webext_extra_named_placeholder_as_literal():
+    original = "Source string"
+    translation = "Translation with a $FOO$"
+    entity = mock_entity("webext", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ["Placeholder $FOO$ not found in reference"]
+    }
+
+
+def test_webext_extra_named_placeholder_as_placeholder():
+    original = "Source string"
+    translation = (
+        ".local $FOO = {$arg1 @source=|$1|}\n"
+        + "{{Translation with a {$FOO @source=|$FOO$|}}}"
+    )
+    entity = mock_entity("webext", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ["Placeholder $FOO$ not found in reference"]
     }

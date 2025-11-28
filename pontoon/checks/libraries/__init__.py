@@ -1,4 +1,5 @@
 from moz.l10n.formats.mf2 import mf2_parse_message, mf2_serialize_pattern
+from moz.l10n.formats.webext import webext_serialize_message
 from moz.l10n.model import CatchallKey, Pattern, PatternMessage, SelectMessage
 
 from pontoon.base.models import Entity, Resource
@@ -106,6 +107,13 @@ def run_checks(
                     tt_patterns.append(
                         (as_gettext(src_msg.pattern), as_gettext(tgt_msg.pattern))
                     )
+
+            case Resource.Format.WEBEXT:
+                src_msg = mf2_parse_message(entity.string)
+                tgt_msg = mf2_parse_message(string)
+                src_str, _ = webext_serialize_message(src_msg)
+                tgt_str, _ = webext_serialize_message(tgt_msg)
+                tt_patterns.append((src_str, tgt_str))
 
             case _:
                 tt_patterns.append((entity.string, string))

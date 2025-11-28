@@ -3,7 +3,7 @@ import type { Message } from '@mozilla/l10n';
 export type MessageEntry =
   | {
       id: string;
-      format: 'android' | 'fluent' | 'gettext' | 'plain';
+      format: 'android' | 'fluent' | 'gettext' | 'plain' | 'webext';
       value: Message;
       attributes?: never;
     }

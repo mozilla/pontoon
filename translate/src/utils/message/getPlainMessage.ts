@@ -1,13 +1,12 @@
 import {
   fluentSerializePattern,
-  FormatKey,
   Pattern,
   serializePattern,
   type Message,
 } from '@mozilla/l10n';
 import type { MessageEntry } from '.';
 import { parseEntry } from './parseEntry';
-import { androidEditPattern } from './android';
+import { editablePattern } from './placeholders';
 
 /**
  * Return a plain string representation of a given message.
@@ -68,7 +67,8 @@ function previewMessage(format: string, message: Message): string {
         onError: () => {},
       });
     case 'android':
-      return androidEditPattern(pattern);
+    case 'webext':
+      return editablePattern(format, pattern);
     default:
       return serializePattern('plain', pattern);
   }
