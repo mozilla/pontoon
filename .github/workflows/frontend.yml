@@ -68,3 +68,18 @@ jobs:
           flags: frontend
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  vitest:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v5
+        - uses: actions/setup-node@v5
+          with: { node-version: '22' }
+        - name: Install globals
+          run: npm install --global npm@8
+        - name: Install dependencies
+          run: npm ci
+        - name: vitest
+          run: npm run vitest -- --coverage
+          working-directory: translate
+          continue-on-error: true
