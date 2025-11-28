@@ -4,7 +4,6 @@ from collections import defaultdict
 from datetime import datetime
 from os import makedirs, remove
 from os.path import commonpath, dirname, isfile, join, normpath
-from re import compile
 
 from moz.l10n.formats import Format
 from moz.l10n.message import parse_message
@@ -327,9 +326,6 @@ def set_translations(
                 for section in res.sections
                 if any(isinstance(entry, Entry) for entry in section.entries)
             ]
-
-
-webext_placeholder = compile(r"\$([a-zA-Z0-9_@]+)\$|(\$[1-9])|\$(\$+)")
 
 
 def set_translation(
