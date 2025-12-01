@@ -17,10 +17,7 @@ from moz.l10n.model import (
 )
 
 from pontoon.base.models import Entity, Resource
-from pontoon.base.simple_preview import (
-    android_placeholder_preview,
-    android_simple_preview,
-)
+from pontoon.base.simple_preview import get_simple_preview, preview_placeholder
 
 
 parser = FluentParser()
@@ -81,7 +78,7 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                     for el in pattern
                     if not isinstance(el, str)
                 )
-                orig_ps = {android_placeholder_preview(ph) for ph in orig_ph_iter}
+                orig_ps = {preview_placeholder(ph) for ph in orig_ph_iter}
             except ValueError:
                 orig_msg = None
                 orig_ps = set()
@@ -99,11 +96,11 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
             try:
                 for pattern in patterns:
                     android_msg = android_parse_message(
-                        escape(android_simple_preview(pattern))
+                        escape(get_simple_preview(Resource.Format.ANDROID, pattern))
                     )
                     for el in android_msg.pattern:
                         if not isinstance(el, str):
-                            ps = android_placeholder_preview(el)
+                            ps = preview_placeholder(el)
                             if ps in orig_ps:
                                 found_ps.add(ps)
                             else:

@@ -1,4 +1,4 @@
-import { CatchallKey, isSelectMessage, Message, Pattern } from '@mozilla/l10n';
+import { isSelectMessage, type CatchallKey, type Message } from '@mozilla/l10n';
 import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
@@ -69,28 +69,11 @@ function* genPatterns(
         label: (typeof key === 'string' ? key : key['*']) || 'other',
         plural: plurals.has(i),
       }));
-      yield [keys, labels, patternAsString(format, pat)];
+      yield [keys, labels, editablePattern(pat)];
     }
   } else {
-    yield [[], [], patternAsString(format, Array.isArray(msg) ? msg : msg.msg)];
+    yield [[], [], editablePattern(Array.isArray(msg) ? msg : msg.msg)];
   }
-}
-
-export function patternAsString(
-  format: MessageEntry['format'],
-  pattern: Pattern,
-) {
-  if (format === 'android' || format === 'webext') {
-    return editablePattern(format, pattern);
-  }
-  switch (pattern.length) {
-    case 0:
-      return '';
-    case 1:
-      if (typeof pattern[0] === 'string') return pattern[0];
-      throw new Error('Unsupported message element');
-  }
-  throw new Error(`Unsupported message pattern length ${pattern.length}`);
 }
 
 function getId(name: string, keys: (string | CatchallKey)[]) {
