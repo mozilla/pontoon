@@ -87,10 +87,9 @@ def team(request, locale):
     locale = get_locale_or_redirect(locale, "pontoon.teams.team", "locale")
     if isinstance(locale, HttpResponseRedirect):
         return locale
-    available_count = locale.project_set.available().visible_for(request.user).count()
     visible_count = locale.project_set.visible().visible_for(request.user).count()
 
-    if not available_count:
+    if not visible_count:
         raise Http404
 
     locale_stats = TranslatedResource.objects.filter(locale=locale).string_stats(
