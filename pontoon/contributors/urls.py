@@ -62,15 +62,21 @@ urlpatterns = [
         views.mark_all_notifications_as_read,
         name="pontoon.contributors.notifications.mark.all.as.read",
     ),
-    # API: Toggle user theme preference
+    # AJAX: Toggle user theme preference
     path(
-        "api/v1/user/<username:username>/theme/",
+        "user/<username:username>/theme/",
         views.toggle_theme,
         name="pontoon.contributors.toggle_theme",
     ),
-    # API: Toggle user profile attribute
+    # AJAX: Edit user profile attributes
     path(
-        "api/v1/user/<username:username>/",
+        "user/<username:username>/attributes/field/",
+        views.edit_user_profile_fields,
+        name="pontoon.contributors.edit_field",
+    ),
+    # AJAX: Toggle user profile attributes
+    path(
+        "user/<username:username>/attributes/toggle/",
         views.toggle_user_profile_attribute,
         name="pontoon.contributors.toggle_user_profile_attribute",
     ),
