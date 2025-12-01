@@ -273,11 +273,13 @@ def manage_project(request, slug=None, template="admin_project.html"):
 
     projects = sorted([p.name for p in Project.objects.all()])
 
-    locales_available = Locale.objects.exclude(pk__in=locales_readonly).exclude(
-        pk__in=locales_selected
+    locales_available = (
+        Locale.objects.visible()
+        .exclude(pk__in=locales_readonly)
+        .exclude(pk__in=locales_selected)
     )
 
-    locales_pretranslate_available = locales_selected.exclude(
+    locales_pretranslate_available = locales_selected.visible().exclude(
         pk__in=locales_pretranslate
     )
 

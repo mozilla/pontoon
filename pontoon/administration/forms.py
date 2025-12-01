@@ -24,15 +24,15 @@ class ProjectForm(forms.ModelForm):
     contact = ContactChoiceField(None, required=False)
     info = HtmlField(required=False)
     locales_readonly = forms.ModelMultipleChoiceField(
-        queryset=Locale.objects.all(),
+        queryset=Locale.objects.visible(),
         required=False,
     )
     locales = forms.ModelMultipleChoiceField(
-        queryset=Locale.objects.all(),
+        queryset=Locale.objects.visible(),
         required=False,
     )
     locales_pretranslate = forms.ModelMultipleChoiceField(
-        queryset=Locale.objects.all(),
+        queryset=Locale.objects.visible(),
         required=False,
     )
 

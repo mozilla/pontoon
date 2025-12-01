@@ -57,7 +57,7 @@ log = logging.getLogger(__name__)
 
 def teams(request):
     """List all active localization teams."""
-    locales = Locale.objects.available().prefetch_related(
+    locales = Locale.objects.visible().prefetch_related(
         "latest_translation__entity__resource",
         "latest_translation__user",
         "latest_translation__approved_user",
