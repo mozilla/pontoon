@@ -183,6 +183,90 @@ def update_contribution_timeline(request):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
+def edit_user_profile_fields(request, username):
+    user = get_object_or_404(User, username=username)
+    if user != request.user:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to edit this user",
+            },
+            status=403,
+        )
+
+    text_attributes = [
+        "first_name",
+        "username",
+        "contact_email",
+        "bio",
+        "chat",
+        "github",
+        "bugzilla",
+    ]
+
+    attribute = request.POST.get("attribute", None)
+    value = request.POST.get(attribute, None)
+
+    if attribute not in text_attributes:
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: Attribute not allowed"},
+            status=403,
+        )
+
+    profile = user.profile
+    if attribute in text_attributes:
+        if attribute == "first_name":
+            user_form = forms.UserForm(
+                request.POST,
+                instance=request.user,
+            )
+
+            if user_form.is_valid():
+                user_form.save()
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "Form validation failed.",
+                        "errors": user_form.errors,
+                    },
+                    status=400,
+                )
+        else:
+            user_profile_form = forms.UserProfileForm(
+                request.POST,
+                instance=profile,
+            )
+
+            if user_profile_form.is_valid():
+                setattr(profile, attribute, value)
+                profile.save(update_fields=[attribute])
+
+                if "contact_email" in user_profile_form.changed_data:
+                    profile.contact_email_verified = False
+                    profile.save(update_fields=["contact_email_verified"])
+
+                    token = utils.generate_verification_token(request.user)
+                    link = request.build_absolute_uri(
+                        reverse("pontoon.contributors.verify.email", args=(token,))
+                    )
+                    send_verification_email(request.user, link)
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "Form validation failed.",
+                        "errors": user_profile_form.errors,
+                    },
+                    status=400,
+                )
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
 def toggle_user_profile_attribute(request, username):
     user = get_object_or_404(User, username=username)
     if user != request.user:
@@ -330,7 +414,8 @@ def dismiss_addon_promotion(request):
 @login_required(redirect_field_name="", login_url="/403")
 def settings(request):
     """View and edit user settings."""
-    profile = request.user.profile
+    user = request.user
+    profile = user.profile
 
     personal_access_tokens = PersonalAccessToken.objects.filter(user=request.user)
 
@@ -339,47 +424,18 @@ def settings(request):
             request.POST,
             instance=profile,
         )
-        user_form = forms.UserForm(
-            request.POST,
-            instance=request.user,
-        )
-        user_profile_form = forms.UserProfileForm(
-            request.POST,
-            instance=profile,
-        )
 
-        if (
-            locales_form.is_valid()
-            and user_form.is_valid()
-            and user_profile_form.is_valid()
-        ):
+        if locales_form.is_valid():
             locales_form.save()
-            user_form.save()
-            user_profile_form.save()
-
-            if "contact_email" in user_profile_form.changed_data:
-                profile.contact_email_verified = False
-                profile.save(update_fields=["contact_email_verified"])
-
-                token = utils.generate_verification_token(request.user)
-                link = request.build_absolute_uri(
-                    reverse("pontoon.contributors.verify.email", args=(token,))
-                )
-                send_verification_email(request.user, link)
-
             messages.success(request, "Settings saved.")
-
-    else:
-        user_form = forms.UserForm(instance=request.user)
-        user_profile_form = forms.UserProfileForm(instance=profile)
 
     selected_locales = list(profile.sorted_locales)
     available_locales = Locale.objects.exclude(
         pk__in=[loc.pk for loc in selected_locales]
-    )
+    ).available()
 
     default_homepage_locale = Locale(name="Default homepage", code="")
-    all_locales = list(Locale.objects.all())
+    all_locales = list(Locale.objects.available())
     all_locales.insert(0, default_homepage_locale)
 
     custom_homepage_locale = default_homepage_locale
@@ -396,7 +452,7 @@ def settings(request):
 
     # Similar logic for preferred source locale
     default_preferred_source_locale = Locale(name="Default project locale", code="")
-    preferred_locales = list(Locale.objects.all())
+    preferred_locales = list(Locale.objects.available())
     preferred_locales.insert(0, default_preferred_source_locale)
 
     preferred_source_locale = default_preferred_source_locale
@@ -425,8 +481,10 @@ def settings(request):
             "preferred_locale": preferred_source_locale,
             "personal_access_tokens": personal_access_tokens,
             "now": timezone.now(),
-            "user_form": user_form,
-            "user_profile_form": user_profile_form,
+            "user": user,
+            "profile": profile,
+            "user_form": forms.UserForm(instance=user),
+            "user_profile_form": forms.UserProfileForm(instance=profile),
             "user_profile_toggle_form": forms.UserProfileToggleForm(instance=profile),
         },
     )

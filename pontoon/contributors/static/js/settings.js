@@ -1,4 +1,58 @@
 $(function () {
+  $('.field .input').on('blur', function (e) {
+    e.preventDefault();
+
+    const self = $(this);
+    const value = self.val().trim();
+    const attribute = self.data('attribute');
+
+    $.ajax({
+      url:
+        '/user/' +
+        $('#profile input[name="username"]').val() +
+        '/attributes/field/',
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('body').data('csrf'),
+        attribute: attribute,
+        [attribute]: value || '',
+      },
+      success: function () {
+        self.parents('.field').find('.errorlist').empty();
+
+        // contact_email special case
+        if (attribute === 'contact_email') {
+          if (value !== '') {
+            self.parents('.field').find('.help').addClass('hide');
+            self.parents('.field').find('.verify').removeClass('hide');
+          } else {
+            self.parents('.field').find('.help').removeClass('hide');
+            self.parents('.field').find('.verify').addClass('hide');
+          }
+        }
+
+        const message = 'Settings saved.';
+        Pontoon.endLoader(message);
+      },
+      error: function (response) {
+        // contact_email special case
+        if (attribute === 'contact_email') {
+          self.parents('.field').find('.help').addClass('hide');
+          self.parents('.field').find('.verify').addClass('hide');
+        }
+
+        const errors = response.responseJSON.errors;
+
+        const errorContainer = self.parents('.field').find('.errorlist');
+        errorContainer.empty();
+        for (const error in errors) {
+          const errorMessages = errors[error].join(', ');
+          errorContainer.append($('<p>').text(errorMessages));
+        }
+      },
+    });
+  });
+
   // Handle toggle buttons
   $('.toggle-button button').click(function (e) {
     e.preventDefault();
@@ -18,7 +72,10 @@ $(function () {
     const value = self.val();
 
     $.ajax({
-      url: '/api/v1/user/' + $('#profile input[name="username"]').val() + '/',
+      url:
+        '/user/' +
+        $('#profile input[name="username"]').val() +
+        '/attributes/toggle/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -93,7 +150,7 @@ $(function () {
         </li>
         `;
 
-        $('.error-message').empty();
+        $('#pat-settings').find('.error-message').empty();
         $('.token-name-input').val('');
         $('.generate-token-btn').prop('disabled', true);
         $('.pat-list').append(newTokenHTML);
@@ -102,11 +159,12 @@ $(function () {
       error: function (response) {
         const errors = response.responseJSON.errors;
 
-        $('.error-message').html('');
+        const errorContainer = $('#pat-settings').find('.error-message');
+        errorContainer.empty();
 
         for (const error in errors) {
           const errorMessages = errors[error].join(', ');
-          $(`.error-message`).append($('<p>').text(errorMessages));
+          errorContainer.append($('<p>').text(errorMessages));
         }
       },
     });
@@ -155,7 +213,10 @@ $(function () {
     const self = $(this);
 
     $.ajax({
-      url: '/api/v1/user/' + $('#profile input[name="username"]').val() + '/',
+      url:
+        '/user/' +
+        $('#profile input[name="username"]').val() +
+        '/attributes/toggle/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
