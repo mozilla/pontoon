@@ -23,10 +23,7 @@
 
 {% block bottom %}
 <section id="main">
-    <form method="POST" action="{{ url('pontoon.contributors.settings') }}" class="user-locales-settings">
-        {% csrf_token %}
-        <input type="hidden" name="return_url" value="{{ return_url(request) }}">
-
+    <form class="user-locales-settings">
         <section>
             <h3>Personal information</h3>
 
@@ -391,10 +388,6 @@
             </div>
             <div class="error-message"></div>
         </section>
-
-        <div class="controls">
-            <button class="submit button active">Save</button>
-        </div>
     </form>
 </section>
 {% endblock %}
