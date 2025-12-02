@@ -1,10 +1,16 @@
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import BasePermission
 
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
 
 from pontoon.api.models import PersonalAccessToken
+
+
+class IsPretranslator(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.groups.filter(name="pretranslators").exists()
 
 
 class PersonalAccessTokenAuthentication(BaseAuthentication):

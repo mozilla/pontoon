@@ -3,6 +3,7 @@ import pytest
 from rest_framework.test import APIClient
 
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import Group
 from django.db.models import Prefetch
 from django.utils.timezone import now, timedelta
 
@@ -1463,7 +1464,38 @@ def test_translation_search(django_assert_num_queries):
 
 
 @pytest.mark.django_db
-def test_pretranslation_tm(django_assert_num_queries, member):
+def test_pretranslation_group_authentication(member):
+    dummy_group = Group.objects.create(name="dummies")
+
+    member.user.groups.add(dummy_group)
+    token = PersonalAccessToken.objects.create(
+        user=member.user,
+        name="Test Token 1",
+        token_hash="hashed_token",
+        expires_at=now() + timedelta(days=1),
+    )
+    token_id = token.id
+    token_unhashed = "unhashed-token"
+    token.token_hash = make_password(token_unhashed)
+    token.save()
+
+    # test no pretranslators group
+    response = APIClient().post(
+        "/api/v2/pretranslate/",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 403
+    assert response.data == {
+        "detail": "You do not have permission to perform this action."
+    }
+
+
+@pytest.mark.django_db
+def test_pretranslation_tm(member):
+    pretranslators = Group.objects.get(name="pretranslators")
+    member.user.groups.add(pretranslators)
     token = PersonalAccessToken.objects.create(
         user=member.user,
         name="Test Token 1",
