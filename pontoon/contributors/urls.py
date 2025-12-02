@@ -80,6 +80,12 @@ urlpatterns = [
         views.toggle_user_profile_attribute,
         name="pontoon.contributors.toggle_user_profile_attribute",
     ),
+    # AJAX: Toggle user profile attributes
+    path(
+        "user/<username:username>/attributes/selector/",
+        views.edit_user_profile_locale_selector,
+        name="pontoon.contributors.edit_locale_selector",
+    ),
     # AJAX: Save custom homepage
     path(
         "save-custom-homepage/",

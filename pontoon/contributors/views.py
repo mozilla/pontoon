@@ -337,6 +337,40 @@ def toggle_user_profile_attribute(request, username):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
+def edit_user_profile_locale_selector(request, username):
+    user = get_object_or_404(User, username=username)
+    if user != request.user:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to edit this user",
+            },
+            status=403,
+        )
+    profile = user.profile
+    locales_form = forms.UserLocalesOrderForm(
+        request.POST,
+        instance=profile,
+    )
+
+    if locales_form.is_valid():
+        locales_form.save()
+    else:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Form validation failed.",
+                "errors": locales_form.errors,
+            },
+            status=400,
+        )
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
 def toggle_theme(request, username):
     user = get_object_or_404(User, username=username)
     if user != request.user:

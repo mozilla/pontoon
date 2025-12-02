@@ -72,6 +72,47 @@ $(function () {
     });
   });
 
+  function saveLocalesOrder() {
+    const selectedLocales = $('.multiple-team-selector .locale.selected')
+      .find('input[type=hidden]')
+      .val();
+
+    $.ajax({
+      url:
+        '/user/' +
+        $('#profile input[name="username"]').val() +
+        '/attributes/selector/',
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('body').data('csrf'),
+        locales_order: selectedLocales,
+      },
+      success: function () {
+        const message = 'Settings saved.';
+        Pontoon.endLoader(message);
+      },
+      error: function (request) {
+        if (request.responseText === 'error') {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
+        } else {
+          Pontoon.endLoader(request.responseText, 'error');
+        }
+      },
+    });
+  }
+
+  $('body').on(
+    'click',
+    '.multiple-team-selector .locale.select li',
+    function () {
+      saveLocalesOrder();
+    },
+  );
+
+  $('body').on('click', '.multiple-team-selector .move-all', function () {
+    saveLocalesOrder();
+  });
+
   // Handle toggle buttons
   $('.toggle-button button').click(function (e) {
     e.preventDefault();
