@@ -13,7 +13,10 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.api.authentication import PersonalAccessTokenAuthentication
+from pontoon.api.authentication import (
+    IsPretranslator,
+    PersonalAccessTokenAuthentication,
+)
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base import forms
 from pontoon.base.models import (
@@ -460,7 +463,7 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
 
 
 class PretranslationView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsPretranslator]
     authentication_classes = [PersonalAccessTokenAuthentication]
 
     def post(self, request):
