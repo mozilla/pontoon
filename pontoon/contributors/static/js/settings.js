@@ -1,10 +1,24 @@
 $(function () {
+  $('.field .input')
+    .unbind('keydown.pontoon')
+    .bind('keydown.pontoon', function (e) {
+      if (e.which === 13) {
+        $(this).trigger('blur');
+        return false;
+      }
+    });
+
   $('.field .input').on('blur', function (e) {
     e.preventDefault();
 
     const self = $(this);
     const value = self.val().trim();
     const attribute = self.data('attribute');
+    const originalValue = self.data('original-value') || '';
+
+    if (value === originalValue) {
+      return;
+    }
 
     $.ajax({
       url:
@@ -18,6 +32,8 @@ $(function () {
         [attribute]: value || '',
       },
       success: function () {
+        self.data('original-value', value);
+        self.attr('data-original-value', value);
         self.parents('.field').find('.errorlist').empty();
 
         // contact_email special case
@@ -35,6 +51,9 @@ $(function () {
         Pontoon.endLoader(message);
       },
       error: function (response) {
+        self.data('original-value', value);
+        self.attr('data-original-value', value);
+
         // contact_email special case
         if (attribute === 'contact_email') {
           self.parents('.field').find('.help').addClass('hide');
