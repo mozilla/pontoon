@@ -334,9 +334,9 @@ dj-database-url==2.1.0 \
     --hash=sha256:04bc34b248d4c21aaa13e4ab419ae6575ef5f10f3df735ce7da97722caa356e0 \
     --hash=sha256:f2042cefe1086e539c9da39fad5ad7f61173bf79665e69bf7e4de55fa88b135f
     # via -r default.in
-django==4.2.26 \
-    --hash=sha256:9398e487bcb55e3f142cb56d19fbd9a83e15bb03a97edc31f408361ee76d9d7a \
-    --hash=sha256:c96e64fc3c359d051a6306871bd26243db1bd02317472a62ffdbe6c3cae14280
+django==4.2.27 \
+    --hash=sha256:b865fbe0f4a3d1ee36594c5efa42b20db3c8bbb10dff0736face1c6e4bda5b92 \
+    --hash=sha256:f393a394053713e7d213984555c5b7d3caeee78b2ccb729888a0774dff6c11a8
     # via
     #   -r default.in
     #   dj-database-url
@@ -850,9 +850,7 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.10.0 \
     --hash=sha256:817b46323b86185c48cc2261a4e0a28c02fdb2f2e3b9fe8894789657b7db6f07 \
     --hash=sha256:fc679d91491d5a3ba4c06f812bfb43506d0f93fb962c0544c949e4da9a35f225
-    # via
-    #   -r default.in
-    #   moz-l10n
+    # via -r default.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -1594,7 +1592,6 @@ six==1.16.0 \
     #   bleach
     #   compare-locales
     #   iniparse
-    #   promise
     #   python-binary-memcached
     #   python-dateutil
 sniffio==1.3.1 \
