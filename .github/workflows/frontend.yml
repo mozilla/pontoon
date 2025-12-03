@@ -75,8 +75,6 @@ jobs:
         - uses: actions/checkout@v5
         - uses: actions/setup-node@v5
           with: { node-version: '22' }
-        - name: Install globals
-          run: npm install --global npm@10
         - name: Install dependencies
           run: npm ci
         - name: vitest
