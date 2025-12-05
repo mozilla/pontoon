@@ -17,6 +17,8 @@ class CreateTranslationForm(forms.Form):
 
     # Some file formats allow empty translations.
     translation = forms.CharField(required=False)
+    value = forms.JSONField()
+    properties = forms.JSONField(required=False)
 
     ignore_warnings = forms.BooleanField(required=False)
     approve = forms.BooleanField(required=False)
