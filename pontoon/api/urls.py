@@ -46,6 +46,12 @@ api_v2_patterns = [
         name="entity-individual-alternate",
     ),
     path(
+        # Pretranslation
+        "pretranslate/",
+        views.PretranslationView.as_view(),
+        name="pretranslation",
+    ),
+    path(
         # Terminology Search
         "search/terminology/",
         views.TermSearchListView.as_view(),
