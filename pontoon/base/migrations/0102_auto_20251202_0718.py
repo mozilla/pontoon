@@ -10,7 +10,7 @@ def create_pretranslators_group(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0100_android_as_mf2"),
+        ("base", "0101_webext_as_mf2"),
     ]
 
     operations = [
