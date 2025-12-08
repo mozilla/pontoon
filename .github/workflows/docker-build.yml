@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
+      - dev
   workflow_dispatch:
 
 jobs:
@@ -37,7 +39,7 @@ jobs:
 
       - name: Tag image for GAR
         id: tag
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
         run: |
           # Get the short commit SHA from GitHub context
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
@@ -55,7 +57,7 @@ jobs:
           echo "image_tags=${GAR_TAG}" >> $GITHUB_OUTPUT
 
       - name: Push Docker image to GAR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
         uses: mozilla-it/deploy-actions/docker-push@v5.3.4
         with:
           image_tags: ${{ steps.tag.outputs.image_tags }}
