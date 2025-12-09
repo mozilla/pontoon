@@ -69,19 +69,6 @@
                     communications, please do so here. Note, this email will also appear under your <a
                         href="{{ url('pontoon.contributors.profile') }}">Profile page</a>.</p>
             </div>
-            <!-- <div class="field">
-                {{ user_profile_form.contact_email.label_tag(label_suffix='') }}
-                <input type="email" name="contact_email" maxlength="254" id="id_contact_email"
-                    placeholder="{{ user.email }}" value="{{ user.profile.contact_email or '' }}">
-                {{ user_profile_form.contact_email.errors }}
-                {% if user.profile.contact_email and not user.profile.contact_email_verified %}
-                <p class="verify">Check your inbox to verify your email address</a></p>
-                {% else %}
-                <p class="help">If you would like to provide a different email address from your login email for email
-                    communications, please do so here. Note, this email will also appear under your <a
-                        href="{{ url('pontoon.contributors.profile') }}">Profile page</a>.</p>
-                {% endif %}
-            </div> -->
             <div class="check-list">
                 {{ Checkbox.checkbox(
                 'News and updates',
