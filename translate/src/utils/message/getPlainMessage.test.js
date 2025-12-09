@@ -176,7 +176,7 @@ describe('getPlainMessage', () => {
 
   describe('Unicode MessageFormat', () => {
     it('works for an MF2 string', () => {
-      expect(getPlainMessage('{{quoted pattern}}', 'gettext')).toEqual(
+      expect(getPlainMessage('{{quoted pattern}}', 'webext')).toEqual(
         'quoted pattern',
       );
     });
