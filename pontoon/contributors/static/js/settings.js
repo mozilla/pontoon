@@ -31,7 +31,7 @@ $(function () {
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
         attribute: attribute,
-        [attribute]: value || '',
+        [attribute]: value,
       },
       success: function () {
         self.data('original-value', value);
