@@ -60,13 +60,10 @@ $(function () {
           self.parents('.field').find('.verify').addClass('hide');
         }
 
-        const errors = response.responseJSON.errors;
-
         const errorContainer = self.parents('.field').find('.errorlist');
         errorContainer.empty();
-        for (const error in errors) {
-          const errorMessages = errors[error].join(', ');
-          errorContainer.append($('<p>').text(errorMessages));
+        for (const error of response.responseJSON.errors) {
+          errorContainer.append($('<p>').text(error.join(', ')));
         }
       },
     });
