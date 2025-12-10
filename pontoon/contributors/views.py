@@ -347,10 +347,9 @@ def edit_user_profile_locale_selector(request, username):
             },
             status=403,
         )
-    profile = user.profile
     locales_form = forms.UserLocalesOrderForm(
         request.POST,
-        instance=profile,
+        instance=user.profile,
     )
 
     if locales_form.is_valid():
