@@ -101,14 +101,10 @@ $(function () {
   $('body').on(
     'click',
     '.multiple-team-selector .locale.select li',
-    function () {
-      saveLocalesOrder();
-    },
+    saveLocalesOrder,
   );
 
-  $('body').on('click', '.multiple-team-selector .move-all', function () {
-    saveLocalesOrder();
-  });
+  $('body').on('click', '.multiple-team-selector .move-all', saveLocalesOrder);
 
   // Handle toggle buttons
   $('.toggle-button button').click(function (e) {
