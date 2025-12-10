@@ -27,7 +27,7 @@ from pontoon.base.models import Entity
 
 
 @dataclass
-class VCSTranslation:
+class RepoTranslation:
     """
     A single translation of a source string into another language.
     """
@@ -78,7 +78,7 @@ def _as_string(format: Format | None, entry: Entry[Message]) -> str:
             return serialize_message(format, entry.value)
 
 
-def as_vcs_translations(res: MozL10nResource[Message]) -> Iterator[VCSTranslation]:
+def as_repo_translations(res: MozL10nResource[Message]) -> Iterator[RepoTranslation]:
     for section in res.sections:
         if res.format == Format.android and section.id:
             continue
@@ -91,7 +91,7 @@ def as_vcs_translations(res: MozL10nResource[Message]) -> Iterator[VCSTranslatio
                     if res.format == Format.gettext
                     else False
                 )
-                yield VCSTranslation(
+                yield RepoTranslation(
                     key=section.id + entry.id,
                     string=_as_string(res.format, entry),
                     fuzzy=fuzzy,

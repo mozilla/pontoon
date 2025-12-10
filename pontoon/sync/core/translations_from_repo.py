@@ -32,7 +32,7 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
-from pontoon.sync.formats import as_vcs_translations
+from pontoon.sync.formats import as_repo_translations
 
 
 log = logging.getLogger(__name__)
@@ -162,7 +162,7 @@ def find_db_updates(
                     translated_resources[db_path].add(locale.pk)
                     translations.update(
                         ((db_path, tx.key, locale.pk), (tx.string, tx.fuzzy))
-                        for tx in as_vcs_translations(l10n_res)
+                        for tx in as_repo_translations(l10n_res)
                     )
                 except Exception as error:
                     scope = f"[{project.slug}:{db_path}, {locale.code}]"
