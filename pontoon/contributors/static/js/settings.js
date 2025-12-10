@@ -1,4 +1,9 @@
 $(function () {
+  function userAttributeURL(action) {
+    const username = $('#profile input[name="username"]').val();
+    return `/user/${username}/attributes/${action}/`;
+  }
+
   $('.field .input')
     .unbind('keydown.pontoon')
     .bind('keydown.pontoon', function (e) {
@@ -21,10 +26,7 @@ $(function () {
     }
 
     $.ajax({
-      url:
-        '/user/' +
-        $('#profile input[name="username"]').val() +
-        '/attributes/field/',
+      url: userAttributeURL('field'),
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -75,10 +77,7 @@ $(function () {
       .val();
 
     $.ajax({
-      url:
-        '/user/' +
-        $('#profile input[name="username"]').val() +
-        '/attributes/selector/',
+      url: userAttributeURL('selector'),
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -125,10 +124,7 @@ $(function () {
     const value = self.val();
 
     $.ajax({
-      url:
-        '/user/' +
-        $('#profile input[name="username"]').val() +
-        '/attributes/toggle/',
+      url: userAttributeURL('toggle'),
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -264,10 +260,7 @@ $(function () {
     const self = $(this);
 
     $.ajax({
-      url:
-        '/user/' +
-        $('#profile input[name="username"]').val() +
-        '/attributes/toggle/',
+      url: userAttributeURL('toggle'),
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
