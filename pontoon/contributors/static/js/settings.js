@@ -214,13 +214,11 @@ $(function () {
         Pontoon.endLoader('Token created.');
       },
       error: function (response) {
-        const errors = response.responseJSON.errors;
-
         const errorContainer = $('#pat-settings').find('.error-message');
         errorContainer.empty();
 
-        for (const error in errors) {
-          const errorMessages = errors[error].join(', ');
+        for (const error of response.responseJSON.errors) {
+          const errorMessages = error.join(', ');
           errorContainer.append($('<p>').text(errorMessages));
         }
       },
