@@ -24,6 +24,7 @@
 {% block bottom %}
 <section id="main">
     <form class="user-locales-settings">
+        {% csrf_token %}
         <section>
             <h3>Personal information</h3>
 

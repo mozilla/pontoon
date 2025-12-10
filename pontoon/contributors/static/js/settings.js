@@ -62,7 +62,7 @@ $(function () {
 
         const errorContainer = self.parents('.field').find('.errorlist');
         errorContainer.empty();
-        for (const error of response.responseJSON.errors) {
+        for (const error of Object.values(response.responseJSON.errors)) {
           errorContainer.append($('<p>').text(error.join(', ')));
         }
       },
@@ -213,7 +213,7 @@ $(function () {
         const errorContainer = $('#pat-settings').find('.error-message');
         errorContainer.empty();
 
-        for (const error of response.responseJSON.errors) {
+        for (const error of Object.values(response.responseJSON.errors)) {
           const errorMessages = error.join(', ');
           errorContainer.append($('<p>').text(errorMessages));
         }
