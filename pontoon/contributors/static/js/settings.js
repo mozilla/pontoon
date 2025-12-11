@@ -32,7 +32,6 @@ $(function () {
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
-        attribute: attribute,
         [attribute]: value,
       },
       success() {

@@ -194,71 +194,65 @@ def edit_user_profile_fields(request, username):
             status=403,
         )
 
-    text_attributes = [
-        "first_name",
-        "username",
-        "contact_email",
-        "bio",
-        "chat",
-        "github",
-        "bugzilla",
-    ]
+    for attribute, value in request.POST.items():
+        if attribute == "csrfmiddlewaretoken":
+            continue
 
-    attribute = request.POST.get("attribute", None)
-    value = request.POST.get(attribute, None)
-
-    if attribute not in text_attributes:
-        return JsonResponse(
-            {"status": False, "message": "Forbidden: Attribute not allowed"},
-            status=403,
-        )
-
-    profile = user.profile
-    if attribute in text_attributes:
-        if attribute == "first_name":
-            user_form = forms.UserForm(
-                request.POST,
-                instance=request.user,
-            )
-
-            if user_form.is_valid():
-                user_form.save()
-            else:
-                return JsonResponse(
-                    {
-                        "status": "error",
-                        "message": "Form validation failed.",
-                        "errors": user_form.errors,
-                    },
-                    status=400,
+        match attribute:
+            case "first_name":
+                user_form = forms.UserForm(
+                    request.POST,
+                    instance=request.user,
                 )
-        else:
-            user_profile_form = forms.UserProfileForm(
-                request.POST,
-                instance=profile,
-            )
 
-            if user_profile_form.is_valid():
-                setattr(profile, attribute, value)
-                profile.save(update_fields=[attribute])
-
-                if "contact_email" in user_profile_form.changed_data:
-                    profile.contact_email_verified = False
-                    profile.save(update_fields=["contact_email_verified"])
-
-                    token = utils.generate_verification_token(request.user)
-                    link = request.build_absolute_uri(
-                        reverse("pontoon.contributors.verify.email", args=(token,))
+                if user_form.is_valid():
+                    user_form.save()
+                else:
+                    return JsonResponse(
+                        {
+                            "status": "error",
+                            "message": "Form validation failed.",
+                            "errors": user_form.errors,
+                        },
+                        status=400,
                     )
-                    send_verification_email(request.user, link)
-            else:
+            case "username" | "contact_email" | "bio" | "chat" | "github" | "bugzilla":
+                profile = user.profile
+                user_profile_form = forms.UserProfileForm(
+                    request.POST,
+                    instance=profile,
+                )
+
+                if user_profile_form.is_valid():
+                    setattr(profile, attribute, value)
+                    profile.save(update_fields=[attribute])
+
+                    if attribute == "contact_email":
+                        profile.contact_email_verified = False
+                        profile.save(update_fields=["contact_email_verified"])
+
+                        token = utils.generate_verification_token(request.user)
+                        link = request.build_absolute_uri(
+                            reverse("pontoon.contributors.verify.email", args=(token,))
+                        )
+                        send_verification_email(request.user, link)
+
+                else:
+                    return JsonResponse(
+                        {
+                            "status": "error",
+                            "message": "Form validation failed.",
+                            "errors": user_profile_form.errors,
+                        },
+                        status=400,
+                    )
+            case _:
                 return JsonResponse(
                     {
                         "status": "error",
-                        "message": "Form validation failed.",
-                        "errors": user_profile_form.errors,
+                        "message": f"Forbidden: Attribute '{attribute}' not allowed.",
                     },
-                    status=400,
+                    status=403,
                 )
 
     return JsonResponse({"status": True})

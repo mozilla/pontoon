@@ -34,7 +34,6 @@ def settings_url():
 @pytest.mark.django_db
 def test_profileform_invalid_first_name(member, user_a):
     params = {
-        "attribute": "first_name",
         "first_name": '<aa>"\'"',
     }
 
@@ -44,7 +43,7 @@ def test_profileform_invalid_first_name(member, user_a):
 
 @pytest.mark.django_db
 def test_profileform_missing_first_name(member, user_a):
-    params = {"attribute": "first_name", "first_name": ""}
+    params = {"first_name": ""}
 
     response = member.client.post(f"/user/{user_a.username}/attributes/field/", params)
     assert response.content.count(b"This field is required.") == 1
@@ -52,7 +51,7 @@ def test_profileform_missing_first_name(member, user_a):
 
 @pytest.mark.django_db
 def test_profileform_valid_first_name(member, user_a):
-    params = {"attribute": "first_name", "first_name": "contributor"}
+    params = {"first_name": "contributor"}
 
     response = member.client.post(f"/user/{user_a.username}/attributes/field/", params)
     assert b'{"status": true}' in response.content
@@ -114,7 +113,6 @@ def test_profileform_contact_email_verified(member, user_a):
     assert User.objects.get(pk=member.user.pk).profile.contact_email_verified is True
 
     params = {
-        "attribute": "contact_email",
         "contact_email": "contact@example.com",
     }
 
