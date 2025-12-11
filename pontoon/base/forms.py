@@ -297,7 +297,7 @@ class UserCustomHomepageForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        all_locales = list(Locale.objects.all().values_list("code", "name"))
+        all_locales = list(Locale.objects.visible().values_list("code", "name"))
 
         self.fields["custom_homepage"] = forms.ChoiceField(
             choices=[("", "Default homepage")] + all_locales, required=False
@@ -315,7 +315,7 @@ class UserPreferredSourceLocaleForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        all_locales = list(Locale.objects.all().values_list("code", "name"))
+        all_locales = list(Locale.objects.visible().values_list("code", "name"))
 
         self.fields["preferred_source_locale"] = forms.ChoiceField(
             choices=[("", "Default project locale")] + all_locales, required=False
