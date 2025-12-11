@@ -32,7 +32,7 @@ import {
   useHandleEnter,
   useHandleEscape,
 } from './editFieldShortcuts';
-import { fluentMode, commonMode } from './editFieldModes';
+import { fluentMode, commonMode, webextMode } from './editFieldModes';
 import { Message } from '@mozilla/l10n';
 
 /**
@@ -99,7 +99,13 @@ export const getExtensions = (
   tooltips({ parent: document.querySelector('.panel-content') as HTMLElement }),
   autocompletePlaceholders(format, orig) ?? closeBrackets(),
   EditorView.lineWrapping,
-  StreamLanguage.define<any>(format === 'fluent' ? fluentMode : commonMode),
+  StreamLanguage.define<any>(
+    format === 'fluent'
+      ? fluentMode
+      : format === 'webext'
+        ? webextMode
+        : commonMode,
+  ),
   syntaxHighlighting(style),
   decoratorPlugin,
   keymap.of([

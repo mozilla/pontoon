@@ -9,7 +9,7 @@ import {
 import type { MessageEntry } from '.';
 
 /**
- * Parse a `'fluent'`, `'android'`, or `'gettext'` message source as a {@link MessageEntry}.
+ * Parse a `'fluent'`, `'android'`, `'gettext'`, or `'webext'` message source as a {@link MessageEntry}.
  *
  * @returns `null` on parse error or unsupported format
  */
@@ -34,9 +34,13 @@ export function parseEntry(
 
       case 'android':
       case 'gettext':
+      case 'webext':
         return { format, id: '', value: mf2ParseMessage(source) };
     }
-  } catch {}
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.warn(`Parse error: ${msg}, with entry source:\n${source}`);
+  }
   return null;
 }
 

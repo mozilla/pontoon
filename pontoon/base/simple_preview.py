@@ -46,7 +46,7 @@ def get_simple_preview(format: str, string: str):
                 msg = mf2_parse_message(string)
                 return android_simple_preview(msg)
 
-            case Resource.Format.GETTEXT:
+            case Resource.Format.GETTEXT | Resource.Format.WEBEXT:
                 msg = mf2_parse_message(string)
                 msg = as_pattern_message(msg)
                 return serialize_message(None, msg)

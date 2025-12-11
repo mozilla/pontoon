@@ -456,12 +456,12 @@ def settings(request):
             messages.success(request, "Settings saved.")
 
     selected_locales = list(profile.sorted_locales)
-    available_locales = Locale.objects.exclude(
+    available_locales = Locale.objects.visible().exclude(
         pk__in=[loc.pk for loc in selected_locales]
     ).available()
 
     default_homepage_locale = Locale(name="Default homepage", code="")
-    all_locales = list(Locale.objects.available())
+    all_locales = list(Locale.objects.visible())
     all_locales.insert(0, default_homepage_locale)
 
     custom_homepage_locale = default_homepage_locale
@@ -478,7 +478,7 @@ def settings(request):
 
     # Similar logic for preferred source locale
     default_preferred_source_locale = Locale(name="Default project locale", code="")
-    preferred_locales = list(Locale.objects.available())
+    preferred_locales = list(Locale.objects.visible())
     preferred_locales.insert(0, default_preferred_source_locale)
 
     preferred_source_locale = default_preferred_source_locale

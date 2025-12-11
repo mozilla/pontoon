@@ -1,10 +1,12 @@
 from html import escape
+from re import fullmatch
 from typing import Iterable, Iterator
 
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
 from moz.l10n.formats.android import android_parse_message
 from moz.l10n.formats.mf2 import mf2_parse_message
+from moz.l10n.formats.webext import webext_parse_message, webext_serialize_message
 from moz.l10n.model import (
     Expression,
     Markup,
@@ -160,6 +162,41 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                 visitor.visit(translation_ast)
                 if visitor.is_empty:
                     warnings.append("Empty translation")
+
+        case Resource.Format.WEBEXT:
+            try:
+                msg = mf2_parse_message(string)
+            except ValueError as e:
+                msg = None
+                errors.append(f"Parse error: {e}")
+            if isinstance(msg, PatternMessage):
+                try:
+                    orig_msg = mf2_parse_message(entity.string)
+                    _, placeholders = webext_serialize_message(orig_msg)
+                except ValueError:
+                    placeholders = None
+
+                # The default moz.l10n serialization would escape $ in literal content,
+                # which we don't want here -- instead looking for typos in placeholders.
+                webext_src = ""
+                for part in msg.pattern:
+                    if isinstance(part, str):
+                        webext_src += part
+                    else:
+                        part_source = part.attributes.get("source", None)
+                        if isinstance(part_source, str):
+                            webext_src += part_source
+                        else:
+                            errors.append(f"Unsupported placeholder: {part}")
+                try:
+                    webext_parse_message(webext_src, placeholders)
+                except Exception as e:
+                    bad_ph = fullmatch(r"Missing placeholders entry for (\w+)", str(e))
+                    errors.append(
+                        f"Placeholder ${bad_ph.group(1).upper()}$ not found in reference"
+                        if bad_ph
+                        else f"Parse error: {e}"
+                    )
 
     checks: dict[str, list[str]] = {}
     if errors:
