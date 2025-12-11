@@ -456,9 +456,11 @@ def settings(request):
             messages.success(request, "Settings saved.")
 
     selected_locales = list(profile.sorted_locales)
-    available_locales = Locale.objects.visible().exclude(
-        pk__in=[loc.pk for loc in selected_locales]
-    ).available()
+    available_locales = (
+        Locale.objects.visible()
+        .exclude(pk__in=[loc.pk for loc in selected_locales])
+        .available()
+    )
 
     default_homepage_locale = Locale(name="Default homepage", code="")
     all_locales = list(Locale.objects.visible())
