@@ -35,7 +35,7 @@ $(function () {
         attribute: attribute,
         [attribute]: value,
       },
-      success: function () {
+      success() {
         self.parents('.field').find('.errorlist').empty();
 
         // contact_email special case
@@ -52,7 +52,7 @@ $(function () {
         const message = 'Settings saved.';
         Pontoon.endLoader(message);
       },
-      error: function (response) {
+      error(response) {
         // contact_email special case
         if (attribute === 'contact_email') {
           self.parents('.field').find('.help').addClass('hide');
@@ -80,11 +80,11 @@ $(function () {
         csrfmiddlewaretoken: $('body').data('csrf'),
         locales_order: selectedLocales,
       },
-      success: function () {
+      success() {
         const message = 'Settings saved.';
         Pontoon.endLoader(message);
       },
-      error: function (request) {
+      error(request) {
         if (request.responseText === 'error') {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
         } else {
@@ -128,7 +128,7 @@ $(function () {
         attribute: attribute,
         value: value,
       },
-      success: function () {
+      success() {
         self.addClass('active');
         self.siblings().removeClass('active');
 
@@ -140,7 +140,7 @@ $(function () {
         }
         Pontoon.endLoader(message);
       },
-      error: function (request) {
+      error(request) {
         if (request.responseText === 'error') {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
         } else {
@@ -162,7 +162,7 @@ $(function () {
         name: $('.token-name-input').val(),
         csrfmiddlewaretoken: csrfmiddlewaretoken,
       },
-      success: function (response) {
+      success(response) {
         if (response.status !== 'success') {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
           return;
@@ -202,7 +202,7 @@ $(function () {
         $('.pat-list').append(newTokenHTML);
         Pontoon.endLoader('Token created.');
       },
-      error: function (response) {
+      error(response) {
         const errorContainer = $('#pat-settings').find('.error-message');
         errorContainer.empty();
 
@@ -226,12 +226,12 @@ $(function () {
       data: {
         csrfmiddlewaretoken: csrfmiddlewaretoken,
       },
-      success: function (response) {
+      success(response) {
         if (response.status === 'success') {
           $(`li[data-token-id="${tokenId}"]`).remove();
         }
       },
-      error: function () {
+      error() {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
       },
     });
@@ -264,7 +264,7 @@ $(function () {
         attribute: self.data('attribute'),
         value: !self.is('.enabled'),
       },
-      success: function () {
+      success() {
         self.toggleClass('enabled');
 
         // If notification type disabled, uncheck email checkbox
@@ -277,7 +277,7 @@ $(function () {
 
         Pontoon.endLoader('Settings saved.');
       },
-      error: function (request) {
+      error(request) {
         if (request.responseText === 'error') {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
         } else {
@@ -298,12 +298,12 @@ $(function () {
         csrfmiddlewaretoken: $('body').data('csrf'),
         custom_homepage: custom_homepage,
       },
-      success: function (data) {
+      success(data) {
         if (data === 'ok') {
           Pontoon.endLoader('Custom homepage saved.');
         }
       },
-      error: function (request) {
+      error(request) {
         if (request.responseText === 'error') {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
         } else {
@@ -324,12 +324,12 @@ $(function () {
         csrfmiddlewaretoken: $('body').data('csrf'),
         preferred_source_locale: preferred_source_locale,
       },
-      success: function (data) {
+      success(data) {
         if (data === 'ok') {
           Pontoon.endLoader('Preferred source locale saved.');
         }
       },
-      error: function (request) {
+      error(request) {
         if (request.responseText === 'error') {
           Pontoon.endLoader('Oops, something went wrong.', 'error');
         } else {
