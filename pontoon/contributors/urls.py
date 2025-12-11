@@ -62,73 +62,65 @@ urlpatterns = [
         views.mark_all_notifications_as_read,
         name="pontoon.contributors.notifications.mark.all.as.read",
     ),
-    # AJAX: Toggle user theme preference
     path(
         "user/<username:username>/theme/",
         views.toggle_theme,
         name="pontoon.contributors.toggle_theme",
     ),
-    # AJAX: Edit user profile attributes
     path(
         "user/<username:username>/attributes/field/",
         views.edit_user_profile_fields,
         name="pontoon.contributors.edit_field",
     ),
-    # AJAX: Toggle user profile attributes
     path(
         "user/<username:username>/attributes/toggle/",
         views.toggle_user_profile_attribute,
         name="pontoon.contributors.toggle_user_profile_attribute",
     ),
-    # AJAX: Toggle user profile attributes
+    # Edit user profile locale selector
     path(
         "user/<username:username>/attributes/selector/",
         views.edit_user_profile_locale_selector,
         name="pontoon.contributors.edit_locale_selector",
     ),
-    # AJAX: Save custom homepage
     path(
         "save-custom-homepage/",
         views.save_custom_homepage,
         name="pontoon.contributors.save_custom_homepage",
     ),
-    # AJAX: Save preferred source locale
     path(
         "save-preferred-source-locale/",
         views.save_preferred_source_locale,
         name="pontoon.contributors.save_preferred_source_locale",
     ),
-    # AJAX: Dismiss Add-On Promotion
     path(
         "dismiss-addon-promotion/",
         views.dismiss_addon_promotion,
         name="pontoon.contributors.dismiss_addon_promotion",
     ),
-    # AJAX: Update contribution graph
     path(
         "update-contribution-graph/",
         views.update_contribution_graph,
         name="pontoon.contributors.update_contribution_graph",
     ),
-    # AJAX: Update contribution timeline
     path(
         "update-contribution-timeline/",
         views.update_contribution_timeline,
         name="pontoon.contributors.update_contribution_timeline",
     ),
-    # AJAX: Toggle user account status (i.e. `is_active`)
+    # Toggle user account status (i.e. `is_active`)
     path(
         "toggle-active-user-status/<username:username>/",
         views.toggle_active_user_status,
         name="pontoon.contributors.toggle_active_user_status",
     ),
-    # AJAX: Generate a new personal access token
+    # Generate a new personal access token
     path(
         "generate-token/",
         views.generate_token,
         name="pontoon.contributors.generate_token",
     ),
-    # AJAX: Delete a personal access token
+    # Delete a personal access token
     path(
         "delete-token/<int:token_id>/",
         views.delete_token,
