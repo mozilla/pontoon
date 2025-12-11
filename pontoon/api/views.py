@@ -24,6 +24,7 @@ from pontoon.base.models.entity import Entity
 from pontoon.base.models.translation import Translation
 from pontoon.terminology.models import (
     Term,
+    TermTranslation,
 )
 
 from .serializers import (
@@ -153,14 +154,28 @@ class LocaleIndividualView(generics.RetrieveAPIView):
     lookup_field = "code"
 
     def get_queryset(self):
-        queryset = Locale.objects.prefetch_related(
-            Prefetch(
-                "project_locale",
-                queryset=ProjectLocale.objects.visible().select_related("project"),
-                to_attr="fetched_project_locales",
+        qs = Locale.objects.available()
+
+        fields_param = self.request.query_params.get("fields", "")
+        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+        # Only prefetch project data when requested
+        needs_projects = not requested or requested & {"projects"}
+        if needs_projects:
+            qs = qs.prefetch_related(
+                Prefetch(
+                    "project_locale",
+                    queryset=ProjectLocale.objects.visible().select_related("project"),
+                    to_attr="fetched_project_locales",
+                )
             )
-        ).distinct()
-        return queryset.stats_data()
+
+        # Only gather stats when requested
+        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
+        if needs_stats:
+            qs = qs.stats_data()
+
+        return qs
 
 
 class ProjectListView(generics.ListAPIView):
@@ -171,19 +186,29 @@ class ProjectListView(generics.ListAPIView):
         include_disabled = query_params.get("include_disabled")
         include_system = query_params.get("include_system")
 
-        queryset = (
-            Project.objects.visible()
-            .visible_for(self.request.user)
-            .prefetch_related(
+        qs = Project.objects.visible().visible_for(self.request.user)
+
+        fields_param = query_params.get("fields", "")
+        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+        # Only prefetch locale data when requested
+        needs_locales = not requested or requested & {"locales"}
+        if needs_locales:
+            qs = qs.prefetch_related(
                 Prefetch(
                     "project_locale",
                     queryset=ProjectLocale.objects.visible().select_related("locale"),
                     to_attr="fetched_project_locales",
-                ),
-                "contact",
-                "tags",
+                )
             )
-        )
+
+        needs_contact = not requested or requested & {"contact"}
+        if needs_contact:
+            qs = qs.prefetch_related("contact")
+
+        needs_tags = not requested or requested & {"tags"}
+        if needs_tags:
+            qs = qs.prefetch_related("tags")
 
         filters = Q()
         if include_disabled is not None:
@@ -191,8 +216,14 @@ class ProjectListView(generics.ListAPIView):
         if include_system is not None:
             filters |= Q(system_project=True)
         if filters:
-            queryset = queryset | Project.objects.filter(filters).distinct()
-        return queryset.stats_data().order_by("slug")
+            qs = qs | Project.objects.filter(filters).distinct()
+
+        # Only gather stats when requested
+        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
+        if needs_stats:
+            qs = qs.stats_data()
+
+        return qs.order_by("slug")
 
 
 class ProjectIndividualView(generics.RetrieveAPIView):
@@ -200,52 +231,77 @@ class ProjectIndividualView(generics.RetrieveAPIView):
     lookup_field = "slug"
 
     def get_queryset(self):
-        queryset = (
-            Project.objects.available()
-            .visible_for(self.request.user)
-            .prefetch_related(
+        qs = Project.objects.available().visible_for(self.request.user)
+
+        fields_param = self.request.query_params.get("fields", "")
+        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+        # Only prefetch locale data when requested
+        needs_locales = not requested or requested & {"locales"}
+        if needs_locales:
+            qs = qs.prefetch_related(
                 Prefetch(
                     "project_locale",
                     queryset=ProjectLocale.objects.visible().select_related("locale"),
                     to_attr="fetched_project_locales",
-                ),
-                "contact",
-                "tags",
+                )
             )
-        ).distinct()
 
-        return queryset.stats_data()
+        needs_contact = not requested or requested & {"contact"}
+        if needs_contact:
+            qs = qs.prefetch_related("contact")
+
+        needs_tags = not requested or requested & {"tags"}
+        if needs_tags:
+            qs = qs.prefetch_related("tags")
+
+        # Only gather stats when requested
+        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
+        if needs_stats:
+            qs = qs.stats_data()
+
+        return qs.distinct()
 
 
 class EntityListView(generics.ListAPIView):
     serializer_class = EntitySerializer
 
     def get_queryset(self):
-        return (
-            Entity.objects.filter(resource__project__disabled=False)
-            .prefetch_related(
-                "resource",
-                "resource__project",
-            )
-            .order_by("id")
+        qs = Entity.objects.filter(resource__project__disabled=False).prefetch_related(
+            "resource"
         )
+
+        fields_param = self.request.query_params.get("fields", "")
+        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+        needs_project = not requested or requested & {"project"}
+        if needs_project:
+            qs = qs.prefetch_related("resource__project")
+
+        return qs.order_by("id")
 
 
 class EntityIndividualView(generics.RetrieveAPIView):
     serializer_class = NestedEntitySerializer
 
     def get_queryset(self):
-        return Entity.objects.filter(
-            resource__project__disabled=False
-        ).prefetch_related(
-            Prefetch(
-                "translation_set",
-                queryset=Translation.objects.filter(approved=True).select_related(
-                    "locale"
-                ),
-                to_attr="filtered_translations",
-            ),
-        )
+        qs = Entity.objects.filter(resource__project__disabled=False)
+
+        fields_param = self.request.query_params.get("fields", "")
+        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+        needs_translations = not requested or requested & {"translations"}
+        if needs_translations:
+            qs = qs.prefetch_related(
+                Prefetch(
+                    "translation_set",
+                    queryset=Translation.objects.filter(approved=True).select_related(
+                        "locale"
+                    ),
+                    to_attr="filtered_translations",
+                )
+            )
+        return qs
 
     def get_object(self):
         queryset = self.get_queryset()
@@ -263,21 +319,40 @@ class EntityIndividualView(generics.RetrieveAPIView):
 class ProjectLocaleIndividualView(generics.RetrieveAPIView):
     serializer_class = NestedProjectLocaleSerializer
 
-    def get_object(self):
+    def get_queryset(self):
         slug = self.kwargs["slug"]
         code = self.kwargs["code"]
 
-        project = get_object_or_404(
-            Project,
-            slug=slug,
-        )
+        qs = ProjectLocale.objects.all().filter(project__slug=slug, locale__code=code)
 
-        queryset = (
-            ProjectLocale.objects.all()
-            .filter(project__slug=slug, locale__code=code)
-            .prefetch_related("project", "locale")
-            .stats_data(project)
-        )
+        fields_param = self.request.query_params.get("fields", "")
+        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+        # Only prefetch locale when requested
+        needs_locale = not requested or requested & {"locale"}
+        if needs_locale:
+            qs = qs.prefetch_related("locale")
+
+        # Only prefetch project when requested
+        needs_project = not requested or requested & {"project"}
+        if needs_project:
+            qs = qs.prefetch_related("project")
+
+        # Only gather stats when requested
+        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
+        if needs_stats:
+            project = get_object_or_404(
+                Project,
+                slug=slug,
+            )
+            qs = qs.stats_data(project)
+
+        return qs
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        slug = self.kwargs["slug"]
+        code = self.kwargs["code"]
 
         obj = get_object_or_404(queryset, project__slug=slug, locale__code=code)
 
@@ -288,7 +363,31 @@ class TermSearchListView(generics.ListAPIView):
     serializer_class = TermSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = TermFilter
-    queryset = Term.objects.prefetch_related("translations__locale")
+
+    def get_queryset(self):
+        locale = self.request.query_params.get("locale")
+
+        qs = Term.objects.all()
+
+        fields_param = self.request.query_params.get("fields", "")
+        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+        # Only prefetch translation_text when requested
+        needs_translation_text = not requested or requested & {"translation_text"}
+        if needs_translation_text:
+            qs = qs.prefetch_related(
+                (
+                    Prefetch(
+                        "translations",
+                        queryset=TermTranslation.objects.filter(
+                            locale__code=locale
+                        ).select_related("locale"),
+                        to_attr="filtered_translations",
+                    )
+                ),
+            ).select_related("entity")
+
+        return qs
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
@@ -343,11 +442,17 @@ class TranslationSearchListView(generics.ListAPIView):
         }
 
         try:
-            entities = (
-                Entity.for_project_locale(
-                    self.request.user, project, locale, status="translated", **form_data
-                )
-                .prefetch_related(
+            qs = Entity.for_project_locale(
+                self.request.user, project, locale, status="translated", **form_data
+            ).select_related("resource__project")
+
+            fields_param = self.request.query_params.get("fields", "")
+            requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+
+            # Only prefetch translation_text when requested
+            needs_translation = not requested or requested & {"translation"}
+            if needs_translation:
+                qs = qs.prefetch_related(
                     (
                         Prefetch(
                             "translation_set",
@@ -358,9 +463,8 @@ class TranslationSearchListView(generics.ListAPIView):
                         )
                     ),
                 )
-                .select_related("resource__project")
-            )
+
         except ValueError as error:
             raise ValueError(error)
 
-        return entities
+        return qs

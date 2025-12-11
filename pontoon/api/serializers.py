@@ -155,7 +155,7 @@ class CompactLocaleSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProjectLocaleSerializer(TranslationStatsMixin, serializers.ModelSerializer):
+class ProjectLocaleSerializer(TranslationStatsMixin, DynamicFieldsModelSerializer):
     locale = CompactLocaleSerializer(read_only=True)
     project = CompactProjectSerializer(read_only=True)
 
@@ -255,13 +255,17 @@ class TermSerializer(DynamicFieldsModelSerializer):
 
     def get_translation_text(self, obj):
         request = self.context.get("request")
-        locale = request.query_params.get("locale") if request else None
 
-        if not locale:
+        if not request:
             return None
 
-        term = obj.translations.filter(locale__code=locale).first()
-        return term.text if term else None
+        translation = (
+            obj.filtered_translations[0].text
+            if hasattr(obj, "filtered_translations") and obj.filtered_translations
+            else None
+        )
+
+        return translation
 
 
 class TranslationMemorySerializer(DynamicFieldsModelSerializer):
