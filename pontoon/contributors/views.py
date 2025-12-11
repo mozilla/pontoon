@@ -195,10 +195,9 @@ def edit_user_profile_fields(request, username):
         )
 
     for attribute, value in request.POST.items():
-        if attribute == "csrfmiddlewaretoken":
-            continue
-
         match attribute:
+            case "csrfmiddlewaretoken":
+                continue
             case "first_name":
                 user_form = forms.UserForm(
                     request.POST,
