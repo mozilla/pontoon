@@ -28,7 +28,10 @@ import { Locale } from './Locale';
 import { MachineryTranslations } from './MachineryTranslations';
 import { UnsavedActions } from './UnsavedChanges';
 import { getMessageEntryFormat } from '../utils/message/getMessageEntryFormat';
-import { getPlaceholderMap } from '../utils/message/placeholders';
+import {
+  getPlaceholderMap,
+  placeholderFormats,
+} from '../utils/message/placeholders';
 
 export type EditFieldHandle = {
   get value(): string;
@@ -252,7 +255,9 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             }
             case 'android':
             case 'gettext':
-            case 'webext': {
+            case 'webext':
+            case 'xcode':
+            case 'xliff': {
               const entry = parseEntry(format, str);
               if (entry) {
                 next.entry = entry;
@@ -333,8 +338,8 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         source = serializeEntry(entry);
         sourceView = true;
       }
-      if (format === 'android' || format === 'webext') {
-        placeholders = getPlaceholderMap(format, entry.value!);
+      if (placeholderFormats.has(format)) {
+        placeholders = getPlaceholderMap(entry.value!);
       }
     } else {
       const entry_ = parseEntry(format, source);
@@ -345,9 +350,9 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         entry = createSimpleMessageEntry(format, entity.key, source);
         sourceView = format === 'fluent';
       }
-      if (format === 'android' || format === 'webext') {
+      if (placeholderFormats.has(format)) {
         const orig = parseEntry(format, entity.original);
-        if (orig?.value) placeholders = getPlaceholderMap(format, orig.value);
+        if (orig?.value) placeholders = getPlaceholderMap(orig.value);
       }
     }
 

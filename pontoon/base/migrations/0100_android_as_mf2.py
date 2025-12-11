@@ -3,10 +3,11 @@ from re import Match, compile
 
 from moz.l10n.formats.android import android_parse_message, android_serialize_message
 from moz.l10n.formats.mf2 import mf2_parse_message, mf2_serialize_message
+from moz.l10n.model import PatternMessage
 
 from django.db import migrations
 
-from pontoon.base.simple_preview import android_simple_preview
+from pontoon.base.simple_preview import preview_placeholder
 
 
 android_nl = compile(r"\s*\n\s*")
@@ -30,6 +31,10 @@ def mf2_string_changed(obj):
         return False
     obj.string = mf2_source
     return True
+
+
+def android_simple_preview(msg: PatternMessage) -> str:
+    return "".join(preview_placeholder(part) for part in msg.pattern)
 
 
 def mf2_tm_changed(tm):

@@ -9,7 +9,9 @@ import {
 import type { MessageEntry } from '.';
 
 /**
- * Parse a `'fluent'`, `'android'`, `'gettext'`, or `'webext'` message source as a {@link MessageEntry}.
+ * Parse a
+ * `'fluent'`, `'android'`, `'gettext'`, `'webext'`, `'xcode'`, or `'xliff'`
+ * message source as a {@link MessageEntry}.
  *
  * @returns `null` on parse error or unsupported format
  */
@@ -35,6 +37,8 @@ export function parseEntry(
       case 'android':
       case 'gettext':
       case 'webext':
+      case 'xcode':
+      case 'xliff':
         return { format, id: '', value: mf2ParseMessage(source) };
     }
   } catch (error) {

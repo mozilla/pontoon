@@ -3,7 +3,7 @@ from moz.l10n.formats.webext import webext_serialize_message
 from moz.l10n.model import CatchallKey, Pattern, PatternMessage, SelectMessage
 
 from pontoon.base.models import Entity, Resource
-from pontoon.base.simple_preview import android_simple_preview
+from pontoon.base.simple_preview import get_simple_preview
 
 from . import compare_locales, translate_toolkit
 from .custom import run_custom_checks
@@ -75,19 +75,21 @@ def run_checks(
             case Resource.Format.ANDROID:
                 src_msg = mf2_parse_message(entity.string)
                 tgt_msg = mf2_parse_message(string)
-                src0 = android_simple_preview(src_msg)
+                src0 = get_simple_preview(res_format, src_msg)
                 if isinstance(src_msg, SelectMessage) and isinstance(
                     tgt_msg, SelectMessage
                 ):
                     for keys, pattern in tgt_msg.variants.items():
                         src = (
-                            android_simple_preview(src_msg.variants[keys])
+                            get_simple_preview(res_format, src_msg.variants[keys])
                             if keys == ("one",) and keys in src_msg.variants
                             else src0
                         )
-                        tt_patterns.append((src, android_simple_preview(pattern)))
+                        tt_patterns.append(
+                            (src, get_simple_preview(res_format, pattern))
+                        )
                 else:
-                    tt_patterns.append((src0, android_simple_preview(tgt_msg)))
+                    tt_patterns.append((src0, get_simple_preview(res_format, tgt_msg)))
 
             case Resource.Format.GETTEXT:
                 src_msg = mf2_parse_message(entity.string)

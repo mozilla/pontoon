@@ -29,6 +29,8 @@ export function serializeEntry(entry: MessageEntry | null): string {
     case 'android':
     case 'gettext':
     case 'webext':
+    case 'xcode':
+    case 'xliff':
       return entry.value ? mf2SerializeMessage(entry.value) : '';
 
     default:
