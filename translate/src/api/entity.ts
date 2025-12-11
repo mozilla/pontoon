@@ -24,6 +24,7 @@ export type Entity = {
   readonly resource_comment: string;
   readonly meta: Array<[key: string, value: string]>;
   readonly format: string;
+  readonly obsolete: boolean;
   readonly path: string;
   readonly project: Record<string, any>;
   readonly translation: EntityTranslation | undefined;
