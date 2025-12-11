@@ -18,12 +18,14 @@ $(function () {
 
     const self = $(this);
     const value = self.val().trim();
-    const attribute = self.data('attribute');
-    const originalValue = self.data('original-value') || '';
+    const attribute = this.dataset.attribute;
+    const originalValue = this.dataset.originalValue || '';
 
     if (value === originalValue) {
       return;
     }
+
+    this.dataset.originalValue = value;
 
     $.ajax({
       url: userAttributeURL('field'),
@@ -34,8 +36,6 @@ $(function () {
         [attribute]: value,
       },
       success: function () {
-        self.data('original-value', value);
-        self.attr('data-original-value', value);
         self.parents('.field').find('.errorlist').empty();
 
         // contact_email special case
@@ -53,9 +53,6 @@ $(function () {
         Pontoon.endLoader(message);
       },
       error: function (response) {
-        self.data('original-value', value);
-        self.attr('data-original-value', value);
-
         // contact_email special case
         if (attribute === 'contact_email') {
           self.parents('.field').find('.help').addClass('hide');
