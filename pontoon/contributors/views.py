@@ -253,7 +253,6 @@ def edit_user_profile_fields(request):
 @require_POST
 @transaction.atomic
 def toggle_user_profile_attribute(request, username):
-            },
     user = request.user
     attribute = request.POST.get("attribute", None)
 
