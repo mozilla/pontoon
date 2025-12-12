@@ -59,7 +59,7 @@ $(function () {
     const theme = self.val();
 
     $.ajax({
-      url: '/user/' + $('#profile input[name="username"]').val() + '/theme/',
+      url: '/user/theme/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
