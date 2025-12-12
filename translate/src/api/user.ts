@@ -98,7 +98,7 @@ export function updateUserSetting(
     csrfmiddlewaretoken: csrfToken,
   });
   const headers = new Headers({ 'X-CSRFToken': csrfToken });
-  return POST(`/user/attributes/toggle/`, payload, { headers });
+  return POST('/user/attributes/toggle/', payload, { headers });
 }
 
 export function updateUserTheme(
