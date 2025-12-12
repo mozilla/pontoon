@@ -111,7 +111,7 @@ export function updateUserTheme(
     csrfmiddlewaretoken: csrfToken,
   });
   const headers = new Headers({ 'X-CSRFToken': csrfToken });
-  return POST(`/user/theme/`, payload, { headers });
+  return POST('/user/theme/', payload, { headers });
 }
 
 /** Update Interactive Tour status to a given step. */
