@@ -21,10 +21,19 @@ $(function () {
     const originalValue = this.dataset.originalValue || '';
 
     if (value === originalValue) {
+      self.parents('.field').find('.errorlist').empty();
+
+      if (attribute === 'contact_email') {
+        if (value !== '') {
+          self.parents('.field').find('.help').addClass('hide');
+          self.parents('.field').find('.verify').removeClass('hide');
+        } else {
+          self.parents('.field').find('.help').removeClass('hide');
+          self.parents('.field').find('.verify').addClass('hide');
+        }
+      }
       return;
     }
-
-    this.dataset.originalValue = value;
 
     $.ajax({
       url: userAttributeURL('field'),
@@ -33,8 +42,8 @@ $(function () {
         csrfmiddlewaretoken: $('body').data('csrf'),
         [attribute]: value,
       },
-      success() {
-        self.parents('.field').find('.errorlist').empty();
+      success: () => {
+        this.dataset.originalValue = value;
 
         // contact_email special case
         if (attribute === 'contact_email') {
@@ -47,6 +56,7 @@ $(function () {
           }
         }
 
+        self.parents('.field').find('.errorlist').empty();
         const message = 'Settings saved.';
         Pontoon.endLoader(message);
       },
