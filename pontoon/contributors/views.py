@@ -183,16 +183,8 @@ def update_contribution_timeline(request):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
-def edit_user_profile_fields(request, username):
-    user = get_object_or_404(User, username=username)
-    if user != request.user:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Forbidden: You don't have permission to edit this user",
-            },
-            status=403,
-        )
+def edit_user_profile_fields(request):
+    user = request.user
 
     for attribute, value in request.POST.items():
         match attribute:
@@ -261,16 +253,8 @@ def edit_user_profile_fields(request, username):
 @require_POST
 @transaction.atomic
 def toggle_user_profile_attribute(request, username):
-    user = get_object_or_404(User, username=username)
-    if user != request.user:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Forbidden: You don't have permission to edit this user",
             },
-            status=403,
-        )
-
+    user = request.user
     attribute = request.POST.get("attribute", None)
 
     boolean_attributes = [
@@ -331,15 +315,7 @@ def toggle_user_profile_attribute(request, username):
 @require_POST
 @transaction.atomic
 def edit_user_profile_locale_selector(request, username):
-    user = get_object_or_404(User, username=username)
-    if user != request.user:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Forbidden: You don't have permission to edit this user",
-            },
-            status=403,
-        )
+    user = request.user
     locales_form = forms.UserLocalesOrderForm(
         request.POST,
         instance=user.profile,
@@ -364,16 +340,7 @@ def edit_user_profile_locale_selector(request, username):
 @require_POST
 @transaction.atomic
 def toggle_theme(request, username):
-    user = get_object_or_404(User, username=username)
-    if user != request.user:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Forbidden: You don't have permission to edit this user",
-            },
-            status=403,
-        )
-
+    user = request.user
     theme = request.POST.get("theme", None)
 
     try:

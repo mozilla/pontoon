@@ -1,7 +1,6 @@
 $(function () {
   function userAttributeURL(action) {
-    const username = $('#profile input[name="username"]').val();
-    return `/user/${username}/attributes/${action}/`;
+    return `/user/attributes/${action}/`;
   }
 
   $('.field .input')

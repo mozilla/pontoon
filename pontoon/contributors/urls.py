@@ -63,23 +63,23 @@ urlpatterns = [
         name="pontoon.contributors.notifications.mark.all.as.read",
     ),
     path(
-        "user/<username:username>/theme/",
+        "user/theme/",
         views.toggle_theme,
         name="pontoon.contributors.toggle_theme",
     ),
     path(
-        "user/<username:username>/attributes/field/",
+        "user/attributes/field/",
         views.edit_user_profile_fields,
         name="pontoon.contributors.edit_field",
     ),
     path(
-        "user/<username:username>/attributes/toggle/",
+        "user/attributes/toggle/",
         views.toggle_user_profile_attribute,
         name="pontoon.contributors.toggle_user_profile_attribute",
     ),
     # Edit user profile locale selector
     path(
-        "user/<username:username>/attributes/selector/",
+        "user/attributes/selector/",
         views.edit_user_profile_locale_selector,
         name="pontoon.contributors.edit_locale_selector",
     ),
