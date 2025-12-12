@@ -193,7 +193,7 @@ def edit_user_profile_fields(request):
             case "first_name":
                 user_form = forms.UserForm(
                     request.POST,
-                    instance=request.user,
+                    instance=user,
                 )
 
                 if user_form.is_valid():
@@ -222,11 +222,11 @@ def edit_user_profile_fields(request):
                         profile.contact_email_verified = False
                         profile.save(update_fields=["contact_email_verified"])
 
-                        token = utils.generate_verification_token(request.user)
+                        token = utils.generate_verification_token(user)
                         link = request.build_absolute_uri(
                             reverse("pontoon.contributors.verify.email", args=(token,))
                         )
-                        send_verification_email(request.user, link)
+                        send_verification_email(user, link)
 
                 else:
                     return JsonResponse(
@@ -253,7 +253,6 @@ def edit_user_profile_fields(request):
 @require_POST
 @transaction.atomic
 def toggle_user_profile_attribute(request):
-    user = request.user
     attribute = request.POST.get("attribute", None)
 
     boolean_attributes = [
@@ -299,7 +298,7 @@ def toggle_user_profile_attribute(request):
             {"status": False, "message": "Bad Request: Value not set"}, status=400
         )
 
-    profile = user.profile
+    profile = request.user.profile
     if attribute in boolean_attributes:
         # Convert JS Boolean to Python
         setattr(profile, attribute, json.loads(value))
@@ -314,10 +313,9 @@ def toggle_user_profile_attribute(request):
 @require_POST
 @transaction.atomic
 def edit_user_profile_locale_selector(request):
-    user = request.user
     locales_form = forms.UserLocalesOrderForm(
         request.POST,
-        instance=user.profile,
+        instance=request.user.profile,
     )
 
     if locales_form.is_valid():
@@ -339,11 +337,10 @@ def edit_user_profile_locale_selector(request):
 @require_POST
 @transaction.atomic
 def toggle_theme(request):
-    user = request.user
     theme = request.POST.get("theme", None)
 
     try:
-        profile = user.profile
+        profile = request.user.profile
         profile.theme = theme
         profile.full_clean()
         profile.save()

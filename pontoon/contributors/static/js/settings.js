@@ -1,8 +1,4 @@
 $(function () {
-  function userAttributeURL(action) {
-    return `/user/attributes/${action}/`;
-  }
-
   $('.field .input')
     .unbind('keydown.pontoon')
     .bind('keydown.pontoon', function (e) {
@@ -36,7 +32,7 @@ $(function () {
     }
 
     $.ajax({
-      url: userAttributeURL('field'),
+      url: '/user/attributes/field/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -82,7 +78,7 @@ $(function () {
       .val();
 
     $.ajax({
-      url: userAttributeURL('selector'),
+      url: '/user/attributes/selector/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -129,7 +125,7 @@ $(function () {
     const value = self.val();
 
     $.ajax({
-      url: userAttributeURL('toggle'),
+      url: '/user/attributes/toggle/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -265,7 +261,7 @@ $(function () {
     const self = $(this);
 
     $.ajax({
-      url: userAttributeURL('toggle'),
+      url: '/user/attributes/toggle/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
