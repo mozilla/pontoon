@@ -252,7 +252,7 @@ def edit_user_profile_fields(request):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
-def toggle_user_profile_attribute(request, username):
+def toggle_user_profile_attribute(request):
     user = request.user
     attribute = request.POST.get("attribute", None)
 
@@ -313,7 +313,7 @@ def toggle_user_profile_attribute(request, username):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
-def edit_user_profile_locale_selector(request, username):
+def edit_user_profile_locale_selector(request):
     user = request.user
     locales_form = forms.UserLocalesOrderForm(
         request.POST,
@@ -338,7 +338,7 @@ def edit_user_profile_locale_selector(request, username):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
-def toggle_theme(request, username):
+def toggle_theme(request):
     user = request.user
     theme = request.POST.get("theme", None)
 
