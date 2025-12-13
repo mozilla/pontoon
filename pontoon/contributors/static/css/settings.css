@@ -129,6 +129,10 @@
   font-style: italic;
 }
 
+#main .field .help.hide {
+  display: none;
+}
+
 #main .check-list .header .title {
   color: var(--light-grey-7);
   display: inline-block;
@@ -216,10 +220,19 @@
   font-style: italic;
 }
 
+#main .field .verify.hide {
+  display: none;
+}
+
 .errorlist {
   color: var(--status-error);
   font-style: italic;
   list-style: none;
+}
+
+.error-message {
+  color: var(--status-error);
+  font-style: italic;
 }
 
 #notification-email-frequency {
@@ -399,10 +412,5 @@
       color: var(--light-grey-7);
       cursor: not-allowed;
     }
-  }
-
-  .error-message {
-    color: var(--status-error);
-    font-style: italic;
   }
 }
