@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from types import SimpleNamespace
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
@@ -12,16 +13,23 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.api.authentication import (
+    IsPretranslator,
+    PersonalAccessTokenAuthentication,
+)
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base import forms
 from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
+    Resource,
     TranslationMemoryEntry,
 )
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.translation import Translation
+from pontoon.pretranslation.pretranslate import get_pretranslation
+from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
 from pontoon.terminology.models import (
     Term,
 )
@@ -364,3 +372,52 @@ class TranslationSearchListView(generics.ListAPIView):
             raise ValueError(error)
 
         return entities
+
+
+class PretranslationView(APIView):
+    permission_classes = [IsAuthenticated, IsPretranslator]
+    authentication_classes = [PersonalAccessTokenAuthentication]
+
+    def post(self, request):
+        resource_format = request.query_params.get("resource_format")
+        locale = request.query_params.get("locale")
+
+        errors = {}
+        try:
+            text = request.body.decode("utf-8")
+        except UnicodeDecodeError:
+            errors["text"] = ["Unable to decode request body as UTF-8."]
+            text = None
+
+        if text is not None:
+            if len(text) > PRETRANSLATION_API_MAX_CHARS:
+                errors["text"] = [
+                    f"Text exceeds maximum length of {PRETRANSLATION_API_MAX_CHARS} characters."
+                ]
+            elif not text.strip():
+                errors["text"] = ["This field is required."]
+
+        if not locale:
+            errors["locale"] = ["This field is required."]
+        if resource_format and resource_format not in set(Resource.Format):
+            errors["resource_format"] = ["Choose a correct resource format."]
+        if errors:
+            raise ValidationError(errors)
+
+        locale = generics.get_object_or_404(Locale, code=locale)
+
+        project = SimpleNamespace(slug="temp-project")
+        resource = SimpleNamespace(project=project, format=resource_format or None)
+        entity = SimpleNamespace(resource=resource, string=text)
+
+        try:
+            pretranslation = get_pretranslation(entity=entity, locale=locale)
+        except Exception as e:
+            return Response(
+                {
+                    "error": f"An error occurred: {str(e)}. Please verify the resource format and syntax."
+                },
+                status=400,
+            )
+
+        return Response({"text": pretranslation[0], "author": pretranslation[1]})
