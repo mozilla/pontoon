@@ -31,6 +31,7 @@ $(function () {
       return;
     }
 
+    this.dataset.originalValue = value;
     $.ajax({
       url: '/user/attributes/field/',
       type: 'POST',
@@ -38,9 +39,7 @@ $(function () {
         csrfmiddlewaretoken: $('body').data('csrf'),
         [attribute]: value,
       },
-      success: () => {
-        this.dataset.originalValue = value;
-
+      success() {
         // contact_email special case
         if (attribute === 'contact_email') {
           if (value !== '') {
@@ -56,7 +55,8 @@ $(function () {
         const message = 'Settings saved.';
         Pontoon.endLoader(message);
       },
-      error(response) {
+      error: (response) => {
+        this.dataset.originalValue = originalValue;
         // contact_email special case
         if (attribute === 'contact_email') {
           self.parents('.field').find('.help').addClass('hide');
