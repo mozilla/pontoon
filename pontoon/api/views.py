@@ -128,7 +128,7 @@ class LocaleListView(generics.ListAPIView):
         qs = Locale.objects.visible()
 
         fields_param = self.request.query_params.get("fields", "")
-        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
         # Only prefetch project data when requested
         needs_projects = not requested or "projects" in requested
@@ -189,7 +189,7 @@ class ProjectListView(generics.ListAPIView):
         qs = Project.objects.visible().visible_for(self.request.user)
 
         fields_param = query_params.get("fields", "")
-        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
         # Only prefetch locale data when requested
         needs_locales = not requested or "locales" in requested
@@ -234,7 +234,7 @@ class ProjectIndividualView(generics.RetrieveAPIView):
         qs = Project.objects.available().visible_for(self.request.user)
 
         fields_param = self.request.query_params.get("fields", "")
-        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
         # Only prefetch locale data when requested
         needs_locales = not requested or "locales" in requested
@@ -272,7 +272,7 @@ class EntityListView(generics.ListAPIView):
         )
 
         fields_param = self.request.query_params.get("fields", "")
-        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
         needs_project = not requested or "project" in requested
         if needs_project:
@@ -288,7 +288,7 @@ class EntityIndividualView(generics.RetrieveAPIView):
         qs = Entity.objects.filter(resource__project__disabled=False)
 
         fields_param = self.request.query_params.get("fields", "")
-        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
         needs_translations = not requested or "translations" in requested
         if needs_translations:
@@ -326,7 +326,7 @@ class ProjectLocaleIndividualView(generics.RetrieveAPIView):
         qs = ProjectLocale.objects.all().filter(project__slug=slug, locale__code=code)
 
         fields_param = self.request.query_params.get("fields", "")
-        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
         # Only prefetch locale when requested
         needs_locale = not requested or "locale" in requested
@@ -370,7 +370,7 @@ class TermSearchListView(generics.ListAPIView):
         qs = Term.objects.all()
 
         fields_param = self.request.query_params.get("fields", "")
-        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
         # Only prefetch translation_text when requested
         needs_translation_text = not requested or "translation_text" in requested
@@ -447,7 +447,7 @@ class TranslationSearchListView(generics.ListAPIView):
             ).select_related("resource__project")
 
             fields_param = self.request.query_params.get("fields", "")
-            requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+            requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
             # Only prefetch translation_text when requested
             needs_translation = not requested or "translation" in requested
