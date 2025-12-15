@@ -160,7 +160,7 @@ class LocaleIndividualView(generics.RetrieveAPIView):
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
         # Only prefetch project data when requested
-        needs_projects = not requested or requested & {"projects"}
+        needs_projects = not requested or "projects" in requested
         if needs_projects:
             qs = qs.prefetch_related(
                 Prefetch(
