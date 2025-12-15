@@ -157,7 +157,7 @@ class LocaleIndividualView(generics.RetrieveAPIView):
         qs = Locale.objects.visible()
 
         fields_param = self.request.query_params.get("fields", "")
-        requested = set(f.strip() for f in fields_param.split(",") if f.strip())
+        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
 
         # Only prefetch project data when requested
         needs_projects = not requested or "projects" in requested
