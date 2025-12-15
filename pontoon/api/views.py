@@ -131,7 +131,7 @@ class LocaleListView(generics.ListAPIView):
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
         # Only prefetch project data when requested
-        needs_projects = not requested or requested & {"projects"}
+        needs_projects = not requested or "projects" in requested
         if needs_projects:
             qs = qs.prefetch_related(
                 Prefetch(
@@ -192,7 +192,7 @@ class ProjectListView(generics.ListAPIView):
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
         # Only prefetch locale data when requested
-        needs_locales = not requested or requested & {"locales"}
+        needs_locales = not requested or "locales" in requested
         if needs_locales:
             qs = qs.prefetch_related(
                 Prefetch(
@@ -202,11 +202,11 @@ class ProjectListView(generics.ListAPIView):
                 )
             )
 
-        needs_contact = not requested or requested & {"contact"}
+        needs_contact = not requested or "contact" in requested
         if needs_contact:
             qs = qs.prefetch_related("contact")
 
-        needs_tags = not requested or requested & {"tags"}
+        needs_tags = not requested or "tags" in requested
         if needs_tags:
             qs = qs.prefetch_related("tags")
 
@@ -237,7 +237,7 @@ class ProjectIndividualView(generics.RetrieveAPIView):
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
         # Only prefetch locale data when requested
-        needs_locales = not requested or requested & {"locales"}
+        needs_locales = not requested or "locales" in requested
         if needs_locales:
             qs = qs.prefetch_related(
                 Prefetch(
@@ -247,11 +247,11 @@ class ProjectIndividualView(generics.RetrieveAPIView):
                 )
             )
 
-        needs_contact = not requested or requested & {"contact"}
+        needs_contact = not requested or "contact" in requested
         if needs_contact:
             qs = qs.prefetch_related("contact")
 
-        needs_tags = not requested or requested & {"tags"}
+        needs_tags = not requested or "tags" in requested
         if needs_tags:
             qs = qs.prefetch_related("tags")
 
@@ -274,7 +274,7 @@ class EntityListView(generics.ListAPIView):
         fields_param = self.request.query_params.get("fields", "")
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
-        needs_project = not requested or requested & {"project"}
+        needs_project = not requested or "project" in requested
         if needs_project:
             qs = qs.prefetch_related("resource__project")
 
@@ -290,7 +290,7 @@ class EntityIndividualView(generics.RetrieveAPIView):
         fields_param = self.request.query_params.get("fields", "")
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
-        needs_translations = not requested or requested & {"translations"}
+        needs_translations = not requested or "translations" in requested
         if needs_translations:
             qs = qs.prefetch_related(
                 Prefetch(
@@ -329,12 +329,12 @@ class ProjectLocaleIndividualView(generics.RetrieveAPIView):
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
         # Only prefetch locale when requested
-        needs_locale = not requested or requested & {"locale"}
+        needs_locale = not requested or "locale" in requested
         if needs_locale:
             qs = qs.prefetch_related("locale")
 
         # Only prefetch project when requested
-        needs_project = not requested or requested & {"project"}
+        needs_project = not requested or "project" in requested
         if needs_project:
             qs = qs.prefetch_related("project")
 
@@ -373,7 +373,7 @@ class TermSearchListView(generics.ListAPIView):
         requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
         # Only prefetch translation_text when requested
-        needs_translation_text = not requested or requested & {"translation_text"}
+        needs_translation_text = not requested or "translation_text" in requested
         if needs_translation_text:
             qs = qs.prefetch_related(
                 (
@@ -450,7 +450,7 @@ class TranslationSearchListView(generics.ListAPIView):
             requested = set(f.strip() for f in fields_param.split(",") if f.strip())
 
             # Only prefetch translation_text when requested
-            needs_translation = not requested or requested & {"translation"}
+            needs_translation = not requested or "translation" in requested
             if needs_translation:
                 qs = qs.prefetch_related(
                     (
