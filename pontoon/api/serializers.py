@@ -190,10 +190,6 @@ class NestedIndividualProjectSerializer(TranslationStatsMixin, ProjectSerializer
         return [pl.locale.code for pl in getattr(obj, "fetched_project_locales", [])]
 
     def get_localizations(self, obj):
-        request = self.context.get("request")
-        if not request:
-            return None
-
         project_locales = obj.project_locale.stats_data(project=obj)
         serialized = ProjectLocaleSerializer(project_locales, many=True).data
         return [
@@ -222,10 +218,6 @@ class NestedIndividualLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
         return [pl.project.slug for pl in getattr(obj, "fetched_project_locales", [])]
 
     def get_localizations(self, obj):
-        request = self.context.get("request")
-        if not request:
-            return None
-
         project_locales = obj.project_locale.stats_data(locale=obj)
         serialized = ProjectLocaleSerializer(project_locales, many=True).data
         return [{k: v for k, v in item.items() if k != "locale"} for item in serialized]
@@ -254,11 +246,6 @@ class TermSerializer(DynamicFieldsModelSerializer):
         ]
 
     def get_translation_text(self, obj):
-        request = self.context.get("request")
-
-        if not request:
-            return None
-
         translation = (
             obj.filtered_translations[0].text
             if hasattr(obj, "filtered_translations") and obj.filtered_translations
@@ -372,11 +359,6 @@ class NestedEntitySerializer(EntitySerializer):
                     self.fields.pop("translations", None)
 
     def get_translations(self, obj):
-        request = self.context.get("request")
-
-        if not request:
-            return None
-
         return TranslationSerializer(
             obj.filtered_translations, many=True, context=self.context
         ).data
@@ -389,11 +371,6 @@ class EntitySearchSerializer(EntitySerializer):
         fields = EntitySerializer.Meta.fields + ["translation"]
 
     def get_translation(self, obj):
-        request = self.context.get("request")
-
-        if not request:
-            return None
-
         translation = (
             obj.filtered_translations[0] if obj.filtered_translations else None
         )
