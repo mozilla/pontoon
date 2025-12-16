@@ -42,6 +42,14 @@ from .serializers import (
 )
 
 
+class RequestFieldsMixin:
+    """Mixin to parse the 'fields' query parameter into a set of requested field names."""
+
+    def request_fields(self):
+        fields_param = self.request.query_params.get("fields", "")
+        return set(fs for f in fields_param.split(",") if (fs := f.strip()))
+
+
 class UserActionsView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -121,14 +129,13 @@ class UserActionsView(APIView):
         )
 
 
-class LocaleListView(generics.ListAPIView):
+class LocaleListView(RequestFieldsMixin, generics.ListAPIView):
     serializer_class = NestedLocaleSerializer
 
     def get_queryset(self):
         qs = Locale.objects.visible()
 
-        fields_param = self.request.query_params.get("fields", "")
-        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        requested = self.request_fields()
 
         # Only prefetch project data when requested
         needs_projects = not requested or "projects" in requested
@@ -149,15 +156,14 @@ class LocaleListView(generics.ListAPIView):
         return qs.distinct().order_by("code")
 
 
-class LocaleIndividualView(generics.RetrieveAPIView):
+class LocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
     serializer_class = NestedIndividualLocaleSerializer
     lookup_field = "code"
 
     def get_queryset(self):
         qs = Locale.objects.visible()
 
-        fields_param = self.request.query_params.get("fields", "")
-        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        requested = self.request_fields()
 
         # Only prefetch project data when requested
         needs_projects = not requested or "projects" in requested
@@ -178,7 +184,7 @@ class LocaleIndividualView(generics.RetrieveAPIView):
         return qs
 
 
-class ProjectListView(generics.ListAPIView):
+class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
     serializer_class = NestedProjectSerializer
 
     def get_queryset(self):
@@ -188,8 +194,7 @@ class ProjectListView(generics.ListAPIView):
 
         qs = Project.objects.visible().visible_for(self.request.user)
 
-        fields_param = query_params.get("fields", "")
-        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        requested = self.request_fields()
 
         # Only prefetch locale data when requested
         needs_locales = not requested or "locales" in requested
@@ -226,15 +231,14 @@ class ProjectListView(generics.ListAPIView):
         return qs.order_by("slug")
 
 
-class ProjectIndividualView(generics.RetrieveAPIView):
+class ProjectIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
     serializer_class = NestedIndividualProjectSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
         qs = Project.objects.available().visible_for(self.request.user)
 
-        fields_param = self.request.query_params.get("fields", "")
-        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        requested = self.request_fields()
 
         # Only prefetch locale data when requested
         needs_locales = not requested or "locales" in requested
@@ -263,7 +267,7 @@ class ProjectIndividualView(generics.RetrieveAPIView):
         return qs.distinct()
 
 
-class EntityListView(generics.ListAPIView):
+class EntityListView(RequestFieldsMixin, generics.ListAPIView):
     serializer_class = EntitySerializer
 
     def get_queryset(self):
@@ -271,8 +275,7 @@ class EntityListView(generics.ListAPIView):
             "resource"
         )
 
-        fields_param = self.request.query_params.get("fields", "")
-        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        requested = self.request_fields()
 
         needs_project = not requested or "project" in requested
         if needs_project:
@@ -281,14 +284,13 @@ class EntityListView(generics.ListAPIView):
         return qs.order_by("id")
 
 
-class EntityIndividualView(generics.RetrieveAPIView):
+class EntityIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
     serializer_class = NestedEntitySerializer
 
     def get_queryset(self):
         qs = Entity.objects.filter(resource__project__disabled=False)
 
-        fields_param = self.request.query_params.get("fields", "")
-        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        requested = self.request_fields()
 
         needs_translations = not requested or "translations" in requested
         if needs_translations:
@@ -316,7 +318,7 @@ class EntityIndividualView(generics.RetrieveAPIView):
         )
 
 
-class ProjectLocaleIndividualView(generics.RetrieveAPIView):
+class ProjectLocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
     serializer_class = NestedProjectLocaleSerializer
 
     def get_queryset(self):
@@ -325,8 +327,7 @@ class ProjectLocaleIndividualView(generics.RetrieveAPIView):
 
         qs = ProjectLocale.objects.all().filter(project__slug=slug, locale__code=code)
 
-        fields_param = self.request.query_params.get("fields", "")
-        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        requested = self.request_fields()
 
         # Only prefetch locale when requested
         needs_locale = not requested or "locale" in requested
@@ -359,7 +360,7 @@ class ProjectLocaleIndividualView(generics.RetrieveAPIView):
         return obj
 
 
-class TermSearchListView(generics.ListAPIView):
+class TermSearchListView(RequestFieldsMixin, generics.ListAPIView):
     serializer_class = TermSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = TermFilter
@@ -369,8 +370,7 @@ class TermSearchListView(generics.ListAPIView):
 
         qs = Term.objects.all()
 
-        fields_param = self.request.query_params.get("fields", "")
-        requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        requested = self.request_fields()
 
         # Only prefetch translation_text when requested
         needs_translation_text = not requested or "translation_text" in requested
@@ -397,7 +397,7 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     queryset = TranslationMemoryEntry.objects.select_related("project", "locale")
 
 
-class TranslationSearchListView(generics.ListAPIView):
+class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
     serializer_class = EntitySearchSerializer
 
     def get_queryset(self):
@@ -446,8 +446,7 @@ class TranslationSearchListView(generics.ListAPIView):
                 self.request.user, project, locale, status="translated", **form_data
             ).select_related("resource__project")
 
-            fields_param = self.request.query_params.get("fields", "")
-            requested = set(fs for f in fields_param.split(",") if (fs := f.strip()))
+            requested = self.request_fields()
 
             # Only prefetch translation_text when requested
             needs_translation = not requested or "translation" in requested
