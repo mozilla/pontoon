@@ -249,7 +249,7 @@ class TermSerializer(DynamicFieldsModelSerializer):
         if hasattr(obj, "filtered_translations") and (ft := obj.filtered_translations):
             return ft[0].text
 
-        return translation
+        return None
 
 
 class TranslationMemorySerializer(DynamicFieldsModelSerializer):
