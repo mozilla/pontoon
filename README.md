@@ -43,34 +43,21 @@ pip install -r requirements/dev.txt
 3. Start up a postgres database container
 
 ```sh
-docker-compose up -d postgresql
+docker run --name postgres -d  \
+  --restart always \
+  -e POSTGRES_DB=postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres_admin_password \
+  -v pg_data:/var/lib/postgresql/data \
+  -p 5432:5432 \
+  postgres:15
 ```
 
 And then execute below SQL command on the new database
 
 ```sql
--- meant to be executed on the mandatory postgress database "postgres"
-CREATE DATABASE pontoon;
-
--- meant to be executed on the mandatory postgress database "postgres"
-CREATE USER "pontoon" WITH PASSWORD "asdf";
-CREATE ROLE "pontoon-all";
-GRANT "pontoon-all" TO "pontoon";
-
--- meant to be executed on the postgress database "pontoon"
-DO $$
-DECLARE
-    tables CURSOR FOR
-        SELECT tablename
-        FROM pg_tables
-        WHERE tablename NOT LIKE 'pg_%' AND tablename NOT LIKE 'sql_%'
-        ORDER BY tablename;
-BEGIN
-    FOR table_record IN tables LOOP
-	EXECUTE format('ALTER TABLE %s OWNER TO "pontoon-all"',   table_record.tablename);
-        -- RAISE NOTICE 'Tablename: %', table_record.tablename;
-    END LOOP;
-END$$;
+CREATE USER pontoon WITH CREATEDB PASSWORD 'asdf';
+CREATE DATABASE pontoon WITH owner = 'pontoon';
 ```
 
 4. Create env file
@@ -88,7 +75,7 @@ SECRET_KEY=random_key
 DJANGO_DEV=True
 DJANGO_DEBUG=True
 CI=False
-DATABASE_URL=postgres://pontoon:asdf@localhost:5555/pontoon
+DATABASE_URL=postgres://pontoon:asdf@localhost:5432/pontoon
 ENABLE_INSIGHTS_TAB=True
 SESSION_COOKIE_SECURE=False
 SITE_URL=http://localhost:8000
@@ -124,6 +111,8 @@ GIT_CONFIG="
 
 ```sh
 source venv/bin/activate
+# Create admin user
+python manage.py createsuperuser
 # Add Keycloak as auth provider
 python manage.py update_auth_providers
 python manage.py runserver
@@ -149,7 +138,7 @@ Run below command in terminal
 bumpversion patch
 
 # build the image
-nvm use v18 && \
+nvm use v24 && \
     make build-translate && \
     docker build -f ./docker/Dockerfile --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 \
         -t 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:$(make version) .

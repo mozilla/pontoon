@@ -1,4 +1,4 @@
-FROM python:3.11.9-bookworm AS server
+FROM python:3.11-bookworm AS server
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -13,7 +13,6 @@ ENV PYTHONPATH /app
 
 # Install required software.
 RUN apt-get update \
-    && apt-get -y upgrade \
     # Enable downloading packages over https
     && apt-get install -y apt-transport-https \
     # Add NodeSource v24.x and install nodejs
