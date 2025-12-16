@@ -138,8 +138,7 @@ class LocaleListView(RequestFieldsMixin, generics.ListAPIView):
         requested = self.request_fields()
 
         # Only prefetch project data when requested
-        needs_projects = not requested or "projects" in requested
-        if needs_projects:
+        if not requested or "projects" in requested:
             qs = qs.prefetch_related(
                 Prefetch(
                     "project_locale",
@@ -149,8 +148,7 @@ class LocaleListView(RequestFieldsMixin, generics.ListAPIView):
             )
 
         # Only gather stats when requested
-        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
-        if needs_stats:
+        if not requested or requested & set(TRANSLATION_STATS_FIELDS):
             qs = qs.stats_data()
 
         return qs.distinct().order_by("code")
@@ -166,8 +164,7 @@ class LocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
         requested = self.request_fields()
 
         # Only prefetch project data when requested
-        needs_projects = not requested or "projects" in requested
-        if needs_projects:
+        if not requested or "projects" in requested:
             qs = qs.prefetch_related(
                 Prefetch(
                     "project_locale",
@@ -177,8 +174,7 @@ class LocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
             )
 
         # Only gather stats when requested
-        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
-        if needs_stats:
+        if not requested or requested & set(TRANSLATION_STATS_FIELDS):
             qs = qs.stats_data()
 
         return qs
@@ -197,8 +193,7 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
         requested = self.request_fields()
 
         # Only prefetch locale data when requested
-        needs_locales = not requested or "locales" in requested
-        if needs_locales:
+        if not requested or "locales" in requested:
             qs = qs.prefetch_related(
                 Prefetch(
                     "project_locale",
@@ -207,12 +202,12 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
                 )
             )
 
-        needs_contact = not requested or "contact" in requested
-        if needs_contact:
+        # Only prefetch contact when requested
+        if not requested or "contact" in requested:
             qs = qs.prefetch_related("contact")
 
-        needs_tags = not requested or "tags" in requested
-        if needs_tags:
+        # Only prefetch tags when requested
+        if not requested or "tags" in requested:
             qs = qs.prefetch_related("tags")
 
         filters = Q()
@@ -224,8 +219,7 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
             qs = qs | Project.objects.filter(filters).distinct()
 
         # Only gather stats when requested
-        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
-        if needs_stats:
+        if not requested or requested & set(TRANSLATION_STATS_FIELDS):
             qs = qs.stats_data()
 
         return qs.order_by("slug")
@@ -241,8 +235,7 @@ class ProjectIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
         requested = self.request_fields()
 
         # Only prefetch locale data when requested
-        needs_locales = not requested or "locales" in requested
-        if needs_locales:
+        if not requested or "locales" in requested:
             qs = qs.prefetch_related(
                 Prefetch(
                     "project_locale",
@@ -251,17 +244,16 @@ class ProjectIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
                 )
             )
 
-        needs_contact = not requested or "contact" in requested
-        if needs_contact:
+        # Only prefetch contact when requested
+        if not requested or "contact" in requested:
             qs = qs.prefetch_related("contact")
 
-        needs_tags = not requested or "tags" in requested
-        if needs_tags:
+        # Only prefetch tags when requested
+        if not requested or "tags" in requested:
             qs = qs.prefetch_related("tags")
 
         # Only gather stats when requested
-        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
-        if needs_stats:
+        if not requested or requested & set(TRANSLATION_STATS_FIELDS):
             qs = qs.stats_data()
 
         return qs.distinct()
@@ -277,8 +269,7 @@ class EntityListView(RequestFieldsMixin, generics.ListAPIView):
 
         requested = self.request_fields()
 
-        needs_project = not requested or "project" in requested
-        if needs_project:
+        if not requested or "project" in requested:
             qs = qs.prefetch_related("resource__project")
 
         return qs.order_by("id")
@@ -292,8 +283,7 @@ class EntityIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
 
         requested = self.request_fields()
 
-        needs_translations = not requested or "translations" in requested
-        if needs_translations:
+        if not requested or "translations" in requested:
             qs = qs.prefetch_related(
                 Prefetch(
                     "translation_set",
@@ -330,18 +320,15 @@ class ProjectLocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
         requested = self.request_fields()
 
         # Only prefetch locale when requested
-        needs_locale = not requested or "locale" in requested
-        if needs_locale:
+        if not requested or "locale" in requested:
             qs = qs.prefetch_related("locale")
 
         # Only prefetch project when requested
-        needs_project = not requested or "project" in requested
-        if needs_project:
+        if not requested or "project" in requested:
             qs = qs.prefetch_related("project")
 
         # Only gather stats when requested
-        needs_stats = not requested or requested & set(TRANSLATION_STATS_FIELDS)
-        if needs_stats:
+        if not requested or requested & set(TRANSLATION_STATS_FIELDS):
             project = get_object_or_404(
                 Project,
                 slug=slug,
@@ -373,8 +360,7 @@ class TermSearchListView(RequestFieldsMixin, generics.ListAPIView):
         requested = self.request_fields()
 
         # Only prefetch translation_text when requested
-        needs_translation_text = not requested or "translation_text" in requested
-        if needs_translation_text:
+        if not requested or "translation_text" in requested:
             qs = qs.prefetch_related(
                 (
                     Prefetch(
@@ -449,8 +435,7 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
             requested = self.request_fields()
 
             # Only prefetch translation_text when requested
-            needs_translation = not requested or "translation" in requested
-            if needs_translation:
+            if not requested or "translation" in requested:
                 qs = qs.prefetch_related(
                     (
                         Prefetch(
