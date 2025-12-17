@@ -290,10 +290,12 @@ you create:
    Learn more in the `Django documentation <https://docs.djangoproject.com/en/5.1/ref/settings/#secure-ssl-redirect>`_.
 
 ``CSRF_TRUSTED_ORIGINS``
-   Optional. A list of trusted origins for unsafe requests. It should contain the domains
-   where the app is available. The setting also supports subdomains, so you could
-   add `https://*.example.com`, for example, to allow access from all
-   subdomains of `example.com`. Default value is `[]`.
+   Optional. A comma-separated list of trusted origins for unsafe requests.
+   It should contain the domains where the app is available.
+   The setting also supports subdomains,
+   so you could add ``https://*.example.com``, for example,
+   to allow access from all subdomains of ``example.com``.
+   Default value is an empty string.
    Learn more in the `Django documentation <https://docs.djangoproject.com/en/5.1/ref/settings/#csrf-trusted-origins>`_.
 
 ``SSH_CONFIG``
