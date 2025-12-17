@@ -291,9 +291,9 @@ you create:
 
 ``CSRF_TRUSTED_ORIGINS``
    Optional. A list of trusted origins for unsafe requests. It should contain the domains
-   where the app is available. The setting also supports subdomains, so you could
+   where the app is available, seperated by comma. The setting also supports subdomains, so you could
    add `https://*.example.com`, for example, to allow access from all
-   subdomains of `example.com`. Default value is `[]`.
+   subdomains of `example.com`. Default value is `""`.
    Learn more in the `Django documentation <https://docs.djangoproject.com/en/5.1/ref/settings/#csrf-trusted-origins>`_.
 
 ``SSH_CONFIG``
