@@ -459,7 +459,7 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
         except ValueError as error:
             raise ValueError(error)
 
-        return entities
+        return qs
 
 
 class PretranslationView(APIView):
