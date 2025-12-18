@@ -553,7 +553,7 @@ is designed to run daily.
 
 .. code-block:: bash
 
-   ./manage.py send_oboarding_emails
+   ./manage.py send_onboarding_emails
 
 Send Inactive Account Emails
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

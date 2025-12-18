@@ -174,7 +174,7 @@ def send_monthly_activity_summary():
     log.info("Start sending Monthly activity summary emails.")
 
     # Get user monthly actions
-    users = User.objects.filter(profile__monthly_activity_summary=True)
+    users = User.objects.filter(is_active=True, profile__monthly_activity_summary=True)
     user_month_actions = _get_monthly_user_actions(users, months_ago=1)
     previous_user_month_actions = _get_monthly_user_actions(users, months_ago=2)
 
@@ -262,7 +262,7 @@ def send_notification_digest(frequency="Daily"):
         start_time = timezone.now() - datetime.timedelta(weeks=1)
 
     users = (
-        User.objects
+        User.objects.filter(is_active=True)
         # Users with the selected notification email frequency
         .filter(profile__notification_email_frequency=frequency)
         # Users subscribed to at least one email notification type
