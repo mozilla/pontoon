@@ -62,6 +62,8 @@ def get_pretranslation(
             Resource.Format.ANDROID,
             Resource.Format.GETTEXT,
             Resource.Format.WEBEXT,
+            Resource.Format.XCODE,
+            Resource.Format.XLIFF,
         }:
             format = Format.mf2
             msg = parse_message(format, entity.string)
@@ -90,6 +92,8 @@ class Pretranslation:
                 Resource.Format.ANDROID
                 | Resource.Format.GETTEXT
                 | Resource.Format.WEBEXT
+                | Resource.Format.XCODE
+                | Resource.Format.XLIFF
             ):
                 self.format = Format.mf2
             case _:

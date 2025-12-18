@@ -3,7 +3,14 @@ import type { Message } from '@mozilla/l10n';
 export type MessageEntry =
   | {
       id: string;
-      format: 'android' | 'fluent' | 'gettext' | 'plain' | 'webext';
+      format:
+        | 'android'
+        | 'fluent'
+        | 'gettext'
+        | 'plain'
+        | 'webext'
+        | 'xcode'
+        | 'xliff';
       value: Message;
       attributes?: never;
     }

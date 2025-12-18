@@ -2,6 +2,7 @@
 Parsing resource files.
 """
 
+from dataclasses import dataclass
 from os.path import splitext
 from re import Match, compile
 from typing import Iterator
@@ -10,13 +11,30 @@ from fluent.syntax import FluentSerializer
 from moz.l10n.formats import Format, detect_format, l10n_extensions
 from moz.l10n.formats.fluent import fluent_astify_entry
 from moz.l10n.message import message_to_json, serialize_message
-from moz.l10n.model import Entry, Id as L10nId, Message, Resource as MozL10nResource
+from moz.l10n.model import (
+    CatchallKey,
+    Entry,
+    Expression,
+    Id as L10nId,
+    Message,
+    PatternMessage,
+    Resource as MozL10nResource,
+    SelectMessage,
+    VariableRef,
+)
 
 from pontoon.base.models import Entity
 
-from .common import VCSTranslation
-from .gettext import gettext_as_entity, gettext_as_translation
-from .xliff import xliff_as_entity, xliff_as_translation
+
+@dataclass
+class VCSTranslation:
+    """
+    A single translation of a source string into another language.
+    """
+
+    key: tuple[str, ...]
+    string: str
+    fuzzy: bool = False
 
 
 def are_compatible_files(file_a, file_b):
@@ -49,7 +67,7 @@ def _as_string(format: Format | None, entry: Entry[Message]) -> str:
         case Format.fluent:
             fluent_entry = fluent_astify_entry(entry, lambda _: "")
             return _fluent_serializer.serialize_entry(fluent_entry)
-        case Format.android | Format.webext:
+        case Format.android | Format.gettext | Format.webext | Format.xliff:
             return serialize_message(Format.mf2, entry.value)
         case Format.properties:
             string = serialize_message(Format.properties, entry.value)
@@ -65,19 +83,19 @@ def as_vcs_translations(res: MozL10nResource[Message]) -> Iterator[VCSTranslatio
         if res.format == Format.android and section.id:
             continue
         for entry in section.entries:
-            if isinstance(entry, Entry):
-                match res.format:
-                    case Format.gettext:
-                        tx = gettext_as_translation(entry)
-                    case Format.xliff:
-                        tx = xliff_as_translation(section.id, entry)
-                    case _:
-                        tx = VCSTranslation(
-                            key=section.id + entry.id,
-                            string=_as_string(res.format, entry),
-                        )
-                if tx is not None:
-                    yield tx
+            if isinstance(entry, Entry) and not (
+                res.format in {Format.gettext, Format.xliff} and entry.value.is_empty()
+            ):
+                fuzzy = (
+                    any(m.key == "flag" and m.value == "fuzzy" for m in entry.meta)
+                    if res.format == Format.gettext
+                    else False
+                )
+                yield VCSTranslation(
+                    key=section.id + entry.id,
+                    string=_as_string(res.format, entry),
+                    fuzzy=fuzzy,
+                )
 
 
 def as_entity(
@@ -87,25 +105,41 @@ def as_entity(
     **kwargs,
 ) -> Entity:
     """At least `order`, `resource`, and `section` should be set as `kwargs`."""
-    match format:
-        case Format.gettext:
-            return gettext_as_entity(entry, kwargs)
-        case Format.xliff:
-            return xliff_as_entity(section_id, entry, kwargs)
-        case _:
-            return Entity(
-                key=list(section_id + entry.id),
-                value=message_to_json(entry.value),
-                properties=(
-                    {
-                        name: message_to_json(value)
-                        for name, value in entry.properties.items()
-                    }
-                    if entry.properties
-                    else None
-                ),
-                string=_as_string(format, entry),
-                comment=entry.comment,
-                meta=[[m.key, m.value] for m in entry.meta],
-                **kwargs,
+    if format == Format.gettext:
+        source_str = entry.id[0]
+        plural_str = entry.get_meta("plural")
+        source_msg = (
+            PatternMessage([source_str])
+            if plural_str is None
+            else SelectMessage(
+                declarations={"n": Expression(VariableRef("n"), "number")},
+                selectors=(VariableRef("n"),),
+                variants={
+                    ("one",): [source_str],
+                    (CatchallKey("other"),): [plural_str],
+                },
             )
+        )
+
+        return Entity(
+            key=list(entry.id),
+            value=message_to_json(source_msg),
+            string=serialize_message(Format.mf2, source_msg),
+            comment=entry.comment,
+            meta=[[m.key, m.value] for m in entry.meta],
+            **kwargs,
+        )
+
+    return Entity(
+        key=list(section_id + entry.id),
+        value=message_to_json(entry.value),
+        properties=(
+            {name: message_to_json(value) for name, value in entry.properties.items()}
+            if entry.properties
+            else None
+        ),
+        string=_as_string(format, entry),
+        comment=entry.comment,
+        meta=[[m.key, m.value] for m in entry.meta],
+        **kwargs,
+    )

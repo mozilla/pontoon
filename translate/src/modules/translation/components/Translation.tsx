@@ -3,6 +3,7 @@ import React from 'react';
 import { getPlainMessage } from '~/utils/message';
 
 import { GenericTranslation } from './GenericTranslation';
+import { placeholderFormats } from '~/utils/message/placeholders';
 
 type Props = {
   content: string;
@@ -23,9 +24,8 @@ export function Translation({
 
   if (
     format === 'fluent' ||
-    format === 'android' ||
     format === 'gettext' ||
-    format === 'webext'
+    placeholderFormats.has(format)
   ) {
     content = getPlainMessage(content, format);
     diffTarget &&= getPlainMessage(diffTarget, format);

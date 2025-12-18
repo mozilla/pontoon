@@ -155,7 +155,7 @@ function SourceReferences({ meta }: { meta: Entity['meta'] }) {
 
 function SourceExamples({ entry }: { readonly entry: MessageEntry | null }) {
   if (!entry?.value || Array.isArray(entry.value)) return null;
-  const phMap = getPlaceholderMap(entry.format, entry.value);
+  const phMap = getPlaceholderMap(entry.value);
   if (!phMap) return null;
   const placeholders = Array.from(phMap.values());
   const examples: string[] = [];
