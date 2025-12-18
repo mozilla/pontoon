@@ -80,7 +80,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
         dispatch(getTeamComments(entity, lc));
       }
     }
-  }, [activeTranslation]);
+  }, [activeTranslation, selectedEntity]);
 
   const navigateToPath = useCallback(
     (path: string) => checkUnsavedChanges(() => location.push(path)),
