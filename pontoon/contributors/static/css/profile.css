@@ -59,6 +59,7 @@ h2 {
 .display-name {
   font-size: 24px;
   padding-bottom: 0;
+  overflow-wrap: break-word;
 }
 
 .username {
