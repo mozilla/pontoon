@@ -106,7 +106,7 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
         for pk, source in possible_matches:
             quality = round((1 - normalized_distance(text, source)) * 100)
 
-            if quality > min_quality:
+            if quality > min_quality * 100:
                 matches_pks.append(pk)
                 quality_sql_map.append(When(pk=pk, then=Value(quality)))
 
