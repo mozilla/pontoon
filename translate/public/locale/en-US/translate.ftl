@@ -246,6 +246,7 @@ entitydetails-EntityNavigation--next = <glyph></glyph>NEXT
 entitydetails-EntityNavigation--previous = <glyph></glyph>PREVIOUS
     .title = Go To Previous String (Alt + Up)
 
+entitydetails-obsolete = OBSOLETE ENTITY
 
 ## Entity Details Helpers
 ## Shows helper tabs
