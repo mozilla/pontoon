@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 import markupsafe
 
 from allauth.socialaccount import providers
+from allauth.socialaccount.adapter import get_adapter
 from allauth.utils import get_request_param
 from bleach.linkifier import Linker
 from django_jinja import library
@@ -233,9 +234,9 @@ def provider_login_url(request, provider_id=settings.AUTHENTICATION_METHOD, **qu
 @library.global_function
 def providers_media_js(request):
     """A port of django tag into jinja2"""
-    return markupsafe.Markup(
-        "\n".join([p.media_js(request) for p in providers.registry.get_list()])
-    )
+    providers_list = get_adapter(request).list_providers(request)
+    ret = "\n".join(p.media_js(request) for p in providers_list)
+    return markupsafe.Markup(ret)
 
 
 @library.filter
