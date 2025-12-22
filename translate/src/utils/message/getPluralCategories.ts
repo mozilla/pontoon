@@ -1,5 +1,3 @@
-import { CLDR_PLURALS } from '../constants';
-
 export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
   // These special cases should be occasionally pruned on CLDR updates
   switch (new Intl.Locale(code).language) {
@@ -22,12 +20,16 @@ export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
     case 'uk': // Ukrainian
       return ['one', 'few', 'many'];
 
-    // For the following, deliberately ignore the `many` rule for millions
+    // For the following Romance languages,
+    // deliberately ignore the `many` rule for millions.
     case 'ca': // Catalan
     case 'es': // Spanish
     case 'fr': // French
     case 'it': // Italian
+    case 'lld': // Ladin
     case 'pt': // Portuguese
+    case 'scn': // Sicilian
+    case 'vec': // Venetian
       return ['one', 'other'];
   }
 
@@ -37,9 +39,5 @@ export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
   }
 
   const pr = new Intl.PluralRules(code);
-  const pc = pr.resolvedOptions().pluralCategories;
-  pc.sort((a, b) =>
-    CLDR_PLURALS.indexOf(a) < CLDR_PLURALS.indexOf(b) ? -1 : 1,
-  );
-  return pc;
+  return pr.resolvedOptions().pluralCategories;
 }
