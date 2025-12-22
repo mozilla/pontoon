@@ -23,7 +23,7 @@ dj-database-url==2.1.0
 Django==4.2.27
 djangorestframework==3.16.0
 django-ace==1.32.4
-django-allauth==65.13.0
+django-allauth[socialaccount]==65.13.0
 django-bmemcached==0.3.0
 django-cors-headers==4.3.1
 django-csp==3.8
