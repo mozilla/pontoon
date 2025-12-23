@@ -13,6 +13,7 @@ export default defineConfig({
     setupFiles: ['./src/setupTests.ts'],
     mockReset: true,
     testTimeout: 10000,
+    environment: 'jsdom',
   },
   resolve: {
     alias: [
