@@ -1,6 +1,6 @@
-import { mount } from 'enzyme';
+import { vi } from 'vitest';
 import React from 'react';
-import sinon from 'sinon';
+import { render } from '@testing-library/react';
 
 import { EditorData, EditorResult } from '~/context/Editor';
 import * as Entity from '~/context/EntityView';
@@ -40,7 +40,7 @@ function mountSpy(format, history, editor) {
     return null;
   };
 
-  mount(
+  render(
     <Entity.EntityView.Provider value={{ entity: { format } }}>
       <HistoryData.Provider value={history}>
         <EditorData.Provider value={editor}>
@@ -62,10 +62,23 @@ const mockEditorMessage = (value) => [
 ];
 
 describe('useExistingTranslation', () => {
-  beforeAll(() =>
-    sinon.stub(Entity, 'useActiveTranslation').returns(ACTIVE_TRANSLATION),
-  );
-  afterAll(() => Entity.useActiveTranslation.restore());
+  beforeAll(() => {
+    vi.mock('~/context/EntityView', async (importOriginal) => {
+      const actual = await importOriginal();
+      return {
+        ...actual,
+        useActiveTranslation: vi.fn(),
+      };
+    });
+  });
+
+  beforeEach(() => {
+    Entity.useActiveTranslation.mockReturnValue(ACTIVE_TRANSLATION);
+  });
+
+  afterAll(() => {
+    vi.restoreAllMocks();
+  });
 
   it('finds identical initial/active translation', () => {
     const entry = mockMessageEntry('something');

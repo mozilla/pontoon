@@ -3,7 +3,6 @@
 
 import { createMemoryHistory } from 'history';
 import React, { useEffect } from 'react';
-import sinon from 'sinon';
 
 import * as TranslationAPI from '~/api/translation';
 import { EntityView } from '~/context/EntityView';
@@ -11,6 +10,7 @@ import { FailedChecksData } from '~/context/FailedChecksData';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
+import { vi } from 'vitest';
 
 const ENTITY = {
   pk: 42,
@@ -55,35 +55,40 @@ function mountWrapper({ setFailedChecks, ...props }) {
 describe('useUpdateTranslationStatus', () => {
   beforeAll(() => {
     global.fetch = () => Promise.resolve({ json: () => Promise.resolve({}) });
-    sinon.stub(TranslationAPI, 'setTranslationStatus');
+    vi.spyOn(TranslationAPI, 'setTranslationStatus').mockImplementation(
+      vi.fn(),
+    );
   });
 
   afterEach(() => {
-    TranslationAPI.setTranslationStatus.reset();
+    TranslationAPI.setTranslationStatus.mockReset();
   });
 
   afterAll(() => {
     delete global.fetch;
-    TranslationAPI.setTranslationStatus.restore();
+    TranslationAPI.setTranslationStatus.mockRestore();
   });
 
   it('updates failed checks from response', async () => {
-    jest.useFakeTimers();
-    TranslationAPI.setTranslationStatus.returns({
+    vi.useFakeTimers();
+    vi.mocked(TranslationAPI.setTranslationStatus).mockReturnValue({
       string: 'string',
       failedChecks: 'FC',
     });
 
-    const setFailedChecks = sinon.stub();
+    const setFailedChecks = vi.fn();
     mountWrapper({ id: 42, change: 'approve', setFailedChecks });
 
     // Let the async code in useUpdateTranslationStatus run
     await 1;
-    jest.runAllTimers();
+    vi.runAllTimers();
 
-    expect(TranslationAPI.setTranslationStatus.getCalls()).toMatchObject([
-      { args: ['approve', 42, 'all', undefined] },
-    ]);
-    expect(setFailedChecks.getCalls()).toMatchObject([{ args: ['FC', 42] }]);
+    expect(TranslationAPI.setTranslationStatus).toHaveBeenCalledWith(
+      'approve',
+      42,
+      'all',
+      undefined,
+    );
+    expect(setFailedChecks).toHaveBeenCalledWith('FC', 42);
   });
 });

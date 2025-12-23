@@ -1,6 +1,5 @@
-import Fluent from '@fluent/react';
 import { mount } from 'enzyme';
-import React from 'react';
+import { useContext } from 'react';
 import sinon from 'sinon';
 
 import * as Hooks from '~/hooks';
@@ -11,40 +10,59 @@ import * as SendTranslation from '../hooks/useSendTranslation';
 import * as UpdateTranslationStatus from '../hooks/useUpdateTranslationStatus';
 
 import { EditorMainAction } from './EditorMainAction';
+import { vi } from 'vitest';
 
 beforeAll(() => {
-  sinon.stub(Fluent, 'Localized').callsFake(({ children }) => children);
-  sinon.stub(React, 'useContext');
-  sinon.stub(Hooks, 'useAppSelector');
-  sinon.stub(Translator, 'useTranslator');
-  sinon.stub(ExistingTranslation, 'useExistingTranslationGetter');
-  sinon.stub(SendTranslation, 'useSendTranslation');
-  sinon.stub(UpdateTranslationStatus, 'useUpdateTranslationStatus');
+  vi.mock('react', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useContext: vi.fn(),
+    };
+  });
+
+  vi.mock('@fluent/react', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      Localized: ({ children }) => children,
+    };
+  });
+
+  vi.spyOn(Hooks, 'useAppSelector').mockImplementation(() => ({}));
+  vi.spyOn(Translator, 'useTranslator').mockReturnValue({});
+  vi.spyOn(ExistingTranslation, 'useExistingTranslationGetter').mockReturnValue(
+    () => ({}),
+  );
+  vi.spyOn(SendTranslation, 'useSendTranslation').mockReturnValue({});
+  vi.spyOn(
+    UpdateTranslationStatus,
+    'useUpdateTranslationStatus',
+  ).mockReturnValue({});
 });
+
 beforeEach(() => {
-  Fluent.Localized.returns;
-  React.useContext.returns({ busy: false }); // EditorData.busy
-  Hooks.useAppSelector.returns(false); // user.settings.forceSuggestions
-  Translator.useTranslator.returns(true);
-  ExistingTranslation.useExistingTranslationGetter.returns(() => undefined);
-  SendTranslation.useSendTranslation.returns(() => {});
-  UpdateTranslationStatus.useUpdateTranslationStatus.returns(() => {});
+  vi.mocked(useContext).mockReturnValue({ busy: false });
+  Hooks.useAppSelector.mockReturnValue(false); // user.settings.forceSuggestions
+  Translator.useTranslator.mockReturnValue(true);
+  ExistingTranslation.useExistingTranslationGetter.mockReturnValue(
+    () => undefined,
+  );
+  SendTranslation.useSendTranslation.mockReturnValue(() => {});
+  UpdateTranslationStatus.useUpdateTranslationStatus.mockReturnValue(() => {});
 });
+
 afterAll(() => {
-  Fluent.Localized.restore();
-  React.useContext.restore();
-  Hooks.useAppSelector.restore();
-  Translator.useTranslator.restore();
-  ExistingTranslation.useExistingTranslationGetter.restore();
-  SendTranslation.useSendTranslation.restore();
-  UpdateTranslationStatus.useUpdateTranslationStatus.restore();
+  vi.restoreAllMocks();
 });
 
 describe('<EditorMainAction>', () => {
   it('renders the Approve button when an identical translation exists', () => {
     const spy = sinon.spy();
-    UpdateTranslationStatus.useUpdateTranslationStatus.returns(spy);
-    ExistingTranslation.useExistingTranslationGetter.returns(() => ({ pk: 1 }));
+    UpdateTranslationStatus.useUpdateTranslationStatus.mockReturnValue(spy);
+    ExistingTranslation.useExistingTranslationGetter.mockReturnValue(() => ({
+      pk: 1,
+    }));
 
     const wrapper = mount(<EditorMainAction />);
 
@@ -54,8 +72,8 @@ describe('<EditorMainAction>', () => {
 
   it('renders the Suggest button when force suggestion is on', () => {
     const spy = sinon.spy();
-    SendTranslation.useSendTranslation.returns(spy);
-    Hooks.useAppSelector.returns(true); // user.settings.forceSuggestions
+    SendTranslation.useSendTranslation.mockReturnValue(spy);
+    Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
 
     const wrapper = mount(<EditorMainAction />);
 
@@ -64,7 +82,7 @@ describe('<EditorMainAction>', () => {
   });
 
   it('renders the Suggest button when user does not have permission', () => {
-    Hooks.useAppSelector.returns(true); // user.settings.forceSuggestions
+    Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
 
     const wrapper = mount(<EditorMainAction />);
 
@@ -73,9 +91,9 @@ describe('<EditorMainAction>', () => {
 
   it('shows a spinner and a disabled Suggesting button when running request', () => {
     const spy = sinon.spy();
-    SendTranslation.useSendTranslation.returns(spy);
-    Hooks.useAppSelector.returns(true); // user.settings.forceSuggestions
-    React.useContext.returns({ busy: true }); // EditorData.busy
+    SendTranslation.useSendTranslation.mockReturnValue(spy);
+    Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
+    vi.mocked(useContext).mockReturnValue({ busy: true }); // EditorData.busy
 
     const wrapper = mount(<EditorMainAction />);
 
@@ -87,7 +105,7 @@ describe('<EditorMainAction>', () => {
 
   it('renders the Save button when force suggestion is off and translation is not the same', () => {
     const spy = sinon.spy();
-    SendTranslation.useSendTranslation.returns(spy);
+    SendTranslation.useSendTranslation.mockReturnValue(spy);
 
     const wrapper = mount(<EditorMainAction />);
 
@@ -97,8 +115,8 @@ describe('<EditorMainAction>', () => {
 
   it('shows a spinner and a disabled Saving button when running request', () => {
     const spy = sinon.spy();
-    SendTranslation.useSendTranslation.returns(spy);
-    React.useContext.returns({ busy: true }); // EditorData.busy
+    SendTranslation.useSendTranslation.mockReturnValue(spy);
+    vi.mocked(useContext).mockReturnValue({ busy: true }); // EditorData.busy
 
     const wrapper = mount(<EditorMainAction />);
 
