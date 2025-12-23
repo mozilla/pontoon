@@ -8,7 +8,6 @@ from urllib.parse import urljoin
 
 import markupsafe
 
-from allauth.socialaccount import providers
 from allauth.socialaccount.adapter import get_adapter
 from allauth.utils import get_request_param
 from bleach.linkifier import Linker
@@ -211,7 +210,7 @@ def provider_login_url(request, provider_id=settings.AUTHENTICATION_METHOD, **qu
     This function adapts the django-allauth templatetags that don't support jinja2.
     @TODO: land support for the jinja2 tags in the django-allauth.
     """
-    provider = providers.registry.by_id(provider_id)
+    provider = get_adapter().get_provider(request, provider_id)
 
     auth_params = query.get("auth_params", None)
     process = query.get("process", None)
