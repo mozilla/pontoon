@@ -48,7 +48,7 @@ def ajax_compose(request):
         "messaging/includes/compose.html",
         {
             "form": forms.MessageForm(),
-            "available_locales": Locale.objects.available(),
+            "available_locales": Locale.objects.visible(),
             "selected_locales": [],
             "available_projects": Project.objects.available().order_by("name"),
             "selected_projects": [],

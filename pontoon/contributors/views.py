@@ -183,17 +183,76 @@ def update_contribution_timeline(request):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
-def toggle_user_profile_attribute(request, username):
-    user = get_object_or_404(User, username=username)
-    if user != request.user:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Forbidden: You don't have permission to edit this user",
-            },
-            status=403,
-        )
+def edit_user_profile_fields(request):
+    user = request.user
 
+    for attribute, value in request.POST.items():
+        match attribute:
+            case "csrfmiddlewaretoken":
+                continue
+            case "first_name":
+                user_form = forms.UserForm(
+                    request.POST,
+                    instance=user,
+                )
+
+                if user_form.is_valid():
+                    user_form.save()
+                else:
+                    return JsonResponse(
+                        {
+                            "status": "error",
+                            "message": "Form validation failed.",
+                            "errors": user_form.errors,
+                        },
+                        status=400,
+                    )
+            case "username" | "contact_email" | "bio" | "chat" | "github" | "bugzilla":
+                profile = user.profile
+                user_profile_form = forms.UserProfileForm(
+                    request.POST,
+                    instance=profile,
+                )
+
+                if user_profile_form.is_valid():
+                    setattr(profile, attribute, value)
+                    profile.save(update_fields=[attribute])
+
+                    if attribute == "contact_email":
+                        profile.contact_email_verified = False
+                        profile.save(update_fields=["contact_email_verified"])
+
+                        token = utils.generate_verification_token(user)
+                        link = request.build_absolute_uri(
+                            reverse("pontoon.contributors.verify.email", args=(token,))
+                        )
+                        send_verification_email(user, link)
+
+                else:
+                    return JsonResponse(
+                        {
+                            "status": "error",
+                            "message": "Form validation failed.",
+                            "errors": user_profile_form.errors,
+                        },
+                        status=400,
+                    )
+            case _:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": f"Forbidden: Attribute '{attribute}' not allowed.",
+                    },
+                    status=403,
+                )
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def toggle_user_profile_attribute(request):
     attribute = request.POST.get("attribute", None)
 
     boolean_attributes = [
@@ -239,7 +298,7 @@ def toggle_user_profile_attribute(request, username):
             {"status": False, "message": "Bad Request: Value not set"}, status=400
         )
 
-    profile = user.profile
+    profile = request.user.profile
     if attribute in boolean_attributes:
         # Convert JS Boolean to Python
         setattr(profile, attribute, json.loads(value))
@@ -253,21 +312,35 @@ def toggle_user_profile_attribute(request, username):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
-def toggle_theme(request, username):
-    user = get_object_or_404(User, username=username)
-    if user != request.user:
+def edit_user_profile_locale_selector(request):
+    locales_form = forms.UserLocalesOrderForm(
+        request.POST,
+        instance=request.user.profile,
+    )
+
+    if locales_form.is_valid():
+        locales_form.save()
+    else:
         return JsonResponse(
             {
-                "status": False,
-                "message": "Forbidden: You don't have permission to edit this user",
+                "status": "error",
+                "message": "Form validation failed.",
+                "errors": locales_form.errors,
             },
-            status=403,
+            status=400,
         )
 
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def toggle_theme(request):
     theme = request.POST.get("theme", None)
 
     try:
-        profile = user.profile
+        profile = request.user.profile
         profile.theme = theme
         profile.full_clean()
         profile.save()
@@ -330,7 +403,8 @@ def dismiss_addon_promotion(request):
 @login_required(redirect_field_name="", login_url="/403")
 def settings(request):
     """View and edit user settings."""
-    profile = request.user.profile
+    user = request.user
+    profile = user.profile
 
     personal_access_tokens = PersonalAccessToken.objects.filter(user=request.user)
 
@@ -339,47 +413,20 @@ def settings(request):
             request.POST,
             instance=profile,
         )
-        user_form = forms.UserForm(
-            request.POST,
-            instance=request.user,
-        )
-        user_profile_form = forms.UserProfileForm(
-            request.POST,
-            instance=profile,
-        )
 
-        if (
-            locales_form.is_valid()
-            and user_form.is_valid()
-            and user_profile_form.is_valid()
-        ):
+        if locales_form.is_valid():
             locales_form.save()
-            user_form.save()
-            user_profile_form.save()
-
-            if "contact_email" in user_profile_form.changed_data:
-                profile.contact_email_verified = False
-                profile.save(update_fields=["contact_email_verified"])
-
-                token = utils.generate_verification_token(request.user)
-                link = request.build_absolute_uri(
-                    reverse("pontoon.contributors.verify.email", args=(token,))
-                )
-                send_verification_email(request.user, link)
-
             messages.success(request, "Settings saved.")
 
-    else:
-        user_form = forms.UserForm(instance=request.user)
-        user_profile_form = forms.UserProfileForm(instance=profile)
-
     selected_locales = list(profile.sorted_locales)
-    available_locales = Locale.objects.exclude(
-        pk__in=[loc.pk for loc in selected_locales]
+    available_locales = (
+        Locale.objects.visible()
+        .exclude(pk__in=[loc.pk for loc in selected_locales])
+        .available()
     )
 
     default_homepage_locale = Locale(name="Default homepage", code="")
-    all_locales = list(Locale.objects.all())
+    all_locales = list(Locale.objects.visible())
     all_locales.insert(0, default_homepage_locale)
 
     custom_homepage_locale = default_homepage_locale
@@ -396,7 +443,7 @@ def settings(request):
 
     # Similar logic for preferred source locale
     default_preferred_source_locale = Locale(name="Default project locale", code="")
-    preferred_locales = list(Locale.objects.all())
+    preferred_locales = list(Locale.objects.visible())
     preferred_locales.insert(0, default_preferred_source_locale)
 
     preferred_source_locale = default_preferred_source_locale
@@ -425,8 +472,10 @@ def settings(request):
             "preferred_locale": preferred_source_locale,
             "personal_access_tokens": personal_access_tokens,
             "now": timezone.now(),
-            "user_form": user_form,
-            "user_profile_form": user_profile_form,
+            "user": user,
+            "profile": profile,
+            "user_form": forms.UserForm(instance=user),
+            "user_profile_form": forms.UserProfileForm(instance=profile),
             "user_profile_toggle_form": forms.UserProfileToggleForm(instance=profile),
         },
     )

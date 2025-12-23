@@ -98,7 +98,7 @@ export function updateUserSetting(
     csrfmiddlewaretoken: csrfToken,
   });
   const headers = new Headers({ 'X-CSRFToken': csrfToken });
-  return POST(`/api/v1/user/${username}/`, payload, { headers });
+  return POST('/user/attributes/toggle/', payload, { headers });
 }
 
 export function updateUserTheme(
@@ -111,7 +111,7 @@ export function updateUserTheme(
     csrfmiddlewaretoken: csrfToken,
   });
   const headers = new Headers({ 'X-CSRFToken': csrfToken });
-  return POST(`/api/v1/user/${username}/theme/`, payload, { headers });
+  return POST('/user/theme/', payload, { headers });
 }
 
 /** Update Interactive Tour status to a given step. */

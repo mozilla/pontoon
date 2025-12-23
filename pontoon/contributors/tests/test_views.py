@@ -32,39 +32,38 @@ def settings_url():
 
 
 @pytest.mark.django_db
-def test_profileform_invalid_first_name(member, settings_url):
-    response = member.client.post(settings_url, {"first_name": '<aa>"\'"'})
+def test_profileform_invalid_first_name(member):
+    params = {
+        "first_name": '<aa>"\'"',
+    }
 
+    response = member.client.post("/user/attributes/field/", params)
     assert b"Enter a valid value." in response.content
 
 
 @pytest.mark.django_db
-def test_profileform_missing_profile_fields(member, settings_url):
-    response = member.client.post(settings_url, {})
+def test_profileform_missing_first_name(member):
+    params = {"first_name": ""}
 
+    response = member.client.post("/user/attributes/field/", params)
     assert response.content.count(b"This field is required.") == 1
 
 
 @pytest.mark.django_db
-def test_profileform_valid_first_name(member, settings_url):
-    response = member.client.post(
-        settings_url, {"first_name": "contributor", "email": member.user.email}
-    )
+def test_profileform_valid_first_name(member):
+    params = {"first_name": "contributor"}
 
-    assert b"Settings saved." in response.content
+    response = member.client.post("/user/attributes/field/", params)
+    assert b'{"status": true}' in response.content
 
 
 @pytest.mark.django_db
-def test_profileform_user_locales_order(member, settings_url):
+def test_profileform_user_locales_order(member):
     locale1, locale2, locale3 = LocaleFactory.create_batch(3)
-    response = member.client.get(settings_url)
-    assert response.status_code == 200
 
     response = member.client.post(
-        "/settings/",
+        "/user/attributes/selector/",
         {
-            "first_name": "contributor",
-            "email": member.user.email,
             "locales_order": commajoin(
                 locale2.pk,
                 locale1.pk,
@@ -81,18 +80,16 @@ def test_profileform_user_locales_order(member, settings_url):
     ]
     # Test if you can clear all locales
     response = member.client.post(
-        "/settings/",
-        {"first_name": "contributor", "email": member.user.email, "locales_order": ""},
+        "/user/attributes/selector/",
+        {"locales_order": ""},
     )
     assert response.status_code == 200
     assert list(User.objects.get(pk=member.user.pk).profile.sorted_locales) == []
 
     # Test if form handles duplicated locales
     response = member.client.post(
-        "/settings/",
+        "/user/attributes/selector/",
         {
-            "first_name": "contributor",
-            "email": member.user.email,
             "locales_order": commajoin(
                 locale1.pk,
                 locale2.pk,
@@ -115,14 +112,11 @@ def test_profileform_contact_email_verified(member):
     profile.save()
     assert User.objects.get(pk=member.user.pk).profile.contact_email_verified is True
 
-    response = member.client.post(
-        "/settings/",
-        {
-            "first_name": "contributor",
-            "email": member.user.email,
-            "contact_email": "contact@example.com",
-        },
-    )
+    params = {
+        "contact_email": "contact@example.com",
+    }
+
+    response = member.client.post("/user/attributes/field/", params)
     assert response.status_code == 200
     assert User.objects.get(pk=member.user.pk).profile.contact_email_verified is False
 
@@ -185,19 +179,17 @@ def contributor_translations(settings, user_a, project_a):
 
 
 @pytest.mark.django_db
-def test_toggle_user_profile_attribute(
-    member, contributor_translations, mock_profile_render, user_a
-):
+def test_toggle_user_profile_attribute(member):
     """Test if toggle_user_profile_attribute view works and fails as expected."""
     params = {}
-    response = member.client.post(f"/api/v1/user/{user_a.username}/", params)
+    response = member.client.post("/user/attributes/toggle/", params)
     assert response.status_code == 403
     assert response.json()["message"] == "Forbidden: Attribute not allowed"
 
     params = {
         "attribute": "quality_checks",
     }
-    response = member.client.post(f"/api/v1/user/{user_a.username}/", params)
+    response = member.client.post("/user/attributes/toggle/", params)
     assert response.status_code == 400
     assert response.json()["message"] == "Bad Request: Value not set"
 
@@ -205,7 +197,7 @@ def test_toggle_user_profile_attribute(
         "attribute": "quality_checks",
         "value": "false",
     }
-    response = member.client.post(f"/api/v1/user/{user_a.username}/", params)
+    response = member.client.post("/user/attributes/toggle/", params)
     assert response.status_code == 200
 
 
