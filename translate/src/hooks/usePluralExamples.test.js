@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+
+import React from 'react';
 import { usePluralExamples } from './usePluralExamples';
 import { vi } from 'vitest';
 
@@ -19,10 +22,10 @@ describe('usePluralExamples', () => {
   it('returns a map of Slovenian plural examples', () => {
     const consoleErrorSpy = vi.spyOn(console, 'error');
     const res = usePluralExamples({
-      cldrPlurals: [1, 2, 3, 5],
-      pluralRule:
-        '(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)',
-    });
+        cldrPlurals: [1, 2, 3, 5],
+        pluralRule:
+          '(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)',
+      });
 
     expect(res).toEqual({ 1: 1, 2: 2, 3: 3, 5: 0 });
     expect(consoleErrorSpy).toHaveBeenCalledTimes(0);
