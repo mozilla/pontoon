@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { USER } from '~/modules/user';
 import * as Hooks from '~/hooks';
 

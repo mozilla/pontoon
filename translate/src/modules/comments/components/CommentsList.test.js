@@ -1,6 +1,7 @@
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { CommentsList } from './CommentsList';
+import { vi } from 'vitest';
 
 vi.mock('react-time-ago', () => {
   return {
