@@ -6,8 +6,9 @@ import { SearchData } from '~/context/SearchData';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { Machinery } from './Machinery';
+import { vi } from 'vitest';
 
-jest.mock('~/hooks', () => ({
+vi.mock('~/hooks', () => ({
   useAppDispatch: () => () => {},
   useAppSelector: () => {},
 }));

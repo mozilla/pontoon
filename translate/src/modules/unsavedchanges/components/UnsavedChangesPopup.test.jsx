@@ -5,6 +5,7 @@ import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { UnsavedChangesPopup } from './UnsavedChangesPopup';
+import { vi } from 'vitest';
 
 const mountPopup = (onIgnore, resetUnsavedChanges) =>
   mount(
@@ -35,7 +36,7 @@ describe('<UnsavedChangesPopup>', () => {
   });
 
   it('closes the unsaved changes popup when the Close button is clicked', () => {
-    const resetUnsavedChanges = jest.fn();
+    const resetUnsavedChanges = vi.fn();
     const wrapper = mountPopup(() => {}, resetUnsavedChanges);
 
     wrapper.find('.close').simulate('click');
@@ -43,7 +44,7 @@ describe('<UnsavedChangesPopup>', () => {
   });
 
   it('ignores the unsaved changes popup when the Proceed button is clicked', () => {
-    const resetUnsavedChanges = jest.fn();
+    const resetUnsavedChanges = vi.fn();
     const wrapper = mountPopup(() => {}, resetUnsavedChanges);
 
     wrapper.find('.proceed.anyway').simulate('click');
