@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import { mount } from 'enzyme';
 
 import { UserAutoUpdater } from './UserAutoUpdater';
+import { vi } from 'vitest';
 
 describe('<UserAutoUpdater>', () => {
   it('fetches user data on mount', () => {
@@ -13,19 +14,19 @@ describe('<UserAutoUpdater>', () => {
   });
 
   it('fetches user data every 2 minutes', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     const getUserData = sinon.spy();
     mount(<UserAutoUpdater getUserData={getUserData} />);
 
-    jest.advanceTimersByTime(2 * 60 * 1000);
+    vi.advanceTimersByTime(2 * 60 * 1000);
     expect(getUserData.callCount).toEqual(2);
 
-    jest.advanceTimersByTime(2 * 60 * 1000);
+    vi.advanceTimersByTime(2 * 60 * 1000);
     expect(getUserData.callCount).toEqual(3);
 
     // If less than 2 minutes have passed, it doesn't trigger.
-    jest.advanceTimersByTime(60 * 1000);
+    vi.advanceTimersByTime(60 * 1000);
     expect(getUserData.callCount).toEqual(3);
   });
 });

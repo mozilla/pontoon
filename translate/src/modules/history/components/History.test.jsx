@@ -4,8 +4,13 @@ import { HistoryData } from '~/context/HistoryData';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { History } from './History';
+import { vi } from 'vitest';
 
-jest.mock('react-time-ago', () => () => null);
+vi.mock('react-time-ago', () => {
+  return {
+    default: () => null,
+  };
+});
 
 function mountHistory(fetching, translations) {
   const store = createReduxStore({

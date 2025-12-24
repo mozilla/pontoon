@@ -11,6 +11,7 @@ import {
 import { mockMatchMedia } from '~/test/utils';
 
 import { OtherLocaleTranslationComponent } from './OtherLocaleTranslation';
+import { vi } from 'vitest';
 
 const LOCALE = { code: 'fr-FR', name: 'French', direction: 'ltr', script: '' };
 const PLAIN_TRANSLATION = {
@@ -83,7 +84,7 @@ describe('<OtherLocaleTranslationComponent>', () => {
   });
 
   it('sets editor value for a plain translation', () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = createTranslation('', PLAIN_TRANSLATION, spy);
 
     const { onClick } = wrapper.find('li').props();
@@ -95,7 +96,7 @@ describe('<OtherLocaleTranslationComponent>', () => {
   });
 
   it('sets editor value for a Fluent translation', () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = createTranslation('fluent', FLUENT_TRANSLATION, spy);
 
     const { onClick } = wrapper.find('li').props();
