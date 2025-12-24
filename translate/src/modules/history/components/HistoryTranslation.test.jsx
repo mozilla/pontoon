@@ -6,11 +6,13 @@ import * as hookModule from '~/hooks/useTranslator';
 import { HistoryTranslationBase } from './HistoryTranslation';
 
 beforeAll(() => {
-  sinon.stub(hookModule, 'useTranslator');
+  vitest.mock('~/hooks/useTranslator', () => ({
+    useTranslator: vi.fn(() => false),
+  }));
 });
-beforeEach(() => hookModule.useTranslator.returns(false));
+
 afterAll(() => {
-  hookModule.useTranslator.restore();
+  hookModule.useTranslator.mockRestore();
 });
 
 describe('<HistoryTranslationComponent>', () => {
@@ -323,7 +325,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('allows translators to review the translation', () => {
-      hookModule.useTranslator.returns(true);
+      hookModule.useTranslator.mockReturnValue(true);
       const wrapper = shallow(
         <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
@@ -337,7 +339,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('allows translators to delete the rejected translation', () => {
-      hookModule.useTranslator.returns(true);
+      hookModule.useTranslator.mockReturnValue(true);
       const translation = { ...DEFAULT_TRANSLATION, rejected: true };
       const wrapper = shallow(
         <HistoryTranslationBase
@@ -351,7 +353,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('forbids translators to delete non-rejected translation', () => {
-      hookModule.useTranslator.returns(true);
+      hookModule.useTranslator.mockReturnValue(true);
       const translation = { ...DEFAULT_TRANSLATION, rejected: false };
       const wrapper = shallow(
         <HistoryTranslationBase

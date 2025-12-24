@@ -2,8 +2,9 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { SignIn } from './SignIn';
 import { UserControls } from './UserControls';
+import { vi } from 'vitest';
 
-jest.mock('./UserAutoUpdater', () => ({ UserAutoUpdater: () => null }));
+vi.mock('./UserAutoUpdater', () => ({ UserAutoUpdater: () => null }));
 
 describe('<UserControls>', () => {
   it('shows a Sign in link when user is logged out', () => {
