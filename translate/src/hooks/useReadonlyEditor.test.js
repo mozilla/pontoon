@@ -1,35 +1,49 @@
-import React from 'react';
-import sinon from 'sinon';
+import { vi } from 'vitest';
 import * as Hooks from '~/hooks';
 import { useReadonlyEditor } from './useReadonlyEditor';
+import { useContext } from 'react';
 
 beforeAll(() => {
-  sinon.stub(React, 'useContext').returns({ entity: 42 });
-  sinon.stub(Hooks, 'useAppSelector');
+  vi.mock('react', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useContext: vi.fn(),
+    };
+  });
+  vi.spyOn(Hooks, 'useAppSelector');
 });
+
 afterAll(() => {
-  React.useContext.restore();
-  Hooks.useAppSelector.restore();
+  vi.restoreAllMocks();
 });
 
 function fakeSelector(readonly, isAuthenticated) {
-  React.useContext.returns({ entity: { pk: 42, original: 'hello', readonly } });
+  vi.mocked(useContext).mockReturnValue({
+    entity: { pk: 42, original: 'hello', readonly },
+  });
   return (cb) => cb({ user: { isAuthenticated } });
 }
 
 describe('useReadonlyEditor', () => {
   it('returns true if user not authenticated', () => {
-    Hooks.useAppSelector.callsFake(fakeSelector(false, false));
-    expect(useReadonlyEditor()).toBeTruthy();
+    vi.mocked(Hooks.useAppSelector).mockImplementation(
+      fakeSelector(false, false),
+    );
+    expect(useReadonlyEditor()).toBe(true);
   });
 
   it('returns true if entity read-only', () => {
-    Hooks.useAppSelector.callsFake(fakeSelector(true, true));
-    expect(useReadonlyEditor()).toBeTruthy();
+    vi.mocked(Hooks.useAppSelector).mockImplementation(
+      fakeSelector(true, true),
+    );
+    expect(useReadonlyEditor()).toBe(true);
   });
 
-  it('returns false if entity not read-only and user authenticated', () => {
-    Hooks.useAppSelector.callsFake(fakeSelector(false, true));
-    expect(useReadonlyEditor()).toBeFalsy();
+  it('returns false If entity not read-only and user authenticated', () => {
+    vi.mocked(Hooks.useAppSelector).mockImplementation(
+      fakeSelector(false, true),
+    );
+    expect(useReadonlyEditor()).toBe(false);
   });
 });
