@@ -80,4 +80,3 @@ jobs:
         - name: vitest
           run: npx vitest run --coverage
           working-directory: translate
-          continue-on-error: true
