@@ -1,5 +1,5 @@
 import { mount } from 'enzyme';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import sinon from 'sinon';
 
 import * as Hooks from '~/hooks';

@@ -4,7 +4,6 @@ import { createMemoryHistory } from 'history';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
-import sinon from 'sinon';
 
 import * as TranslationAPI from '~/api/translation';
 import { EditorActions, EditorProvider } from '~/context/Editor';
