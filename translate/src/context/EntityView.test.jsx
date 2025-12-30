@@ -1,5 +1,5 @@
 import { mount } from 'enzyme';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 
 import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';

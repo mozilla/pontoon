@@ -1,5 +1,5 @@
 import { mount } from 'enzyme';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 
 import * as EntityView from './EntityView';
 import { FailedChecksData, FailedChecksProvider } from './FailedChecksData';
