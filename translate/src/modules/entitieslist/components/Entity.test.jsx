@@ -4,10 +4,14 @@ import sinon from 'sinon';
 
 import * as hookModule from '~/hooks/useTranslator';
 import { Entity } from './Entity';
+import { vitest } from 'vitest';
 
-beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
-beforeEach(() => hookModule.useTranslator.returns(false));
-afterAll(() => hookModule.useTranslator.restore());
+beforeAll(() => {
+  vitest.mock('~/hooks/useTranslator', () => ({
+    useTranslator: vi.fn(() => false),
+  }));
+});
+afterAll(() => hookModule.useTranslator.mockRestore());
 
 describe('<Entity>', () => {
   const ENTITY_A = {
@@ -100,7 +104,7 @@ describe('<Entity>', () => {
   });
 
   it('calls the toggleForBatchEditing function on click on .status', () => {
-    hookModule.useTranslator.returns(true);
+    hookModule.useTranslator.mockReturnValue(true);
     const toggleForBatchEditingFn = sinon.spy();
     const wrapper = mount(
       <Entity
