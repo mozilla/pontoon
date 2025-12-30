@@ -9,17 +9,17 @@
  */
 export const ignoreFromJest = [
   './src/modules/editor',
-  './src/hooks/',
-  './src/modules/comments/',
-  './src/modules/entities/',
-  './src/modules/entitydetails/',
-  './src/modules/history/',
-  './src/modules/machinery/',
-  './src/modules/otherlocales/',
-  './src/modules/resourceprogress/',
-  './src/modules/teamcomments/',
-  './src/modules/unsavedchanges/',
-  './src/modules/user/',
+  './src/hooks',
+  './src/modules/comments',
+  './src/modules/entities',
+  './src/modules/entitydetails',
+  './src/modules/history',
+  './src/modules/machinery',
+  './src/modules/otherlocales',
+  './src/modules/resourceprogress',
+  './src/modules/teamcomments',
+  './src/modules/unsavedchanges',
+  './src/modules/user',
 ];
 export const includeInVitest = ignoreFromJest.map((x) => {
   return `${x}/**/*.test.*`;
