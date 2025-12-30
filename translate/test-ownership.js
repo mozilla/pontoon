@@ -10,5 +10,6 @@
 export const ingoreFromVitest = [
   'src/modules/interactivetour/components/InteractiveTour.test.js',
   'src/modules/entitieslist/components/EntitiesList.test.js',
+  'src/utils/message/getEmptyMessage.test.js',
 ];
 export const includeInJest = ingoreFromVitest.map((x) => `<rootDir>/${x}`);
