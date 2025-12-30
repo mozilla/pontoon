@@ -1,6 +1,6 @@
 /* eslint-env commonjs */
 /* global module */
-const { ignoreFromJest } = require('./test-ownership');
+const { includeInJest } = require('./test-ownership');
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
@@ -10,13 +10,9 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
   coveragePathIgnorePatterns: ['<rootDir>/node_modules/'],
-  testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-    '<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}',
-  ],
+  testMatch: includeInJest,
   testEnvironment: './jest-jsdom-fix.mjs',
   preset: 'ts-jest',
-  testPathIgnorePatterns: ignoreFromJest,
   transform: {
     '\\.jsx?$': ['babel-jest', { configFile: '../babel.config.json' }],
     '\\.tsx?$': 'ts-jest',
