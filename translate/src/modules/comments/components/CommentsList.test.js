@@ -1,8 +1,13 @@
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { CommentsList } from './CommentsList';
+import { vi } from 'vitest';
 
-jest.mock('react-time-ago', () => () => null);
+vi.mock('react-time-ago', () => {
+  return {
+    default: () => null,
+  };
+});
 
 describe('<CommentsList>', () => {
   const DEFAULT_USER = 'AnnPerkins';

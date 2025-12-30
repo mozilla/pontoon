@@ -9,6 +9,7 @@ import {
   UserNotificationsMenu,
   UserNotificationsMenuDialog,
 } from './UserNotificationsMenu';
+import { vi } from 'vitest';
 
 describe('<UserNotificationsMenuDialog>', () => {
   it('shows empty notifications menu if user has no notifications', () => {
@@ -54,9 +55,8 @@ describe('<UserNotificationsMenuDialog>', () => {
 });
 
 describe('<UserNotificationsMenu>', () => {
-  const sandbox = sinon.createSandbox();
-  beforeEach(() => sandbox.spy(api, 'logUXAction'));
-  afterEach(() => sandbox.restore());
+  beforeEach(() => vi.spyOn(api, 'logUXAction'));
+  afterEach(() => vi.restoreAllMocks());
 
   it('hides the notifications icon when the user is logged out', () => {
     const user = {
@@ -94,7 +94,7 @@ describe('<UserNotificationsMenu>', () => {
     const wrapper = mount(<UserNotificationsMenu user={user} />);
 
     expect(wrapper.find('.user-notifications-menu .badge').text()).toEqual('5');
-    expect(api.logUXAction.called).toEqual(true);
+    expect(api.logUXAction).toHaveBeenCalled();
   });
 
   it('calls the logUxAction function on click on the icon if menu not visible', () => {
@@ -114,12 +114,12 @@ describe('<UserNotificationsMenu>', () => {
     );
 
     // shallow() does not handle useEffect()
-    expect(api.logUXAction.called).toEqual(false);
+    expect(api.logUXAction).not.toHaveBeenCalled();
 
     wrapper.find('.selector').simulate('click', {});
-    expect(api.logUXAction.calledOnce).toEqual(true);
+    expect(api.logUXAction).toHaveBeenCalledTimes(1);
 
     wrapper.find('.selector').simulate('click', {});
-    expect(api.logUXAction.calledOnce).toEqual(true);
+    expect(api.logUXAction).toHaveBeenCalledTimes(1);
   });
 });

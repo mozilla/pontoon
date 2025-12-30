@@ -1,19 +1,23 @@
-import React from 'react';
-import sinon from 'sinon';
-
 import { PROJECT } from '~/modules/project';
 import { USER } from '~/modules/user';
 import * as Hooks from '~/hooks';
 
 import { useTranslator } from './useTranslator';
+import { vi } from 'vitest';
 
 beforeAll(() => {
-  sinon.stub(Hooks, 'useAppSelector');
-  sinon.stub(React, 'useContext').returns({ code: 'mylocale' });
+  vi.spyOn(Hooks, 'useAppSelector');
+  vi.mock('react', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useContext: () => ({ code: 'mylocale' }),
+    };
+  });
 });
+
 afterAll(() => {
-  Hooks.useAppSelector.restore();
-  React.useContext.restore();
+  vi.restoreAllMocks();
 });
 
 const fakeSelector = (user) => (sel) =>
@@ -24,12 +28,14 @@ const fakeSelector = (user) => (sel) =>
 
 describe('useTranslator', () => {
   it('returns false for non-authenticated users', () => {
-    (Hooks.useAppSelector.callsFake(fakeSelector({ isAuthenticated: false })),
-      expect(useTranslator()).toBeFalsy());
+    Hooks.useAppSelector.mockImplementation(
+      fakeSelector({ isAuthenticated: false }),
+    );
+    expect(useTranslator()).toBeFalsy();
   });
 
   it('returns true if user is a manager of the locale', () => {
-    Hooks.useAppSelector.callsFake(
+    Hooks.useAppSelector.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         canManageLocales: ['mylocale'],
@@ -41,7 +47,7 @@ describe('useTranslator', () => {
   });
 
   it('returns true if user is a translator of the locale', () => {
-    Hooks.useAppSelector.callsFake(
+    Hooks.useAppSelector.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         canManageLocales: [],
@@ -53,7 +59,7 @@ describe('useTranslator', () => {
   });
 
   it('returns true if user is a translator for project-locale', () => {
-    Hooks.useAppSelector.callsFake(
+    Hooks.useAppSelector.mockImplementation(
       fakeSelector({
         isAuthenticated: true,
         canManageLocales: ['localeA'],

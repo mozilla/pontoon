@@ -1,8 +1,9 @@
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { TeamComments } from './TeamComments';
+import { vi } from 'vitest';
 
-jest.mock('react-time-ago', () => () => null);
+vi.mock('react-time-ago', () => ({ default: () => null }));
 
 describe('<TeamComments>', () => {
   const DEFAULT_USER = 'AndyDwyer';

@@ -16,6 +16,11 @@ export default defineConfig({
     mockReset: true,
     testTimeout: 10000,
     environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost',
+      },
+    },
   },
   resolve: {
     alias: [

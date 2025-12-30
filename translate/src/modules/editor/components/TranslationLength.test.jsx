@@ -5,7 +5,6 @@ import { EditorData, EditorResult } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 
 import { TranslationLength } from './TranslationLength';
-import sinon from 'sinon';
 import { vi } from 'vitest';
 
 describe('<TranslationLength>', () => {

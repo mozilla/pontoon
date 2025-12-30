@@ -1,6 +1,7 @@
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { ResourceProgress } from './ResourceProgress';
+import { vi } from 'vitest';
 
 describe('<ResourceProgress>', () => {
   const STATS = {
@@ -22,7 +23,7 @@ describe('<ResourceProgress>', () => {
   };
 
   beforeAll(() => {
-    HTMLCanvasElement.prototype.getContext = jest.fn();
+    HTMLCanvasElement.prototype.getContext = vi.fn();
   });
 
   it('shows only a selector by default', () => {

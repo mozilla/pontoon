@@ -1,8 +1,13 @@
 import { mount } from 'enzyme';
 import React from 'react';
 import { UserNotification } from './UserNotification';
+import { vi } from 'vitest';
 
-jest.mock('react-time-ago', () => () => null);
+vi.mock('react-time-ago', () => {
+  return {
+    default: () => null,
+  };
+});
 
 const notificationBase = {
   id: 0,
