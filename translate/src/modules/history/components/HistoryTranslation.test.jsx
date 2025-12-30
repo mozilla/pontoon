@@ -1,6 +1,5 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import sinon from 'sinon';
 
 import * as hookModule from '~/hooks/useTranslator';
 import { HistoryTranslationBase } from './HistoryTranslation';

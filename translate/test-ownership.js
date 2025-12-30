@@ -11,6 +11,7 @@ export const ignoreFromJest = [
   './src/modules/editor',
   './src/hooks/',
   './src/modules/comments/',
+  './src/modules/entities/',
   './src/modules/entitydetails/',
   './src/modules/history/',
   './src/modules/machinery/',
@@ -19,7 +20,6 @@ export const ignoreFromJest = [
   './src/modules/teamcomments/',
   './src/modules/unsavedchanges/',
   './src/modules/user/',
-  './src/modules/entities/',
 ];
 export const includeInVitest = ignoreFromJest.map((x) => {
   return `${x}/**/*.test.*`;
