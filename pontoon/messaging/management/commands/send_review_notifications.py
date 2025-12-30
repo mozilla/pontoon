@@ -30,6 +30,7 @@ class Command(BaseCommand):
         for suggestion in Translation.objects.filter(
             (Q(approved_date__gt=start) | Q(rejected_date__gt=start))
             & Q(user__profile__review_notifications=True)
+            & Q(entity__resource__project__disabled=False)
         ):
             author = suggestion.user
             locale = suggestion.locale

@@ -13,6 +13,7 @@ class Command(BaseCommand):
         # Send the 2nd onboarding email to users that have received the 1st email
         # and have joined at least ONBOARDING_EMAIL_2_DELAY days ago.
         users_for_email_2 = User.objects.filter(
+            is_active=True,
             profile__onboarding_email_status=1,
             date_joined__lt=(now() - timedelta(days=settings.ONBOARDING_EMAIL_2_DELAY)),
         )
@@ -22,6 +23,7 @@ class Command(BaseCommand):
         # Send the 3rd onboarding email to users that have received the 2nd email
         # and have joined at least ONBOARDING_EMAIL_3_DELAY days ago.
         users_for_email_3 = User.objects.filter(
+            is_active=True,
             profile__onboarding_email_status=2,
             date_joined__lt=(now() - timedelta(days=settings.ONBOARDING_EMAIL_3_DELAY)),
         )

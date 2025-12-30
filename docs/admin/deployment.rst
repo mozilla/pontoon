@@ -267,6 +267,14 @@ you create:
    Optional. Set your `OpenAI API` key to add the ability to refine machine
    translations using ChatGPT.
 
+``PERSONAL_ACCESS_TOKEN_MAX_COUNT``
+   Optional. The maximum number of personal access tokens a user can create. 
+   The default value is 10.
+
+``PRETRANSLATION_API_MAX_CHARS``
+   Optional. Specifies the maximum length of input text allowed for pretranslation API. 
+   The default value is 2048.
+
 ``PROJECT_MANAGERS``
    Optional. A list of project manager email addresses to send project requests to
 
@@ -290,10 +298,12 @@ you create:
    Learn more in the `Django documentation <https://docs.djangoproject.com/en/5.1/ref/settings/#secure-ssl-redirect>`_.
 
 ``CSRF_TRUSTED_ORIGINS``
-   Optional. A list of trusted origins for unsafe requests. It should contain the domains
-   where the app is available. The setting also supports subdomains, so you could
-   add `https://*.example.com`, for example, to allow access from all
-   subdomains of `example.com`. Default value is `[]`.
+   Optional. A comma-separated list of trusted origins for unsafe requests.
+   It should contain the domains where the app is available.
+   The setting also supports subdomains,
+   so you could add ``https://*.example.com``, for example,
+   to allow access from all subdomains of ``example.com``.
+   Default value is an empty string.
    Learn more in the `Django documentation <https://docs.djangoproject.com/en/5.1/ref/settings/#csrf-trusted-origins>`_.
 
 ``SSH_CONFIG``
@@ -543,7 +553,7 @@ is designed to run daily.
 
 .. code-block:: bash
 
-   ./manage.py send_oboarding_emails
+   ./manage.py send_onboarding_emails
 
 Send Inactive Account Emails
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

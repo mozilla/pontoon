@@ -1,0 +1,25 @@
+{% macro text(field, attribute, value, title='') %}
+    {{ field.label_tag(label_suffix='') }}
+    <input class="input" 
+           value="{{ value or '' }}" 
+           data-attribute="{{ attribute }}" 
+           data-original-value="{{ value or '' }}"
+           title="{{ title }}"
+           name="{{ field.name }}" 
+           id="{{ field.auto_id }}"
+           type="text"
+           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}>
+    <div class="errorlist"></div>
+{% endmacro %}
+
+{% macro textarea(field, attribute, value, title='') %}
+    {{ field.label_tag(label_suffix='') }}
+    <textarea class="input" 
+           data-attribute="{{ attribute }}" 
+           data-original-value="{{ value or '' }}"
+           title="{{ title }}"
+           name="{{ field.name }}" 
+           id="{{ field.auto_id }}"
+           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}>{{ value or '' }}</textarea>
+    <div class="errorlist"></div>
+{% endmacro %}

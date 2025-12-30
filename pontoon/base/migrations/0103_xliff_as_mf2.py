@@ -78,5 +78,5 @@ def mf2_as_xliff(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [("base", "0101_webext_as_mf2")]
+    dependencies = [("base", "0102_add_pretranslators_group")]
     operations = [migrations.RunPython(xliff_as_mf2, reverse_code=mf2_as_xliff)]

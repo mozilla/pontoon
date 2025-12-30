@@ -59,6 +59,7 @@ h2 {
 .display-name {
   font-size: 24px;
   padding-bottom: 0;
+  overflow-wrap: break-word;
 }
 
 .username {
@@ -66,11 +67,13 @@ h2 {
   line-height: 1.4em;
   font-size: 20px;
   font-weight: 300;
+  overflow-wrap: break-word;
 }
 
 .bio {
   font-size: 16px;
   line-height: 1.4em;
+  overflow-wrap: break-word;
 }
 
 .item-with-icon {

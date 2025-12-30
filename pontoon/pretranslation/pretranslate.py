@@ -215,7 +215,7 @@ class Pretranslation:
                 ]
 
         raise ValueError(
-            f"Pretranslation for `{self.source}` to {self.locale.code} not available."
+            f"Pretranslation for `{self.source}` to `{self.locale.code}` not available"
         )
 
 
