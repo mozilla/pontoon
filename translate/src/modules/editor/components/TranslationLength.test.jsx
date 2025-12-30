@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { shallow } from 'enzyme';
 
 import { EditorData, EditorResult } from '~/context/Editor';
@@ -6,14 +6,21 @@ import { EntityView } from '~/context/EntityView';
 
 import { TranslationLength } from './TranslationLength';
 import sinon from 'sinon';
+import { vi } from 'vitest';
 
 describe('<TranslationLength>', () => {
   beforeAll(() => {
-    sinon.stub(React, 'useContext');
+    vi.mock('react', async (importOriginal) => {
+      const actual = await importOriginal();
+      return {
+        ...actual,
+        useContext: vi.fn(),
+      };
+    });
   });
 
   afterAll(() => {
-    React.useContext.restore();
+    vi.restoreAllMocks();
   });
 
   function mountTranslationLength(format, original, value, comment) {
@@ -22,7 +29,7 @@ describe('<TranslationLength>', () => {
       [EditorResult, [{ value }]],
       [EntityView, { entity: { comment, format, original } }],
     ]);
-    React.useContext.callsFake((key) => context.get(key));
+    vi.mocked(useContext).mockImplementation((key) => context.get(key));
 
     return shallow(<TranslationLength />);
   }

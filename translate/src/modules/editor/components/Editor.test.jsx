@@ -4,7 +4,6 @@ import { createMemoryHistory } from 'history';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
-import sinon from 'sinon';
 
 import * as TranslationAPI from '~/api/translation';
 import { EditorActions, EditorProvider } from '~/context/Editor';
@@ -17,6 +16,7 @@ import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { Editor } from './Editor';
+import { vi } from 'vitest';
 
 const NESTED_SELECTORS_STRING = ftl`
   my-message =
@@ -155,7 +155,9 @@ describe('<Editor>', () => {
   });
 
   it('renders the source form when passing a broken string', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const [wrapper] = mountEditor(6);
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('E0028'));
 
     const input = wrapper.find(EditField);
     expect(input).toHaveLength(1);
@@ -211,7 +213,9 @@ describe('<Editor>', () => {
   });
 
   it('passes a reconstructed translation to sendTranslation', async () => {
-    sinon.stub(TranslationAPI, 'createTranslation').returns({});
+    const createSpy = vi
+      .spyOn(TranslationAPI, 'createTranslation')
+      .mockReturnValue({});
 
     const [wrapper, actions] = mountEditor(1);
 
@@ -220,7 +224,8 @@ describe('<Editor>', () => {
     wrapper.update();
     await act(() => wrapper.find('.action-suggest').prop('onClick')());
 
-    const { args } = TranslationAPI.createTranslation.getCalls()[0];
+    expect(createSpy.mock.calls.length).toBe(1);
+    const args = createSpy.mock.calls[0];
     expect(args[1]).toBe('my-message = Coucou\n');
   });
 });

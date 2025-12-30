@@ -1,5 +1,6 @@
 /* eslint-env commonjs */
 /* global module */
+const { ignoreFromJest } = require('./test-ownership');
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
@@ -15,6 +16,7 @@ module.exports = {
   ],
   testEnvironment: './jest-jsdom-fix.mjs',
   preset: 'ts-jest',
+  testPathIgnorePatterns: ignoreFromJest,
   transform: {
     '\\.jsx?$': ['babel-jest', { configFile: '../babel.config.json' }],
     '\\.tsx?$': 'ts-jest',

@@ -3,18 +3,22 @@ import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { EditorSettings, EditorSettingsDialog } from './EditorSettings';
+import { vi } from 'vitest';
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useContext: () => ({ code: 'en' }),
-}));
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useContext: () => ({ code: 'en' }),
+  };
+});
 
-jest.mock('~/modules/project/hooks', () => ({
+vi.mock('~/modules/project/hooks', () => ({
   useProject: () => ({ slug: 'test' }),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
+vi.mock('react-redux', () => ({
+  ...vi.importActual('react-redux'),
   useSelector: (selector) =>
     selector({
       user: {
@@ -25,7 +29,7 @@ jest.mock('react-redux', () => ({
 }));
 
 function createEditorSettingsDialogForNonTranslator() {
-  jest.mock('~/hooks/useTranslator', () => ({
+  vi.mock('~/hooks/useTranslator', () => ({
     useTranslator: () => false,
   }));
 
@@ -57,6 +61,10 @@ function createEditorSettingsDialog() {
 }
 
 describe('<EditorSettingsDialog>', () => {
+  beforeEach(() => {
+    vi.unmock('~/hooks/useTranslator');
+  });
+
   it('does not show the forceSuggestions setting if user is not a translator', () => {
     const [wrapper] = createEditorSettingsDialogForNonTranslator();
 
