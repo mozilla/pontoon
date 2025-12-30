@@ -850,9 +850,7 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.10.0 \
     --hash=sha256:817b46323b86185c48cc2261a4e0a28c02fdb2f2e3b9fe8894789657b7db6f07 \
     --hash=sha256:fc679d91491d5a3ba4c06f812bfb43506d0f93fb962c0544c949e4da9a35f225
-    # via
-    #   -r default.in
-    #   moz-l10n
+    # via -r default.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
