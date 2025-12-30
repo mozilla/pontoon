@@ -8,7 +8,7 @@
  * Vitest migration is complete.
  */
 export const ingoreFromVitest = [
-   "src/modules/interactivetour/components/InteractiveTour.test.js",
-  "src/modules/entitieslist/components/EntitiesList.test.js" 
-]
-export const includeInJest = ingoreFromVitest.map((x)=> `<rootDir>/${x}`)
+  'src/modules/interactivetour/components/InteractiveTour.test.js',
+  'src/modules/entitieslist/components/EntitiesList.test.js',
+];
+export const includeInJest = ingoreFromVitest.map((x) => `<rootDir>/${x}`);

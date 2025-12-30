@@ -1,21 +1,21 @@
-import React, { useContext } from "react";
-import { vi } from "vitest";
-import {useActiveTranslation} from "./EntityView"
+import React, { useContext } from 'react';
+import { vi } from 'vitest';
+import { useActiveTranslation } from './EntityView';
 
 describe('useActiveTranslation', () => {
   beforeAll(() => {
-   vi.mock("react",async (importOriginal)=>{
-    const actual = await importOriginal();
-    return {
+    vi.mock('react', async (importOriginal) => {
+      const actual = await importOriginal();
+      return {
         ...actual,
         useContext: vi.fn(),
-        useMemo: (cb) => cb()
-    }
-   })
+        useMemo: (cb) => cb(),
+      };
+    });
   });
 
   afterAll(() => {
-    vi.restoreAllMocks()
+    vi.restoreAllMocks();
   });
 
   it('returns the correct string', () => {

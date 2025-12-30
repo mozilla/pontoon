@@ -49,7 +49,7 @@ describe('<NotificationPanel>', () => {
     );
 
     // Run time forward, the message with disappear.
-    vi.runAllTimers()
+    vi.runAllTimers();
 
     expect(container.childNodes).toHaveLength(1);
     expect(container.querySelectorAll('.showing')).toHaveLength(0);
