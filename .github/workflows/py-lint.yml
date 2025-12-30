@@ -32,8 +32,8 @@ jobs:
           enable-cache: true
           cache-dependency-glob: |
             **/requirements/*.txt
-          # Version should match the one used in docker/Dockerfile
-          version: "0.9.0"
+          # Version should match the one used in docker/Dockerfile*
+          version: "0.9.21"
       - name: Install Dependencies
         run: uv pip install -r requirements/lint.txt
         env:
