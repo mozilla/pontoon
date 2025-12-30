@@ -155,7 +155,9 @@ describe('<Editor>', () => {
   });
 
   it('renders the source form when passing a broken string', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const [wrapper] = mountEditor(6);
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('E0028'));
 
     const input = wrapper.find(EditField);
     expect(input).toHaveLength(1);
