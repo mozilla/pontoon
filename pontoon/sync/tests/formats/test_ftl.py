@@ -5,7 +5,7 @@ from unittest import TestCase
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_entity, as_vcs_translations
+from pontoon.sync.formats import as_entity, as_repo_translations
 
 
 class FTLTests(TestCase):
@@ -41,7 +41,7 @@ class FTLTests(TestCase):
             as_entity(Format.fluent, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
-        t0, t1, t2, t3, t4, t5, t6 = as_vcs_translations(res)
+        t0, t1, t2, t3, t4, t5, t6 = as_repo_translations(res)
 
         # basic
         assert e0.comment == "Sample comment"

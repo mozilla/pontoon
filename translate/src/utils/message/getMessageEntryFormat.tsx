@@ -6,6 +6,8 @@ export function getMessageEntryFormat(format: string): MessageEntry['format'] {
     case 'gettext':
     case 'fluent':
     case 'webext':
+    case 'xcode':
+    case 'xliff':
       return format;
     default:
       return 'plain';

@@ -347,7 +347,7 @@ def set_translation(
             return False
 
     match format:
-        case Format.android | Format.gettext | Format.webext:
+        case Format.android | Format.gettext | Format.webext | Format.xliff:
             msg = parse_message(Format.mf2, tx.string)
             if isinstance(entry.value, SelectMessage):
                 entry.value.variants = (

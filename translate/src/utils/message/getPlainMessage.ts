@@ -60,16 +60,10 @@ function previewMessage(format: string, message: Message): string {
     pattern = catchall.pat;
   }
 
-  switch (format) {
-    case 'fluent':
-      return fluentSerializePattern(pattern, {
+  return format === 'fluent'
+    ? fluentSerializePattern(pattern, {
         escapeSyntax: false,
         onError: () => {},
-      });
-    case 'android':
-    case 'webext':
-      return editablePattern(format, pattern);
-    default:
-      return serializePattern('plain', pattern);
-  }
+      })
+    : editablePattern(pattern);
 }
