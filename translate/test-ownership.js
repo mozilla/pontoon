@@ -7,8 +7,8 @@
  * This file is temporary and will be deleted after the
  * Vitest migration is complete.
  */
-export const ingoreFromVitest = [
+export const ignoreFromVitest = [
   'src/modules/entitieslist/components/EntitiesList.test.js',
   'src/utils/message/getEmptyMessage.test.js',
 ];
-export const includeInJest = ingoreFromVitest.map((x) => `<rootDir>/${x}`);
+export const includeInJest = ignoreFromVitest.map((x) => `<rootDir>/${x}`);

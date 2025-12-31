@@ -29,7 +29,7 @@ describe('<NotificationPanel>', () => {
       <ComponentWithProvider initialMessage={null} />,
     );
 
-    expect(container.firstChild.childNodes.length).toBe(1);
+    expect(container.firstChild.childNodes).toHaveLength(1);
     expect(container.querySelector('span').textContent).toBe('');
   });
 
