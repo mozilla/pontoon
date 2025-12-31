@@ -28,8 +28,8 @@ describe('<BatchActions>', () => {
     }));
 
     vi.mock('../actions', () => ({
-      resetSelection: vi.fn(() => ({ type: 'RESET_SELECTION' })),
-      selectAll: vi.fn(() => ({ type: 'SELECT_ALL' })),
+      resetSelection: vi.fn(() => ({ type: 'whatever' })),
+      selectAll: vi.fn(() => ({ type: 'whatever' })),
     }));
   });
 

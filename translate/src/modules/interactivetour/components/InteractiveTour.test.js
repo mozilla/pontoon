@@ -1,14 +1,17 @@
 import Tour from 'reactour';
-import sinon from 'sinon';
 
 import * as hookModule from '~/hooks/useTranslator';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { InteractiveTour } from './InteractiveTour';
+import { vi } from 'vitest';
 
-beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
-beforeEach(() => hookModule.useTranslator.returns(false));
-afterAll(() => hookModule.useTranslator.restore());
+beforeAll(() => {
+  vi.mock('~/hooks/useTranslator', () => ({
+    useTranslator: vi.fn(() => false),
+  }));
+});
+afterAll(() => hookModule.useTranslator.mockRestore());
 
 describe('<InteractiveTour>', () => {
   it('renders correctly on the tutorial page for unauthenticated user', () => {

@@ -8,7 +8,6 @@
  * Vitest migration is complete.
  */
 export const ingoreFromVitest = [
-  'src/modules/interactivetour/components/InteractiveTour.test.js',
   'src/modules/entitieslist/components/EntitiesList.test.js',
   'src/utils/message/getEmptyMessage.test.js',
 ];
