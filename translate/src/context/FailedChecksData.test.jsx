@@ -1,16 +1,24 @@
 import { mount } from 'enzyme';
 import React, { useContext } from 'react';
-import Sinon from 'sinon';
 
 import * as EntityView from './EntityView';
 import { FailedChecksData, FailedChecksProvider } from './FailedChecksData';
+import { vi } from 'vitest';
 
 describe('FailedChecksProvider', () => {
-  beforeAll(() => Sinon.stub(EntityView, 'useActiveTranslation'));
-  afterAll(() => EntityView.useActiveTranslation.restore());
+  beforeAll(() => {
+    vi.mock('./EntityView', () => ({ useActiveTranslation: vi.fn() }));
+  });
+
+  afterAll(() => {
+    EntityView.useActiveTranslation.mockRestore();
+  });
 
   it('shows failed checks for approved translations with errors or warnings', () => {
-    EntityView.useActiveTranslation.returns({ errors: [], warnings: [] });
+    EntityView.useActiveTranslation.mockReturnValue({
+      errors: [],
+      warnings: [],
+    });
 
     let failedChecks;
     const Spy = () => {
@@ -29,7 +37,7 @@ describe('FailedChecksProvider', () => {
       source: null,
     });
 
-    EntityView.useActiveTranslation.returns({
+    EntityView.useActiveTranslation.mockReturnValue({
       errors: ['Error1'],
       warnings: ['Warning1'],
       approved: true,
@@ -44,7 +52,7 @@ describe('FailedChecksProvider', () => {
   });
 
   it('hides failed checks for pretranslated translations without errors or warnings', () => {
-    EntityView.useActiveTranslation.returns({
+    EntityView.useActiveTranslation.mockReturnValue({
       errors: [],
       warnings: [],
       pretranslated: [],

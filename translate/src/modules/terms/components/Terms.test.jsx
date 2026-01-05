@@ -1,7 +1,5 @@
-import * as Fluent from '@fluent/react';
 import { render } from '@testing-library/react';
 import React from 'react';
-import sinon from 'sinon';
 
 import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
@@ -9,6 +7,7 @@ import { Locale } from '~/context/Locale';
 import { createReduxStore, MockStore } from '~/test/store';
 
 import { Terms } from './Terms';
+import { vi } from 'vitest';
 
 const Wrap = ({ children }) => (
   <MockStore store={createReduxStore({ user: { isAuthenticated: true } })}>
@@ -28,12 +27,18 @@ describe('<Terms>', () => {
   beforeAll(() => {
     getSelectionBackup = window.getSelection;
     window.getSelection = () => null;
-    sinon.stub(Fluent, 'Localized').callsFake(({ children }) => children);
+    vi.mock('@fluent/react', async (importOriginal) => {
+      const actual = await importOriginal();
+      return {
+        ...actual,
+        Localized: ({ children }) => children,
+      };
+    });
   });
 
   afterAll(() => {
     window.getSelection = getSelectionBackup;
-    Fluent.Localized.restore();
+    vi.restoreAllMocks();
   });
 
   it('returns null while terms are loading', () => {

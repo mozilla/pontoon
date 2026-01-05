@@ -1,19 +1,21 @@
 import { mount } from 'enzyme';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import sinon from 'sinon';
 
 import * as api from '~/api/l10n';
 
 import { AppLocalizationProvider } from './AppLocalizationProvider';
+import { vi } from 'vitest';
 
 describe('<AppLocalizationProvider>', () => {
-  beforeAll(() => sinon.stub(api, 'fetchL10n'));
-  afterEach(() => api.fetchL10n.resetHistory());
-  afterAll(() => api.fetchL10n.restore());
+  beforeAll(() => {
+    vi.mock('~/api/l10n', () => ({ fetchL10n: vi.fn() }));
+  });
+  afterEach(() => api.fetchL10n.mockClear());
+  afterAll(() => api.fetchL10n.mockRestore());
 
   it('fetches a locale when the component mounts', async () => {
-    api.fetchL10n.resolves('');
+    api.fetchL10n.mockResolvedValue('');
     mount(
       <AppLocalizationProvider>
         <div />
@@ -21,11 +23,11 @@ describe('<AppLocalizationProvider>', () => {
     );
     await act(() => new Promise((resolve) => setTimeout(resolve)));
 
-    expect(api.fetchL10n.callCount).toEqual(1);
+    expect(api.fetchL10n).toHaveBeenCalledTimes(1);
   });
 
   it('renders messages and children when loaded', async () => {
-    api.fetchL10n.resolves('key = message\n');
+    api.fetchL10n.mockResolvedValue('key = message\n');
     const wrapper = mount(
       <AppLocalizationProvider>
         <div id='test' />

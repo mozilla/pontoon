@@ -7,20 +7,8 @@
  * This file is temporary and will be deleted after the
  * Vitest migration is complete.
  */
-export const ignoreFromJest = [
-  './src/modules/editor',
-  './src/hooks',
-  './src/modules/comments',
-  './src/modules/entities',
-  './src/modules/entitydetails',
-  './src/modules/history',
-  './src/modules/machinery',
-  './src/modules/otherlocales',
-  './src/modules/resourceprogress',
-  './src/modules/teamcomments',
-  './src/modules/unsavedchanges',
-  './src/modules/user',
+export const ignoreFromVitest = [
+  'src/modules/entitieslist/components/EntitiesList.test.js',
+  'src/utils/message/getEmptyMessage.test.js',
 ];
-export const includeInVitest = ignoreFromJest.map((x) => {
-  return `${x}/**/*.test.*`;
-});
+export const includeInJest = ignoreFromVitest.map((x) => `<rootDir>/${x}`);

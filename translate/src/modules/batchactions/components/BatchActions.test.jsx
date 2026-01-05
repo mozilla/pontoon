@@ -1,6 +1,5 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import sinon from 'sinon';
 
 import * as Hooks from '~/hooks';
 import * as Actions from '../actions';
@@ -10,6 +9,7 @@ import { ApproveAll } from './ApproveAll';
 import { BatchActions } from './BatchActions';
 import { RejectAll } from './RejectAll';
 import { ReplaceAll } from './ReplaceAll';
+import { vi } from 'vitest';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -20,24 +20,24 @@ const DEFAULT_BATCH_ACTIONS = {
 
 describe('<BatchActions>', () => {
   beforeAll(() => {
-    sinon.stub(Hooks, 'useAppDispatch').returns(() => {});
-    sinon
-      .stub(Hooks, 'useAppSelector')
-      .callsFake((sel) => sel({ [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS }));
-    sinon.stub(Actions, 'resetSelection').returns({ type: 'whatever' });
-    sinon.stub(Actions, 'selectAll').returns({ type: 'whatever' });
-  });
+    vi.mock('~/hooks', () => ({
+      useAppDispatch: vi.fn(() => vi.fn()),
+      useAppSelector: vi.fn((selector) =>
+        selector({ [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS }),
+      ),
+    }));
 
-  afterEach(() => {
-    Actions.resetSelection.reset();
-    Actions.selectAll.reset();
+    vi.mock('../actions', () => ({
+      resetSelection: vi.fn(() => ({ type: 'whatever' })),
+      selectAll: vi.fn(() => ({ type: 'whatever' })),
+    }));
   });
 
   afterAll(() => {
-    Hooks.useAppDispatch.restore();
-    Hooks.useAppSelector.restore();
-    Actions.resetSelection.restore();
-    Actions.selectAll.restore();
+    Hooks.useAppDispatch.mockRestore();
+    Hooks.useAppSelector.mockRestore();
+    Actions.resetSelection.mockRestore();
+    Actions.selectAll.mockRestore();
   });
 
   it('renders correctly', () => {
@@ -73,13 +73,13 @@ describe('<BatchActions>', () => {
     const wrapper = shallow(<BatchActions />);
 
     wrapper.find('.selected-count').simulate('click');
-    expect(Actions.resetSelection.called).toBeTruthy();
+    expect(Actions.resetSelection).toHaveBeenCalled();
   });
 
   it('selects all entities when the Select All button is clicked', () => {
     const wrapper = shallow(<BatchActions />);
 
     wrapper.find('.select-all').simulate('click');
-    expect(Actions.selectAll.called).toBeTruthy();
+    expect(Actions.selectAll).toHaveBeenCalled();
   });
 });

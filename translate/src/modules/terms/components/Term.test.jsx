@@ -1,4 +1,3 @@
-import * as Fluent from '@fluent/react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -10,6 +9,7 @@ import { Locale } from '~/context/Locale';
 import { createReduxStore, MockStore } from '~/test/store';
 
 import { Term } from './Term';
+import { vi } from 'vitest';
 
 const TERM = {
   text: 'text',
@@ -40,12 +40,18 @@ describe('<Term>', () => {
   beforeAll(() => {
     getSelectionBackup = window.getSelection;
     window.getSelection = () => null;
-    sinon.stub(Fluent, 'Localized').callsFake(({ children }) => children);
+    vi.mock('@fluent/react', async () => {
+      const actual = await vi.importActual('@fluent/react');
+      return {
+        ...actual,
+        Localized: ({ children }) => children,
+      };
+    });
   });
 
   afterAll(() => {
     window.getSelection = getSelectionBackup;
-    Fluent.Localized.restore();
+    vi.restoreAllMocks();
   });
 
   it('renders term correctly', () => {

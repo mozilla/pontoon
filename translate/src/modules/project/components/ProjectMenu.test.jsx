@@ -1,13 +1,21 @@
 import { shallow } from 'enzyme';
-import React from 'react';
-import sinon from 'sinon';
+import React, { useContext } from 'react';
 
 import { ProjectItem } from './ProjectItem';
 
 import { ProjectMenu, ProjectMenuDialog } from './ProjectMenu';
+import { vi } from 'vitest';
 
-beforeAll(() => sinon.stub(React, 'useContext'));
-afterAll(() => React.useContext.restore());
+beforeAll(() => {
+  vi.mock('react', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      useContext: vi.fn(),
+    };
+  });
+});
+afterAll(() => vi.restoreAllMocks());
 
 function createShallowProjectMenuDialog({
   project = {
@@ -15,7 +23,7 @@ function createShallowProjectMenuDialog({
     name: 'Project',
   },
 } = {}) {
-  React.useContext.returns({
+  vi.mocked(useContext).mockReturnValue({
     code: 'locale',
     localizations: [{ project }],
   });
@@ -70,7 +78,7 @@ function createShallowProjectMenu({
     name: 'Project',
   },
 } = {}) {
-  React.useContext.returns({
+  vi.mocked(useContext).mockReturnValue({
     code: 'locale',
     localizations: [{ project }],
   });
