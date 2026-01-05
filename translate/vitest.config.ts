@@ -1,7 +1,6 @@
 import path from 'path';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { ignoreFromVitest } from './test-ownership';
 
 export default defineConfig({
   plugins: [react()],
@@ -14,7 +13,6 @@ export default defineConfig({
     setupFiles: ['./src/setupTests.ts'],
     mockReset: true,
     testTimeout: 10000,
-    exclude: ignoreFromVitest,
     environment: 'jsdom',
     environmentOptions: {
       jsdom: {

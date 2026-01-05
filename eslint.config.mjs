@@ -36,7 +36,6 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.jest,
         gettext: 'readonly',
         ngettext: 'readonly',
         interpolate: 'readonly',
@@ -44,7 +43,6 @@ export default [
         expect: 'readonly',
         test: 'readonly',
         browser: 'readonly',
-        jest: 'readonly',
         Promise: 'readonly',
         Set: 'readonly',
         URLSearchParameters: 'readonly',
