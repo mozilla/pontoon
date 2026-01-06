@@ -25,8 +25,8 @@
     </tr>
     <tr>
         <td rowspan=2>Tests</td>
-        <td>Jest</td>
-        <td>http://jestjs.io/</td>
+        <td>vitest</td>
+        <td>https://vitest.dev/</td>
     </tr>
     <tr>
         <td>Testing Library</td>
@@ -148,10 +148,10 @@ To check for TypeScript errors locally, run:
 
 ## Testing
 
-Tests are run using [Jest] and [Sinon] for mocking.
-We are currently migrating our React tests to the [React Testing Library] from [Enzyme].
+Tests are run using [Vitest].
+We are currently migrating our React tests to the [React Testing Library] from [Enzyme] and replacing [Sinon] mocks with their [Vitest] equivalents.
 
-[jest]: https://facebook.github.io/jest/
+[Vitest]: https://vitest.dev/
 [sinon]: http://sinonjs.org/
 [react testing library]: https://testing-library.com/docs/react-testing-library/intro/
 [enzyme]: http://airbnb.io/enzyme/docs/api/
@@ -178,7 +178,7 @@ it('does something specific', () => {
 });
 ```
 
-We use `jest`'s [`expect`](https://facebook.github.io/jest/docs/en/expect.html) assertion tool.
+We use `vitest`'s [`expect`](https://vitest.dev/api/expect.html) assertion tool.
 
 ## Localization
 
@@ -259,7 +259,7 @@ At this stage, only the translation workspace is localizable. Until the full app
 - [React](https://reactjs.org/docs/getting-started.html)
 - [Redux](https://redux.js.org/)
 - [create-react-app](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md)
-- [Jest](http://jestjs.io/docs/en/getting-started)
+- [Vitest](https://vitest.dev/guide/#getting-started)
 - [sinon](https://sinonjs.org/releases/v6.0.0/)
 - [Linkify](https://tasti.github.io/react-linkify/)
 - [ReactTimeAgo](https://github.com/catamphetamine/react-time-ago)
