@@ -2,7 +2,7 @@ import { mount, shallow } from 'enzyme';
 import { createMemoryHistory } from 'history';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import sinon from 'sinon';
+import { expect, vi } from 'vitest';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
@@ -160,7 +160,7 @@ describe('<SearchBoxBase>', () => {
   });
 
   it('sets status to null when "all" is selected', () => {
-    const push = sinon.spy();
+    const push = vi.fn();
     const wrapper = mount(
       <SearchBoxBase
         dispatch={(a) => (typeof a === 'function' ? a() : {})}
@@ -177,22 +177,21 @@ describe('<SearchBoxBase>', () => {
     });
     wrapper.update();
 
-    expect(push.callCount).toBe(1);
-    expect(push.firstCall.args).toMatchObject([
-      {
-        author: '',
-        extra: '',
-        search: '',
-        status: null,
-        tag: '',
-        time: null,
-        entity: 0,
-      },
-    ]);
+    expect(push).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenNthCalledWith(1, {
+      author: '',
+      extra: '',
+      list: null,
+      search: '',
+      status: null,
+      tag: '',
+      time: null,
+      entity: 0,
+    });
   });
 
   it('sets correct status', () => {
-    const push = sinon.spy();
+    const push = vi.fn();
     const wrapper = mount(
       <SearchBoxBase
         dispatch={(a) => (typeof a === 'function' ? a() : {})}
@@ -224,18 +223,16 @@ describe('<SearchBoxBase>', () => {
     const apply = wrapper.find('FiltersPanel').prop('applyFilters');
     apply();
 
-    expect(
-      push.calledWith({
-        author: 'user@example.com',
-        extra: 'unchanged',
-        search: '',
-        status: 'missing,warnings',
-        tag: 'browser',
-        time: '111111111111-111111111111',
-        entity: 0,
-        list: null,
-      }),
-    ).toBeTruthy();
+    expect(push).toHaveBeenCalledWith({
+      author: 'user@example.com',
+      extra: 'unchanged',
+      search: '',
+      status: 'missing,warnings',
+      tag: 'browser',
+      time: '111111111111-111111111111',
+      entity: 0,
+      list: null,
+    });
   });
 });
 
@@ -244,7 +241,7 @@ describe('<SearchBox>', () => {
     const history = createMemoryHistory({
       initialEntries: ['/kg/firefox/all-resources/'],
     });
-    const spy = sinon.spy();
+    const spy = vi.fn();
     history.listen(spy);
 
     const store = createReduxStore();
@@ -265,20 +262,23 @@ describe('<SearchBox>', () => {
     expect(wrapper.find('input#search').prop('value')).toEqual('test');
 
     // ... but it wasn't propagated to the global redux store yet.
-    expect(spy.callCount).toBe(0);
+    expect(spy).not.toHaveBeenCalled();
 
     // Wait until Enter is pressed.
     wrapper.find('input#search').simulate('keydown', { key: 'Enter' });
 
-    expect(spy.callCount).toBe(2);
-    expect(spy.firstCall.args).toMatchObject([
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenNthCalledWith(
+      1,
       {
+        key: expect.anything(),
         pathname: '/kg/firefox/all-resources/',
         search: '?search=test',
         hash: '',
+        state: undefined,
       },
       'PUSH',
-    ]);
+    );
   });
 
   it('puts focus on the search input on Ctrl + Shift + F', () => {
@@ -290,7 +290,7 @@ describe('<SearchBox>', () => {
       />,
     );
 
-    const focusMock = sinon.spy(
+    const focusMock = vi.spyOn(
       wrapper.find('input#search').instance(),
       'focus',
     );
@@ -302,6 +302,6 @@ describe('<SearchBox>', () => {
       }),
     );
 
-    expect(focusMock.calledOnce).toBeTruthy();
+    expect(focusMock).toHaveBeenCalledOnce();
   });
 });

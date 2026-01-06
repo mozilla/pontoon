@@ -1,10 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { ReplaceAll } from './ReplaceAll';
+import { vi } from 'vitest';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -98,7 +98,7 @@ describe('<ReplaceAll>', () => {
   });
 
   it('performs replace all action when Replace All button is clicked', () => {
-    const mockReplaceAll = sinon.spy();
+    const mockReplaceAll = vi.fn();
 
     const wrapper = mount(
       <WrapReplaceAll
@@ -107,8 +107,8 @@ describe('<ReplaceAll>', () => {
       />,
     );
 
-    expect(mockReplaceAll.called).toBeFalsy();
+    expect(mockReplaceAll).not.toHaveBeenCalled();
     wrapper.find('.replace-all').simulate('click');
-    expect(mockReplaceAll.called).toBeTruthy();
+    expect(mockReplaceAll).toHaveBeenCalled();
   });
 });

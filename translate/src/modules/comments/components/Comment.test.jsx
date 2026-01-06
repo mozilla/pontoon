@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 
 import { Comment } from './Comment';
+import { vi } from 'vitest';
 
 describe('<Comment>', () => {
   const DEFAULT_COMMENT = {
@@ -26,7 +26,7 @@ describe('<Comment>', () => {
   };
 
   it('renders the correct text', () => {
-    const deleteMock = sinon.stub();
+    const deleteMock = vi.fn();
     const wrapper = shallow(
       <Comment
         comment={DEFAULT_COMMENT}
@@ -45,7 +45,7 @@ describe('<Comment>', () => {
   });
 
   it('renders a link for the author', () => {
-    const deleteMock = sinon.stub();
+    const deleteMock = vi.fn();
     const comments = {
       ...DEFAULT_COMMENT,
       ...{ username: 'Leslie_Knope', author: 'LKnope' },

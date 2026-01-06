@@ -1,6 +1,5 @@
 import { mount } from 'enzyme';
 import React, { useContext } from 'react';
-import sinon from 'sinon';
 
 import * as Hooks from '~/hooks';
 import * as Translator from '~/hooks/useTranslator';
@@ -58,7 +57,7 @@ afterAll(() => {
 
 describe('<EditorMainAction>', () => {
   it('renders the Approve button when an identical translation exists', () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     UpdateTranslationStatus.useUpdateTranslationStatus.mockReturnValue(spy);
     ExistingTranslation.useExistingTranslationGetter.mockReturnValue(() => ({
       pk: 1,
@@ -67,18 +66,18 @@ describe('<EditorMainAction>', () => {
     const wrapper = mount(<EditorMainAction />);
 
     wrapper.find('.action-approve').simulate('click');
-    expect(spy.getCalls()).toMatchObject([{ args: [1, 'approve', false] }]);
+    expect(spy.mock.calls).toMatchObject([[1, 'approve', false]]);
   });
 
   it('renders the Suggest button when force suggestion is on', () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     SendTranslation.useSendTranslation.mockReturnValue(spy);
     Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
 
     const wrapper = mount(<EditorMainAction />);
 
     wrapper.find('.action-suggest').simulate('click');
-    expect(spy.getCalls()).toMatchObject([{ args: [] }]);
+    expect(spy.mock.calls).toMatchObject([[]]);
   });
 
   it('renders the Suggest button when user does not have permission', () => {
@@ -90,7 +89,7 @@ describe('<EditorMainAction>', () => {
   });
 
   it('shows a spinner and a disabled Suggesting button when running request', () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     SendTranslation.useSendTranslation.mockReturnValue(spy);
     Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
     vi.mocked(useContext).mockReturnValue({ busy: true }); // EditorData.busy
@@ -100,21 +99,21 @@ describe('<EditorMainAction>', () => {
     expect(wrapper.find('.action-suggest .fa-spin')).toHaveLength(1);
 
     wrapper.find('.action-suggest').simulate('click');
-    expect(spy.getCalls()).toMatchObject([]);
+    expect(spy.mock.calls).toMatchObject([]);
   });
 
   it('renders the Save button when force suggestion is off and translation is not the same', () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     SendTranslation.useSendTranslation.mockReturnValue(spy);
 
     const wrapper = mount(<EditorMainAction />);
 
     wrapper.find('.action-save').simulate('click');
-    expect(spy.getCalls()).toMatchObject([{ args: [] }]);
+    expect(spy.mock.calls).toMatchObject([[]]);
   });
 
   it('shows a spinner and a disabled Saving button when running request', () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     SendTranslation.useSendTranslation.mockReturnValue(spy);
     vi.mocked(useContext).mockReturnValue({ busy: true }); // EditorData.busy
 
@@ -123,6 +122,6 @@ describe('<EditorMainAction>', () => {
     expect(wrapper.find('.action-save .fa-spin')).toHaveLength(1);
 
     wrapper.find('.action-save').simulate('click');
-    expect(spy.getCalls()).toMatchObject([]);
+    expect(spy.mock.calls).toMatchObject([]);
   });
 });

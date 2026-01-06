@@ -1,6 +1,5 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
-import sinon from 'sinon';
 
 import * as hookModule from '~/hooks/useTranslator';
 import { Entity } from './Entity';
@@ -91,7 +90,7 @@ describe('<Entity>', () => {
   });
 
   it('calls the selectEntity function on click on li', () => {
-    const selectEntityFn = sinon.spy();
+    const selectEntityFn = vi.fn();
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
@@ -100,12 +99,12 @@ describe('<Entity>', () => {
       />,
     );
     wrapper.find('li').simulate('click');
-    expect(selectEntityFn.calledOnce).toEqual(true);
+    expect(selectEntityFn).toHaveBeenCalledOnce();
   });
 
   it('calls the toggleForBatchEditing function on click on .status', () => {
     hookModule.useTranslator.mockReturnValue(true);
-    const toggleForBatchEditingFn = sinon.spy();
+    const toggleForBatchEditingFn = vi.fn();
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
@@ -115,12 +114,12 @@ describe('<Entity>', () => {
       />,
     );
     wrapper.find('.status').simulate('click');
-    expect(toggleForBatchEditingFn.calledOnce).toEqual(true);
+    expect(toggleForBatchEditingFn).toHaveBeenCalledOnce();
   });
 
   it('does not call the toggleForBatchEditing function if user not translator', () => {
-    const toggleForBatchEditingFn = sinon.spy();
-    const selectEntityFn = sinon.spy();
+    const toggleForBatchEditingFn = vi.fn();
+    const selectEntityFn = vi.fn();
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
@@ -131,12 +130,12 @@ describe('<Entity>', () => {
       />,
     );
     wrapper.find('.status').simulate('click');
-    expect(toggleForBatchEditingFn.called).toEqual(false);
+    expect(toggleForBatchEditingFn).not.toHaveBeenCalled();
   });
 
   it('does not call the toggleForBatchEditing function if read-only editor', () => {
-    const toggleForBatchEditingFn = sinon.spy();
-    const selectEntityFn = sinon.spy();
+    const toggleForBatchEditingFn = vi.fn();
+    const selectEntityFn = vi.fn();
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
@@ -147,6 +146,6 @@ describe('<Entity>', () => {
       />,
     );
     wrapper.find('.status').simulate('click');
-    expect(toggleForBatchEditingFn.called).toEqual(false);
+    expect(toggleForBatchEditingFn).not.toHaveBeenCalled();
   });
 });

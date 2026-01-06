@@ -1,6 +1,5 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
-import sinon from 'sinon';
 
 import * as api from '~/api/uxaction';
 
@@ -98,7 +97,7 @@ describe('<UserNotificationsMenu>', () => {
   });
 
   it('calls the logUxAction function on click on the icon if menu not visible', () => {
-    const markAllNotificationsAsRead = sinon.spy();
+    const markAllNotificationsAsRead = vi.fn();
     const user = {
       isAuthenticated: true,
       notifications: {
@@ -117,9 +116,9 @@ describe('<UserNotificationsMenu>', () => {
     expect(api.logUXAction).not.toHaveBeenCalled();
 
     wrapper.find('.selector').simulate('click', {});
-    expect(api.logUXAction).toHaveBeenCalledTimes(1);
+    expect(api.logUXAction).toHaveBeenCalledOnce();
 
     wrapper.find('.selector').simulate('click', {});
-    expect(api.logUXAction).toHaveBeenCalledTimes(1);
+    expect(api.logUXAction).toHaveBeenCalledOnce();
   });
 });

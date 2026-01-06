@@ -1,5 +1,4 @@
 import React from 'react';
-import sinon from 'sinon';
 
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
@@ -11,6 +10,7 @@ import {
 } from '~/test/store';
 
 import { FailedChecks } from './FailedChecks';
+import { vi } from 'vitest';
 
 function mountFailedChecks(failedChecks, user) {
   const store = createReduxStore({ project: { slug: 'firefox', tags: [] } });
@@ -19,7 +19,7 @@ function mountFailedChecks(failedChecks, user) {
   const Component = () => (
     <Locale.Provider value={{ code: 'kg' }}>
       <FailedChecksData.Provider value={failedChecks}>
-        <FailedChecks sendTranslation={sinon.mock()} />
+        <FailedChecks sendTranslation={vi.fn()} />
       </FailedChecksData.Provider>
     </Locale.Provider>
   );

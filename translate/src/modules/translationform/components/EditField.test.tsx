@@ -4,7 +4,6 @@ import * as Fluent from '@fluent/react';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import sinon from 'sinon';
 
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
@@ -20,7 +19,7 @@ function MockEditField({
   format,
   fieldRef,
   isAuthenticated = true,
-  setResultFromInput = sinon.spy(),
+  setResultFromInput = vi.fn(),
 }: {
   defaultValue: string;
   singleField?: boolean;
@@ -94,7 +93,7 @@ describe('<EditField>', () => {
   });
 
   it('sets the result on user input', async () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     const { container } = render(
       <MockEditField
         defaultValue='foo'
@@ -104,16 +103,16 @@ describe('<EditField>', () => {
     );
     await userEvent.click(container.querySelector('.cm-line')!);
     await userEvent.keyboard('x{ArrowRight}{ArrowRight}{ArrowRight}  y');
-    expect(spy.getCalls()).toMatchObject([
-      { args: [0, 'xfoo'] },
-      { args: [0, 'xfoo '] },
-      { args: [0, 'xfoo  '] },
-      { args: [0, 'xfoo  y'] },
+    expect(spy.mock.calls).toMatchObject([
+      [0, 'xfoo'],
+      [0, 'xfoo '],
+      [0, 'xfoo  '],
+      [0, 'xfoo  y'],
     ]);
   });
 
   it('ignores user input when readonly', async () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     const { container } = render(
       <MockEditField
         defaultValue='foo'
@@ -124,11 +123,11 @@ describe('<EditField>', () => {
     );
     await userEvent.click(container.querySelector('.cm-line')!);
     await userEvent.keyboard('x');
-    expect(spy.getCalls()).toMatchObject([]);
+    expect(spy.mock.calls).toMatchObject([]);
   });
 
   it('sets the result via ref', async () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     const ref = React.createRef<EditFieldHandle>();
     render(
       <MockEditField
@@ -142,7 +141,7 @@ describe('<EditField>', () => {
       ref.current!.focus();
       ref.current!.setSelection('bar');
     });
-    expect(spy.getCalls()).toMatchObject([{ args: [0, 'foobar'] }]);
+    expect(spy.mock.calls).toMatchObject([[0, 'foobar']]);
   });
 
   it('does not highlight `% d` as code (#2988)', () => {

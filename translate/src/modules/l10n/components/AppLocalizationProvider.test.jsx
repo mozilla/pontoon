@@ -23,7 +23,7 @@ describe('<AppLocalizationProvider>', () => {
     );
     await act(() => new Promise((resolve) => setTimeout(resolve)));
 
-    expect(api.fetchL10n).toHaveBeenCalledTimes(1);
+    expect(api.fetchL10n).toHaveBeenCalledOnce();
   });
 
   it('renders messages and children when loaded', async () => {

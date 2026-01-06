@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
+import { expect } from 'vitest';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
@@ -36,7 +36,7 @@ describe('<FiltersPanelDialog>', () => {
   for (const { slug } of FILTERS_STATUS) {
     describe(`status: ${slug}`, () => {
       it('applies a single filter on click on a filter title', () => {
-        const onApplyFilter = sinon.spy();
+        const onApplyFilter = vi.fn();
         const store = createReduxStore();
         const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
           filters: { authors: [], extras: [], statuses: [slug], tags: [] },
@@ -48,11 +48,11 @@ describe('<FiltersPanelDialog>', () => {
 
         wrapper.find(`.menu .${slug}`).simulate('click');
 
-        expect(onApplyFilter.calledWith(slug)).toBeTruthy();
+        expect(onApplyFilter).toHaveBeenCalledWith(slug, expect.anything());
       });
 
       it('toggles a filter on click on a filter status icon', () => {
-        const onToggleFilter = sinon.spy();
+        const onToggleFilter = vi.fn();
         const store = createReduxStore();
         const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
           filters: { authors: [], extras: [], statuses: [slug], tags: [] },
@@ -65,7 +65,7 @@ describe('<FiltersPanelDialog>', () => {
 
         wrapper.find(`.menu .${slug} .status`).simulate('click');
 
-        expect(onToggleFilter.calledWith(slug)).toBeTruthy();
+        expect(onToggleFilter).toHaveBeenCalledWith(slug, expect.anything());
       });
     });
   }
@@ -73,7 +73,7 @@ describe('<FiltersPanelDialog>', () => {
   for (const { slug } of FILTERS_EXTRA) {
     describe(`extra: ${slug}`, () => {
       it('applies a single filter on click on a filter title', () => {
-        const onApplyFilter = sinon.spy();
+        const onApplyFilter = vi.fn();
         const store = createReduxStore();
         const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
           filters: { authors: [], extras: [slug], statuses: [], tags: [] },
@@ -85,11 +85,11 @@ describe('<FiltersPanelDialog>', () => {
 
         wrapper.find(`.menu .${slug}`).simulate('click');
 
-        expect(onApplyFilter.calledWith(slug)).toBeTruthy();
+        expect(onApplyFilter).toHaveBeenCalledWith(slug, expect.anything());
       });
 
       it('toggles a filter on click on a filter status icon', () => {
-        const onToggleFilter = sinon.spy();
+        const onToggleFilter = vi.fn();
         const store = createReduxStore();
         const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
           filters: { authors: [], extras: [slug], statuses: [], tags: [] },
@@ -102,7 +102,7 @@ describe('<FiltersPanelDialog>', () => {
 
         wrapper.find(`.menu .${slug} .status`).simulate('click');
 
-        expect(onToggleFilter.calledWith(slug)).toBeTruthy();
+        expect(onToggleFilter).toHaveBeenCalledWith(slug, expect.anything());
       });
     });
   }
@@ -134,7 +134,7 @@ describe('<FiltersPanelDialog>', () => {
   });
 
   it('resets selected filters on click on the Clear button', () => {
-    const onResetFilters = sinon.spy();
+    const onResetFilters = vi.fn();
     const store = createReduxStore();
     const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
       filters: { authors: [], extras: [], statuses: [], tags: [] },
@@ -147,11 +147,11 @@ describe('<FiltersPanelDialog>', () => {
 
     wrapper.find('FilterToolbar .clear-selection').simulate('click');
 
-    expect(onResetFilters.called).toBeTruthy();
+    expect(onResetFilters).toHaveBeenCalled();
   });
 
   it('applies selected filters on click on the Apply button', () => {
-    const onApplyFilters = sinon.spy();
+    const onApplyFilters = vi.fn();
     const store = createReduxStore();
     const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
       filters: { authors: [], extras: [], statuses: [], tags: [] },
@@ -164,7 +164,7 @@ describe('<FiltersPanelDialog>', () => {
 
     wrapper.find('FilterToolbar .apply-selected').simulate('click');
 
-    expect(onApplyFilters.called).toBeTruthy();
+    expect(onApplyFilters).toHaveBeenCalled();
   });
 });
 
@@ -177,8 +177,8 @@ describe('<FiltersPanel>', () => {
         tagsData={[]}
         timeRangeData={[]}
         parameters={{}}
-        getAuthorsAndTimeRangeData={sinon.spy()}
-        updateFiltersFromURL={sinon.spy()}
+        getAuthorsAndTimeRangeData={vi.fn()}
+        updateFiltersFromURL={vi.fn()}
       />,
     );
 
@@ -196,7 +196,7 @@ describe('<FiltersPanel>', () => {
           tagsData={[]}
           timeRangeData={[]}
           parameters={{}}
-          getAuthorsAndTimeRangeData={sinon.spy()}
+          getAuthorsAndTimeRangeData={vi.fn()}
         />,
       );
 
@@ -211,7 +211,7 @@ describe('<FiltersPanel>', () => {
           tagsData={[]}
           timeRangeData={[]}
           parameters={{}}
-          getAuthorsAndTimeRangeData={sinon.spy()}
+          getAuthorsAndTimeRangeData={vi.fn()}
         />,
       );
 

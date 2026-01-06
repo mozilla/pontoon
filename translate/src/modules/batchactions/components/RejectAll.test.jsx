@@ -1,10 +1,10 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import sinon from 'sinon';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { RejectAll } from './RejectAll';
+import { vi } from 'vitest';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -98,7 +98,7 @@ describe('<RejectAll>', () => {
   });
 
   it('raise confirmation warning when Reject All button is clicked', () => {
-    const mockRejectAll = sinon.spy();
+    const mockRejectAll = vi.fn();
 
     const wrapper = mount(
       <WrapRejectAll
@@ -107,16 +107,16 @@ describe('<RejectAll>', () => {
       />,
     );
 
-    expect(mockRejectAll.called).toBeFalsy();
+    expect(mockRejectAll).not.toHaveBeenCalled();
     wrapper.find('.reject-all').simulate('click');
-    expect(mockRejectAll.called).toBeFalsy();
+    expect(mockRejectAll).not.toHaveBeenCalled();
     expect(wrapper.find('#batchactions-RejectAll--confirmation')).toHaveLength(
       1,
     );
   });
 
   it('performs reject all action when Reject All button is confirmed', () => {
-    const mockRejectAll = sinon.spy();
+    const mockRejectAll = vi.fn();
 
     const wrapper = mount(
       <WrapRejectAll
@@ -125,9 +125,9 @@ describe('<RejectAll>', () => {
       />,
     );
 
-    expect(mockRejectAll.called).toBeFalsy();
+    expect(mockRejectAll).not.toHaveBeenCalled();
     wrapper.find('.reject-all').simulate('click');
     wrapper.find('.reject-all').simulate('click');
-    expect(mockRejectAll.called).toBeTruthy();
+    expect(mockRejectAll).toHaveBeenCalled();
   });
 });
