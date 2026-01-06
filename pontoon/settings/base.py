@@ -1094,6 +1094,7 @@ CELERY_ACCEPT_CONTENT = ["pickle"]
 
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = "pontoon.base.adapter.PontoonSocialAdapter"
+SOCIALACCOUNT_ONLY = True
 
 # Supported values: 'django', 'fxa', 'github', 'gitlab', 'google'
 AUTHENTICATION_METHOD = os.environ.get("AUTHENTICATION_METHOD", "django")

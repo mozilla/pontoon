@@ -26,6 +26,7 @@ if settings.AUTHENTICATION_METHOD == "django":
     ]
 else:
     urlpatterns: List[Union[URLPattern, URLResolver]] = [
+        path("signup/", account_views.signup, name="account_signup"),
         path("login/", account_views.login, name="account_login"),
         path("logout/", account_views.logout, name="account_logout"),
         path("inactive/", account_views.account_inactive, name="account_inactive"),
