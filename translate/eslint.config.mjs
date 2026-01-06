@@ -3,6 +3,7 @@ import globals from 'globals';
 import tsParser from '@typescript-eslint/parser';
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
+import vitest from '@vitest/eslint-plugin';
 
 export default [
   eslint.configs.recommended,
@@ -15,6 +16,7 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
+        ...vitest.environments.env.globals,
       },
 
       parser: tsParser,
