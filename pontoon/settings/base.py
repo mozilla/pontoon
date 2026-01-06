@@ -371,7 +371,6 @@ TEMPLATES = [
                     account|
                     socialaccount|
                     allauth|
-                    mfa|
                     rest_framework|
                     django_filters|
                     drf_spectacular|
