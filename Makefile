@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-translate build-server server-env setup run clean shell ci test test-translate test-server jest pytest format lint types eslint prettier check-prettier ruff check-ruff dropdb dumpdb loaddb sync-projects requirements
+.PHONY: build build-translate build-server server-env setup run clean shell ci test test-translate test-server vitest pytest format lint types eslint prettier check-prettier ruff check-ruff dropdb dumpdb loaddb sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -25,7 +25,7 @@ help:
 	@echo "  shell-root       Opens a Bash shell as root in the server docker container"
 	@echo "  ci               Test and lint all code"
 	@echo "  test             Runs all test suites"
-	@echo "  test-translate   Runs the translate frontend test suite (Jest)"
+	@echo "  test-translate   Runs the translate frontend test suite (Vitest)"
 	@echo "  test-server      Runs the server test suite (Pytest)"
 	@echo "  format           Runs all formatters"
 	@echo "  lint             Runs all linters"
@@ -102,8 +102,8 @@ ci: test lint
 
 test: test-server test-translate
 
-test-translate: jest
-jest:
+test-translate: vitest
+vitest:
 	npm test -w translate
 
 test-server: pytest
