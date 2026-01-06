@@ -9,6 +9,7 @@ export default defineConfig({
     coverage: {
       reportOnFailure: true,
       include: ['src/**/*.{js,jsx,ts,tsx}'],
+      reporter: ['html', 'lcov'],
     },
     setupFiles: ['./src/setupTests.ts'],
     mockReset: true,
