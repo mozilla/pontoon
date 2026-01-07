@@ -149,10 +149,9 @@ To check for TypeScript errors locally, run:
 ## Testing
 
 Tests are run using [Vitest].
-We are currently migrating our React tests to the [React Testing Library] from [Enzyme] and replacing [Sinon] mocks with their [Vitest] equivalents.
+We are currently migrating our React tests to the [React Testing Library] from [Enzyme].
 
 [Vitest]: https://vitest.dev/
-[sinon]: http://sinonjs.org/
 [react testing library]: https://testing-library.com/docs/react-testing-library/intro/
 [enzyme]: http://airbnb.io/enzyme/docs/api/
 
