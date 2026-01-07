@@ -5,6 +5,7 @@ import {
 } from '@fluent/react';
 import { shallow } from 'enzyme';
 import React from 'react';
+import { vi } from 'vitest';
 
 /*
  * Taken from https://github.com/mozilla/addons-frontend/blob/58d1315409f1ad6dc9b979440794df44c1128455/tests/unit/helpers.js#L276
@@ -83,9 +84,9 @@ export function findLocalizedById(wrapper, id) {
  * Source: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
  */
 export function mockMatchMedia() {
-  return Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: vi.fn().mockImplementation((query) => ({
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn((query) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -95,7 +96,7 @@ export function mockMatchMedia() {
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
     })),
-  });
+  );
 }
 
 /**
