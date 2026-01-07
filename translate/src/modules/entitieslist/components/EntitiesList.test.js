@@ -1,151 +1,158 @@
-// import { createMemoryHistory } from 'history';
+import { createMemoryHistory } from 'history';
 // import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
-// import sinon from 'sinon';
+import sinon from 'sinon';
 
-// import * as BatchActions from '~/modules/batchactions/actions';
-// import * as EntitiesActions from '~/modules/entities/actions';
+import * as BatchActions from '~/modules/batchactions/actions';
+import * as EntitiesActions from '~/modules/entities/actions';
 
-// import {
-//   createDefaultUser,
-//   createReduxStore,
-//   mountComponentWithStore,
-// } from '~/test/store';
+import {
+  createDefaultUser,
+  createReduxStore,
+  mountComponentWithStore,
+} from '~/test/store';
 
-// import { EntitiesList } from './EntitiesList';
+import { EntitiesList } from './EntitiesList';
+import { vi } from 'vitest';
 
-// // Entities shared between tests
-// const ENTITIES = [
-//   { pk: 1, translation: { string: '', errors: [], warnings: [] } },
-//   { pk: 2, translation: { string: '', errors: [], warnings: [] } },
-// ];
+// Entities shared between tests
+const ENTITIES = [
+  { pk: 1, translation: { string: '', errors: [], warnings: [] } },
+  { pk: 2, translation: { string: '', errors: [], warnings: [] } },
+];
 
 describe('<EntitiesList>', () => {
-  // beforeAll(() => {
-  //   sinon.stub(BatchActions, 'resetSelection').returns({ type: 'whatever' });
-  //   sinon.stub(BatchActions, 'toggleSelection').returns({ type: 'whatever' });
-  //   sinon.stub(EntitiesActions, 'getEntities').returns({ type: 'whatever' });
-  // });
-
-  // beforeEach(() => {
-  //   // Make sure tests do not pollute one another.
-  //   BatchActions.resetSelection.resetHistory();
-  //   BatchActions.toggleSelection.resetHistory();
-  //   EntitiesActions.getEntities.resetHistory();
-  //   mockAllIsIntersecting(true);
-  // });
-
-  // afterAll(() => {
-  //   BatchActions.resetSelection.restore();
-  //   BatchActions.toggleSelection.restore();
-  //   EntitiesActions.getEntities.restore();
-  // });
-
-  it('shows a loading animation when there are more entities to load', () => {
-    // const store = createReduxStore();
-    // store.dispatch({
-    //   type: EntitiesActions.RECEIVE_ENTITIES,
-    //   entities: ENTITIES,
-    //   hasMore: true,
-    // });
-    // const wrapper = mountComponentWithStore(EntitiesList, store);
-    // expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
+  beforeAll(() => {
+    vi.spyOn(BatchActions, 'resetSelection').mockReturnValue({
+      type: 'whatever',
+    });
+    vi.spyOn(BatchActions, 'toggleSelection').mockReturnValue({
+      type: 'whatever',
+    });
+    vi.spyOn(EntitiesActions, 'getEntities').mockReturnValue({
+      type: 'whatever',
+    });
   });
 
-  // it("doesn't display a loading animation when there aren't entities to load", () => {
-  //   const store = createReduxStore();
-  //   store.dispatch({
-  //     type: EntitiesActions.RECEIVE_ENTITIES,
-  //     entities: ENTITIES,
-  //     hasMore: false,
-  //   });
-  //   const wrapper = mountComponentWithStore(EntitiesList, store);
+  beforeEach(() => {
+    // Make sure tests do not pollute one another.
+    BatchActions.resetSelection.mockClear();
+    BatchActions.toggleSelection.mockClear();
+    EntitiesActions.getEntities.mockClear();
+    // mockAllIsIntersecting(true);
+  });
 
-  //   expect(wrapper.find('SkeletonLoader')).toHaveLength(0);
-  // });
+  afterAll(() => {
+    vi.restoreAllMocks();
+  });
+  // FIXME: https://github.com/mozilla/pontoon/issues/3883
+  it.skip('shows a loading animation when there are more entities to load', () => {
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: true,
+    });
+    const wrapper = mountComponentWithStore(EntitiesList, store);
+    expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
+  });
 
-  // it('shows a loading animation when entities are being fetched from the server', () => {
-  //   const store = createReduxStore();
-  //   store.dispatch({ type: EntitiesActions.REQUEST_ENTITIES });
-  //   const wrapper = mountComponentWithStore(EntitiesList, store);
+  it("doesn't display a loading animation when there aren't entities to load", () => {
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
+    const wrapper = mountComponentWithStore(EntitiesList, store);
 
-  //   expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
-  // });
+    expect(wrapper.find('SkeletonLoader')).toHaveLength(0);
+  });
 
-  // it('shows the correct number of entities', () => {
-  //   const history = createMemoryHistory({
-  //     initialEntries: ['/kg/firefox/all-resources/?string=1'],
-  //   });
+  // FIXME: https://github.com/mozilla/pontoon/issues/3883
+  it.skip('shows a loading animation when entities are being fetched from the server', () => {
+    const store = createReduxStore();
+    store.dispatch({ type: EntitiesActions.REQUEST_ENTITIES });
+    const wrapper = mountComponentWithStore(EntitiesList, store);
 
-  //   const store = createReduxStore();
-  //   store.dispatch({
-  //     type: EntitiesActions.RECEIVE_ENTITIES,
-  //     entities: ENTITIES,
-  //     hasMore: false,
-  //   });
-  //   const wrapper = mountComponentWithStore(EntitiesList, store, {}, history);
+    expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
+  });
 
-  //   expect(wrapper.find('Entity')).toHaveLength(2);
-  // });
+  it('shows the correct number of entities', () => {
+    const history = createMemoryHistory({
+      initialEntries: ['/kg/firefox/all-resources/?string=1'],
+    });
 
-  // it('when requesting new entities, load page 2', () => {
-  //   jest.useFakeTimers();
-  //   mockAllIsIntersecting(false);
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
+    const wrapper = mountComponentWithStore(EntitiesList, store, {}, history);
 
-  //   const store = createReduxStore();
-  //   store.dispatch({
-  //     type: EntitiesActions.RECEIVE_ENTITIES,
-  //     entities: ENTITIES,
-  //     hasMore: true,
-  //   });
-  //   mountComponentWithStore(EntitiesList, store);
+    expect(wrapper.find('Entity')).toHaveLength(2);
+  });
 
-  //   mockAllIsIntersecting(true);
-  //   jest.advanceTimersByTime(100); // default value for react-infinite-scroll-hook delayInMs
+  // FIXME: https://github.com/mozilla/pontoon/issues/3883
+  it.skip('when requesting new entities, load page 2', () => {
+    vi.useFakeTimers();
+    // mockAllIsIntersecting(false);
 
-  //   expect(EntitiesActions.getEntities.args[0][1]).toEqual(2);
-  // });
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: true,
+    });
+    mountComponentWithStore(EntitiesList, store);
 
-  // it('redirects to the first entity when none is selected', () => {
-  //   const history = createMemoryHistory({
-  //     initialEntries: ['/kg/firefox/all-resources/'],
-  //   });
-  //   const spy = sinon.spy();
-  //   history.listen(spy);
+    // mockAllIsIntersecting(true);
+    vi.advanceTimersByTime(100); // default value for react-infinite-scroll-hook delayInMs
 
-  //   const store = createReduxStore();
-  //   store.dispatch({
-  //     type: EntitiesActions.RECEIVE_ENTITIES,
-  //     entities: ENTITIES,
-  //     hasMore: false,
-  //   });
+    expect(EntitiesActions.getEntities.args[0][1]).toEqual(2);
+  });
 
-  //   mountComponentWithStore(EntitiesList, store, {}, history);
+  it('redirects to the first entity when none is selected', () => {
+    const history = createMemoryHistory({
+      initialEntries: ['/kg/firefox/all-resources/'],
+    });
+    const spy = sinon.spy();
+    history.listen(spy);
 
-  //   expect(spy.calledOnce).toBeTruthy();
-  //   const [location, action] = spy.firstCall.args;
-  //   expect(action).toBe('REPLACE');
-  //   expect(location).toMatchObject({
-  //     pathname: '/kg/firefox/all-resources/',
-  //     search: '?string=1',
-  //     hash: '',
-  //   });
-  // });
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
 
-  // it('toggles entity for batch editing', () => {
-  //   const store = createReduxStore();
-  //   store.dispatch({
-  //     type: EntitiesActions.RECEIVE_ENTITIES,
-  //     entities: ENTITIES,
-  //     hasMore: false,
-  //   });
+    mountComponentWithStore(EntitiesList, store, {}, history);
 
-  //   // HACK to get isTranslator === true in Entity
-  //   createDefaultUser(store, { can_translate_locales: [''] });
+    expect(spy.calledOnce).toBeTruthy();
+    const [location, action] = spy.firstCall.args;
+    expect(action).toBe('REPLACE');
+    expect(location).toMatchObject({
+      pathname: '/kg/firefox/all-resources/',
+      search: '?string=1',
+      hash: '',
+    });
+  });
 
-  //   const wrapper = mountComponentWithStore(EntitiesList, store);
+  it('toggles entity for batch editing', () => {
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
 
-  //   wrapper.find('.entity .status').first().simulate('click');
+    // HACK to get isTranslator === true in Entity
+    createDefaultUser(store, { can_translate_locales: [''] });
 
-  //   expect(BatchActions.toggleSelection.calledOnce).toBeTruthy();
-  // });
+    const wrapper = mountComponentWithStore(EntitiesList, store);
+
+    wrapper.find('.entity .status').first().simulate('click');
+
+    expect(BatchActions.toggleSelection).toHaveBeenCalledTimes(1);
+  });
 });
