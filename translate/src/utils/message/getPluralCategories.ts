@@ -1,3 +1,5 @@
+import { CLDR_PLURALS } from '../constants';
+
 export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
   // These special cases should be occasionally pruned on CLDR updates
   switch (new Intl.Locale(code).language) {
@@ -38,6 +40,12 @@ export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
     return ['one', 'other'];
   }
 
+  // TODO: Sort won't be needed once https://github.com/tc39/ecma402/pull/918
+  // is adopted in all environments (e.g. Node.js 24 & later).
   const pr = new Intl.PluralRules(code);
-  return pr.resolvedOptions().pluralCategories;
+  const pc = pr.resolvedOptions().pluralCategories;
+  pc.sort((a, b) =>
+    CLDR_PLURALS.indexOf(a) < CLDR_PLURALS.indexOf(b) ? -1 : 1,
+  );
+  return pc;
 }
