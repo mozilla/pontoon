@@ -875,15 +875,28 @@ pontoon_file_handler = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler", "stream": sys.stdout}},
     "formatters": {
         "verbose": {"format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s"},
     },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
+    },
     "loggers": {
-        "django": {"handlers": ["console"]},
+        "django": {
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": True,
+        },
         "pontoon": {
-            "handlers": ["console"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
+            "propagate": True,
         },
     },
 }
