@@ -342,4 +342,46 @@ $(function () {
       },
     });
   });
+
+  const deleteUserModal = $('#delete-user-modal')[0];
+
+  $(document).on('click', '.delete-user-btn', function (e) {
+    e.preventDefault();
+
+    deleteUserModal.showModal();
+  });
+
+  $(document).on('click', '#delete-user-confirm', function (e) {
+    e.preventDefault();
+
+    deleteUserModal.close();
+
+    const csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+    $.ajax({
+      url: `/user/delete/`,
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: csrfmiddlewaretoken,
+      },
+      success() {
+        window.location.href = '/';
+      },
+      error() {
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
+      },
+    });
+  });
+
+  $(document).on('click', '#delete-user-cancel', function (e) {
+    e.preventDefault();
+
+    deleteUserModal.close();
+  });
+
+  deleteUserModal.on('blur', function (e) {
+    e.preventDefault();
+
+    deleteUserModal.close();
+  });
 });

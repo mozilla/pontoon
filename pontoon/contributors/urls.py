@@ -84,6 +84,11 @@ urlpatterns = [
         name="pontoon.contributors.edit_locale_selector",
     ),
     path(
+        "user/delete/",
+        views.delete_user,
+        name="pontoon.contributors.delete_user",
+    ),
+    path(
         "save-custom-homepage/",
         views.save_custom_homepage,
         name="pontoon.contributors.save_custom_homepage",

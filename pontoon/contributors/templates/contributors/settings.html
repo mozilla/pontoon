@@ -322,6 +322,21 @@
             </div>
         </section>
 
+        <section>
+            <h3>Account Management</h3>
+            <div id="account-settings" class="clearfix">
+                <div>
+                    <span class="label">Delete this account</span>
+                    <button class="delete-user-btn ">Delete this account</button>
+                </div>
+                <dialog id="delete-user-modal">
+                    <p>Are you sure? This cannot be undone</p>
+                    <button id="delete-user-cancel">Cancel</button>
+                    <button class="delete-user-btn" id="delete-user-confirm"">Yes, delete me</button>
+                </dialog>
+            </div>
+        </section>
+
         <section id="pat-settings">
             <h3>Personal Access Tokens</h3>
             <ul class="pat-list">
