@@ -1106,7 +1106,8 @@ def account_username(user):
 
 # django-allauth settings
 ACCOUNT_AUTHENTICATED_METHOD = "email"
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USER_DISPLAY = account_username
 
