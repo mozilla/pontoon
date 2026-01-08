@@ -890,6 +890,7 @@ LOGGING = {
         "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
     },
     "loggers": {
+        "celery": {"level": "INFO", "propagate": True},
         "django": {
             "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),
             "propagate": True,
