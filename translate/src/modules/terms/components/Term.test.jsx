@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import sinon from 'sinon';
 
 import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
@@ -56,7 +55,7 @@ describe('<Term>', () => {
 
   it('renders term correctly', () => {
     const { container } = render(
-      <MockTerm isAuthenticated setEditorSelection={sinon.spy()} />,
+      <MockTerm isAuthenticated setEditorSelection={vi.fn()} />,
     );
 
     expect(container.querySelectorAll('li')).toHaveLength(1);
@@ -76,16 +75,16 @@ describe('<Term>', () => {
   });
 
   it('calls the addTextToEditorTranslation function on click', async () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     const { container } = render(
       <MockTerm isAuthenticated setEditorSelection={spy} />,
     );
     await userEvent.click(container.querySelector('li'));
-    expect(spy.called).toEqual(true);
+    expect(spy).toHaveBeenCalled();
   });
 
   it('does not call the addTextToEditorTranslation function if term not translated', async () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     const { container } = render(
       <MockTerm
         isAuthenticated
@@ -94,15 +93,15 @@ describe('<Term>', () => {
       />,
     );
     await userEvent.click(container.querySelector('li'));
-    expect(spy.called).toEqual(false);
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('does not call the addTextToEditorTranslation function if read-only editor', async () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     const { container } = render(
       <MockTerm isAuthenticated={false} setEditorSelection={spy} />,
     );
     await userEvent.click(container.querySelector('li'));
-    expect(spy.called).toEqual(false);
+    expect(spy).not.toHaveBeenCalled();
   });
 });

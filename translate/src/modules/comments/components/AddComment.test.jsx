@@ -1,10 +1,10 @@
 import React from 'react';
-import sinon from 'sinon';
 
 import { MentionUsers } from '~/context/MentionUsers';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { AddComment } from './AddComment';
+import { vi } from 'vitest';
 
 const USER = {
   user: 'RSwanson',
@@ -15,10 +15,10 @@ const USER = {
 describe('<AddComment>', () => {
   it('calls submitComment function', () => {
     const store = createReduxStore();
-    const submitCommentFn = sinon.spy();
+    const submitCommentFn = vi.fn();
     const Wrapper = () => (
       <MentionUsers.Provider
-        value={{ initMentions: sinon.spy(), mentionUsers: [] }}
+        value={{ initMentions: vi.fn(), mentionUsers: [] }}
       >
         <AddComment onAddComment={submitCommentFn} user={USER} />
       </MentionUsers.Provider>
@@ -26,7 +26,7 @@ describe('<AddComment>', () => {
     const wrapper = mountComponentWithStore(Wrapper, store);
 
     const event = {
-      preventDefault: sinon.spy(),
+      preventDefault: vi.fn(),
     };
 
     wrapper.find('button').simulate('click', event);
@@ -34,7 +34,7 @@ describe('<AddComment>', () => {
   });
 
   it('fetches mentionable users on render', () => {
-    const initMentions = sinon.spy();
+    const initMentions = vi.fn();
     const store = createReduxStore();
     const Wrapper = () => (
       <MentionUsers.Provider value={{ initMentions, mentionUsers: [] }}>
@@ -43,6 +43,6 @@ describe('<AddComment>', () => {
     );
     mountComponentWithStore(Wrapper, store);
 
-    expect(initMentions.calledOnce).toBeTruthy;
+    expect(initMentions).toHaveBeenCalledOnce();
   });
 });

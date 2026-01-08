@@ -63,7 +63,6 @@
     "@types/react-tabs": "^2.3.4",
     "@types/reactour": "^1.18.1",
     "@types/shortid": "^0.0.29",
-    "@types/sinon": "^10.0.1",
     "@types/styled-components": "^5.1.9",
     "@typescript-eslint/eslint-plugin": "^8.7.0",
     "@typescript-eslint/parser": "^8.7.0",
@@ -82,7 +81,6 @@
     "react-intersection-observer": "9.11.0",
     "rollup": "^3.29.5",
     "rollup-plugin-css-only": "^4.3.0",
-    "sinon": "^13.0.2",
     "typescript": "^5.8.3",
     "utility-types": "^3.10.0",
     "vitest": "^4.0.9"

@@ -259,7 +259,6 @@ At this stage, only the translation workspace is localizable. Until the full app
 - [Redux](https://redux.js.org/)
 - [create-react-app](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md)
 - [Vitest](https://vitest.dev/guide/#getting-started)
-- [sinon](https://sinonjs.org/releases/v6.0.0/)
 - [Linkify](https://tasti.github.io/react-linkify/)
 - [ReactTimeAgo](https://github.com/catamphetamine/react-time-ago)
 - [react-tabs](https://github.com/reactjs/react-tabs)

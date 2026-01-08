@@ -1,10 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { ApproveAll } from './ApproveAll';
+import { vi } from 'vitest';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -98,7 +98,7 @@ describe('<ApproveAll>', () => {
   });
 
   it('performs approve all action when Approve All button is clicked', () => {
-    const mockApproveAll = sinon.spy();
+    const mockApproveAll = vi.fn();
 
     const wrapper = mount(
       <WrapApproveAll
@@ -107,8 +107,8 @@ describe('<ApproveAll>', () => {
       />,
     );
 
-    expect(mockApproveAll.called).toBeFalsy();
+    expect(mockApproveAll).not.toHaveBeenCalled();
     wrapper.find('.approve-all').simulate('click');
-    expect(mockApproveAll.called).toBeTruthy();
+    expect(mockApproveAll).toHaveBeenCalled();
   });
 });

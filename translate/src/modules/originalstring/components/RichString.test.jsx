@@ -1,7 +1,6 @@
 import ftl from '@fluent/dedent';
 import React from 'react';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 import { editMessageEntry, parseEntry } from '~/utils/message';
 import { RichString } from './RichString';
@@ -88,12 +87,12 @@ describe('<RichString>', () => {
 
   it('calls the onClick function on click on .original', () => {
     const message = editMessageEntry(parseEntry('fluent', ORIGINAL));
-    const spy = sinon.spy();
+    const spy = vi.fn();
     const wrapper = mount(
       <RichString message={message} onClick={spy} terms={{}} />,
     );
 
     wrapper.find('.original').simulate('click');
-    expect(spy.called).toEqual(true);
+    expect(spy).toHaveBeenCalled();
   });
 });

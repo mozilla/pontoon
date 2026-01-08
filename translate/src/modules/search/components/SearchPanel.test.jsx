@@ -1,6 +1,5 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
@@ -33,25 +32,25 @@ describe('<SearchPanelDialog>', () => {
   for (const { slug } of SEARCH_OPTIONS) {
     describe(`option: ${slug}`, () => {
       it('toggles a search option on click on the option icon', () => {
-        const onToggleOption = sinon.spy();
+        const onToggleOption = vi.fn();
         const store = createReduxStore();
 
         const wrapper = mountComponentWithStore(SearchPanelDialog, store, {
           selectedSearchOptions: selectedSearchOptions,
-          onApplyOptions: sinon.spy(),
+          onApplyOptions: vi.fn(),
           onToggleOption,
-          onDiscard: sinon.spy(),
+          onDiscard: vi.fn(),
         });
 
         wrapper.find(`.menu .${slug}`).simulate('click');
 
-        expect(onToggleOption.calledWith(slug)).toBeTruthy();
+        expect(onToggleOption).toHaveBeenCalledWith(slug);
       });
     });
   }
 
   it('applies selected options on click on the Apply button', () => {
-    const onApplyOptions = sinon.spy();
+    const onApplyOptions = vi.fn();
     const store = createReduxStore();
     const wrapper = mountComponentWithStore(SearchPanelDialog, store, {
       selectedSearchOptions: selectedSearchOptions,
@@ -60,7 +59,7 @@ describe('<SearchPanelDialog>', () => {
 
     wrapper.find('.search-button').simulate('click');
 
-    expect(onApplyOptions.called).toBeTruthy();
+    expect(onApplyOptions).toHaveBeenCalled();
   });
 });
 

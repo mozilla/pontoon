@@ -1,6 +1,5 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 
 import { EditorSettings, EditorSettingsDialog } from './EditorSettings';
 import { vi } from 'vitest';
@@ -33,7 +32,7 @@ function createEditorSettingsDialogForNonTranslator() {
     useTranslator: () => false,
   }));
 
-  const toggleSettingMock = sinon.stub();
+  const toggleSettingMock = vi.fn();
   const wrapper = shallow(
     <EditorSettingsDialog
       settings={{
@@ -47,7 +46,7 @@ function createEditorSettingsDialogForNonTranslator() {
 }
 
 function createEditorSettingsDialog() {
-  const toggleSettingMock = sinon.stub();
+  const toggleSettingMock = vi.fn();
   const wrapper = shallow(
     <EditorSettingsDialog
       settings={{
@@ -78,15 +77,14 @@ describe('<EditorSettingsDialog>', () => {
 
     // Do it once to turn it on.
     wrapper.find('.menu li').at(0).simulate('click');
-    expect(toggleSettingMock.calledOnce).toBeTruthy();
-    expect(toggleSettingMock.calledWith('runQualityChecks')).toBeTruthy();
+    expect(toggleSettingMock.mock.calls).toMatchObject([['runQualityChecks']]);
 
     // Do it twice to turn it off.
     wrapper.setProps({ settings: { runQualityChecks: true } });
 
     wrapper.find('.menu li').at(0).simulate('click');
-    expect(toggleSettingMock.calledTwice).toBeTruthy();
-    expect(toggleSettingMock.calledWith('runQualityChecks')).toBeTruthy();
+    expect(toggleSettingMock).toHaveBeenCalledTimes(2);
+    expect(toggleSettingMock).toHaveBeenCalledWith('runQualityChecks');
   });
 
   it('toggles the forceSuggestions setting', () => {
@@ -94,15 +92,14 @@ describe('<EditorSettingsDialog>', () => {
 
     // Do it once to turn it on.
     wrapper.find('.menu li').at(1).simulate('click');
-    expect(toggleSettingMock.calledOnce).toBeTruthy();
-    expect(toggleSettingMock.calledWith('forceSuggestions')).toBeTruthy();
+    expect(toggleSettingMock.mock.calls).toMatchObject([['forceSuggestions']]);
 
     // Do it twice to turn it off.
     wrapper.setProps({ settings: { forceSuggestions: true } });
 
     wrapper.find('.menu li').at(1).simulate('click');
-    expect(toggleSettingMock.calledTwice).toBeTruthy();
-    expect(toggleSettingMock.calledWith('forceSuggestions')).toBeTruthy();
+    expect(toggleSettingMock).toHaveBeenCalledTimes(2);
+    expect(toggleSettingMock).toHaveBeenCalledWith('forceSuggestions');
   });
 });
 

@@ -1,6 +1,5 @@
 import { createMemoryHistory } from 'history';
 // import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
-import sinon from 'sinon';
 
 import * as BatchActions from '~/modules/batchactions/actions';
 import * as EntitiesActions from '~/modules/entities/actions';
@@ -116,7 +115,7 @@ describe('<EntitiesList>', () => {
     const history = createMemoryHistory({
       initialEntries: ['/kg/firefox/all-resources/'],
     });
-    const spy = sinon.spy();
+    const spy = vi.fn();
     history.listen(spy);
 
     const store = createReduxStore();
@@ -128,14 +127,16 @@ describe('<EntitiesList>', () => {
 
     mountComponentWithStore(EntitiesList, store, {}, history);
 
-    expect(spy.calledOnce).toBeTruthy();
-    const [location, action] = spy.firstCall.args;
-    expect(action).toBe('REPLACE');
-    expect(location).toMatchObject({
-      pathname: '/kg/firefox/all-resources/',
-      search: '?string=1',
-      hash: '',
-    });
+    expect(spy.mock.calls).toMatchObject([
+      [
+        expect.objectContaining({
+          pathname: '/kg/firefox/all-resources/',
+          search: '?string=1',
+          hash: '',
+        }),
+        'REPLACE',
+      ],
+    ]);
   });
 
   it('toggles entity for batch editing', () => {

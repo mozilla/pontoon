@@ -25,7 +25,7 @@ describe('usePluralExamples', () => {
     });
 
     expect(res).toEqual({ 1: 1, 2: 2, 3: 3, 5: 0 });
-    expect(consoleErrorSpy).toHaveBeenCalledTimes(0);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
   it('prevents infinite loop if locale plurals are not configured properly', () => {
@@ -36,6 +36,6 @@ describe('usePluralExamples', () => {
     });
 
     expect(res).toEqual({ 0: 1, 1: 2 });
-    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledOnce();
   });
 });

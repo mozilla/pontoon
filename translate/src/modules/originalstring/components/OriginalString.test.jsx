@@ -1,6 +1,5 @@
 import ftl from '@fluent/dedent';
 import React from 'react';
-import sinon from 'sinon';
 
 import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
@@ -42,13 +41,13 @@ describe('<OriginalString>', () => {
   });
 
   it('calls the selectTerms function on placeable click', () => {
-    const spy = sinon.spy();
+    const spy = vi.fn();
     const wrapper = mountOriginalString(spy);
 
     wrapper.find('.original').simulate('click');
-    expect(spy.called).toEqual(false);
+    expect(spy).not.toHaveBeenCalled();
 
     wrapper.find('.original mark').at(0).simulate('click');
-    expect(spy.called).toEqual(true);
+    expect(spy).toHaveBeenCalled();
   });
 });
