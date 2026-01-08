@@ -107,7 +107,6 @@ describe('<RejectAll>', () => {
       />,
     );
 
-    expect(mockRejectAll).not.toHaveBeenCalled();
     wrapper.find('.reject-all').simulate('click');
     expect(mockRejectAll).not.toHaveBeenCalled();
     expect(wrapper.find('#batchactions-RejectAll--confirmation')).toHaveLength(

@@ -127,14 +127,16 @@ describe('<EntitiesList>', () => {
 
     mountComponentWithStore(EntitiesList, store, {}, history);
 
-    expect(spy).toHaveBeenCalledOnce();
-    const [location, action] = spy.mock.calls[0];
-    expect(action).toBe('REPLACE');
-    expect(location).toMatchObject({
-      pathname: '/kg/firefox/all-resources/',
-      search: '?string=1',
-      hash: '',
-    });
+    expect(spy.mock.calls).toMatchObject([
+      [
+        expect.objectContaining({
+          pathname: '/kg/firefox/all-resources/',
+          search: '?string=1',
+          hash: '',
+        }),
+        'REPLACE',
+      ],
+    ]);
   });
 
   it('toggles entity for batch editing', () => {

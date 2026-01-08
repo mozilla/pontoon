@@ -77,8 +77,7 @@ describe('<EditorSettingsDialog>', () => {
 
     // Do it once to turn it on.
     wrapper.find('.menu li').at(0).simulate('click');
-    expect(toggleSettingMock).toHaveBeenCalledOnce();
-    expect(toggleSettingMock).toHaveBeenCalledWith('runQualityChecks');
+    expect(toggleSettingMock.mock.calls).toMatchObject([['runQualityChecks']]);
 
     // Do it twice to turn it off.
     wrapper.setProps({ settings: { runQualityChecks: true } });
@@ -93,8 +92,7 @@ describe('<EditorSettingsDialog>', () => {
 
     // Do it once to turn it on.
     wrapper.find('.menu li').at(1).simulate('click');
-    expect(toggleSettingMock).toHaveBeenCalledOnce();
-    expect(toggleSettingMock).toHaveBeenCalledWith('forceSuggestions');
+    expect(toggleSettingMock.mock.calls).toMatchObject([['forceSuggestions']]);
 
     // Do it twice to turn it off.
     wrapper.setProps({ settings: { forceSuggestions: true } });

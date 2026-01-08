@@ -99,7 +99,7 @@ describe('<EditorMainAction>', () => {
     expect(wrapper.find('.action-suggest .fa-spin')).toHaveLength(1);
 
     wrapper.find('.action-suggest').simulate('click');
-    expect(spy.mock.calls).toMatchObject([]);
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('renders the Save button when force suggestion is off and translation is not the same', () => {
@@ -122,6 +122,6 @@ describe('<EditorMainAction>', () => {
     expect(wrapper.find('.action-save .fa-spin')).toHaveLength(1);
 
     wrapper.find('.action-save').simulate('click');
-    expect(spy.mock.calls).toMatchObject([]);
+    expect(spy).not.toHaveBeenCalled();
   });
 });

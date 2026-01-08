@@ -123,7 +123,7 @@ describe('<EditField>', () => {
     );
     await userEvent.click(container.querySelector('.cm-line')!);
     await userEvent.keyboard('x');
-    expect(spy.mock.calls).toMatchObject([]);
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('sets the result via ref', async () => {
