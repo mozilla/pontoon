@@ -19,7 +19,6 @@ def test_dismiss_email_consent(member):
     assert profile.email_communications_enabled is False
     assert profile.email_consent_dismissed_at is not None
     assert response.status_code == 200
-    assert response.json()["next"] == "/"
 
     params = {
         "value": "true",
@@ -29,4 +28,3 @@ def test_dismiss_email_consent(member):
     assert profile.email_communications_enabled is True
     assert profile.email_consent_dismissed_at is not None
     assert response.status_code == 200
-    assert response.json()["next"] == "/"

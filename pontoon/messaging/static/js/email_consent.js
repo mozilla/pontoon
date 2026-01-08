@@ -10,8 +10,8 @@ $(function () {
         csrfmiddlewaretoken: $('body').data('csrf'),
         value: self.is('.enable'),
       },
-      success: function (data) {
-        window.location.href = data.next;
+      success() {
+        window.location.href = '/';
       },
       error: function (request) {
         if (request.responseText === 'error') {
