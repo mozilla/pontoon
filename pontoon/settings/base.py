@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import socket
+import sys
 
 from datetime import datetime
 from ipaddress import ip_address, ip_network
@@ -874,7 +875,7 @@ pontoon_file_handler = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "handlers": {"console": {"class": "logging.StreamHandler", "stream": sys.stdout}},
     "formatters": {
         "verbose": {"format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s"},
     },
