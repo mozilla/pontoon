@@ -50,26 +50,7 @@ jobs:
           license-checker-rseidelsohn --json | jq -r 'to_entries[] | "\(.key): \(.value.licenses)"'
           license-checker-rseidelsohn --summary --failOn 'GPL'
 
-  jest:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with: { node-version: '22' }
-      - name: Install globals
-        run: npm install --global npm@8
-      - name: Install dependencies
-        run: npm ci
-      - name: Test
-        run: npm test --coverage
-        working-directory: translate
-      - uses: codecov/codecov-action@v4
-        with:
-          flags: frontend
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  vitest:
+  test:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v5
@@ -78,5 +59,10 @@ jobs:
         - name: Install dependencies
           run: npm ci
         - name: vitest
-          run: npx vitest run --coverage
+          run: npm test -- --coverage
           working-directory: translate
+        - uses: codecov/codecov-action@v4
+          with:
+            flags: frontend
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

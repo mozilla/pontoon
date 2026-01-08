@@ -5,6 +5,7 @@ import {
 } from '@fluent/react';
 import { shallow } from 'enzyme';
 import React from 'react';
+import { vi } from 'vitest';
 
 /*
  * Taken from https://github.com/mozilla/addons-frontend/blob/58d1315409f1ad6dc9b979440794df44c1128455/tests/unit/helpers.js#L276
@@ -75,27 +76,6 @@ export function findLocalizedById(wrapper, id) {
   return wrapper.findWhere(
     (elem) => elem.type() === Localized && elem.prop('id') === id,
   );
-}
-
-/*
- * Mock window.matchMedia, which is not implemented in JSDOM.
- *
- * Source: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
- */
-export function mockMatchMedia() {
-  return Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: (query) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: jest.fn(), // deprecated
-      removeListener: jest.fn(), // deprecated
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-    }),
-  });
 }
 
 /**

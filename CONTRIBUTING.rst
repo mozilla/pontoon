@@ -335,7 +335,7 @@ To run only the ``translate`` tests:
 
 .. code-block:: shell
 
-    $ make jest
+    $ make test-translate
 
 
 To run only the Python tests:

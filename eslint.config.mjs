@@ -1,6 +1,7 @@
 import react from 'eslint-plugin-react';
 import globals from 'globals';
 import eslint from '@eslint/js';
+import vitest from '@vitest/eslint-plugin';
 
 export default [
   {
@@ -36,7 +37,7 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.jest,
+        ...vitest.environments.env.globals,
         gettext: 'readonly',
         ngettext: 'readonly',
         interpolate: 'readonly',
@@ -44,7 +45,6 @@ export default [
         expect: 'readonly',
         test: 'readonly',
         browser: 'readonly',
-        jest: 'readonly',
         Promise: 'readonly',
         Set: 'readonly',
         URLSearchParameters: 'readonly',

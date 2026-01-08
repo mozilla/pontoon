@@ -8,7 +8,6 @@ import {
   createReduxStore,
   mountComponentWithStore,
 } from '~/test/store';
-import { mockMatchMedia } from '~/test/utils';
 
 import { OtherLocaleTranslationComponent } from './OtherLocaleTranslation';
 import { vi } from 'vitest';
@@ -55,7 +54,6 @@ describe('<OtherLocaleTranslationComponent>', () => {
         toString: () => {},
       };
     };
-    mockMatchMedia();
   });
 
   afterAll(() => {

@@ -45,7 +45,7 @@
     "start": "rollup -c --watch",
     "build": "rollup -c",
     "build:prod": "rollup -c --environment BUILD:production",
-    "test": "jest",
+    "test": "vitest run",
     "types": "tsc --noEmit"
   }
 }
