@@ -78,27 +78,6 @@ export function findLocalizedById(wrapper, id) {
   );
 }
 
-/*
- * Mock window.matchMedia, which is not implemented in JSDOM.
- *
- * Source: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
- */
-export function mockMatchMedia() {
-  vi.stubGlobal(
-    'matchMedia',
-    vi.fn((query) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(), // deprecated
-      removeListener: vi.fn(), // deprecated
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  );
-}
-
 /**
  * Mock the @fluent/react LocalizationProvider,
  * which is required as a wrapper for Localization.
