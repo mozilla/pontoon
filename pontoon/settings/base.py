@@ -1092,7 +1092,6 @@ CELERY_TASK_SERIALIZER = "pickle"
 CELERY_RESULT_SERIALIZER = "pickle"
 CELERY_ACCEPT_CONTENT = ["pickle"]
 
-SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = "pontoon.base.adapter.PontoonSocialAdapter"
 SOCIALACCOUNT_ONLY = True
 
@@ -1105,7 +1104,6 @@ def account_username(user):
 
 
 # django-allauth settings
-ACCOUNT_AUTHENTICATED_METHOD = "email"
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "none"
