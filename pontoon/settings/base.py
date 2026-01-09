@@ -285,7 +285,7 @@ INSTALLED_APPS = (
     "allauth.socialaccount.providers.github",
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.gitlab",
-    "allauth.socialaccount.providers.keycloak",
+    "allauth.socialaccount.providers.openid_connect",
     "notifications",
     "django_ace",
     "rest_framework",
@@ -337,6 +337,7 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "pontoon.base.middleware.ThrottleIpMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -369,6 +370,7 @@ TEMPLATES = [
                     registration|
                     account|
                     socialaccount|
+                    allauth|
                     rest_framework|
                     django_filters|
                     drf_spectacular|
@@ -1090,8 +1092,8 @@ CELERY_TASK_SERIALIZER = "pickle"
 CELERY_RESULT_SERIALIZER = "pickle"
 CELERY_ACCEPT_CONTENT = ["pickle"]
 
-SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = "pontoon.base.adapter.PontoonSocialAdapter"
+SOCIALACCOUNT_ONLY = True
 
 # Supported values: 'django', 'fxa', 'github', 'gitlab', 'google'
 AUTHENTICATION_METHOD = os.environ.get("AUTHENTICATION_METHOD", "django")
@@ -1102,8 +1104,8 @@ def account_username(user):
 
 
 # django-allauth settings
-ACCOUNT_AUTHENTICATED_METHOD = "email"
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USER_DISPLAY = account_username
 
@@ -1130,6 +1132,10 @@ GOOGLE_SECRET_KEY = os.environ.get("GOOGLE_SECRET_KEY")
 # Keycloak Accounts
 KEYCLOAK_CLIENT_ID = os.environ.get("KEYCLOAK_CLIENT_ID")
 KEYCLOAK_CLIENT_SECRET = os.environ.get("KEYCLOAK_CLIENT_SECRET")
+KEYCLOAK_CLIENT_URL = os.environ.get(
+    "KEYCLOAK_CLIENT_URL",
+    "http://keycloak:8080/realms/master/.well-known/openid-configuration",
+)
 
 # All settings related to the AllAuth
 SOCIALACCOUNT_PROVIDERS = {
@@ -1139,9 +1145,18 @@ SOCIALACCOUNT_PROVIDERS = {
         "PROFILE_ENDPOINT": FXA_PROFILE_ENDPOINT,
     },
     "gitlab": {"GITLAB_URL": GITLAB_URL, "SCOPE": ["read_user"]},
-    "keycloak": {
-        "KEYCLOAK_URL": os.environ.get("KEYCLOAK_URL"),
-        "KEYCLOAK_REALM": os.environ.get("KEYCLOAK_REALM"),
+    "openid_connect": {
+        "APPS": [
+            {
+                "provider_id": "keycloak",
+                "name": "Keycloak",
+                "client_id": KEYCLOAK_CLIENT_ID,
+                "secret": KEYCLOAK_CLIENT_SECRET,
+                "settings": {
+                    "server_url": KEYCLOAK_CLIENT_URL,
+                },
+            }
+        ]
     },
 }
 

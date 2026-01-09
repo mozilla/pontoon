@@ -397,7 +397,6 @@ def dismiss_email_consent(request):
     return JsonResponse(
         {
             "status": True,
-            "next": request.session.get("next_path", "/"),
         }
     )
 
