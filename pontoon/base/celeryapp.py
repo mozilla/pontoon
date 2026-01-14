@@ -1,8 +1,10 @@
+import logging.config
 import os
 
 import dotenv
 
 from celery import Celery
+from celery.signals import setup_logging
 
 
 # Read dotenv file and inject its values into the environment
@@ -20,3 +22,12 @@ app = Celery("pontoon")
 # INSTALLED_APPS.
 app.config_from_object("django.conf:settings")
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
+
+@setup_logging.connect
+def configure_celery_logging(*args, **kwargs):
+    """
+    Prevent Celery from configuring its own logging (which adds its handler /
+    TaskFormatter), and use Django's LOGGING config instead.
+    """
+    logging.config.dictConfig(settings.LOGGING)
