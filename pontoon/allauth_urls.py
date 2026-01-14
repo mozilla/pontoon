@@ -29,12 +29,12 @@ else:
         path("logout/", account_views.logout, name="account_logout"),
         path("inactive/", account_views.account_inactive, name="account_inactive"),
         path(
-            "/login/cancelled/",
+            "login/cancelled/",
             socialaccount_views.login_cancelled,
             name="socialaccount_login_cancelled",
         ),
         path(
-            "/login/error/",
+            "login/error/",
             socialaccount_views.login_error,
             name="socialaccount_login_error",
         ),
