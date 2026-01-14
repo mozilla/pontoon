@@ -1,8 +1,7 @@
+import logging.config
 import os
 
 import dotenv
-
-import logging.config
 
 from celery import Celery
 from celery.signals import setup_logging
