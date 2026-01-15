@@ -5,7 +5,7 @@ from pontoon.machinery.utils import get_google_automl_translation
 
 
 class Command(BaseCommand):
-    help = "Collect data needed for the Insights tab"
+    help = "Google Cloud AutoML Translation custom model warmup"
 
     def handle(self, *args, **options):
         """
