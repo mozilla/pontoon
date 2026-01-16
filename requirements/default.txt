@@ -888,7 +888,9 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.10.0 \
     --hash=sha256:817b46323b86185c48cc2261a4e0a28c02fdb2f2e3b9fe8894789657b7db6f07 \
     --hash=sha256:fc679d91491d5a3ba4c06f812bfb43506d0f93fb962c0544c949e4da9a35f225
-    # via -r default.in
+    # via
+    #   -r default.in
+    #   moz-l10n
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -1039,9 +1041,9 @@ psycopg2==2.9.6 \
     --hash=sha256:f75001a1cbbe523e00b0ef896a5a1ada2da93ccd752b7636db5a99bc57c44494 \
     --hash=sha256:f7a7a5ee78ba7dc74265ba69e010ae89dae635eea0e97b055fb641a01a31d2b1
     # via -r default.in
-pyasn1==0.6.1 \
-    --hash=sha256:0d632f46f2ba09143da3a8afe9e33fb6f92fa2320ab7e886e2d0f7672af84629 \
-    --hash=sha256:6f580d2bdd84365380830acf45550f2511469f673cb4a5ae3857a3170128b034
+pyasn1==0.6.2 \
+    --hash=sha256:1eb26d860996a18e9b6ed05e7aae0e9fc21619fcee6af91cca9bad4fbea224bf \
+    --hash=sha256:9b59a2b25ba7e4f8197db7686c09fb33e658b98339fadb826e9512629017833b
     # via
     #   pyasn1-modules
     #   rsa
