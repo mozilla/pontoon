@@ -1,3 +1,5 @@
+import time
+
 from django.core.management.base import BaseCommand
 
 from pontoon.base.models import Locale
@@ -13,12 +15,19 @@ class Command(BaseCommand):
         custom model into the chip. To keep latency low, we need to make regular dummy warmup
         requests, which is what this management command does.
         """
-        self.stdout.write("Google AutoML Warmup process started.")
+        start_time = time.monotonic()
+        warmed_locales = []
+        self.stdout.write("[Google AutoML Warmup] Process started.")
 
         locales = Locale.objects.exclude(google_automl_model="").order_by("code")
 
         for locale in locales:
             get_google_automl_translation("t", locale)
-            self.stdout.write(f"Google AutoML Warmup for {locale.code} complete.")
+            warmed_locales.append(locale.code)
 
-        self.stdout.write("Google AutoML Warmup process complete for all locales.")
+        elapsed = time.monotonic() - start_time
+
+        self.stdout.write(
+            f"[Google AutoML Warmup] Process complete for locales: {', '.join(warmed_locales)}.\n"
+            f"[Google AutoML Warmup] Elapsed time: {elapsed:.2f}s."
+        )
