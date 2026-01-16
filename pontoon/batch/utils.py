@@ -88,6 +88,7 @@ def find_and_replace(translations, find, replace, user):
     now = timezone.now()
     translations_to_create = []
     translations_with_errors = []
+    translation_pks_to_exclude = []
 
     # To speed-up error checks, translations will prefetch additional fields
     translations = translations.for_checks(only_db_formats=False)
@@ -103,8 +104,9 @@ def find_and_replace(translations, find, replace, user):
         else:
             new_translation.string = translation.string.replace(find, replace)
 
-        # Quit early if no changes are made
+        # If no changes are made, store PK to exclude later
         if new_translation.string == translation.string:
+            translation_pks_to_exclude.append(translation.pk)
             continue
 
         new_translation.pk = None  # Create new translation
@@ -131,6 +133,9 @@ def find_and_replace(translations, find, replace, user):
             translations_with_errors.append(translation.pk)
         else:
             translations_to_create.append(new_translation)
+
+    if translation_pks_to_exclude:
+        translations = translations.exclude(pk__in=translation_pks_to_exclude)
 
     if translations_with_errors:
         translations = translations.exclude(pk__in=translations_with_errors)
