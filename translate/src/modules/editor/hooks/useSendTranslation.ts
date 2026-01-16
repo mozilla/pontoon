@@ -62,6 +62,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
         : [];
     const content = await createTranslation(
       entity.pk,
+      entry,
       translation,
       locale.code,
       forceSuggestions,
