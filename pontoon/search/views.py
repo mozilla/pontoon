@@ -123,7 +123,6 @@ def translation_search(request):
             "search/search.html",
             {
                 "entities": entities,
-                "entities_url": SITE_URL + "/entities",
                 "search": search,
                 "locales": locales,
                 "projects": projects,
