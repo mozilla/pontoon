@@ -1,0 +1,127 @@
+#entity-list-header {
+  display: flex;
+  border-bottom: 1px solid var(--main-border-1);
+  padding: 10px;
+}
+
+#entity-list-header span {
+  color: var(--light-grey-7);
+  font-weight: bold;
+  text-transform: uppercase;
+  flex: 1;
+}
+
+#entity-list.striped li:nth-child(even) {
+  background: var(--dark-grey-1);
+}
+
+.entity-container {
+  display: grid;
+  align-items: stretch;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  padding: 16px 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.source-string-container,
+.translation-string-container,
+.entity-info-container,
+.utility-btn-container {
+  padding: 0 10px;
+}
+
+.source-string-container,
+.translation-string-container {
+  margin-bottom: 16px;
+}
+
+.entity-info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.entity-info-container .context {
+  color: var(--translation-secondary-color);
+  padding: 0 40px 0 0;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 22px;
+  min-width: 0;
+}
+
+.entity-info-container .context a,
+.entity-info-container .context .entity-keys {
+  word-break: break-all;
+}
+
+.entity-info-container .context .title {
+  color: var(--translation-subtitle-color);
+  font-size: 11px;
+  font-weight: 300;
+  min-width: 70px;
+}
+
+.entity-info-container .context a {
+  color: var(--translation-secondary-color);
+  text-decoration: none;
+}
+
+.entity-info-container .context a:hover {
+  color: var(--status-translated);
+}
+
+.entity-container .controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 4px;
+  margin-bottom: 0;
+}
+
+.entity-container .controls .all-locales-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--status-translated);
+  background: none;
+  min-width: 28px;
+  height: 28px;
+  font-size: 20px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.entity-container .controls .all-locales-btn::before {
+  font-weight: 900;
+}
+
+.entity-container .controls .edit-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--status-translated);
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+}
+
+.entity-container .controls button.copy-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--status-translated);
+  background: none;
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+  padding: 0;
+}
+.controls button.copy-btn:hover,
+.controls a.edit-btn:hover,
+.controls a.all-locales-btn:hover {
+  background: none;
+  color: var(--status-unreviewed);
+}
