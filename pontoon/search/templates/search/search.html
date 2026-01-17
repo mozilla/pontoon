@@ -16,42 +16,37 @@
 {% block bottom %}
 <section id="main">
   <div class="container">
-    <menu class="controls">
-      <div id="search" class="search-wrapper big clearfix">
-        <div class="icon fas fa-search"></div>
-        <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Search Translations" value="{{ search }}">
+    <menu>
+      <div id="search-menu" class="controls">
+        <div class="search-wrapper big clearfix">
+          <div class="icon fas fa-search"></div>
+          <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Type and press Enter to search" value="{{ search }}">
+        </div>
+        <div id="locale-selector">
+          {{ team_selector.locale(locales, preferred_locale) }}
+        </div>
+        <div id="project-selector">
+          {{ project_selector.project(projects, preferred_project) }}
+        </div>
       </div>
-      <button class="button search-button">Search</button>
       <div class="errors"></div>
-
-    <div class="check-list">
-
-        {{ Checkbox.checkbox('Include Search Identifiers', class='field search-identifiers-enabled', attribute='search-identifiers-enabled',
-            is_enabled=search_identifiers_enabled) }}
-        {{ Checkbox.checkbox('Match Case', class='field match-case-enabled', attribute='match-case-enabled',
-            is_enabled=match_case_enabled) }}
-        {{ Checkbox.checkbox('Match Whole Word', class='field match-whole-word-enabled', attribute='match-whole-word-enabled',
-            is_enabled=match_whole_word_enabled) }}
-    </div>
-    <div class="selector-list">
-      <div id="locale-selector">
-        {{ team_selector.locale(locales, preferred_locale) }}
-      </div>
-      <div id="project-selector">
-        {{ project_selector.project(projects, preferred_project) }}
-      </div>
+    <div id="search-filters">
+      {{ Checkbox.checkbox('Search in string Identifiers', class='field search-identifiers-enabled', attribute='search-identifiers-enabled',
+          is_enabled=search_identifiers_enabled, icon_first=True) }}
+      {{ Checkbox.checkbox('Case Sensitive', class='field match-case-enabled', attribute='match-case-enabled',
+          is_enabled=match_case_enabled, icon_first=True) }}
+      {{ Checkbox.checkbox('Entire Words', class='field match-whole-word-enabled', attribute='match-whole-word-enabled',
+          is_enabled=match_whole_word_enabled, icon_first=True) }}
     </div>
     </menu>
 
-    <section>
-        {% if entities and search %}
-          {{ Entities.list_entities(entities, entities_url, has_more) }}
-        {% elif not entities and search %}
-          <div>No Results Found.</div>
-        {% endif %}
-      </div>
-    </section>
-
+  <section id="search-results">
+      {% if entities and search %}
+        {{ Entities.list_entities(entities, preferred_locale, has_more) }}
+      {% elif not entities and search %}
+        <div>No Results Found.</div>
+      {% endif %}
+  </section>
   </div>
 </section>
 {% endblock %}
