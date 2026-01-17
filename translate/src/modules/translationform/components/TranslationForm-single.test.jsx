@@ -55,10 +55,8 @@ function mountForm(string) {
     store,
   );
 
-  const view = wrapper
-    .find('.singlefield')
-    .instance()
-    .querySelector('.cm-content').cmView.view;
+  const view = wrapper.container.querySelector('.singlefield .cm-content')
+    .cmView.view;
 
   return { actions, getResult: () => result, view, wrapper };
 }
@@ -82,7 +80,6 @@ describe('<TranslationForm> with one field', () => {
   it('updates the translation when setEditorSelection is passed without focus', async () => {
     const { wrapper, actions, getResult } = mountForm('Foo');
     act(() => actions.setEditorSelection(', Bar'));
-    wrapper.update();
 
     expect(getResult()[0].value).toBe('Foo, Bar');
   });
@@ -94,7 +91,6 @@ describe('<TranslationForm> with one field', () => {
       view.dispatch({ selection: { anchor: view.state.doc.length } });
       actions.setEditorSelection(', World');
     });
-    wrapper.update();
 
     expect(getResult()[0].value).toBe('Hello, World');
   });

@@ -8,6 +8,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 import { SearchBox, SearchBoxBase } from './SearchBox';
+import { fireEvent } from '@testing-library/react';
 
 const PROJECT = {
   tags: [],
@@ -247,25 +248,23 @@ describe('<SearchBox>', () => {
     const store = createReduxStore();
     const wrapper = mountComponentWithStore(SearchBox, store, {}, history);
 
-    // `simulate()` doesn't quite work in conjunction with `mount()`, so
-    // invoking the `prop()` callback directly is the way to go as suggested
-    // by the enzyme maintainer...
     act(() => {
-      wrapper.find('input#search').prop('onChange')({
-        currentTarget: { value: 'test' },
+      fireEvent.change(wrapper.container.querySelector('input#search'), {
+        target: { value: 'test' },
       });
     });
-    wrapper.update();
 
-    //console.log(wrapper.find('input#search').props())
     // The state has been updated correctly...
-    expect(wrapper.find('input#search').prop('value')).toEqual('test');
+    expect(wrapper.container.querySelector('input#search')).toHaveValue('test');
 
     // ... but it wasn't propagated to the global redux store yet.
     expect(spy).not.toHaveBeenCalled();
 
     // Wait until Enter is pressed.
-    wrapper.find('input#search').simulate('keydown', { key: 'Enter' });
+    fireEvent.keyDown(wrapper.container.querySelector('input#search'), {
+      key: 'Enter',
+      code: 'Enter',
+    });
 
     expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenNthCalledWith(

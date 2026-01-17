@@ -1,8 +1,9 @@
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
-import { SignIn } from './SignIn';
 import { UserControls } from './UserControls';
 import { vi } from 'vitest';
+import { screen } from '@testing-library/react';
+import { expect } from 'vitest';
 
 vi.mock('./UserAutoUpdater', () => ({ UserAutoUpdater: () => null }));
 
@@ -11,17 +12,17 @@ describe('<UserControls>', () => {
     const store = createReduxStore({
       user: { isAuthenticated: false, notifications: {} },
     });
-    const wrapper = mountComponentWithStore(UserControls, store);
+    mountComponentWithStore(UserControls, store);
 
-    expect(wrapper.find(SignIn)).toHaveLength(1);
+    expect(screen.queryByTestId('sign-in')).toBeInTheDocument();
   });
 
   it('hides a Sign in link when user is logged in', () => {
     const store = createReduxStore({
       user: { isAuthenticated: true, notifications: {} },
     });
-    const wrapper = mountComponentWithStore(UserControls, store);
+    mountComponentWithStore(UserControls, store);
 
-    expect(wrapper.find(SignIn)).toHaveLength(0);
+    expect(screen.queryByTestId('sign-in')).not.toBeInTheDocument();
   });
 });

@@ -113,7 +113,7 @@ export function Entity({
   );
 
   return (
-    <li className={cn} onClick={handleSelectEntity}>
+    <li className={cn} onClick={handleSelectEntity} data-testid='entity'>
       <span className='status fas' onClick={handleForBatchEditing} />
       {selected && !entity.isSibling ? (
         <div>
