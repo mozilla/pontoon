@@ -1,5 +1,5 @@
 $(function () {
-  $('.search-button').click(function () {
+  $('.search-btn').click(function () {
     $('.search-input').trigger('enterKey');
   });
 

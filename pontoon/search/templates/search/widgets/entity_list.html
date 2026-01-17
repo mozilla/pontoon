@@ -1,33 +1,38 @@
 
-{% macro list_entities(entities, entities_url, has_more) %}
-<ul class="entity-list" data-has-more="{{ 'true' if has_more else 'false' }}">
+{% macro list_entities(entities, preferred_locale, has_more) %}
+<div id="entity-list-header">
+  <span class="source-header">English - EN</span>
+  <span class="translation-header">{{ preferred_locale.name }} - {{ preferred_locale.code }}</span>
+</div>
+<ul id="entity-list" class="striped" data-has-more="{{ 'true' if has_more else 'false' }}">
   {% for entity in entities %}
-    <li class="entity-item">
-        <span class="source-string">{{ entity.string }}</span>
-        {% if entity.resource.format != "gettext" %}
-          <span class="entity-keys">{{ ", ".join(entity.key) }}</span>
-        {% endif %}
-        <span>Entity URL:</span>
-        <a href="{{ entities_url }}/{{ entity.id }}">/entities/{{ entity.id }}</a>
-        <div class="entity-project">
-            <span class="entity-project-slug">{{ entity.project.slug }}</span>
-            <span class="entity-project-name">{{ entity.project.name }}</span>
-        </div>
-    
-        <div class="entity-resource">
-            <a>{{ entity.resource.path }}</a>
-        </div>
-    
-        <div class="entity-locale">
-            <span class="entity-locale-code">{{ entity.translation.locale.code }}</span>
-            <span class="entity-locale-name">{{ entity.translation.locale.name }}</span>
-        </div>
-    
-        <div class="translation-string">{{ entity.translation.string }}</div>
-    </li>
-    {% if not loop.last %}
-      <li class="horizontal-separator"></li>
-    {% endif %}
-  {% endfor %}
+        <li class="entity-container">
+            <div class="source-string-container">
+              <span class="source-string">{{ entity.string }}</span>
+            </div>
+
+            <div class="translation-string-container">
+              <span class="translation-string">{{ entity.translation.string }}</span>
+            </div>
+
+            <div class="entity-info-container">
+              <div class="context">
+                  <span class="title">CONTEXT</span>
+                  {% if entity.resource.format != "gettext" %}
+                    <span class="entity-keys">{{ ", ".join(entity.key) }}</span>
+                    <span class="divider">&bull;</span>
+                  {% endif %}
+                  <a class="resource-path" href="/{{ preferred_locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}">{{ entity.resource.path }}</a>
+                  <span class="divider">&bull;</span>
+                  <a class="project" href="/projects/{{ entity.project.slug }}">{{ entity.project.name }}</a>
+              </div>
+            </div>
+            <div class="utility-btn-container controls clearfix">
+              <a class="all-locales-btn fas fa-globe" type="button" tabindex="-1" href="/entities/{{ entity.id }}"></a>
+              <a class="edit-btn fas fa-edit" type="button" tabindex="-1" href="/{{ preferred_locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}"></a>
+              <button class="button copy-btn far fa-copy" type="button" tabindex="-1" data-clipboard-text="{{ entity.translation.string }}"></button>
+            </div>
+        </li>
+        {% endfor %}
 </ul>
 {% endmacro %}
