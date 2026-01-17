@@ -20,7 +20,7 @@ describe('<CommentsList>', () => {
 
   it('shows the correct number of comments', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(CommentsList, store, {
+    const { container } = mountComponentWithStore(CommentsList, store, {
       translation: {
         ...DEFAULT_TRANSLATION,
         comments: [
@@ -32,6 +32,6 @@ describe('<CommentsList>', () => {
       user: DEFAULT_USER,
     });
 
-    expect(wrapper.find('ul > *')).toHaveLength(3);
+    expect(container.querySelectorAll('ul > *')).toHaveLength(3);
   });
 });

@@ -11,6 +11,7 @@ import {
 
 import { FailedChecks } from './FailedChecks';
 import { vi } from 'vitest';
+import { expect } from 'vitest';
 
 function mountFailedChecks(failedChecks, user) {
   const store = createReduxStore({ project: { slug: 'firefox', tags: [] } });
@@ -30,7 +31,9 @@ describe('<FailedChecks>', () => {
   it('does not render if no errors or warnings present', () => {
     const wrapper = mountFailedChecks({ errors: [], warnings: [] });
 
-    expect(wrapper.find('.failed-checks')).toHaveLength(0);
+    expect(
+      wrapper.container.querySelector('.failed-checks'),
+    ).not.toBeInTheDocument();
   });
 
   it('renders popup with errors and warnings', () => {
@@ -39,11 +42,13 @@ describe('<FailedChecks>', () => {
       warnings: ['a warning', 'two warnings'],
     });
 
-    expect(wrapper.find('.failed-checks')).toHaveLength(1);
-    expect(wrapper.find('#editor-FailedChecks--close')).toHaveLength(1);
-    expect(wrapper.find('#editor-FailedChecks--title')).toHaveLength(1);
-    expect(wrapper.find('.error')).toHaveLength(1);
-    expect(wrapper.find('.warning')).toHaveLength(2);
+    expect(wrapper.container.querySelectorAll('.failed-checks')).toHaveLength(
+      1,
+    );
+    expect(wrapper.queryByRole('button')).toHaveTextContent('×');
+    expect(wrapper.container.querySelectorAll('p.title')).toHaveLength(1);
+    expect(wrapper.container.querySelectorAll('.error')).toHaveLength(1);
+    expect(wrapper.container.querySelectorAll('.warning')).toHaveLength(2);
   });
 
   it('renders save anyway button if translation with warnings submitted', () => {
@@ -52,7 +57,7 @@ describe('<FailedChecks>', () => {
       { settings: { force_suggestions: false } },
     );
 
-    expect(wrapper.find('.save.anyway')).toHaveLength(1);
+    expect(wrapper.container.querySelector('.save.anyway')).toBeInTheDocument();
   });
 
   it('renders suggest anyway button if translation with warnings suggested', () => {
@@ -61,7 +66,9 @@ describe('<FailedChecks>', () => {
       { settings: { force_suggestions: true } },
     );
 
-    expect(wrapper.find('.suggest.anyway')).toHaveLength(1);
+    expect(
+      wrapper.container.querySelector('.suggest.anyway'),
+    ).toBeInTheDocument();
   });
 
   it('renders suggest anyway button if user does not have sufficient permissions', () => {
@@ -70,7 +77,9 @@ describe('<FailedChecks>', () => {
       { can_manage_locales: [] },
     );
 
-    expect(wrapper.find('.suggest.anyway')).toHaveLength(1);
+    expect(
+      wrapper.container.querySelector('.suggest.anyway'),
+    ).toBeInTheDocument();
   });
 
   it('renders approve anyway button if translation with warnings approved', () => {
@@ -80,6 +89,8 @@ describe('<FailedChecks>', () => {
       source: 42,
     });
 
-    expect(wrapper.find('.approve.anyway')).toHaveLength(1);
+    expect(
+      wrapper.container.querySelector('.approve.anyway'),
+    ).toBeInTheDocument();
   });
 });
