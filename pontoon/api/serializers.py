@@ -306,6 +306,7 @@ class ResourceSerializer(serializers.ModelSerializer):
 
 
 class EntitySerializer(DynamicFieldsModelSerializer):
+    string = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
     resource = ResourceSerializer(read_only=True)
 
