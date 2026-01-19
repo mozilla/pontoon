@@ -11,10 +11,6 @@
   flex: 1;
 }
 
-#entity-list.striped li:nth-child(even) {
-  background: var(--dark-grey-1);
-}
-
 .entity-container {
   display: grid;
   align-items: stretch;
@@ -119,9 +115,9 @@
   font-size: 20px;
   padding: 0;
 }
-.controls button.copy-btn:hover,
-.controls a.edit-btn:hover,
-.controls a.all-locales-btn:hover {
+.entity-container .controls button.copy-btn:hover,
+.entity-container .controls a.edit-btn:hover,
+.entity-container .controls a.all-locales-btn:hover {
   background: none;
   color: var(--status-unreviewed);
 }

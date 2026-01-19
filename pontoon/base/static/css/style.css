@@ -229,6 +229,10 @@ table.striped tr:nth-child(even) {
   background: var(--dark-grey-1);
 }
 
+ul.striped li:nth-child(even) {
+  background: var(--dark-grey-1);
+}
+
 tfoot tr {
   border-top: 1px solid var(--main-border-1);
 }

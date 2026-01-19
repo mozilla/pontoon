@@ -22,11 +22,11 @@
           <div class="icon fas fa-search"></div>
           <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Type and press Enter to search" value="{{ search }}">
         </div>
-        <div id="locale-selector">
-          {{ team_selector.locale(locales, preferred_locale) }}
-        </div>
         <div id="project-selector">
           {{ project_selector.project(projects, preferred_project) }}
+        </div>
+        <div id="locale-selector">
+          {{ team_selector.locale(locales, preferred_locale) }}
         </div>
       </div>
       <div class="errors"></div>

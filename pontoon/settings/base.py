@@ -763,7 +763,6 @@ PIPELINE_JS = {
     "search": {
         "source_filenames": (
             "js/search.js",
-            "js/entity_list.js",
             "js/team_selector.js",
             "js/lib/clipboard.min.js",
         ),

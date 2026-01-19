@@ -75,7 +75,7 @@ $(function () {
   });
 
   let currentPage = 2;
-  let hasMore = $('.entity-list').data('has-more');
+  let hasMore = $('#entity-list').data('has-more');
   let isLoading = false;
   let errors = false;
 
@@ -109,35 +109,74 @@ $(function () {
           search_match_whole_word: params.get('search_match_whole_word'),
         },
         success: function (response) {
-          response.entities.forEach(function (entity) {
-            const entities_url = `/entities/${entity.id}/`;
-
-            $('.entity-list').append(`
-              <li class="entity-item">
-                <span>${entity.string}</span>
-                <span>${entity.key}</span>
-                <span>Entity URL:</span>
-                <a href="${entities_url}">${entities_url}</a>
-                <div>
-                  <span>${entity.project.slug}</span>
-                  <span>${entity.project.name}</span>
+          const locale = params.get('locale');
+          response['entities'].forEach(function (entity) {
+            const $li = $(`
+              <li class="entity-container">
+                <div class="source-string-container">
+                  <span class="source-string"></span>
                 </div>
-
-                <div>
-                  <a>${entity.resource.path}</a>
+                <div class="translation-string-container">
+                  <span class="translation-string"></span>
                 </div>
-
-                <div>
-                  <span>${entity.translation.locale.code}</span>
-                  <span>${entity.translation.locale.name}</span>
+                <div class="entity-info-container">
+                  <div class="context">
+                    <span class="title">CONTEXT</span>
+                    <span class="entity-keys"></span>
+                    <span class="divider entity-keys-divider">&bull;</span>
+                    <a class="resource-path"></a>
+                    <span class="divider">&bull;</span>
+                    <a class="project"></a>
+                  </div>
                 </div>
-
-                <div>${entity.translation.string}</div>
+                <div class="utility-btn-container controls clearfix">
+                  <a class="all-locales-btn fas fa-globe" type="button" tabindex="-1"></a>
+                  <a class="edit-btn fas fa-edit" type="button" tabindex="-1"></a>
+                  <button class="button copy-btn far fa-copy" type="button" tabindex="-1"></button>
+                </div>
               </li>
             `);
+
+            $li.find('.source-string').text(entity['string']);
+            $li
+              .find('.translation-string')
+              .text(entity['translation']['string']);
+            $li.find('.resource-path').text(entity['resource']['path']);
+            $li.find('.project').text(entity['project']['name']);
+
+            $li
+              .find('.resource-path')
+              .attr(
+                'href',
+                `/${locale}/${entity['project']['slug']}/${entity['resource']['path']}`,
+              );
+            $li
+              .find('.project')
+              .attr('href', `/projects/${entity['project']['slug']}`);
+            $li
+              .find('.all-locales-btn')
+              .attr('href', `/entities/${entity['id']}`);
+            $li
+              .find('.edit-btn')
+              .attr(
+                'href',
+                `/${locale}/${entity['project']['slug']}/${entity['resource']['path']}/?string=${entity['id']}`,
+              );
+            $li
+              .find('.copy-btn')
+              .attr('data-clipboard-text', entity['translation']['string']);
+
+            if (entity['resource']['format'] !== 'gettext') {
+              $li.find('.entity-keys').text(entity['key'].join(', '));
+            } else {
+              $li.find('.entity-keys').remove();
+              $li.find('.entity-keys-divider').remove();
+            }
+
+            $('#entity-list').append($li);
           });
 
-          hasMore = response.has_more;
+          hasMore = response['has_more'];
           currentPage += 1;
         },
         error: function () {
@@ -150,18 +189,15 @@ $(function () {
     }
   });
 
-  const clipboard = new Clipboard('.entity-list li');
+  $(function () {
+    const clipboard = new Clipboard('.copy-btn');
 
-  clipboard.on('success', function (event) {
-    const successMessage = $('<span class="clipboard-success">Copied!</span>'),
-      $trigger = $(event.trigger);
+    clipboard.on('success', function () {
+      Pontoon.endLoader('Translation copied.');
+    });
 
-    $('.clipboard-success').remove();
-    $trigger.find('header').prepend(successMessage);
-    setTimeout(function () {
-      successMessage.fadeOut(500, function () {
-        successMessage.remove();
-      });
-    }, 1000);
+    $(document).on('click', '.copy-btn', function (e) {
+      e.preventDefault();
+    });
   });
 });
