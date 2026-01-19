@@ -23,14 +23,21 @@
 
 .source-string-container,
 .translation-string-container {
-  padding-right: 16px;
   margin-bottom: 16px;
+}
+
+.source-string-container {
+  padding-right: 10px;
+}
+
+.translation-string-container {
+  padding-left: 10px;
 }
 
 .entity-info-container {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .entity-info-container .context {
