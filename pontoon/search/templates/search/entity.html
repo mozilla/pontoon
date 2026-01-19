@@ -45,7 +45,7 @@
   <div class="container">
 
     {% if entity.translations %}
-      {{ Translations.list_translations(entity, site_url) }}
+      {{ Translations.list_translations(entity) }}
     {% else %}
       {{ Translations.no_translations() }}
     {% endif %}
