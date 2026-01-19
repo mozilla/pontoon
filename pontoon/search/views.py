@@ -195,7 +195,6 @@ def entity(request, pk):
             "search/entity.html",
             {
                 "entity": entity,
-                "site_url": SITE_URL,
             },
         )
     else:

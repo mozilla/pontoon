@@ -1,0 +1,50 @@
+.translations-table tbody {
+  color: var(--white-1);
+  line-height: 1.5;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.locale-column {
+  display: flex;
+  gap: 8px;
+}
+
+.locale-column .translation-locale-name {
+  width: 108px;
+}
+
+.locale-column .translation-locale-code {
+  width: 40px;
+  color: var(--status-translated-alt);
+}
+
+#locale-header,
+#translation-header {
+  text-align: center;
+}
+
+.utility-btn-column .controls {
+  display: flex;
+  margin-bottom: 0;
+  gap: 4px;
+}
+
+.utility-btn-column .controls .edit-btn,
+.utility-btn-column .controls button.copy-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--status-translated);
+  background: none;
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+  padding: 0;
+}
+
+.utility-btn-column .controls button.copy-btn:hover,
+.utility-btn-column .controls a.edit-btn:hover {
+  background: none;
+  color: var(--status-unreviewed);
+}
