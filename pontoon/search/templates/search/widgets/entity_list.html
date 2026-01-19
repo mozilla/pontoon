@@ -1,8 +1,8 @@
 
 {% macro list_entities(entities, preferred_locale, has_more) %}
 <div id="entity-list-header">
-  <span class="source-header">English - EN</span>
-  <span class="translation-header">{{ preferred_locale.name }} - {{ preferred_locale.code }}</span>
+  <span class="source-header">Source</span>
+  <span class="translation-header">Translation</span>
 </div>
 <ul id="entity-list" class="striped" data-has-more="{{ 'true' if has_more else 'false' }}">
   {% for entity in entities %}
@@ -17,11 +17,11 @@
 
             <div class="entity-info-container">
               <div class="context">
-                  {% if entity.resource.format != "gettext" %}
-                    <span class="entity-keys">{{ ", ".join(entity.key) }}</span>
-                    <span class="divider">&bull;</span>
-                  {% endif %}
-                  <a class="project" href="/projects/{{ entity.project.slug }}">{{ entity.project.name }}</a>
+                <a class="project" href="/projects/{{ entity.project.slug }}">{{ entity.project.name }}</a>
+                {% if entity.resource.format != "gettext" %}
+                  <span class="divider">&bull;</span>
+                  <span class="entity-keys">{{ ", ".join(entity.key) }}</span>
+                {% endif %}
               </div>
             </div>
             <div class="utility-btn-container controls clearfix">
