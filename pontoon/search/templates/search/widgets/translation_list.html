@@ -22,10 +22,14 @@
           </div>
         </td>
         <td class="utility-btn-column controls">
-          <div class="controls clearfix">
-            <a class="edit-btn fas fa-edit" type="button" tabindex="-1" href="/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}"></a>
-            <button class="button copy-btn far fa-copy" type="button" tabindex="-1" data-clipboard-text="{{ translation.string }}"></button>
-          </div>
+            <a class="edit button" href="/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">
+              <span class="fas fa-pencil-alt"></span>
+              Edit
+            </a>
+            <button class="copy button" type="button" data-clipboard-text="{{ translation.string }}">
+              <span class="far fa-copy"></span>
+              Copy
+            </button>
         </td>
       </tr>
     {% endfor %}

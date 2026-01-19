@@ -22,14 +22,8 @@
 }
 
 .source-string-container,
-.translation-string-container,
-.entity-info-container,
-.utility-btn-container {
-  padding: 0 10px;
-}
-
-.source-string-container,
 .translation-string-container {
+  padding-right: 16px;
   margin-bottom: 16px;
 }
 
@@ -41,8 +35,7 @@
 
 .entity-info-container .context {
   color: var(--translation-secondary-color);
-  padding: 0 40px 0 0;
-  font-size: 12px;
+  padding-right: 16px;
   font-style: italic;
   line-height: 22px;
   min-width: 0;
@@ -73,51 +66,17 @@
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  gap: 4px;
+  gap: 8px;
   margin-bottom: 0;
 }
 
-.entity-container .controls .all-locales-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--status-translated);
-  background: none;
-  min-width: 28px;
-  height: 28px;
-  font-size: 20px;
-  padding: 0;
-  flex-shrink: 0;
+.striped li:nth-child(even) .controls a,
+.striped li:nth-child(even) .controls button {
+  background: var(--background-1);
 }
 
-.entity-container .controls .all-locales-btn::before {
-  font-weight: 900;
-}
-
-.entity-container .controls .edit-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--status-translated);
-  width: 28px;
-  height: 28px;
-  font-size: 20px;
-}
-
-.entity-container .controls button.copy-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--status-translated);
-  background: none;
-  width: 28px;
-  height: 28px;
-  font-size: 20px;
-  padding: 0;
-}
-.entity-container .controls button.copy-btn:hover,
-.entity-container .controls a.edit-btn:hover,
-.entity-container .controls a.all-locales-btn:hover {
-  background: none;
-  color: var(--status-unreviewed);
+.entity-container .controls button.copy:hover,
+.entity-container .controls a.edit:hover,
+.entity-container .controls a.all-locales:hover {
+  background: var(--status-translated);
 }

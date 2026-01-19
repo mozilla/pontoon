@@ -17,20 +17,26 @@
 
             <div class="entity-info-container">
               <div class="context">
-                  <span class="title">CONTEXT</span>
                   {% if entity.resource.format != "gettext" %}
                     <span class="entity-keys">{{ ", ".join(entity.key) }}</span>
                     <span class="divider">&bull;</span>
                   {% endif %}
-                  <a class="resource-path" href="/{{ preferred_locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}">{{ entity.resource.path }}</a>
-                  <span class="divider">&bull;</span>
                   <a class="project" href="/projects/{{ entity.project.slug }}">{{ entity.project.name }}</a>
               </div>
             </div>
             <div class="utility-btn-container controls clearfix">
-              <a class="all-locales-btn fas fa-globe" type="button" tabindex="-1" href="/entities/{{ entity.id }}"></a>
-              <a class="edit-btn fas fa-edit" type="button" tabindex="-1" href="/{{ preferred_locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}"></a>
-              <button class="button copy-btn far fa-copy" type="button" tabindex="-1" data-clipboard-text="{{ entity.translation.string }}"></button>
+              <a class="all-locales button" href="/entities/{{ entity.id }}">
+                <span class="fas fa-globe"></span>
+                All Locales
+              </a>
+              <a class="edit button" href="/{{ preferred_locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">
+                <span class="fas fa-pencil-alt"></span>
+                Edit
+              </a>
+              <button class="copy button" type="button" data-clipboard-text="{{ entity.translation.string }}">
+                <span class="far fa-copy"></span>
+                Copy
+              </button>
             </div>
         </li>
         {% endfor %}

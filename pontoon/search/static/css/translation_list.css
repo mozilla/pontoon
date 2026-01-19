@@ -24,27 +24,20 @@
   text-align: center;
 }
 
-.utility-btn-column .controls {
+.utility-btn-column {
   display: flex;
   margin-bottom: 0;
-  gap: 4px;
+  gap: 8px;
 }
 
-.utility-btn-column .controls .edit-btn,
-.utility-btn-column .controls button.copy-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--status-translated);
-  background: none;
-  width: 28px;
-  height: 28px;
-  font-size: 20px;
-  padding: 0;
+.striped tr:nth-child(even) .controls a,
+.striped tr:nth-child(even) .controls button {
+  background: var(--background-1);
 }
 
-.utility-btn-column .controls button.copy-btn:hover,
-.utility-btn-column .controls a.edit-btn:hover {
-  background: none;
-  color: var(--status-unreviewed);
+.striped tr:nth-child(even) .controls a:hover,
+.striped tr:nth-child(even) .controls button:hover,
+.utility-btn-column button:hover,
+.utility-btn-column a:hover {
+  background: var(--status-translated);
 }

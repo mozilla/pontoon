@@ -190,7 +190,7 @@ $(function () {
   });
 
   $(function () {
-    const clipboard = new Clipboard('.copy-btn');
+    const clipboard = new Clipboard('.copy');
 
     clipboard.on('success', function () {
       Pontoon.endLoader('Translation copied.');
