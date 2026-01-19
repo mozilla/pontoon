@@ -592,6 +592,7 @@ PIPELINE_CSS = {
             "css/team_selector.css",
             "css/search.css",
             "css/entity_list.css",
+            "css/translation_list.css",
         ),
         "output_filename": "css/search.min.css",
     },

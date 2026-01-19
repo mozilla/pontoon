@@ -44,7 +44,7 @@
       {% if entities and search %}
         {{ Entities.list_entities(entities, preferred_locale, has_more) }}
       {% elif not entities and search %}
-        <div>No Results Found.</div>
+        <p id="no-results">No Results Found.</p>
       {% endif %}
   </section>
   </div>

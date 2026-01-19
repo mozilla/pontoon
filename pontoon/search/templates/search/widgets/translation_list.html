@@ -2,28 +2,29 @@
 
 {# Widget to display list of contributors. #}
 {% macro list_translations(entity, site_url) %}
-  <table class="striped">
+  <table class="translations-table striped">
     <thead>
       <tr>
-        <th>Locale Code</th>
-        <th>Translation</th>
-        <th>Find it on Pontoon</th>
+        <th id="locale-header">Locale</th>
+        <th id="translation-header">Translation</th>
       </tr>
     </thead>
     <tbody>
     {% for translation in entity.translations %}
       <tr>
-        <td>
-            <p class="translation-locale-code">{{ translation.locale.code }}</p>
+        <td class="locale-column">
+            <span class="translation-locale-name">{{ translation.locale.name }}</span>
+            <a class="translation-locale-code" href="/{{ translation.locale.code }}">{{ translation.locale.code }}</a>
         </td>
         <td>
           <div>
-            <p class="translation-string">{{ translation.string }}</p>
+            <span class="translation-string">{{ translation.string }}</span>
           </div>
         </td>
-        <td>
-          <div>
-            <a href="{{ site_url }}/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}" class="translation-url">Link</a>
+        <td class="utility-btn-column controls">
+          <div class="controls clearfix">
+            <a class="edit-btn fas fa-edit" type="button" tabindex="-1" href="/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}"></a>
+            <button class="button copy-btn far fa-copy" type="button" tabindex="-1" data-clipboard-text="{{ translation.string }}"></button>
           </div>
         </td>
       </tr>
