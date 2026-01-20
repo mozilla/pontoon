@@ -25,6 +25,29 @@ from pontoon.test.factories import (
 
 
 @pytest.mark.django_db
+def test_user_actions_project_not_visible(member):
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+
+    private_project = ProjectFactory(
+        slug="private-project",
+        visibility="private",
+    )
+
+    date = now().strftime("%Y-%m-%d")
+
+    response = client.get(
+        f"/api/v2/user-actions/{date}/project/{private_project.slug}/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 403
+    assert response.data == {
+        "detail": "You do not have permission to access data for this project."
+    }
+
+
+@pytest.mark.django_db
 def test_dynamic_fields(django_assert_num_queries):
     expected_results = [
         {
@@ -1802,6 +1825,3 @@ def test_pretranslation_tm(member):
     )
 
     assert response.status_code == 400
-
-
-# Test Google AutoML

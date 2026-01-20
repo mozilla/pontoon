@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -70,6 +70,10 @@ class UserActionsView(APIView):
         end_date = start_date + timedelta(days=1)
 
         project = generics.get_object_or_404(Project, slug=slug)
+        if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
+            raise PermissionDenied(
+                "You do not have permission to access data for this project."
+            )
 
         actions = ActionLog.objects.filter(
             action_type__startswith="translation:",
