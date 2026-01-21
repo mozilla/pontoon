@@ -8,11 +8,11 @@
   {% for entity in entities %}
         <li class="entity-container">
             <div class="source-string-container">
-              <span class="source-string">{{ entity.string|new_highlight_matches(search, match_case_enabled, match_whole_word_enabled) }}</span>
+              <span class="source-string">{{ entity.string|advanced_highlight_matches(search, match_case_enabled, match_whole_word_enabled) }}</span>
             </div>
 
             <div class="translation-string-container">
-              <span class="translation-string">{{ entity.translation.string|new_highlight_matches(search, match_case_enabled, match_whole_word_enabled) }}</span>
+              <span class="translation-string">{{ entity.translation.string|advanced_highlight_matches(search, match_case_enabled, match_whole_word_enabled) }}</span>
             </div>
 
             <div class="entity-info-container">

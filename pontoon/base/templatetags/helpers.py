@@ -311,7 +311,6 @@ def highlight_matches(text, search_query):
 def advanced_highlight_matches(
     text, search_query, match_case_enabled=False, match_whole_word_enabled=False
 ):
-
     if not search_query:
         return text
 
