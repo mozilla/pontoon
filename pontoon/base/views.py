@@ -417,7 +417,16 @@ def get_translation_history(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
-    project_contact = entity.resource.project.contact
+    project = entity.resource.project
+
+    if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Permission Denied: You do not have permission to access data for this project.",
+            },
+            status=403,
+        )
 
     translations = (
         Translation.objects.filter(entity=entity, locale=locale)
@@ -437,6 +446,7 @@ def get_translation_history(request):
         .order_by("-active", "rejected", "-date")
     )
 
+    project_contact = project.contact
     payload = []
 
     for t in translations:
