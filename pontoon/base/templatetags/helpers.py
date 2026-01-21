@@ -308,6 +308,36 @@ def highlight_matches(text, search_query):
 
 
 @library.filter
+def advanced_highlight_matches(
+    text, search_query, match_case_enabled=False, match_whole_word_enabled=False
+):
+
+    if not search_query:
+        return text
+
+    escaped_text = escape(text)
+    terms = list(set(search_query.split() + [search_query]))
+    escaped_terms = [escape(term) for term in terms]
+
+    if match_whole_word_enabled:
+        pattern = "|".join(rf"\b{re.escape(term)}\b" for term in escaped_terms)
+    else:
+        pattern = "|".join(rf"{re.escape(term)}" for term in escaped_terms)
+
+    flags = 0 if match_case_enabled else re.IGNORECASE
+
+    highlighted_text = re.sub(
+        f"({pattern})",
+        r"<mark>\1</mark>",
+        escaped_text,
+        flags=flags,
+    )
+
+    # Mark as safe to include <mark> tags only
+    return mark_safe(highlighted_text)
+
+
+@library.filter
 def default_if_empty(value, default=""):
     """Return the original value if it's not empty or None, else use the default"""
 

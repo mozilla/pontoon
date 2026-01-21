@@ -21,6 +21,14 @@
   line-height: 1.5;
 }
 
+.entity-container mark {
+  background: var(--search-background);
+  color: var(--search-color);
+  font-weight: inherit;
+  font-style: inherit;
+  border-radius: 3px;
+}
+
 .source-string-container,
 .translation-string-container {
   margin-bottom: 16px;

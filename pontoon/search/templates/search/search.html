@@ -42,7 +42,7 @@
 
   <section id="search-results">
       {% if entities and search %}
-        {{ Entities.list_entities(entities, preferred_locale, has_more) }}
+        {{ Entities.list_entities(entities, preferred_locale, has_more, search, match_case_enabled, match_whole_word_enabled) }}
       {% elif not entities and search %}
         <p id="no-results">No Results Found.</p>
       {% endif %}
