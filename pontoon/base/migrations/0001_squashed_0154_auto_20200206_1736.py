@@ -253,7 +253,15 @@ class Migration(migrations.Migration):
                         verbose_name="Keep links on the project website clickable",
                     ),
                 ),
-                
+                (
+                    "langpack_url",
+                    models.URLField(
+                        blank=True,
+                        help_text="\n        URL pattern for downloading language packs. Leave empty if language packs\n        not available for the project. Supports {locale_code} wildcard.\n    ",
+                        null=True,
+                        verbose_name="Language pack URL",
+                    ),
+                ),
                 ("info", models.TextField(blank=True, verbose_name="Project info")),
                 ("deadline", models.DateField(blank=True, null=True)),
                 (
