@@ -192,16 +192,6 @@ class Project(models.Model, AggregatedStats):
         choices=Visibility.choices,
     )
 
-    langpack_url = models.URLField(
-        "Language pack URL",
-        blank=True,
-        null=True,
-        help_text="""
-        URL pattern for downloading language packs. Leave empty if language packs
-        not available for the project. Supports {locale_code} wildcard.
-    """,
-    )
-
     # Project info
     info = models.TextField("Project info", blank=True)
     deadline = models.DateField(blank=True, null=True)
@@ -257,7 +247,6 @@ class Project(models.Model, AggregatedStats):
             "name": self.name,
             "slug": self.slug,
             "info": self.info,
-            "langpack_url": self.langpack_url or "",
             "contact": self.contact.serialize() if self.contact else None,
         }
 
