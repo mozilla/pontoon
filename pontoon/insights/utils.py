@@ -1,12 +1,13 @@
 import json
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import User
 from django.db.models import Avg, Count, Q, Sum
 from django.db.models.functions import TruncMonth
+from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.utils import convert_to_unix_time
@@ -19,10 +20,10 @@ from pontoon.insights.models import (
 
 def get_insight_start_date():
     """Include at most the last year of data in insights."""
-    now = datetime.now()
+    now = timezone.now()
     if now.month == 12:
-        return datetime(now.year, 1, 1)
-    return datetime(now.year - 1, now.month + 1, 1)
+        return timezone.datetime(now.year, 1, 1)
+    return timezone.datetime(now.year - 1, now.month + 1, 1)
 
 
 def get_time_to_review(time_to_review):
@@ -37,7 +38,7 @@ def get_time_to_review_12_month_avg(category, query_filters=None):
     in the 12 months before each month.
     """
     snapshots = LocaleInsightsSnapshot.objects.filter(
-        created_at__gte=datetime.now() - relativedelta(years=2)
+        created_at__gte=timezone.now() - relativedelta(years=2)
     )
 
     if query_filters:
