@@ -109,73 +109,7 @@ $(function () {
           search_match_whole_word: params.get('search_match_whole_word'),
         },
         success: function (response) {
-          const locale = params.get('locale');
-          response['entities'].forEach(function (entity) {
-            const $li = $(`
-              <li class="entity-container">
-                <div class="source-string-container">
-                  <span class="source-string"></span>
-                </div>
-                <div class="translation-string-container">
-                  <span class="translation-string"></span>
-                </div>
-                <div class="entity-info-container">
-                  <div class="context">
-                    <span class="title">CONTEXT</span>
-                    <span class="entity-keys"></span>
-                    <span class="divider entity-keys-divider">&bull;</span>
-                    <a class="resource-path"></a>
-                    <span class="divider">&bull;</span>
-                    <a class="project"></a>
-                  </div>
-                </div>
-                <div class="utility-container controls clearfix">
-                  <a class="all-locales-btn fas fa-globe" type="button" tabindex="-1"></a>
-                  <a class="edit-btn fas fa-edit" type="button" tabindex="-1"></a>
-                  <button class="button copy-btn far fa-copy" type="button" tabindex="-1"></button>
-                </div>
-              </li>
-            `);
-
-            $li.find('.source-string').text(entity['string']);
-            $li
-              .find('.translation-string')
-              .text(entity['translation']['string']);
-            $li.find('.resource-path').text(entity['resource']['path']);
-            $li.find('.project').text(entity['project']['name']);
-
-            $li
-              .find('.resource-path')
-              .attr(
-                'href',
-                `/${locale}/${entity['project']['slug']}/${entity['resource']['path']}`,
-              );
-            $li
-              .find('.project')
-              .attr('href', `/projects/${entity['project']['slug']}`);
-            $li
-              .find('.all-locales-btn')
-              .attr('href', `/entities/${entity['id']}`);
-            $li
-              .find('.edit-btn')
-              .attr(
-                'href',
-                `/${locale}/${entity['project']['slug']}/${entity['resource']['path']}/?string=${entity['id']}`,
-              );
-            $li
-              .find('.copy-btn')
-              .attr('data-clipboard-text', entity['translation']['string']);
-
-            if (entity['resource']['format'] !== 'gettext') {
-              $li.find('.entity-keys').text(entity['key'].join(', '));
-            } else {
-              $li.find('.entity-keys').remove();
-              $li.find('.entity-keys-divider').remove();
-            }
-
-            $('#entity-list').append($li);
-          });
-
+          $('#entity-list').append(response.html);
           hasMore = response['has_more'];
           currentPage += 1;
         },
