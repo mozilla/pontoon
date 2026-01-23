@@ -134,9 +134,9 @@
   font-size: 13px;
 }
 
-.utility-container button.copy:hover,
-.utility-container a.edit:hover,
-.utility-container a.all-locales:hover {
+.utility-container.controls button.copy:hover,
+.utility-container.controls a.edit:hover,
+.utility-container.controls a.all-locales:hover {
   background: var(--status-translated);
 }
 
