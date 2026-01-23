@@ -1,6 +1,6 @@
 import json
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
 
@@ -24,8 +24,10 @@ def get_insight_start_date():
     if now.month == 12:
         naive_dt = datetime(now.year, 1, 1)
     else:
-        naive_dt = datetime(now.year - 1, now.month + 1, 1)
-    return timezone.make_aware(naive_dt, timezone.get_default_timezone())
+        naive_dt = timezone.datetime(now.year, 1, 1)
+    else:
+        naive_dt = timezone.datetime(now.year - 1, now.month + 1, 1)
+    return timezone.make_aware(naive_dt)
 
 
 def get_time_to_review(time_to_review):
