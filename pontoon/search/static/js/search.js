@@ -129,7 +129,7 @@ $(function () {
                     <a class="project"></a>
                   </div>
                 </div>
-                <div class="utility-btn-container controls clearfix">
+                <div class="utility-container controls clearfix">
                   <a class="all-locales-btn fas fa-globe" type="button" tabindex="-1"></a>
                   <a class="edit-btn fas fa-edit" type="button" tabindex="-1"></a>
                   <button class="button copy-btn far fa-copy" type="button" tabindex="-1"></button>

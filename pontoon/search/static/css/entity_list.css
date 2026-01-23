@@ -29,69 +29,15 @@
   border-radius: 3px;
 }
 
-.source-string-container,
-.translation-string-container {
+.entity-container .source-string-container,
+.entity-container .translation-string-container {
   margin-bottom: 16px;
 }
 
-.source-string-container {
+.entity-container .source-string-container {
   padding-right: 10px;
 }
 
-.translation-string-container {
-  padding-left: 10px;
-}
-
-.entity-info-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.entity-info-container .context {
-  color: var(--translation-secondary-color);
-  padding-right: 16px;
-  font-style: italic;
-  line-height: 22px;
-  min-width: 0;
-}
-
-.entity-info-container .context a,
-.entity-info-container .context .entity-keys {
-  word-break: break-all;
-}
-
-.entity-info-container .context .title {
-  color: var(--translation-subtitle-color);
-  font-size: 11px;
-  font-weight: 300;
-  min-width: 70px;
-}
-
-.entity-info-container .context a {
-  color: var(--translation-secondary-color);
-  text-decoration: none;
-}
-
-.entity-info-container .context a:hover {
-  color: var(--status-translated);
-}
-
-.entity-container .controls {
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
-  gap: 8px;
-  margin-bottom: 0;
-}
-
-.striped li:nth-child(even) .controls a,
-.striped li:nth-child(even) .controls button {
-  background: var(--background-1);
-}
-
-.entity-container .controls button.copy:hover,
-.entity-container .controls a.edit:hover,
-.entity-container .controls a.all-locales:hover {
-  background: var(--status-translated);
+.entity-container .translation-string-container {
+  padding-right: 10px;
 }
