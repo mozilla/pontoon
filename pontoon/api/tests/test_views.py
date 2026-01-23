@@ -1143,7 +1143,7 @@ def test_tm_search(django_assert_num_queries):
 
 
 @pytest.mark.django_db
-def test_translation_search(django_assert_num_queries):
+def test_entity_search(django_assert_num_queries):
     locale_a = LocaleFactory(code="gs", name="Geonosian")
 
     locale_b = LocaleFactory(code="kg", name="Klingon")
