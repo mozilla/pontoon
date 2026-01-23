@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('base', '0103_xliff_as_mf2'),
+        ("base", "0103_xliff_as_mf2"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='project',
-            name='langpack_url',
+            model_name="project",
+            name="langpack_url",
         ),
     ]
