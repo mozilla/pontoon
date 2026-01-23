@@ -110,14 +110,15 @@
 }
 
 .entity-info-container a,
+.entity-info-container .divider,
 .entity-info-container .entity-keys {
+  vertical-align: middle;
   word-break: break-all;
 }
 
 .entity-info-container a {
-  color: var(--translation-secondary-color);
+  color: var(--status-translated);
   text-decoration: none;
-  vertical-align: middle;
 }
 
 .entity-info-container a:hover {
