@@ -67,8 +67,38 @@
   margin: 40px;
 }
 
-.striped tr:nth-child(even) .controls a,
-.striped tr:nth-child(even) .controls button {
+#search-filters {
+  display: flex;
+  margin: 15px 10px;
+  gap: 20px;
+}
+
+#search-filters {
+  color: var(--light-grey-7);
+  display: flex;
+  font-size: 16px;
+  font-weight: 300;
+  text-align: center;
+}
+
+#search-filters .check-box {
+  justify-content: flex-start;
+}
+
+#search-filters .check-box.field {
+  padding: 0;
+}
+
+#locale-selector,
+#project-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.striped li:nth-child(even) .controls a,
+.striped li:nth-child(even) .controls button {
   background: var(--background-1);
 }
 

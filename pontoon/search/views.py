@@ -6,6 +6,7 @@ from requests.exceptions import RequestException
 
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 from pontoon.base.models.entity import Entity
@@ -172,8 +173,20 @@ def more_translations(request):
     if response.status_code == 200:
         entities = response.json()["results"]
         has_more = response.json()["next"] is not None
+
+        html = render_to_string(
+            "search/widgets/entity_list.html",
+            {
+                "entities": entities,
+                "preferred_locale": Locale.objects.get(code=locale),
+                "search": search,
+                "search_identifiers_enabled": search_identifiers == "true",
+                "match_case_enabled": search_match_case == "true",
+                "match_whole_word_enabled": search_match_whole_word == "true",
+            },
+        )
         return JsonResponse(
-            {"entities": entities, "has_more": has_more},
+            {"html": html, "has_more": has_more},
         )
 
     return JsonResponse({"error": "No results found."}, status=404)
