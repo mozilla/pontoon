@@ -1,8 +1,63 @@
-#search-menu {
-  margin: 0 auto;
-  width: 980px;
-  display: flex;
-  gap: 8px;
+#main {
+  .container {
+    menu {
+      margin-bottom: 40px;
+
+      #search-menu {
+        margin: 0 auto;
+        width: 980px;
+        display: flex;
+        gap: 8px;
+
+        .search-wrapper {
+          .icon {
+            left: 6px;
+            top: 9px;
+          }
+
+          .search-input {
+            font-weight: 400;
+            color: var(--input-color-1);
+            font-size: 16px;
+            height: 32px;
+          }
+        }
+      }
+
+      #locale-selector,
+      #project-selector {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+
+        .select .button {
+          font-size: 16px;
+          height: 32px;
+          padding: 8px 12px;
+        }
+      }
+
+      .check-list {
+        text-align: right;
+        width: 100%;
+
+        .check-box {
+          display: inline-block;
+          padding-bottom: inherit;
+
+          .check-box-wrapper {
+            margin-left: 14px;
+            width: auto;
+
+            .fas {
+              margin-left: 0;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 #no-results {
@@ -10,36 +65,6 @@
   font-style: italic;
   text-align: center;
   margin: 40px;
-}
-
-#search-filters {
-  display: flex;
-  margin: 15px 10px;
-  gap: 20px;
-}
-
-#search-filters {
-  color: var(--light-grey-7);
-  display: flex;
-  font-size: 16px;
-  font-weight: 300;
-  text-align: center;
-}
-
-#search-filters .check-box {
-  justify-content: flex-start;
-}
-
-#search-filters .check-box.field {
-  padding: 0;
-}
-
-#locale-selector,
-#project-selector {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
 }
 
 .striped tr:nth-child(even) .controls a,
