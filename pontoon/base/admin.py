@@ -242,7 +242,6 @@ class ProjectAdmin(admin.ModelAdmin):
                     "deadline",
                     "priority",
                     "contact",
-                    "langpack_url",
                     "configuration_file",
                     "can_be_requested",
                     "date_created",
