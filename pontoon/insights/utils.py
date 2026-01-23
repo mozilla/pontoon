@@ -22,8 +22,6 @@ def get_insight_start_date():
     """Include at most the last year of data in insights."""
     now = timezone.now()
     if now.month == 12:
-        naive_dt = datetime(now.year, 1, 1)
-    else:
         naive_dt = timezone.datetime(now.year, 1, 1)
     else:
         naive_dt = timezone.datetime(now.year - 1, now.month + 1, 1)
