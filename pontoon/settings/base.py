@@ -330,21 +330,21 @@ THROTTLE_BLOCK_DURATION = int(os.environ.get("THROTTLE_BLOCK_DURATION", "600"))
 
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "pontoon.base.middleware.RaygunExceptionMiddleware",
     "pontoon.base.middleware.BlockedIpMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "pontoon.base.middleware.ThrottleIpMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "pontoon.base.middleware.ThrottleIpMiddleware",
     "pontoon.base.middleware.EmailConsentMiddleware",
+    "pontoon.base.middleware.RaygunExceptionMiddleware",
 )
 
 CONTEXT_PROCESSORS = (
