@@ -50,7 +50,7 @@ def create_api_url(
     return f"{SITE_URL}/api/v2/search/translations/?{urlencode(query_params)}"
 
 
-def translation_search(request):
+def entity_search(request):
     """Get corresponding entity given entity."""
 
     search = request.GET.get("search")
@@ -141,7 +141,7 @@ def translation_search(request):
 
 
 @require_AJAX
-def more_translations(request):
+def more_entities(request):
     page = request.GET.get("page")
 
     search = request.GET.get("search")
