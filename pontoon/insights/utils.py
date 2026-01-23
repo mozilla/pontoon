@@ -22,8 +22,10 @@ def get_insight_start_date():
     """Include at most the last year of data in insights."""
     now = timezone.now()
     if now.month == 12:
-        return timezone.datetime(now.year, 1, 1)
-    return timezone.datetime(now.year - 1, now.month + 1, 1)
+        naive_dt = timezone.datetime(now.year, 1, 1)
+    else:
+        naive_dt = timezone.datetime(now.year - 1, now.month + 1, 1)
+    return timezone.make_aware(naive_dt)
 
 
 def get_time_to_review(time_to_review):
@@ -434,9 +436,7 @@ def get_global_pretranslation_quality(category, id):
     for action in actions:
         key = action[f"translation__{category}__{id}"]
         name = action[f"translation__{category}__name"]
-        month_index = relativedelta(
-            action["month"].replace(tzinfo=None), start_date
-        ).months
+        month_index = relativedelta(action["month"], start_date).months
 
         if category == "locale":
             name = f"{name} · {key}"
