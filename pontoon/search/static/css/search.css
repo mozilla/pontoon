@@ -42,6 +42,46 @@
   gap: 8px;
 }
 
+.striped tr:nth-child(even) .controls a,
+.striped tr:nth-child(even) .controls button {
+  background: var(--background-1);
+}
+
+.entity-info-container {
+  color: var(--translation-secondary-color);
+  padding-right: 16px;
+  font-style: italic;
+  line-height: 22px;
+}
+
+.entity-info-container a,
+.entity-info-container .entity-keys {
+  word-break: break-all;
+}
+
+.entity-info-container a {
+  color: var(--translation-secondary-color);
+  text-decoration: none;
+}
+
+.entity-info-container a:hover {
+  color: var(--status-translated);
+}
+
+.utility-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.utility-container button.copy:hover,
+.utility-container a.edit:hover,
+.utility-container a.all-locales:hover {
+  background: var(--status-translated);
+}
+
 .errors {
   p {
     color: var(--status-error);

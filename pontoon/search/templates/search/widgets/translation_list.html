@@ -1,27 +1,40 @@
-{% import "widgets/menu.html" as Menu %}
+{# Widget to display list of translations. #}
+{% macro list_translations(entity) %}
+  <ul id="translation-list" class="striped">
+    <li id="initial-section-container" class="translation-container">
+      <div class="source-string-container">
+        <span class="source-string">{{ entity.string }}</span>
+      </div>
 
-{# Widget to display list of contributors. #}
-{% macro list_translations(entity, site_url) %}
-  <table class="translations-table striped">
-    <thead>
-      <tr>
-        <th id="locale-header">Locale</th>
-        <th id="translation-header">Translation</th>
-      </tr>
-    </thead>
-    <tbody>
+      <div class="translation-info-container">
+        <div class="entity-info-container">
+          <a class="project" href="/projects/{{ entity.project.slug }}">{{ entity.project.name }}</a>
+          {% if entity.resource.format != "gettext" %}
+            <span class="divider">&bull;</span>
+            <span class="entity-keys">{{ ", ".join(entity.key)}}</span>
+          {% endif %}
+        </div>
+
+        <div class="utility-container controls">
+          <button class="copy button" type="button" data-clipboard-text="{{ entity.string }}">
+            <span class="far fa-copy"></span>
+            Copy
+          </button>
+        </div>
+      </div>
+    </li>
     {% for translation in entity.translations %}
-      <tr>
-        <td class="locale-column">
+      <li class="translation-container">
+        <div class="source-string-container">
+          <span class="translation-string">{{ translation.string }}</span>
+        </div>
+
+        <div class="translation-info-container">
+          <div class="locale-container">
             <span class="translation-locale-name">{{ translation.locale.name }}</span>
             <a class="translation-locale-code" href="/{{ translation.locale.code }}">{{ translation.locale.code }}</a>
-        </td>
-        <td>
-          <div>
-            <span class="translation-string">{{ translation.string }}</span>
           </div>
-        </td>
-        <td class="utility-btn-column controls">
+          <div class="utility-container controls">
             <a class="edit button" href="/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">
               <span class="fas fa-pencil-alt"></span>
               Edit
@@ -30,11 +43,11 @@
               <span class="far fa-copy"></span>
               Copy
             </button>
-        </td>
-      </tr>
+          </div>
+        </div>
+      </li>
     {% endfor %}
-    </tbody>
-  </table>
+  </ul>
 {% endmacro %}
 
 {# Widget to display notification if no translations are available. #}
