@@ -590,6 +590,7 @@ PIPELINE_CSS = {
         "source_filenames": (
             "css/heading_info.css",
             "css/team_selector.css",
+            "css/check-box.css",
             "css/search.css",
             "css/entity_list.css",
             "css/translation_list.css",
