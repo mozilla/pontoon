@@ -333,18 +333,18 @@ MIDDLEWARE = (
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.gzip.GZipMiddleware",
+    "pontoon.base.middleware.RaygunExceptionMiddleware",
     "pontoon.base.middleware.BlockedIpMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "pontoon.base.middleware.ThrottleIpMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
-    "pontoon.base.middleware.ThrottleIpMiddleware",
     "pontoon.base.middleware.EmailConsentMiddleware",
-    "pontoon.base.middleware.RaygunExceptionMiddleware",
 )
 
 CONTEXT_PROCESSORS = (
