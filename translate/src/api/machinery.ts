@@ -98,7 +98,7 @@ export async function fetchTranslationMemory(
   };
 
   if (pk) {
-    params[pk] = String(pk);
+    params.pk = String(pk);
   }
 
   const results = (await GET_(url, params)) as Array<{
