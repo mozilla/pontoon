@@ -72,7 +72,9 @@ def run_checks(
 
         tt_patterns: list[tuple[str, str]] = []
         match res_format:
-            case Resource.Format.ANDROID:
+            case (
+                Resource.Format.ANDROID | Resource.Format.XCODE | Resource.Format.XLIFF
+            ):
                 src_msg = mf2_parse_message(entity.string)
                 tgt_msg = mf2_parse_message(string)
                 src0 = get_simple_preview(res_format, src_msg)
