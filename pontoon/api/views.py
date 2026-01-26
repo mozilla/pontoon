@@ -304,9 +304,9 @@ class EntityIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
             qs = qs.prefetch_related(
                 Prefetch(
                     "translation_set",
-                    queryset=Translation.objects.filter(locale__in=locales, approved=True).select_related(
-                        "locale"
-                    ),
+                    queryset=Translation.objects.filter(
+                        locale__in=locales, approved=True
+                    ).select_related("locale"),
                     to_attr="filtered_translations",
                 )
             )
