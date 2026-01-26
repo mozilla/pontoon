@@ -335,7 +335,7 @@ def test_personal_access_token_deletion(member):
 
 @pytest.mark.django_db
 def test_personal_access_token_deletion_correct_permissions(member, user_b):
-    """Test if personal access token is deleted correctly."""
+    """Test if personal access token can be deleted by another user."""
     token = PersonalAccessToken.objects.create(
         user=user_b, name="Test Token 1", expires_at=now() + timedelta(days=30)
     )
@@ -348,3 +348,17 @@ def test_personal_access_token_deletion_correct_permissions(member, user_b):
     assert response.json()["status"] == "error"
     assert response.json()["message"] == "You are not authorized to delete this token."
     assert PersonalAccessToken.objects.filter(id=token.id).exists()
+
+
+@pytest.mark.django_db
+def test_delete_user(member):
+    """Test if user can delete their own account."""
+    url = reverse("pontoon.contributors.delete_user")
+    user_pk = member.user.pk
+
+    response = member.client.post(url)
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "success"
+    assert response.json()["message"] == "User deleted successfully."
+    assert not User.objects.filter(pk=user_pk).exists()
