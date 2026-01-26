@@ -330,9 +330,12 @@
                     <button class="delete-user-btn ">Delete this account</button>
                 </div>
                 <dialog id="delete-user-modal">
-                    <p>Are you sure? This cannot be undone</p>
-                    <button id="delete-user-cancel">Cancel</button>
-                    <button class="delete-user-btn" id="delete-user-confirm"">Yes, delete me</button>
+                    <span>Are you sure you want to delete your account? This action can't be undone.</span>
+
+                    <div class="controls">
+                        <button id="delete-user-cancel" class="button">Cancel</button>
+                        <button id="delete-user-confirm" class="delete-user-btn">Yes, delete me</button>
+                    </div>
                 </dialog>
             </div>
         </section>

@@ -379,9 +379,9 @@ $(function () {
     deleteUserModal.close();
   });
 
-  deleteUserModal.on('blur', function (e) {
-    e.preventDefault();
-
-    deleteUserModal.close();
+  $(deleteUserModal).on('click', function (e) {
+    if (e.target === deleteUserModal) {
+      deleteUserModal.close();
+    }
   });
 });
