@@ -40,9 +40,12 @@
   flex: 1;
 }
 
+.locale-container {
+  font-style: italic;
+}
+
 .locale-container .translation-locale-name {
-  display: inline-block;
-  width: 140px;
+  color: var(--light-grey-7);
 }
 
 .locale-container .translation-locale-code {
