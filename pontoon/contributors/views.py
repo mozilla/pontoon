@@ -588,7 +588,7 @@ def delete_token(request, token_id):
 @transaction.atomic
 def delete_user(request):
     try:
-        # request.user.delete()
+        request.user.delete()
         logout(request)
         messages.success(request, "User deleted.")
         return JsonResponse(
