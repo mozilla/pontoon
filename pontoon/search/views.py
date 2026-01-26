@@ -77,7 +77,7 @@ def entity_search(request):
     else:
         preferred_project = Project.objects.get(slug=project)
 
-    locales = list(Locale.objects.available())
+    locales = list(Locale.objects.visible())
 
     if not locale or not Locale.objects.filter(code=locale).exists():
         locale = get_project_locale_from_request(request, Locale.objects) or "en-GB"
