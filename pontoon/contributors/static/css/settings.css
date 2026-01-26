@@ -66,11 +66,20 @@
 }
 
 #delete-user-modal {
-  border-color: var(--main-border-1);
+  background: var(--black-3);
+  border: 1px solid var(--main-border-1);
   border-radius: 3px;
-  background: var(--background-1);
   color: var(--white-1);
-  width: 500px;
+  font-weight: 300;
+  padding: 10px;
+  width: 400px;
+
+  span {
+    text-align: left;
+    display: block;
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
 
   .controls {
     display: flex;
@@ -79,26 +88,9 @@
     margin-bottom: 0;
   }
 
-  .controls .button {
-    display: 1;
+  &::backdrop {
+    background: color-mix(in srgb, var(--black-3) 50%, transparent);
   }
-}
-
-#delete-user-modal span {
-  display: block;
-  margin: 0 0 16px 8px;
-  text-align: left;
-}
-
-::backdrop {
-  background-image: linear-gradient(
-    45deg,
-    magenta,
-    rebeccapurple,
-    dodgerblue,
-    green
-  );
-  opacity: 0.75;
 }
 
 #display-name {
