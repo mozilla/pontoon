@@ -162,3 +162,18 @@ def test_tt_android_plural_checks():
     # two: Starting punctuation, Ending whitespace
     # *: Starting punctuation
     assert checks == {"ttWarnings": ["Starting punctuation", "Ending whitespace"]}
+
+
+def test_tt_xcode_checks():
+    entity = MagicMock()
+    entity.resource.path = "xcode.xliff"
+    entity.resource.format = Resource.Format.XCODE
+    entity.resource.all.return_value = []
+    entity.string = "You can learn more {$arg @source=|%@|}."
+    entity.comment = ""
+    assert run_checks(
+        entity,
+        "en-US",
+        string="You can learn more",
+        use_tt_checks=True,
+    ) == {"ttWarnings": ["Ending punctuation", "Printf format string mismatch"]}
