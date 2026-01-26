@@ -65,7 +65,8 @@ def entity_search(request):
         .visible_for(request.user)
         .prefetch_related(
             "contact",
-        ).order_by("name")
+        )
+        .order_by("name")
     )
 
     default_project = Project(name="All Projects", slug="all-projects")
