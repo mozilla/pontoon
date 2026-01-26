@@ -546,13 +546,6 @@ PIPELINE_CSS = {
         ),
         "output_filename": "css/notifications.min.css",
     },
-    "machinery": {
-        "source_filenames": (
-            "css/team_selector.css",
-            "css/machinery.css",
-        ),
-        "output_filename": "css/machinery.min.css",
-    },
     "contributors": {
         "source_filenames": (
             "css/heading_info.css",
@@ -734,15 +727,6 @@ PIPELINE_JS = {
             "js/notifications.js",
         ),
         "output_filename": "js/notifications.min.js",
-    },
-    "machinery": {
-        "source_filenames": (
-            "js/lib/diff.js",
-            "js/lib/clipboard.min.js",
-            "js/team_selector.js",
-            "js/machinery.js",
-        ),
-        "output_filename": "js/machinery.min.js",
     },
     "homepage": {
         "source_filenames": ("js/homepage.js",),
