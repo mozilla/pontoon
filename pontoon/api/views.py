@@ -300,13 +300,12 @@ class EntityIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
         requested = self.request_fields()
 
         if not requested or "translations" in requested:
-            locales = Locale.objects.visible()
             qs = qs.prefetch_related(
                 Prefetch(
                     "translation_set",
-                    queryset=Translation.objects.filter(
-                        locale__in=locales, approved=True
-                    ).select_related("locale"),
+                    queryset=Translation.objects.filter(approved=True).select_related(
+                        "locale"
+                    ),
                     to_attr="filtered_translations",
                 )
             )
