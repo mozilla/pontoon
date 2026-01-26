@@ -31,8 +31,9 @@
 
         <div class="translation-info-container">
           <div class="locale-container">
-            <span class="translation-locale-name">{{ translation.locale.name }}</span>
             <a class="translation-locale-code" href="/{{ translation.locale.code }}">{{ translation.locale.code }}</a>
+            <span class="divider">&bull;</span>
+            <span class="translation-locale-name">{{ translation.locale.name }}</span>
           </div>
           <div class="utility-container controls">
             <a class="edit button" href="/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">
