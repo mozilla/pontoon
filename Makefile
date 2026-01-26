@@ -150,7 +150,7 @@ loaddb:
 	# Note: docker-compose doesn't support the `-i` (--interactive) argument
 	# that we need to send the dump file through STDIN. We thus are forced to
 	# use docker here instead.
-	"${DOCKER}" exec -i `"${DC}" ps -q postgresql` pg_restore -U pontoon -d pontoon -O < "${DB_DUMP_FILE}"
+	"${DOCKER}" exec -i `"${DC}" ps -q postgresql` psql -U pontoon -d pontoon < "${DB_DUMP_FILE}"
 
 sync-projects:
 	"${DC}" run --rm server .//manage.py sync_projects $(opts)
