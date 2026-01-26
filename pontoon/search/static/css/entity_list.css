@@ -30,10 +30,18 @@
 
   .source-string-container {
     padding-right: 5px;
+    overflow: hidden;
   }
 
   .translation-string-container {
     padding-left: 5px;
+    overflow: hidden;
+  }
+
+  .source-string,
+  .translation-string {
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   mark {
