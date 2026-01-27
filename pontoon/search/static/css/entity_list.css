@@ -6,16 +6,16 @@
     color: var(--light-grey-7);
     flex: 1;
     font-weight: bold;
-    padding: 10px;
+    padding: 10px 16px;
     text-transform: uppercase;
   }
 
   .source-header {
-    padding-right: 5px;
+    padding-right: 8px;
   }
 
   .translation-header {
-    padding-left: 5px;
+    padding-left: 8px;
   }
 }
 
@@ -24,17 +24,17 @@
   align-items: stretch;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
-  padding: 10px;
+  padding: 16px;
   font-size: 14px;
   line-height: 1.5;
 
   .source-string-container {
-    padding-right: 5px;
+    padding-right: 8px;
     overflow: hidden;
   }
 
   .translation-string-container {
-    padding-left: 5px;
+    padding-left: 8px;
     overflow: hidden;
   }
 
