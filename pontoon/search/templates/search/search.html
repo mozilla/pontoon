@@ -45,7 +45,7 @@
           <span class="translation-header">Translation</span>
         </div>
         <ul id="entity-list" data-has-more="{{ 'true' if has_more else 'false' }}">
-          {% include 'search/widgets/entity_list.html' %}
+          {% include 'search/widgets/search_results.html' %}
         </ul>
       {% elif not entities and search %}
         <p id="no-results">No results found.</p>

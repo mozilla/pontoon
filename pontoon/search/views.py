@@ -176,7 +176,7 @@ def more_entities(request):
         has_more = response.json()["next"] is not None
 
         html = render_to_string(
-            "search/widgets/entity_list.html",
+            "search/widgets/search_results.html",
             {
                 "entities": entities,
                 "preferred_locale": Locale.objects.get(code=locale),
