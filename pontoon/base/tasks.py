@@ -1,8 +1,10 @@
+import logging
 import sys
 
 from celery import Task
 
-from pontoon.base.errors import send_exception
+
+log = logging.getLogger(__name__)
 
 
 class PontoonTask(Task):
@@ -14,4 +16,4 @@ class PontoonTask(Task):
         # Celery throws away the traceback instance and creates its own,
         # but inspect can't process their custom class.
         _, _, traceback = sys.exc_info()
-        send_exception(exc, exc_info=(einfo.type, exc, traceback))
+        log.error(exc, exc_info=(einfo.type, exc, traceback))
