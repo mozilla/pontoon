@@ -5,7 +5,6 @@
 
       #search-menu {
         margin: 0 auto;
-        width: 980px;
         display: flex;
         gap: 8px;
 
@@ -40,6 +39,7 @@
 
       .check-list {
         text-align: right;
+        margin: 5px 0;
         width: 100%;
 
         .check-box {
@@ -47,7 +47,8 @@
           padding-bottom: inherit;
 
           .check-box-wrapper {
-            margin-left: 14px;
+            font-size: 15px;
+            margin-left: 28px;
             width: auto;
 
             .fas {
