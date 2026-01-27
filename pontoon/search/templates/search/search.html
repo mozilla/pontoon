@@ -9,7 +9,7 @@
 {% block class %}search{% endblock %}
 
 {% block heading %}
-  {{ Heading.heading(title='Translation Search', subtitle='Search engine for entity translations') }}
+  {{ Heading.heading(title='Translation Search', subtitle='Search translations across all projects and locales') }}
 {% endblock %}
 
 {% block bottom %}
@@ -44,7 +44,7 @@
           <span class="source-header">Source</span>
           <span class="translation-header">Translation</span>
         </div>
-        <ul id="entity-list" class="striped" data-has-more="{{ 'true' if has_more else 'false' }}">
+        <ul id="entity-list" data-has-more="{{ 'true' if has_more else 'false' }}">
           {% include 'search/widgets/entity_list.html' %}
         </ul>
       {% elif not entities and search %}
