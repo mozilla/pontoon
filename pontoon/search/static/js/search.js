@@ -17,8 +17,6 @@ $(function () {
 
     searchOptions['search'] = $('.search-input').val();
     if (!searchOptions['search']) {
-      const errorMessage = 'Search term cannot be empty.';
-      $('.errors').html($('<p>').text(errorMessage));
       return;
     }
 
@@ -77,19 +75,13 @@ $(function () {
   let currentPage = 2;
   let hasMore = $('#entity-list').data('has-more');
   let isLoading = false;
-  let errors = false;
-
-  if ($('.errors').children().length > 0) {
-    errors = true;
-  }
 
   $(window).on('scroll', function () {
     if (
       $(window).scrollTop() + $(window).height() >=
         $(document).height() - 2000 &&
       !isLoading &&
-      hasMore &&
-      !errors
+      hasMore
     ) {
       isLoading = true;
 
