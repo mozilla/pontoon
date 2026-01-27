@@ -98,6 +98,62 @@
   gap: 8px;
 }
 
+#entity-list-header {
+  display: flex;
+  border-bottom: 1px solid var(--main-border-1);
+
+  span {
+    color: var(--light-grey-7);
+    flex: 1;
+    font-weight: bold;
+    padding: 10px 16px;
+    text-transform: uppercase;
+  }
+
+  .source-header {
+    padding-right: 8px;
+  }
+
+  .translation-header {
+    padding-left: 8px;
+  }
+}
+
+.entity-container {
+  display: grid;
+  align-items: stretch;
+  border-bottom: 1px solid var(--main-border-1);
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+
+  .source-string-container {
+    padding-right: 8px;
+    overflow: hidden;
+  }
+
+  .translation-string-container {
+    padding-left: 8px;
+    overflow: hidden;
+  }
+
+  .source-string,
+  .translation-string {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  mark {
+    background: var(--search-background);
+    color: var(--search-color);
+    font-weight: inherit;
+    font-style: inherit;
+    border-radius: 3px;
+  }
+}
+
 .entity-info-container {
   color: var(--translation-secondary-color);
   font-style: italic;
@@ -135,4 +191,72 @@
 .utility-container.controls a.edit:hover,
 .utility-container.controls a.all-locales:hover {
   background: var(--status-translated);
+}
+
+#initial-section-container {
+  background-color: var(--dark-grey-1);
+  border-radius: 6px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+
+  .translation-info-container {
+    display: flex;
+
+    locale-container,
+    .utility-container {
+      flex: 1;
+    }
+  }
+
+  .button {
+    background: var(--background-1);
+  }
+
+  .button:hover {
+    background: var(--status-translated);
+  }
+}
+
+#translation-list {
+  color: var(--white-1);
+  line-height: 1.5;
+  font-size: 14px;
+
+  .translation-container {
+    border-bottom: 1px solid var(--main-border-1);
+    padding: 16px;
+
+    .translation-info-container {
+      display: flex;
+
+      locale-container,
+      .utility-container {
+        flex: 1;
+      }
+
+      .locale-container {
+        font-style: italic;
+        margin-top: 20px;
+
+        .translation-locale-name {
+          color: var(--light-grey-7);
+          vertical-align: middle;
+        }
+
+        .translation-locale-name:hover {
+          color: var(--status-translated);
+        }
+
+        .translation-locale-code {
+          color: var(--status-translated-alt);
+          vertical-align: middle;
+        }
+
+        .locale-container .divider {
+          vertical-align: middle;
+        }
+      }
+    }
+  }
 }
