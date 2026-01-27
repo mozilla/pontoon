@@ -1,7 +1,6 @@
 {# Widget to display list of translations. #}
 {% macro list_translations(entity) %}
-  <ul id="translation-list" class="striped">
-    <li id="initial-section-container" class="translation-container">
+    <div id="initial-section-container" class="translation-container">
       <div class="source-string-container">
         <span class="source-string">{{ entity.string }}</span>
       </div>
@@ -22,7 +21,9 @@
           </button>
         </div>
       </div>
-    </li>
+    </div>
+
+<ul id="translation-list">
     {% for translation in entity.translations %}
       <li class="translation-container">
         <div class="source-string-container">
@@ -31,9 +32,11 @@
 
         <div class="translation-info-container">
           <div class="locale-container">
-            <a class="translation-locale-code" href="/{{ translation.locale.code }}">{{ translation.locale.code }}</a>
-            <span class="divider">&bull;</span>
-            <span class="translation-locale-name">{{ translation.locale.name }}</span>
+            <a href="/{{ translation.locale.code }}">
+              <span class="translation-locale-name">{{ translation.locale.name }}</span>
+              <span class="divider">&bull;</span>
+              <span class="translation-locale-code">{{ translation.locale.code }}</a>
+            </a>
           </div>
           <div class="utility-container controls">
             <a class="edit button" href="/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">
