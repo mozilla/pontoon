@@ -20,20 +20,6 @@
   border-radius: 2px 2px 0 0;
 }
 
-.locale-selector .locale.select .button .language,
-.locale-selector .locale.select .button .selected-project {
-  display: inline-block;
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: bottom;
-}
-
-.locale-selector .locale.select .button .selected-project {
-  max-width: 220px;
-}
-
 .locale-selector .locale.select .button .code {
   text-transform: none;
 }
@@ -59,16 +45,6 @@
 
 .locale-selector .locale.select .code {
   float: right;
-}
-
-.locale-selector .locale.select .menu ul li span.language,
-.locale-selector .locale.select .menu ul li span.selected-project {
-  display: inline-block;
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: middle;
 }
 
 .locale-selector .locale.select .menu ul li span.code {
