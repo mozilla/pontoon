@@ -119,7 +119,7 @@ $(function () {
     const clipboard = new Clipboard('.copy');
 
     clipboard.on('success', function () {
-      Pontoon.endLoader('Translation copied.');
+      Pontoon.endLoader('Translation copied to clipboard.');
     });
 
     $(document).on('click', '.copy-btn', function (e) {
