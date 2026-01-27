@@ -22,6 +22,7 @@
 .entity-container {
   display: grid;
   align-items: stretch;
+  border-bottom: 1px solid var(--main-border-1);
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
   padding: 16px;

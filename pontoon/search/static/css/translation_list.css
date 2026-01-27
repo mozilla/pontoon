@@ -8,30 +8,31 @@
   color: var(--white-1);
   line-height: 1.5;
   font-size: 14px;
-  font-weight: 300;
 }
 
 #translation-list .translation-container {
+  border-bottom: 1px solid var(--main-border-1);
   padding: 16px;
 }
 
 #initial-section-container {
-  border-top: 1px solid var(--main-border-1);
+  background-color: var(--dark-grey-1);
+  border-radius: 6px;
   font-size: 16px;
-  border-left: 8px solid var(--status-translated-alt);
-  padding-left: 8px;
+  margin-bottom: 20px;
+  padding: 16px;
 }
 
-#initial-section-container .source-string-container {
-  font-weight: bold;
+#initial-section-container .button {
+  background: var(--background-1);
+}
+
+#initial-section-container .button:hover {
+  background: var(--status-translated);
 }
 
 .translation-info-container {
   display: flex;
-}
-
-.translation-container .source-string-container {
-  margin-bottom: 16px;
 }
 
 .translation-info-container .locale-container,
@@ -42,12 +43,23 @@
 
 .locale-container {
   font-style: italic;
+  margin-top: 20px;
 }
 
 .locale-container .translation-locale-name {
   color: var(--light-grey-7);
 }
 
+.locale-container .translation-locale-name:hover {
+  color: var(--status-translated);
+}
+
 .locale-container .translation-locale-code {
   color: var(--status-translated-alt);
+}
+
+.locale-container .translation-locale-code,
+.locale-container .divider,
+.locale-container .translation-locale-name {
+  vertical-align: middle;
 }
