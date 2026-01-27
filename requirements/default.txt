@@ -43,10 +43,6 @@ bleach==6.1.0 \
     --hash=sha256:0a31f1837963c41d46bbf1331b8778e1308ea0791db03cc4e7357b97cf42a8fe \
     --hash=sha256:3225f354cfc436b9789c66c4ee030194bee0568fbf9cbdad3bc8b5c26c5f12b6
     # via -r default.in
-blinker==1.8.2 \
-    --hash=sha256:1779309f71bf239144b9399d06ae925637cf6634cf6bd131104184531bf67c01 \
-    --hash=sha256:8f77b09d3bf7c795e969e9486f39c2c5e9c39d4ee07424be2bc594ece9642d83
-    # via raygun4py
 cachetools==5.5.0 \
     --hash=sha256:02134e8439cdc2ffb62023ce1debca2944c3f289d66bb17ead3ab3dede74b292 \
     --hash=sha256:2cc24fb4cbe39633fb7badd9db9ca6295d766d9c2995f245725a46715d050f2a
@@ -653,10 +649,6 @@ jsonfield==3.1.0 \
     # via
     #   -r default.in
     #   django-notifications-hq
-jsonpickle==3.3.0 \
-    --hash=sha256:287c12143f35571ab00e224fa323aa4b090d5a7f086f5f494d7ee9c7eb1a380a \
-    --hash=sha256:ab467e601e5b1a1cd76f1819d014795165da071744ef30bf3786e9bc549de25a
-    # via raygun4py
 jsonschema==4.24.0 \
     --hash=sha256:0b4e8069eb12aedfa881333004bccaec24ecef5a8a6a4b6df142b2cc9599d196 \
     --hash=sha256:a462455f19f5faf404a7902952b6f0e3ce868f3ee09a359b05eca6673bd8412d
@@ -888,9 +880,7 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.10.0 \
     --hash=sha256:817b46323b86185c48cc2261a4e0a28c02fdb2f2e3b9fe8894789657b7db6f07 \
     --hash=sha256:fc679d91491d5a3ba4c06f812bfb43506d0f93fb962c0544c949e4da9a35f225
-    # via
-    #   -r default.in
-    #   moz-l10n
+    # via -r default.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -1341,9 +1331,6 @@ rapidfuzz==3.9.7 \
     --hash=sha256:fcf79b686962d7bec458a0babc904cb4fa319808805e036b9d5a531ee6b9b835 \
     --hash=sha256:fde81b1da9a947f931711febe2e2bee694e891f6d3e6aa6bc02c1884702aea19
     # via -r default.in
-raygun4py==4.3.0 \
-    --hash=sha256:9a675da0215df310a929ef8fe4f9f6c7882b3ee44a925d73e5c191fd962d7c4d
-    # via -r default.in
 referencing==0.36.2 \
     --hash=sha256:df2e89862cd09deabbdba16944cc3f10feb6b3e6f18e902f7cc25609a34775aa \
     --hash=sha256:e8699adbbf8b5c7de96d8ffa0eb5c158b3beafce084968e2ea8bb08c6794dcd0
@@ -1454,7 +1441,6 @@ requests==2.32.4 \
     # via
     #   django-allauth
     #   google-api-core
-    #   raygun4py
 rpds-py==0.26.0 \
     --hash=sha256:0919f38f5542c0a87e7b4afcafab6fd2c15386632d249e9a087498571250abe3 \
     --hash=sha256:093d63b4b0f52d98ebae33b8c50900d3d67e0666094b1be7a12fffd7f65de74b \
