@@ -1,3 +1,5 @@
+import logging
+
 from guardian.models import GroupObjectPermission
 
 from django.contrib.auth.models import Group, Permission, User
@@ -7,7 +9,6 @@ from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-from pontoon.base import errors
 from pontoon.base.models import (
     Locale,
     LocaleCodeHistory,
@@ -18,6 +19,9 @@ from pontoon.base.models import (
     UserProfile,
 )
 from pontoon.messaging.emails import send_onboarding_email_1
+
+
+log = logging.getLogger(__name__)
 
 
 @receiver(post_delete, sender=ProjectLocale)
@@ -80,7 +84,7 @@ def create_locale_permissions_groups(sender, **kwargs):
             instance.code,
         )
     except ObjectDoesNotExist as e:
-        errors.send_exception(e)
+        log.error(e)
 
 
 @receiver(pre_save, sender=ProjectLocale)
@@ -101,7 +105,7 @@ def create_project_locale_permissions_groups(sender, **kwargs):
             f"{instance.project.slug}/{instance.locale.code}",
         )
     except ObjectDoesNotExist as e:
-        errors.send_exception(e)
+        log.error(e)
 
 
 @receiver(pre_save, sender=Project)
@@ -157,7 +161,7 @@ def assign_locale_group_permissions(sender, **kwargs):
             instance, "managers", ["can_translate_locale", "can_manage_locale"]
         )
     except ObjectDoesNotExist as e:
-        errors.send_exception(e)
+        log.error(e)
 
 
 @receiver(post_save, sender=Locale)
@@ -208,7 +212,7 @@ def assign_project_locale_group_permissions(sender, **kwargs):
             instance, "translators", ["can_translate_project_locale"]
         )
     except ObjectDoesNotExist as e:
-        errors.send_exception(e)
+        log.error(e)
 
 
 @receiver(post_save, sender=User)

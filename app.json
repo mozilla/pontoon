@@ -18,9 +18,6 @@
       "plan": "newrelic:wayne"
     },
     {
-      "plan": "raygun:cr-free"
-    },
-    {
       "plan": "papertrail:choklad"
     },
     {

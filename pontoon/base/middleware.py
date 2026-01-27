@@ -3,12 +3,9 @@ import time
 
 from ipaddress import ip_address
 
-from raygun4py.middleware.django import Provider
-
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
@@ -17,18 +14,6 @@ from pontoon.base.utils import get_ip, is_ajax
 
 
 log = logging.getLogger(__name__)
-
-
-class RaygunExceptionMiddleware(Provider, MiddlewareMixin):
-    def __init__(self, get_response):
-        super().__init__(get_response)
-        self._async_check()
-
-    def process_exception(self, request, exception):
-        # Ignore non-failure exceptions. We don't need to be notified
-        # of these.
-        if not isinstance(exception, (Http404, PermissionDenied)):
-            return super().process_exception(request, exception)
 
 
 class BlockedIpMiddleware(MiddlewareMixin):

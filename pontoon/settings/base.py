@@ -191,9 +191,6 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = os.environ.get("GOOGLE_ANALYTICS_KEY", "")
 
-# Raygun.io configuration
-RAYGUN4PY_CONFIG = {"api_key": os.environ.get("RAYGUN_APIKEY", "")}
-
 
 def _get_site_url_netloc():
     from urllib.parse import urlparse
@@ -333,7 +330,6 @@ MIDDLEWARE = (
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "pontoon.base.middleware.RaygunExceptionMiddleware",
     "pontoon.base.middleware.BlockedIpMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

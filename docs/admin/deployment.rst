@@ -404,7 +404,6 @@ Pontoon is designed to run with the following add-ons enabled:
 
 - Database: Heroku Postgres
 - Log Management: Papertrail
-- Error Tracking: Raygun.io
 - Email: Sendgrid
 - Scheduled Jobs: Heroku Scheduler
 - Cache: Memcachier
