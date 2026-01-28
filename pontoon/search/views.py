@@ -112,29 +112,25 @@ def entity_search(request):
     except RequestException:
         raise Http404
 
-    if response.status_code == 200:
-        data = response.json()
-        entities = data["results"]
-        has_more = data["next"]
-        return render(
-            request,
-            "search/search.html",
-            {
-                "entities": entities,
-                "search": search,
-                "locales": locales,
-                "projects": projects,
-                "preferred_locale": preferred_locale,
-                "preferred_project": preferred_project,
-                "search_identifiers_enabled": search_identifiers,
-                "match_case_enabled": search_match_case,
-                "match_whole_word_enabled": search_match_whole_word,
-                "has_more": has_more,
-            },
-        )
-
-    else:
-        raise Http404
+    data = response.json()
+    entities = data["results"]
+    has_more = data["next"]
+    return render(
+        request,
+        "search/search.html",
+        {
+            "entities": entities,
+            "search": search,
+            "locales": locales,
+            "projects": projects,
+            "preferred_locale": preferred_locale,
+            "preferred_project": preferred_project,
+            "search_identifiers_enabled": search_identifiers,
+            "match_case_enabled": search_match_case,
+            "match_whole_word_enabled": search_match_whole_word,
+            "has_more": has_more,
+        },
+    )
 
 
 @require_AJAX
@@ -167,27 +163,24 @@ def more_entities(request):
     except RequestException:
         raise Http404
 
-    if response.status_code == 200:
-        data = response.json()
-        entities = data["results"]
-        has_more = data["next"] is not None
+    data = response.json()
+    entities = data["results"]
+    has_more = data["next"] is not None
 
-        html = render_to_string(
-            "search/widgets/search_results.html",
-            {
-                "entities": entities,
-                "preferred_locale": Locale.objects.get(code=locale),
-                "search": search,
-                "search_identifiers_enabled": search_identifiers,
-                "match_case_enabled": search_match_case,
-                "match_whole_word_enabled": search_match_whole_word,
-            },
-        )
-        return JsonResponse(
-            {"html": html, "has_more": has_more},
-        )
-
-    return JsonResponse({"error": "No results found."}, status=404)
+    html = render_to_string(
+        "search/widgets/search_results.html",
+        {
+            "entities": entities,
+            "preferred_locale": Locale.objects.get(code=locale),
+            "search": search,
+            "search_identifiers_enabled": search_identifiers,
+            "match_case_enabled": search_match_case,
+            "match_whole_word_enabled": search_match_whole_word,
+        },
+    )
+    return JsonResponse(
+        {"html": html, "has_more": has_more},
+    )
 
 
 def entity(request, pk):
