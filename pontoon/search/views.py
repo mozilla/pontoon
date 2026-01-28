@@ -173,8 +173,9 @@ def more_entities(request):
         raise Http404
 
     if response.status_code == 200:
-        entities = response.json()["results"]
-        has_more = response.json()["next"] is not None
+        data = response.json()
+        entities = data["results"]
+        has_more = data["next"] is not None
 
         html = render_to_string(
             "search/widgets/search_results.html",
