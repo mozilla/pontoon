@@ -199,20 +199,11 @@ def entity(request, pk):
     try:
         response = requests.get(api_url)
         response.raise_for_status()
-    except RequestException:
+        data = response.json()
+    except (RequestException, ValueError):
         raise Http404
 
-    if response.status_code == 200:
-        entity = response.json()
-        return render(
-            request,
-            "search/entity.html",
-            {
-                "entity": entity,
-            },
-        )
-    else:
-        raise Http404
+    return render(request, "search/entity.html", {"entity": data})
 
 
 def entity_alternate(request, project, resource, entity):
