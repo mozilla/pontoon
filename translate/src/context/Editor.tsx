@@ -329,17 +329,19 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     let source = activeTranslation?.string || '';
     let sourceView = false;
     let placeholders: Map<string, Expression | Markup> | null = null;
+    let orig: MessageEntry | null = null;
+    if (placeholderFormats.has(format)) {
+      orig = parseEntry(format, entity.original);
+      if (orig?.value) placeholders = getPlaceholderMap(orig.value);
+    }
     if (!source) {
-      const orig = parseEntry(format, entity.original);
+      orig ??= parseEntry(format, entity.original);
       entry = orig
         ? getEmptyMessageEntry(orig, locale)
         : createSimpleMessageEntry(format, entity.key, '');
       if (requiresSourceView(entry)) {
         source = serializeEntry(entry);
         sourceView = true;
-      }
-      if (placeholderFormats.has(format)) {
-        placeholders = getPlaceholderMap(entry.value!);
       }
     } else {
       const entry_ = parseEntry(format, source);
@@ -349,10 +351,6 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       } else {
         entry = createSimpleMessageEntry(format, entity.key, source);
         sourceView = format === 'fluent';
-      }
-      if (placeholderFormats.has(format)) {
-        const orig = parseEntry(format, entity.original);
-        if (orig?.value) placeholders = getPlaceholderMap(orig.value);
       }
     }
 

@@ -29,7 +29,9 @@ function mountSpy(Spy, format, translation, original) {
           format,
           key: ['key'],
           original: original ?? 'key = test',
-          translation: { string: translation, errors: [], warnings: [] },
+          translation: translation
+            ? { string: translation, errors: [], warnings: [] }
+            : undefined,
           project: { contact: '' },
           comment: '',
         },
@@ -177,6 +179,38 @@ describe('<EditorProvider>', () => {
     expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
   });
 
+  it('provides a simple Android value with no translation', () => {
+    let editor, result;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      return null;
+    };
+    mountSpy(
+      Spy,
+      'android',
+      undefined,
+      'Hello, {$arg1 :string @source=|%1$s|}!',
+    );
+    const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
+    expect(editor).toMatchObject({
+      sourceView: false,
+      initial: { id: '', value: [''] },
+      placeholders: new Map([['%1$s', arg1]]),
+      fields: [
+        {
+          id: '',
+          keys: [],
+          labels: [],
+          name: '',
+          handle: { current: { value: '' } },
+        },
+      ],
+    });
+    expect(editor.placeholders).toBeInstanceOf(Map);
+    expect(result).toMatchObject([{ name: '', keys: [], value: '' }]);
+  });
+
   it('provides a simple Android value', () => {
     let editor, result;
     const Spy = () => {
@@ -205,6 +239,7 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
+    expect(editor.placeholders).toBeInstanceOf(Map);
     expect(result).toMatchObject([{ name: '', keys: [], value: 'Hei, %1$s!' }]);
   });
 
