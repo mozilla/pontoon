@@ -36,7 +36,9 @@ $(function () {
     $('.check-box.enabled').each(function () {
       const attr = $(this).data('attribute');
       const param = checkboxParamMap[attr];
-      if (param) params.set(param, 'true');
+      if (param) {
+        params.set(param, 'true');
+      }
     });
 
     window.location.href = `${url.pathname}?${params.toString()}`;
