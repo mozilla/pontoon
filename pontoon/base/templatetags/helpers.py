@@ -287,44 +287,31 @@ def linkify(source):
 
 
 @library.filter
-def highlight_matches(text, search_query):
+def highlight_matches(
+    text,
+    search_query,
+    advanced=False,
+    match_case_enabled=False,
+    match_whole_word_enabled=False,
+):
     """Highlight all occurrences of the search query in the text."""
     if not search_query:
         return text
 
-    # First, escape the text to prevent HTML rendering
     escaped_text = escape(text)
-
-    # Then apply highlighting to the escaped text
-    highlighted_text = re.sub(
-        f"({re.escape(search_query)})",
-        r"<mark>\1</mark>",
-        escaped_text,
-        flags=re.IGNORECASE,
-    )
-
-    # Mark as safe to include <mark> tags only
-    return mark_safe(highlighted_text)
-
-
-@library.filter
-def advanced_highlight_matches(
-    text, search_query, match_case_enabled=False, match_whole_word_enabled=False
-):
-    if not search_query:
-        return text
-
-    escaped_text = escape(text)
-    terms = list(set(search_query.split() + [search_query]))
-    escaped_terms = [escape(term) for term in terms]
-
-    if match_whole_word_enabled:
-        pattern = "|".join(rf"\b{re.escape(term)}\b" for term in escaped_terms)
-    else:
-        pattern = "|".join(rf"{re.escape(term)}" for term in escaped_terms)
-
     flags = 0 if match_case_enabled else re.IGNORECASE
 
+    if advanced:
+        terms = list(set(search_query.split() + [search_query]))
+        escaped_terms = [escape(term) for term in terms]
+        pattern = "|".join(rf"{re.escape(term)}" for term in escaped_terms)
+
+        if match_whole_word_enabled:
+            pattern = "|".join(rf"\b{re.escape(term)}\b" for term in escaped_terms)
+    else:
+        pattern = re.escape(search_query)
+
+    # Then apply highlighting to the escaped text
     highlighted_text = re.sub(
         f"({pattern})",
         r"<mark>\1</mark>",
