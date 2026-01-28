@@ -1,8 +1,4 @@
 $(function () {
-  $('.search-btn').click(function () {
-    $('.search-input').trigger('enterKey');
-  });
-
   $('.search-input')
     .unbind('keydown.pontoon')
     .bind('keydown.pontoon', function (e) {
@@ -13,58 +9,37 @@ $(function () {
     });
 
   $('.search-input').on('enterKey', function () {
-    const searchOptions = {};
+    const $input = $('.search-input');
+    const search = $input.val()?.trim();
 
-    searchOptions['search'] = $('.search-input').val();
-    if (!searchOptions['search']) {
-      return;
+    const url = new URL(window.location.href);
+    url.search = '';
+
+    const params = url.searchParams;
+    params.set('search', search);
+
+    const locale = $('.locale .selector .language').data().code;
+    params.set('locale', locale);
+
+    const project = $('.project .selector .selected-project').data().slug;
+
+    if (project && project !== 'all-projects') {
+      params.set('project', project);
     }
 
-    $('.check-box').each(function () {
-      const self = $(this);
-      if (self.hasClass('enabled')) {
-        const attribute = self.data('attribute');
-        searchOptions[attribute] = true;
-      }
+    const checkboxParamMap = {
+      'search-identifiers-enabled': 'search_identifiers',
+      'match-case-enabled': 'search_match_case',
+      'match-whole-word-enabled': 'search_match_whole_word',
+    };
+
+    $('.check-box.enabled').each(function () {
+      const attr = $(this).data('attribute');
+      const param = checkboxParamMap[attr];
+      if (param) params.set(param, 'true');
     });
 
-    searchOptions['locale'] = $('.locale .selector .language').data().code;
-    const selectedProject = $('.project .selector .selected-project').data()
-      .slug;
-
-    if (selectedProject && selectedProject !== 'all-projects') {
-      searchOptions['project'] = selectedProject;
-    }
-
-    const currentUrl = new URL(window.location.href);
-    currentUrl.search = '';
-    const params = currentUrl.searchParams;
-
-    // search, project, locale selectors
-    params.set('search', searchOptions['search']);
-    if (searchOptions['project']) {
-      params.set('project', searchOptions['project']);
-    }
-    params.set('locale', searchOptions['locale']);
-
-    // checkboxes
-    if (searchOptions['search-identifiers-enabled']) {
-      params.set(
-        'search_identifiers',
-        searchOptions['search-identifiers-enabled'],
-      );
-    }
-    if (searchOptions['match-case-enabled']) {
-      params.set('search_match_case', searchOptions['match-case-enabled']);
-    }
-    if (searchOptions['match-whole-word-enabled']) {
-      params.set(
-        'search_match_whole_word',
-        searchOptions['match-whole-word-enabled'],
-      );
-    }
-
-    window.location.href = `${currentUrl.pathname}?${params.toString()}`;
+    window.location.href = `${url.pathname}?${params.toString()}`;
   });
 
   $('.check-box').click(function () {
