@@ -12,11 +12,9 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
 
-from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
@@ -28,24 +26,6 @@ from .openai_service import OpenAIService
 
 
 log = logging.getLogger(__name__)
-
-
-def machinery(request):
-    locale = utils.get_project_locale_from_request(request, Locale.objects) or "en-GB"
-
-    return render(
-        request,
-        "machinery/machinery.html",
-        {
-            "locale": Locale.objects.get(code=locale),
-            "locales": Locale.objects.visible(),
-            "is_google_translate_supported": bool(settings.GOOGLE_TRANSLATE_API_KEY),
-            "is_microsoft_translator_supported": bool(
-                settings.MICROSOFT_TRANSLATOR_API_KEY
-            ),
-            "is_systran_translate_supported": bool(settings.SYSTRAN_TRANSLATE_API_KEY),
-        },
-    )
 
 
 def translation_memory(request):
