@@ -204,6 +204,10 @@ you create:
    Optional. Set your `Google Cloud AutoML Translation`_ model ID to use custom machine
    translation engine by Google.
 
+``GOOGLE_APPLICATION_CREDENTIALS``
+   Optional. Path to a Google Cloud service account JSON key file
+   used by Google client libraries for authentication.
+
 ``INACTIVE_CONTRIBUTOR_PERIOD``
    Optional. Number of months in which the contributor needs to log in in order not to
    receive the inactive account email. The default value is 6.
