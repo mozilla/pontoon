@@ -118,8 +118,9 @@ def entity_search(request):
         raise Http404
 
     if response.status_code == 200:
-        entities = response.json()["results"]
-        has_more = response.json()["next"]
+        data = response.json()
+        entities = data["results"]
+        has_more = data["next"]
         return render(
             request,
             "search/search.html",
