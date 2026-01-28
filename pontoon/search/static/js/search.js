@@ -29,7 +29,7 @@ $(function () {
     });
 
     searchOptions['locale'] = $('.locale .selector .language').data().code;
-    const selectedProject = $('.locale .selector .selected-project').data()
+    const selectedProject = $('.project .selector .selected-project').data()
       .slug;
 
     if (selectedProject && selectedProject !== 'all-projects') {
