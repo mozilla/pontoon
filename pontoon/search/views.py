@@ -12,7 +12,7 @@ from django.urls import reverse
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
-from pontoon.base.utils import get_project_locale_from_request, require_AJAX
+from pontoon.base.utils import get_project_locale_from_request, parse_bool, require_AJAX
 from pontoon.settings.base import SITE_URL
 
 
@@ -25,10 +25,6 @@ def create_api_url(
     search_match_whole_word,
     page=None,
 ):
-    search_match_case = search_match_case == "true"
-    search_identifiers = search_identifiers == "true"
-    search_match_whole_word = search_match_whole_word == "true"
-
     query_params = {
         "text": search,
         "project": project,
@@ -56,9 +52,9 @@ def entity_search(request):
     search = request.GET.get("search")
     locale = request.GET.get("locale")
     project = request.GET.get("project")
-    search_identifiers = request.GET.get("search_identifiers")
-    search_match_case = request.GET.get("search_match_case")
-    search_match_whole_word = request.GET.get("search_match_whole_word")
+    search_identifiers = parse_bool(request.GET.get("search_identifiers"))
+    search_match_case = parse_bool(request.GET.get("search_match_case"))
+    search_match_whole_word = parse_bool(request.GET.get("search_match_whole_word"))
 
     projects = list(
         Project.objects.visible()
@@ -72,11 +68,10 @@ def entity_search(request):
     default_project = Project(name="All Projects", slug="all-projects")
     projects.insert(0, default_project)
 
-    if not project or not Project.objects.filter(slug=project).exists():
+    preferred_project = Project.objects.filter(slug=project).first()
+    if not preferred_project:
         preferred_project = default_project
         project = None
-    else:
-        preferred_project = Project.objects.get(slug=project)
 
     locales = list(Locale.objects.visible())
 
@@ -96,9 +91,9 @@ def entity_search(request):
                 "projects": projects,
                 "preferred_locale": preferred_locale,
                 "preferred_project": preferred_project,
-                "search_identifiers_enabled": search_identifiers == "true",
-                "match_case_enabled": search_match_case == "true",
-                "match_whole_word_enabled": search_match_whole_word == "true",
+                "search_identifiers_enabled": search_identifiers,
+                "match_case_enabled": search_match_case,
+                "match_whole_word_enabled": search_match_whole_word,
             },
         )
 
@@ -131,9 +126,9 @@ def entity_search(request):
                 "projects": projects,
                 "preferred_locale": preferred_locale,
                 "preferred_project": preferred_project,
-                "search_identifiers_enabled": search_identifiers == "true",
-                "match_case_enabled": search_match_case == "true",
-                "match_whole_word_enabled": search_match_whole_word == "true",
+                "search_identifiers_enabled": search_identifiers,
+                "match_case_enabled": search_match_case,
+                "match_whole_word_enabled": search_match_whole_word,
                 "has_more": has_more,
             },
         )
@@ -149,9 +144,9 @@ def more_entities(request):
     search = request.GET.get("search")
     locale = request.GET.get("locale")
     project = request.GET.get("project")
-    search_identifiers = request.GET.get("search_identifiers")
-    search_match_case = request.GET.get("search_match_case")
-    search_match_whole_word = request.GET.get("search_match_whole_word")
+    search_identifiers = parse_bool(request.GET.get("search_identifiers"))
+    search_match_case = parse_bool(request.GET.get("search_match_case"))
+    search_match_whole_word = parse_bool(request.GET.get("search_match_whole_word"))
 
     if not locale or not Locale.objects.filter(code=locale).exists():
         locale = get_project_locale_from_request(request, Locale.objects) or "en-GB"
@@ -183,9 +178,9 @@ def more_entities(request):
                 "entities": entities,
                 "preferred_locale": Locale.objects.get(code=locale),
                 "search": search,
-                "search_identifiers_enabled": search_identifiers == "true",
-                "match_case_enabled": search_match_case == "true",
-                "match_whole_word_enabled": search_match_whole_word == "true",
+                "search_identifiers_enabled": search_identifiers,
+                "match_case_enabled": search_match_case,
+                "match_whole_word_enabled": search_match_whole_word,
             },
         )
         return JsonResponse(
