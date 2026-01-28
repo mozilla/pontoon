@@ -341,3 +341,7 @@ def get_locale_or_redirect(code, redirect_view_name=None, url_arg_name=None, **k
         return redirect(redirect_url)
 
     raise Http404
+
+
+def parse_bool(value) -> bool:
+    return str(value).lower() in ("1", "true", "yes", "on")
