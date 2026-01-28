@@ -12,6 +12,7 @@ import {
 
 import { EntitiesList } from './EntitiesList';
 import { vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 
 // Entities shared between tests
 const ENTITIES = [
@@ -52,7 +53,7 @@ describe('<EntitiesList>', () => {
       hasMore: true,
     });
     const wrapper = mountComponentWithStore(EntitiesList, store);
-    expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
+    expect(wrapper.queryByTestId('skeleton-loader')).toBeInTheDocument();
   });
 
   it("doesn't display a loading animation when there aren't entities to load", () => {
@@ -64,7 +65,7 @@ describe('<EntitiesList>', () => {
     });
     const wrapper = mountComponentWithStore(EntitiesList, store);
 
-    expect(wrapper.find('SkeletonLoader')).toHaveLength(0);
+    expect(wrapper.queryByTestId('skeleton-loader')).not.toBeInTheDocument();
   });
 
   // FIXME: https://github.com/mozilla/pontoon/issues/3883
@@ -73,7 +74,7 @@ describe('<EntitiesList>', () => {
     store.dispatch({ type: EntitiesActions.REQUEST_ENTITIES });
     const wrapper = mountComponentWithStore(EntitiesList, store);
 
-    expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
+    expect(wrapper.queryByTestId('skeleton-loader')).toBeInTheDocument();
   });
 
   it('shows the correct number of entities', () => {
@@ -89,7 +90,7 @@ describe('<EntitiesList>', () => {
     });
     const wrapper = mountComponentWithStore(EntitiesList, store, {}, history);
 
-    expect(wrapper.find('Entity')).toHaveLength(2);
+    expect(wrapper.queryAllByTestId('entity')).toHaveLength(2);
   });
 
   // FIXME: https://github.com/mozilla/pontoon/issues/3883
@@ -150,9 +151,9 @@ describe('<EntitiesList>', () => {
     // HACK to get isTranslator === true in Entity
     createDefaultUser(store, { can_translate_locales: [''] });
 
-    const wrapper = mountComponentWithStore(EntitiesList, store);
+    const { container } = mountComponentWithStore(EntitiesList, store);
 
-    wrapper.find('.entity .status').first().simulate('click');
+    fireEvent.click(container.querySelector('.entity .status'));
 
     expect(BatchActions.toggleSelection).toHaveBeenCalledTimes(1);
   });

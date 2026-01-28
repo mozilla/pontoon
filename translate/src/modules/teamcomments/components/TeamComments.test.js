@@ -10,17 +10,19 @@ describe('<TeamComments>', () => {
 
   it('shows correct message when no comments', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(TeamComments, store, {
+    const { container } = mountComponentWithStore(TeamComments, store, {
       teamComments: { entity: 267, comments: [] },
       user: DEFAULT_USER,
     });
 
-    expect(wrapper.find('p').text()).toEqual('No comments available.');
+    expect(container.querySelector('p')).toHaveTextContent(
+      'No comments available.',
+    );
   });
 
   it('renders correctly when there are comments', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(TeamComments, store, {
+    const { container } = mountComponentWithStore(TeamComments, store, {
       teamComments: {
         entity: 267,
         comments: [
@@ -32,7 +34,7 @@ describe('<TeamComments>', () => {
       user: DEFAULT_USER,
     });
 
-    expect(wrapper.children()).toHaveLength(1);
-    expect(wrapper.find('li')).toHaveLength(3);
+    expect(container.childElementCount).toBe(1);
+    expect(container.querySelectorAll('li')).toHaveLength(3);
   });
 });

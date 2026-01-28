@@ -127,7 +127,7 @@ export function Helpers({
   if (windowWidth === 'narrow' || windowWidth === 'medium') {
     return (
       <>
-        <div className='bottom'>
+        <div className='bottom' data-testid='helpers'>
           <Tabs
             selectedIndex={commentTabIndex}
             onSelect={(index, lastIndex) => {
@@ -185,7 +185,7 @@ export function Helpers({
 
   return (
     <>
-      <div className='top'>
+      <div className='top' data-testid='helpers'>
         <Tabs
           selectedIndex={commentTabIndex}
           onSelect={(tab) => setCommentTabIndex(tab)}

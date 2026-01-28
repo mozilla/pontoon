@@ -58,7 +58,7 @@ export function SearchPanelDialog({
   useOnDiscard(ref, onDiscard);
 
   return (
-    <div className='menu' ref={ref}>
+    <div className='menu' ref={ref} data-testid='search-panel-dialog'>
       <Localized id='search-SearchPanel--heading'>
         <header className='title'>SEARCH OPTIONS</header>
       </Localized>

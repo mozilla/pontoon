@@ -2,6 +2,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { ResourceProgress } from './ResourceProgress';
 import { vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 
 describe('<ResourceProgress>', () => {
   const STATS = {
@@ -32,8 +33,10 @@ describe('<ResourceProgress>', () => {
       parameters: PARAMETERS,
     });
 
-    expect(wrapper.find('.selector').exists()).toBeTruthy();
-    expect(wrapper.find('ResourceProgressDialog').exists()).toBeFalsy();
+    expect(wrapper.container.querySelector('.selector')).toBeInTheDocument();
+    expect(
+      wrapper.queryByTestId('resource-progress-dialog'),
+    ).not.toBeInTheDocument();
   });
 
   it('shows the info menu after a click', () => {
@@ -41,8 +44,10 @@ describe('<ResourceProgress>', () => {
     const wrapper = mountComponentWithStore(ResourceProgress, store, {
       parameters: PARAMETERS,
     });
-    wrapper.find('.selector').simulate('click');
+    fireEvent.click(wrapper.container.querySelector('.selector'));
 
-    expect(wrapper.find('ResourceProgressDialog').exists()).toBeTruthy();
+    expect(
+      wrapper.queryByTestId('resource-progress-dialog'),
+    ).toBeInTheDocument();
   });
 });

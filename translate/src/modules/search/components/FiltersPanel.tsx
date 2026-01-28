@@ -191,7 +191,7 @@ const FilterToolbar = ({
   onApply: () => void;
   onReset: () => void;
 }) => (
-  <div className='toolbar clearfix'>
+  <div className='toolbar clearfix' data-testid='filter-toolbar'>
     <Localized
       id='search-FiltersPanel--clear-selection'
       attrs={{ title: true }}
@@ -248,7 +248,7 @@ export function FiltersPanelDialog({
   useOnDiscard(ref, onDiscard);
 
   return (
-    <div className='menu' ref={ref}>
+    <div className='menu' ref={ref} data-testid='filters-panel-dialog'>
       <ul>
         <Localized id='search-FiltersPanel--heading-status'>
           <li className='horizontal-separator'>TRANSLATION STATUS</li>
