@@ -1,45 +1,45 @@
 {# Widget to display list of translations. #}
 {% macro list_translations(entity) %}
-    <div id="initial-section-container" class="translation-container">
-      <div class="source-string-container">
-        <span class="source-string">{{ entity.string }}</span>
-      </div>
+<div id="initial-section-container" class="translation-container">
+  <div class="translation-string-container">
+    <span class="source-string">{{ entity.string }}</span>
+  </div>
 
-      <div class="translation-info-container">
-        <div class="entity-info-container">
-          <a class="project" href="/projects/{{ entity.project.slug }}">{{ entity.project.name }}</a>
-          {% if entity.resource.format != "gettext" %}
-            <span class="divider">&bull;</span>
-            <span class="entity-keys">{{ ", ".join(entity.key)}}</span>
-          {% endif %}
-        </div>
-
-        <div class="utility-container controls">
-          <button class="copy button" type="button" data-clipboard-text="{{ entity.string }}">
-            <span class="far fa-copy"></span>
-            Copy
-          </button>
-        </div>
-      </div>
+  <div class="translation-info-container">
+    <div class="entity-info-container">
+      <a class="project" href="{{ url('pontoon.projects.project', entity.project.slug) }}">{{ entity.project.name }}</a>
+      {% if entity.resource.format != "gettext" %}
+        <span class="divider">&bull;</span>
+        <span class="entity-keys">{{ ", ".join(entity.key)}}</span>
+      {% endif %}
     </div>
+
+    <div class="utility-container controls">
+      <button class="copy button" type="button" data-clipboard-text="{{ entity.string }}">
+        <span class="far fa-copy"></span>
+        Copy
+      </button>
+    </div>
+  </div>
+</div>
 
 <ul id="translation-list">
     {% for translation in entity.translations %}
       <li class="translation-container">
-        <div class="source-string-container">
+        <div class="translation-string-container">
           <span class="translation-string">{{ translation.string }}</span>
         </div>
 
         <div class="translation-info-container">
           <div class="locale-container">
-            <a href="/{{ translation.locale.code }}">
+            <a href="{{ url('pontoon.teams.team', translation.locale.code ) }}">
               <span class="translation-locale-name">{{ translation.locale.name }}</span>
               <span class="divider">&bull;</span>
               <span class="translation-locale-code">{{ translation.locale.code }}</a>
             </a>
           </div>
           <div class="utility-container controls">
-            <a class="edit button" href="/{{ translation.locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">
+            <a class="edit button" href="{{ url('pontoon.translate', locale=translation.locale.code, project=entity.project.slug, resource=entity.resource.path) }}?string={{ entity.id }}">
               <span class="fas fa-pencil-alt"></span>
               Edit
             </a>
