@@ -590,7 +590,7 @@ def delete_user(request):
     try:
         request.user.delete()
         logout(request)
-        messages.success(request, "User deleted.")
+        messages.success(request, "Your account has been deleted.")
         return JsonResponse(
             {
                 "status": "success",
