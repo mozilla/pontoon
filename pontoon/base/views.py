@@ -810,6 +810,8 @@ def download_translations(request):
     locale = get_object_or_404(Locale, code=code)
 
     # FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
+    # Once fixed, we should remove SSH credentials from the web pod
+    # https://github.com/mozilla/webservices-infra/pull/9295
     url = translations_target_url(project, locale, res_path)
     if url and url.startswith("https://"):
         return HttpResponseRedirect(url)

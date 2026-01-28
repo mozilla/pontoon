@@ -19,6 +19,8 @@ from pontoon.sync.core.translations_to_repo import update_changed_resources
 
 
 # FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
+# Once fixed, we should remove SSH credentials from the web pod
+# https://github.com/mozilla/webservices-infra/pull/9295
 def translations_target_url(
     project: Project, locale: Locale, resource_path: str
 ) -> str | None:
