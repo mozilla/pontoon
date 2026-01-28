@@ -9,7 +9,7 @@
       </div>
 
       <div class="entity-info-container">
-        <a class="project" href="/projects/{{ entity.project.slug }}">{{ entity.project.name }}</a>
+        <a class="project" href="{{ url('pontoon.projects.project', entity.project.slug) }}">{{ entity.project.name }}</a>
         {% if entity.resource.format != "gettext" %}
           <span class="divider">&bull;</span>
           {% if search_identifiers_enabled %}
@@ -20,11 +20,11 @@
         {% endif %}
       </div>
       <div class="utility-container controls">
-        <a class="all-locales button" href="/entities/{{ entity.id }}">
+        <a class="all-locales button" href="{{ url('pontoon.entity', entity.id) }}">
           <span class="fas fa-globe"></span>
           All Locales
         </a>
-        <a class="edit button" href="/{{ preferred_locale.code}}/{{ entity.project.slug }}/{{ entity.resource.path }}/?string={{ entity.id }}">
+        <a class="edit button" href="{{ url('pontoon.translate', locale=preferred_locale.code, project=entity.project.slug, resource=entity.resource.path) }}?string={{ entity.id }}">
           <span class="fas fa-pencil-alt"></span>
           Edit
         </a>
