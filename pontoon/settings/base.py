@@ -596,6 +596,7 @@ PIPELINE_CSS = {
         "source_filenames": (
             "css/heading_info.css",
             "css/team_selector.css",
+            "css/project_selector.css",
             "css/check-box.css",
             "css/search.css",
         ),
@@ -770,6 +771,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/search.js",
             "js/team_selector.js",
+            "js/project_selector.js",
             "js/lib/clipboard.min.js",
         ),
         "output_filename": "js/search.min.js",
