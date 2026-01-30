@@ -49,7 +49,48 @@ $(function () {
     self.toggleClass('enabled');
   });
 
-  let currentPage = 2;
+  const url = new URL(window.location.href);
+  const params = url.searchParams;
+  let currentPage = parseInt(params.get('pages')) || 1;
+
+  function updateURL() {
+    if (currentPage > 1) {
+      url.searchParams.set('pages', currentPage);
+    } else {
+      url.searchParams.delete('pages');
+    }
+
+    history.replaceState(null, '', url);
+  }
+
+  function loadMoreEntries() {
+    $.ajax({
+      url: '/ajax/more-translations/',
+      type: 'GET',
+      data: {
+        page: currentPage + 1,
+        search: params.get('search'),
+        locale: params.get('locale'),
+        project: params.get('project'),
+        search_identifiers: params.get('search_identifiers'),
+        search_match_case: params.get('search_match_case'),
+        search_match_whole_word: params.get('search_match_whole_word'),
+      },
+      success: function (response) {
+        $('#entity-list').append(response.html);
+        hasMore = response['has_more'];
+        currentPage += 1;
+        updateURL();
+      },
+      error: function () {
+        Pontoon.endLoader('Oops, something went wrong.');
+      },
+      complete: function () {
+        isLoading = false;
+      },
+    });
+  }
+
   let hasMore = $('#entity-list').data('has-more');
   let isLoading = false;
 
@@ -61,34 +102,7 @@ $(function () {
       hasMore
     ) {
       isLoading = true;
-
-      const currentUrl = new URL(window.location.href);
-      const params = currentUrl.searchParams;
-
-      $.ajax({
-        url: '/ajax/more-translations/',
-        type: 'GET',
-        data: {
-          page: currentPage,
-          search: params.get('search'),
-          locale: params.get('locale'),
-          project: params.get('project'),
-          search_identifiers: params.get('search_identifiers'),
-          search_match_case: params.get('search_match_case'),
-          search_match_whole_word: params.get('search_match_whole_word'),
-        },
-        success: function (response) {
-          $('#entity-list').append(response.html);
-          hasMore = response['has_more'];
-          currentPage += 1;
-        },
-        error: function () {
-          Pontoon.endLoader('Oops, something went wrong.');
-        },
-        complete: function () {
-          isLoading = false;
-        },
-      });
+      loadMoreEntries();
     }
   });
 
