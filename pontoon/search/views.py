@@ -49,6 +49,11 @@ def create_api_url(
 def entity_search(request):
     """Get corresponding entity given entity."""
 
+    try:
+        pages = int(request.GET.get("pages", 1))
+    except ValueError:
+        pages = 1
+
     search = request.GET.get("search")
     locale = request.GET.get("locale")
     project = request.GET.get("project")
@@ -97,24 +102,31 @@ def entity_search(request):
             },
         )
 
-    api_url = create_api_url(
-        search,
-        project,
-        locale,
-        search_identifiers,
-        search_match_case,
-        search_match_whole_word,
-    )
+    entities = []
+    has_more = True
+    for page in range(1, pages + 1):
+        if not has_more:
+            break
+        api_url = create_api_url(
+            search,
+            project,
+            locale,
+            search_identifiers,
+            search_match_case,
+            search_match_whole_word,
+            page=page,
+        )
 
-    try:
-        response = requests.get(api_url)
-        response.raise_for_status()
-    except RequestException:
-        raise Http404
+        try:
+            response = requests.get(api_url)
+            response.raise_for_status()
+        except RequestException:
+            raise Http404
 
-    data = response.json()
-    entities = data["results"]
-    has_more = data["next"]
+        data = response.json()
+        entities.extend(data["results"])
+        has_more = data["next"] is not None
+
     return render(
         request,
         "search/search.html",
