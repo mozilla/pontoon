@@ -82,7 +82,7 @@ const style = HighlightStyle.define([
   }, // <...>
   { tag: tags.brace, color: '#872bff', fontWeight: 'bold', whiteSpace: 'pre' }, // { }
   { tag: tags.name, color: '#872bff', whiteSpace: 'pre' }, // {...}
-  { tag: [tags.quote, tags.literal], whiteSpace: 'pre-wrap' }, // "..."
+  { tag: [tags.quote, tags.literal], color:'#3e9682',whiteSpace: 'pre-wrap' }, // "..."
   { tag: tags.string, whiteSpace: 'pre-wrap' },
 ]);
 
