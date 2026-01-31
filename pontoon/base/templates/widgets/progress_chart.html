@@ -1,13 +1,13 @@
 {% macro span(chart, link, link_parameter=False, has_params=False) %}
 {% if chart != None %}
   <div class="chart-wrapper">
-    <span class="percent">{{ (100 * (chart.approved + chart.pretranslated + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span>
+    <span class="percent">{{ (100 * (chart.approved + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span>
     <span class="chart">
       <span class="translated" style="width:{{ (100 * chart.approved / chart.total) | round(1) }}%"></span>
       <span class="pretranslated" style="width:{{ (100 * chart.pretranslated / chart.total) | round(1) }}%"></span>
       <span class="warnings" style="width:{{ (100 * chart.warnings / chart.total) | round(1) }}%"></span>
       <span class="errors" style="width:{{ (100 * chart.errors / chart.total) | round(1) }}%"></span>
-      <span class="missing" style="width:{{ (100 * (chart.total - chart.approved - chart.pretranslated - chart.warnings - chart.errors) / chart.total) | round(1) }}%"></span>
+      <span class="missing" style="width:{{ (100 * (chart.total - chart.approved - chart.pretranslated) / chart.total) | round(1) }}%"></span>
     </span>
     <span class="unreviewed-status fas fa-lightbulb{% if chart.unreviewed > 0 %} pending{% endif %}"></span>
   </div>
@@ -46,7 +46,7 @@
       <li class="missing">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=missing{% endif %}">
           <div class="title">Missing</div>
-          {% set missing_strings = chart.total - chart.approved - chart.pretranslated - chart.warnings - chart.errors %}
+          {% set missing_strings = chart.total - chart.approved %}
           <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|comma_or_prefix }}</div>
         </a>
       </li>

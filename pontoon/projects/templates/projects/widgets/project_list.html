@@ -30,7 +30,7 @@
       </h4>
     </td>
     <td class="deadline">
-      {{ Deadline.deadline(project.deadline, chart.total > 0 and chart.total == chart.approved + chart.pretranslated + chart.warnings) }}
+      {{ Deadline.deadline(project.deadline, chart.total > 0 and chart.total == chart.approved + chart.warnings) }}
     </td>
     <td class="priority">
       {{ Priority.priority(project.priority) }}

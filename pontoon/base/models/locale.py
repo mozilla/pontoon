@@ -79,14 +79,10 @@ class LocaleQuerySet(models.QuerySet):
             warnings=Sum("translatedresources__strings_with_warnings", default=0),
             unreviewed=Sum("translatedresources__unreviewed_strings", default=0),
         ).annotate(
-            missing=F("total")
-            - F("approved")
-            - F("pretranslated")
-            - F("errors")
-            - F("warnings"),
+            missing=F("total") - F("approved") - F("pretranslated"),
             is_complete=Case(
                 When(
-                    total=F("approved") + F("pretranslated") + F("warnings"),
+                    total=F("approved") + F("warnings"),
                     then=Value(True),
                 ),
                 default=Value(False),

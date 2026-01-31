@@ -114,7 +114,7 @@ def test_locale(django_assert_num_queries):
     translated_resource.pretranslated_strings = 0
     translated_resource.strings_with_errors = 3
     translated_resource.strings_with_warnings = 2
-    translated_resource.missing_strings = 5
+    translated_resource.missing_strings = 10
     translated_resource.unreviewed_strings = 5
     translated_resource.save()
 
@@ -145,7 +145,7 @@ def test_locale(django_assert_num_queries):
         "pretranslated_strings": 0,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
-        "missing_strings": 5,
+        "missing_strings": 10,
         "unreviewed_strings": 5,
         "complete": False,
         "projects": ["terminology"],
@@ -161,7 +161,7 @@ def test_locale(django_assert_num_queries):
         "pretranslated_strings": 0,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
-        "missing_strings": 5,
+        "missing_strings": 10,
         "unreviewed_strings": 5,
         "complete": False,
     } in localizations
@@ -296,7 +296,7 @@ def test_project(django_assert_num_queries):
         translated_resource.pretranslated_strings = 0
         translated_resource.strings_with_errors = 3
         translated_resource.strings_with_warnings = 2
-        translated_resource.missing_strings = 5
+        translated_resource.missing_strings = 10
         translated_resource.unreviewed_strings = 5
         translated_resource.save()
 
@@ -325,7 +325,7 @@ def test_project(django_assert_num_queries):
         "pretranslated_strings": 0,
         "strings_with_warnings": 4,
         "strings_with_errors": 6,
-        "missing_strings": 10,
+        "missing_strings": 20,
         "unreviewed_strings": 10,
         "complete": False,
         "tags": [],
@@ -452,7 +452,7 @@ def test_project(django_assert_num_queries):
         "pretranslated_strings": 0,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
-        "missing_strings": 5,
+        "missing_strings": 10,
         "unreviewed_strings": 5,
         "complete": False,
     } in localizations
@@ -467,7 +467,7 @@ def test_project(django_assert_num_queries):
         "pretranslated_strings": 0,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
-        "missing_strings": 5,
+        "missing_strings": 10,
         "unreviewed_strings": 5,
         "complete": False,
     } in localizations
@@ -896,7 +896,7 @@ def test_project_locale(django_assert_num_queries):
         translated_resource.pretranslated_strings = 0
         translated_resource.strings_with_errors = 3
         translated_resource.strings_with_warnings = 2
-        translated_resource.missing_strings = 5
+        translated_resource.missing_strings = 10
         translated_resource.unreviewed_strings = 5
         translated_resource.save()
 
@@ -925,7 +925,7 @@ def test_project_locale(django_assert_num_queries):
             "pretranslated_strings": 0,
             "strings_with_warnings": 2,
             "strings_with_errors": 3,
-            "missing_strings": 5,
+            "missing_strings": 10,
             "unreviewed_strings": 5,
             "complete": False,
         },
@@ -934,7 +934,7 @@ def test_project_locale(django_assert_num_queries):
         "pretranslated_strings": 0,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
-        "missing_strings": 5,
+        "missing_strings": 10,
         "unreviewed_strings": 5,
         "complete": False,
         "project": {
@@ -954,7 +954,7 @@ def test_project_locale(django_assert_num_queries):
             "pretranslated_strings": 0,
             "strings_with_warnings": 4,
             "strings_with_errors": 6,
-            "missing_strings": 10,
+            "missing_strings": 20,
             "unreviewed_strings": 10,
             "complete": False,
         },
