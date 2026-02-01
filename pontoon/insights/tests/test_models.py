@@ -16,5 +16,5 @@ def test_missing_strings_property_locale_snapshot():
         completion=0.4,
     )
 
-    expected_missing = 100 - 40 - 20 - 5 - 10
+    expected_missing = 100 - 40 - 20
     assert snapshot.missing_strings == expected_missing

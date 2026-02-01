@@ -51,8 +51,7 @@ function ResourceMenuDialog({
   };
 
   const getProgress = (res: Resource) => {
-    const completeStrings =
-      res.approvedStrings + res.pretranslatedStrings + res.stringsWithWarnings;
+    const completeStrings = res.approvedStrings + res.stringsWithWarnings;
     const percent = Math.floor((completeStrings / res.totalStrings) * 100);
     return percent;
   };

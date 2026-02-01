@@ -108,7 +108,7 @@
   {{ legend_item(
     title='Missing',
     class='missing',
-    value=(stats.total - stats.approved - stats.pretranslated - stats.warnings - stats.errors),
+    value=(stats.total - stats.approved - stats.pretranslated),
     link=(link + '?status=missing') if link else None)
   }}
 </ul>
