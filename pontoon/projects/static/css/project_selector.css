@@ -1,0 +1,40 @@
+.project-selector .project.select .button {
+  background: var(--button-background-1);
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-size: 14px;
+  height: 28px;
+  margin: 0;
+  padding: 6px 12px;
+  text-align: left;
+  text-transform: uppercase;
+  width: 240px;
+}
+
+.project-selector .project.select .button:before,
+.project-selector .project.select .button:after {
+  display: none;
+}
+
+.project-selector .project.select.opened .button {
+  border-radius: 2px 2px 0 0;
+}
+
+.project-selector .project.select .menu {
+  background: var(--popup-background-1);
+  top: 28px;
+  display: none;
+  position: absolute;
+  right: 0;
+  width: 240px;
+}
+
+.project-selector .project.select .menu ul {
+  max-height: 214px;
+}
+
+.project-selector .project.select .menu li {
+  color: var(--light-grey-6);
+  cursor: pointer;
+  text-align: left;
+}

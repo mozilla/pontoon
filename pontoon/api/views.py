@@ -203,8 +203,8 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        include_disabled = query_params.get("include_disabled")
-        include_system = query_params.get("include_system")
+        include_disabled = query_params.get("include_disabled", "").lower()
+        include_system = query_params.get("include_system", "").lower()
 
         qs = Project.objects.visible().visible_for(self.request.user)
 
@@ -229,9 +229,9 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
             qs = qs.prefetch_related("tags")
 
         filters = Q()
-        if include_disabled is not None:
+        if include_disabled == "true":
             filters |= Q(disabled=True)
-        if include_system is not None:
+        if include_system == "true":
             filters |= Q(system_project=True)
         if filters:
             qs = qs | Project.objects.filter(filters).distinct()
@@ -306,13 +306,12 @@ class EntityIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
         requested = self.request_fields()
 
         if not requested or "translations" in requested:
-            locales = Locale.objects.visible()
             qs = qs.prefetch_related(
                 Prefetch(
                     "translation_set",
-                    queryset=Translation.objects.filter(
-                        locale__in=locales, approved=True
-                    ).select_related("locale"),
+                    queryset=Translation.objects.filter(approved=True).select_related(
+                        "locale"
+                    ),
                     to_attr="filtered_translations",
                 )
             )
@@ -414,6 +413,13 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
         text = query_params.get("text")
         locale = query_params.get("locale")
 
+        if query_params.get("search_identifiers", "").lower() != "true":
+            query_params.pop("search_identifiers", None)
+        if query_params.get("search_match_case", "").lower() != "true":
+            query_params.pop("search_match_case", None)
+        if query_params.get("search_match_whole_word", "").lower() != "true":
+            query_params.pop("search_match_whole_word", None)
+
         errors = {}
         if not text:
             errors["text"] = ["This field is required."]
@@ -463,10 +469,10 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
                     (
                         Prefetch(
                             "translation_set",
-                            queryset=Translation.objects.filter(
-                                locale__code=locale_code, approved=True
+                            queryset=(
+                                Translation.objects.filter(locale=locale, approved=True)
                             ).select_related("locale"),
-                            to_attr="filtered_translations",
+                            to_attr="active_translations",
                         )
                     ),
                 )
