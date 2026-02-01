@@ -46,7 +46,7 @@ def create_api_url(
     return f"{SITE_URL}/api/v2/search/translations/?{urlencode(query_params)}"
 
 
-def entity_search(request):
+def search(request):
     """Get corresponding entity given entity."""
 
     try:
@@ -55,8 +55,8 @@ def entity_search(request):
         pages = 1
 
     search = request.GET.get("search")
-    locale = request.GET.get("locale")
-    project = request.GET.get("project")
+    locale_slug = request.GET.get("locale")
+    project_slug = request.GET.get("project")
     search_identifiers = parse_bool(request.GET.get("search_identifiers"))
     search_match_case = parse_bool(request.GET.get("search_match_case"))
     search_match_whole_word = parse_bool(request.GET.get("search_match_whole_word"))
@@ -73,17 +73,19 @@ def entity_search(request):
     default_project = Project(name="All Projects", slug="all-projects")
     projects.insert(0, default_project)
 
-    preferred_project = Project.objects.filter(slug=project).first()
-    if not preferred_project:
-        preferred_project = default_project
-        project = None
+    project = Project.objects.filter(slug=project_slug).first()
+    if not project:
+        project = default_project
+        project_slug = None
 
     locales = list(Locale.objects.visible())
 
-    if not locale or not Locale.objects.filter(code=locale).exists():
-        locale = get_project_locale_from_request(request, Locale.objects) or "en-GB"
+    if not locale_slug or not Locale.objects.filter(code=locale_slug).exists():
+        locale_slug = (
+            get_project_locale_from_request(request, Locale.objects) or "en-GB"
+        )
 
-    preferred_locale = Locale.objects.get(code=locale)
+    locale = Locale.objects.get(code=locale_slug)
 
     if not search:
         return render(
@@ -94,8 +96,8 @@ def entity_search(request):
                 "search": "",
                 "locales": locales,
                 "projects": projects,
-                "preferred_locale": preferred_locale,
-                "preferred_project": preferred_project,
+                "locale": locale,
+                "project": project,
                 "search_identifiers_enabled": search_identifiers,
                 "match_case_enabled": search_match_case,
                 "match_whole_word_enabled": search_match_whole_word,
@@ -109,8 +111,8 @@ def entity_search(request):
             break
         api_url = create_api_url(
             search,
-            project,
-            locale,
+            project_slug,
+            locale_slug,
             search_identifiers,
             search_match_case,
             search_match_whole_word,
@@ -135,8 +137,8 @@ def entity_search(request):
             "search": search,
             "locales": locales,
             "projects": projects,
-            "preferred_locale": preferred_locale,
-            "preferred_project": preferred_project,
+            "locale": locale,
+            "project": project,
             "search_identifiers_enabled": search_identifiers,
             "match_case_enabled": search_match_case,
             "match_whole_word_enabled": search_match_whole_word,
@@ -146,23 +148,25 @@ def entity_search(request):
 
 
 @require_AJAX
-def more_entities(request):
+def search_results(request):
     page = request.GET.get("page")
 
     search = request.GET.get("search")
-    locale = request.GET.get("locale")
-    project = request.GET.get("project")
+    locale_slug = request.GET.get("locale")
+    project_slug = request.GET.get("project")
     search_identifiers = parse_bool(request.GET.get("search_identifiers"))
     search_match_case = parse_bool(request.GET.get("search_match_case"))
     search_match_whole_word = parse_bool(request.GET.get("search_match_whole_word"))
 
-    if not locale or not Locale.objects.filter(code=locale).exists():
-        locale = get_project_locale_from_request(request, Locale.objects) or "en-GB"
+    if not locale_slug or not Locale.objects.filter(code=locale_slug).exists():
+        locale_slug = (
+            get_project_locale_from_request(request, Locale.objects) or "en-GB"
+        )
 
     api_url = create_api_url(
         search,
-        project,
-        locale,
+        project_slug,
+        locale_slug,
         search_identifiers,
         search_match_case,
         search_match_whole_word,
@@ -183,7 +187,7 @@ def more_entities(request):
         "search/widgets/search_results.html",
         {
             "entities": entities,
-            "preferred_locale": Locale.objects.get(code=locale),
+            "locale": Locale.objects.get(code=locale_slug),
             "search": search,
             "search_identifiers_enabled": search_identifiers,
             "match_case_enabled": search_match_case,

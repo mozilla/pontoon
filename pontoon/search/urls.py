@@ -3,18 +3,18 @@ from django.urls import path
 from pontoon.search.views import (
     entity,
     entity_alternate,
-    entity_search,
-    more_entities,
+    search,
+    search_results,
 )
 
 
 urlpatterns = [
     path(
         "search/",
-        entity_search,
+        search,
         name="pontoon.search",
     ),
-    path("ajax/more-translations/", more_entities, name="pontoon.search.more"),
+    path("ajax/more-translations/", search_results, name="pontoon.search.more"),
     path("entities/<int:pk>/", entity, name="pontoon.entity"),
     path(
         "entities/<slug:project>/<path:resource>/<str:entity>/",

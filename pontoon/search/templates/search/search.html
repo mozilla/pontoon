@@ -22,10 +22,10 @@
           <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Type and press Enter to search" value="{{ search }}">
         </div>
         <div id="project-selector">
-          {{ project_selector.project(projects, preferred_project) }}
+          {{ project_selector.project(projects, project) }}
         </div>
         <div id="locale-selector">
-          {{ team_selector.locale(locales, preferred_locale) }}
+          {{ team_selector.locale(locales, locale) }}
         </div>
       </div>
       <div class="check-list noselect">
@@ -38,19 +38,19 @@
       </div>
     </menu>
 
-  <section id="search-results">
-      {% if entities %}
-        <div id="entity-list-header">
-          <span class="source-header">Source</span>
-          <span class="translation-header">Translation</span>
-        </div>
-        <ul id="entity-list" data-has-more="{{ 'true' if has_more else 'false' }}">
-          {% include 'search/widgets/search_results.html' %}
-        </ul>
-      {% elif not entities and search %}
-        <p id="no-results">No results found.</p>
-      {% endif %}
-  </section>
+    <section id="search-results">
+        {% if entities %}
+          <div id="entity-list-header">
+            <span class="source-header">Source</span>
+            <span class="translation-header">Translation</span>
+          </div>
+          <ul id="entity-list" data-has-more="{{ 'true' if has_more else 'false' }}">
+            {% include 'search/widgets/search_results.html' %}
+          </ul>
+        {% elif not entities and search %}
+          <p id="no-results">No results found.</p>
+        {% endif %}
+    </section>
   </div>
 </section>
 {% endblock %}
