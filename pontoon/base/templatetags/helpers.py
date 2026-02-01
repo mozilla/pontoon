@@ -294,7 +294,12 @@ def highlight_matches(
     match_case_enabled=False,
     match_whole_word_enabled=False,
 ):
-    """Highlight all occurrences of the search query in the text."""
+    """Highlight all occurrences of the search query in the text.
+
+    Advanced usage is relegated for Translation Search, where more
+
+    inclusive whole word checks can be used.
+    """
     if not search_query:
         return text
 
@@ -304,10 +309,11 @@ def highlight_matches(
     if advanced:
         terms = list(set(search_query.split() + [search_query]))
         escaped_terms = [escape(term) for term in terms]
-        pattern = "|".join(rf"{re.escape(term)}" for term in escaped_terms)
+        boundary = r"\b" if match_whole_word_enabled else ""
 
-        if match_whole_word_enabled:
-            pattern = "|".join(rf"\b{re.escape(term)}\b" for term in escaped_terms)
+        pattern = "|".join(
+            rf"{boundary}{re.escape(term)}{boundary}" for term in escaped_terms
+        )
     else:
         pattern = re.escape(search_query)
 

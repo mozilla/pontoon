@@ -24,7 +24,7 @@
           <span class="fas fa-globe"></span>
           All Locales
         </a>
-        <a class="edit button" href="{{ url('pontoon.translate', locale=preferred_locale.code, project=entity.project.slug, resource=entity.resource.path) }}?string={{ entity.id }}">
+        <a class="edit button" href="{{ url('pontoon.translate', locale=locale.code, project=entity.project.slug, resource=entity.resource.path) }}?string={{ entity.id }}">
           <span class="fas fa-pencil-alt"></span>
           Edit
         </a>
