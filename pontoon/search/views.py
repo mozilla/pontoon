@@ -55,7 +55,7 @@ def search(request):
         pages = 1
 
     search = request.GET.get("search")
-    locale_slug = request.GET.get("locale")
+    locale_code = request.GET.get("locale")
     project_slug = request.GET.get("project")
     search_identifiers = parse_bool(request.GET.get("search_identifiers"))
     search_match_case = parse_bool(request.GET.get("search_match_case"))
@@ -80,12 +80,12 @@ def search(request):
 
     locales = list(Locale.objects.visible())
 
-    if not locale_slug or not Locale.objects.filter(code=locale_slug).exists():
-        locale_slug = (
+    if not locale_code or not Locale.objects.filter(code=locale_code).exists():
+        locale_code = (
             get_project_locale_from_request(request, Locale.objects) or "en-GB"
         )
 
-    locale = Locale.objects.get(code=locale_slug)
+    locale = Locale.objects.get(code=locale_code)
 
     if not search:
         return render(
@@ -112,7 +112,7 @@ def search(request):
         api_url = create_api_url(
             search,
             project_slug,
-            locale_slug,
+            locale_code,
             search_identifiers,
             search_match_case,
             search_match_whole_word,
@@ -152,21 +152,21 @@ def search_results(request):
     page = request.GET.get("page")
 
     search = request.GET.get("search")
-    locale_slug = request.GET.get("locale")
+    locale_code = request.GET.get("locale")
     project_slug = request.GET.get("project")
     search_identifiers = parse_bool(request.GET.get("search_identifiers"))
     search_match_case = parse_bool(request.GET.get("search_match_case"))
     search_match_whole_word = parse_bool(request.GET.get("search_match_whole_word"))
 
-    if not locale_slug or not Locale.objects.filter(code=locale_slug).exists():
-        locale_slug = (
+    if not locale_code or not Locale.objects.filter(code=locale_code).exists():
+        locale_code = (
             get_project_locale_from_request(request, Locale.objects) or "en-GB"
         )
 
     api_url = create_api_url(
         search,
         project_slug,
-        locale_slug,
+        locale_code,
         search_identifiers,
         search_match_case,
         search_match_whole_word,
@@ -187,7 +187,7 @@ def search_results(request):
         "search/widgets/search_results.html",
         {
             "entities": entities,
-            "locale": Locale.objects.get(code=locale_slug),
+            "locale": Locale.objects.get(code=locale_code),
             "search": search,
             "search_identifiers_enabled": search_identifiers,
             "match_case_enabled": search_match_case,
