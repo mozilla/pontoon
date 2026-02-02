@@ -14,7 +14,7 @@ urlpatterns = [
         search,
         name="pontoon.search",
     ),
-    path("ajax/more-translations/", search_results, name="pontoon.search.more"),
+    path("search/results/", search_results, name="pontoon.search.results"),
     path("entities/<int:pk>/", entity, name="pontoon.entity"),
     path(
         "entities/<slug:project>/<path:resource>/<str:entity>/",
