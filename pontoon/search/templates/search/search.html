@@ -38,19 +38,17 @@
       </div>
     </menu>
 
+    {% if search %}
     <section id="search-results">
-        {% if entities %}
           <div id="entity-list-header">
             <span class="source-header">Source</span>
             <span class="translation-header">Translation</span>
           </div>
-          <ul id="entity-list" data-has-more="{{ 'true' if has_more else 'false' }}">
-            {% include 'search/widgets/search_results.html' %}
+          <ul id="entity-list">
           </ul>
-        {% elif not entities and search %}
           <p id="no-results">No results found.</p>
-        {% endif %}
     </section>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

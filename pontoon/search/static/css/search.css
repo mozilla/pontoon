@@ -74,6 +74,7 @@
   font-style: italic;
   text-align: center;
   margin: 40px;
+  display: none;
 }
 
 #locale-selector,
