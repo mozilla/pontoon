@@ -296,9 +296,9 @@ def highlight_matches(
 ):
     """Highlight all occurrences of the search query in the text.
 
-    Advanced usage is relegated for Translation Search, where more
-
-    inclusive whole word checks can be used.
+    By default, highlights the exact query as a single phrase. When
+    advanced=True, also highlights individual words from the query
+    as separate matches.
     """
     if not search_query:
         return text

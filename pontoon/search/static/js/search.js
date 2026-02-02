@@ -27,7 +27,7 @@ $(function () {
 
   function loadMoreEntries() {
     return $.ajax({
-      url: '/ajax/more-translations/',
+      url: '/search/results/',
       type: 'GET',
       data: {
         page: currentPage,
