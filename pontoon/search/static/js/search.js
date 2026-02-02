@@ -58,12 +58,15 @@ $(function () {
 
     if (params.get('search')) {
       Pontoon.NProgressUnbind();
+      NProgress.start();
       for (let i = 1; i <= pages; i++) {
         await loadMoreEntries();
+        NProgress.set(i / pages);
         if (!hasMore) {
           break;
         }
       }
+      NProgress.done();
       Pontoon.NProgressBind();
 
       if ($('#entity-list').children().length <= 0) {
