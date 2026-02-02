@@ -47,14 +47,7 @@ def create_api_url(
 
 
 def search(request):
-    """Get corresponding entity given entity."""
-
-    try:
-        pages = int(request.GET.get("pages", 1))
-    except ValueError:
-        pages = 1
-
-    search = request.GET.get("search")
+    """Render the search page with filters for searching entities."""
     locale_code = request.GET.get("locale")
     project_slug = request.GET.get("project")
     search_identifiers = parse_bool(request.GET.get("search_identifiers"))
@@ -73,7 +66,9 @@ def search(request):
     default_project = Project(name="All Projects", slug="all-projects")
     projects.insert(0, default_project)
 
-    project = Project.objects.filter(slug=project_slug).first()
+    project = (
+        Project.objects.filter(slug=project_slug).first() if project_slug else None
+    )
     if not project:
         project = default_project
         project_slug = None
@@ -87,54 +82,12 @@ def search(request):
 
     locale = Locale.objects.get(code=locale_code)
 
-    if not search:
-        return render(
-            request,
-            "search/search.html",
-            {
-                "entities": [],
-                "search": "",
-                "locales": locales,
-                "projects": projects,
-                "locale": locale,
-                "project": project,
-                "search_identifiers_enabled": search_identifiers,
-                "match_case_enabled": search_match_case,
-                "match_whole_word_enabled": search_match_whole_word,
-            },
-        )
-
-    entities = []
-    has_more = True
-    for page in range(1, pages + 1):
-        if not has_more:
-            break
-        api_url = create_api_url(
-            search,
-            project_slug,
-            locale_code,
-            search_identifiers,
-            search_match_case,
-            search_match_whole_word,
-            page=page,
-        )
-
-        try:
-            response = requests.get(api_url)
-            response.raise_for_status()
-        except RequestException:
-            raise Http404
-
-        data = response.json()
-        entities.extend(data["results"])
-        has_more = data["next"] is not None
-
     return render(
         request,
         "search/search.html",
         {
-            "entities": entities,
-            "search": search,
+            "entities": [],
+            "search": request.GET.get("search", ""),
             "locales": locales,
             "projects": projects,
             "locale": locale,
@@ -142,7 +95,6 @@ def search(request):
             "search_identifiers_enabled": search_identifiers,
             "match_case_enabled": search_match_case,
             "match_whole_word_enabled": search_match_whole_word,
-            "has_more": has_more,
         },
     )
 
@@ -150,7 +102,6 @@ def search(request):
 @require_AJAX
 def search_results(request):
     page = request.GET.get("page")
-
     search = request.GET.get("search")
     locale_code = request.GET.get("locale")
     project_slug = request.GET.get("project")

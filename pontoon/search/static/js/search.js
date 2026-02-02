@@ -8,6 +8,70 @@ $(function () {
       }
     });
 
+  const url = new URL(window.location.href);
+  const params = url.searchParams;
+  let currentPage = 1;
+  let hasMore = false;
+  let isLoading = false;
+
+  function updateURL() {
+    const pagesLoaded = currentPage - 1;
+    if (pagesLoaded > 1) {
+      url.searchParams.set('pages', pagesLoaded);
+    } else {
+      url.searchParams.delete('pages');
+    }
+
+    history.replaceState(null, '', url);
+  }
+
+  function loadMoreEntries() {
+    return $.ajax({
+      url: '/ajax/more-translations/',
+      type: 'GET',
+      data: {
+        page: currentPage,
+        search: params.get('search'),
+        locale: params.get('locale'),
+        project: params.get('project'),
+        search_identifiers: params.get('search_identifiers'),
+        search_match_case: params.get('search_match_case'),
+        search_match_whole_word: params.get('search_match_whole_word'),
+      },
+      success: function (response) {
+        $('#entity-list').append(response.html);
+        hasMore = response['has_more'];
+        currentPage += 1;
+        updateURL();
+      },
+      error: function () {
+        Pontoon.endLoader('Oops, something went wrong.');
+      },
+      complete: function () {
+        isLoading = false;
+      },
+    });
+  }
+
+  $(window).on('load', async function () {
+    const pages = parseInt(params.get('pages')) || 1;
+
+    if (params.get('search')) {
+      Pontoon.NProgressUnbind();
+      for (let i = 1; i <= pages; i++) {
+        await loadMoreEntries();
+        if (!hasMore) {
+          break;
+        }
+      }
+      Pontoon.NProgressBind();
+
+      if ($('#entity-list').children().length <= 0) {
+        $('#no-results').show();
+      }
+    }
+  });
+
   $('.search-input').on('enterKey', function () {
     const $input = $('.search-input');
     const search = $input.val()?.trim();
@@ -48,51 +112,6 @@ $(function () {
     const self = $(this);
     self.toggleClass('enabled');
   });
-
-  const url = new URL(window.location.href);
-  const params = url.searchParams;
-  let currentPage = parseInt(params.get('pages')) || 1;
-
-  function updateURL() {
-    if (currentPage > 1) {
-      url.searchParams.set('pages', currentPage);
-    } else {
-      url.searchParams.delete('pages');
-    }
-
-    history.replaceState(null, '', url);
-  }
-
-  function loadMoreEntries() {
-    $.ajax({
-      url: '/ajax/more-translations/',
-      type: 'GET',
-      data: {
-        page: currentPage + 1,
-        search: params.get('search'),
-        locale: params.get('locale'),
-        project: params.get('project'),
-        search_identifiers: params.get('search_identifiers'),
-        search_match_case: params.get('search_match_case'),
-        search_match_whole_word: params.get('search_match_whole_word'),
-      },
-      success: function (response) {
-        $('#entity-list').append(response.html);
-        hasMore = response['has_more'];
-        currentPage += 1;
-        updateURL();
-      },
-      error: function () {
-        Pontoon.endLoader('Oops, something went wrong.');
-      },
-      complete: function () {
-        isLoading = false;
-      },
-    });
-  }
-
-  let hasMore = $('#entity-list').data('has-more');
-  let isLoading = false;
 
   $(window).on('scroll', function () {
     if (
