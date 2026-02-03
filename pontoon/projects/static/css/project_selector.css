@@ -2,6 +2,7 @@
   background: var(--button-background-1);
   border-radius: 2px;
   box-sizing: border-box;
+  display: flex;
   font-size: 14px;
   height: 28px;
   margin: 0;
@@ -18,6 +19,14 @@
 
 .project-selector .project.select.opened .button {
   border-radius: 2px 2px 0 0;
+}
+
+.project-selector .project.select .button .selected-project {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .project-selector .project.select .menu {
@@ -37,4 +46,13 @@
   color: var(--light-grey-6);
   cursor: pointer;
   text-align: left;
+}
+
+.project-selector .project.select .menu ul li span.selected-project {
+  display: inline-block;
+  max-width: 85%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
 }

@@ -2,6 +2,7 @@
   background: var(--button-background-1);
   border-radius: 2px;
   box-sizing: border-box;
+  display: flex;
   font-size: 14px;
   height: 28px;
   margin: 0;
@@ -20,21 +21,17 @@
   border-radius: 2px 2px 0 0;
 }
 
-.locale-selector .locale.select .button .language,
-.locale-selector .locale.select .button .selected-project {
-  display: inline-block;
-  max-width: 80%;
+.locale-selector .locale.select .button .language {
+  flex: 1;
+  margin-right: 12px;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  vertical-align: bottom;
-}
-
-.locale-selector .locale.select .button .selected-project {
-  max-width: 220px;
 }
 
 .locale-selector .locale.select .button .code {
+  flex-shrink: 0;
   text-transform: none;
 }
 
@@ -54,24 +51,19 @@
 .locale-selector .locale.select .menu li {
   color: var(--light-grey-6);
   cursor: pointer;
+  display: flex;
   text-align: left;
 }
 
-.locale-selector .locale.select .code {
-  float: right;
-}
-
-.locale-selector .locale.select .menu ul li span.language,
-.locale-selector .locale.select .menu ul li span.selected-project {
-  display: inline-block;
-  max-width: 85%;
+.locale-selector .locale.select .menu ul li span.language {
+  flex: 1;
+  margin-right: 4px;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  vertical-align: middle;
 }
 
 .locale-selector .locale.select .menu ul li span.code {
-  float: right;
-  width: auto;
+  flex-shrink: 0;
 }
