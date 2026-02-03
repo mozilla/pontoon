@@ -22,7 +22,6 @@
         {% if user.is_authenticated and user.is_superuser %}
         <li><a href="{{ url('pontoon.messaging.compose') }}">Messaging</a></li>
         {% endif %}
-        <li><a href="{{ url('pontoon.machinery') }}">Machinery</a></li>
         <li><a href="{{ url('pontoon.search') }}">Search</a></li>
       </ul>
 
