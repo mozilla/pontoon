@@ -302,30 +302,26 @@ class TranslationSerializer(serializers.ModelSerializer):
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
-        fields = [
-            "path",
-        ]
+        fields = ["path", "format"]
 
 
 class EntitySerializer(DynamicFieldsModelSerializer):
-    entity = serializers.SerializerMethodField()
+    string = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
     resource = ResourceSerializer(read_only=True)
 
     class Meta:
         model = Entity
         fields = [
-            "entity",
+            "id",
+            "string",
+            "key",
             "project",
             "resource",
         ]
 
-    def get_entity(self, obj):
-        return {
-            "id": obj.id,
-            "string": get_simple_preview(obj.resource.format, obj.string),
-            "key": obj.key,
-        }
+    def get_string(self, obj):
+        return get_simple_preview(obj.resource.format, obj.string)
 
     def get_project(self, obj):
         if not obj.resource.project:
@@ -348,11 +344,13 @@ class NestedEntitySerializer(EntitySerializer):
 
         if "context" in kwargs:
             if "request" in kwargs["context"]:
-                include_translations = kwargs["context"]["request"].query_params.get(
-                    "include_translations"
+                include_translations = (
+                    kwargs["context"]["request"]
+                    .query_params.get("include_translations", "false")
+                    .lower()
                 )
 
-                if include_translations is None:
+                if include_translations != "true":
                     self.fields.pop("translations", None)
 
     def get_translations(self, obj):
@@ -368,8 +366,11 @@ class EntitySearchSerializer(EntitySerializer):
         fields = EntitySerializer.Meta.fields + ["translation"]
 
     def get_translation(self, obj):
-        translation = (
-            obj.filtered_translations[0] if obj.filtered_translations else None
-        )
+        request = self.context.get("request")
+
+        if not request:
+            return None
+
+        translation = obj.active_translations[0] if obj.active_translations else None
 
         return TranslationSerializer(translation, context=self.context).data

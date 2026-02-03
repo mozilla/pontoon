@@ -1,0 +1,255 @@
+#main {
+  .container {
+    menu {
+      margin-bottom: 40px;
+
+      #search-menu {
+        margin: 0 auto;
+        display: flex;
+        gap: 8px;
+
+        > .search-wrapper {
+          .icon {
+            left: 6px;
+            top: 9px;
+          }
+
+          .search-input {
+            font-weight: 400;
+            color: var(--input-color-1);
+            font-size: 16px;
+            height: 32px;
+          }
+        }
+      }
+
+      #locale-selector,
+      #project-selector {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+
+        .select .button {
+          font-size: 16px;
+          height: 32px;
+          padding: 8px 12px;
+        }
+      }
+
+      .check-list {
+        text-align: right;
+        margin: 5px 0;
+        width: 100%;
+
+        .check-box {
+          display: inline-block;
+          padding-bottom: inherit;
+
+          .check-box-wrapper {
+            font-size: 15px;
+            margin-left: 28px;
+            width: auto;
+
+            .fas {
+              margin-left: 0;
+            }
+          }
+        }
+
+        .field .check-box-wrapper {
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 4px;
+        }
+      }
+    }
+  }
+}
+
+#entity-list {
+  display: none;
+}
+
+#no-results {
+  color: var(--light-grey-7);
+  font-style: italic;
+  padding: 10px 16px;
+  display: none;
+}
+
+#locale-selector,
+#project-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+#entity-list-header {
+  display: none;
+  border-bottom: 1px solid var(--main-border-1);
+
+  span {
+    box-sizing: border-box;
+    color: var(--light-grey-7);
+    display: inline-block;
+    font-weight: bold;
+    padding: 10px 16px;
+    text-transform: uppercase;
+    width: 490px;
+  }
+
+  .source-header {
+    padding-right: 8px;
+  }
+
+  .translation-header {
+    padding-left: 8px;
+  }
+}
+
+.entity-container {
+  display: grid;
+  align-items: stretch;
+  border-bottom: 1px solid var(--main-border-1);
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+
+  .source-string-container {
+    padding-right: 8px;
+    overflow: hidden;
+  }
+
+  .translation-string-container {
+    padding-left: 8px;
+    overflow: hidden;
+  }
+
+  .source-string,
+  .translation-string {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  mark {
+    background: var(--search-background);
+    color: var(--search-color);
+    font-weight: inherit;
+    font-style: inherit;
+    border-radius: 3px;
+  }
+}
+
+.entity-info-container {
+  color: var(--translation-secondary-color);
+  font-style: italic;
+  line-height: 22px;
+  margin-top: 20px;
+}
+
+.entity-info-container a,
+.entity-info-container .divider,
+.entity-info-container .entity-keys {
+  vertical-align: sub;
+  word-break: break-all;
+}
+
+.entity-info-container a {
+  color: var(--status-translated);
+  text-decoration: none;
+}
+
+.entity-info-container a:hover {
+  color: var(--status-translated);
+}
+
+.utility-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 0;
+  margin-top: 20px;
+  font-size: 13px;
+}
+
+.utility-container.controls button.copy:hover,
+.utility-container.controls a.edit:hover,
+.utility-container.controls a.all-locales:hover {
+  background: var(--status-translated);
+}
+
+#initial-section-container {
+  background-color: var(--dark-grey-1);
+  border-radius: 6px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+
+  .translation-info-container {
+    display: flex;
+
+    .entity-info-container,
+    .utility-container {
+      flex: 1;
+      font-size: 14px;
+    }
+  }
+
+  .button {
+    background: var(--background-1);
+  }
+
+  .button:hover {
+    background: var(--status-translated);
+  }
+}
+
+#translation-list {
+  color: var(--white-1);
+  line-height: 1.5;
+  font-size: 14px;
+
+  .translation-container {
+    border-bottom: 1px solid var(--main-border-1);
+    padding: 16px;
+
+    .translation-info-container {
+      display: flex;
+
+      locale-container,
+      .utility-container {
+        flex: 1;
+      }
+
+      .locale-container {
+        font-style: italic;
+        margin-top: 20px;
+
+        .translation-locale-name {
+          color: var(--light-grey-7);
+          vertical-align: sub;
+        }
+
+        .translation-locale-name:hover {
+          color: var(--status-translated);
+        }
+
+        .translation-locale-code {
+          color: var(--status-translated-alt);
+          vertical-align: sub;
+        }
+
+        .divider {
+          vertical-align: sub;
+        }
+      }
+    }
+  }
+}
