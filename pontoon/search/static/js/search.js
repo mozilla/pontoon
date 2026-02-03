@@ -1,10 +1,4 @@
 $(function () {
-  const url = new URL(window.location.href);
-  const params = url.searchParams;
-  let currentPage = 1;
-  let hasMore = false;
-  let isLoading = false;
-
   function updateURL() {
     const pagesLoaded = currentPage - 1;
     if (pagesLoaded > 1) {
@@ -64,15 +58,6 @@ $(function () {
     });
   }
 
-  $(window).on('load', async function () {
-    if (!params.get('search')) {
-      return;
-    }
-
-    const pages = parseInt(params.get('pages')) || 1;
-    await loadMoreEntries({ pages: pages });
-  });
-
   $('.search-input')
     .unbind('keydown.pontoon')
     .bind('keydown.pontoon', function (e) {
@@ -82,7 +67,7 @@ $(function () {
       }
     });
 
-  $('.search-input').on('enterKey', async function () {
+  $('.search-input').on('enterKey', function () {
     const search = $('.search-input').val()?.trim();
     if (!search) {
       return;
@@ -118,7 +103,7 @@ $(function () {
 
     currentPage = 1;
     $('#entity-list').empty();
-    await loadMoreEntries();
+    loadMoreEntries();
   });
 
   $('.check-box').click(function () {
@@ -136,13 +121,24 @@ $(function () {
     }
   });
 
+  $(document).on('click', '.copy-btn', function (e) {
+    e.preventDefault();
+  });
+
+  const url = new URL(window.location.href);
+  const params = url.searchParams;
+  const pages = parseInt(params.get('pages')) || 1;
+  let currentPage = 1;
+  let hasMore = false;
+  let isLoading = false;
+
+  if (params.get('search')) {
+    loadMoreEntries({ pages: pages });
+  }
+
   const clipboard = new Clipboard('.copy');
 
   clipboard.on('success', function () {
     Pontoon.endLoader('Translation copied to clipboard.');
-  });
-
-  $(document).on('click', '.copy-btn', function (e) {
-    e.preventDefault();
   });
 });
