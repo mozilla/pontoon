@@ -76,7 +76,7 @@
 #no-results {
   color: var(--light-grey-7);
   font-style: italic;
-  padding: 10px;
+  padding: 10px 16px;
   display: none;
 }
 
