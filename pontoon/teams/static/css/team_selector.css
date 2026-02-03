@@ -29,7 +29,6 @@
 }
 
 .locale-selector .locale.select .button .code {
-  flex-shrink: 0;
   text-transform: none;
 }
 
