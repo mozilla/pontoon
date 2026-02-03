@@ -90,15 +90,17 @@
 }
 
 #entity-list-header {
-  display: flex;
+  display: none;
   border-bottom: 1px solid var(--main-border-1);
 
   span {
+    box-sizing: border-box;
     color: var(--light-grey-7);
-    flex: 1;
+    display: inline-block;
     font-weight: bold;
     padding: 10px 16px;
     text-transform: uppercase;
+    width: 490px;
   }
 
   .source-header {
