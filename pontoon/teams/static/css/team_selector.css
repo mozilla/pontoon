@@ -58,6 +58,10 @@
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  margin-right: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
