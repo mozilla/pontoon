@@ -67,11 +67,10 @@ def search(request):
     projects.insert(0, default_project)
 
     project = (
-        Project.objects.filter(slug=project_slug).first() if project_slug else None
+        Project.objects.filter(slug=project_slug).first()
+        if project_slug
+        else default_project
     )
-    if not project:
-        project = default_project
-        project_slug = None
 
     locales = list(Locale.objects.visible())
 
