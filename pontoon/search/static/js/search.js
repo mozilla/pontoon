@@ -1,13 +1,4 @@
 $(function () {
-  $('.search-input')
-    .unbind('keydown.pontoon')
-    .bind('keydown.pontoon', function (e) {
-      if (e.which === 13) {
-        $(this).trigger('enterKey');
-        return false;
-      }
-    });
-
   const url = new URL(window.location.href);
   const params = url.searchParams;
   let currentPage = 1;
@@ -80,6 +71,15 @@ $(function () {
     }
   });
 
+  $('.search-input')
+    .unbind('keydown.pontoon')
+    .bind('keydown.pontoon', function (e) {
+      if (e.which === 13) {
+        $(this).trigger('enterKey');
+        return false;
+      }
+    });
+
   $('.search-input').on('enterKey', async function () {
     const search = $('.search-input').val()?.trim();
     if (!search) {
@@ -141,15 +141,13 @@ $(function () {
     }
   });
 
-  $(function () {
-    const clipboard = new Clipboard('.copy');
+  const clipboard = new Clipboard('.copy');
 
-    clipboard.on('success', function () {
-      Pontoon.endLoader('Translation copied to clipboard.');
-    });
+  clipboard.on('success', function () {
+    Pontoon.endLoader('Translation copied to clipboard.');
+  });
 
-    $(document).on('click', '.copy-btn', function (e) {
-      e.preventDefault();
-    });
+  $(document).on('click', '.copy-btn', function (e) {
+    e.preventDefault();
   });
 });
