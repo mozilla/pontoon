@@ -20,8 +20,10 @@ $(function () {
     if (isLoading) {
       return;
     }
+
     isLoading = true;
     const pageCount = (options && options.pages) || 1;
+
     const data = {
       search: params.get('search'),
       locale: params.get('locale'),
@@ -52,6 +54,12 @@ $(function () {
       },
       complete: function () {
         isLoading = false;
+        if ($('#entity-list').children().length > 0) {
+          $('#entity-list').show();
+        } else {
+          $('#entity-list').hide();
+          $('#no-results').show();
+        }
       },
     });
   }
@@ -63,12 +71,6 @@ $(function () {
 
     const pages = parseInt(params.get('pages')) || 1;
     await loadMoreEntries({ pages: pages });
-
-    if ($('#entity-list').children().length > 0) {
-      $('#entity-list').show();
-    } else {
-      $('#no-results').show();
-    }
   });
 
   $('.search-input')
@@ -117,13 +119,6 @@ $(function () {
     currentPage = 1;
     $('#entity-list').empty();
     await loadMoreEntries();
-
-    if ($('#entity-list').children().length > 0) {
-      $('#entity-list').show();
-    } else {
-      $('#entity-list').hide();
-      $('#no-results').show();
-    }
   });
 
   $('.check-box').click(function () {
