@@ -69,6 +69,10 @@
   }
 }
 
+#entity-list {
+  display: none;
+}
+
 #no-results {
   color: var(--light-grey-7);
   font-style: italic;

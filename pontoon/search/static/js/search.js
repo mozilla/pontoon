@@ -25,23 +25,35 @@ $(function () {
     history.replaceState(null, '', url);
   }
 
-  function loadMoreEntries() {
+  function loadMoreEntries(options) {
+    if (isLoading) {
+      return;
+    }
+    isLoading = true;
+    const pageCount = (options && options.pages) || 1;
+    const data = {
+      search: params.get('search'),
+      locale: params.get('locale'),
+      project: params.get('project'),
+      search_identifiers: params.get('search_identifiers'),
+      search_match_case: params.get('search_match_case'),
+      search_match_whole_word: params.get('search_match_whole_word'),
+    };
+
+    if (options && options.pages) {
+      data.pages = options.pages;
+    } else {
+      data.page = currentPage;
+    }
+
     return $.ajax({
       url: '/search/results/',
       type: 'GET',
-      data: {
-        page: currentPage,
-        search: params.get('search'),
-        locale: params.get('locale'),
-        project: params.get('project'),
-        search_identifiers: params.get('search_identifiers'),
-        search_match_case: params.get('search_match_case'),
-        search_match_whole_word: params.get('search_match_whole_word'),
-      },
+      data: data,
       success: function (response) {
         $('#entity-list').append(response.html);
         hasMore = response['has_more'];
-        currentPage += 1;
+        currentPage += pageCount;
         updateURL();
       },
       error: function () {
@@ -54,35 +66,29 @@ $(function () {
   }
 
   $(window).on('load', async function () {
+    if (!params.get('search')) {
+      return;
+    }
+
     const pages = parseInt(params.get('pages')) || 1;
+    await loadMoreEntries({ pages: pages });
 
-    if (params.get('search')) {
-      Pontoon.NProgressUnbind();
-      NProgress.start();
-      for (let i = 1; i <= pages; i++) {
-        await loadMoreEntries();
-        NProgress.set(i / pages);
-        if (!hasMore) {
-          break;
-        }
-      }
-      NProgress.done();
-      Pontoon.NProgressBind();
-
-      if ($('#entity-list').children().length <= 0) {
-        $('#no-results').show();
-      }
+    if ($('#entity-list').children().length > 0) {
+      $('#entity-list').show();
+    } else {
+      $('#no-results').show();
     }
   });
 
-  $('.search-input').on('enterKey', function () {
-    const $input = $('.search-input');
-    const search = $input.val()?.trim();
+  $('.search-input').on('enterKey', async function () {
+    const search = $('.search-input').val()?.trim();
+    if (!search) {
+      return;
+    }
 
-    const url = new URL(window.location.href);
+    $('#no-results').hide();
+
     url.search = '';
-
-    const params = url.searchParams;
     params.set('search', search);
 
     const locale = $('.locale .selector .language').data().code;
@@ -108,7 +114,16 @@ $(function () {
       }
     });
 
-    window.location.href = `${url.pathname}?${params.toString()}`;
+    currentPage = 1;
+    $('#entity-list').empty();
+    await loadMoreEntries();
+
+    if ($('#entity-list').children().length > 0) {
+      $('#entity-list').show();
+    } else {
+      $('#entity-list').hide();
+      $('#no-results').show();
+    }
   });
 
   $('.check-box').click(function () {
@@ -120,10 +135,8 @@ $(function () {
     if (
       $(window).scrollTop() + $(window).height() >=
         $(document).height() - 2000 &&
-      !isLoading &&
       hasMore
     ) {
-      isLoading = true;
       loadMoreEntries();
     }
   });

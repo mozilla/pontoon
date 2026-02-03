@@ -101,6 +101,11 @@ def search(request):
 
 @require_AJAX
 def search_results(request):
+    try:
+        pages = int(request.GET.get("pages", 1))
+    except ValueError:
+        pages = 1
+
     page = request.GET.get("page")
     search = request.GET.get("search")
     locale_code = request.GET.get("locale")
@@ -114,25 +119,58 @@ def search_results(request):
             get_project_locale_from_request(request, Locale.objects) or "en-GB"
         )
 
-    api_url = create_api_url(
-        search,
-        project_slug,
-        locale_code,
-        search_identifiers,
-        search_match_case,
-        search_match_whole_word,
-        page=page,
-    )
+    if page:
+        try:
+            page = int(page)
+        except ValueError:
+            page = 1
+        # Single page fetch
+        api_url = create_api_url(
+            search,
+            project_slug,
+            locale_code,
+            search_identifiers,
+            search_match_case,
+            search_match_whole_word,
+            page=page,
+        )
 
-    try:
-        response = requests.get(api_url)
-        response.raise_for_status()
-    except RequestException:
-        raise Http404
+        try:
+            response = requests.get(api_url)
+            response.raise_for_status()
+        except RequestException:
+            raise Http404
 
-    data = response.json()
-    entities = data["results"]
-    has_more = data["next"] is not None
+        data = response.json()
+        entities = data["results"]
+        has_more = data["next"] is not None
+    else:
+        # Multi-page fetch
+        entities = []
+        has_more = True
+        for p in range(1, pages + 1):
+            if not has_more:
+                break
+
+            api_url = create_api_url(
+                search,
+                project_slug,
+                locale_code,
+                search_identifiers,
+                search_match_case,
+                search_match_whole_word,
+                page=p,
+            )
+
+            try:
+                response = requests.get(api_url)
+                response.raise_for_status()
+            except RequestException:
+                raise Http404
+
+            data = response.json()
+            entities.extend(data["results"])
+            has_more = data["next"] is not None
 
     html = render_to_string(
         "search/widgets/search_results.html",
@@ -145,6 +183,7 @@ def search_results(request):
             "match_whole_word_enabled": search_match_whole_word,
         },
     )
+
     return JsonResponse(
         {"html": html, "has_more": has_more},
     )
