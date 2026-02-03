@@ -156,7 +156,7 @@
 .entity-info-container a,
 .entity-info-container .divider,
 .entity-info-container .entity-keys {
-  vertical-align: middle;
+  vertical-align: sub;
   word-break: break-all;
 }
 
@@ -195,9 +195,10 @@
   .translation-info-container {
     display: flex;
 
-    locale-container,
+    .entity-info-container,
     .utility-container {
       flex: 1;
+      font-size: 14px;
     }
   }
 
@@ -233,7 +234,7 @@
 
         .translation-locale-name {
           color: var(--light-grey-7);
-          vertical-align: middle;
+          vertical-align: sub;
         }
 
         .translation-locale-name:hover {
@@ -242,11 +243,11 @@
 
         .translation-locale-code {
           color: var(--status-translated-alt);
-          vertical-align: middle;
+          vertical-align: sub;
         }
 
-        .locale-container .divider {
-          vertical-align: middle;
+        .divider {
+          vertical-align: sub;
         }
       }
     }
