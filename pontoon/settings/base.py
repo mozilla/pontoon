@@ -171,12 +171,6 @@ GOOGLE_AUTOML_SUPPORTED_LOCALES = [
 # Google Cloud AutoML Translation Project ID
 GOOGLE_AUTOML_PROJECT_ID = os.environ.get("GOOGLE_AUTOML_PROJECT_ID", "")
 
-# It is recommended to make Google Cloud AutoML Translation warmup requests every minute,
-# although in our experience every 5 minutes (300 seconds) is sufficient.
-GOOGLE_AUTOML_WARMUP_INTERVAL = float(
-    os.environ.get("GOOGLE_AUTOML_WARMUP_INTERVAL", "300")
-)
-
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get("MICROSOFT_TRANSLATOR_API_KEY", "")
 

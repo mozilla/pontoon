@@ -1,19 +1,4 @@
 $(function () {
-  $('.search-input')
-    .unbind('keydown.pontoon')
-    .bind('keydown.pontoon', function (e) {
-      if (e.which === 13) {
-        $(this).trigger('enterKey');
-        return false;
-      }
-    });
-
-  const url = new URL(window.location.href);
-  const params = url.searchParams;
-  let currentPage = 1;
-  let hasMore = false;
-  let isLoading = false;
-
   function updateURL() {
     const pagesLoaded = currentPage - 1;
     if (pagesLoaded > 1) {
@@ -29,8 +14,10 @@ $(function () {
     if (isLoading) {
       return;
     }
+
     isLoading = true;
     const pageCount = (options && options.pages) || 1;
+
     const data = {
       search: params.get('search'),
       locale: params.get('locale'),
@@ -52,6 +39,7 @@ $(function () {
       data: data,
       success: function (response) {
         $('#entity-list').append(response.html);
+        $('#entity-list-header').show();
         hasMore = response['has_more'];
         currentPage += pageCount;
         updateURL();
@@ -61,26 +49,26 @@ $(function () {
       },
       complete: function () {
         isLoading = false;
+        if ($('#entity-list').children().length > 0) {
+          $('#entity-list').show();
+        } else {
+          $('#entity-list').hide();
+          $('#no-results').show();
+        }
       },
     });
   }
 
-  $(window).on('load', async function () {
-    if (!params.get('search')) {
-      return;
-    }
+  $('.search-input')
+    .unbind('keydown.pontoon')
+    .bind('keydown.pontoon', function (e) {
+      if (e.which === 13) {
+        $(this).trigger('enterKey');
+        return false;
+      }
+    });
 
-    const pages = parseInt(params.get('pages')) || 1;
-    await loadMoreEntries({ pages: pages });
-
-    if ($('#entity-list').children().length > 0) {
-      $('#entity-list').show();
-    } else {
-      $('#no-results').show();
-    }
-  });
-
-  $('.search-input').on('enterKey', async function () {
+  $('.search-input').on('enterKey', function () {
     const search = $('.search-input').val()?.trim();
     if (!search) {
       return;
@@ -116,14 +104,7 @@ $(function () {
 
     currentPage = 1;
     $('#entity-list').empty();
-    await loadMoreEntries();
-
-    if ($('#entity-list').children().length > 0) {
-      $('#entity-list').show();
-    } else {
-      $('#entity-list').hide();
-      $('#no-results').show();
-    }
+    loadMoreEntries();
   });
 
   $('.check-box').click(function () {
@@ -141,15 +122,24 @@ $(function () {
     }
   });
 
-  $(function () {
-    const clipboard = new Clipboard('.copy');
+  $(document).on('click', '.copy-btn', function (e) {
+    e.preventDefault();
+  });
 
-    clipboard.on('success', function () {
-      Pontoon.endLoader('Translation copied to clipboard.');
-    });
+  const url = new URL(window.location.href);
+  const params = url.searchParams;
+  const pages = parseInt(params.get('pages')) || 1;
+  let currentPage = 1;
+  let hasMore = false;
+  let isLoading = false;
 
-    $(document).on('click', '.copy-btn', function (e) {
-      e.preventDefault();
-    });
+  if (params.get('search')) {
+    loadMoreEntries({ pages: pages });
+  }
+
+  const clipboard = new Clipboard('.copy');
+
+  clipboard.on('success', function () {
+    Pontoon.endLoader('Translation copied to clipboard.');
   });
 });

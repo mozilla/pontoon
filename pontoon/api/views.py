@@ -151,10 +151,13 @@ class LocaleListView(RequestFieldsMixin, generics.ListAPIView):
 
         # Only prefetch project data when requested
         if not requested or "projects" in requested:
+            visible_projects = Project.objects.visible().visible_for(self.request.user)
             qs = qs.prefetch_related(
                 Prefetch(
                     "project_locale",
-                    queryset=ProjectLocale.objects.visible().select_related("project"),
+                    queryset=ProjectLocale.objects.visible()
+                    .filter(project__in=visible_projects)
+                    .select_related("project"),
                     to_attr="fetched_project_locales",
                 )
             )
@@ -177,10 +180,13 @@ class LocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
 
         # Only prefetch project data when requested
         if not requested or "projects" in requested:
+            visible_projects = Project.objects.visible().visible_for(self.request.user)
             qs = qs.prefetch_related(
                 Prefetch(
                     "project_locale",
-                    queryset=ProjectLocale.objects.visible().select_related("project"),
+                    queryset=ProjectLocale.objects.visible()
+                    .filter(project__in=visible_projects)
+                    .select_related("project"),
                     to_attr="fetched_project_locales",
                 )
             )
