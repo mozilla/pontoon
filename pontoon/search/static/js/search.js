@@ -1,5 +1,5 @@
 $(function () {
-  function updateURL() {
+  function updateURL(mode) {
     const pagesLoaded = currentPage - 1;
     if (pagesLoaded > 1) {
       url.searchParams.set('pages', pagesLoaded);
@@ -7,7 +7,17 @@ $(function () {
       url.searchParams.delete('pages');
     }
 
-    history.replaceState(null, '', url);
+    const state = {
+      html: $('#entity-list').html(),
+      currentPage: currentPage,
+      hasMore: hasMore,
+    };
+
+    if (mode === 'push') {
+      history.pushState(state, '', url);
+    } else {
+      history.replaceState(state, '', url);
+    }
   }
 
   function loadMoreEntries(options) {
@@ -42,7 +52,7 @@ $(function () {
         $('#entity-list-header').show();
         hasMore = response['has_more'];
         currentPage += pageCount;
-        updateURL();
+        updateURL(options?.mode);
       },
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.');
@@ -104,7 +114,7 @@ $(function () {
 
     currentPage = 1;
     $('#entity-list').empty();
-    loadMoreEntries();
+    loadMoreEntries({ mode: 'push' });
   });
 
   $('.check-box').click(function () {
@@ -132,6 +142,37 @@ $(function () {
   let currentPage = 1;
   let hasMore = false;
   let isLoading = false;
+
+  $(window).on('popstate', function (event) {
+    const state = event.originalEvent.state;
+
+    if (state) {
+      if (state.html && state.html.trim() !== '') {
+        $('#no-results').hide();
+        $('#entity-list').html(state.html).show();
+      } else {
+        $('#entity-list').empty().hide();
+        $('#no-results').show();
+      }
+      currentPage = state.currentPage;
+      hasMore = state.hasMore;
+
+      url.href = window.location.href;
+
+      const search = url.searchParams.get('search');
+
+      if (search) {
+        $('.search-input').val(search);
+      }
+    } else {
+      $('#entity-list').empty().hide();
+      $('#no-results').hide();
+      $('.search-input').val('');
+      currentPage = 1;
+      hasMore = false;
+      url.href = window.location.href;
+    }
+  });
 
   if (params.get('search')) {
     loadMoreEntries({ pages: pages });
