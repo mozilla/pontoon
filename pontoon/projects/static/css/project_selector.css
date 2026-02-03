@@ -49,10 +49,8 @@
 }
 
 .project-selector .project.select .menu ul li span.selected-project {
-  display: inline-block;
-  max-width: 85%;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  vertical-align: middle;
 }
