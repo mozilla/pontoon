@@ -287,20 +287,42 @@ def linkify(source):
 
 
 @library.filter
-def highlight_matches(text, search_query):
-    """Highlight all occurrences of the search query in the text."""
+def highlight_matches(
+    text,
+    search_query,
+    advanced=False,
+    match_case_enabled=False,
+    match_whole_word_enabled=False,
+):
+    """Highlight all occurrences of the search query in the text.
+
+    By default, highlights the exact query as a single phrase. When
+    advanced=True, also highlights individual words from the query
+    as separate matches.
+    """
     if not search_query:
         return text
 
-    # First, escape the text to prevent HTML rendering
     escaped_text = escape(text)
+    flags = 0 if match_case_enabled else re.IGNORECASE
+
+    if advanced:
+        terms = list(set(search_query.split() + [search_query]))
+        escaped_terms = [escape(term) for term in terms]
+        boundary = r"\b" if match_whole_word_enabled else ""
+
+        pattern = "|".join(
+            rf"{boundary}{re.escape(term)}{boundary}" for term in escaped_terms
+        )
+    else:
+        pattern = re.escape(search_query)
 
     # Then apply highlighting to the escaped text
     highlighted_text = re.sub(
-        f"({re.escape(search_query)})",
+        f"({pattern})",
         r"<mark>\1</mark>",
         escaped_text,
-        flags=re.IGNORECASE,
+        flags=flags,
     )
 
     # Mark as safe to include <mark> tags only
