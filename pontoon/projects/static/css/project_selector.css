@@ -20,6 +20,14 @@
   border-radius: 2px 2px 0 0;
 }
 
+.project-selector .project.select .button .selected-project {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .project-selector .project.select .menu {
   background: var(--popup-background-1);
   top: 28px;
@@ -37,4 +45,11 @@
   color: var(--light-grey-6);
   cursor: pointer;
   text-align: left;
+}
+
+.project-selector .project.select .menu ul li span.selected-project {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
