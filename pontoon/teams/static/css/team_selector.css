@@ -22,6 +22,7 @@
 }
 
 .locale-selector .locale.select .button .language {
+  flex: 1;
   margin-right: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
