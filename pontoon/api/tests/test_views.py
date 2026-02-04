@@ -775,16 +775,16 @@ def test_entity_with_translations(django_assert_num_queries):
         "resource": {"path": "resource_project_a.po", "format": "gettext"},
         "translations": [
             {
-                "locale": {"code": "kg", "name": "Klingon"},
-                "string": "approved_translation_Klingon",
+                "locale": {"code": "gs", "name": "Geonosian"},
+                "string": "approved_translation_Geonosian",
             },
             {
                 "locale": {"code": "hut", "name": "Huttese"},
                 "string": "approved_translation_Huttese",
             },
             {
-                "locale": {"code": "gs", "name": "Geonosian"},
-                "string": "approved_translation_Geonosian",
+                "locale": {"code": "kg", "name": "Klingon"},
+                "string": "approved_translation_Klingon",
             },
         ],
     }
