@@ -2,6 +2,7 @@
   background: var(--button-background-1);
   border-radius: 2px;
   box-sizing: border-box;
+  display: flex;
   font-size: 14px;
   height: 28px;
   margin: 0;
@@ -18,6 +19,14 @@
 
 .locale-selector .locale.select.opened .button {
   border-radius: 2px 2px 0 0;
+}
+
+.locale-selector .locale.select .button .language {
+  flex: 1;
+  margin-right: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .locale-selector .locale.select .button .code {
@@ -40,14 +49,14 @@
 .locale-selector .locale.select .menu li {
   color: var(--light-grey-6);
   cursor: pointer;
+  display: flex;
   text-align: left;
 }
 
-.locale-selector .locale.select .code {
-  float: right;
-}
-
-.locale-selector .locale.select .menu ul li span.code {
-  float: right;
-  width: auto;
+.locale-selector .locale.select .menu ul li span.language {
+  flex: 1;
+  margin-right: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
