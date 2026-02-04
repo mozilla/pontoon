@@ -22,6 +22,7 @@
 }
 
 .locale-selector .locale.select .button .language {
+  flex: 1;
   margin-right: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -54,16 +55,8 @@
 
 .locale-selector .locale.select .menu ul li span.language {
   flex: 1;
-  margin-right: 4px;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex: 1;
   margin-right: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.locale-selector .locale.select .menu ul li span.code {
 }
