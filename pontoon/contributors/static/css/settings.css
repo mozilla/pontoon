@@ -63,34 +63,7 @@
   text-align: center;
   text-transform: uppercase;
   box-sizing: border-box;
-}
-
-#delete-user-modal {
-  background: var(--black-3);
-  border: 1px solid var(--main-border-1);
-  border-radius: 3px;
-  color: var(--white-1);
-  font-weight: 300;
-  padding: 10px;
-  width: 400px;
-
-  span {
-    text-align: left;
-    display: block;
-    font-size: 16px;
-    margin-bottom: 32px;
-  }
-
-  .controls {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-bottom: 0;
-  }
-
-  &::backdrop {
-    background: color-mix(in srgb, var(--black-3) 50%, transparent);
-  }
+  width: 180px;
 }
 
 #display-name {
