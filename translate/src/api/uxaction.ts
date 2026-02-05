@@ -1,11 +1,17 @@
 import { POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';
 
+function isAuthenticated(): boolean {
+  const root = document.getElementById('root');
+  return root?.dataset.isAuthenticated === 'true';
+}
+
 export async function logUXAction(
   action_type: string,
   experiment: string | null,
   data: Record<string, string | number | boolean> | null,
 ): Promise<void> {
+  if (!isAuthenticated()) return;
   const csrfToken = getCSRFToken();
 
   const payload = new URLSearchParams({
