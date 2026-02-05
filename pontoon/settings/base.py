@@ -875,6 +875,11 @@ LOGGING = {
     },
     "loggers": {
         "django": {"handlers": ["console"]},
+        "django.security.csrf": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
         "pontoon": {
             "handlers": ["console"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
