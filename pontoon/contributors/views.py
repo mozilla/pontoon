@@ -9,6 +9,7 @@ from datetime import time, timedelta
 from dateutil.relativedelta import relativedelta
 
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
@@ -579,6 +580,31 @@ def delete_token(request, token_id):
     except PersonalAccessToken.DoesNotExist:
         return JsonResponse(
             {"status": "error", "message": "Unable to delete the token."}, status=404
+        )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def delete_user(request):
+    try:
+        request.user.delete()
+        logout(request)
+        messages.success(request, "Your account has been deleted.")
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": "User deleted successfully.",
+            },
+        )
+    except Exception as e:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "An error occurred while trying to delete the user.",
+                "errors": str(e),
+            },
+            status=400,
         )
 
 
