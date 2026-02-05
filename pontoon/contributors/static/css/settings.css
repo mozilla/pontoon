@@ -56,14 +56,10 @@
   background: var(--status-error);
   border: none;
   border-radius: 3px;
-  font-weight: 400;
-  color: var(--black-3);
   font-size: 14px;
   padding: 6px 12px;
-  text-align: center;
   text-transform: uppercase;
-  box-sizing: border-box;
-  width: 180px;
+  width: 295px;
 }
 
 #display-name {
