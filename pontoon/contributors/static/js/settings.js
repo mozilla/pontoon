@@ -342,4 +342,27 @@ $(function () {
       },
     });
   });
+
+  $('.delete-user-btn').click(function (e) {
+    e.preventDefault();
+
+    if ($(this).is('.confirmed')) {
+      const csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+      $.ajax({
+        url: `/user/delete/`,
+        type: 'POST',
+        data: {
+          csrfmiddlewaretoken: csrfmiddlewaretoken,
+        },
+        success() {
+          window.location.href = '/';
+        },
+        error() {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
+        },
+      });
+    } else {
+      $(this).addClass('confirmed').html('Are you sure?');
+    }
+  });
 });
