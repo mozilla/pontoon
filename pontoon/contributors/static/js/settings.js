@@ -343,7 +343,7 @@ $(function () {
     });
   });
 
-  $(document).on('click', '.delete-user-btn', function (e) {
+  $('.delete-user-btn').click(function (e) {
     e.preventDefault();
 
     if ($(this).is('.confirmed')) {
