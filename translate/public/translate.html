@@ -30,6 +30,7 @@
     <div
         id="root"
         data-csrf-token="{{ csrf_token }}"
+        data-is-authenticated="{{ 'true' if request.user.is_authenticated else 'false' }}"
         data-is-google-translate-supported="{{ is_google_translate_supported | to_json() }}"
         data-is-microsoft-translator-supported="{{ is_microsoft_translator_supported | to_json() }}"
         data-is-openai-chatgpt-supported="{{ is_openai_chatgpt_supported | to_json() }}"
