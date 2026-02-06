@@ -393,22 +393,21 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [state, actions, status, machinery.translations]);
 
   useEffect(() => {
-    // Dismiss failed checks when the results change.
-    // Note that if the editor is updated simultaneously,
-    // setting failed checks needs to be delayed past this.
-    resetFailedChecks();
-
     // Changes in `result` need to be reflected in `UnsavedChanges`,
     // but the latter needs to be defined at a higher level to make it
     // available in `EntitiesList`. Therefore, that state is managed here.
     // Let's also avoid the calculation, unless it's actually required.
-    setUnsavedChanges(() => {
-      const { entry, initial, placeholders, sourceView } = state;
-      const next = sourceView
-        ? parseEntryFromFluentSource(entry, result[0].value)
-        : buildMessageEntry(entry, placeholders, result);
-      return !pojoEquals(initial, next);
-    });
+    const { entry, initial, placeholders, sourceView } = state;
+    const next = sourceView
+      ? parseEntryFromFluentSource(entry, result[0].value)
+      : buildMessageEntry(entry, placeholders, result);
+    const hasChanges = !pojoEquals(initial, next);
+
+    if (hasChanges) {
+      resetFailedChecks();
+    }
+
+    setUnsavedChanges(() => hasChanges);
   }, [result]);
 
   return (
