@@ -13,7 +13,7 @@ type Props = {
  */
 export function SignIn({ url }: Props): React.ReactElement<'span'> {
   return (
-    <span className='user-signin'>
+    <span className='user-signin' data-testid='sign-in'>
       <Localized id='user-SignIn--sign-in'>
         <SignInOutForm url={url}>Sign in</SignInOutForm>
       </Localized>

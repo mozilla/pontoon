@@ -35,7 +35,7 @@ describe('<Navigation>', () => {
       HISTORY,
     );
 
-    expect(wrapper.text()).toContain('Klingon');
-    expect(wrapper.text()).toContain('kg');
+    expect(wrapper.container).toHaveTextContent('Klingon');
+    expect(wrapper.container).toHaveTextContent('kg');
   });
 });

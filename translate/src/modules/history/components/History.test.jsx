@@ -29,24 +29,26 @@ function mountHistory(fetching, translations) {
 
 describe('<History>', () => {
   it('shows the correct number of translations', () => {
-    const wrapper = mountHistory(false, [
+    const { container } = mountHistory(false, [
       { pk: 1, userBanner: '' },
       { pk: 2, userBanner: '' },
       { pk: 3, userBanner: '' },
     ]);
 
-    expect(wrapper.find('ul > *')).toHaveLength(3);
+    expect(container.querySelectorAll('ul > *')).toHaveLength(3);
   });
 
   it('returns null while history is loading', () => {
-    const wrapper = mountHistory(true, []);
+    const { container } = mountHistory(true, []);
 
-    expect(wrapper.find('HistoryTranslationComponent > *')).toHaveLength(0);
+    expect(container.querySelectorAll('ul > *')).toHaveLength(0);
   });
 
   it('renders a no results message if history is empty', () => {
     const wrapper = mountHistory(false, []);
 
-    expect(wrapper.find('#history-History--no-translations')).toHaveLength(1);
+    expect(
+      wrapper.queryByTestId('history-History--no-translations'),
+    ).toBeInTheDocument();
   });
 });

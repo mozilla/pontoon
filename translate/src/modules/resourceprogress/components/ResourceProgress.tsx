@@ -27,7 +27,7 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
   useOnDiscard(ref, onDiscard);
 
   return (
-    <aside ref={ref} className='menu'>
+    <aside ref={ref} className='menu' data-testid='resource-progress-dialog'>
       <div className='main'>
         <header>
           <h2>

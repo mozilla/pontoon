@@ -26,7 +26,10 @@ export function History(): React.ReactElement<'section'> | null {
 
   if (!translations.length) {
     return fetching ? null : (
-      <section className='history'>
+      <section
+        className='history'
+        data-testid='history-History--no-translations'
+      >
         <Localized id='history-History--no-translations'>
           <p>No translations available.</p>
         </Localized>

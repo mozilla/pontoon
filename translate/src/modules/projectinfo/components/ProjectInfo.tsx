@@ -38,7 +38,7 @@ export function ProjectInfo(): React.ReactElement<'div'> | null {
   const handleDiscard = useCallback(() => setVisible(false), []);
 
   return fetching || !info ? null : (
-    <div className='project-info'>
+    <div className='project-info' data-testid='project-info'>
       <div className='button' onClick={toggleVisible}>
         <span className='fas fa-info'></span>
       </div>

@@ -6,6 +6,7 @@ import { EntityView } from '~/context/EntityView';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { OriginalString } from './OriginalString';
+import { fireEvent } from '@testing-library/react';
 
 const ENTITY = {
   format: 'fluent',
@@ -33,21 +34,21 @@ function mountOriginalString(spy) {
 
 describe('<OriginalString>', () => {
   it('renders original input as simple string', () => {
-    const wrapper = mountOriginalString();
+    const { container } = mountOriginalString();
 
-    expect(wrapper.find('.original').children().text()).toMatch(
+    expect(container.querySelector('.original').textContent).toMatch(
       /^Hello\W*\nSimple\W*\nString$/,
     );
   });
 
   it('calls the selectTerms function on placeable click', () => {
     const spy = vi.fn();
-    const wrapper = mountOriginalString(spy);
+    const { container } = mountOriginalString(spy);
 
-    wrapper.find('.original').simulate('click');
+    fireEvent.click(container.querySelector('.original'));
     expect(spy).not.toHaveBeenCalled();
 
-    wrapper.find('.original mark').at(0).simulate('click');
+    fireEvent.click(container.querySelector('.original mark'));
     expect(spy).toHaveBeenCalled();
   });
 });
