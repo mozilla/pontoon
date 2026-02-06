@@ -41,22 +41,11 @@ class AggregatedStats:
 
     @property
     def missing_strings(self) -> int:
-        return (
-            self.total_strings
-            - self.approved_strings
-            - self.pretranslated_strings
-            - self.strings_with_errors
-            - self.strings_with_warnings
-        )
+        return self.total_strings - self.approved_strings - self.pretranslated_strings
 
     @property
     def complete(self) -> bool:
-        return (
-            self.total_strings
-            == self.approved_strings
-            + self.pretranslated_strings
-            + self.strings_with_warnings
-        )
+        return self.total_strings == self.approved_strings + self.strings_with_warnings
 
 
 def get_top_instances(qs, stats: dict[int, dict[str, int]]) -> dict[str, object] | None:
@@ -69,13 +58,7 @@ def get_top_instances(qs, stats: dict[int, dict[str, int]]) -> dict[str, object]
 
     def _missing(x: tuple[int, dict[str, int]]) -> int:
         _, d = x
-        return (
-            d["total"]
-            - d["approved"]
-            - d["pretranslated"]
-            - d["errors"]
-            - d["warnings"]
-        )
+        return d["total"] - d["approved"]
 
     max_total_id = max(stats.items(), key=lambda x: x[1]["total"])[0]
     max_approved_id = max(stats.items(), key=lambda x: x[1]["approved"])[0]

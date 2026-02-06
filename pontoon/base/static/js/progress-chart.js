@@ -28,10 +28,7 @@ $(function () {
           ? stats.missing / stats.all
           : 1 /* Draw "empty" progress if no projects enabled */,
       },
-      number = Math.floor(
-        (fraction.translated + fraction.pretranslated + fraction.warnings) *
-          100,
-      );
+      number = Math.floor((fraction.translated + fraction.warnings) * 100);
 
     // Update graph
     const canvas = this,

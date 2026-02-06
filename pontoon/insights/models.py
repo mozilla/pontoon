@@ -25,13 +25,7 @@ class InsightsSnapshot(models.Model):
 
     @property
     def missing_strings(self):
-        return (
-            self.total_strings
-            - self.approved_strings
-            - self.pretranslated_strings
-            - self.strings_with_errors
-            - self.strings_with_warnings
-        )
+        return self.total_strings - self.approved_strings - self.pretranslated_strings
 
     # Active users
     total_managers = models.PositiveIntegerField(default=0)
