@@ -17,14 +17,12 @@ def create_pm_group(apps, schema_editor):
     else:
         print("'project_managers' group already exists.")
 
-    # 3. Ensure the 'can_manage_project' permission exists
-    # We find the ContentType ID for the Project model
-    project_content_type = ContentType.objects.get_for_model(Project)
+    # 3. Fetch the permission declared on Project.Meta.permissions
+    project_content_type = ContentType.objects.get(app_label="base", model="project")
 
-    permission, perm_created = Permission.objects.get_or_create(
+        permission = Permission.objects.get(
         codename="can_manage_project",
         content_type=project_content_type,
-        defaults={"name": "Can manage project"},
     )
 
     # 4. Assign the permission to the group
