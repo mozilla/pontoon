@@ -2,6 +2,7 @@
 
 import logging
 
+from django.core.management.sql import emit_post_migrate_signal
 from django.db import migrations
 
 
@@ -9,19 +10,18 @@ log = logging.getLogger(__name__)
 
 
 def create_pm_group(apps, schema_editor):
-    # 1. Get the models we need from the historical state
     Group = apps.get_model("auth", "Group")
     Permission = apps.get_model("auth", "Permission")
     ContentType = apps.get_model("contenttypes", "ContentType")
 
-    # 2. Get or Create the 'project_managers' group
+    emit_post_migrate_signal(2, False, "default")
+
     group, created = Group.objects.get_or_create(name="project_managers")
     if created:
         log.info("Created 'project_managers' group.")
     else:
         log.info("'project_managers' group already exists.")
 
-    # 3. Ensure the 'can_manage_project' permission exists
     project_content_type = ContentType.objects.get(app_label="base", model="project")
 
     permission = Permission.objects.get(
@@ -29,7 +29,6 @@ def create_pm_group(apps, schema_editor):
         content_type=project_content_type,
     )
 
-    # 4. Assign the permission to the group
     group.permissions.add(permission)
     log.info(f"Added 'can_manage_project' permission to {group.name}")
 
