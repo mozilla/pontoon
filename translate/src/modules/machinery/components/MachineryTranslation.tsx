@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import type { MachineryTranslation, SourceType } from '~/api/machinery';
-import { logUXAction } from '~/api/uxaction';
+import { useLogUXAction } from '~/hooks/useLogUXAction';
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
@@ -43,6 +43,7 @@ export function MachineryTranslationComponent({
   const { llmTranslation } = getLLMTranslationState(translation);
 
   const locale = useContext(Locale);
+  const log = useLogUXAction();
 
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
@@ -53,13 +54,21 @@ export function MachineryTranslationComponent({
         : translation.sources;
       setEditorFromHelpers(content, sources, true);
       if (llmTranslation) {
-        logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
+        log('LLM Translation Copied', 'LLM Feature Adoption', {
           action: 'Copy LLM Translation',
           localeCode: locale.code,
         });
       }
     }
-  }, [index, setEditorFromHelpers, translation, llmTranslation]);
+  }, [
+    index,
+    llmTranslation,
+    setElement,
+    setEditorFromHelpers,
+    translation,
+    locale.code,
+    log,
+  ]);
 
   const className = classNames(
     'translation',
