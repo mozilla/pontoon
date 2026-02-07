@@ -1,27 +1,11 @@
-import { fetchUserData } from './user';
 import { POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';
-
-let userDataPromise: ReturnType<typeof fetchUserData> | null = null;
-
-async function isAuthenticated(): Promise<boolean> {
-  if (!userDataPromise) {
-    userDataPromise = fetchUserData();
-  }
-  try {
-    const userData = await userDataPromise;
-    return Boolean(userData?.is_authenticated);
-  } catch {
-    return false;
-  }
-}
 
 export async function logUXAction(
   action_type: string,
   experiment: string | null,
   data: Record<string, string | number | boolean> | null,
 ): Promise<void> {
-  if (!(await isAuthenticated())) return;
   const csrfToken = getCSRFToken();
 
   const payload = new URLSearchParams({

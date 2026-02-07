@@ -7,8 +7,9 @@ import {
 import { EntityTranslation } from '~/api/translation';
 import { logUXAction } from '~/api/uxaction';
 import { Location } from '~/context/Location';
+import { USER } from '~/modules/user';
 import { updateStats } from '~/modules/stats/actions';
-import type { AppDispatch } from '~/store';
+import type { AppDispatch, RootState } from '~/store';
 
 export const RECEIVE_ENTITIES = 'entities/RECEIVE';
 export const REQUEST_ENTITIES = 'entities/REQUEST';
@@ -62,7 +63,8 @@ export const updateEntityTranslation = (
 
 /** Fetch entities and their translation.  */
 export const getEntities =
-  (location: Location, page: number) => async (dispatch: AppDispatch) => {
+  (location: Location, page: number) =>
+  async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch({ type: REQUEST_ENTITIES });
 
     const content = await fetchEntities(location, page);
@@ -74,8 +76,9 @@ export const getEntities =
       search_match_whole_word,
       search_rejected_translations,
     } = location;
+    const isAuthenticated = Boolean(getState()[USER].isAuthenticated);
 
-    if (search) {
+    if (search && isAuthenticated) {
       logUXAction(
         'Load: String list with search parameter',
         'Search Options Statistics',

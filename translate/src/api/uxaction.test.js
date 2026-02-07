@@ -2,17 +2,10 @@ import { vi } from 'vitest';
 
 vi.mock('./utils/base', () => ({ POST: vi.fn() }));
 vi.mock('./utils/csrfToken', () => ({ getCSRFToken: () => 'test-csrf-token' }));
-vi.mock('./user', () => ({ fetchUserData: vi.fn() }));
 
-async function setup({
-  authenticated: authenticated = true,
-  postReject = false,
-} = {}) {
-  const { fetchUserData } = await import('./user');
+async function setup({ postReject = false } = {}) {
   const { POST } = await import('./utils/base');
   const { logUXAction } = await import('./uxaction');
-
-  fetchUserData.mockResolvedValue({ is_authenticated: authenticated });
 
   if (postReject) {
     POST.mockRejectedValue(new Error('err'));
@@ -20,7 +13,7 @@ async function setup({
     POST.mockResolvedValue(undefined);
   }
 
-  return { fetchUserData, POST, logUXAction };
+  return { POST, logUXAction };
 }
 
 describe('logUXAction', () => {
@@ -31,19 +24,10 @@ describe('logUXAction', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    document.body.innerHTML = '';
   });
 
-  it('does nothing when unauthenticated', async () => {
-    const { POST, logUXAction } = await setup({ authenticated: false });
-
-    await logUXAction('Load: X', 'Exp', { a: true });
-
-    expect(POST).not.toHaveBeenCalled();
-  });
-
-  it('POSTs when authenticated', async () => {
-    const { POST, logUXAction } = await setup({ authenticated: true });
+  it('POSTs when called', async () => {
+    const { POST, logUXAction } = await setup();
 
     await logUXAction('Load: X', 'Exp', { a: true });
 
@@ -52,11 +36,25 @@ describe('logUXAction', () => {
   });
 
   it('swallows POST errors', async () => {
-    const { logUXAction } = await setup({
-      authenticated: true,
-      postReject: true,
-    });
+    const { logUXAction } = await setup({ postReject: true });
 
     await expect(logUXAction('Load: X', null, null)).resolves.toBeUndefined();
+  });
+
+  it('includes CSRF token and payload fields', async () => {
+    const { POST, logUXAction } = await setup();
+
+    await logUXAction('Test Action', 'Test Experiment', { foo: 'bar', num: 1 });
+
+    expect(POST).toHaveBeenCalledTimes(1);
+
+    const payload = POST.mock.calls[0][1];
+    expect(payload).toBeInstanceOf(URLSearchParams);
+
+    expect(payload.get('csrfmiddlewaretoken')).toBe('test-csrf-token');
+    expect(payload.get('action_type')).toBe('Test Action');
+    expect(payload.get('experiment')).toBe('Test Experiment');
+
+    expect(JSON.parse(payload.get('data'))).toEqual({ foo: 'bar', num: 1 });
   });
 });
