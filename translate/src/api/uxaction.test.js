@@ -1,23 +1,32 @@
 import { vi } from 'vitest';
 
-vi.mock('./utils/base', () => ({
-  POST: vi.fn(),
-}));
+vi.mock('./utils/base', () => ({ POST: vi.fn() }));
+vi.mock('./utils/csrfToken', () => ({ getCSRFToken: () => 'test-csrf-token' }));
+vi.mock('./user', () => ({ fetchUserData: vi.fn() }));
 
-vi.mock('./utils/csrfToken', () => ({
-  getCSRFToken: () => 'test-csrf-token',
-}));
+async function setup({
+  authenticated: authenticated = true,
+  postReject = false,
+} = {}) {
+  const { fetchUserData } = await import('./user');
+  const { POST } = await import('./utils/base');
+  const { logUXAction } = await import('./uxaction');
 
-import { POST } from './utils/base';
-import { logUXAction } from './uxaction';
+  fetchUserData.mockResolvedValue({ is_authenticated: authenticated });
 
-function setRoot(isAuthenticated) {
-  document.body.innerHTML = `<div id="root" data-is-authenticated="${isAuthenticated}"></div>`;
+  if (postReject) {
+    POST.mockRejectedValue(new Error('err'));
+  } else {
+    POST.mockResolvedValue(undefined);
+  }
+
+  return { fetchUserData, POST, logUXAction };
 }
 
 describe('logUXAction', () => {
   beforeEach(() => {
-    POST.mockResolvedValue(undefined);
+    vi.resetModules();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -26,21 +35,28 @@ describe('logUXAction', () => {
   });
 
   it('does nothing when unauthenticated', async () => {
-    setRoot('false');
+    const { POST, logUXAction } = await setup({ authenticated: false });
+
     await logUXAction('Load: X', 'Exp', { a: true });
+
     expect(POST).not.toHaveBeenCalled();
   });
 
   it('POSTs when authenticated', async () => {
-    setRoot('true');
+    const { POST, logUXAction } = await setup({ authenticated: true });
+
     await logUXAction('Load: X', 'Exp', { a: true });
+
     expect(POST).toHaveBeenCalledTimes(1);
     expect(POST.mock.calls[0][0]).toBe('/log-ux-action/');
   });
 
   it('swallows POST errors', async () => {
-    setRoot('true');
-    POST.mockRejectedValue(new Error('boom'));
+    const { logUXAction } = await setup({
+      authenticated: true,
+      postReject: true,
+    });
+
     await expect(logUXAction('Load: X', null, null)).resolves.toBeUndefined();
   });
 });
