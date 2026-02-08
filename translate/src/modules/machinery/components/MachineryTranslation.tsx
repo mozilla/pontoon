@@ -60,15 +60,7 @@ export function MachineryTranslationComponent({
         });
       }
     }
-  }, [
-    index,
-    llmTranslation,
-    setElement,
-    setEditorFromHelpers,
-    translation,
-    locale.code,
-    log,
-  ]);
+  }, [index, llmTranslation, setEditorFromHelpers, translation, log]);
 
   const className = classNames(
     'translation',
