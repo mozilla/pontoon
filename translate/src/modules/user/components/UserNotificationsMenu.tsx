@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { logUXAction } from '~/api/uxaction';
+import { useLogUXAction } from '~/hooks/useLogUXAction';
 import { useOnDiscard } from '~/utils';
 
 import type { Notification, UserState } from '../index';
@@ -71,22 +71,24 @@ export function UserNotificationsMenu({
   const [visible, setVisible] = useState(false);
   const handleDiscard = useCallback(() => setVisible(false), []);
 
+  const log = useLogUXAction();
+
   const unread = user?.notifications.has_unread;
 
   useEffect(() => {
     if (user.isAuthenticated && unread) {
-      logUXAction('Render: Unread notifications icon', 'Notifications 1.0', {
+      log('Render: Unread notifications icon', 'Notifications 1.0', {
         pathname: window.location.pathname,
       });
     }
-  }, []);
+  }, [user.isAuthenticated, unread, log]);
 
   const handleClick = useCallback(() => {
     if (visible) {
       setVisible(false);
     } else {
       setVisible(true);
-      logUXAction('Click: Notifications icon', 'Notifications 1.0', {
+      log('Click: Notifications icon', 'Notifications 1.0', {
         pathname: window.location.pathname,
         unread,
       });
@@ -94,7 +96,7 @@ export function UserNotificationsMenu({
     if (unread) {
       markAllNotificationsAsRead();
     }
-  }, [markAllNotificationsAsRead, unread, visible]);
+  }, [markAllNotificationsAsRead, unread, visible, log]);
 
   return user?.isAuthenticated ? (
     <div className='user-notifications-menu'>
