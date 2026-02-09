@@ -1,11 +1,16 @@
 Your suggestions have been reviewed:
 <ul>
-    {% for notification in notifications %}
+  {% for notification in notifications %}
     {% set locale = notification.locale %}
     {% set project = notification.project %}
     {% set ids = notification.ids %}
     {% set msg = notification.msg %}
-    <li><a href="{{ full_url('pontoon.translate', locale.code, project.slug, 'all-resources') }}?list={{ ids }}">{{
-            project.name }} ({{ locale.code }})</a>: {{ msg }}</a></li>
-    {% endfor %}
+    <li>
+      <a
+        href="{{ full_url('pontoon.translate', locale.code, project.slug, 'all-resources') }}?list={{ ids }}"
+      >
+        {{ project.name }} ({{ locale.code }}): {{ msg }}
+      </a>
+    </li>
+  {% endfor %}
 </ul>

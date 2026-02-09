@@ -1,373 +1,437 @@
 {% import "insights/widgets/tooltip.html" as Tooltip %}
 {% import "contributors/includes/timeline.html" as Timeline with context %}
-
 {% extends "base.html" %}
 
 {% block title %}{{ contributor.display_name }}{% endblock %}
 
 {% block before %}
-<!-- Server data -->
-<div id="server" class="hidden"
-     data-user="{{ contributor.pk }}"
-     >
-</div>
+  <!-- Server data -->
+  <div id="server" class="hidden" data-user="{{ contributor.pk }}"></div>
 {% endblock %}
 
 {% block class %}user{% endblock %}
 
 {% block bottom %}
-<section id="main" class="clearfix">
+  <section id="main" class="clearfix">
     <div class="container clearfix">
-        <div class="left-column">
+      <div class="left-column">
+        {% set is_my_profile = (user.is_authenticated and user.email == contributor.email) %}
+        {% set profile = contributor.profile %}
+        {% set has_badges = badges.review_master_badge.level or badges.translation_champion_badge.level or badges.community_builder_badge.level %}
+        {% set translator_for_locales = contributor.translator_for_locales %}
+        {% set manager_for_locales = contributor.manager_for_locales %}
+        {% set user_is_translator = user.can_translate_locales %}
+        {% set profile_is_disabled = contributor.is_active == False %}
 
-            {% set is_my_profile = (user.is_authenticated and user.email == contributor.email) %}
-            {% set profile = contributor.profile %}
-            {% set has_badges = badges.review_master_badge.level or badges.translation_champion_badge.level or badges.community_builder_badge.level %}
-            {% set translator_for_locales = contributor.translator_for_locales %}
-            {% set manager_for_locales = contributor.manager_for_locales %}
-            {% set user_is_translator = user.can_translate_locales %}
-            {% set profile_is_disabled = contributor.is_active == False %}
-
-            <a class="avatar" href="{% if is_my_profile %}https://gravatar.com/{% endif %}">
-                {% if is_my_profile %}
-                <div class="desc">Update profile picture</div>
-                {% endif %}
-                {% if profile_is_disabled %}
-                <div class="status">
-                    <i class="fas fa-exclamation-circle fa-sm"></i>
-                    <span>Account disabled by an administrator</span>
-                </div>
-                {% endif %}
-                <img class="rounded" src="{{ contributor.gravatar_url(512) }}" width="256" height="256">
-            </a>
-
-            <div class="personal-information">
-                {% set is_name_visible = contributor.first_name or profile.username %}
-                {% if is_name_visible %}
-                <div class="block">
-                    {% if contributor.first_name %}
-                    <h2 class="display-name">{{ contributor.first_name }}</h2>
-                    {% endif %}
-                    {% if profile.username %}
-                    <div class="username">{{ profile.username }}</div>
-                    {% endif %}
-                </div>
-                {% endif %}
-
-                {% if profile.bio %}
-                <div class="block">
-                    <div class="bio">{{ profile.bio }}</div>
-                </div>
-                {% endif %}
-
-                {% set is_email_visible = user.is_authenticated and (profile.visibility_email == "Logged-in users" or user_is_translator or manager_for_locales or contact_for.exists() or contributor.is_superuser) %}
-                {% set are_external_accounts_visible = (profile.visibility_external_accounts == "Public" or user_is_translator) and (profile.chat or profile.github or profile.bugzilla) %}
-
-                {% if is_email_visible or are_external_accounts_visible %}
-                <div class="block">
-                    {% if is_email_visible %}
-                    {% set email = contributor.contact_email %}
-                    <div class="item-with-icon">
-                        <span class="icon fas fa-envelope"></span>
-                        <a href="mailto:{{ email|nospam }}">{{ email|nospam }}</a>
-                    </div>
-                    {% endif %}
-
-                    {% if are_external_accounts_visible %}
-
-                    {% if profile.chat %}
-                    <div class="item-with-icon" title="Chat Account">
-                        <span class="icon fas fa-comment-dots"></span>
-                        <span>{{ profile.chat }}</span>
-                    </div>
-                    {% endif %}
-
-                    {% if profile.github %}
-                    <div class="item-with-icon" title="GitHub Account">
-                        <span class="icon fab fa-github"></span>
-                        <a href="https://github.com/{{ profile.github }}">{{ profile.github }}</a>
-                    </div>
-                    {% endif %}
-
-                    {% if profile.bugzilla %}
-                    <div class="item-with-icon" title="Bugzilla Account">
-                        <span class="icon fas fa-bug"></span>
-                        <a href="mailto:{{ profile.bugzilla|nospam }}">{{ profile.bugzilla|nospam }}</a>
-                    </div>
-                    {% endif %}
-
-                    {% endif %}
-                </div>
-                {% endif %}
-
-                {% if is_my_profile %}
-                <div class="block">
-                    <a class="button" href="{{ url('pontoon.contributors.settings') }}">Change Settings</a>
-                </div>
-                {% endif %}
-                {% set is_admin = (user.is_authenticated and user.is_superuser) %}
-                    {% if is_admin and not is_my_profile %}
-                    <form id="account-status-form" action="{{ url('pontoon.contributors.toggle_active_user_status', username=contributor.username) }}" method="POST">
-                        {% csrf_token %}
-                        {% if contributor.is_active %}
-                        <button class="button" type="submit"><i class="icon fas fa-lock fa-sm"></i>Disable</button>
-                        {% else %}
-                        <button class="button" type="submit"><i class="icon fas fa-unlock fa-sm"></i>Enable</button>
-                        {% endif %}
-                    </form>
-                    {% endif %}
+        <a
+          class="avatar"
+          href="{% if is_my_profile %}https://gravatar.com/{% endif %}"
+        >
+          {% if is_my_profile %}
+            <div class="desc">Update profile picture</div>
+          {% endif %}
+          {% if profile_is_disabled %}
+            <div class="status">
+              <i class="fas fa-exclamation-circle fa-sm"></i>
+              <span>Account disabled by an administrator</span>
             </div>
+          {% endif %}
+          <img
+            class="rounded"
+            src="{{ contributor.gravatar_url(512) }}"
+            width="256"
+            height="256"
+          />
+        </a>
 
-            {% if is_name_visible or profile.bio or is_email_visible or are_external_accounts_visible or is_my_profile %}
-            <hr>
-            {% endif %}
-
-            {% if has_badges %}
-            <div class="achievements">
-                <div class="block">
-                    <h4 class="subtitle">Achievements</h4>
-                    {% for path, badge in badges.items() %}
-                    {% if badge.level %}
-                    <div class="badge-wrapper">
-                        <img class="badge" src="{{ static('img/' ~ path ~ '.svg') }}" title="{{ badge.name }}: Level {{ badge.level }}" />
-                        {% if badge.level > 1 %}
-                            <div class="badge-level">{{ badge.level }}x</div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
+        <div class="personal-information">
+          {% set is_name_visible = contributor.first_name or profile.username %}
+          {% if is_name_visible %}
+            <div class="block">
+              {% if contributor.first_name %}
+                <h2 class="display-name">{{ contributor.first_name }}</h2>
+              {% endif %}
+              {% if profile.username %}
+                <div class="username">{{ profile.username }}</div>
+              {% endif %}
             </div>
-            <hr>
-            {% endif %}
+          {% endif %}
 
-            <div class="dates">
-                <div class="block">
-                    <h4 class="subtitle">Latest activity</h4>
-                    <div class="item-with-icon">
-                        <span class="icon fas fa-calendar-alt"></span>
-                        {% set action = contributor.latest_action %}
-                        {% if action and action.translation %}
-                        {% set resource = action.translation.entity.resource %}
-                        {% set string = action.translation.entity.pk %}
-                        <a href="{{ url('pontoon.translate', action.translation.locale.code, resource.project.slug, resource.path) }}?string={{ string }}">{{ action.created_at|format_datetime("date") }}</a>
-                        {% else %}
-                        <span>No activity yet</span>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="block">
-                    <h4 class="subtitle">Last login</h4>
-                    <div class="item-with-icon">
-                        <span class="icon fas fa-calendar-alt"></span>
-                        <span>{{ contributor.last_login|format_datetime("date") }}</span>
-                    </div>
-                </div>
-
-                <div class="block">
-                    <h4 class="subtitle">Member since</h4>
-                    <div class="item-with-icon">
-                        <span class="icon fas fa-calendar-alt"></span>
-                        <span>{{ contributor.date_joined|format_datetime("date") }}</span>
-                    </div>
-                </div>
+          {% if profile.bio %}
+            <div class="block">
+              <div class="bio">{{ profile.bio }}</div>
             </div>
+          {% endif %}
 
-            {% if translator_for_locales or manager_for_locales or contact_for.exists() or contributor.is_superuser %}
-            <hr>
-            {% endif %}
+          {% set is_email_visible = user.is_authenticated and (profile.visibility_email == "Logged-in users" or user_is_translator or manager_for_locales or contact_for.exists() or contributor.is_superuser) %}
+          {% set are_external_accounts_visible = (profile.visibility_external_accounts == "Public" or user_is_translator) and (profile.chat or profile.github or profile.bugzilla) %}
 
-            <div class="permissions">
-                {% if translator_for_locales %}
-                <div class="block">
-                    <h4 class="subtitle">Translator</h4>
-                    {% for locale in translator_for_locales %}
-                    <div class="item-with-icon">
-                        <span class="icon fas fa-language"></span>
-                        <span>{{ locale.name }} <span class="stress">{{ locale.code }}</span></span>
-                    </div>
-                    {% endfor %}
+          {% if is_email_visible or are_external_accounts_visible %}
+            <div class="block">
+              {% if is_email_visible %}
+                {% set email = contributor.contact_email %}
+                <div class="item-with-icon">
+                  <span class="icon fas fa-envelope"></span>
+                  <a href="mailto:{{ email|nospam }}">{{ email|nospam }}</a>
                 </div>
+              {% endif %}
+
+              {% if are_external_accounts_visible %}
+
+                {% if profile.chat %}
+                  <div class="item-with-icon" title="Chat Account">
+                    <span class="icon fas fa-comment-dots"></span>
+                    <span>{{ profile.chat }}</span>
+                  </div>
                 {% endif %}
 
-                {% if manager_for_locales %}
-                <div class="block">
-                    <h4 class="subtitle">Team manager</h4>
-                    {% for locale in manager_for_locales %}
-                    <div class="item-with-icon">
-                        <span class="icon fas fa-language"></span>
-                        <a href="{{ url('pontoon.teams.team', locale.code) }}">{{ locale.name }} <span class="stress">{{ locale.code }}</span></a>
-                    </div>
-                    {% endfor %}
-                </div>
+                {% if profile.github %}
+                  <div class="item-with-icon" title="GitHub Account">
+                    <span class="icon fab fa-github"></span>
+                    <a href="https://github.com/{{ profile.github }}"
+                      >{{ profile.github }}</a
+                    >
+                  </div>
                 {% endif %}
 
-                {% if contact_for.exists() %}
-                <div class="block">
-                    <h4 class="subtitle">Project manager</h4>
-                    {% for project in contact_for %}
-                    <div class="item-with-icon">
-                        <span class="icon fas fa-language"></span>
-                        <a href="{{ url('pontoon.projects.project', project.slug) }}">{{ project.name }}</a>
-                    </div>
-                    {% endfor %}
-                </div>
+                {% if profile.bugzilla %}
+                  <div class="item-with-icon" title="Bugzilla Account">
+                    <span class="icon fas fa-bug"></span>
+                    <a href="mailto:{{ profile.bugzilla|nospam }}"
+                      >{{ profile.bugzilla|nospam }}</a
+                    >
+                  </div>
                 {% endif %}
-
-                {% if contributor.is_superuser %}
-                <div class="block">
-                    <h4 class="subtitle superuser">Administrator</h4>
-                </div>
-                {% endif %}
+              {% endif %}
             </div>
+          {% endif %}
 
+          {% if is_my_profile %}
+            <div class="block">
+              <a
+                class="button"
+                href="{{ url('pontoon.contributors.settings') }}"
+                >Change Settings</a
+              >
+            </div>
+          {% endif %}
+          {% set is_admin = (user.is_authenticated and user.is_superuser) %}
+          {% if is_admin and not is_my_profile %}
+            <form
+              id="account-status-form"
+              action="{{ url('pontoon.contributors.toggle_active_user_status', username=contributor.username) }}"
+              method="POST"
+            >
+              {% csrf_token %}
+              {% if contributor.is_active %}
+                <button class="button" type="submit">
+                  <i class="icon fas fa-lock fa-sm"></i>Disable
+                </button>
+              {% else %}
+                <button class="button" type="submit">
+                  <i class="icon fas fa-unlock fa-sm"></i>Enable
+                </button>
+              {% endif %}
+            </form>
+          {% endif %}
         </div>
 
-        <div class="right-column">
+        {% if is_name_visible or profile.bio or is_email_visible or are_external_accounts_visible or is_my_profile %}
+          <hr />
+        {% endif %}
 
-            {% set approval_rate_visibile = profile.visibility_approval == "Public" or user_is_translator %}
-            {% set contributor_is_translator = contributor.can_translate_locales %}
-            {% set self_approval_rate_visibile = contributor_is_translator and (profile.visibility_self_approval == "Public" or user_is_translator) %}
+        {% if has_badges %}
+          <div class="achievements">
+            <div class="block">
+              <h4 class="subtitle">Achievements</h4>
+              {% for path, badge in badges.items() %}
+                {% if badge.level %}
+                  <div class="badge-wrapper">
+                    <img
+                      class="badge"
+                      src="{{ static('img/' ~ path ~ '.svg') }}"
+                      title="{{ badge.name }}: Level {{ badge.level }}"
+                    />
+                    {% if badge.level > 1 %}
+                      <div class="badge-level">{{ badge.level }}x</div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <hr />
+        {% endif %}
 
-            <div class="clearfix">
+        <div class="dates">
+          <div class="block">
+            <h4 class="subtitle">Latest activity</h4>
+            <div class="item-with-icon">
+              <span class="icon fas fa-calendar-alt"></span>
+              {% set action = contributor.latest_action %}
+              {% if action and action.translation %}
+                {% set resource = action.translation.entity.resource %}
+                {% set string = action.translation.entity.pk %}
+                <a
+                  href="{{ url('pontoon.translate', action.translation.locale.code, resource.project.slug, resource.path) }}?string={{ string }}"
+                  >{{ action.created_at|format_datetime("date") }}</a
+                >
+              {% else %}
+                <span>No activity yet</span>
+              {% endif %}
+            </div>
+          </div>
 
-            {% if approval_rate_visibile or self_approval_rate_visibile %}
+          <div class="block">
+            <h4 class="subtitle">Last login</h4>
+            <div class="item-with-icon">
+              <span class="icon fas fa-calendar-alt"></span>
+              <span>{{ contributor.last_login|format_datetime("date") }}</span>
+            </div>
+          </div>
+
+          <div class="block">
+            <h4 class="subtitle">Member since</h4>
+            <div class="item-with-icon">
+              <span class="icon fas fa-calendar-alt"></span>
+              <span>{{ contributor.date_joined|format_datetime("date") }}</span>
+            </div>
+          </div>
+        </div>
+
+        {% if translator_for_locales or manager_for_locales or contact_for.exists() or contributor.is_superuser %}
+          <hr />
+        {% endif %}
+
+        <div class="permissions">
+          {% if translator_for_locales %}
+            <div class="block">
+              <h4 class="subtitle">Translator</h4>
+              {% for locale in translator_for_locales %}
+                <div class="item-with-icon">
+                  <span class="icon fas fa-language"></span>
+                  <span
+                    >{{ locale.name }}
+                    <span class="stress">{{ locale.code }}</span></span
+                  >
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if manager_for_locales %}
+            <div class="block">
+              <h4 class="subtitle">Team manager</h4>
+              {% for locale in manager_for_locales %}
+                <div class="item-with-icon">
+                  <span class="icon fas fa-language"></span>
+                  <a href="{{ url('pontoon.teams.team', locale.code) }}"
+                    >{{ locale.name }}
+                    <span class="stress">{{ locale.code }}</span></a
+                  >
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if contact_for.exists() %}
+            <div class="block">
+              <h4 class="subtitle">Project manager</h4>
+              {% for project in contact_for %}
+                <div class="item-with-icon">
+                  <span class="icon fas fa-language"></span>
+                  <a href="{{ url('pontoon.projects.project', project.slug) }}"
+                    >{{ project.name }}</a
+                  >
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if contributor.is_superuser %}
+            <div class="block">
+              <h4 class="subtitle superuser">Administrator</h4>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="right-column">
+        {% set approval_rate_visibile = profile.visibility_approval == "Public" or user_is_translator %}
+        {% set contributor_is_translator = contributor.can_translate_locales %}
+        {% set self_approval_rate_visibile = contributor_is_translator and (profile.visibility_self_approval == "Public" or user_is_translator) %}
+
+        <div class="clearfix">
+          {% if approval_rate_visibile or self_approval_rate_visibile %}
             <section id="insights" data-dates="{{ approvals_charts.dates }}">
-                <div class="block clearfix">
-                    <div class="chart-group">
-                        {% if approval_rate_visibile %}
-                        <div class="chart-item approval-rate">
-                            <h3 class="controls">
-                                Approval rate
-                                {{ Tooltip.display(
-                                    items=[{
-                                        'class': 'current-month',
-                                        'name': 'Current month',
-                                        'definition': 'Rate of translations approved within all translations reviewed during each month.',
-                                    }, {
-                                        'class': 'twelve-month-average',
-                                        'name': '12-month average',
-                                        'definition': 'Rate of translations approved within all translations reviewed in the 12 months before the specific month.',
-                                    }]
-                                ) }}
-                            </h3>
-                            <canvas
-                                id="approval-rate-chart"
-                                data-approval-rates="{{ approvals_charts.approval_rates }}"
-                                data-approval-rates-12-month-avg="{{ approvals_charts.approval_rates_12_month_avg }}"
-                                width="436"
-                                height="{% if self_approval_rate_visibile %}143{% else %}175{% endif %}">
-                            </canvas>
-                        </div>
-                        {% endif %}
-                        {% if self_approval_rate_visibile %}
-                        <div class="chart-item self-approval-rate">
-                            <h3 class="controls">
-                                Self-approval rate
-                                {{ Tooltip.display(
-                                    items=[{
-                                        'class': 'current-month',
-                                        'name': 'Current month',
-                                        'definition': 'Rate of self-approved translations within all approved translations during each month.',
-                                    }, {
-                                        'class': 'twelve-month-average',
-                                        'name': '12-month average',
-                                        'definition': 'Rate of self-approved translations within all approved translations in the 12 months before the specific month.',
-                                    }]
-                                ) }}
-                            </h3>
-                            <canvas
-                                id="self-approval-rate-chart"
-                                data-self-approval-rates="{{ approvals_charts.self_approval_rates }}"
-                                data-self-approval-rates-12-month-avg="{{ approvals_charts.self_approval_rates_12_month_avg }}"
-                                width="436"
-                                height="{% if approval_rate_visibile %}143{% else %}175{% endif %}">
-                            </canvas>
-                        </div>
-                        {% endif %}
+              <div class="block clearfix">
+                <div class="chart-group">
+                  {% if approval_rate_visibile %}
+                    <div class="chart-item approval-rate">
+                      <h3 class="controls">
+                        Approval rate
+                        {{
+                          Tooltip.display(
+                              items=[{
+                                  'class': 'current-month',
+                                  'name': 'Current month',
+                                  'definition': 'Rate of translations approved within all translations reviewed during each month.',
+                              }, {
+                                  'class': 'twelve-month-average',
+                                  'name': '12-month average',
+                                  'definition': 'Rate of translations approved within all translations reviewed in the 12 months before the specific month.',
+                              }]
+                          )
+                        }}
+                      </h3>
+                      <canvas
+                        id="approval-rate-chart"
+                        data-approval-rates="{{ approvals_charts.approval_rates }}"
+                        data-approval-rates-12-month-avg="{{ approvals_charts.approval_rates_12_month_avg }}"
+                        width="436"
+                        height="{% if self_approval_rate_visibile %}143{% else %}175{% endif %}"
+                      >
+                      </canvas>
                     </div>
-                    {% if approval_rate_visibile and self_approval_rate_visibile %}
-                    <nav class="chart-group-navigation">
-                        <ul class="unselectable">
-                            <li class="active" title="Approval rate">
-                                <i class="icon"></i><span class="label">Approval rate</span>
-                            </li>
-                            <li title="Self-approval rate">
-                                <i class="icon"></i><span class="label">Self-approval rate</span>
-                            </li>
-                        </ul>
-                    </nav>
-                    {% endif %}
+                  {% endif %}
+                  {% if self_approval_rate_visibile %}
+                    <div class="chart-item self-approval-rate">
+                      <h3 class="controls">
+                        Self-approval rate
+                        {{
+                          Tooltip.display(
+                              items=[{
+                                  'class': 'current-month',
+                                  'name': 'Current month',
+                                  'definition': 'Rate of self-approved translations within all approved translations during each month.',
+                              }, {
+                                  'class': 'twelve-month-average',
+                                  'name': '12-month average',
+                                  'definition': 'Rate of self-approved translations within all approved translations in the 12 months before the specific month.',
+                              }]
+                          )
+                        }}
+                      </h3>
+                      <canvas
+                        id="self-approval-rate-chart"
+                        data-self-approval-rates="{{ approvals_charts.self_approval_rates }}"
+                        data-self-approval-rates-12-month-avg="{{ approvals_charts.self_approval_rates_12_month_avg }}"
+                        width="436"
+                        height="{% if approval_rate_visibile %}143{% else %}175{% endif %}"
+                      >
+                      </canvas>
+                    </div>
+                  {% endif %}
                 </div>
+                {% if approval_rate_visibile and self_approval_rate_visibile %}
+                  <nav class="chart-group-navigation">
+                    <ul class="unselectable">
+                      <li class="active" title="Approval rate">
+                        <i class="icon"></i
+                        ><span class="label">Approval rate</span>
+                      </li>
+                      <li title="Self-approval rate">
+                        <i class="icon"></i
+                        ><span class="label">Self-approval rate</span>
+                      </li>
+                    </ul>
+                  </nav>
+                {% endif %}
+              </div>
             </section>
-            {% endif %}
+          {% endif %}
 
-            <section id="stats">
-                <div class="total">
-                    <span>All translations</span>
-                    <p>{{ all_time_stats.translations.count()|intcomma }}</p>
-                </div>
-                <div class="translated">
-                    <span>Approved</span>
-                    <p>{{ all_time_stats.translations.filter(approved=True).count()|intcomma }}</p>
-                </div>
-                <div class="unreviewed">
-                    <span>Unreviewed</span>
-                    <p>{{ all_time_stats.translations.exclude(approved=True).exclude(rejected=True).count()|intcomma }}</p>
-                </div>
-            </section>
-
+          <section id="stats">
+            <div class="total">
+              <span>All translations</span>
+              <p>{{ all_time_stats.translations.count()|intcomma }}</p>
             </div>
-
-            <section id="contributions">
-                <div class="header clearfix">
-                    <h3 class="title">{{ contribution_graph.title }}</h3>
-                    <div class="type-selector controls select">
-                        <div class="button selector">
-                            <div class="value">
-                                <span data-type="all_contributions" title="Submissions, reviews performed and reviews received">All contributions</span>
-                            </div>
-                            <span class="icon fas fa-caret-down"></span>
-                        </div>
-                        <div class="menu" style="display: none;">
-                            <ul>
-                                <li class="clearfix">
-                                    <span data-type="user_translations" title="Translations submitted, including both suggestions and direct translations">Submissions</span>
-                                </li>
-                                <li class="clearfix">
-                                    <span data-type="user_reviews" title="Reviews performed">Reviews performed</span>
-                                </li>
-                                <li class="clearfix">
-                                    <span data-type="peer_reviews" title="Reviews received from another translator">Reviews received</span>
-                                </li>
-                                <li class="clearfix">
-                                    <span data-type="all_user_contributions" title="Submissions and reviews performed">Submissions and reviews</span>
-                                </li>
-                                <li class="clearfix">
-                                    <span data-type="all_contributions" title="Submissions, reviews performed and reviews received">All contributions</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div id="contribution-graph" data-contributions="{{ contribution_graph.contributions }}"></div>
-                <div class="svg-tip"></div>
-            </section>
-
-            <section id="timeline">
-            {{ Timeline }}
-            </section>
-            <button id="show-more" class="button">Show more activity</button>
+            <div class="translated">
+              <span>Approved</span>
+              <p>
+                {{ all_time_stats.translations.filter(approved=True).count()|intcomma }}
+              </p>
+            </div>
+            <div class="unreviewed">
+              <span>Unreviewed</span>
+              <p>
+                {{ all_time_stats.translations.exclude(approved=True).exclude(rejected=True).count()|intcomma }}
+              </p>
+            </div>
+          </section>
         </div>
+
+        <section id="contributions">
+          <div class="header clearfix">
+            <h3 class="title">{{ contribution_graph.title }}</h3>
+            <div class="type-selector controls select">
+              <div class="button selector">
+                <div class="value">
+                  <span
+                    data-type="all_contributions"
+                    title="Submissions, reviews performed and reviews received"
+                    >All contributions</span
+                  >
+                </div>
+                <span class="icon fas fa-caret-down"></span>
+              </div>
+              <div class="menu" style="display: none;">
+                <ul>
+                  <li class="clearfix">
+                    <span
+                      data-type="user_translations"
+                      title="Translations submitted, including both suggestions and direct translations"
+                      >Submissions</span
+                    >
+                  </li>
+                  <li class="clearfix">
+                    <span data-type="user_reviews" title="Reviews performed"
+                      >Reviews performed</span
+                    >
+                  </li>
+                  <li class="clearfix">
+                    <span
+                      data-type="peer_reviews"
+                      title="Reviews received from another translator"
+                      >Reviews received</span
+                    >
+                  </li>
+                  <li class="clearfix">
+                    <span
+                      data-type="all_user_contributions"
+                      title="Submissions and reviews performed"
+                      >Submissions and reviews</span
+                    >
+                  </li>
+                  <li class="clearfix">
+                    <span
+                      data-type="all_contributions"
+                      title="Submissions, reviews performed and reviews received"
+                      >All contributions</span
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div
+            id="contribution-graph"
+            data-contributions="{{ contribution_graph.contributions }}"
+          ></div>
+          <div class="svg-tip"></div>
+        </section>
+
+        <section id="timeline">{{ Timeline }}</section>
+        <button id="show-more" class="button">Show more activity</button>
+      </div>
     </div>
-</section>
+  </section>
 {% endblock %}
 
 {% block extend_css %}
-{% stylesheet 'profile' %}
+  {% stylesheet 'profile' %}
 {% endblock %}
 
 {% block extend_js %}
-{% javascript 'profile' %}
+  {% javascript 'profile' %}
 {% endblock %}

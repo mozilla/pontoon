@@ -2,16 +2,20 @@
 
 {% block title %}{{ subject }}{% endblock %}
 
-{% block extend_css %}{% endblock %}
+{% block extend_css %}
+{% endblock %}
 
 {% block header %}Hello.{% endblock %}
 
-{% block subheader %}{% endblock %}
-
-{% block content_class %}{% endblock %}
-
-{% block content %}
-{{ content|safe }}
+{% block subheader %}
 {% endblock %}
 
-{% block footer %}{% endblock %}
+{% block content_class %}
+{% endblock %}
+
+{% block content %}
+  {{ content|safe }}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

@@ -1,130 +1,140 @@
 {% macro menu() %}
-{% if user.is_authenticated %}
+  {% if user.is_authenticated %}
 
-{% set unread_count = user.notifications.unread().count() %}
-<div id="notifications" class="notifications select{% if unread_count %} unread{% endif %}">
+    {% set unread_count = user.notifications.unread().count() %}
+    <div
+      id="notifications"
+      class="notifications select{% if unread_count %}unread{% endif %}"
+    >
+      <div class="button selector">
+        <i class="icon far fa-bell fa-fw"></i>
+        <i class="badge"
+          >{{ user.unread_notifications_display(unread_count) }}</i
+        >
+      </div>
 
-  <div class="button selector">
-    <i class="icon far fa-bell fa-fw"></i>
-    <i class="badge">{{ user.unread_notifications_display(unread_count) }}</i>
-  </div>
+      <div class="menu">
+        {{ list(notifications=user.menu_notifications(unread_count)) }}
 
-  <div class="menu">
-    {{ list(notifications=user.menu_notifications(unread_count)) }}
-
-    <ul>
-      <li class="horizontal-separator"></li>
-      <li class="see-all"><a href="{{ full_url('pontoon.contributors.notifications') }}?referrer=ui">See all Notifications</a></li>
-    </ul>
-  </div>
-
-</div>
-
-{% endif %}
+        <ul>
+          <li class="horizontal-separator"></li>
+          <li class="see-all">
+            <a
+              href="{{ full_url('pontoon.contributors.notifications') }}?referrer=ui"
+              >See all Notifications</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+  {% endif %}
 {% endmacro %}
 
 {% macro notification_time(notification) %}
 
-{% if notification|is_old_notification %}
-  <time class="old-notification" datetime="{{ notification.timestamp }}">
-    {{ notification.timestamp|format_datetime("date") }}
-  </time>
-{% else %}
-  <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }}</time>
-{% endif %}
-
+  {% if notification|is_old_notification %}
+    <time class="old-notification" datetime="{{ notification.timestamp }}">
+      {{ notification.timestamp|format_datetime("date") }}
+    </time>
+  {% else %}
+    <time class="timeago" datetime="{{ notification.timestamp }}"
+      >{{ notification.timesince() }}</time
+    >
+  {% endif %}
 {% endmacro %}
 
 {% macro list(notifications, no_title="No new notifications.", no_description="Here you’ll see updates for localizations you contribute to.") %}
-<ul class="notification-list">
-  {% for notification in notifications %}
-    <li class="notification-item" data-id="{{ notification.id }}" data-level="{{ notification.level }}" data-unread="{{ notification.unread|to_json() }}">
-      <div class="item-content">
-        {% set target = notification.target %}
-        {% set description = notification.description %}
-        {% set has_actor = true %}
-
-        {% if notification.actor.slug %}
-          {% set actor_anchor = notification.actor %}
-          {% if "new string" in notification.verb %}
-            {% set actor_url = full_url('pontoon.translate.locale.agnostic', notification.actor.slug, "all-resources") + '?status=missing,pretranslated' %}
-          {% else %}
-            {% set actor_url = full_url('pontoon.projects.project', notification.actor.slug) %}
-          {% endif %}
-
-        {% elif notification.actor.email %}
-          {% set actor_anchor = notification.actor.name_or_email|nospam %}
-          {% set actor_url = full_url('pontoon.contributors.contributor.username', notification.actor.username) %}
-        {% else %}
-          {% set actor_anchor = "Deleted User" %}
-          {% set has_actor = false %}
-        {% endif %}
-
-        {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
-          <span class="description">{{ description|safe }}</span>
-
-          {{ notification_time(notification) }}
-
-        {% elif target and target.resource %}
-
-          <span class="actor {% if not has_actor %}deleted{% endif %}">
-            {{ actor_anchor }}
-          </span>
-
-          <span class="verb">
-            {% set link = full_url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
-            <a href="{{ link + '?string=' + target.pk|string }}">{{ notification.verb }}</a>
-          </span>
-
-          <span class="target">
-            {{ target.resource.project.name }}
-          </span>
-
-          {{ notification_time(notification) }}
-
-          <div class="message trim">{{ description|linkify|safe }}</div>
-
-        {% else %}
-
-          <span class="actor {% if not has_actor %}deleted{% endif %}">
-            {% if has_actor %}
-              <a href="{{ actor_url }}">{{ actor_anchor }}</a>
-            {% else %}
-              {{ actor_anchor }}
-            {% endif %}
-          </span>
-
-          <span class="verb">
-            {{ notification.verb.replace("has added a comment in", "has added a comment") }}
-          </span>
-
-          {% if target %}
-            <span class="target">
-              <a href="{{ full_url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
-            </span>
-          {% endif %}
-
-          {{ notification_time(notification )}}
-
+  <ul class="notification-list">
+    {% for notification in notifications %}
+      <li
+        class="notification-item"
+        data-id="{{ notification.id }}"
+        data-level="{{ notification.level }}"
+        data-unread="{{ notification.unread|to_json() }}"
+      >
+        <div class="item-content">
+          {% set target = notification.target %}
           {% set description = notification.description %}
-          {% if description %}
-            <div class="message">{{ description|safe }}</div>
+          {% set has_actor = true %}
+
+          {% if notification.actor.slug %}
+            {% set actor_anchor = notification.actor %}
+            {% if "new string" in notification.verb %}
+              {% set actor_url = full_url('pontoon.translate.locale.agnostic', notification.actor.slug, "all-resources") + '?status=missing,pretranslated' %}
+            {% else %}
+              {% set actor_url = full_url('pontoon.projects.project', notification.actor.slug) %}
+            {% endif %}
+          {% elif notification.actor.email %}
+            {% set actor_anchor = notification.actor.name_or_email|nospam %}
+            {% set actor_url = full_url('pontoon.contributors.contributor.username', notification.actor.username) %}
+          {% else %}
+            {% set actor_anchor = "Deleted User" %}
+            {% set has_actor = false %}
           {% endif %}
 
-        {% endif%}
-      </div>
-    </li>
-    {% if not loop.last %}
-      <li class="horizontal-separator"></li>
-    {% endif %}
-  {% endfor %}
+          {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
+            <span class="description">{{ description|safe }}</span>
 
-  {% if notifications|length == 0 %}
-    <li class="no">
-      <i class="icon fas fa-bell fa-fw"></i>
-      <p class="title">{{ no_title }}</p>
-      <p class="description">{{ no_description }}</p>
-    </li>
-  {% endif %}
-</ul>
+            {{ notification_time(notification) }}
+          {% elif target and target.resource %}
+            <span class="actor {% if not has_actor %}deleted{% endif %}">
+              {{ actor_anchor }}
+            </span>
+
+            <span class="verb">
+              {% set link = full_url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
+              <a href="{{ link + '?string=' + target.pk|string }}"
+                >{{ notification.verb }}</a
+              >
+            </span>
+
+            <span class="target"> {{ target.resource.project.name }} </span>
+
+            {{ notification_time(notification) }}
+
+            <div class="message trim">{{ description|linkify|safe }}</div>
+          {% else %}
+            <span class="actor {% if not has_actor %}deleted{% endif %}">
+              {% if has_actor %}
+                <a href="{{ actor_url }}">{{ actor_anchor }}</a>
+              {% else %}
+                {{ actor_anchor }}
+              {% endif %}
+            </span>
+
+            <span class="verb">
+              {{ notification.verb.replace("has added a comment in", "has added a comment") }}
+            </span>
+
+            {% if target %}
+              <span class="target">
+                <a
+                  href="{{ full_url('pontoon.projects.project', target.slug) }}"
+                  >{{ target }}</a
+                >
+              </span>
+            {% endif %}
+
+            {{ notification_time(notification ) }}
+
+            {% set description = notification.description %}
+            {% if description %}
+              <div class="message">{{ description|safe }}</div>
+            {% endif %}
+          {% endif %}
+        </div>
+      </li>
+      {% if not loop.last %}
+        <li class="horizontal-separator"></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if notifications|length == 0 %}
+      <li class="no">
+        <i class="icon fas fa-bell fa-fw"></i>
+        <p class="title">{{ no_title }}</p>
+        <p class="description">{{ no_description }}</p>
+      </li>
+    {% endif %}
+  </ul>
 {% endmacro %}

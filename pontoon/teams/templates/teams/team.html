@@ -7,148 +7,159 @@
 {% block class %}locale{% endblock %}
 
 {% block before %}
-<!-- Server data -->
-<div id="server"
-     class="hidden"
-     data-url-split="{{ locale.code }}"
-     data-locale="{{ locale.code }}"
-     data-locale-projects="{{ locale.available_projects_list(request.user)|to_json }}">
-</div>
+  <!-- Server data -->
+  <div
+    id="server"
+    class="hidden"
+    data-url-split="{{ locale.code }}"
+    data-locale="{{ locale.code }}"
+    data-locale-projects="{{ locale.available_projects_list(request.user)|to_json }}"
+  ></div>
 {% endblock %}
 
 {% block heading %}
-<section id="heading">
-  <div class="container clearfix">
-    {{ HeadingInfo.download_selector(locale.code, "all-projects") }}
-    <h1>
-      {{ HeadingInfo.heading_item(
-        title=locale.name,
-        link=url('pontoon.teams.team', locale.code))
-      }}
-      {{ HeadingInfo.heading_item(
-        title=locale.code,
-        link=url('pontoon.teams.team', locale.code),
-        class='small')
-      }}
-    </h1>
+  <section id="heading">
+    <div class="container clearfix">
+      {{ HeadingInfo.download_selector(locale.code, "all-projects") }}
+      <h1>
+        {{
+          HeadingInfo.heading_item(
+          title=locale.name,
+          link=url('pontoon.teams.team', locale.code))
+        }}
+        {{
+          HeadingInfo.heading_item(
+          title=locale.code,
+          link=url('pontoon.teams.team', locale.code),
+          class='small')
+        }}
+      </h1>
 
-    <ul class="details">
-      {{ HeadingInfo.details_item(
-        title='Plural forms',
-        class='plural-forms',
-        value=', '.join(locale.cldr_plurals_list()),
-        title_link='http://cldr.unicode.org/index/cldr-spec/plural-rules')
-      }}
+      <ul class="details">
+        {{
+          HeadingInfo.details_item(
+          title='Plural forms',
+          class='plural-forms',
+          value=', '.join(locale.cldr_plurals_list()),
+          title_link='http://cldr.unicode.org/index/cldr-spec/plural-rules')
+        }}
 
-      {{ HeadingInfo.details_item(
-        title='Script',
-        class='script',
-        value=locale.script)
-      }}
+        {{
+          HeadingInfo.details_item(
+          title='Script',
+          class='script',
+          value=locale.script)
+        }}
 
-      {{ HeadingInfo.details_item(
-        title='Writing direction',
-        class='writing-direction',
-        value=locale.get_direction_display()|capitalize)
-      }}
+        {{
+          HeadingInfo.details_item(
+          title='Writing direction',
+          class='writing-direction',
+          value=locale.get_direction_display()|capitalize)
+        }}
 
-      {{ HeadingInfo.details_item(
-        title='Number of literate speakers',
-        class='literate-speakers',
-        value=(locale.population|intcomma or 'Unknown'),
-        title_link='http://www.unicode.org/cldr/charts/latest/supplemental/territory_language_information.html')
-      }}
+        {{
+          HeadingInfo.details_item(
+          title='Number of literate speakers',
+          class='literate-speakers',
+          value=(locale.population|intcomma or 'Unknown'),
+          title_link='http://www.unicode.org/cldr/charts/latest/supplemental/territory_language_information.html')
+        }}
 
-      {{ HeadingInfo.details_item_resources(locale.externalresource_set.all()) }}
-    </ul>
+        {{ HeadingInfo.details_item_resources(locale.externalresource_set.all()) }}
+      </ul>
 
-    {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(locale_stats, url('pontoon.translate', locale.code, 'all-projects', 'all-resources')) }}
-
-  </div>
-</section>
+      {{ HeadingInfo.progress_chart() }}
+      {{ HeadingInfo.progress_chart_legend(locale_stats, url('pontoon.translate', locale.code, 'all-projects', 'all-resources')) }}
+    </div>
+  </section>
 {% endblock %}
 
 {% block middle %}
-<section id="middle" class="submenu tabs">
-  <div class="container">
-    {% set current_page = request.path.split('/')[2]|default('') %}
-    {% call Menu.submenu() %}
-      {{ Menu.item(
-          'Projects',
-          url('pontoon.teams.team', locale.code),
-          is_active = (current_page == ''),
-          count = count,
-          icon = 'folder',
-        )
-      }}
-      {{ Menu.item(
-          'Contributors',
-          url('pontoon.teams.contributors', locale.code),
-          is_active = (current_page == 'contributors'),
-          count = False,
-          icon = 'users',
-        )
-      }}
-      {% if settings.ENABLE_INSIGHTS %}
-      {{ Menu.item(
-          'Insights',
-          url('pontoon.teams.insights', locale.code),
-          is_active = (current_page == 'insights'),
-          count = False,
-          icon = 'chart-line',
-        )
-      }}
-      {% endif %}
-      {% if settings.ENABLE_BUGS_TAB %}
-      {{ Menu.item(
-          'Bugs',
-          url('pontoon.teams.bugs', locale.code),
-          is_active = (current_page == 'bugs'),
-          count = False,
-          icon = 'bug',
-        )
-      }}
-      {% endif %}
-      {{ Menu.item(
-          'Info',
-          url('pontoon.teams.info', locale.code),
-          is_active = (current_page == 'info'),
-          count = 1 if locale.team_description else False,
-          icon = 'info-circle',
-        )
-      }}
-      {% if request.user.has_perm('base.can_manage_locale', locale) %}
-        {{ Menu.item(
-            'Permissions',
-            url('pontoon.teams.permissions', locale.code),
-            is_active = (current_page == 'permissions'),
-            count = False,
-            icon = 'cog',
+  <section id="middle" class="submenu tabs">
+    <div class="container">
+      {% set current_page = request.path.split('/')[2]|default('') %}
+      {% call Menu.submenu() %}
+        {{
+          Menu.item(
+            'Projects',
+            url('pontoon.teams.team', locale.code),
+            is_active = (current_page == ''),
+            count = count,
+            icon = 'folder',
           )
         }}
-      {% endif %}
-      {% if request.user.has_perm('base.can_translate_locale', locale) %}
-        {{ Menu.item(
-            'TM',
-            url('pontoon.teams.translation-memory', locale.code),
-            is_active = (current_page == 'translation-memory'),
+        {{
+          Menu.item(
+            'Contributors',
+            url('pontoon.teams.contributors', locale.code),
+            is_active = (current_page == 'contributors'),
             count = False,
-            icon = 'database',
+            icon = 'users',
           )
         }}
-      {% endif %}
-    {% endcall %}
-  </div>
-</section>
+        {% if settings.ENABLE_INSIGHTS %}
+          {{
+            Menu.item(
+              'Insights',
+              url('pontoon.teams.insights', locale.code),
+              is_active = (current_page == 'insights'),
+              count = False,
+              icon = 'chart-line',
+            )
+          }}
+        {% endif %}
+        {% if settings.ENABLE_BUGS_TAB %}
+          {{
+            Menu.item(
+              'Bugs',
+              url('pontoon.teams.bugs', locale.code),
+              is_active = (current_page == 'bugs'),
+              count = False,
+              icon = 'bug',
+            )
+          }}
+        {% endif %}
+        {{
+          Menu.item(
+            'Info',
+            url('pontoon.teams.info', locale.code),
+            is_active = (current_page == 'info'),
+            count = 1 if locale.team_description else False,
+            icon = 'info-circle',
+          )
+        }}
+        {% if request.user.has_perm('base.can_manage_locale', locale) %}
+          {{
+            Menu.item(
+              'Permissions',
+              url('pontoon.teams.permissions', locale.code),
+              is_active = (current_page == 'permissions'),
+              count = False,
+              icon = 'cog',
+            )
+          }}
+        {% endif %}
+        {% if request.user.has_perm('base.can_translate_locale', locale) %}
+          {{
+            Menu.item(
+              'TM',
+              url('pontoon.teams.translation-memory', locale.code),
+              is_active = (current_page == 'translation-memory'),
+              count = False,
+              icon = 'database',
+            )
+          }}
+        {% endif %}
+      {% endcall %}
+    </div>
+  </section>
 {% endblock %}
 
 {% block bottom %}
-<section id="main" class="clearfix">
-  <div class="container">
-
-  </div>
-</section>
+  <section id="main" class="clearfix">
+    <div class="container"></div>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

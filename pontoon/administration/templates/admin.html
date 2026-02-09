@@ -23,29 +23,41 @@
 {% endblock %}
 
 {% block bottom %}
-<section id="main" class="clearfix">
-  <div class="container">
-    <menu class="controls">
-      <div class="search-wrapper big clearfix">
-        <div class="icon fas fa-search"></div>
-        <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
-      </div>
-      <a class="add button small" href="{{ url('pontoon.admin.project.new') }}">Add new project</a>
-      <button class="button small request-toggle"
-              id="toggle-projects"
-              data-show-disabled="false">
-        <span class="fas fa-chevron-right"></span>
-      </button>
-    </menu>
+  <section id="main" class="clearfix">
+    <div class="container">
+      <menu class="controls">
+        <div class="search-wrapper big clearfix">
+          <div class="icon fas fa-search"></div>
+          <input
+            class="table-filter"
+            type="search"
+            autocomplete="off"
+            autofocus
+            placeholder="Filter projects"
+          />
+        </div>
+        <a
+          class="add button small"
+          href="{{ url('pontoon.admin.project.new') }}"
+          >Add new project</a
+        >
+        <button
+          class="button small request-toggle"
+          id="toggle-projects"
+          data-show-disabled="false"
+        >
+          <span class="fas fa-chevron-right"></span>
+        </button>
+      </menu>
 
-    <div class="project-list enabled-projects">
-      {{ render_project_list(enabled_projects, project_stats) }}
+      <div class="project-list enabled-projects">
+        {{ render_project_list(enabled_projects, project_stats) }}
+      </div>
+      <div class="project-list disabled-projects">
+        {{ render_project_list(disabled_projects, project_stats) }}
+      </div>
     </div>
-    <div class="project-list disabled-projects">
-      {{ render_project_list(disabled_projects, project_stats) }}
-    </div>
- </div>
-</section>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

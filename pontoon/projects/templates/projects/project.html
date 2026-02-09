@@ -7,114 +7,121 @@
 {% block class %}project{% endblock %}
 
 {% block before %}
-<!-- Server data -->
-<div id="server"
-     class="hidden"
-     data-url-split="projects/{{ project.slug }}"
-     data-project="{{ project.slug }}"
-     data-locale-projects="{{ project.available_locales_list()|to_json }}">
-</div>
+  <!-- Server data -->
+  <div
+    id="server"
+    class="hidden"
+    data-url-split="projects/{{ project.slug }}"
+    data-project="{{ project.slug }}"
+    data-locale-projects="{{ project.available_locales_list()|to_json }}"
+  ></div>
 {% endblock %}
 
 {% block heading %}
-<section id="heading">
-  <div class="container clearfix">
-    <h1>
-      {{ HeadingInfo.heading_item(
-        title=project.name,
-        link=url('pontoon.projects.project', project.slug))
-      }}
-    </h1>
-
-    <ul class="details">
-      {{ HeadingInfo.details_item_priority(project.priority) }}
-
-      {{ HeadingInfo.details_item_deadline(project.deadline, project_stats.approved == project_stats.total) }}
-
-      {{ HeadingInfo.details_item_url(
-        title='Repository',
-        class='repository',
-        url=project.repositories.first().website)
-      }}
-
-      {{ HeadingInfo.details_item_resources(project.externalresource_set.all()) }}
-
-      {% if project.contact %}
-        {{ HeadingInfo.details_item(
-          title='Project manager',
-          class='contact-person',
-          value=project.contact.name_or_email,
-          value_link=url('pontoon.contributors.contributor.username', project.contact.username))
+  <section id="heading">
+    <div class="container clearfix">
+      <h1>
+        {{
+          HeadingInfo.heading_item(
+          title=project.name,
+          link=url('pontoon.projects.project', project.slug))
         }}
-      {% endif %}
-    </ul>
+      </h1>
 
-    {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(project_stats) }}
-  </div>
-</section>
+      <ul class="details">
+        {{ HeadingInfo.details_item_priority(project.priority) }}
+
+        {{ HeadingInfo.details_item_deadline(project.deadline, project_stats.approved == project_stats.total) }}
+
+        {{
+          HeadingInfo.details_item_url(
+          title='Repository',
+          class='repository',
+          url=project.repositories.first().website)
+        }}
+
+        {{ HeadingInfo.details_item_resources(project.externalresource_set.all()) }}
+
+        {% if project.contact %}
+          {{
+            HeadingInfo.details_item(
+            title='Project manager',
+            class='contact-person',
+            value=project.contact.name_or_email,
+            value_link=url('pontoon.contributors.contributor.username', project.contact.username))
+          }}
+        {% endif %}
+      </ul>
+
+      {{ HeadingInfo.progress_chart() }}
+      {{ HeadingInfo.progress_chart_legend(project_stats) }}
+    </div>
+  </section>
 {% endblock %}
 
 {% block middle %}
-<section id="middle" class="submenu tabs">
-  <div class="container">
-    {% set current_page = request.path.split('/')[2]|default('') %}
-    {% call Menu.submenu() %}
-      {{ Menu.item(
-          'Teams',
-          url('pontoon.projects.project', project.slug),
-          is_active = (current_page == ''),
-          count = count,
-          icon = 'folder',
-        )
-      }}
-      {% if project.tags_enabled and tags_count %}
-         {{ Menu.item(
-           'Tags',
-           url('pontoon.projects.tags', project.slug),
-           is_active = (current_page == 'tags'),
-           count = tags_count,
-           icon = 'tag',
-         )
-      }}
-      {% endif %}
-      {{ Menu.item(
-          'Contributors',
-          url('pontoon.projects.contributors', project.slug),
-          is_active = (current_page == 'contributors'),
-          count = False,
-          icon = 'users',
-        )
-      }}
-      {% if settings.ENABLE_INSIGHTS %}
-      {{ Menu.item(
-          'Insights',
-          url('pontoon.projects.insights', project.slug),
-          is_active = (current_page == 'insights'),
-          count = False,
-          icon = 'chart-line',
-        )
-      }}
-      {% endif %}
-      {{ Menu.item(
-          'Info',
-          url('pontoon.projects.info', project.slug),
-          is_active = (current_page == 'info'),
-          count = 1 if project.info else False,
-          icon = 'info-circle',
-        )
-      }}
-    {% endcall %}
-  </div>
-</section>
+  <section id="middle" class="submenu tabs">
+    <div class="container">
+      {% set current_page = request.path.split('/')[2]|default('') %}
+      {% call Menu.submenu() %}
+        {{
+          Menu.item(
+            'Teams',
+            url('pontoon.projects.project', project.slug),
+            is_active = (current_page == ''),
+            count = count,
+            icon = 'folder',
+          )
+        }}
+        {% if project.tags_enabled and tags_count %}
+          {{
+            Menu.item(
+              'Tags',
+              url('pontoon.projects.tags', project.slug),
+              is_active = (current_page == 'tags'),
+              count = tags_count,
+              icon = 'tag',
+            )
+          }}
+        {% endif %}
+        {{
+          Menu.item(
+            'Contributors',
+            url('pontoon.projects.contributors', project.slug),
+            is_active = (current_page == 'contributors'),
+            count = False,
+            icon = 'users',
+          )
+        }}
+        {% if settings.ENABLE_INSIGHTS %}
+          {{
+            Menu.item(
+              'Insights',
+              url('pontoon.projects.insights', project.slug),
+              is_active = (current_page == 'insights'),
+              count = False,
+              icon = 'chart-line',
+            )
+          }}
+        {% endif %}
+        {{
+          Menu.item(
+            'Info',
+            url('pontoon.projects.info', project.slug),
+            is_active = (current_page == 'info'),
+            count = 1 if project.info else False,
+            icon = 'info-circle',
+          )
+        }}
+      {% endcall %}
+    </div>
+  </section>
 {% endblock %}
 
 {% block bottom %}
-<section id="main" class="clearfix">
-  <div class="container">
-
-  </div>
-</section>
+  <section id="main" class="clearfix">
+    <div class="container"></div>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

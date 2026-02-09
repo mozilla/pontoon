@@ -1,29 +1,29 @@
 {% macro list(id, title, items, left_shortcut=None, right_shortcut=None, sortable=False) %}
-<div class="item select {{ id }}">
+  <div class="item select {{ id }}">
     <label for="{{ id }}">
-        {% if left_shortcut %}
+      {% if left_shortcut %}
         <a class="move-all left" href="#move-all">{{ left_shortcut }}</a>
-        {% endif %}
-        {{ title }}
-        {% if right_shortcut %}
+      {% endif %}
+      {{ title }}
+      {% if right_shortcut %}
         <a class="move-all right" href="#move-all">{{ right_shortcut }}</a>
-        {% endif %}
+      {% endif %}
     </label>
 
     <div class="menu permanent">
-        <div class="search-wrapper clearfix">
-            <div class="icon fas fa-search"></div>
-            <input id="{{ id }}" type="search" autocomplete="off">
-        </div>
-        <ul class="{% if sortable %}sortable{% endif %}">
-            {% for item in items %}
-            <li class="clearfix" data-id="{{ item.id }}">
-                <span class="arrow fas"></span>
-                <span class="item">{{ item.name }}</span>
-            </li>
-            {% endfor %}
-            <li class="no-match">No results</li>
-        </ul>
+      <div class="search-wrapper clearfix">
+        <div class="icon fas fa-search"></div>
+        <input id="{{ id }}" type="search" autocomplete="off" />
+      </div>
+      <ul class="{% if sortable %}sortable{% endif %}">
+        {% for item in items %}
+          <li class="clearfix" data-id="{{ item.id }}">
+            <span class="arrow fas"></span>
+            <span class="item">{{ item.name }}</span>
+          </li>
+        {% endfor %}
+        <li class="no-match">No results</li>
+      </ul>
     </div>
-</div>
+  </div>
 {% endmacro %}

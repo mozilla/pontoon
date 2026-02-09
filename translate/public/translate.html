@@ -1,42 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- prettier-ignore-start -->
 <html{% if locale %} lang="{{ locale }}"{% endif %}>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="Mozilla’s Localization Platform">
-    <meta name="author" content="Mozilla">
-    <meta name="color-scheme" content="only light">
+<!-- prettier-ignore-end -->
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Mozilla’s Localization Platform" />
+  <meta name="author" content="Mozilla" />
+  <meta name="color-scheme" content="only light" />
 
-    <link rel="icon" href="/favicon.ico" sizes="32x32">
-    <link rel="icon" href="/static/img/logo.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" href="/static/img/logo.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png" />
 
-    <title>Pontoon</title>
+  <title>Pontoon</title>
 
-    <!-- Inlining CSS mitigates/prevents fouc. -->
-    <style> body { background: var(--translation-background) !important; } </style>
-    <link href="/static/css/fontawesome-all.css" rel="stylesheet" />
-    <link href="/static/css/boilerplate.css" rel="stylesheet" />
-    <link href="/static/css/fonts.css" rel="stylesheet" />
-    {% stylesheet 'translate' %}
+  <!-- Inlining CSS mitigates/prevents fouc. -->
+  <style>
+    body {
+      background: var(--translation-background) !important;
+    }
+  </style>
+  <link href="/static/css/fontawesome-all.css" rel="stylesheet" />
+  <link href="/static/css/boilerplate.css" rel="stylesheet" />
+  <link href="/static/css/fonts.css" rel="stylesheet" />
+  {% stylesheet 'translate' %}
+  {% include "tracker.html" %}
+</head>
+<body
+  class="{% block class %}{% endblock %} {{ theme_class(request) }}"
+  data-theme="{{ user_theme(request.user) }}"
+>
+  <noscript> You need to enable JavaScript to run this app. </noscript>
+  <div
+    id="root"
+    data-csrf-token="{{ csrf_token }}"
+    data-is-google-translate-supported="{{ is_google_translate_supported | to_json() }}"
+    data-is-microsoft-translator-supported="{{ is_microsoft_translator_supported | to_json() }}"
+    data-is-openai-chatgpt-supported="{{ is_openai_chatgpt_supported | to_json() }}"
+    data-is-systran-translate-supported="{{ is_systran_translate_supported | to_json() }}"
+    data-notifications="{{ notifications | to_json }}"
+    translate="no"
+  ></div>
+  {% javascript 'translate' %}
+</body>
 
-    {% include "tracker.html" %}
-  </head>
-  <body class="{% block class %}{% endblock %} {{ theme_class(request) }}" data-theme="{{ user_theme(request.user) }}">
-    <noscript>
-      You need to enable JavaScript to run this app.
-    </noscript>
-    <div
-        id="root"
-        data-csrf-token="{{ csrf_token }}"
-        data-is-google-translate-supported="{{ is_google_translate_supported | to_json() }}"
-        data-is-microsoft-translator-supported="{{ is_microsoft_translator_supported | to_json() }}"
-        data-is-openai-chatgpt-supported="{{ is_openai_chatgpt_supported | to_json() }}"
-        data-is-systran-translate-supported="{{ is_systran_translate_supported | to_json() }}"
-        data-notifications="{{ notifications | to_json }}"
-        translate="no"
-    ></div>
-    {% javascript 'translate' %}
-  </body>
+<!-- prettier-ignore-start -->
 </html>
+<!-- prettier-ignore-end -->

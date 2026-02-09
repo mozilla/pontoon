@@ -1,17 +1,27 @@
 {% macro list(identifier, choices, label, description, index=None) %}
-<div class="user select {{ identifier }}">
-  <label for="{{ identifier }}-{{ index }}">{{ label|safe }}</label>
-  <div class="menu permanent">
-    <div class="search-wrapper clearfix">
-      <div class="icon fas fa-search"></div>
-      <input id="{{ identifier }}-{{ index }}" type="search" autocomplete="off">
+  <div class="user select {{ identifier }}">
+    <label for="{{ identifier }}-{{ index }}">{{ label|safe }}</label>
+    <div class="menu permanent">
+      <div class="search-wrapper clearfix">
+        <div class="icon fas fa-search"></div>
+        <input
+          id="{{ identifier }}-{{ index }}"
+          type="search"
+          autocomplete="off"
+        />
+      </div>
+      <ul>
+        {% for user in choices %}
+          <li
+            class="clearfix contributor"
+            data-id="{{ user.id }}"
+            title="{{ user.first_name }}"
+          >
+            <span class="arrow fas"></span>{{ user.email }}
+          </li>
+        {% endfor %}
+      </ul>
     </div>
-    <ul>
-      {% for user in choices %}
-      <li class="clearfix contributor" data-id="{{ user.id }}" title="{{ user.first_name }}"><span class="arrow fas"></span>{{ user.email }}</li>
-      {% endfor %}
-    </ul>
+    <p class="intro">{{ description }}</p>
   </div>
-  <p class="intro">{{ description }}</p>
-</div>
 {% endmacro %}

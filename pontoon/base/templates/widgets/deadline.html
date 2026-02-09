@@ -1,5 +1,8 @@
 {% macro deadline(deadline, complete) %}
-  <time datetime="{% if deadline %}{{ deadline.isoformat() }}{% endif %}" class="{{ deadline|date_status(complete) }}">
-  {{ deadline|format_datetime('short_date', default='―') }}
+  <time
+    datetime="{% if deadline %}{{ deadline.isoformat() }}{% endif %}"
+    class="{{ deadline|date_status(complete) }}"
+  >
+    {{ deadline|format_datetime('short_date', default='―') }}
   </time>
 {% endmacro %}

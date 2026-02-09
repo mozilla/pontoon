@@ -1,34 +1,36 @@
 <!doctype html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
 
     <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title>{% block title %}Pontoon{% endblock %}</title>
-    <meta name="description" content="Mozilla’s Localization Platform">
-    <meta name="author" content="Mozilla">
-    <meta name="color-scheme" content="only light">
+    <meta name="description" content="Mozilla’s Localization Platform" />
+    <meta name="author" content="Mozilla" />
+    <meta name="color-scheme" content="only light" />
 
-    <link rel="icon" href="{{ static('img/favicon.ico') }}" sizes="32x32">
-    <link rel="icon" href="{{ static('img/logo.svg') }}" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="{{ static('img/apple-touch-icon.png') }}">
+    <link rel="icon" href="{{ static('img/favicon.ico') }}" sizes="32x32" />
+    <link rel="icon" href="{{ static('img/logo.svg') }}" type="image/svg+xml" />
+    <link
+      rel="apple-touch-icon"
+      href="{{ static('img/apple-touch-icon.png') }}"
+    />
 
     {% block site_css %}
-    <!-- Inlining CSS mitigates/prevents fouc. -->
-    <style>
-      body {
-         background: #333941;
-      }
-    </style>
+      <!-- Inlining CSS mitigates/prevents fouc. -->
+      <style>
+        body {
+          background: #333941;
+        }
+      </style>
 
       {% stylesheet 'base' %}
 
       {% block extend_css %}
       {% endblock %}
     {% endblock %}
-
     {% include "tracker.html" %}
   </head>
 
@@ -38,9 +40,7 @@
     data-theme="{{ user_theme(request.user) }}"
   >
     {% block content %}
-
       {% include "addon_promotion.html" %}
-
       {% include "header.html" %}
 
       {% block before %}
@@ -54,7 +54,6 @@
 
       {% block bottom %}
       {% endblock %}
-
     {% endblock %}
 
     <!-- JavaScript at the bottom for fast page loading -->

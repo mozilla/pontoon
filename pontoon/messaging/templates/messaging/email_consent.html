@@ -5,7 +5,7 @@
 {% block class %}email-consent{% endblock %}
 
 {% block middle %}
-<section id="main">
+  <section id="main">
     <section>
       <div class="container">
         <h1>{{ settings.EMAIL_CONSENT_TITLE }}</h1>
@@ -14,10 +14,12 @@
           <button class="enable">Enable email communications</button>
           <button class="disable">No, thanks</button>
         </div>
-        <p class="privacy-notice">{{ settings.EMAIL_CONSENT_PRIVACY_NOTICE|safe }}</p>
+        <p class="privacy-notice">
+          {{ settings.EMAIL_CONSENT_PRIVACY_NOTICE|safe }}
+        </p>
       </div>
     </section>
-</section>
+  </section>
 {% endblock %}
 
 {% block extend_css %}
