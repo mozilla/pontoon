@@ -7,81 +7,85 @@
 {% block class %}project{% endblock %}
 
 {% block before %}
-<!-- Server data -->
-<div id="server"
-     class="hidden"
-     data-url-split="projects/{{ project.slug }}">
-</div>
+  <!-- Server data -->
+  <div
+    id="server"
+    class="hidden"
+    data-url-split="projects/{{ project.slug }}"
+  ></div>
 {% endblock %}
 
 {% block heading %}
-<section id="heading">
-  <div class="container clearfix">
-    <h1>
-      {{ HeadingInfo.heading_item(
-        title=project.name,
-        link=url('pontoon.projects.project', project.slug))
-      }}
-      {{ HeadingInfo.heading_item(
-        title=tag.name,
-        link=url('pontoon.tags.project.tag', project.slug, tag.slug),
-        class='small')
-      }}
-    </h1>
-
-    <ul class="details">
-      {{ HeadingInfo.details_item_priority(project.priority, title='Project priority') }}
-      {{ HeadingInfo.details_item_priority(tag.priority, title='Tag priority') }}
-
-      {{ HeadingInfo.details_item_deadline(project.deadline, tag.chart.approved == tag.chart.total) }}
-
-      {{ HeadingInfo.details_item_url(
-        title='Repository',
-        class='repository',
-        url=project.repositories.first().website)
-      }}
-
-      {{ HeadingInfo.details_item_resources(project.externalresource_set.all()) }}
-
-      {% if project.contact %}
-        {{ HeadingInfo.details_item(
-          title='Project manager',
-          class='contact-person',
-          value=project.contact.name_or_email,
-          value_link=url('pontoon.contributors.contributor.username', project.contact.username))
+  <section id="heading">
+    <div class="container clearfix">
+      <h1>
+        {{
+          HeadingInfo.heading_item(
+          title=project.name,
+          link=url('pontoon.projects.project', project.slug))
         }}
-      {% endif %}
-    </ul>
+        {{
+          HeadingInfo.heading_item(
+          title=tag.name,
+          link=url('pontoon.tags.project.tag', project.slug, tag.slug),
+          class='small')
+        }}
+      </h1>
 
-    {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(tag.chart) }}
-  </div>
-</section>
+      <ul class="details">
+        {{ HeadingInfo.details_item_priority(project.priority, title='Project priority') }}
+        {{ HeadingInfo.details_item_priority(tag.priority, title='Tag priority') }}
+
+        {{ HeadingInfo.details_item_deadline(project.deadline, tag.chart.approved == tag.chart.total) }}
+
+        {{
+          HeadingInfo.details_item_url(
+          title='Repository',
+          class='repository',
+          url=project.repositories.first().website)
+        }}
+
+        {{ HeadingInfo.details_item_resources(project.externalresource_set.all()) }}
+
+        {% if project.contact %}
+          {{
+            HeadingInfo.details_item(
+            title='Project manager',
+            class='contact-person',
+            value=project.contact.name_or_email,
+            value_link=url('pontoon.contributors.contributor.username', project.contact.username))
+          }}
+        {% endif %}
+      </ul>
+
+      {{ HeadingInfo.progress_chart() }}
+      {{ HeadingInfo.progress_chart_legend(tag.chart) }}
+    </div>
+  </section>
 {% endblock %}
 
 {% block middle %}
-<section id="middle" class="submenu tabs">
-  <div class="container">
-    {% set current_page = request.path.split('/')[2]|default('') %}
-    {% call Menu.submenu() %}
-      {{ Menu.item(
-          'Teams',
-          url('pontoon.tags.project.tag', project.slug, tag.slug),
-          is_active = (current_page == ''),
-          count = project.locales.count()
-        )
-      }}
-    {% endcall %}
-  </div>
-</section>
+  <section id="middle" class="submenu tabs">
+    <div class="container">
+      {% set current_page = request.path.split('/')[2]|default('') %}
+      {% call Menu.submenu() %}
+        {{
+          Menu.item(
+            'Teams',
+            url('pontoon.tags.project.tag', project.slug, tag.slug),
+            is_active = (current_page == ''),
+            count = project.locales.count()
+          )
+        }}
+      {% endcall %}
+    </div>
+  </section>
 {% endblock %}
 
 {% block bottom %}
-<section id="main" class="clearfix">
-  <div class="container">
-
-  </div>
-</section>
+  <section id="main" class="clearfix">
+    <div class="container"></div>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

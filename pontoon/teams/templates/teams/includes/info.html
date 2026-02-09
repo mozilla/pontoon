@@ -1,28 +1,33 @@
 <div id="info-wrapper">
   {% if request.user.has_perm('base.can_manage_locale', locale) %}
-  <div class="controls">
-    <a class="edit-info button" href="#"><span class="fas fa-pencil-alt"></span>Edit</a>
-    <a href="#" class="cancel">Cancel</a>
-    <button class="button active save">Save</button>
-  </div>
+    <div class="controls">
+      <a class="edit-info button" href="#"
+        ><span class="fas fa-pencil-alt"></span>Edit</a
+      >
+      <a href="#" class="cancel">Cancel</a>
+      <button class="button active save">Save</button>
+    </div>
   {% endif %}
 
   <div class="read-only-info">
     <div class="info">{{ locale.team_description|safe }}</div>
-    <p class="no-results {% if locale.team_description %}hidden{% endif %}">No team info available.</p>
+    <p class="no-results {% if locale.team_description %}hidden{% endif %}">
+      No team info available.
+    </p>
   </div>
 
   {% if request.user.has_perm('base.can_manage_locale', locale) %}
-  <div class="read-write-info hidden"
-       data-url="{{ url('pontoon.teams.ajax.update-info', locale.code) }}">
+    <div
+      class="read-write-info hidden"
+      data-url="{{ url('pontoon.teams.ajax.update-info', locale.code) }}"
+    >
+      <textarea rows="10" />
 
-    <textarea rows="10" />
-
-    <div class="toolbar clearfix">
-      <div class="subtitle">
-        <p>Supports html</p>
+      <div class="toolbar clearfix">
+        <div class="subtitle">
+          <p>Supports html</p>
+        </div>
       </div>
     </div>
-  </div>
   {% endif %}
 </div>

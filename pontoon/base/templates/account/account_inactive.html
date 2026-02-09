@@ -6,16 +6,19 @@
 {% block class %}standalone{% endblock %}
 
 {% block content %}
-<section id="main">
+  <section id="main">
     <section>
       <div class="container">
         <h1>Your account is disabled</h1>
-        <p class="main-text">If you believe this is a mistake or need further assistance, please <a href="mailto:{{ settings.DEFAULT_FROM_EMAIL }}">get in touch</a>.</p>
+        <p class="main-text">
+          If you believe this is a mistake or need further assistance, please
+          <a href="mailto:{{ settings.DEFAULT_FROM_EMAIL }}">get in touch</a>.
+        </p>
       </div>
     </section>
-</section>
+  </section>
 {% endblock %}
 
 {% block extend_css %}
-  <link rel="stylesheet" href="{% static 'css/standalone.css' %}">
+  <link rel="stylesheet" href="{% static 'css/standalone.css' %}" />
 {% endblock %}

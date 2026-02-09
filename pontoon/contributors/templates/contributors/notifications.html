@@ -5,11 +5,12 @@
 {% block title %}Notifications{% endblock %}
 
 {% block before %}
-<!-- Server data -->
-<div id="server"
-     class="hidden"
-     data-has-more="{{ has_more|to_json() }}">
-</div>
+  <!-- Server data -->
+  <div
+    id="server"
+    class="hidden"
+    data-has-more="{{ has_more|to_json() }}"
+  ></div>
 {% endblock %}
 
 {% block heading %}
@@ -17,33 +18,43 @@
 {% endblock %}
 
 {% block bottom %}
-<section id="main" class="notifications clearfix {% if notifications|length == 0 %}no{% endif %}">
-  <div class="container">
-    <div class="menu permanent left-column">
-      <ul>
-        <li class="all selected">
-          <a href="{{ url('pontoon.contributors.notifications') }}">All Notifications</a>
-        </li>
-        {% for slug in ordered_projects %}
-          {% if loop.first %}
-            <li class="horizontal-separator"></li>
-          {% endif %}
-          <li class="project">
-            <a href="{{ url('pontoon.contributors.notifications') }}{{ slug }}/" data-notifications="{{ projects[slug].notifications|to_json() }}">
-              <span class="name">{{ projects[slug].name }}</span>
-              <span class="count">{{ projects[slug].notifications|length }}</span>
-            </a>
+  <section
+    id="main"
+    class="notifications clearfix {% if notifications|length == 0 %}no{% endif %}"
+  >
+    <div class="container">
+      <div class="menu permanent left-column">
+        <ul>
+          <li class="all selected">
+            <a href="{{ url('pontoon.contributors.notifications') }}"
+              >All Notifications</a
+            >
           </li>
-        {% endfor %}
-      </ul>
+          {% for slug in ordered_projects %}
+            {% if loop.first %}
+              <li class="horizontal-separator"></li>
+            {% endif %}
+            <li class="project">
+              <a
+                href="{{ url('pontoon.contributors.notifications') }}{{ slug }}/"
+                data-notifications="{{ projects[slug].notifications|to_json() }}"
+              >
+                <span class="name">{{ projects[slug].name }}</span>
+                <span class="count"
+                  >{{ projects[slug].notifications|length }}</span
+                >
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="menu permanent right-column">
+        <section class="selected">
+          {{ Notifications.list(notifications=notifications, no_title="No notifications.") }}
+        </section>
+      </div>
     </div>
-    <div class="menu permanent right-column">
-      <section class="selected">
-        {{ Notifications.list(notifications=notifications, no_title="No notifications.") }}
-      </section>
-    </div>
-  </div>
-</section>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

@@ -4,76 +4,35 @@
 {% block title %}{{ subject }}{% endblock %}
 
 {% block extend_css %}
-.introduction {
-    margin-bottom: 30px;
-}
-
-.notifications {
-    font-size: 15px;
-    text-align: left;
-}
-
-.notifications ul {
-    border-bottom: 1px solid #ededed;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.notifications li {
-    margin: 0;
-}
-
-.notifications li.horizontal-separator {
-    border-top: 1px solid #ededed;
-}
-
-.notifications li .item-content {
-    padding: 10px 0;
-}
-
-.notifications li .item-content .message {
-    color: #888888;
-    padding: 10px;
-}
-
-.notifications li .item-content .message p {
-    margin: 0;
-}
-
-.notifications li .item-content .description ul {
-    border: none;
-    list-style: inside;
-    padding-top: 10px;
-}
-
-.notifications li .item-content .description ul li {
-    margin: 0;
-    padding: 2px 4px;
-}
-
-.notifications li .item-content .timeago {
-    color: #888888;
-    display: block;
-    font-size: 11px;
-    font-weight: normal;
-    margin-top: 8px;
-    text-align: right;
-    text-transform: uppercase;
-}
+  .introduction { margin-bottom: 30px; } .notifications { font-size: 15px;
+  text-align: left; } .notifications ul { border-bottom: 1px solid #ededed;
+  list-style-type: none; margin: 0; padding: 0; } .notifications li { margin: 0;
+  } .notifications li.horizontal-separator { border-top: 1px solid #ededed; }
+  .notifications li .item-content { padding: 10px 0; } .notifications li
+  .item-content .message { color: #888888; padding: 10px; } .notifications li
+  .item-content .message p { margin: 0; } .notifications li .item-content
+  .description ul { border: none; list-style: inside; padding-top: 10px; }
+  .notifications li .item-content .description ul li { margin: 0; padding: 2px
+  4px; } .notifications li .item-content .timeago { color: #888888; display:
+  block; font-size: 11px; font-weight: normal; margin-top: 8px; text-align:
+  right; text-transform: uppercase; }
 {% endblock %}
 
 {% block header %}Hello.{% endblock %}
 
-{% block subheader %}{% endblock %}
+{% block subheader %}
+{% endblock %}
 
 {% block content_class %}notifications{% endblock %}
 
 {% block content %}
-<p class="introduction">Here's a summary of the Pontoon notifications you've subscribed to.</p>
-{{ Notifications.list(notifications=notifications) }}
+  <p class="introduction">
+    Here's a summary of the Pontoon notifications you've subscribed to.
+  </p>
+  {{ Notifications.list(notifications=notifications) }}
 {% endblock %}
 
 {% block footer %}
-You can adjust your notifications subscriptions at any time from your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
+  You can adjust your notifications subscriptions at any time from your
+  <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 {% endblock %}

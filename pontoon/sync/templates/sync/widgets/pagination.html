@@ -1,28 +1,30 @@
 {% macro pagination(sync_page) %}
-<div class="pagination controls">
+  <div class="pagination controls">
     {% if sync_page.has_previous() %}
-    <a class="first button" href="?page=1">
-        First
-    </a>
+      <a class="first button" href="?page=1"> First </a>
 
-    <a class="previous button" href="?page={{ sync_page.previous_page_number() }}">
+      <a
+        class="previous button"
+        href="?page={{ sync_page.previous_page_number() }}"
+      >
         <span class="fas fa-chevron-left"></span>
         Previous
-    </a>
+      </a>
     {% endif %}
 
     <span class="page">
-        Page <span class="current">{{ sync_page.number }}</span> of {{ sync_page.paginator.num_pages }}
+      Page <span class="current">{{ sync_page.number }}</span> of
+      {{ sync_page.paginator.num_pages }}
     </span>
 
     {% if sync_page.has_next() %}
-    <a class="last button" href="?page={{ sync_page.paginator.num_pages }}">
+      <a class="last button" href="?page={{ sync_page.paginator.num_pages }}">
         Last
-    </a>
-    <a class="next button" href="?page={{ sync_page.next_page_number() }}">
+      </a>
+      <a class="next button" href="?page={{ sync_page.next_page_number() }}">
         Next
         <span class="fas fa-chevron-right"></span>
-    </a>
+      </a>
     {% endif %}
-</div>
+  </div>
 {% endmacro %}

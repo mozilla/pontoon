@@ -3,259 +3,279 @@
 
 {# Widget to display insights. #}
 {% macro display() %}
-<div id="insights" data-dates="{{ dates }}">
+  <div id="insights" data-dates="{{ dates }}">
     <section class="clearfix">
-        {% if total_users %}
+      {% if total_users %}
         <section
-            class="half active-users"
-            data-total="{{ total_users|to_json() }}"
-            data-1="{{ active_users_last_month|to_json() }}"
-            data-3="{{ active_users_last_3_months|to_json() }}"
-            data-6="{{ active_users_last_6_months|to_json() }}"
-            data-12="{{ active_users_last_12_months|to_json() }}"
+          class="half active-users"
+          data-total="{{ total_users|to_json() }}"
+          data-1="{{ active_users_last_month|to_json() }}"
+          data-3="{{ active_users_last_3_months|to_json() }}"
+          data-6="{{ active_users_last_6_months|to_json() }}"
+          data-12="{{ active_users_last_12_months|to_json() }}"
         >
-            <div class="block clearfix">
-                <h3 class="controls">
-                    Active users
-                    {{ Tooltip.display(
-                        intro='Ratios of active vs. all managers, reviewers, contributors.',
-                        items=[{
-                            'class': 'active-managers',
-                            'name': 'Active managers',
-                            'definition': 'Managers who logged into Pontoon within the selected time frame.',
-                        }, {
-                            'class': 'active-reviewers',
-                            'name': 'Active reviewers',
-                            'definition': 'Users who reviewed translations within the selected time frame.',
-                        }, {
-                            'class': 'active-contributors',
-                            'name': 'Active contributors',
-                            'definition': 'Users who submitted translations within the selected time frame.',
-                        }]
-                    ) }}
-                    <ul class="period-selector noselect clearfix">
-                        <li><div class="active selector" data-period="12">12m</div></li>
-                        <li><div class="selector" data-period="6">6m</div></li>
-                        <li><div class="selector" data-period="3">3m</div></li>
-                        <li><div class="selector" data-period="1">1m</div></li>
-                    </ul>
-                </h3>
-                {{ ActiveUsers.chart('managers', 'Active managers') }}
-                {{ ActiveUsers.chart('reviewers', 'Active reviewers') }}
-                {{ ActiveUsers.chart('contributors', 'Active contributors') }}
-            </div>
+          <div class="block clearfix">
+            <h3 class="controls">
+              Active users
+              {{
+                Tooltip.display(
+                    intro='Ratios of active vs. all managers, reviewers, contributors.',
+                    items=[{
+                        'class': 'active-managers',
+                        'name': 'Active managers',
+                        'definition': 'Managers who logged into Pontoon within the selected time frame.',
+                    }, {
+                        'class': 'active-reviewers',
+                        'name': 'Active reviewers',
+                        'definition': 'Users who reviewed translations within the selected time frame.',
+                    }, {
+                        'class': 'active-contributors',
+                        'name': 'Active contributors',
+                        'definition': 'Users who submitted translations within the selected time frame.',
+                    }]
+                )
+              }}
+              <ul class="period-selector noselect clearfix">
+                <li><div class="active selector" data-period="12">12m</div></li>
+                <li><div class="selector" data-period="6">6m</div></li>
+                <li><div class="selector" data-period="3">3m</div></li>
+                <li><div class="selector" data-period="1">1m</div></li>
+              </ul>
+            </h3>
+            {{ ActiveUsers.chart('managers', 'Active managers') }}
+            {{ ActiveUsers.chart('reviewers', 'Active reviewers') }}
+            {{ ActiveUsers.chart('contributors', 'Active contributors') }}
+          </div>
         </section>
-        {% endif %}
-        {% if time_to_review_suggestions %}
+      {% endif %}
+      {% if time_to_review_suggestions %}
         <section class="half">
-            <div class="block clearfix">
-                <div class="chart-item time-to-review-suggestions">
-                    <h3 class="controls">
-                        Time to review suggestions
-                        {{ Tooltip.display(
-                            intro='How much time it takes on average to review a suggestion.',
-                            items=[{
-                                'class': 'current-month',
-                                'name': 'Current month',
-                                'definition': 'Average age of suggestions reviewed during the specific month.',
-                            }, {
-                                'class': 'twelve-month-average',
-                                'name': '12-month average',
-                                'definition': 'Average age of suggestions reviewed in the 12 months before the specific month.',
-                            }]
-                        ) }}
-                    </h3>
-                    <canvas
-                        id="time-to-review-suggestions-chart"
-                        data-time-to-review-suggestions="{{ time_to_review_suggestions }}"
-                        data-time-to-review-suggestions-12-month-avg="{{ time_to_review_suggestions_12_month_avg }}"
-                        width="410"
-                        height="160">
-                    </canvas>
-                </div>
+          <div class="block clearfix">
+            <div class="chart-item time-to-review-suggestions">
+              <h3 class="controls">
+                Time to review suggestions
+                {{
+                  Tooltip.display(
+                      intro='How much time it takes on average to review a suggestion.',
+                      items=[{
+                          'class': 'current-month',
+                          'name': 'Current month',
+                          'definition': 'Average age of suggestions reviewed during the specific month.',
+                      }, {
+                          'class': 'twelve-month-average',
+                          'name': '12-month average',
+                          'definition': 'Average age of suggestions reviewed in the 12 months before the specific month.',
+                      }]
+                  )
+                }}
+              </h3>
+              <canvas
+                id="time-to-review-suggestions-chart"
+                data-time-to-review-suggestions="{{ time_to_review_suggestions }}"
+                data-time-to-review-suggestions-12-month-avg="{{ time_to_review_suggestions_12_month_avg }}"
+                width="410"
+                height="160"
+              >
+              </canvas>
             </div>
+          </div>
         </section>
-        {% endif %}
+      {% endif %}
     </section>
 
     {% if unreviewed_lifespans %}
-    <section class="clearfix">
+      <section class="clearfix">
         <section class="half">
-            <div class="block clearfix">
-                <div class="chart-item age-of-unreviewed-suggestions">
-                    <h3 class="controls">
-                        Age of unreviewed suggestions
-                        {{ Tooltip.display(
-                            intro='How old are the unreviewed suggestions on average at a particular point in time.',
-                            items=[{
-                                'class': 'current-month',
-                                'name': 'Current month',
-                                'definition': 'Average age of unreviewed suggestions during the specific month.',
-                            }]
-                        ) }}
-                    </h3>
-                    <canvas
-                        id="unreviewed-suggestions-lifespan-chart"
-                        data-lifespans="{{ unreviewed_lifespans }}"
-                        width="410"
-                        height="160">
-                    </canvas>
-                </div>
+          <div class="block clearfix">
+            <div class="chart-item age-of-unreviewed-suggestions">
+              <h3 class="controls">
+                Age of unreviewed suggestions
+                {{
+                  Tooltip.display(
+                      intro='How old are the unreviewed suggestions on average at a particular point in time.',
+                      items=[{
+                          'class': 'current-month',
+                          'name': 'Current month',
+                          'definition': 'Average age of unreviewed suggestions during the specific month.',
+                      }]
+                  )
+                }}
+              </h3>
+              <canvas
+                id="unreviewed-suggestions-lifespan-chart"
+                data-lifespans="{{ unreviewed_lifespans }}"
+                width="410"
+                height="160"
+              >
+              </canvas>
             </div>
+          </div>
         </section>
         <section class="half">
-            <div class="block clearfix">
-                <div class="chart-item time-to-review-pretranslations">
-                    <h3 class="controls">
-                        Time to review pretranslations
-                        {{ Tooltip.display(
-                            intro='How much time it takes on average to review a pretranslation.',
-                            items=[{
-                                'class': 'current-month',
-                                'name': 'Current month',
-                                'definition': 'Average age of pretranslations reviewed during the specific month.',
-                            }, {
-                                'class': 'twelve-month-average',
-                                'name': '12-month average',
-                                'definition': 'Average age of pretranslations reviewed in the 12 months before the specific month.',
-                            }]
-                        ) }}
-                    </h3>
-                    <canvas
-                        id="time-to-review-pretranslations-chart"
-                        data-time-to-review-pretranslations="{{ time_to_review_pretranslations }}"
-                        data-time-to-review-pretranslations-12-month-avg="{{ time_to_review_pretranslations_12_month_avg }}"
-                        width="410"
-                        height="160">
-                    </canvas>
-                </div>
+          <div class="block clearfix">
+            <div class="chart-item time-to-review-pretranslations">
+              <h3 class="controls">
+                Time to review pretranslations
+                {{
+                  Tooltip.display(
+                      intro='How much time it takes on average to review a pretranslation.',
+                      items=[{
+                          'class': 'current-month',
+                          'name': 'Current month',
+                          'definition': 'Average age of pretranslations reviewed during the specific month.',
+                      }, {
+                          'class': 'twelve-month-average',
+                          'name': '12-month average',
+                          'definition': 'Average age of pretranslations reviewed in the 12 months before the specific month.',
+                      }]
+                  )
+                }}
+              </h3>
+              <canvas
+                id="time-to-review-pretranslations-chart"
+                data-time-to-review-pretranslations="{{ time_to_review_pretranslations }}"
+                data-time-to-review-pretranslations-12-month-avg="{{ time_to_review_pretranslations_12_month_avg }}"
+                width="410"
+                height="160"
+              >
+              </canvas>
             </div>
+          </div>
         </section>
-    </section>
+      </section>
     {% endif %}
 
     <section class="review-activity">
-        <figure class="block">
-            <h3 class="controls">
-                Review activity
-                {{ Tooltip.display(
-                    intro='Impact of the review process and adding suggestions on the overal amount of unreviewed suggestions.',
-                    items=[{
-                        'class': 'unreviewed',
-                        'name': 'Unreviewed',
-                        'definition': 'Suggestions pending a review.',
-                    }, {
-                        'class': 'peer-approved',
-                        'name': 'Peer-approved',
-                        'definition': 'Suggestions approved by peers of the author.',
-                    }, {
-                        'class': 'self-approved',
-                        'name': 'Self-approved',
-                        'definition': 'Directly submitted translations.',
-                    }, {
-                        'class': 'rejected',
-                        'name': 'Rejected',
-                        'definition': 'Rejected suggestions.',
-                    }, {
-                        'class': 'new-suggestions',
-                        'name': 'New suggestions',
-                        'definition': 'Newly added suggestions (hidden by default).',
-                    }]
-                ) }}
-            </h3>
-            <canvas
-                id="review-activity-chart"
-                data-unreviewed="{{ review_activity.unreviewed }}"
-                data-peer-approved="{{ review_activity.peer_approved }}"
-                data-self-approved="{{ review_activity.self_approved }}"
-                data-rejected="{{ review_activity.rejected }}"
-                data-new-suggestions="{{ review_activity.new_suggestions }}"
-                width="920"
-                height="400">
-            </canvas>
-            <div id="review-activity-chart-legend" class="legend"></div>
-        </figure>
+      <figure class="block">
+        <h3 class="controls">
+          Review activity
+          {{
+            Tooltip.display(
+                intro='Impact of the review process and adding suggestions on the overal amount of unreviewed suggestions.',
+                items=[{
+                    'class': 'unreviewed',
+                    'name': 'Unreviewed',
+                    'definition': 'Suggestions pending a review.',
+                }, {
+                    'class': 'peer-approved',
+                    'name': 'Peer-approved',
+                    'definition': 'Suggestions approved by peers of the author.',
+                }, {
+                    'class': 'self-approved',
+                    'name': 'Self-approved',
+                    'definition': 'Directly submitted translations.',
+                }, {
+                    'class': 'rejected',
+                    'name': 'Rejected',
+                    'definition': 'Rejected suggestions.',
+                }, {
+                    'class': 'new-suggestions',
+                    'name': 'New suggestions',
+                    'definition': 'Newly added suggestions (hidden by default).',
+                }]
+            )
+          }}
+        </h3>
+        <canvas
+          id="review-activity-chart"
+          data-unreviewed="{{ review_activity.unreviewed }}"
+          data-peer-approved="{{ review_activity.peer_approved }}"
+          data-self-approved="{{ review_activity.self_approved }}"
+          data-rejected="{{ review_activity.rejected }}"
+          data-new-suggestions="{{ review_activity.new_suggestions }}"
+          width="920"
+          height="400"
+        >
+        </canvas>
+        <div id="review-activity-chart-legend" class="legend"></div>
+      </figure>
     </section>
 
     <section class="translation-activity">
-        <figure class="block">
-            <h3 class="controls">
-                Translation activity
-                {{ Tooltip.display(
-                    intro='Impact of adding translations and source strings on the overal translation completion.',
-                    items=[{
-                        'class': 'completion',
-                        'name': 'Completion',
-                        'definition': 'Share of translated strings.',
-                    }, {
-                        'class': 'human-translations',
-                        'name': 'Human translations',
-                        'definition': 'Translations authored by users.',
-                    }, {
-                        'class': 'machinery-translations',
-                        'name': 'Machinery translations',
-                        'definition': 'Translations copied from Machinery.',
-                    }, {
-                        'class': 'new-source-strings',
-                        'name': 'New source strings',
-                        'definition': 'Newly added source strings (hidden by default).',
-                    }]
-                ) }}
-            </h3>
-            <canvas
-                id="translation-activity-chart"
-                data-completion="{{ translation_activity.completion }}"
-                data-human-translations="{{ translation_activity.human_translations }}"
-                data-machinery-translations="{{ translation_activity.machinery_translations }}"
-                data-new-source-strings="{{ translation_activity.new_source_strings }}"
-                width="920"
-                height="400">
-            </canvas>
-            <div id="translation-activity-chart-legend" class="legend"></div>
-        </figure>
+      <figure class="block">
+        <h3 class="controls">
+          Translation activity
+          {{
+            Tooltip.display(
+                intro='Impact of adding translations and source strings on the overal translation completion.',
+                items=[{
+                    'class': 'completion',
+                    'name': 'Completion',
+                    'definition': 'Share of translated strings.',
+                }, {
+                    'class': 'human-translations',
+                    'name': 'Human translations',
+                    'definition': 'Translations authored by users.',
+                }, {
+                    'class': 'machinery-translations',
+                    'name': 'Machinery translations',
+                    'definition': 'Translations copied from Machinery.',
+                }, {
+                    'class': 'new-source-strings',
+                    'name': 'New source strings',
+                    'definition': 'Newly added source strings (hidden by default).',
+                }]
+            )
+          }}
+        </h3>
+        <canvas
+          id="translation-activity-chart"
+          data-completion="{{ translation_activity.completion }}"
+          data-human-translations="{{ translation_activity.human_translations }}"
+          data-machinery-translations="{{ translation_activity.machinery_translations }}"
+          data-new-source-strings="{{ translation_activity.new_source_strings }}"
+          width="920"
+          height="400"
+        >
+        </canvas>
+        <div id="translation-activity-chart-legend" class="legend"></div>
+      </figure>
     </section>
 
     <section class="pretranslation-quality">
-        <figure class="block">
-            <h3 class="controls">
-                Pretranslation quality
-                {{ Tooltip.display(
-                    intro='Approval rate and chrF++ score of pretranslations.',
-                    items=[{
-                        'class': 'approval-rate',
-                        'name': 'Approval rate',
-                        'definition': 'Share of approved pretranslations.',
-                    }, {
-                        'class': 'chrf-score',
-                        'name': 'chrF++ score',
-                        'definition': 'Machine translation evaluation metric, calculated for pretranslations reviewed in a specific month.',
-                    }, {
-                        'class': 'approved',
-                        'name': 'Approved',
-                        'definition': 'Pretranslations that have been approved.',
-                    }, {
-                        'class': 'rejected',
-                        'name': 'Rejected',
-                        'definition': 'Pretranslations that have been rejected.',
-                    }, {
-                        'class': 'new-pretranslations',
-                        'name': 'New pretranslations',
-                        'definition': 'Newly added pretranslations (hidden by default).',
-                    }]
-                ) }}
-            </h3>
-            <canvas
-                id="pretranslation-quality-chart"
-                data-approval-rate="{{ pretranslation_quality.approval_rate }}"
-                data-chrf-score="{{ pretranslation_quality.chrf_score }}"
-                data-approved="{{ pretranslation_quality.approved }}"
-                data-rejected="{{ pretranslation_quality.rejected }}"
-                data-new="{{ pretranslation_quality.new }}"
-                width="920"
-                height="400">
-            </canvas>
-            <div id="pretranslation-quality-chart-legend" class="legend"></div>
-        </figure>
+      <figure class="block">
+        <h3 class="controls">
+          Pretranslation quality
+          {{
+            Tooltip.display(
+                intro='Approval rate and chrF++ score of pretranslations.',
+                items=[{
+                    'class': 'approval-rate',
+                    'name': 'Approval rate',
+                    'definition': 'Share of approved pretranslations.',
+                }, {
+                    'class': 'chrf-score',
+                    'name': 'chrF++ score',
+                    'definition': 'Machine translation evaluation metric, calculated for pretranslations reviewed in a specific month.',
+                }, {
+                    'class': 'approved',
+                    'name': 'Approved',
+                    'definition': 'Pretranslations that have been approved.',
+                }, {
+                    'class': 'rejected',
+                    'name': 'Rejected',
+                    'definition': 'Pretranslations that have been rejected.',
+                }, {
+                    'class': 'new-pretranslations',
+                    'name': 'New pretranslations',
+                    'definition': 'Newly added pretranslations (hidden by default).',
+                }]
+            )
+          }}
+        </h3>
+        <canvas
+          id="pretranslation-quality-chart"
+          data-approval-rate="{{ pretranslation_quality.approval_rate }}"
+          data-chrf-score="{{ pretranslation_quality.chrf_score }}"
+          data-approved="{{ pretranslation_quality.approved }}"
+          data-rejected="{{ pretranslation_quality.rejected }}"
+          data-new="{{ pretranslation_quality.new }}"
+          width="920"
+          height="400"
+        >
+        </canvas>
+        <div id="pretranslation-quality-chart-legend" class="legend"></div>
+      </figure>
     </section>
-</div>
+  </div>
 {% endmacro %}
