@@ -1,9 +1,10 @@
 {% autoescape off %}
-Please enable pretranslation for the following projects in {{ locale.name }} ({{ locale.code }}):
-{{ projects }}
-Requested by {{ user }}, {{ user_role }}:
-{{ user_url }}
-{% if locale.google_automl_model == '' %}
-IMPORTANT: Pretranslation is not enabled yet for {{ locale.name }} ({{ locale.code }}). Training a custom engine is required before enabling new projects.
-{% endif %}
+  Please enable pretranslation for the following projects in {{ locale.name }}
+  ({{ locale.code }}): {{ projects }} Requested by {{ user }}, {{ user_role }}:
+  {{ user_url }}
+  {% if locale.google_automl_model == '' %}
+    IMPORTANT: Pretranslation is not enabled yet for {{ locale.name }}
+    ({{ locale.code }}). Training a custom engine is required before enabling
+    new projects.
+  {% endif %}
 {% endautoescape %}
