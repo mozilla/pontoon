@@ -33,7 +33,10 @@
         .select .button {
           font-size: 16px;
           height: 32px;
-          padding: 8px 12px;
+
+          span {
+            line-height: 20px;
+          }
         }
       }
 
