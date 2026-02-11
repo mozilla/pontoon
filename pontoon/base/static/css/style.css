@@ -666,7 +666,7 @@ header nav .right .sign-in-header {
 header nav .right .sign-in-header button {
   background: transparent;
   border: 1.5px solid var(--status-translated);
-  border-radius: 2px;
+  border-radius: 3px;
   color: var(--white-1);
   font-size: 14px;
   font-weight: 300;
@@ -1172,139 +1172,6 @@ body > form,
   font-weight: bold;
 }
 
-#helpers > section ul {
-  list-style: none;
-  margin: 0;
-}
-
-#helpers > section ul li {
-  border-bottom: 1px solid var(--light-grey-1);
-  padding-bottom: 20px;
-  padding-top: 5px;
-  text-align: right;
-}
-
-#helpers > section ul li > header {
-  color: var(--light-grey-7);
-  display: block;
-  font-size: 11px;
-  font-weight: 300;
-  padding: 1px 0 5px;
-  text-transform: uppercase;
-}
-
-#helpers > section ul li > header .stress {
-  color: var(--status-translated-alt);
-  padding-left: 3px;
-  padding-right: 3px;
-}
-
-#helpers > section.machinery ul li > header .stress {
-  padding-right: 0;
-}
-
-#helpers > section.machinery ul li > header sup {
-  color: var(--status-translated-alt);
-}
-
-#helpers > section.machinery ul li > header .sources {
-  display: inline-block;
-}
-
-#helpers > section.machinery ul li > header .sources li:before {
-  content: '•';
-  padding-right: 3px;
-}
-
-#helpers
-  > section.machinery
-  ul
-  li
-  > header
-  .sources
-  li[data-source='Microsoft']:only-child:before,
-#helpers
-  > section.machinery
-  ul
-  li
-  > header
-  .sources
-  li[data-source='Google Translate']:only-child:before,
-#helpers
-  > section.machinery
-  ul
-  li
-  > header
-  .sources
-  li[data-source='Microsoft Translator']:only-child:before,
-#helpers
-  > section.machinery
-  ul
-  li
-  > header
-  .sources
-  li[data-source='Systran Translate']:only-child:before,
-#helpers
-  > section.machinery
-  ul
-  li
-  > header
-  .sources
-  li[data-source='Caighdean']:only-child:before {
-  content: '';
-  padding-right: 0;
-}
-
-#helpers > section.machinery ul li > header .sources li {
-  border: none;
-  display: inline-block;
-  list-style-type: disc;
-  list-style-position: inside;
-  padding: 0 0 0 3px;
-}
-
-#helpers > section ul li > p {
-  min-height: 22px;
-  text-align: left;
-}
-
-#helpers > section ul li > p.translation-clipboard,
-#helpers > section ul li > p.translation-diff {
-  display: none;
-}
-
-#helpers > section ul li > p ins,
-#helpers > section ul li > p del {
-  border-radius: 2px;
-  white-space: pre-wrap;
-}
-
-#helpers > section ul li > p ins {
-  background: var(--diff-ins-background);
-  color: var(--diff-ins-color);
-}
-
-#helpers > section ul li > p del {
-  background: var(--diff-del-background);
-  color: var(--diff-del-color);
-}
-
-#helpers > section ul li > p ins mark,
-#helpers > section ul li > p del mark {
-  background: transparent;
-  border-color: transparent;
-  margin: 0;
-}
-
-#helpers > section ul li.disabled p {
-  color: var(--light-grey-7);
-  font-style: italic;
-}
-
-#helpers > section ul li p.original {
-  color: var(--light-grey-7);
-}
-
 .tabs nav ul li {
   float: left;
   padding: 0;
@@ -1386,7 +1253,7 @@ body > form,
 }
 
 .controls .select.opened .button {
-  border-radius: 0 0 2px 2px;
+  border-radius: 0 0 3px 3px;
 }
 
 .controls button.button:hover,

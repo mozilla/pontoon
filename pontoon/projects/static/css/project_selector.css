@@ -1,6 +1,6 @@
 .project-selector .project.select .button {
   background: var(--button-background-1);
-  border-radius: 2px;
+  border-radius: 3px;
   box-sizing: border-box;
   font-size: 14px;
   height: 28px;
@@ -17,7 +17,7 @@
 }
 
 .project-selector .project.select.opened .button {
-  border-radius: 2px 2px 0 0;
+  border-radius: 3px 3px 0 0;
 }
 
 .project-selector .project.select .button .selected-project {

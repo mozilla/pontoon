@@ -111,7 +111,7 @@ h2 {
 
 .personal-information .button {
   background: var(--dark-grey-1);
-  border-radius: 2px;
+  border-radius: 3px;
   box-sizing: border-box;
   font-size: 16px;
   font-weight: normal;

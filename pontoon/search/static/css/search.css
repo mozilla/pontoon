@@ -4,12 +4,15 @@
       margin-bottom: 40px;
 
       #search-menu {
+        font-size: 0;
         margin: 0 auto;
-        display: flex;
-        gap: 8px;
 
         > .search-wrapper {
+          margin-right: 10px;
+          width: 730px;
+
           .icon {
+            font-size: 16px;
             left: 6px;
             top: 9px;
           }
@@ -21,51 +24,64 @@
             height: 32px;
           }
         }
-      }
 
-      #locale-selector,
-      #project-selector {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-
-        .select .button {
+        .search.button {
+          background: var(--status-translated);
+          color: var(--black-3);
           font-size: 16px;
           height: 32px;
-
-          span {
-            line-height: 20px;
-          }
+          width: 240px;
         }
       }
 
-      .check-list {
-        text-align: right;
-        margin: 5px 0;
-        width: 100%;
+      .search-options {
+        font-size: 0;
+        margin-top: 20px;
 
-        .check-box {
+        #project-selector,
+        #locale-selector {
           display: inline-block;
-          padding-bottom: inherit;
+          vertical-align: center;
 
-          .check-box-wrapper {
-            font-size: 15px;
-            margin-left: 28px;
-            width: auto;
+          .select .button {
+            font-size: 16px;
+            height: 32px;
 
-            .fas {
-              margin-left: 0;
+            span {
+              line-height: 20px;
             }
           }
         }
 
-        .field .check-box-wrapper {
-          display: flex;
-          flex-direction: row-reverse;
-          justify-content: flex-end;
-          align-items: center;
-          gap: 4px;
+        #project-selector {
+          margin-right: 10px;
+        }
+
+        .check-list {
+          display: inline-block;
+
+          .check-box {
+            display: inline-block;
+            line-height: 24px;
+
+            .check-box-wrapper {
+              font-size: 15px;
+              margin-left: 20px;
+              width: auto;
+
+              .fas {
+                margin-left: 0;
+              }
+            }
+          }
+
+          .field .check-box-wrapper {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+          }
         }
       }
     }
@@ -81,14 +97,6 @@
   font-style: italic;
   padding: 10px 16px;
   display: none;
-}
-
-#locale-selector,
-#project-selector {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
 }
 
 #entity-list-header {

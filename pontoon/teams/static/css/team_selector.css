@@ -1,6 +1,6 @@
 .locale-selector .locale.select .button {
   background: var(--button-background-1);
-  border-radius: 2px;
+  border-radius: 3px;
   box-sizing: border-box;
   display: flex;
   font-size: 14px;
@@ -18,7 +18,7 @@
 }
 
 .locale-selector .locale.select.opened .button {
-  border-radius: 2px 2px 0 0;
+  border-radius: 3px 3px 0 0;
 }
 
 .locale-selector .locale.select .button .language {
