@@ -107,7 +107,7 @@ $(function () {
     loadMoreEntries();
   });
 
-  $('#search-menu .search-wrapper .icon').click(function () {
+  $('#search-menu .search.button').click(function () {
     $('.search-input').trigger('enterKey');
   });
 
