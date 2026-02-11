@@ -5,15 +5,11 @@
 
       #search-menu {
         margin: 0 auto;
-        display: flex;
-        gap: 8px;
 
         > .search-wrapper {
           .icon {
-            left: 0;
-            top: 0;
-            cursor: pointer;
-            padding: 9px 0 8px 6px;
+            left: 6px;
+            top: 9px;
           }
 
           .search-input {
@@ -25,49 +21,49 @@
         }
       }
 
-      #locale-selector,
-      #project-selector {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
+      .search-options {
+        margin-top: 20px;
 
-        .select .button {
-          font-size: 16px;
-          height: 32px;
-
-          span {
-            line-height: 20px;
-          }
-        }
-      }
-
-      .check-list {
-        text-align: right;
-        margin: 5px 0;
-        width: 100%;
-
-        .check-box {
+        #locale-selector,
+        #project-selector {
           display: inline-block;
-          padding-bottom: inherit;
+          vertical-align: center;
 
-          .check-box-wrapper {
-            font-size: 15px;
-            margin-left: 28px;
-            width: auto;
+          .select .button {
+            font-size: 16px;
+            height: 32px;
 
-            .fas {
-              margin-left: 0;
+            span {
+              line-height: 20px;
             }
           }
         }
 
-        .field .check-box-wrapper {
-          display: flex;
-          flex-direction: row-reverse;
-          justify-content: flex-end;
-          align-items: center;
-          gap: 4px;
+        .check-list {
+          display: inline-block;
+
+          .check-box {
+            display: inline-block;
+            padding-bottom: inherit;
+
+            .check-box-wrapper {
+              font-size: 15px;
+              margin-left: 20px;
+              width: auto;
+
+              .fas {
+                margin-left: 0;
+              }
+            }
+          }
+
+          .field .check-box-wrapper {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+          }
         }
       }
     }
@@ -83,14 +79,6 @@
   font-style: italic;
   padding: 10px 16px;
   display: none;
-}
-
-#locale-selector,
-#project-selector {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
 }
 
 #entity-list-header {
