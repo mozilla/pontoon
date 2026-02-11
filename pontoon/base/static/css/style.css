@@ -666,7 +666,7 @@ header nav .right .sign-in-header {
 header nav .right .sign-in-header button {
   background: transparent;
   border: 1.5px solid var(--status-translated);
-  border-radius: 2px;
+  border-radius: 3px;
   color: var(--white-1);
   font-size: 14px;
   font-weight: 300;
@@ -1275,7 +1275,7 @@ body > form,
 
 #helpers > section ul li > p ins,
 #helpers > section ul li > p del {
-  border-radius: 2px;
+  border-radius: 3px;
   white-space: pre-wrap;
 }
 
@@ -1386,7 +1386,7 @@ body > form,
 }
 
 .controls .select.opened .button {
-  border-radius: 0 0 2px 2px;
+  border-radius: 0 0 3px 3px;
 }
 
 .controls button.button:hover,
