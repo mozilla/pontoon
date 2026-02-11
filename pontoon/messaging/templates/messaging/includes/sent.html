@@ -37,14 +37,12 @@
               {% endwith %}
             </span>
             <span class="types">
-              {% if message.notification %}<i
-                class="type far fa-bell"
-                title="Sent as Notification"
-              ></i>{% endif %}
-              {% if message.email %}<i
-                class="type far fa-envelope"
-                title="Sent as Email"
-              ></i>{% endif %}
+              {% if message.notification %}
+                <i class="type far fa-bell" title="Sent as Notification"></i>
+              {% endif %}
+              {% if message.email %}
+                <i class="type far fa-envelope" title="Sent as Email"></i>
+              {% endif %}
             </span>
           </div>
           <p class="subject">{{ message.subject }}</p>

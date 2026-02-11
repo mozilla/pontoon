@@ -2,8 +2,10 @@
 {% import 'widgets/heading_info.html' as HeadingInfo %}
 {% import "widgets/menu.html" as Menu %}
 
-{% block title %}{{ project.name }} &middot; {{ locale.name }}
-({{ locale.code }}){% endblock %}
+{% block title %}
+  {{ project.name }}
+  &middot; {{ locale.name }} ({{ locale.code }})
+{% endblock %}
 
 {% block class %}localization{% endblock %}
 

@@ -4,50 +4,58 @@
 {% import 'widgets/priority.html' as Priority %}
 
 {% macro header(deadline, priority) %}
+  {# prettier-ignore-start #}
   <table class="table table-sort project-list">
-    <thead>
-      <tr>
-        <th class="resource{% if deadline %} with-deadline{% endif %}{% if priority %} with-priority{% endif %} asc">Resource<i class="fas"></i></th>
+  {# prettier-ignore-end #}
+  <thead>
+    <tr>
+      <th
+        class="resource{% if deadline %}with-deadline{% endif %}{% if priority %}with-priority{% endif %} asc"
+      >
+        Resource<i class="fas"></i>
+      </th>
 
-        {% if deadline %}
+      {% if deadline %}
         <th class="deadline">Target Date<i class="fas"></i></th>
-        {% endif %}
+      {% endif %}
 
-        {% if priority %}
+      {% if priority %}
         <th class="priority inverted">Priority<i class="fas"></i></th>
-        {% endif %}
+      {% endif %}
 
-        <th class="latest-activity">Latest Activity<i class="fas"></i></th>
-        <th class="progress">Progress<i class="fas"></i></th>
-        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fas fa-lightbulb"></span><i class="fas"></i></th>
-      </tr>
-    </thead>
+      <th class="latest-activity">Latest Activity<i class="fas"></i></th>
+      <th class="progress">Progress<i class="fas"></i></th>
+      <th class="unreviewed-status inverted" title="Unreviewed suggestions">
+        <span class="fas fa-lightbulb"></span><i class="fas"></i>
+      </th>
+    </tr>
+  </thead>
+  {# prettier-ignore-start #}
     <tbody>
+    {# prettier-ignore-end #}
 {% endmacro %}
 
 {% macro item(resource, main_link, chart_link, latest_activity, chart, deadline, priority) %}
   <tr class="limited">
-    <td class="resource{% if deadline %} with-deadline{% endif %}{% if priority %} with-priority{% endif %}">
+    <td
+      class="resource{% if deadline %}with-deadline{% endif %}{% if priority %}with-priority{% endif %}"
+    >
       <h4>
         <a href="{{ main_link }}">{{ resource.title }}</a>
       </h4>
     </td>
 
     {% if deadline %}
-    <td class="deadline">
-      {{ Deadline.deadline(resource.deadline, chart.total > 0 and chart.total == chart.approved + chart.pretranslated + chart.warnings) }}
-    </td>
+      <td class="deadline">
+        {{ Deadline.deadline(resource.deadline, chart.total > 0 and chart.total == chart.approved + chart.pretranslated + chart.warnings) }}
+      </td>
     {% endif %}
 
     {% if priority %}
-    <td class="priority">
-      {{ Priority.priority(resource.priority) }}
-    </td>
+      <td class="priority">{{ Priority.priority(resource.priority) }}</td>
     {% endif %}
 
-    <td class="latest-activity">
-      {{ LatestActivity.span(latest_activity) }}
-    </td>
+    <td class="latest-activity">{{ LatestActivity.span(latest_activity) }}</td>
     <td class="progress" colspan="2">
       {% if chart.total %}
         {{ ProgressChart.span(chart, chart_link, True) }}
@@ -59,6 +67,8 @@
 {% endmacro %}
 
 {% macro footer() %}
+  {# prettier-ignore-start #}
     </tbody>
   </table>
+  {# prettier-ignore-end #}
 {% endmacro %}
