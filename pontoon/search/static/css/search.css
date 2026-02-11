@@ -59,6 +59,7 @@
 
         .check-list {
           display: inline-block;
+          vertical-align: bottom;
 
           .check-box {
             display: inline-block;
