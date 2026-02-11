@@ -107,6 +107,10 @@ $(function () {
     loadMoreEntries();
   });
 
+  $('#search-menu .search.button').click(function () {
+    $('.search-input').trigger('enterKey');
+  });
+
   $('.check-box').click(function () {
     const self = $(this);
     self.toggleClass('enabled');

@@ -41,7 +41,7 @@ body > header.menu-opened {
 #main .buttons button {
   background-color: var(--homepage-tour-button-background);
   border: none;
-  border-radius: 2px;
+  border-radius: 3px;
   box-sizing: content-box;
   color: var(--homepage-tour-button-color);
   display: flex;

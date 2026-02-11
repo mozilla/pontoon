@@ -21,20 +21,23 @@
           <div class="icon fas fa-search"></div>
           <input class="search-input" type="search" autocomplete="off" autofocus placeholder="Type and press Enter to search" value="{{ search }}">
         </div>
+        <button class="button search">Search</button>
+      </div>
+      <div class="search-options controls">
         <div id="project-selector">
           {{ project_selector.project(projects, project) }}
         </div>
         <div id="locale-selector">
           {{ team_selector.locale(locales, locale) }}
         </div>
-      </div>
-      <div class="check-list noselect">
-        {{ Checkbox.checkbox('Search in string identifiers', class='field search-identifiers-enabled', attribute='search-identifiers-enabled',
-            is_enabled=search_identifiers_enabled) }}
-        {{ Checkbox.checkbox('Case sensitive', class='field match-case-enabled', attribute='match-case-enabled',
-            is_enabled=match_case_enabled) }}
-        {{ Checkbox.checkbox('Entire words', class='field match-whole-word-enabled', attribute='match-whole-word-enabled',
-            is_enabled=match_whole_word_enabled) }}
+        <div class="check-list noselect">
+          {{ Checkbox.checkbox('Search in string identifiers', class='field search-identifiers-enabled', attribute='search-identifiers-enabled',
+              is_enabled=search_identifiers_enabled) }}
+          {{ Checkbox.checkbox('Case sensitive', class='field match-case-enabled', attribute='match-case-enabled',
+              is_enabled=match_case_enabled) }}
+          {{ Checkbox.checkbox('Entire words', class='field match-whole-word-enabled', attribute='match-whole-word-enabled',
+              is_enabled=match_whole_word_enabled) }}
+        </div>
       </div>
     </menu>
 
