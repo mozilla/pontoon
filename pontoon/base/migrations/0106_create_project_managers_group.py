@@ -12,7 +12,6 @@ def create_pm_group(apps, schema_editor):
     Group = apps.get_model("auth", "Group")
     Permission = apps.get_model("auth", "Permission")
     ContentType = apps.get_model("contenttypes", "ContentType")
-    Project = apps.get_model("base", "project")
 
     group, created = Group.objects.get_or_create(name="project_managers")
     if not created:
@@ -21,9 +20,11 @@ def create_pm_group(apps, schema_editor):
 
     log.info("Created 'project_managers' group.")
 
-    project_content_type = ContentType.objects.get_for_model(Project)
+    project_content_type = ContentType.objects.get_or_create(
+        app_label="base", model="project"
+    )
 
-    permission = Permission.objects.get_or_create(
+    permission, _ = Permission.objects.get_or_create(
         codename="can_manage_project",
         content_type=project_content_type,
         defaults={"name": "can manage project"},
