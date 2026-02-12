@@ -101,7 +101,7 @@
 }
 
 #entity-list-header {
-  display: none;
+  display: flex;
   border-bottom: 1px solid var(--main-border-1);
 
   span {
