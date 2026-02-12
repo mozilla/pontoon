@@ -3,6 +3,7 @@ import { createMemoryHistory } from 'history';
 
 import * as BatchActions from '~/modules/batchactions/actions';
 import * as EntitiesActions from '~/modules/entities/actions';
+import * as uxaction from '~/api/uxaction';
 
 import {
   createDefaultUser,
@@ -20,6 +21,8 @@ const ENTITIES = [
 ];
 
 describe('<EntitiesList>', () => {
+  let mockLogUXAction;
+
   beforeAll(() => {
     vi.spyOn(BatchActions, 'resetSelection').mockReturnValue({
       type: 'whatever',
@@ -30,6 +33,9 @@ describe('<EntitiesList>', () => {
     vi.spyOn(EntitiesActions, 'getEntities').mockReturnValue({
       type: 'whatever',
     });
+    mockLogUXAction = vi
+      .spyOn(uxaction, 'logUXAction')
+      .mockImplementation(() => {});
   });
 
   beforeEach(() => {
@@ -37,6 +43,7 @@ describe('<EntitiesList>', () => {
     BatchActions.resetSelection.mockClear();
     BatchActions.toggleSelection.mockClear();
     EntitiesActions.getEntities.mockClear();
+    uxaction.logUXAction.mockClear();
     // mockAllIsIntersecting(true);
   });
 
@@ -155,5 +162,37 @@ describe('<EntitiesList>', () => {
     wrapper.find('.entity .status').first().simulate('click');
 
     expect(BatchActions.toggleSelection).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders correctly for unauthenticated user', () => {
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
+
+    createDefaultUser(store, { is_authenticated: false });
+
+    const wrapper = mountComponentWithStore(EntitiesList, store);
+
+    expect(wrapper.find('.entities')).toHaveLength(1);
+    expect(mockLogUXAction).not.toHaveBeenCalled();
+  });
+
+  it('renders correctly for authenticated user', () => {
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
+
+    createDefaultUser(store, { is_authenticated: true });
+
+    const wrapper = mountComponentWithStore(EntitiesList, store);
+
+    expect(wrapper.find('.entities')).toHaveLength(1);
+    expect(mockLogUXAction).not.toHaveBeenCalled();
   });
 });
