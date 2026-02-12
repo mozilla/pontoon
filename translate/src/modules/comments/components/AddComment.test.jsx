@@ -5,6 +5,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { AddComment } from './AddComment';
 import { vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 
 const USER = {
   user: 'RSwanson',
@@ -25,11 +26,7 @@ describe('<AddComment>', () => {
     );
     const wrapper = mountComponentWithStore(Wrapper, store);
 
-    const event = {
-      preventDefault: vi.fn(),
-    };
-
-    wrapper.find('button').simulate('click', event);
+    fireEvent.click(wrapper.queryByRole('button'));
     expect(submitCommentFn.calledOnce).toBeTruthy;
   });
 

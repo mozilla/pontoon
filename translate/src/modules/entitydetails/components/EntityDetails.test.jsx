@@ -53,26 +53,28 @@ describe('<EntityDetails>', () => {
 
   it('loads the correct list of components', () => {
     urls = [];
-    const wrapper = mockEntityDetails(42);
+    const { container, queryByTestId } = mockEntityDetails(42);
     expect(urls).toMatchObject([
       'http://localhost/other-locales/?entity=42&locale=kg',
       'http://localhost/get-team-comments/?entity=42&locale=kg',
     ]);
 
-    expect(wrapper.find('.entity-navigation')).toHaveLength(1);
-    expect(wrapper.find('.metadata')).toHaveLength(1);
-    expect(wrapper.find('.editor')).toHaveLength(1);
-    expect(wrapper.find('Helpers')).toHaveLength(1);
+    expect(container.querySelector('.entity-navigation')).toBeInTheDocument();
+    expect(container.querySelector('.metadata')).toBeInTheDocument();
+    expect(container.querySelector('.editor')).toBeInTheDocument();
+    expect(queryByTestId('helpers')).toBeInTheDocument();
   });
 
   it('does not load anything for entity 0', () => {
     urls = [];
-    const wrapper = mockEntityDetails(0);
+    const { container, queryByTestId } = mockEntityDetails(0);
     expect(urls).toMatchObject([]);
 
-    expect(wrapper.find('.entity-navigation')).toHaveLength(0);
-    expect(wrapper.find('.metadata')).toHaveLength(0);
-    expect(wrapper.find('.editor')).toHaveLength(0);
-    expect(wrapper.find('Helpers')).toHaveLength(0);
+    expect(
+      container.querySelector('.entity-navigation'),
+    ).not.toBeInTheDocument();
+    expect(container.querySelector('.metadata')).not.toBeInTheDocument();
+    expect(container.querySelector('.editor')).not.toBeInTheDocument();
+    expect(queryByTestId('helpers')).not.toBeInTheDocument();
   });
 });

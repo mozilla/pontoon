@@ -14,6 +14,7 @@ import {
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { TranslationForm } from './TranslationForm';
+import { expect } from 'vitest';
 
 const DEFAULT_LOCALE = {
   direction: 'ltr',
@@ -55,10 +56,10 @@ function mountForm(string) {
     ),
     store,
   );
-
-  const views = Array.from(
-    wrapper.find('.translationform').instance().querySelectorAll('.cm-content'),
-  ).map((el) => el.cmView.view);
+  const form = wrapper.container.querySelector('.translationform');
+  const views = Array.from(form.querySelectorAll('.cm-content')).map(
+    (el) => el.cmView.view,
+  );
 
   return { actions, getResult: () => result, views, wrapper };
 }
@@ -79,7 +80,10 @@ describe('<TranslationForm> with multiple fields', () => {
   });
 
   it('renders select expression properly', () => {
-    const { views, wrapper } = mountForm(ftl`
+    const {
+      views,
+      wrapper: { container },
+    } = mountForm(ftl`
       my-entry =
         { PLATFORM() ->
             [variant] Hello!
@@ -91,12 +95,16 @@ describe('<TranslationForm> with multiple fields', () => {
       'Hello!',
       'World!',
     ]);
-    expect(wrapper.find('label').at(0).html()).toContain('variant');
-    expect(wrapper.find('label').at(1).html()).toContain('another-variant');
+    const labels = container.querySelectorAll('label');
+    expect(labels[0]).toHaveTextContent('variant');
+    expect(labels[1]).toHaveTextContent('another-variant');
   });
 
   it('renders select expression in attributes properly', () => {
-    const { views, wrapper } = mountForm(ftl`
+    const {
+      views,
+      wrapper: { container },
+    } = mountForm(ftl`
       my-entry =
         .label =
             { PLATFORM() ->
@@ -114,48 +122,56 @@ describe('<TranslationForm> with multiple fields', () => {
       'Preferences',
       'Options',
     ]);
-    expect(wrapper.find('input')).toHaveLength(2);
+    expect(container.querySelectorAll('input')).toHaveLength(2);
 
-    const l0 = wrapper.find('label').at(0);
-    expect(l0.find('span').at(0).html()).toContain('label');
-    expect(l0.find('span').at(1).html()).toContain('macosx');
+    const l0 = container.querySelectorAll('label')[0];
+    expect(l0.querySelectorAll('span')[0]).toHaveTextContent('label');
+    expect(l0.querySelectorAll('span')[1]).toHaveTextContent('macosx');
 
-    const l1 = wrapper.find('label').at(1);
-    expect(l1.find('span').at(0).html()).toContain('label');
-    expect(l1.find('span').at(1).html()).toContain('other');
+    const l1 = container.querySelectorAll('label')[1];
+    expect(l1.querySelectorAll('span')[0]).toHaveTextContent('label');
+    expect(l1.querySelectorAll('span')[1]).toHaveTextContent('other');
 
-    const l2 = wrapper.find('label').at(2);
-    expect(l2.find('span').at(0).html()).toContain('accesskey');
-    expect(l2.find('span').at(1).html()).toContain('macosx');
-    expect(wrapper.find('input').at(0).html()).toContain('e');
+    const l2 = container.querySelectorAll('label')[2];
+    expect(l2.querySelectorAll('span')[0]).toHaveTextContent('accesskey');
+    expect(l2.querySelectorAll('span')[1]).toHaveTextContent('macosx');
+    expect(container.querySelectorAll('input')[0]).toHaveValue('e');
 
-    const l3 = wrapper.find('label').at(3);
-    expect(l3.find('span').at(0).html()).toContain('accesskey');
-    expect(l3.find('span').at(1).html()).toContain('other');
-    expect(wrapper.find('input').at(1).html()).toContain('s');
+    const l3 = container.querySelectorAll('label')[3];
+    expect(l3.querySelectorAll('span')[0]).toHaveTextContent('accesskey');
+    expect(l3.querySelectorAll('span')[1]).toHaveTextContent('other');
+    expect(container.querySelectorAll('input')[1]).toHaveValue('s');
   });
 
   it('renders plural string properly', () => {
-    const { views, wrapper } = mountForm(ftl`
+    const {
+      views,
+      wrapper: { container, debug },
+    } = mountForm(ftl`
       my-entry =
         { $num ->
             [one] Hello!
            *[other] World!
         }
       `);
-
     expect(views.map((view) => view.state.doc.toString())).toMatchObject([
       'Hello!',
       'World!',
     ]);
 
-    const labels = wrapper.find('#translationform--label-with-example');
-    expect(labels.at(0).prop('vars')).toEqual({ label: 'one', example: 1 });
-    expect(labels.at(1).prop('vars')).toEqual({ label: 'other', example: 2 });
+    const labels = container.querySelectorAll('label');
+    expect(labels[0].querySelectorAll('span')[0]).toHaveTextContent('one');
+    expect(labels[0].querySelectorAll('span')[1]).toHaveTextContent('1');
+
+    expect(labels[1].querySelectorAll('span')[0]).toHaveTextContent('other');
+    expect(labels[1].querySelectorAll('span')[1]).toHaveTextContent('2');
   });
 
   it('renders plural string in attributes properly', () => {
-    const { views, wrapper } = mountForm(ftl`
+    const {
+      views,
+      wrapper: { container },
+    } = mountForm(ftl`
       my-entry =
         .label =
             { $num ->
@@ -171,20 +187,21 @@ describe('<TranslationForm> with multiple fields', () => {
       'Foo',
     ]);
 
-    expect(wrapper.find('label').at(0).find('span').at(0).html()).toContain(
-      'label',
-    );
-    expect(wrapper.find('label').at(1).find('span').at(0).html()).toContain(
-      'label',
-    );
+    const labels = container.querySelectorAll('label');
+    expect(labels[0].querySelectorAll('span')[0]).toHaveTextContent('label');
+    expect(labels[0].querySelectorAll('span')[1]).toHaveTextContent('one');
+    expect(labels[0].querySelectorAll('span')[2]).toHaveTextContent('1');
 
-    const labels = wrapper.find('#translationform--label-with-example');
-    expect(labels.at(0).prop('vars')).toEqual({ label: 'one', example: 1 });
-    expect(labels.at(1).prop('vars')).toEqual({ label: 'other', example: 2 });
+    expect(labels[1].querySelectorAll('span')[0]).toHaveTextContent('label');
+    expect(labels[1].querySelectorAll('span')[1]).toHaveTextContent('other');
+    expect(labels[1].querySelectorAll('span')[2]).toHaveTextContent('2');
   });
 
   it('renders access keys properly', () => {
-    const { views, wrapper } = mountForm(ftl`
+    const {
+      views,
+      wrapper: { container },
+    } = mountForm(ftl`
       title = Title
         .label = Candidates
         .accesskey = C
@@ -195,53 +212,74 @@ describe('<TranslationForm> with multiple fields', () => {
       'Candidates',
     ]);
 
-    expect(wrapper.find('label').at(1).html()).toContain('label');
-    expect(wrapper.find('label').at(2).html()).toContain('accesskey');
+    expect(container.querySelectorAll('label')[1]).toHaveTextContent('label');
+    expect(container.querySelectorAll('label')[2]).toHaveTextContent(
+      'accesskey',
+    );
 
-    const input = wrapper.find('input');
+    const input = container.querySelectorAll('input');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toEqual('C');
-    expect(input.prop('maxLength')).toEqual(1);
+    expect(input[0]).toHaveValue('C');
+    expect(input[0]).toHaveAttribute('maxLength', '1');
 
-    expect(wrapper.find('.accesskeys')).toHaveLength(1);
-    expect(wrapper.find('.accesskeys button')).toHaveLength(8);
-    expect(wrapper.find('.accesskeys button').at(0).text()).toEqual('C');
-    expect(wrapper.find('.accesskeys button').at(1).text()).toEqual('a');
-    expect(wrapper.find('.accesskeys button').at(2).text()).toEqual('n');
-    expect(wrapper.find('.accesskeys button').at(3).text()).toEqual('d');
-    expect(wrapper.find('.accesskeys button').at(4).text()).toEqual('i');
-    expect(wrapper.find('.accesskeys button').at(5).text()).toEqual('t');
-    expect(wrapper.find('.accesskeys button').at(6).text()).toEqual('e');
-    expect(wrapper.find('.accesskeys button').at(7).text()).toEqual('s');
+    expect(container.querySelectorAll('.accesskeys')).toHaveLength(1);
+    expect(container.querySelectorAll('.accesskeys button')).toHaveLength(8);
+    expect(
+      container.querySelectorAll('.accesskeys button')[0],
+    ).toHaveTextContent('C');
+    expect(
+      container.querySelectorAll('.accesskeys button')[1],
+    ).toHaveTextContent('a');
+    expect(
+      container.querySelectorAll('.accesskeys button')[2],
+    ).toHaveTextContent('n');
+    expect(
+      container.querySelectorAll('.accesskeys button')[3],
+    ).toHaveTextContent('d');
+    expect(
+      container.querySelectorAll('.accesskeys button')[4],
+    ).toHaveTextContent('i');
+    expect(
+      container.querySelectorAll('.accesskeys button')[5],
+    ).toHaveTextContent('t');
+    expect(
+      container.querySelectorAll('.accesskeys button')[6],
+    ).toHaveTextContent('e');
+    expect(
+      container.querySelectorAll('.accesskeys button')[7],
+    ).toHaveTextContent('s');
   });
 
   it('does not render accesskey buttons if no candidates can be generated', () => {
-    const { wrapper } = mountForm(ftl`
+    const {
+      wrapper: { container },
+    } = mountForm(ftl`
       title =
         .label = { reference }
         .accesskey = C
       `);
 
-    expect(wrapper.find('.accesskeys button')).toHaveLength(0);
+    expect(container.querySelectorAll('.accesskeys button')).toHaveLength(0);
   });
 
   it('does not render the access key UI if access key is longer than 1 character', () => {
-    const { wrapper } = mountForm(ftl`
+    const {
+      wrapper: { container },
+    } = mountForm(ftl`
       title =
         .label = Candidates
         .accesskey = { reference }
       `);
 
-    expect(wrapper.find('.accesskeys')).toHaveLength(0);
+    expect(container.querySelectorAll('.accesskeys')).toHaveLength(0);
   });
 
   it('updates the translation when setEditorSelection is passed', async () => {
-    const { actions, getResult, wrapper } = mountForm(ftl`
+    const { actions, getResult } = mountForm(ftl`
       title = Value
         .label = Something
       `);
     act(() => actions.setEditorSelection('Add'));
-    wrapper.update();
 
     const result = getResult();
     expect(result[0].value).toEqual('ValueAdd');

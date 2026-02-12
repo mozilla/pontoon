@@ -7,7 +7,6 @@
 import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
 
 import { LocationProvider } from '~/context/Location';
@@ -15,6 +14,7 @@ import { UPDATE } from '~/modules/user/actions';
 import { reducer } from '~/rootReducer';
 
 import { MockLocalizationProvider } from './utils';
+import { render } from '@testing-library/react';
 
 const HISTORY = createMemoryHistory({
   initialEntries: ['/kg/firefox/all-resources/'],
@@ -42,7 +42,7 @@ export const mountComponentWithStore = (
   props = {},
   history,
 ) =>
-  mount(
+  render(
     <MockStore store={store} history={history}>
       <Component {...props} />
     </MockStore>,

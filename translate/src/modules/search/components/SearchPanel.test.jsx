@@ -1,10 +1,11 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { SearchPanel, SearchPanelDialog } from './SearchPanel';
 import { SEARCH_OPTIONS } from '../constants';
+import { fireEvent, render } from '@testing-library/react';
+import { expect } from 'vitest';
 
 const selectedSearchOptions = {
   search_identifiers: false,
@@ -14,18 +15,26 @@ const selectedSearchOptions = {
   search_match_whole_word: false,
 };
 
+vi.mock('@fluent/react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    Localized: ({ children }) => children,
+  };
+});
+
 describe('<SearchPanelDialog>', () => {
   it('correctly sets search option as selected', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(SearchPanelDialog, store, {
+    const { container } = mountComponentWithStore(SearchPanelDialog, store, {
       options: selectedSearchOptions,
       selectedSearchOptions,
     });
 
     for (const { slug } of SEARCH_OPTIONS) {
-      expect(wrapper.find(`.menu .${slug}`).hasClass('enabled')).toBe(
-        selectedSearchOptions[slug],
-      );
+      expect(
+        container.querySelector(`.menu .${slug}`).classList.contains('enabled'),
+      ).toBe(selectedSearchOptions[slug]);
     }
   });
 
@@ -35,14 +44,18 @@ describe('<SearchPanelDialog>', () => {
         const onToggleOption = vi.fn();
         const store = createReduxStore();
 
-        const wrapper = mountComponentWithStore(SearchPanelDialog, store, {
-          selectedSearchOptions: selectedSearchOptions,
-          onApplyOptions: vi.fn(),
-          onToggleOption,
-          onDiscard: vi.fn(),
-        });
+        const { container } = mountComponentWithStore(
+          SearchPanelDialog,
+          store,
+          {
+            selectedSearchOptions: selectedSearchOptions,
+            onApplyOptions: vi.fn(),
+            onToggleOption,
+            onDiscard: vi.fn(),
+          },
+        );
 
-        wrapper.find(`.menu .${slug}`).simulate('click');
+        fireEvent.click(container.querySelector(`.menu .${slug}`));
 
         expect(onToggleOption).toHaveBeenCalledWith(slug);
       });
@@ -52,12 +65,12 @@ describe('<SearchPanelDialog>', () => {
   it('applies selected options on click on the Apply button', () => {
     const onApplyOptions = vi.fn();
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(SearchPanelDialog, store, {
+    const { container } = mountComponentWithStore(SearchPanelDialog, store, {
       selectedSearchOptions: selectedSearchOptions,
       onApplyOptions,
     });
 
-    wrapper.find('.search-button').simulate('click');
+    fireEvent.click(container.querySelector('.search-button'));
 
     expect(onApplyOptions).toHaveBeenCalled();
   });
@@ -65,10 +78,14 @@ describe('<SearchPanelDialog>', () => {
 
 describe('<SearchPanel>', () => {
   it('shows a panel with options on click', () => {
-    const wrapper = shallow(<SearchPanel options={selectedSearchOptions} />);
+    const wrapper = render(
+      <SearchPanel searchOptions={selectedSearchOptions} />,
+    );
 
-    expect(wrapper.find('SearchPanelDialog')).toHaveLength(0);
-    wrapper.find('.visibility-switch').simulate('click');
-    expect(wrapper.find('SearchPanelDialog')).toHaveLength(1);
+    expect(
+      wrapper.queryByTestId('search-panel-dialog'),
+    ).not.toBeInTheDocument();
+    fireEvent.click(wrapper.container.querySelector('.visibility-switch'));
+    expect(wrapper.queryByTestId('search-panel-dialog')).toBeInTheDocument();
   });
 });

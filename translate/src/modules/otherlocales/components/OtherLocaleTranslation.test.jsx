@@ -1,5 +1,4 @@
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
@@ -11,6 +10,7 @@ import {
 
 import { OtherLocaleTranslationComponent } from './OtherLocaleTranslation';
 import { vi } from 'vitest';
+import { fireEvent, screen } from '@testing-library/react';
 
 const LOCALE = { code: 'fr-FR', name: 'French', direction: 'ltr', script: '' };
 const PLAIN_TRANSLATION = {
@@ -61,32 +61,28 @@ describe('<OtherLocaleTranslationComponent>', () => {
   });
 
   it('renders a plain translation correctly', () => {
-    const wrapper = createTranslation('', PLAIN_TRANSLATION);
+    createTranslation('', PLAIN_TRANSLATION);
 
-    const gt = wrapper.find('GenericTranslation');
-    expect(gt.props().content).toMatch(/^Un cheval/);
+    expect(screen.getByText(/^Un cheval/)).toBeInTheDocument();
   });
 
   it('renders a Fluent translation correctly', () => {
-    const wrapper = createTranslation('fluent', FLUENT_TRANSLATION);
+    createTranslation('fluent', FLUENT_TRANSLATION);
 
-    const gt = wrapper.find('GenericTranslation');
-    expect(gt.props().content).toMatch(/^Un cheval/);
+    expect(screen.getByText(/^Un cheval/)).toBeInTheDocument();
   });
 
   it('renders an MF2 translation correctly', () => {
-    const wrapper = createTranslation('gettext', MF2_TRANSLATION);
+    createTranslation('gettext', MF2_TRANSLATION);
 
-    const gt = wrapper.find('GenericTranslation');
-    expect(gt.props().content).toMatch(/^Un cheval/);
+    expect(screen.getByText(/^Un cheval/)).toBeInTheDocument();
   });
 
   it('sets editor value for a plain translation', () => {
     const spy = vi.fn();
-    const wrapper = createTranslation('', PLAIN_TRANSLATION, spy);
+    const { container } = createTranslation('', PLAIN_TRANSLATION, spy);
 
-    const { onClick } = wrapper.find('li').props();
-    act(() => onClick());
+    fireEvent.click(container.querySelector('li'));
 
     expect(spy.mock.calls).toEqual([
       ['Un cheval, un cheval ! Mon royaume pour un cheval !', [], true],
@@ -95,10 +91,9 @@ describe('<OtherLocaleTranslationComponent>', () => {
 
   it('sets editor value for a Fluent translation', () => {
     const spy = vi.fn();
-    const wrapper = createTranslation('fluent', FLUENT_TRANSLATION, spy);
+    const { container } = createTranslation('fluent', FLUENT_TRANSLATION, spy);
 
-    const { onClick } = wrapper.find('li').props();
-    act(() => onClick());
+    fireEvent.click(container.querySelector('li'));
 
     expect(spy.mock.calls).toEqual([
       ['Un cheval, un cheval ! Mon royaume pour un cheval !', [], true],

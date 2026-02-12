@@ -6,6 +6,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { FiltersPanel, FiltersPanelDialog } from './FiltersPanel';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
+import { fireEvent } from '@testing-library/react';
 
 describe('<FiltersPanelDialog>', () => {
   it('correctly sets filter as selected', () => {
@@ -13,7 +14,7 @@ describe('<FiltersPanelDialog>', () => {
     const extras = ['rejected'];
 
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
+    const { container } = mountComponentWithStore(FiltersPanelDialog, store, {
       filters: { authors: [], extras, statuses, tags: [] },
       authorsData: [],
       tagsData: [],
@@ -21,15 +22,19 @@ describe('<FiltersPanelDialog>', () => {
     });
 
     for (const filter of FILTERS_STATUS) {
-      expect(wrapper.find(`.menu .${filter.slug}`).hasClass('selected')).toBe(
-        statuses.includes(filter.slug),
-      );
+      expect(
+        container
+          .querySelector(`.menu .${filter.slug}`)
+          .classList.contains('selected'),
+      ).toBe(statuses.includes(filter.slug));
     }
 
     for (const filter of FILTERS_EXTRA) {
-      expect(wrapper.find(`.menu .${filter.slug}`).hasClass('selected')).toBe(
-        extras.includes(filter.slug),
-      );
+      expect(
+        container
+          .querySelector(`.menu .${filter.slug}`)
+          .classList.contains('selected'),
+      ).toBe(extras.includes(filter.slug));
     }
   });
 
@@ -38,15 +43,19 @@ describe('<FiltersPanelDialog>', () => {
       it('applies a single filter on click on a filter title', () => {
         const onApplyFilter = vi.fn();
         const store = createReduxStore();
-        const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
-          filters: { authors: [], extras: [], statuses: [slug], tags: [] },
-          onApplyFilter,
-          authorsData: [],
-          tagsData: [],
-          timeRangeData: [],
-        });
+        const { container } = mountComponentWithStore(
+          FiltersPanelDialog,
+          store,
+          {
+            filters: { authors: [], extras: [], statuses: [slug], tags: [] },
+            onApplyFilter,
+            authorsData: [],
+            tagsData: [],
+            timeRangeData: [],
+          },
+        );
 
-        wrapper.find(`.menu .${slug}`).simulate('click');
+        fireEvent.click(container.querySelector(`.menu .${slug}`));
 
         expect(onApplyFilter).toHaveBeenCalledWith(slug, expect.anything());
       });
@@ -54,16 +63,20 @@ describe('<FiltersPanelDialog>', () => {
       it('toggles a filter on click on a filter status icon', () => {
         const onToggleFilter = vi.fn();
         const store = createReduxStore();
-        const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
-          filters: { authors: [], extras: [], statuses: [slug], tags: [] },
-          onToggleFilter,
-          parameters: {},
-          authorsData: [],
-          tagsData: [],
-          timeRangeData: [],
-        });
+        const { container } = mountComponentWithStore(
+          FiltersPanelDialog,
+          store,
+          {
+            filters: { authors: [], extras: [], statuses: [slug], tags: [] },
+            onToggleFilter,
+            parameters: {},
+            authorsData: [],
+            tagsData: [],
+            timeRangeData: [],
+          },
+        );
 
-        wrapper.find(`.menu .${slug} .status`).simulate('click');
+        fireEvent.click(container.querySelector(`.menu .${slug} .status`));
 
         expect(onToggleFilter).toHaveBeenCalledWith(slug, expect.anything());
       });
@@ -75,15 +88,19 @@ describe('<FiltersPanelDialog>', () => {
       it('applies a single filter on click on a filter title', () => {
         const onApplyFilter = vi.fn();
         const store = createReduxStore();
-        const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
-          filters: { authors: [], extras: [slug], statuses: [], tags: [] },
-          onApplyFilter,
-          authorsData: [],
-          tagsData: [],
-          timeRangeData: [],
-        });
+        const { container } = mountComponentWithStore(
+          FiltersPanelDialog,
+          store,
+          {
+            filters: { authors: [], extras: [slug], statuses: [], tags: [] },
+            onApplyFilter,
+            authorsData: [],
+            tagsData: [],
+            timeRangeData: [],
+          },
+        );
 
-        wrapper.find(`.menu .${slug}`).simulate('click');
+        fireEvent.click(container.querySelector(`.menu .${slug}`));
 
         expect(onApplyFilter).toHaveBeenCalledWith(slug, expect.anything());
       });
@@ -91,16 +108,20 @@ describe('<FiltersPanelDialog>', () => {
       it('toggles a filter on click on a filter status icon', () => {
         const onToggleFilter = vi.fn();
         const store = createReduxStore();
-        const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
-          filters: { authors: [], extras: [slug], statuses: [], tags: [] },
-          onToggleFilter,
-          parameters: {},
-          authorsData: [],
-          tagsData: [],
-          timeRangeData: [],
-        });
+        const { container } = mountComponentWithStore(
+          FiltersPanelDialog,
+          store,
+          {
+            filters: { authors: [], extras: [slug], statuses: [], tags: [] },
+            onToggleFilter,
+            parameters: {},
+            authorsData: [],
+            tagsData: [],
+            timeRangeData: [],
+          },
+        );
 
-        wrapper.find(`.menu .${slug} .status`).simulate('click');
+        fireEvent.click(container.querySelector(`.menu .${slug} .status`));
 
         expect(onToggleFilter).toHaveBeenCalledWith(slug, expect.anything());
       });
@@ -117,7 +138,7 @@ describe('<FiltersPanelDialog>', () => {
       timeRangeData: [],
     });
 
-    expect(wrapper.find('FilterToolbar')).toHaveLength(1);
+    expect(wrapper.queryByTestId('filter-toolbar')).toBeInTheDocument();
   });
 
   it('hides the toolbar when no filters are selected', () => {
@@ -130,7 +151,7 @@ describe('<FiltersPanelDialog>', () => {
       timeRangeData: [],
     });
 
-    expect(wrapper.find('FilterToolbar')).toHaveLength(0);
+    expect(wrapper.queryByTestId('filter-toolbar')).not.toBeInTheDocument();
   });
 
   it('resets selected filters on click on the Clear button', () => {
@@ -145,7 +166,9 @@ describe('<FiltersPanelDialog>', () => {
       timeRangeData: [],
     });
 
-    wrapper.find('FilterToolbar .clear-selection').simulate('click');
+    fireEvent.click(
+      wrapper.queryByTestId('filter-toolbar').querySelector('.clear-selection'),
+    );
 
     expect(onResetFilters).toHaveBeenCalled();
   });
@@ -162,7 +185,9 @@ describe('<FiltersPanelDialog>', () => {
       timeRangeData: [],
     });
 
-    wrapper.find('FilterToolbar .apply-selected').simulate('click');
+    fireEvent.click(
+      wrapper.queryByTestId('filter-toolbar').querySelector('.apply-selected'),
+    );
 
     expect(onApplyFilters).toHaveBeenCalled();
   });
