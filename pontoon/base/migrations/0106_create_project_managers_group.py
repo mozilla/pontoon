@@ -24,7 +24,7 @@ def create_pm_group(apps, schema_editor):
         app_label="base", model="project"
     )
 
-    permission, _ = Permission.objects.get_or_create(
+    permission = Permission.objects.get(
         codename="can_manage_project",
         content_type=project_content_type,
     )
