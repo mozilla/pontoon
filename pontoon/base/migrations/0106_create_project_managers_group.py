@@ -25,9 +25,10 @@ def create_pm_group(apps, schema_editor):
         model="project",
     )
 
-    permission = Permission.objects.get(
+    permission, _ = Permission.objects.get_or_create(
         codename="can_manage_project",
         content_type=project_content_type,
+        defaults={"name": "Can manage project"},
     )
 
     group.permissions.add(permission)
