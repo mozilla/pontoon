@@ -1,17 +1,14 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 
+import * as api from '~/api/uxaction';
+
 import { UserNotification } from './UserNotification';
 import {
   UserNotificationsMenu,
   UserNotificationsMenuDialog,
 } from './UserNotificationsMenu';
 import { vi } from 'vitest';
-
-const logMock = vi.fn();
-vi.mock('~/hooks/useLogUXAction', () => ({
-  useLogUXAction: () => logMock,
-}));
 
 describe('<UserNotificationsMenuDialog>', () => {
   it('shows empty notifications menu if user has no notifications', () => {
@@ -57,7 +54,7 @@ describe('<UserNotificationsMenuDialog>', () => {
 });
 
 describe('<UserNotificationsMenu>', () => {
-  beforeEach(() => logMock.mockClear());
+  beforeEach(() => vi.spyOn(api, 'logUXAction'));
   afterEach(() => vi.restoreAllMocks());
 
   it('hides the notifications icon when the user is logged out', () => {
@@ -96,7 +93,7 @@ describe('<UserNotificationsMenu>', () => {
     const wrapper = mount(<UserNotificationsMenu user={user} />);
 
     expect(wrapper.find('.user-notifications-menu .badge').text()).toEqual('5');
-    expect(logMock).toHaveBeenCalled();
+    expect(api.logUXAction).toHaveBeenCalled();
   });
 
   it('calls the logUxAction function on click on the icon if menu not visible', () => {
@@ -116,12 +113,12 @@ describe('<UserNotificationsMenu>', () => {
     );
 
     // shallow() does not handle useEffect()
-    expect(logMock).not.toHaveBeenCalled();
+    expect(api.logUXAction).not.toHaveBeenCalled();
 
     wrapper.find('.selector').simulate('click', {});
-    expect(logMock).toHaveBeenCalledOnce();
+    expect(api.logUXAction).toHaveBeenCalledOnce();
 
     wrapper.find('.selector').simulate('click', {});
-    expect(logMock).toHaveBeenCalledOnce();
+    expect(api.logUXAction).toHaveBeenCalledOnce();
   });
 });

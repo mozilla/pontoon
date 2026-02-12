@@ -2,7 +2,7 @@ import React, { useState, useRef, useContext } from 'react';
 import { Localized } from '@fluent/react';
 import type { MachineryTranslation } from '~/api/machinery';
 import { Locale } from '~/context/Locale';
-import { useLogUXAction } from '~/hooks/useLogUXAction';
+import { logUXAction } from '~/api/uxaction';
 import { useLLMTranslation } from '~/context/TranslationContext';
 
 type Props = {
@@ -26,7 +26,6 @@ export function GoogleTranslation({
   const locale = useContext(Locale);
 
   const getLLMTranslationState = useLLMTranslation();
-  const log = useLogUXAction();
 
   const { transformLLMTranslation, selectedOption, restoreOriginal } =
     getLLMTranslationState(translation);
@@ -45,7 +44,7 @@ export function GoogleTranslation({
       restoreOriginal(translation);
     } else {
       await transformLLMTranslation(translation, characteristic, locale.name);
-      log('LLM Dropdown Select', 'LLM Feature Adoption', {
+      logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
         optionSelected: characteristic,
         localeCode: locale.code,
       });

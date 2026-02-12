@@ -11,7 +11,7 @@ import { useLLMTranslation } from '~/context/TranslationContext';
 import { Locale } from '~/context/Locale';
 import { useAppSelector } from '~/hooks';
 import { getPlainMessage } from '~/utils/message';
-import { useLogUXAction } from '~/hooks/useLogUXAction';
+import { logUXAction } from '~/api/uxaction';
 
 import { useExistingTranslationGetter } from '../../editor/hooks/useExistingTranslationGetter';
 import { useSendTranslation } from '../../editor/hooks/useSendTranslation';
@@ -96,7 +96,6 @@ export function useHandleCtrlShiftArrow(): (
 
   const getLLMTranslationState = useLLMTranslation();
   const locale = useContext(Locale);
-  const log = useLogUXAction();
 
   return (key) => {
     const { tab, element, setElement } = helperSelection;
@@ -127,10 +126,14 @@ export function useHandleCtrlShiftArrow(): (
       setEditorFromHelpers(updatedTranslation, translationObj.sources, true);
 
       if (llmState.llmTranslation) {
-        log('LLM Translation Copied via Shortcut', 'LLM Feature Adoption', {
-          action: 'Copy LLM Translation via Shortcut',
-          localeCode: locale.code,
-        });
+        logUXAction(
+          'LLM Translation Copied via Shortcut',
+          'LLM Feature Adoption',
+          {
+            action: 'Copy LLM Translation via Shortcut',
+            localeCode: locale.code,
+          },
+        );
       }
     } else {
       const { translation } = otherLocaleTranslations[nextIdx];
