@@ -3,6 +3,7 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 import type { Entity as EntityType } from '~/api/entity';
+import { logUXAction } from '~/api/uxaction';
 import { EntitiesList as EntitiesListContext } from '~/context/EntitiesList';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
@@ -246,8 +247,22 @@ export function EntitiesList(): React.ReactElement<'div'> {
     if (!fetching) {
       // Currently shown entities should be excluded from the next results.
       dispatch(getEntities(location, page));
+      if (isAuthUser) {
+        logUXAction(
+          'Load: String list with search parameter',
+          'Search Options Statistics',
+          {
+            search_exclude_source_strings:
+              location.search_exclude_source_strings,
+            search_identifiers: location.search_identifiers,
+            search_match_case: location.search_match_case,
+            search_match_whole_word: location.search_match_whole_word,
+            search_rejected_translations: location.search_rejected_translations,
+          },
+        );
+      }
     }
-  }, [dispatch, entities, fetching, location, page]);
+  }, [dispatch, entities, fetching, isAuthUser, location, page]);
 
   // Must be after other useEffect() calls, as they are run in order during mount
   useEffect(() => {
