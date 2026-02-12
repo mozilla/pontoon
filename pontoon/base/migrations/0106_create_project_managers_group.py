@@ -20,7 +20,10 @@ def create_pm_group(apps, schema_editor):
 
     log.info("Created 'project_managers' group.")
 
-    project_content_type = ContentType.objects.get(app_label="base", model="project")
+    project_content_type, _ = ContentType.objects.get_or_create(
+        app_label="base",
+        model="project",
+    )
 
     permission = Permission.objects.get(
         codename="can_manage_project",
