@@ -164,7 +164,13 @@ describe('<EntitiesList>', () => {
     expect(BatchActions.toggleSelection).toHaveBeenCalledTimes(1);
   });
 
-  it('renders correctly for unauthenticated user', () => {
+  it('does not log UX action when unauthenticated user loads page with search parameter', () => {
+    const history = createMemoryHistory({
+      initialEntries: [
+        '/kg/firefox/all-resources/?string=1&search=test&search_identifiers=true',
+      ],
+    });
+
     const store = createReduxStore();
     store.dispatch({
       type: EntitiesActions.RECEIVE_ENTITIES,
@@ -174,13 +180,19 @@ describe('<EntitiesList>', () => {
 
     createDefaultUser(store, { is_authenticated: false });
 
-    const wrapper = mountComponentWithStore(EntitiesList, store);
+    mountComponentWithStore(EntitiesList, store, {}, history);
 
-    expect(wrapper.find('.entities')).toHaveLength(1);
+    // Verify that logUXAction was NOT called for unauthenticated user
     expect(mockLogUXAction).not.toHaveBeenCalled();
   });
 
-  it('renders correctly for authenticated user', () => {
+  it('logs UX action when authenticated user loads page with search parameter', () => {
+    const history = createMemoryHistory({
+      initialEntries: [
+        '/kg/firefox/all-resources/?string=1&search=test&search_identifiers=true',
+      ],
+    });
+
     const store = createReduxStore();
     store.dispatch({
       type: EntitiesActions.RECEIVE_ENTITIES,
@@ -190,9 +202,19 @@ describe('<EntitiesList>', () => {
 
     createDefaultUser(store, { is_authenticated: true });
 
-    const wrapper = mountComponentWithStore(EntitiesList, store);
+    mountComponentWithStore(EntitiesList, store, {}, history);
 
-    expect(wrapper.find('.entities')).toHaveLength(1);
-    expect(mockLogUXAction).not.toHaveBeenCalled();
+    // Verify that logUXAction was called when component mounted with search parameters
+    expect(mockLogUXAction).toHaveBeenCalledWith(
+      'Load: String list with search parameter',
+      'Search Options Statistics',
+      {
+        search_exclude_source_strings: false,
+        search_identifiers: true,
+        search_match_case: false,
+        search_match_whole_word: false,
+        search_rejected_translations: false,
+      },
+    );
   });
 });
