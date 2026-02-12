@@ -20,7 +20,9 @@ def create_pm_group(apps, schema_editor):
 
     log.info("Created 'project_managers' group.")
 
-    project_content_type = ContentType.objects.get(app_label="base", model="project")
+    project_content_type = ContentType.objects.get_or_create(
+        app_label="base", model="project"
+    )
 
     permission = Permission.objects.get_or_create(
         codename="can_manage_project",
@@ -35,6 +37,8 @@ def create_pm_group(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("base", "0105_fix_mf2_translations"),
+        ("auth", "0001_initial"),
+        ("contenttypes", "0001_initial"),
     ]
 
     operations = [
