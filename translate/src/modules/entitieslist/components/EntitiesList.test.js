@@ -3,6 +3,7 @@ import { createMemoryHistory } from 'history';
 
 import * as BatchActions from '~/modules/batchactions/actions';
 import * as EntitiesActions from '~/modules/entities/actions';
+import * as uxaction from '~/api/uxaction';
 
 import {
   createDefaultUser,
@@ -20,6 +21,8 @@ const ENTITIES = [
 ];
 
 describe('<EntitiesList>', () => {
+  let mockLogUXAction;
+
   beforeAll(() => {
     vi.spyOn(BatchActions, 'resetSelection').mockReturnValue({
       type: 'whatever',
@@ -30,6 +33,9 @@ describe('<EntitiesList>', () => {
     vi.spyOn(EntitiesActions, 'getEntities').mockReturnValue({
       type: 'whatever',
     });
+    mockLogUXAction = vi
+      .spyOn(uxaction, 'logUXAction')
+      .mockImplementation(() => {});
   });
 
   beforeEach(() => {
@@ -37,6 +43,7 @@ describe('<EntitiesList>', () => {
     BatchActions.resetSelection.mockClear();
     BatchActions.toggleSelection.mockClear();
     EntitiesActions.getEntities.mockClear();
+    uxaction.logUXAction.mockClear();
     // mockAllIsIntersecting(true);
   });
 
@@ -155,5 +162,59 @@ describe('<EntitiesList>', () => {
     wrapper.find('.entity .status').first().simulate('click');
 
     expect(BatchActions.toggleSelection).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not log UX action when unauthenticated user loads page with search parameter', () => {
+    const history = createMemoryHistory({
+      initialEntries: [
+        '/kg/firefox/all-resources/?string=1&search=test&search_identifiers=true',
+      ],
+    });
+
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
+
+    createDefaultUser(store, { is_authenticated: false });
+
+    mountComponentWithStore(EntitiesList, store, {}, history);
+
+    // Verify that logUXAction was NOT called for unauthenticated user
+    expect(mockLogUXAction).not.toHaveBeenCalled();
+  });
+
+  it('logs UX action when authenticated user loads page with search parameter', () => {
+    const history = createMemoryHistory({
+      initialEntries: [
+        '/kg/firefox/all-resources/?string=1&search=test&search_identifiers=true',
+      ],
+    });
+
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
+
+    createDefaultUser(store, { is_authenticated: true });
+
+    mountComponentWithStore(EntitiesList, store, {}, history);
+
+    // Verify that logUXAction was called when component mounted with search parameters
+    expect(mockLogUXAction).toHaveBeenCalledWith(
+      'Load: String list with search parameter',
+      'Search Options Statistics',
+      {
+        search_exclude_source_strings: false,
+        search_identifiers: true,
+        search_match_case: false,
+        search_match_whole_word: false,
+        search_rejected_translations: false,
+      },
+    );
   });
 });

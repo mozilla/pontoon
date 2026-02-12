@@ -3,6 +3,7 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 import type { Entity as EntityType } from '~/api/entity';
+import { logUXAction } from '~/api/uxaction';
 import { EntitiesList as EntitiesListContext } from '~/context/EntitiesList';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
@@ -152,6 +153,31 @@ export function EntitiesList(): React.ReactElement<'div'> {
       }
     }
   });
+
+  // Log UX action when authenticated user loads page with search parameters
+  useEffect(() => {
+    if (isAuthUser && location.search) {
+      logUXAction(
+        'Load: String list with search parameter',
+        'Search Options Statistics',
+        {
+          search_exclude_source_strings: location.search_exclude_source_strings,
+          search_identifiers: location.search_identifiers,
+          search_match_case: location.search_match_case,
+          search_match_whole_word: location.search_match_whole_word,
+          search_rejected_translations: location.search_rejected_translations,
+        },
+      );
+    }
+  }, [
+    isAuthUser,
+    location.search,
+    location.search_exclude_source_strings,
+    location.search_identifiers,
+    location.search_match_case,
+    location.search_match_whole_word,
+    location.search_rejected_translations,
+  ]);
 
   // Whenever the route changes, we want to verify that the user didn't
   // change locale, project, resource... If they did, then we'll have
