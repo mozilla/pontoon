@@ -37,8 +37,6 @@ def create_pm_group(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("base", "0105_fix_mf2_translations"),
-        ("auth", "0001_initial"),
-        ("contenttypes", "0001_initial"),
     ]
 
     operations = [
