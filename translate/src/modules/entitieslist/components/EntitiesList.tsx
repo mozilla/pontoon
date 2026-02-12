@@ -247,7 +247,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
     if (!fetching) {
       // Currently shown entities should be excluded from the next results.
       dispatch(getEntities(location, page));
-      if (isAuthUser) {
+      if (isAuthUser && location.search) {
         logUXAction(
           'Load: String list with search parameter',
           'Search Options Statistics',
