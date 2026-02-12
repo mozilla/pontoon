@@ -4,7 +4,7 @@
     {% set unread_count = user.notifications.unread().count() %}
     <div
       id="notifications"
-      class="notifications select{% if unread_count %}unread{% endif %}"
+      class="notifications select {% if unread_count %}unread{% endif %}"
     >
       <div class="button selector">
         <i class="icon far fa-bell fa-fw"></i>
