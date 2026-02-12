@@ -20,8 +20,6 @@
     </thead>
     <!-- prettier-ignore-start -->
     <tbody>
-    <!-- prettier-ignore-end -->
-  </table>
 {% endmacro %}
 
 {% macro item(locale, main_link, chart_link, latest_activity, chart, class='limited', request=False, link_parameter=False, has_param=False, not_ready_message='Not synced yet') %}
@@ -56,8 +54,8 @@
 {% macro footer(request=False, form=None) %}
   <!-- prettier-ignore-start -->
     </tbody>
-  </table>
   <!-- prettier-ignore-end -->
+  </table>
   {% if request %}
     {% if form %}
       <form id="request-team-form">

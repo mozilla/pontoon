@@ -9,8 +9,9 @@ Your suggestions have been reviewed:
       <a
         href="{{ full_url('pontoon.translate', locale.code, project.slug, 'all-resources') }}?list={{ ids }}"
       >
-        {{ project.name }} ({{ locale.code }}): {{ msg }}
-      </a>
+        {{ project.name }} ({{ locale.code }}):</a
+      >
+      {{ msg }}
     </li>
   {% endfor %}
 </ul>

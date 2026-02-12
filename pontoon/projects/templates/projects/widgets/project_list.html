@@ -25,8 +25,6 @@
     </thead>
     <!-- prettier-ignore-start -->
     <tbody>
-    <!-- prettier-ignore-end -->
-  </table>
 {% endmacro %}
 
 {% macro item(project, main_link, chart_link, latest_activity, chart, class='limited', all_strings=False, request=False, link_parameter=False) %}
@@ -70,26 +68,28 @@
     </tbody>
   </table>
   <!-- prettier-ignore-end -->
-  {% if request %}
-    <div id="request-item-note">
-      <p class="locale-projects">
-        The requested projects won’t be enabled automatically: an email will be
-        sent to Pontoon admins and team managers to evaluate the request. We’ll
-        try to respond as soon as possible. Please make sure to get in touch
-        with the
-        <a href="{{ url('pontoon.teams.info', locale.code) }}"
-          >localization team</a
-        >
-        if you are a new contributor.
-      </p>
-      <p class="pretranslation">
-        Pretranslation won’t be enabled automatically for the requested
-        projects: an email will be sent to Pontoon admins and team managers to
-        evaluate the request. We’ll try to respond as soon as possible. Note
-        that, if a locale is not using pretranslation yet, this will require
-        additional time to train a custom translation engine.
-      </p>
-    </div>
-    <button class="request-item">Request new projects</button>
-  {% endif %}
+    {% if request %}
+      <div id="request-item-note">
+        <p class="locale-projects">
+          The requested projects won’t be enabled automatically: an email will
+          be sent to Pontoon admins and team managers to evaluate the request.
+          We’ll try to respond as soon as possible. Please make sure to get in
+          touch with the
+          <a href="{{ url('pontoon.teams.info', locale.code) }}"
+            >localization team</a
+          >
+          if you are a new contributor.
+        </p>
+        <p class="pretranslation">
+          Pretranslation won’t be enabled automatically for the requested
+          projects: an email will be sent to Pontoon admins and team managers to
+          evaluate the request. We’ll try to respond as soon as possible. Note
+          that, if a locale is not using pretranslation yet, this will require
+          additional time to train a custom translation engine.
+        </p>
+      </div>
+      <button class="request-item">Request new projects</button>
+    {% endif %}
+    <!-- prettier-ignore-end -->
+  </table>
 {% endmacro %}
