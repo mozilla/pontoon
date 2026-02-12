@@ -71,7 +71,12 @@ body.top-contributors #heading .legend li .status.fas {
   color: var(--white-1);
 }
 
-th:last-child,
+th:last-child {
+  text-align: center;
+  width: 270px;
+}
+
+.contributors-list th:last-child,
 .stats .details {
   display: flex;
   justify-content: center;
