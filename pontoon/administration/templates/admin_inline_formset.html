@@ -1,32 +1,43 @@
 {% macro render(title, type, formset) %}
-<h4>
+  <h4>
     <span>{{ title }}</span>
     <a href="#" class="add-inline" data-type="{{ type }}">Add more</a>
-</h4>
+  </h4>
 
-{{ formset.management_form }}
-{% for form in formset %}
+  {{ formset.management_form }}
+  {% for form in formset %}
     {{ form.id }}
     <div class="{{ type }} inline controls clearfix">
-        {{ form.name.label_tag(label_suffix='') }}
-        {{ form.url.label_tag(label_suffix='') }}
-        <span class="arrow">{{ form.name }}</span>
-        {{ form.url }}
-        <button title="Delete" class="button delete-inline far fa-trash-alt" tabindex="-1"></button>
-        {{ form.DELETE }}
-        {{ form.name.errors }}
-        {{ form.url.errors }}
+      {{ form.name.label_tag(label_suffix='') }}
+      {{ form.url.label_tag(label_suffix='') }}
+      <span class="arrow">{{ form.name }}</span>
+      {{ form.url }}
+      <button
+        title="Delete"
+        class="button delete-inline far fa-trash-alt"
+        tabindex="-1"
+      ></button>
+      {{ form.DELETE }}
+      {{ form.name.errors }}
+      {{ form.url.errors }}
     </div>
-{% endfor %}
+  {% endfor %}
 
-<div class="{{ type }} inline controls clearfix" data-count="{{ formset.total_form_count() }}">
+  <div
+    class="{{ type }} inline controls clearfix"
+    data-count="{{ formset.total_form_count() }}"
+  >
     {{ formset.empty_form.name.label_tag(label_suffix='') }}
     {{ formset.empty_form.url.label_tag(label_suffix='') }}
     <span class="arrow">{{ formset.empty_form.name }}</span>
     {{ formset.empty_form.url }}
-    <button title="Delete" class="button delete-inline far fa-trash-alt" tabindex="-1"></button>
+    <button
+      title="Delete"
+      class="button delete-inline far fa-trash-alt"
+      tabindex="-1"
+    ></button>
     {{ formset.empty_form.DELETE }}
     {{ formset.empty_form.name.errors }}
     {{ formset.empty_form.url.errors }}
-</div>
+  </div>
 {% endmacro %}

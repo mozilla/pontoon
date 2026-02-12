@@ -59,7 +59,7 @@ body.top-contributors #heading .legend li .status.fas {
 
 .details div {
   display: inline-block;
-  width: 90px;
+  flex: 0 0 90px;
 }
 
 .details div span {
@@ -71,8 +71,15 @@ body.top-contributors #heading .legend li .status.fas {
   color: var(--white-1);
 }
 
-th:last-child,
+th:last-child {
+  text-align: center;
+  width: 270px;
+}
+
+.contributors-list th:last-child,
 .stats .details {
+  display: flex;
+  justify-content: center;
   text-align: center;
   width: 270px;
 }

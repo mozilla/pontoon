@@ -1,45 +1,51 @@
 <div class="translation-memory items">
-    <menu class="controls">
-        <div class="search-wrapper small clearfix">
-            <div class="icon fas fa-search"></div>
-            <input class="table-filter" type="search" autocomplete="off" value="{{ search_query }}" autofocus
-                placeholder="Search translation memory">
-        </div>
+  <menu class="controls">
+    <div class="search-wrapper small clearfix">
+      <div class="icon fas fa-search"></div>
+      <input
+        class="table-filter"
+        type="search"
+        autocomplete="off"
+        value="{{ search_query }}"
+        autofocus
+        placeholder="Search translation memory"
+      />
+    </div>
 
-        <div class="upload-wrapper">
-            <button class="cancel button">
-                <span class="fas fa-times"></span>
-            </button>
+    <div class="upload-wrapper">
+      <button class="cancel button">
+        <span class="fas fa-times"></span>
+      </button>
 
-            <button class="confirm button">
-                <span class="fas fa-upload"></span>
-                Continue
-            </button>
+      <button class="confirm button">
+        <span class="fas fa-upload"></span>
+        Continue
+      </button>
 
-            <button class="upload button">
-                <span class="fas fa-upload"></span>
-                Upload .TMX
-            </button>
-        </div>
+      <button class="upload button">
+        <span class="fas fa-upload"></span>
+        Upload .TMX
+      </button>
+    </div>
 
-        <p class="upload-terms">
-            By uploading content, you confirm that you have the right to share it, either as the owner or under a
-            license that permits redistribution.<br>
-            Please ensure that the content complies with applicable copyright laws and does not infringe on
-            third-party rights.
-        </p>
-    </menu>
+    <p class="upload-terms">
+      By uploading content, you confirm that you have the right to share it,
+      either as the owner or under a license that permits redistribution.<br />
+      Please ensure that the content complies with applicable copyright laws and
+      does not infringe on third-party rights.
+    </p>
+  </menu>
 
-    <table class="translation-memory-list">
-        <thead>
-            <tr>
-                <th class="source text">Source</th>
-                <th class="target text">Translation</th>
-                <th class="actions">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% include "teams/widgets/translation_memory_entries.html" with context %}
-        </tbody>
-    </table>
+  <table class="translation-memory-list">
+    <thead>
+      <tr>
+        <th class="source text">Source</th>
+        <th class="target text">Translation</th>
+        <th class="actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include "teams/widgets/translation_memory_entries.html" with context %}
+    </tbody>
+  </table>
 </div>
