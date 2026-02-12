@@ -1,6 +1,6 @@
 {% macro checkbox(label, class, attribute, is_enabled=False, title=False, help=False, form_field=None) %}
   <div
-    class="check-box {{ class }}{% if is_enabled %}enabled{% endif %}"
+    class="check-box {{ class }} {% if is_enabled %}enabled{% endif %}"
     data-attribute="{{ attribute }}"
     {% if title %}title="{{ title }}"{% endif %}
   >

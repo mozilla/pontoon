@@ -10,8 +10,8 @@
     <span class="title"
       >{{ title }}{% if title_link %}
         <sup
-          ><a href="{{ title_link }}" target="_blank" rel="noopener noreferrer"
-            >*</a
+          ><a href="{{ title_link }}" target="_blank" rel="noopener noreferrer">
+            *</a
           ></sup
         >
       {% endif %}</span
@@ -146,7 +146,7 @@
         </p>
       {% endif %}
     </div>
-    <div class="unreviewed{% if stats.unreviewed %}pending{% endif %}">
+    <div class="unreviewed {% if stats.unreviewed %}pending{% endif %}">
       {% if link %}
         <a href="{{ link + '?status=unreviewed' }}">
           <p class="title">Unreviewed</p>

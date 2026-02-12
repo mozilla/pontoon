@@ -70,7 +70,7 @@
 
   {% for project_locale in project_locales %}
     <div
-      class="permissions-groups project-locale clearfix{% if not project_locale.has_custom_translators %}hidden{% endif %}"
+      class="permissions-groups project-locale clearfix {% if not project_locale.has_custom_translators %}hidden{% endif %}"
       data-slug="{{ project_locale.project.slug }}"
       data-index="{{ loop.index0 }}"
     >

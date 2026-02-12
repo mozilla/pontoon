@@ -10,7 +10,7 @@
   <thead>
     <tr>
       <th
-        class="resource{% if deadline %}with-deadline{% endif %}{% if priority %}with-priority{% endif %} asc"
+        class="resource {% if deadline %}with-deadline{% endif %} {% if priority %}with-priority{% endif %} asc"
       >
         Resource<i class="fas"></i>
       </th>
@@ -38,7 +38,7 @@
 {% macro item(resource, main_link, chart_link, latest_activity, chart, deadline, priority) %}
   <tr class="limited">
     <td
-      class="resource{% if deadline %}with-deadline{% endif %}{% if priority %}with-priority{% endif %}"
+      class="resource {% if deadline %}with-deadline{% endif %} {% if priority %}with-priority{% endif %}"
     >
       <h4>
         <a href="{{ main_link }}">{{ resource.title }}</a>
