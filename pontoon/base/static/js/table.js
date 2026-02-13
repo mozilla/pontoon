@@ -125,8 +125,6 @@ var Pontoon = (function (my) {
               all = legend.find('.all .value').data('value') || 0,
               translated =
                 legend.find('.translated .value').data('value') / all || 0,
-              pretranslated =
-                legend.find('.pretranslated .value').data('value') / all || 0,
               warnings =
                 legend.find('.warnings .value').data('value') / all || 0;
 
@@ -134,7 +132,7 @@ var Pontoon = (function (my) {
               return 'not-ready';
             }
 
-            return translated + pretranslated + warnings;
+            return translated + warnings;
           }
 
           function getUnreviewed(el) {
