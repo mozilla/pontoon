@@ -89,7 +89,10 @@ def test_remove_resource():
             "b.po",
             "c.ftl",
         }
-        assert [res.obsolete for res in project.resources.all()] == [False, False, True]
+        assert project.resources.count() == 3
+        assert project.resources.get(path="c.ftl").obsolete is True
+        assert project.resources.get(path="a.ftl").obsolete is False
+        assert project.resources.get(path="b.po").obsolete is False
         assert TranslatedResource.objects.filter(resource=res_c).exists()
         assert Entity.objects.filter(pk=entity_c.pk).exists()
         assert Translation.objects.filter(pk=translation_c.pk).exists()
