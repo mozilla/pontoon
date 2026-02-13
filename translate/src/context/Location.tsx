@@ -95,30 +95,25 @@ function parse(
     entity: Number(params.get('string')),
   };
   const list = params.get('list');
-  const location: Location = list
-    ? { ...common, ...emptyParams, list: list.split(',').map(Number) }
-    : {
-        ...common,
-        search: params.get('search'),
-        status: params.get('status'),
-        extra: params.get('extra'),
-        search_identifiers: params.has('search_identifiers'),
-        search_exclude_source_strings: params.has(
-          'search_exclude_source_strings',
-        ),
-        search_rejected_translations: params.has(
-          'search_rejected_translations',
-        ),
-        search_match_case: params.has('search_match_case'),
-        search_match_whole_word: params.has('search_match_whole_word'),
-        tag: params.get('tag'),
-        author: params.get('author'),
-        time: params.get('time'),
-        reviewer: params.get('reviewer'),
-        review_time: params.get('review_time'),
-        exclude_self_reviewed: params.has('exclude_self_reviewed'),
-        list: null,
-      };
+  const location: Location = {
+    ...common,
+    list: list ? list.split(',').map(Number) : null,
+    search: params.get('search'),
+    status: params.get('status'),
+    extra: params.get('extra'),
+    search_identifiers: params.has('search_identifiers'),
+    search_exclude_source_strings: params.has('search_exclude_source_strings'),
+    search_rejected_translations: params.has('search_rejected_translations'),
+    search_match_case: params.has('search_match_case'),
+    search_match_whole_word: params.has('search_match_whole_word'),
+    tag: params.get('tag'),
+    author: params.get('author'),
+    time: params.get('time'),
+    reviewer: params.get('reviewer'),
+    review_time: params.get('review_time'),
+    exclude_self_reviewed: params.has('exclude_self_reviewed'),
+  };
+
   return location;
 }
 
@@ -135,34 +130,31 @@ function stringify(prev: Location, next: string | Partial<Location>) {
   const params = new URLSearchParams();
   if (next.list) {
     params.set('list', next.list.join(','));
-  } else {
-    let keepList = !('list' in next);
-    for (const key of [
-      'search',
-      'status',
-      'extra',
-      'search_identifiers',
-      'search_exclude_source_strings',
-      'search_rejected_translations',
-      'search_match_case',
-      'search_match_whole_word',
-      'tag',
-      'author',
-      'time',
-      'reviewer',
-      'review_time',
-      'exclude_self_reviewed',
-    ] as const) {
-      const value = key in next ? next[key] : prev[key];
-      if (value) {
-        params.set(key, String(value));
-        keepList &&= false;
-      }
-    }
-    if (keepList && prev.list) {
-      params.set('list', prev.list.join(','));
+  } else if (prev.list && !('list' in next)) {
+    params.set('list', prev.list.join(','));
+  }
+  for (const key of [
+    'search',
+    'status',
+    'extra',
+    'search_identifiers',
+    'search_exclude_source_strings',
+    'search_rejected_translations',
+    'search_match_case',
+    'search_match_whole_word',
+    'tag',
+    'author',
+    'time',
+    'reviewer',
+    'review_time',
+    'exclude_self_reviewed',
+  ] as const) {
+    const value = key in next ? next[key] : prev[key];
+    if (value) {
+      params.set(key, String(value));
     }
   }
+
   const entity = 'entity' in next ? next.entity : prev.entity;
   if (entity) {
     params.set('string', String(entity));
