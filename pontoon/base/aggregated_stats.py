@@ -51,12 +51,7 @@ class AggregatedStats:
 
     @property
     def complete(self) -> bool:
-        return (
-            self.total_strings
-            == self.approved_strings
-            + self.pretranslated_strings
-            + self.strings_with_warnings
-        )
+        return self.total_strings == self.approved_strings + self.strings_with_warnings
 
 
 def get_top_instances(qs, stats: dict[int, dict[str, int]]) -> dict[str, object] | None:
