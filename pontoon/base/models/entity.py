@@ -252,12 +252,11 @@ class EntityQuerySet(models.QuerySet):
         return entities
 
     def obsolete(self, now):
-        entities = list(self)
-        for entity in entities:
-            entity.obsolete = True
-            entity.date_obsoleted = now
-            entity.section = None
-        Entity.objects.bulk_update(entities, ["obsolete", "date_obsoleted", "section"])
+        self.update(
+            obsolete=True,
+            date_obsoleted=now,
+            section=None,
+        )
 
 
 class Entity(DirtyFieldsMixin, models.Model):
