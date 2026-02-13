@@ -3,6 +3,14 @@ from django.db import models
 from django.utils import timezone
 
 
+class ResourceQuerySet(models.QuerySet):
+    def obsolete(self, now):
+        from pontoon.base.models.entity import Entity
+
+        self.update(obsolete=True, date_obsoleted=now)
+        Entity.objects.filter(resource__in=self).obsolete(now)
+
+
 class Resource(models.Model):
     project = models.ForeignKey("Project", models.CASCADE, related_name="resources")
     path = models.TextField()  # Path to localization file
@@ -41,6 +49,8 @@ class Resource(models.Model):
     )
 
     deadline = models.DateField(blank=True, null=True)
+
+    objects = ResourceQuerySet.as_manager()
 
     # Formats that allow empty translations
     EMPTY_TRANSLATION_FORMATS = {
