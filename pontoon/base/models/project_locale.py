@@ -58,7 +58,7 @@ class ProjectLocaleQuerySet(models.QuerySet):
             - F("warnings"),
             is_complete=Case(
                 When(
-                    total=F("approved") + F("pretranslated") + F("warnings"),
+                    total=F("approved") + F("warnings"),
                     then=Value(True),
                 ),
                 default=Value(False),
