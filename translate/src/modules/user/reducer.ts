@@ -51,7 +51,7 @@ export type Notification = {
   readonly actor: {
     readonly anchor: string;
     readonly url: string;
-  };
+  } | null;
   readonly target: {
     readonly anchor: string;
     readonly url: string;
