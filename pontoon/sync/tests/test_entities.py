@@ -12,6 +12,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from pontoon.base.models import Entity, Project, TranslatedResource
+from pontoon.base.models.translation import Translation
 from pontoon.base.tests import (
     EntityFactory,
     LocaleFactory,
@@ -54,13 +55,17 @@ def test_remove_resource():
         ResourceFactory.create(project=project, path="a.ftl", format="fluent")
         ResourceFactory.create(project=project, path="b.po", format="gettext")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
+        entity_c = EntityFactory.create(resource=res_c, string="Hello")
+        translation_c = TranslationFactory.create(
+            entity=entity_c, locale=locale, string="Bonjour"
+        )
 
         # Filesystem setup
         makedirs(repo.checkout_path)
         build_file_tree(
             repo.checkout_path,
             {
-                "en-US": {"a.ftl": "", "b.pot": ""},
+                "en-US": {"a.ftl": "", "b.po": ""},
                 "fr-Test": {"a.ftl": "", "b.po": "", "c.ftl": ""},
             },
         )
@@ -79,9 +84,15 @@ def test_remove_resource():
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (0, set(), {"c.ftl"})
-        assert {res.path for res in project.resources.all()} == {"a.ftl", "b.po"}
-        with pytest.raises(TranslatedResource.DoesNotExist):
-            TranslatedResource.objects.get(resource=res_c)
+        assert {res.path for res in project.resources.all()} == {
+            "a.ftl",
+            "b.po",
+            "c.ftl",
+        }
+        assert [res.obsolete for res in project.resources.all()] == [False, False, True]
+        assert TranslatedResource.objects.filter(resource=res_c).exists()
+        assert Entity.objects.filter(pk=entity_c.pk).exists()
+        assert Translation.objects.filter(pk=translation_c.pk).exists()
 
 
 @pytest.mark.django_db

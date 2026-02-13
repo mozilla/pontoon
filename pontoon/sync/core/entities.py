@@ -70,7 +70,7 @@ def sync_resources_from_repo(
 
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)
-        removed_paths = remove_resources(project, paths, checkout)
+        removed_paths = remove_resources(project, paths, checkout, now)
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
         new_res_added_ent_count, _ = add_resources(project, updates, changed_paths, now)
         update_translated_resources(project, locale_map, paths)
@@ -103,7 +103,10 @@ def rename_resources(
 
 
 def remove_resources(
-    project: Project, paths: L10nConfigPaths | L10nDiscoverPaths, checkout: Checkout
+    project: Project,
+    paths: L10nConfigPaths | L10nDiscoverPaths,
+    checkout: Checkout,
+    now: datetime,
 ) -> set[str]:
     if not checkout.removed:
         return set()
@@ -115,8 +118,7 @@ def remove_resources(
     )
     removed_db_paths = {res.path for res in removed_resources}
     if removed_db_paths:
-        # FIXME: https://github.com/mozilla/pontoon/issues/2133
-        removed_resources.delete()
+        removed_resources.obsolete(now)
         rm_count = len(removed_db_paths)
         str_source_files = "source file" if rm_count == 1 else "source files"
         log.info(
