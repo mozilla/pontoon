@@ -39,7 +39,7 @@ $(function () {
       data: data,
       success: function (response) {
         $('#entity-list').append(response.html);
-        $('#entity-list-header').show();
+        $('#entity-list-header').css('display', 'flex');
         hasMore = response['has_more'];
         currentPage += pageCount;
         updateURL();

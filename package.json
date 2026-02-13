@@ -78,7 +78,8 @@
     "globals": "^15.9.0",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^27.4.0",
-    "prettier": "^3.3.3",
+    "prettier": "^3.8.1",
+    "prettier-plugin-jinja-template": "^2.1.0",
     "react-intersection-observer": "9.11.0",
     "rollup": "^3.29.5",
     "rollup-plugin-css-only": "^4.3.0",
@@ -91,7 +92,21 @@
     "trailingComma": "all",
     "tabWidth": 2,
     "jsxSingleQuote": true,
-    "singleQuote": true
+    "singleQuote": true,
+    "plugins": [
+      "prettier-plugin-jinja-template"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.html",
+          "**/*.jinja"
+        ],
+        "options": {
+          "parser": "jinja-template"
+        }
+      }
+    ]
   },
   "engines": {
     "npm": ">= 7"

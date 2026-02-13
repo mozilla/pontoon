@@ -11,10 +11,6 @@ venv/
 /media/
 /static/
 
-# Jinja templates
-translate/public/translate.html
-**/templates/**/*.html
-
 # Vendored code
 pontoon/base/static/css/boilerplate.css
 pontoon/base/static/css/fontawesome-all.css

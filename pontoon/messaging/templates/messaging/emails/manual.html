@@ -2,21 +2,28 @@
 
 {% block title %}{{ subject }}{% endblock %}
 
-{% block extend_css %}{% endblock %}
+{% block extend_css %}
+{% endblock %}
 
 {% block header %}Hello.{% endblock %}
 
-{% block subheader %}{% endblock %}
+{% block subheader %}
+{% endblock %}
 
-{% block content_class %}{% endblock %}
+{% block content_class %}
+{% endblock %}
 
 {% block content %}
-{{ content|safe }}
+  {{ content|safe }}
 {% endblock %}
 
 {% block footer %}
-{% if not is_transactional %}
-{{ settings.EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT }}<br>
-To no longer receive emails like these, unsubscribe here: <a href="{{ full_url('pontoon.messaging.unsubscribe', user.profile.unique_id) }}">Unsubscribe</a>.
-{% endif %}
+  {% if not is_transactional %}
+    {{ settings.EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT }}<br />
+    To no longer receive emails like these, unsubscribe here:
+    <a
+      href="{{ full_url('pontoon.messaging.unsubscribe', user.profile.unique_id) }}"
+      >Unsubscribe</a
+    >.
+  {% endif %}
 {% endblock %}

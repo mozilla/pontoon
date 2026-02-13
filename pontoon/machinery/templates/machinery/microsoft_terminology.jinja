@@ -1,17 +1,19 @@
 <?xml version='1.0' encoding='utf-8'?>
 <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
-    <soap-env:Header></soap-env:Header>
-    <soap-env:Body>
-        <GetTranslations xmlns="http://api.terminology.microsoft.com/terminology">
-            <text>{{ text }}</text>
-            <from>en-US</from>
-            <to>{{ to }}</to>
-            <sources xmlns:a="https://api.terminology.microsoft.com/terminology"
-                xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-                <a:TranslationSource>Terms</a:TranslationSource>
-                <a:TranslationSource>UiStrings</a:TranslationSource>
-            </sources>
-            <maxTranslations>{{ max_result }}</maxTranslations>
-        </GetTranslations>
-    </soap-env:Body>
+  <soap-env:Header></soap-env:Header>
+  <soap-env:Body>
+    <GetTranslations xmlns="http://api.terminology.microsoft.com/terminology">
+      <text>{{ text }}</text>
+      <from>en-US</from>
+      <to>{{ to }}</to>
+      <sources
+        xmlns:a="https://api.terminology.microsoft.com/terminology"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+      >
+        <a:TranslationSource>Terms</a:TranslationSource>
+        <a:TranslationSource>UiStrings</a:TranslationSource>
+      </sources>
+      <maxTranslations>{{ max_result }}</maxTranslations>
+    </GetTranslations>
+  </soap-env:Body>
 </soap-env:Envelope>

@@ -5,14 +5,21 @@
 {% block class %}standalone{% endblock %}
 
 {% block middle %}
-<section id="main">
+  <section id="main">
     <section>
       <div class="container">
         <h1>You've been unsubscribed</h1>
-        <p class="main-text">Unsubscribed by accident? <a href="{{ url('pontoon.messaging.subscribe', uuid) }}">Subscribe again</a> or update your email <a href="{{ url('pontoon.contributors.settings') }}">settings</a>.</p>
+        <p class="main-text">
+          Unsubscribed by accident?
+          <a href="{{ url('pontoon.messaging.subscribe', uuid) }}"
+            >Subscribe again</a
+          >
+          or update your email
+          <a href="{{ url('pontoon.contributors.settings') }}">settings</a>.
+        </p>
       </div>
     </section>
-</section>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

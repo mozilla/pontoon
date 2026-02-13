@@ -1,33 +1,33 @@
 <!-- Locale selector -->
 {% macro locale(locales_list, locale_selected) %}
-<div class="locale-selector">
-  <div class="locale select">
-    <div class="button selector noselect">
-      <span class="language" {{ locale_selected.serialize() | dict_html_attrs }}>{{ locale_selected.name }}</span><span class="code">{{ locale_selected.code }}</span>
-    </div>
-
-    <div class="menu">
-      <div class="search-wrapper clearfix">
-        <div class="icon fas fa-search"></div>
-        <input type="search" autocomplete="off" autofocus>
+  <div class="locale-selector">
+    <div class="locale select">
+      <div class="button selector noselect">
+        <span
+          class="language"
+          {{ locale_selected.serialize() | dict_html_attrs }}
+          >{{ locale_selected.name }}</span
+        ><span class="code">{{ locale_selected.code }}</span>
       </div>
 
-      <ul>
-        {% for l in locales_list %}
-          <li class="clearfix">
-            <span class="language"
-              {{ l.serialize() | dict_html_attrs }}
-            >
-              {{ l.name }}
-            </span>
-            <span class="code">
-              {{ l.code }}
-            </span>
-          </li>
-        {% endfor %}
-        <li class="no-match">No results</li>
-      </ul>
+      <div class="menu">
+        <div class="search-wrapper clearfix">
+          <div class="icon fas fa-search"></div>
+          <input type="search" autocomplete="off" autofocus />
+        </div>
+
+        <ul>
+          {% for l in locales_list %}
+            <li class="clearfix">
+              <span class="language" {{ l.serialize() | dict_html_attrs }}>
+                {{ l.name }}
+              </span>
+              <span class="code"> {{ l.code }} </span>
+            </li>
+          {% endfor %}
+          <li class="no-match">No results</li>
+        </ul>
+      </div>
     </div>
   </div>
-</div>
 {% endmacro %}

@@ -2,131 +2,143 @@
 {% import 'widgets/heading_info.html' as HeadingInfo %}
 {% import "widgets/menu.html" as Menu %}
 
-{% block title %}{{ project.name }} &middot; {{ locale.name }} ({{ locale.code }}){% endblock %}
+{% block title %}
+  {{ project.name }}
+  &middot; {{ locale.name }} ({{ locale.code }})
+{% endblock %}
 
 {% block class %}localization{% endblock %}
 
 {% block before %}
-<!-- Server data -->
-<div id="server"
-     class="hidden"
-     data-url-split="{{ locale.code }}/{{ project.slug }}">
-</div>
+  <!-- Server data -->
+  <div
+    id="server"
+    class="hidden"
+    data-url-split="{{ locale.code }}/{{ project.slug }}"
+  ></div>
 {% endblock %}
 
 {% block heading %}
-<section id="heading">
-  <div class="container clearfix">
-    {{ HeadingInfo.download_selector(locale.code, project.slug) }}
-    <h1>
-      {{ HeadingInfo.heading_item(
-        title=project.name,
-        link=url('pontoon.projects.project', project.slug))
-      }}
-      {{ HeadingInfo.heading_item(
-        title=locale.name,
-        link=url('pontoon.teams.team', locale.code),
-        class='small')
-      }}
-    </h1>
-
-    <ul class="details">
-      {{ HeadingInfo.details_item_priority(project.priority) }}
-
-      {{ HeadingInfo.details_item_deadline(project.deadline, project_locale_stats.approved == project_locale_stats.total) }}
-
-      {{ HeadingInfo.details_item_url(
-        title='Repository',
-        class='repository',
-        url=project.repositories.first().website)
-      }}
-
-      {{ HeadingInfo.details_item_resources(project.externalresource_set.all(), locale.code) }}
-
-      {% if project.contact %}
-        {{ HeadingInfo.details_item(
-          title='Project manager',
-          class='contact-person',
-          value=project.contact.name_or_email,
-          value_link=url('pontoon.contributors.contributor.username', project.contact.username))
+  <section id="heading">
+    <div class="container clearfix">
+      {{ HeadingInfo.download_selector(locale.code, project.slug) }}
+      <h1>
+        {{
+          HeadingInfo.heading_item(
+          title=project.name,
+          link=url('pontoon.projects.project', project.slug))
         }}
-      {% endif %}
-    </ul>
+        {{
+          HeadingInfo.heading_item(
+          title=locale.name,
+          link=url('pontoon.teams.team', locale.code),
+          class='small')
+        }}
+      </h1>
 
-    {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(project_locale_stats, url('pontoon.translate', locale.code, project.slug, 'all-resources')) }}
-  </div>
-</section>
+      <ul class="details">
+        {{ HeadingInfo.details_item_priority(project.priority) }}
+
+        {{ HeadingInfo.details_item_deadline(project.deadline, project_locale_stats.approved == project_locale_stats.total) }}
+
+        {{
+          HeadingInfo.details_item_url(
+          title='Repository',
+          class='repository',
+          url=project.repositories.first().website)
+        }}
+
+        {{ HeadingInfo.details_item_resources(project.externalresource_set.all(), locale.code) }}
+
+        {% if project.contact %}
+          {{
+            HeadingInfo.details_item(
+            title='Project manager',
+            class='contact-person',
+            value=project.contact.name_or_email,
+            value_link=url('pontoon.contributors.contributor.username', project.contact.username))
+          }}
+        {% endif %}
+      </ul>
+
+      {{ HeadingInfo.progress_chart() }}
+      {{ HeadingInfo.progress_chart_legend(project_locale_stats, url('pontoon.translate', locale.code, project.slug, 'all-resources')) }}
+    </div>
+  </section>
 {% endblock %}
 
 {% block middle %}
-<section id="middle" class="submenu tabs">
-  <div class="container">
-    {% set current_page = request.path.split('/')[2]|default('') %}
-    {% call Menu.submenu() %}
-      {{ Menu.item(
-          'Resources',
-          url('pontoon.localizations.localization', locale.code, project.slug),
-          is_active = (current_page == ''),
-          count = resource_count,
-          icon = 'file',
-        )
-      }}
-      {% if project.tags_enabled and tags_count %}
-         {{ Menu.item(
-           'Tags',
-           url('pontoon.localizations.tags', locale.code, project.slug),
-           is_active = (current_page == 'tags'),
-           count = tags_count,
-           icon = 'tag',
-         )
-      }}
-      {% endif %}
-      {{ Menu.item(
-          'Contributors',
-          url('pontoon.localizations.contributors', locale.code, project.slug),
-          is_active = (current_page == 'contributors'),
-          count = False,
-          icon = 'users',
-        )
-      }}
-      {% if settings.ENABLE_INSIGHTS %}
-      {{ Menu.item(
-          'Insights',
-          url('pontoon.localizations.insights', locale.code, project.slug),
-          is_active = (current_page == 'insights'),
-          count = False,
-          icon = 'chart-line',
-        )
-      }}
-      {% endif %}
-      {{ Menu.item(
-          'Project Info',
-          url('pontoon.localizations.project-info', locale.code, project.slug),
-          is_active = (current_page == 'project-info'),
-          count = 1 if project.info else False,
-          icon = 'info-circle',
-        )
-      }}
-      {{ Menu.item(
-          'Team Info',
-          url('pontoon.localizations.team-info', locale.code, project.slug),
-          is_active = (current_page == 'team-info'),
-          count = 1 if locale.team_description else False,
-          icon = 'info-circle',
-        )
-      }}
-    {% endcall %}
-  </div>
-</section>
+  <section id="middle" class="submenu tabs">
+    <div class="container">
+      {% set current_page = request.path.split('/')[2]|default('') %}
+      {% call Menu.submenu() %}
+        {{
+          Menu.item(
+            'Resources',
+            url('pontoon.localizations.localization', locale.code, project.slug),
+            is_active = (current_page == ''),
+            count = resource_count,
+            icon = 'file',
+          )
+        }}
+        {% if project.tags_enabled and tags_count %}
+          {{
+            Menu.item(
+              'Tags',
+              url('pontoon.localizations.tags', locale.code, project.slug),
+              is_active = (current_page == 'tags'),
+              count = tags_count,
+              icon = 'tag',
+            )
+          }}
+        {% endif %}
+        {{
+          Menu.item(
+            'Contributors',
+            url('pontoon.localizations.contributors', locale.code, project.slug),
+            is_active = (current_page == 'contributors'),
+            count = False,
+            icon = 'users',
+          )
+        }}
+        {% if settings.ENABLE_INSIGHTS %}
+          {{
+            Menu.item(
+              'Insights',
+              url('pontoon.localizations.insights', locale.code, project.slug),
+              is_active = (current_page == 'insights'),
+              count = False,
+              icon = 'chart-line',
+            )
+          }}
+        {% endif %}
+        {{
+          Menu.item(
+            'Project Info',
+            url('pontoon.localizations.project-info', locale.code, project.slug),
+            is_active = (current_page == 'project-info'),
+            count = 1 if project.info else False,
+            icon = 'info-circle',
+          )
+        }}
+        {{
+          Menu.item(
+            'Team Info',
+            url('pontoon.localizations.team-info', locale.code, project.slug),
+            is_active = (current_page == 'team-info'),
+            count = 1 if locale.team_description else False,
+            icon = 'info-circle',
+          )
+        }}
+      {% endcall %}
+    </div>
+  </section>
 {% endblock %}
 
 {% block bottom %}
-<section id="main" class="clearfix">
-  <div class="container">
-
-  </div>
-</section>
+  <section id="main" class="clearfix">
+    <div class="container"></div>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

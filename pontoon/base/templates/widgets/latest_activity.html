@@ -1,20 +1,28 @@
 {% macro span(latest_activity) -%}
-<span class="latest">
-  {% if latest_activity.date %}
-    {% if latest_activity.user %}
-      {% set action = latest_activity.type + ' by' %}
-      {% set user = latest_activity.user.name_or_email %}
-      {% set link = url('pontoon.contributors.contributor.username', latest_activity.user.username) %}
-      {% set avatar = latest_activity.user.gravatar_url(88) %}
+  <span class="latest">
+    {% if latest_activity.date %}
+      {% if latest_activity.user %}
+        {% set action = latest_activity.type + ' by' %}
+        {% set user = latest_activity.user.name_or_email %}
+        {% set link = url('pontoon.contributors.contributor.username', latest_activity.user.username) %}
+        {% set avatar = latest_activity.user.gravatar_url(88) %}
+      {% else %}
+        {% set action = 'imported' %}
+        {% set user = '' %}
+        {% set link = '' %}
+        {% set avatar = '' %}
+      {% endif %}
+      <time
+        datetime="{{ latest_activity.date.isoformat() }}"
+        data-translation="{{ latest_activity.translation|as_plain_message() }}"
+        data-action="{{ action }}"
+        data-user-name="{{ user }}"
+        data-user-link="{{ link }}"
+        data-user-avatar="{{ avatar }}"
+        >{{ latest_activity.date|naturaltime }}</time
+      >
     {% else %}
-      {% set action = 'imported' %}
-      {% set user = '' %}
-      {% set link = '' %}
-      {% set avatar = '' %}
+      <span class="not">―</span>
     {% endif %}
-    <time datetime="{{ latest_activity.date.isoformat() }}" data-translation="{{ latest_activity.translation|as_plain_message() }}" data-action="{{ action }}" data-user-name="{{ user }}" data-user-link="{{ link }}" data-user-avatar="{{ avatar }}">{{ latest_activity.date|naturaltime }}</time>
-  {% else %}
-    <span class="not">―</span>
-  {% endif %}
-</span>
+  </span>
 {%- endmacro %}

@@ -3,10 +3,12 @@
 {% block title %}Page not found{% endblock %}
 
 {% block middle %}
-<section id="error">
-  <div class="inner">
-    <h1 id="title"><a href="/">Oops!</a></h1>
-    <h2 id="subtitle">{% block description %}We couldn't find the page you're looking for.{% endblock %}</h2>
-  </div>
-</section>
+  <section id="error">
+    <div class="inner">
+      <h1 id="title"><a href="/">Oops!</a></h1>
+      <h2 id="subtitle">
+        {% block description %}We couldn't find the page you're looking for.{% endblock %}
+      </h2>
+    </div>
+  </section>
 {% endblock %}

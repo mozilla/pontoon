@@ -1,317 +1,349 @@
 {% extends "base.html" %}
-
 {% import 'admin_team_selector.html' as admin_team_selector %}
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'admin_inline_formset.html' as inline_formset %}
 {% import 'tag_inline_formset.html' as tag_inline_formset %}
 
-{% block title %}{{'%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
+{% block title %}{{ '%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
 
 {% block class %}admin-project{% endblock %}
 
 {% block middle %}
-<form id="admin-form" method="POST" action="{{ request.path }}" class="{% if pk %}edit{% else %}add{% endif %}">
+  <form
+    id="admin-form"
+    method="POST"
+    action="{{ request.path }}"
+    class="{% if pk %}edit{% else %}add{% endif %}"
+  >
+    <h1>
+      {{ '%(subtitle)s' | format(subtitle=subtitle) }}
+      {% if pk %}
+        <aside>
+          <a href="{{ url('pontoon.admin.project.new') }}">Add new</a>
+          {% if translate_locale and form.slug.value() != '' %}
+            <a
+              class="translate"
+              href="{{ url('pontoon.localizations.localization', translate_locale, form.slug.value()) }}"
+              >Translate</a
+            >
+          {% endif %}
+        </aside>
+      {% endif %}
+    </h1>
 
-  <h1>
-  {{ '%(subtitle)s' | format(subtitle=subtitle) }}
-  {% if pk %}
-  <aside>
-    <a href="{{ url('pontoon.admin.project.new') }}">Add new</a>
-    {% if translate_locale and form.slug.value() != '' %}
-    <a class="translate" href="{{ url('pontoon.localizations.localization', translate_locale, form.slug.value()) }}">Translate</a>
+    {% csrf_token %}
+
+    {% if pk %}
+      <input type="hidden" value="{{ pk }}" name="pk" />
     {% endif %}
-  </aside>
-  {% endif %}
-  </h1>
 
-  {% csrf_token %}
-
-  {% if pk %}
-  <input type="hidden" value="{{ pk }}" name="pk">
-  {% endif %}
-
-  <div class="half clearfix">
-    <div class="labels">
-      {{ form.name.label_tag() }}
-      {{ form.slug.label_tag() }}
-    </div>
-    <div class="fields">
-      {{ form.name }}
-      {{ form.slug }}
-    </div>
-    <div class="errors">
-      <div class="for-name">
-        {{ form.name.errors }}
+    <div class="half clearfix">
+      <div class="labels">
+        {{ form.name.label_tag() }}
+        {{ form.slug.label_tag() }}
       </div>
-      <div class="for-slug">
-        {{ form.slug.errors }}
+      <div class="fields">
+        {{ form.name }}
+        {{ form.slug }}
+      </div>
+      <div class="errors">
+        <div class="for-name">{{ form.name.errors }}</div>
+        <div class="for-slug">{{ form.slug.errors }}</div>
       </div>
     </div>
-  </div>
 
-  <h3>Locales</h3>
+    <h3>Locales</h3>
 
-  <div class="locales clearfix">
+    <div class="locales clearfix">
       {{ admin_team_selector.render(locales_available, locales_selected, locales_readonly) }}
       {{ form.locales }}
       {{ form.locales.errors }}
       {{ form.locales_readonly }}
       {{ form.locales_readonly.errors }}
       {{ form.non_field_errors() }}
-  </div>
+    </div>
 
-  <div class="locales-toolbar clearfix">
-    <section class="can-be-requested checkbox clearfix">
-      <label for="id_can_be_requested">
+    <div class="locales-toolbar clearfix">
+      <section class="can-be-requested checkbox clearfix">
+        <label for="id_can_be_requested">
           {{ form.can_be_requested }}Locales can opt-in
-      </label>
-    </section>
-    <section class="copy-locales clearfix">
-      <select id="copy-locales">
-        <option selected>Copy locales from another project</option>
-        {% for project in projects %}
-          <option>{{ project }}</option>
-        {% endfor %}
-      </select>
-    </section>
-  </div>
-
-  <section class="data-source">
-    <h3>
-      <span>Data Source</span>
-    </h3>
-    {{ form.data_source }}
-  </section>
-
-  <section class="new-strings">
-    <h3>
-      <span>Strings</span>
-    </h3>
-    {% if not pk %}
-    <div class="clearfix">
-      <label for="id_new_strings">
-        Enter strings to create the first entities. Strings are separated on new line characters.
-      </label>
-      <textarea id="id_new_strings" name="new_strings" class="strings-source" placeholder="First strings"></textarea>
-    </div>
-    {% endif %}
-    {% if pk %}
-    <div class="clearfix manage-strings">
-      <a href="{{ url('pontoon.admin.project.strings', slug) }}">Manage Strings</a>
-      <a href="{{ url('pontoon.admin.project.strings', slug) }}?format=csv">Download Strings</a>
-    </div>
-    {% endif %}
-  </section>
-
-  <section class="repositories">
-  <h3>
-    <span>Repositories</span>
-    <a href="#add-repo" class="add-repo">Add more</a>
-  </h3>
-
-  {{ repo_formset.management_form }}
-  {{ repo_formset.non_form_errors() }}
-  {% for repo_form in repo_formset %}
-    <div class="repository clearfix">
-      {{ repo_form.id }}
-      <div class="clearfix">
-        <section class="type-wrapper">
-          {{ repo_form.type.label_tag(label_suffix='') }}
-          {{ repo_form.type }}
-        </section>
-        <section class="details-wrapper">
-          <div class="repo">
-            {{ repo_form.url.label_tag(label_suffix='') }}
-            {{ repo_form.url }}
-            {{ repo_form.url.errors }}
-          </div>
-        </section>
-        <section class="branch-wrapper">
-          <div class="branch">
-            {{ repo_form.branch.label_tag(label_suffix='') }}
-            {{ repo_form.branch }}
-            {{ repo_form.branch.errors }}
-          </div>
-        </section>
-      </div>
-      <section class="website-wrapper clearfix">
-        <div class="website">
-          {{ repo_form.website.label_tag(label_suffix='') }}
-          {{ repo_form.website }}
-          {{ repo_form.website.errors }}
-        </div>
+        </label>
       </section>
-      <div class="repository-toolbar clearfix">
-        <section class="checkbox source-wrapper">
-          <label for="id_repositories-0-source_repo" title="{{ repo_form.source_repo.help_text|trim }}">
-              {{ repo_form.source_repo }}{{ repo_form.source_repo.label }}
+      <section class="copy-locales clearfix">
+        <select id="copy-locales">
+          <option selected>Copy locales from another project</option>
+          {% for project in projects %}
+            <option>{{ project }}</option>
+          {% endfor %}
+        </select>
+      </section>
+    </div>
+
+    <section class="data-source">
+      <h3>
+        <span>Data Source</span>
+      </h3>
+      {{ form.data_source }}
+    </section>
+
+    <section class="new-strings">
+      <h3>
+        <span>Strings</span>
+      </h3>
+      {% if not pk %}
+        <div class="clearfix">
+          <label for="id_new_strings">
+            Enter strings to create the first entities. Strings are separated on
+            new line characters.
           </label>
-        </section>
-        <section class="delete-wrapper">
-          <div class="delete">
-            {{ repo_form.DELETE.label_tag(label_suffix='') }}
-            {{ repo_form.DELETE }}
+          <textarea
+            id="id_new_strings"
+            name="new_strings"
+            class="strings-source"
+            placeholder="First strings"
+          ></textarea>
+        </div>
+      {% endif %}
+      {% if pk %}
+        <div class="clearfix manage-strings">
+          <a href="{{ url('pontoon.admin.project.strings', slug) }}"
+            >Manage Strings</a
+          >
+          <a href="{{ url('pontoon.admin.project.strings', slug) }}?format=csv"
+            >Download Strings</a
+          >
+        </div>
+      {% endif %}
+    </section>
+
+    <section class="repositories">
+      <h3>
+        <span>Repositories</span>
+        <a href="#add-repo" class="add-repo">Add more</a>
+      </h3>
+
+      {{ repo_formset.management_form }}
+      {{ repo_formset.non_form_errors() }}
+      {% for repo_form in repo_formset %}
+        <div class="repository clearfix">
+          {{ repo_form.id }}
+          <div class="clearfix">
+            <section class="type-wrapper">
+              {{ repo_form.type.label_tag(label_suffix='') }}
+              {{ repo_form.type }}
+            </section>
+            <section class="details-wrapper">
+              <div class="repo">
+                {{ repo_form.url.label_tag(label_suffix='') }}
+                {{ repo_form.url }}
+                {{ repo_form.url.errors }}
+              </div>
+            </section>
+            <section class="branch-wrapper">
+              <div class="branch">
+                {{ repo_form.branch.label_tag(label_suffix='') }}
+                {{ repo_form.branch }}
+                {{ repo_form.branch.errors }}
+              </div>
+            </section>
+          </div>
+          <section class="website-wrapper clearfix">
+            <div class="website">
+              {{ repo_form.website.label_tag(label_suffix='') }}
+              {{ repo_form.website }}
+              {{ repo_form.website.errors }}
+            </div>
+          </section>
+          <div class="repository-toolbar clearfix">
+            <section class="checkbox source-wrapper">
+              <label
+                for="id_repositories-0-source_repo"
+                title="{{ repo_form.source_repo.help_text|trim }}"
+              >
+                {{ repo_form.source_repo }}{{ repo_form.source_repo.label }}
+              </label>
+            </section>
+            <section class="delete-wrapper">
+              <div class="delete">
+                {{ repo_form.DELETE.label_tag(label_suffix='') }}
+                {{ repo_form.DELETE }}
+              </div>
+            </section>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="repository-empty clearfix">
+        {{ repo_formset.empty_form.id }}
+        <div class="clearfix">
+          <section class="type-wrapper">
+            {{ repo_formset.empty_form.type.label_tag() }}
+            {{ repo_formset.empty_form.type }}
+          </section>
+          <section class="details-wrapper">
+            <div class="repo">
+              {{ repo_formset.empty_form.url.label_tag() }}
+              {{ repo_formset.empty_form.url }}
+            </div>
+          </section>
+          <section class="branch-wrapper">
+            <div class="branch">
+              {{ repo_formset.empty_form.branch.label_tag() }}
+              {{ repo_formset.empty_form.branch }}
+            </div>
+          </section>
+        </div>
+        <section class="website-wrapper clearfix">
+          <div class="website">
+            {{ repo_formset.empty_form.website.label_tag() }}
+            {{ repo_formset.empty_form.website }}
           </div>
         </section>
-      </div>
-    </div>
-  {% endfor %}
-  <div class="repository-empty clearfix">
-    {{ repo_formset.empty_form.id }}
-    <div class="clearfix">
-      <section class="type-wrapper">
-        {{ repo_formset.empty_form.type.label_tag() }}
-        {{ repo_formset.empty_form.type }}
-      </section>
-      <section class="details-wrapper">
-        <div class="repo">
-          {{ repo_formset.empty_form.url.label_tag() }}
-          {{ repo_formset.empty_form.url }}
+        <div class="repository-toolbar clearfix">
+          <section class="delete-wrapper">
+            <div class="delete">
+              {{ repo_formset.empty_form.DELETE.label_tag() }}
+              {{ repo_formset.empty_form.DELETE }}
+            </div>
+          </section>
         </div>
-      </section>
-      <section class="branch-wrapper">
-        <div class="branch">
-          {{ repo_formset.empty_form.branch.label_tag() }}
-          {{ repo_formset.empty_form.branch }}
-        </div>
-      </section>
-    </div>
-    <section class="website-wrapper clearfix">
-      <div class="website">
-        {{ repo_formset.empty_form.website.label_tag() }}
-        {{ repo_formset.empty_form.website }}
+        {{ repo_formset.empty_form.errors }}
       </div>
     </section>
-    <div class="repository-toolbar clearfix">
-      <section class="delete-wrapper">
-        <div class="delete">
-          {{ repo_formset.empty_form.DELETE.label_tag() }}
-          {{ repo_formset.empty_form.DELETE }}
-        </div>
-      </section>
+
+    <h3>
+      <span>{{ form.configuration_file.label }}</span>
+      <span class="small stress">(optional)</span>
+    </h3>
+
+    <div class="clearfix">
+      <label for="id_configuration_file">
+        {{ form.configuration_file.help_text|trim }}
+        <a
+          href="https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html"
+          target="_blank"
+          >Learn more.</a
+        >
+      </label>
+      <input
+        id="id_configuration_file"
+        name="configuration_file"
+        type="text"
+        placeholder="l10n.toml"
+        value="{{ form.configuration_file.value() or '' }}"
+      />
+      {{ form.configuration_file.errors }}
     </div>
-    {{ repo_formset.empty_form.errors }}
-  </div>
-  </section>
 
-  <h3>
-    <span>{{ form.configuration_file.label }}</span>
-    <span class="small stress">(optional)</span>
-  </h3>
+    <h3>Project info <span class="small stress">(optional)</span></h3>
 
-  <div class="clearfix">
-    <label for="id_configuration_file">
-      {{ form.configuration_file.help_text|trim }}
-      <a href="https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html" target="_blank">Learn more.</a>
-    </label>
-    <input id="id_configuration_file" name="configuration_file" type="text" placeholder="l10n.toml" value="{{ form.configuration_file.value() or '' }}">
-    {{ form.configuration_file.errors }}
-  </div>
-
-  <h3>Project info <span class="small stress">(optional)</span></h3>
-
-  <div>
+    <div>
       {{ form.info }}
       <p class="subtitle">Supports HTML</p>
       {{ form.info.errors }}
-  </div>
+    </div>
 
-  <div>
-      <label for="id_admin_notes">Internal admin notes - only visible on this page</label>
+    <div>
+      <label for="id_admin_notes"
+        >Internal admin notes - only visible on this page</label
+      >
       {{ form.admin_notes }}
       {{ form.admin_notes.errors }}
-  </div>
+    </div>
 
-  <div class="deadline-priority-contact clearfix">
-    <section class="deadline clearfix">
-      <label for="id_deadline">Target date</label>
-      <input id="id_deadline" name="deadline" value="{{ form.deadline.value() or '' }}" type="date">
-      {{ form.deadline.errors }}
-    </section>
-    <section class="priority clearfix">
-      {{ form.priority.label_tag() }}
-      {{ form.priority }}
-      {{ form.priority.errors }}
-    </section>
-    <section class="contact clearfix">
+    <div class="deadline-priority-contact clearfix">
+      <section class="deadline clearfix">
+        <label for="id_deadline">Target date</label>
+        <input
+          id="id_deadline"
+          name="deadline"
+          value="{{ form.deadline.value() or '' }}"
+          type="date"
+        />
+        {{ form.deadline.errors }}
+      </section>
+      <section class="priority clearfix">
+        {{ form.priority.label_tag() }}
+        {{ form.priority }}
+        {{ form.priority.errors }}
+      </section>
+      <section class="contact clearfix">
         <label for="id_contact">Project manager</label>
         {{ form.contact }}
         {{ form.contact.errors }}
+      </section>
+    </div>
+
+    {{ inline_formset.render(title='External resources', type='externalresource', formset=external_resource_formset) }}
+    <datalist id="external-resource-types">
+      <option value="Development site"></option>
+      <option value="Production site"></option>
+      <option value="Development build"></option>
+      <option value="Production build"></option>
+      <option value="Screenshots"></option>
+      <option value="Issue tracking"></option>
+    </datalist>
+
+    <section class="tags">
+      <h3>
+        <span>Tags</span>
+        <span class="small stress">(optional)</span>
+      </h3>
+      <div class="controls clearfix">
+        <div class="checkbox clearfix">
+          <label for="id_tags_enabled">
+            {{ form.tags_enabled }}{{ form.tags_enabled.label }}
+          </label>
+        </div>
+      </div>
+      {% if tag_formset %}
+        {{ tag_inline_formset.render(title='Linked tags', type='tag', formset=tag_formset, project=project) }}
+      {% endif %}
     </section>
-  </div>
 
-  {{ inline_formset.render(title='External resources', type='externalresource', formset=external_resource_formset) }}
-  <datalist id="external-resource-types">
-    <option value="Development site">
-    <option value="Production site">
-    <option value="Development build">
-    <option value="Production build">
-    <option value="Screenshots">
-    <option value="Issue tracking">
-  </datalist>
+    <section class="visibility">
+      <h3>
+        <span>Visibility</span>
+      </h3>
+      {{ form.visibility }}
+    </section>
 
-  <section class="tags">
-    <h3>
-      <span>Tags</span>
-      <span class="small stress">(optional)</span>
-    </h3>
+    <section class="controls clearfix">
+      <h3>
+        <span>Pretranslation</span>
+      </h3>
+      <div class="clearfix">
+        <button class="pretranslate button clearfix">Pretranslate</button>
+        <div class="checkbox clearfix">
+          <label for="id_pretranslation_enabled">
+            {{ form.pretranslation_enabled }}{{ form.pretranslation_enabled.label }}
+          </label>
+        </div>
+      </div>
+      <div class="locales-pretranslate clearfix">
+        {{ multiple_team_selector.render(locales_pretranslate_available, locales_pretranslate) }}
+        {{ form.locales_pretranslate }}
+        {{ form.locales_pretranslate.errors }}
+      </div>
+    </section>
+
     <div class="controls clearfix">
       <div class="checkbox clearfix">
-        <label for="id_tags_enabled">
-          {{ form.tags_enabled }}{{ form.tags_enabled.label }}
+        <label for="id_disabled">
+          {{ form.disabled }}{{ form.disabled.label }}
         </label>
       </div>
-    </div>
-    {% if tag_formset %}
-    {{ tag_inline_formset.render(title='Linked tags', type='tag', formset=tag_formset, project=project) }}
-    {% endif %}
-  </section>
-
-  <section class="visibility">
-        <h3>
-            <span>Visibility</span>
-        </h3>
-        {{ form.visibility }}
-  </section>
-
-  <section class="controls clearfix">
-    <h3>
-      <span>Pretranslation</span>
-    </h3>
-    <div class="clearfix">
-      <button class="pretranslate button clearfix">Pretranslate</button>
       <div class="checkbox clearfix">
-        <label for="id_pretranslation_enabled">
-          {{ form.pretranslation_enabled }}{{ form.pretranslation_enabled.label }}
+        <label for="id_sync_disabled">
+          {{ form.sync_disabled }}{{ form.sync_disabled.label }}
         </label>
-      </div>
-    </div>
-    <div class="locales-pretranslate clearfix">
-      {{ multiple_team_selector.render(locales_pretranslate_available, locales_pretranslate) }}
-      {{ form.locales_pretranslate }}
-      {{ form.locales_pretranslate.errors }}
-    </div>
-  </section>
-
-  <div class="controls clearfix">
-      <div class="checkbox clearfix">
-          <label for="id_disabled">
-              {{ form.disabled }}{{ form.disabled.label }}
-          </label>
-      </div>
-      <div class="checkbox clearfix">
-          <label for="id_sync_disabled">
-              {{ form.sync_disabled }}{{ form.sync_disabled.label }}
-          </label>
       </div>
       {% if settings.MANUAL_SYNC and not project.disabled and project.data_source != "database" %}
-      <button class="sync button">Sync</button>
+        <button class="sync button">Sync</button>
       {% endif %}
       <button class="button active save">Save project</button>
       <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
-  </div>
-
-</form>
+    </div>
+  </form>
 {% endblock %}
 
 {% block extend_css %}
