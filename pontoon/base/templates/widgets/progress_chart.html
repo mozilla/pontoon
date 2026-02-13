@@ -2,7 +2,7 @@
   {% if chart != None %}
     <div class="chart-wrapper">
       <span class="percent"
-        >{{ (100 * (chart.approved + chart.pretranslated + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span
+        >{{ (100 * (chart.approved + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span
       >
       <span class="chart">
         <span

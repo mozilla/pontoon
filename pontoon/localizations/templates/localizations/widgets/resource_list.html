@@ -47,7 +47,7 @@
 
     {% if deadline %}
       <td class="deadline">
-        {{ Deadline.deadline(resource.deadline, chart.total > 0 and chart.total == chart.approved + chart.pretranslated + chart.warnings) }}
+        {{ Deadline.deadline(resource.deadline, chart.total > 0 and chart.total == chart.approved + chart.warnings) }}
       </td>
     {% endif %}
 

@@ -120,7 +120,7 @@ export function ResourceProgress(): React.ReactElement<'div'> | null {
     return null;
   }
 
-  const complete = stats.approved + stats.pretranslated + stats.warnings;
+  const complete = stats.approved + stats.warnings;
   const percent = Math.floor((complete / stats.total) * 100);
 
   return (
