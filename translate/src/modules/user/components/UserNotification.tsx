@@ -65,13 +65,13 @@ const Comment = ({
   verb,
 }: Props['notification']) => (
   <div className='item-content'>
-    <span className='actor'>{actor.anchor}</span>
+    <span className='actor'>{actor ? actor.anchor : '(Deleted user)'}</span>
 
     <span className='verb'>
-      <a href={target.url}>{verb}</a>
+      {target ? <a href={target.url}>{verb}</a> : verb}
     </span>
 
-    <span className='target'>{target.anchor}</span>
+    {target ? <span className='target'>{target.anchor}</span> : null}
 
     <DateDisplay date={date} date_iso={date_iso} />
 
@@ -100,7 +100,7 @@ const Other = ({
 }: Props['notification']) => (
   <div className='item-content'>
     <span className='actor'>
-      <a href={actor.url}>{actor.anchor}</a>
+      {actor ? <a href={actor.url}>{actor.anchor}</a> : '(Deleted user)'}
     </span>
 
     <span className='verb'>

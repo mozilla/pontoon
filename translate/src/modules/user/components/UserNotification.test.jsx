@@ -83,4 +83,30 @@ describe('<UserNotification>', () => {
     expect(wrapper.find('.message').text()).toBe('');
     expect(wrapper.find('.verb').text()).toBe('is Other');
   });
+
+  it('shows comment notification with deleted actor', () => {
+    const notification = {
+      ...notificationBase,
+      actor: null,
+      description: {
+        content: 'Comment content',
+        is_comment: true,
+      },
+    };
+    const wrapper = mount(<UserNotification notification={notification} />);
+
+    expect(wrapper.find('.actor').text()).toBe('(Deleted user)');
+  });
+
+  it('shows other notification with deleted actor', () => {
+    const notification = {
+      ...notificationBase,
+      actor: null,
+      description: { content: 'Other content' },
+    };
+    const wrapper = mount(<UserNotification notification={notification} />);
+
+    expect(wrapper.find('.actor').text()).toBe('(Deleted user)');
+    expect(wrapper.find('.actor a')).toHaveLength(0);
+  });
 });
