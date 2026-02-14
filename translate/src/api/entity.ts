@@ -120,30 +120,29 @@ function buildFetchPayload(
 
   if (list) {
     payload.append('entity_ids', list.join(','));
-  } else {
-    if (entity) {
-      payload.append('entity', String(entity));
-    }
-    for (const key of [
-      'search',
-      'status',
-      'search_identifiers',
-      'search_exclude_source_strings',
-      'search_rejected_translations',
-      'search_match_case',
-      'search_match_whole_word',
-      'extra',
-      'tag',
-      'author',
-      'time',
-      'reviewer',
-      'review_time',
-      'exclude_self_reviewed',
-    ] as const) {
-      const value = location[key];
-      if (value) {
-        payload.append(key, String(value));
-      }
+  }
+  if (entity) {
+    payload.append('entity', String(entity));
+  }
+  for (const key of [
+    'search',
+    'status',
+    'search_identifiers',
+    'search_exclude_source_strings',
+    'search_rejected_translations',
+    'search_match_case',
+    'search_match_whole_word',
+    'extra',
+    'tag',
+    'author',
+    'time',
+    'reviewer',
+    'review_time',
+    'exclude_self_reviewed',
+  ] as const) {
+    const value = location[key];
+    if (value) {
+      payload.append(key, String(value));
     }
   }
 

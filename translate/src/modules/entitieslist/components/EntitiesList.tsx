@@ -122,7 +122,11 @@ export function EntitiesList(): React.ReactElement<'div'> {
       if (entity.pk !== location.entity) {
         checkUnsavedChanges(() => {
           dispatch(resetSelection());
-          const nextLocation = { entity: entity.pk };
+          const nextLocation = {
+            entity: entity.pk,
+            search: location.search,
+            list: location.list,
+          };
           if (replaceHistory) {
             location.replace(nextLocation);
           } else {
