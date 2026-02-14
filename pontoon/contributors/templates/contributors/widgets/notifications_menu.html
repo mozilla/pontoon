@@ -54,6 +54,8 @@
         {% elif notification.actor.email %}
           {% set actor_anchor = notification.actor.name_or_email|nospam %}
           {% set actor_url = full_url('pontoon.contributors.contributor.username', notification.actor.username) %}
+        {% else %}
+          {% set actor_anchor = "(Deleted user)" %}
         {% endif %}
 
         {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
