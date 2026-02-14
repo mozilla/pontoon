@@ -182,8 +182,8 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     entity_ids = form.cleaned_data["entity_ids"]
     entities = Entity.objects.filter(pk__in=entity_ids)
 
-    if form.cleaned_data.get('search'):
-        search_term = form.cleaned_data['search']
+    if form.cleaned_data.get("search"):
+        search_term = form.cleaned_data["search"]
         entities = entities.filter(string__icontains=search_term)
 
     entities = entities.distinct().order_by("order")
