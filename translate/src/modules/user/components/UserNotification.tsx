@@ -65,7 +65,7 @@ const Comment = ({
   verb,
 }: Props['notification']) => (
   <div className='item-content'>
-    {actor ? <span className='actor'>{actor.anchor}</span> : null}
+    <span className='actor'>{actor ? actor.anchor : '(Deleted user)'}</span>
 
     <span className='verb'>
       <a href={target.url}>{verb}</a>
@@ -99,11 +99,9 @@ const Other = ({
   verb,
 }: Props['notification']) => (
   <div className='item-content'>
-    {actor ? (
-      <span className='actor'>
-        <a href={actor.url}>{actor.anchor}</a>
-      </span>
-    ) : null}
+    <span className='actor'>
+      {actor ? <a href={actor.url}>{actor.anchor}</a> : '(Deleted user)'}
+    </span>
 
     <span className='verb'>
       {verb.replace('has added a comment in', 'has added a comment')}
