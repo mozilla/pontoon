@@ -95,25 +95,35 @@ function parse(
     entity: Number(params.get('string')),
   };
   const list = params.get('list');
-  const location: Location = {
-    ...common,
-    list: list ? list.split(',').map(Number) : null,
-    search: params.get('search'),
-    status: params.get('status'),
-    extra: params.get('extra'),
-    search_identifiers: params.has('search_identifiers'),
-    search_exclude_source_strings: params.has('search_exclude_source_strings'),
-    search_rejected_translations: params.has('search_rejected_translations'),
-    search_match_case: params.has('search_match_case'),
-    search_match_whole_word: params.has('search_match_whole_word'),
-    tag: params.get('tag'),
-    author: params.get('author'),
-    time: params.get('time'),
-    reviewer: params.get('reviewer'),
-    review_time: params.get('review_time'),
-    exclude_self_reviewed: params.has('exclude_self_reviewed'),
-  };
-
+  const location: Location = list
+    ? {
+        ...common,
+        ...emptyParams,
+        list: list.split(',').map(Number),
+        search: params.get('search'),
+      }
+    : {
+        ...common,
+        search: params.get('search'),
+        status: params.get('status'),
+        extra: params.get('extra'),
+        search_identifiers: params.has('search_identifiers'),
+        search_exclude_source_strings: params.has(
+          'search_exclude_source_strings',
+        ),
+        search_rejected_translations: params.has(
+          'search_rejected_translations',
+        ),
+        search_match_case: params.has('search_match_case'),
+        search_match_whole_word: params.has('search_match_whole_word'),
+        tag: params.get('tag'),
+        author: params.get('author'),
+        time: params.get('time'),
+        reviewer: params.get('reviewer'),
+        review_time: params.get('review_time'),
+        exclude_self_reviewed: params.has('exclude_self_reviewed'),
+        list: null,
+      };
   return location;
 }
 
