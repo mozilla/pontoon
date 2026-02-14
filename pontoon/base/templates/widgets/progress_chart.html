@@ -1,7 +1,7 @@
 {% macro span(chart, link, link_parameter=False, has_params=False) %}
 {% if chart != None %}
   <div class="chart-wrapper">
-    <span class="percent">{{ (100 * (chart.approved + chart.pretranslated + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span>
+    <span class="percent">{{ (100 * (chart.approved + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span>
     <span class="chart">
       <span class="translated" style="width:{{ (100 * chart.approved / chart.total) | round(1) }}%"></span>
       <span class="pretranslated" style="width:{{ (100 * chart.pretranslated / chart.total) | round(1) }}%"></span>

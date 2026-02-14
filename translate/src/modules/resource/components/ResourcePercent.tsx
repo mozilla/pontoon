@@ -12,18 +12,10 @@ type Props = {
  * Render a resource item percentage.
  */
 export function ResourcePercent({
-  resource: {
-    approvedStrings,
-    pretranslatedStrings,
-    stringsWithWarnings,
-    totalStrings,
-  },
+  resource: { approvedStrings, stringsWithWarnings, totalStrings },
 }: Props): React.ReactElement<'span'> {
   const percent =
-    Math.floor(
-      ((approvedStrings + pretranslatedStrings + stringsWithWarnings) /
-        totalStrings) *
-        100,
-    ) + '%';
+    Math.floor(((approvedStrings + stringsWithWarnings) / totalStrings) * 100) +
+    '%';
   return <span className='percent'>{percent}</span>;
 }

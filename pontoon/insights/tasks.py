@@ -301,7 +301,7 @@ def projectlocale_insights(
         id = pls["projectlocale"]
         ad = activities.get(id, Activity(0))
         pl_completion = (
-            (pls["approved"] + pls["pretranslated"] + pls["warnings"]) / pls["total"]
+            (pls["approved"] + pls["warnings"]) / pls["total"]
             if pls["total"] > 0
             else 0.0
         )
@@ -491,11 +491,7 @@ def get_locale_insights_snapshot(
         ls_errors += ls["errors"]
         ls_warnings += ls["warnings"]
         ls_unreviewed += ls["unreviewed"]
-    ls_completion = (
-        (ls_approved + ls_pretranslated + ls_warnings) / ls_total
-        if ls_total > 0
-        else 0.0
-    )
+    ls_completion = (ls_approved + ls_warnings) / ls_total if ls_total > 0 else 0.0
 
     reviewers = translators | manager_logins.keys()
     active_users = {
