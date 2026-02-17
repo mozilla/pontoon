@@ -10,6 +10,9 @@ class ResourceQuerySet(models.QuerySet):
         self.update(obsolete=True, date_obsoleted=now)
         Entity.objects.filter(resource__in=self).obsolete(now)
 
+    def current(self):
+        return self.filter(obsolete=False)
+
 
 class Resource(models.Model):
     project = models.ForeignKey("Project", models.CASCADE, related_name="resources")
