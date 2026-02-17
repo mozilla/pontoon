@@ -1,32 +1,38 @@
 {% extends "allauth/layouts/base.html" %}
 
 {% block content %}
-<h1 id="title">Pontoon</h1>
-<h2 id="subtitle">Sign in</h2>
+  <h1 id="title">Pontoon</h1>
+  <h2 id="subtitle">Sign in</h2>
 
-{% if form.non_field_errors %}
+  {% if form.non_field_errors %}
     <ul>
-        {% for error in form.non_field_errors.values %}
-            <li>{{ error }}</li>
-        {% endfor %}
+      {% for error in form.non_field_errors.values %}
+        <li>{{ error }}</li>
+      {% endfor %}
     </ul>
-{% endif %}
+  {% endif %}
 
-<form id="standalone-sign-in" method="POST" action="{{ request.path }}">
+  <form id="standalone-sign-in" method="POST" action="{{ request.path }}">
     <div class="clearfix">
-        <label for="id_username">Username</label> <br/>
-        {{ form.username }}
-        {{ form.username.errors }}
+      <label for="id_username">Username</label> <br />
+      {{ form.username }}
+      {{ form.username.errors }}
     </div>
     <div class="clearfix">
-        <label for="id_password">Password</label> <br/>
-        {{ form.password }}
-        {{ form.password.errors }}
+      <label for="id_password">Password</label> <br />
+      {{ form.password }}
+      {{ form.password.errors }}
     </div>
     <div class="controls clearfix">
-        <input class="button active" type="submit" name="sign-in" id="sign-in" value="Sign in" />
+      <input
+        class="button active"
+        type="submit"
+        name="sign-in"
+        id="sign-in"
+        value="Sign in"
+      />
     </div>
-    <input type="hidden" name="next" value="{{ request.GET.next }}">
+    <input type="hidden" name="next" value="{{ request.GET.next }}" />
     {% csrf_token %}
-</form>
+  </form>
 {% endblock content %}

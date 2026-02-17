@@ -13,14 +13,18 @@
 
   <div class="container">
     <nav>
-      <a href="{{ url('pontoon.homepage') }}" class="logo"><img src="{{ static('img/logo.svg') }}" width="26" height="32"></a>
+      <a href="{{ url('pontoon.homepage') }}" class="logo"
+        ><img src="{{ static('img/logo.svg') }}" width="26" height="32"
+      /></a>
 
       <ul class="links">
         <li><a href="{{ url('pontoon.teams') }}">Teams</a></li>
         <li><a href="{{ url('pontoon.projects') }}">Projects</a></li>
         <li><a href="{{ url('pontoon.contributors') }}">Contributors</a></li>
         {% if user.is_authenticated and user.is_superuser %}
-        <li><a href="{{ url('pontoon.messaging.compose') }}">Messaging</a></li>
+          <li>
+            <a href="{{ url('pontoon.messaging.compose') }}">Messaging</a>
+          </li>
         {% endif %}
         <li><a href="{{ url('pontoon.search') }}">Search</a></li>
       </ul>
@@ -29,9 +33,7 @@
         {{ Notifications.menu() }}
 
         {% if not user.is_authenticated %}
-        <div class="sign-in-header">
-          {{ SignIn.button() }}
-        </div>
+          <div class="sign-in-header">{{ SignIn.button() }}</div>
         {% endif %}
 
         <div id="profile" class="select">
@@ -41,40 +43,99 @@
               {{ Profile.top_menu() }}
 
               {% if user.is_authenticated %}
-              <li class="appearance clearfix">
-                <p class="help">Choose appearance</p>
-                {{ ThemeToggle.button(user, long_name=False) }}
-              </li>
+                <li class="appearance clearfix">
+                  <p class="help">Choose appearance</p>
+                  {{ ThemeToggle.button(user, long_name=False) }}
+                </li>
 
-              <li class="horizontal-separator"></li>
+                <li class="horizontal-separator"></li>
               {% endif %}
 
-              <li><a href="{{ url('pontoon.terms') }}" rel="noopener noreferrer" target="_blank"><i class="fas fa-gavel fa-fw"></i>Terms of Use</a></li>
-              <li><a href="https://github.com/mozilla/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>Hack it on GitHub</a></li>
-              <li><a href="https://github.com/mozilla/pontoon/discussions" rel="noopener noreferrer" target="_blank"><i class="fas fa-comment-dots fa-fw"></i>Give Feedback</a></li>
-              <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fas fa-life-ring fa-fw"></i>Help</a></li>
+              <li>
+                <a
+                  href="{{ url('pontoon.terms') }}"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  ><i class="fas fa-gavel fa-fw"></i>Terms of Use</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/mozilla/pontoon/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  ><i class="fab fa-github fa-fw"></i>Hack it on GitHub</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/mozilla/pontoon/discussions"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  ><i class="fas fa-comment-dots fa-fw"></i>Give Feedback</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  ><i class="fas fa-life-ring fa-fw"></i>Help</a
+                >
+              </li>
 
               {% if user.is_authenticated %}
-              <li class="horizontal-separator"></li>
+                <li class="horizontal-separator"></li>
               {% endif %}
 
               {% if perms.base.can_manage_project %}
-              <li><a href="{{ url('pontoon.admin') }}"><i class="fas fa-wrench fa-fw"></i>Admin</a></li>
+                <li>
+                  <a href="{{ url('pontoon.admin') }}"
+                    ><i class="fas fa-wrench fa-fw"></i>Admin</a
+                  >
+                </li>
                 {% if project %}
-                <li><a href="{{ url('pontoon.admin.project', project.slug) }}"><i class="fas fa-wrench fa-fw"></i>Admin &middot; Current Project</a></li>
+                  <li>
+                    <a href="{{ url('pontoon.admin.project', project.slug) }}"
+                      ><i class="fas fa-wrench fa-fw"></i>Admin &middot; Current
+                      Project</a
+                    >
+                  </li>
                 {% endif %}
-              <li><a href="{{ url('pontoon.sync.log') }}"><i class="fas fa-sync-alt fa-fw"></i>Sync Log</a></li>
+                <li>
+                  <a href="{{ url('pontoon.sync.log') }}"
+                    ><i class="fas fa-sync-alt fa-fw"></i>Sync Log</a
+                  >
+                </li>
               {% endif %}
 
               {% if user.is_authenticated %}
-                <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fas fa-cog fa-fw"></i>Settings</a></li>
+                <li>
+                  <a href="{{ url('pontoon.contributors.settings') }}"
+                    ><i class="fas fa-cog fa-fw"></i>Settings</a
+                  >
+                </li>
 
                 {% if settings.AUTHENTICATION_METHOD == 'django' %}
-                <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}"><i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                  <li id="standalone-sign-out">
+                    <a
+                      href="{{ url('standalone_logout') }}"
+                      title="{{ user.email|nospam }}"
+                      ><i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a
+                    >
+                  </li>
                 {% else %}
-                <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                  <li id="sign-out">
+                    <a
+                      href="{{ url('account_logout') }}"
+                      title="{{ user.email|nospam }}"
+                      >{{ SignOut.csrf_form() }}<i
+                        class="fas fa-sign-out-alt fa-fw"
+                      ></i
+                      >Sign out</a
+                    >
+                  </li>
                 {% endif %}
-
               {% endif %}
             </ul>
           </div>

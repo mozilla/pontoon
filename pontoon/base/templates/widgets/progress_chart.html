@@ -1,64 +1,109 @@
 {% macro span(chart, link, link_parameter=False, has_params=False) %}
-{% if chart != None %}
-  <div class="chart-wrapper">
-    <span class="percent">{{ (100 * (chart.approved + chart.pretranslated + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span>
-    <span class="chart">
-      <span class="translated" style="width:{{ (100 * chart.approved / chart.total) | round(1) }}%"></span>
-      <span class="pretranslated" style="width:{{ (100 * chart.pretranslated / chart.total) | round(1) }}%"></span>
-      <span class="warnings" style="width:{{ (100 * chart.warnings / chart.total) | round(1) }}%"></span>
-      <span class="errors" style="width:{{ (100 * chart.errors / chart.total) | round(1) }}%"></span>
-      <span class="missing" style="width:{{ (100 * (chart.total - chart.approved - chart.pretranslated - chart.warnings - chart.errors) / chart.total) | round(1) }}%"></span>
-    </span>
-    <span class="unreviewed-status fas fa-lightbulb{% if chart.unreviewed > 0 %} pending{% endif %}"></span>
-  </div>
-  <div class="legend">
-    <ul>
-      <li class="all">
-        <a href="{{ link }}">
-          <div class="title">All</div>
-          <div class="value" data-value="{{ chart.total }}">{{ chart.total|comma_or_prefix }}</div>
-        </a>
-      </li>
-      <li class="translated">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=translated{% endif %}">
-          <div class="title">Trnsltd</div>
-          <div class="value" data-value="{{ chart.approved }}">{{ chart.approved|comma_or_prefix }}</div>
-        </a>
-      </li>
-      <li class="pretranslated">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=pretranslated{% endif %}">
-          <div class="title">Pre</div>
-          <div class="value" data-value="{{ chart.pretranslated }}">{{ chart.pretranslated|comma_or_prefix }}</div>
-        </a>
-      </li>
-      <li class="warnings">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=warnings{% endif %}">
-          <div class="title">Wrngs</div>
-          <div class="value" data-value="{{ chart.warnings }}">{{ chart.warnings|comma_or_prefix }}</div>
-        </a>
-      </li>
-      <li class="errors">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=errors{% endif %}">
-          <div class="title">Errors</div>
-          <div class="value" data-value="{{ chart.errors }}">{{ chart.errors|comma_or_prefix }}</div>
-        </a>
-      </li>
-      <li class="missing">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=missing{% endif %}">
-          <div class="title">Missing</div>
-          {% set missing_strings = chart.total - chart.approved - chart.pretranslated - chart.warnings - chart.errors %}
-          <div class="value" data-value="{{ missing_strings }}">{{ missing_strings|comma_or_prefix }}</div>
-        </a>
-      </li>
-      <li class="unreviewed">
-        <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}">
-          <div class="title">Unrvwd</div>
-          <div class="value" data-value="{{ chart.unreviewed }}">{{ chart.unreviewed|comma_or_prefix }}</div>
-        </a>
-      </li>
-    </ul>
-  </div>
-{% else %}
-  <span class="not-ready">Not synced yet</span>
-{% endif %}
+  {% if chart != None %}
+    <div class="chart-wrapper">
+      <span class="percent"
+        >{{ (100 * (chart.approved + chart.pretranslated + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span
+      >
+      <span class="chart">
+        <span
+          class="translated"
+          style="width:{{ (100 * chart.approved / chart.total) | round(1) }}%"
+        ></span>
+        <span
+          class="pretranslated"
+          style="width:{{ (100 * chart.pretranslated / chart.total) | round(1) }}%"
+        ></span>
+        <span
+          class="warnings"
+          style="width:{{ (100 * chart.warnings / chart.total) | round(1) }}%"
+        ></span>
+        <span
+          class="errors"
+          style="width:{{ (100 * chart.errors / chart.total) | round(1) }}%"
+        ></span>
+        <span
+          class="missing"
+          style="width:{{ (100 * (chart.total - chart.approved - chart.pretranslated - chart.warnings - chart.errors) / chart.total) | round(1) }}%"
+        ></span>
+      </span>
+      <span
+        class="unreviewed-status fas fa-lightbulb {% if chart.unreviewed > 0 %}pending{% endif %}"
+      ></span>
+    </div>
+    <div class="legend">
+      <ul>
+        <li class="all">
+          <a href="{{ link }}">
+            <div class="title">All</div>
+            <div class="value" data-value="{{ chart.total }}">
+              {{ chart.total|comma_or_prefix }}
+            </div>
+          </a>
+        </li>
+        <li class="translated">
+          <a
+            href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=translated{% endif %}"
+          >
+            <div class="title">Trnsltd</div>
+            <div class="value" data-value="{{ chart.approved }}">
+              {{ chart.approved|comma_or_prefix }}
+            </div>
+          </a>
+        </li>
+        <li class="pretranslated">
+          <a
+            href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=pretranslated{% endif %}"
+          >
+            <div class="title">Pre</div>
+            <div class="value" data-value="{{ chart.pretranslated }}">
+              {{ chart.pretranslated|comma_or_prefix }}
+            </div>
+          </a>
+        </li>
+        <li class="warnings">
+          <a
+            href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=warnings{% endif %}"
+          >
+            <div class="title">Wrngs</div>
+            <div class="value" data-value="{{ chart.warnings }}">
+              {{ chart.warnings|comma_or_prefix }}
+            </div>
+          </a>
+        </li>
+        <li class="errors">
+          <a
+            href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=errors{% endif %}"
+          >
+            <div class="title">Errors</div>
+            <div class="value" data-value="{{ chart.errors }}">
+              {{ chart.errors|comma_or_prefix }}
+            </div>
+          </a>
+        </li>
+        <li class="missing">
+          <a
+            href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=missing{% endif %}"
+          >
+            <div class="title">Missing</div>
+            {% set missing_strings = chart.total - chart.approved - chart.pretranslated - chart.warnings - chart.errors %}
+            <div class="value" data-value="{{ missing_strings }}">
+              {{ missing_strings|comma_or_prefix }}
+            </div>
+          </a>
+        </li>
+        <li class="unreviewed">
+          <a
+            href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=unreviewed{% endif %}"
+          >
+            <div class="title">Unrvwd</div>
+            <div class="value" data-value="{{ chart.unreviewed }}">
+              {{ chart.unreviewed|comma_or_prefix }}
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  {% else %}
+    <span class="not-ready">Not synced yet</span>
+  {% endif %}
 {% endmacro %}

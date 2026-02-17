@@ -1,94 +1,155 @@
 {% import 'contributors/widgets/contributor_selector_list.html' as ContributorSelectorList %}
 
-<form id="permissions-form" method="POST" action="{{ url('pontoon.teams.ajax.permissions', locale.code) }}">
-    <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+<form
+  id="permissions-form"
+  method="POST"
+  action="{{ url('pontoon.teams.ajax.permissions', locale.code) }}"
+>
+  <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken" />
 
-    <input type="hidden" id="community-builder-level" value="{{ community_builder_level_reached }}">
-    <div class="badge-tooltip">
-        <p class="title">Achievement unlocked</p>
-        <img class="badge" src="{{ static('img/community_builder_badge.svg') }}" title="Community Builder Badge" />
-        <p class="badge-name"></p>
-        <p class="badge-level">Level <span class="level"></span></p>
-        <p class="notice">View your new badge in your <a href="{{ url('pontoon.contributors.contributor.username', request.user) }}">profile</a>.</p>
-        <button class="continue">Continue</button>
+  <input
+    type="hidden"
+    id="community-builder-level"
+    value="{{ community_builder_level_reached }}"
+  />
+  <div class="badge-tooltip">
+    <p class="title">Achievement unlocked</p>
+    <img
+      class="badge"
+      src="{{ static('img/community_builder_badge.svg') }}"
+      title="Community Builder Badge"
+    />
+    <p class="badge-name"></p>
+    <p class="badge-level">Level <span class="level"></span></p>
+    <p class="notice">
+      View your new badge in your
+      <a
+        href="{{ url('pontoon.contributors.contributor.username', request.user) }}"
+        >profile</a
+      >.
+    </p>
+    <button class="continue">Continue</button>
+  </div>
+
+  <div class="permissions-groups general clearfix">
+    <h3 class="controls">
+      General
+      <span class="small stress"
+        >(default team permissions for all projects)</span
+      >
+    </h3>
+    <div class="selector-wrapper double-list-selector clearfix">
+      {{
+        ContributorSelectorList.list(
+            'available',
+            choices=contributors,
+            label='team contributors',
+            description="Click on user's email address to move it to the group pointed to by the arrow."
+        )
+      }}
+      {{
+        ContributorSelectorList.list(
+            'translators',
+            choices=translators,
+            label='translators',
+            description="Translators can submit and approve translations in all projects, unless overridden below."
+        )
+      }}
+      {{
+        ContributorSelectorList.list(
+            'managers',
+            choices=managers,
+            label='managers',
+            description="Managers can change team permissions and edit other settings like team description."
+        )
+      }}
     </div>
-    
+  </div>
 
-    <div class="permissions-groups general clearfix">
-        <h3 class="controls">General <span class="small stress">(default team permissions for all projects)</span></h3>
-        <div class="selector-wrapper double-list-selector clearfix">
-            {{ ContributorSelectorList.list(
-                'available',
-                choices=contributors,
-                label='team contributors',
-                description="Click on user's email address to move it to the group pointed to by the arrow."
-            ) }}
-            {{ ContributorSelectorList.list(
-                'translators',
-                choices=translators,
-                label='translators',
-                description="Translators can submit and approve translations in all projects, unless overridden below."
-            ) }}
-            {{ ContributorSelectorList.list(
-                'managers',
-                choices=managers,
-                label='managers',
-                description="Managers can change team permissions and edit other settings like team description."
-            ) }}
-        </div>
+  {{ project_locale_form.management_form }}
+
+  {% for project_locale in project_locales %}
+    <div
+      class="permissions-groups project-locale clearfix {% if not project_locale.has_custom_translators %}hidden{% endif %}"
+      data-slug="{{ project_locale.project.slug }}"
+      data-index="{{ loop.index0 }}"
+    >
+      <input
+        type="hidden"
+        name="project-locale-{{ loop.index0 }}-id"
+        value="{{ project_locale.pk }}"
+      />
+
+      {% if project_locale.has_custom_translators %}
+        <input
+          type="hidden"
+          name="project-locale-{{ loop.index0 }}-has_custom_translators"
+          value="1"
+        />
+      {% endif %}
+
+      <h3 class="controls">
+        {{ project_locale.project.name }}
+        <span class="small stress"
+          >(override team translators for this project)</span
+        >
+        <a
+          href="#"
+          class="remove-project button"
+          title="Remove custom project permissions"
+          ><span class="fas fa-trash"></span>Remove</a
+        >
+      </h3>
+      <div class="selector-wrapper double-list-selector clearfix">
+        {{
+          ContributorSelectorList.list(
+              'available',
+              choices=project_locale.contributors,
+              label='team contributors',
+              description="Click on user's email address to move it to the group pointed to by the arrow.",
+              index=project_locale.pk
+          )
+        }}
+        {{
+          ContributorSelectorList.list(
+              'translators',
+              choices=project_locale.translators,
+              label='translators',
+              description="Add or remove Translators to override default team translators set in the General section.",
+              index=project_locale.pk
+          )
+        }}
+      </div>
     </div>
+  {% endfor %}
 
-    {{ project_locale_form.management_form }}
-
-    {% for project_locale in project_locales %}
-    <div class="permissions-groups project-locale clearfix{% if not project_locale.has_custom_translators %} hidden{% endif %}"
-         data-slug="{{ project_locale.project.slug }}"
-         data-index="{{ loop.index0 }}">
-        <input type="hidden" name="project-locale-{{ loop.index0 }}-id" value="{{ project_locale.pk }}">
-
-        {% if project_locale.has_custom_translators %}
-        <input type="hidden" name="project-locale-{{ loop.index0 }}-has_custom_translators" value="1">
-        {% endif %}
-
-        <h3 class="controls">
-            {{ project_locale.project.name }} <span class="small stress">(override team translators for this project)</span>
-            <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fas fa-trash"></span>Remove</a>
-        </h3>
-        <div class="selector-wrapper double-list-selector clearfix">
-            {{ ContributorSelectorList.list(
-                'available',
-                choices=project_locale.contributors,
-                label='team contributors',
-                description="Click on user's email address to move it to the group pointed to by the arrow.",
-                index=project_locale.pk
-            ) }}
-            {{ ContributorSelectorList.list(
-                'translators',
-                choices=project_locale.translators,
-                label='translators',
-                description="Add or remove Translators to override default team translators set in the General section.",
-                index=project_locale.pk
-            ) }}
+  <menu class="controls">
+    <button class="button active save">Save</button>
+    <div
+      id="project-selector"
+      class="select{% if hide_project_selector %}hidden{% endif %}"
+    >
+      <div class="button selector">
+        Add custom permissions for project<span
+          class="icon fas fa-caret-up"
+        ></span>
+      </div>
+      <div class="menu">
+        <div class="search-wrapper clearfix">
+          <div class="icon fas fa-search"></div>
+          <input autocomplete="off" autofocus="" type="search" />
         </div>
+        <ul>
+          {% for project_locale in project_locales %}
+            <li
+              data-slug="{{ project_locale.project.slug }}"
+              class="{% if project_locale.has_custom_translators %}hidden{% else %}limited{% endif %}"
+            >
+              {{ project_locale.project.name }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
-    {% endfor %}
-
-    <menu class="controls">
-        <button class="button active save">Save</button>
-        <div id="project-selector" class="select{% if hide_project_selector %} hidden{% endif %}">
-            <div class="button selector">Add custom permissions for project<span class="icon fas fa-caret-up"></span></div>
-            <div class="menu">
-                <div class="search-wrapper clearfix">
-                    <div class="icon fas fa-search"></div>
-                    <input autocomplete="off" autofocus="" type="search">
-                </div>
-                <ul>
-                    {% for project_locale in project_locales %}
-                        <li data-slug="{{ project_locale.project.slug }}" class="{% if project_locale.has_custom_translators %}hidden{% else %}limited{% endif %}">{{ project_locale.project.name }}</li>
-                    {% endfor %}
-                </ul>
-
-            </div>
-        </div>
-    </menu>
+  </menu>
 </form>

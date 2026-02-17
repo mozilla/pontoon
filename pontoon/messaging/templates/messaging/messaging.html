@@ -6,39 +6,38 @@
 {% block class %}messaging{% endblock %}
 
 {% block heading %}
-{{ Heading.heading(title='Messaging Center', subtitle='Send emails and notifications to localizers') }}
+  {{ Heading.heading(title='Messaging Center', subtitle='Send emails and notifications to localizers') }}
 {% endblock %}
 
 {% block bottom %}
-{% set current_page = request.path.split('/')[2]|default('') %}
-<section id="main">
+  {% set current_page = request.path.split('/')[2]|default('') %}
+  <section id="main">
     <div class="container">
-        <section class="clearfix">
-            <div class="menu permanent left-column">
-                <ul>
-                    <li class="compose{% if current_page == '' %} selected{% endif %}">
-                        <a href="{{ url('pontoon.messaging.compose') }}">Compose</a>
-                    </li>
-                    <li class="sent{% if current_page == 'sent' %} selected{% endif %}">
-                        <a href="{{ url('pontoon.messaging.sent') }}">
-                            <span class="name">Sent</span>
-                            <span class="count">{{ count }}</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+      <section class="clearfix">
+        <div class="menu permanent left-column">
+          <ul>
+            <li class="compose{% if current_page == '' %}selected{% endif %}">
+              <a href="{{ url('pontoon.messaging.compose') }}">Compose</a>
+            </li>
+            <li class="sent{% if current_page == 'sent' %}selected{% endif %}">
+              <a href="{{ url('pontoon.messaging.sent') }}">
+                <span class="name">Sent</span>
+                <span class="count">{{ count }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
 
-            <div class="menu permanent right-column">
-            </div>
-        </section>
+        <div class="menu permanent right-column"></div>
+      </section>
     </div>
-</section>
+  </section>
 {% endblock %}
 
 {% block extend_css %}
-{% stylesheet 'messaging' %}
+  {% stylesheet 'messaging' %}
 {% endblock %}
 
 {% block extend_js %}
-{% javascript 'messaging' %}
+  {% javascript 'messaging' %}
 {% endblock %}

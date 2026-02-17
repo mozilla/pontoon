@@ -1,14 +1,18 @@
 {% macro checkbox(label, class, attribute, is_enabled=False, title=False, help=False, form_field=None) %}
-<div class="check-box {{ class }}{% if is_enabled %} enabled{% endif %}" data-attribute="{{ attribute }}"{% if title %} title="{{title}}"{% endif %}>
+  <div
+    class="check-box {{ class }} {% if is_enabled %}enabled{% endif %}"
+    data-attribute="{{ attribute }}"
+    {% if title %}title="{{ title }}"{% endif %}
+  >
     <div class="check-box-wrapper">
-        <span class="label">{{ label }}</span>
-        <i class="fas fa-fw"></i>
+      <span class="label">{{ label }}</span>
+      <i class="fas fa-fw"></i>
     </div>
     {% if help %}
-    <p class="help">{{ help|safe }}</p>
+      <p class="help">{{ help|safe }}</p>
     {% endif %}
     {% if form_field %}
-    {{ form_field }}
+      {{ form_field }}
     {% endif %}
-</div>
+  </div>
 {% endmacro %}

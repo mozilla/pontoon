@@ -5,34 +5,75 @@
 <!doctype html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
 
     <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <title>{% block title %}Pontoon{% endblock %}</title>
-    <meta name="description" content="Mozilla’s Localization Platform">
-    <meta name="author" content="Mozilla">
-    <meta name="color-scheme" content="only light">
+    <meta name="description" content="Mozilla’s Localization Platform" />
+    <meta name="author" content="Mozilla" />
+    <meta name="color-scheme" content="only light" />
 
-    <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="32x32">
-    <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="32x32" />
+    <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml" />
+    <link
+      rel="apple-touch-icon"
+      href="{% static 'img/apple-touch-icon.png' %}"
+    />
 
-    <link rel="stylesheet" href="{% static 'css/fontawesome-all.css' %}" title="" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/nprogress.css' %}" title="" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/fonts.css' %}" title="" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/boilerplate.css' %}" title="" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" title="" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/dark-theme.css' %}" title="" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/light-theme.css' %}" title="" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/fontawesome-all.css' %}"
+      title=""
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/nprogress.css' %}"
+      title=""
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/fonts.css' %}"
+      title=""
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/boilerplate.css' %}"
+      title=""
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/style.css' %}"
+      title=""
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/dark-theme.css' %}"
+      title=""
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/light-theme.css' %}"
+      title=""
+      type="text/css"
+    />
 
     {% include "tracker.html" %}
     {% block extend_js %}
     {% endblock extend_js %}
   </head>
 
-  <body class="{% block class %}{% endblock %} {{ request|theme_class }}" data-theme="{{ user|user_theme }}">
+  <body
+    class="{% block class %}{% endblock %} {{ request|theme_class }}"
+    data-theme="{{ user|user_theme }}"
+  >
     <header>
       <ul class="notification">
         {% for message in messages %}
@@ -42,7 +83,9 @@
 
       <div class="container">
         <nav>
-          <a href="{% url 'pontoon.homepage' %}" class="logo"><img src="{% static 'img/logo.svg' %}" width="26" height="32"></a>
+          <a href="{% url 'pontoon.homepage' %}" class="logo"
+            ><img src="{% static 'img/logo.svg' %}" width="26" height="32"
+          /></a>
 
           <ul class="links">
             <li><a href="{% url 'pontoon.teams' %}">Teams</a></li>
@@ -55,7 +98,12 @@
             <div id="profile" class="select">
               <div class="button selector">
                 {% if user.is_authenticated %}
-                  <img class="rounded" src="{{ request.user.gravatar_url_small }}" width="44" height="44">
+                  <img
+                    class="rounded"
+                    src="{{ request.user.gravatar_url_small }}"
+                    width="44"
+                    height="44"
+                  />
                 {% else %}
                   <div class="menu-icon fas fa-bars"></div>
                 {% endif %}
@@ -63,35 +111,95 @@
               <div class="menu">
                 <ul>
                   {% if user.is_authenticated %}
-                  <li><a href="{% url 'pontoon.contributors.contributor.username' username=user %}"><i class="fas fa-user fa-fw"></i>My Profile</a></li>
-                  <li><a href="{% url 'pontoon.contributors.settings' %}"><i class="fas fa-cog fa-fw"></i>Change Settings</a></li>
-                  <li class="horizontal-separator"></li>
+                    <li>
+                      <a
+                        href="{% url 'pontoon.contributors.contributor.username' username=user %}"
+                        ><i class="fas fa-user fa-fw"></i>My Profile</a
+                      >
+                    </li>
+                    <li>
+                      <a href="{% url 'pontoon.contributors.settings' %}"
+                        ><i class="fas fa-cog fa-fw"></i>Change Settings</a
+                      >
+                    </li>
+                    <li class="horizontal-separator"></li>
                   {% endif %}
 
-                  <li><a href="{% url 'pontoon.terms' %}" rel="noopener noreferrer" target="_blank"><i class="fas fa-gavel fa-fw"></i>Terms of Use</a></li>
-                  <li><a href="https://github.com/mozilla/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>Hack it on GitHub</a></li>
-                  <li><a href="https://github.com/mozilla/pontoon/discussions" rel="noopener noreferrer" target="_blank"><i class="fas fa-comment-dots fa-fw"></i>Give Feedback</a></li>
-                  <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fas fa-life-ring fa-fw"></i>Help</a></li>
+                  <li>
+                    <a
+                      href="{% url 'pontoon.terms' %}"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      ><i class="fas fa-gavel fa-fw"></i>Terms of Use</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://github.com/mozilla/pontoon/"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      ><i class="fab fa-github fa-fw"></i>Hack it on GitHub</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://github.com/mozilla/pontoon/discussions"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      ><i class="fas fa-comment-dots fa-fw"></i>Give Feedback</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      ><i class="fas fa-life-ring fa-fw"></i>Help</a
+                    >
+                  </li>
 
                   <li class="horizontal-separator"></li>
 
                   {% if perms.base.can_manage_project %}
-                  <li><a href="{% url 'pontoon.admin' %}">Admin</a></li>
-                  <li><a href="{% url 'pontoon.sync.log' %}">Sync Log</a></li>
+                    <li><a href="{% url 'pontoon.admin' %}">Admin</a></li>
+                    <li><a href="{% url 'pontoon.sync.log' %}">Sync Log</a></li>
                   {% endif %}
 
                   {% if settings.AUTHENTICATION_METHOD == 'django' %}
                     {% if user.is_authenticated %}
-                      <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                      <li id="standalone-sign-out">
+                        <a
+                          href="{% url 'standalone_logout' %}"
+                          title="{{ user.email|nospam }}"
+                          ><i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a
+                        >
+                      </li>
                     {% else %}
-                      <li id="standalone-signin"><a href="{% url 'standalone_login' %}?next={{ request.get_full_path|urlencode }}"><i class="fas fa-sign-in-alt fa-fw"></i>Sign in</a></li>
+                      <li id="standalone-signin">
+                        <a
+                          href="{% url 'standalone_login' %}?next={{ request.get_full_path|urlencode }}"
+                          ><i class="fas fa-sign-in-alt fa-fw"></i>Sign in</a
+                        >
+                      </li>
                     {% endif %}
                   {% else %}
                     {% if user.is_authenticated %}
-                      <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form }}<i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                      <li id="sign-out">
+                        <a
+                          href="{% url 'account_logout' %}"
+                          title="{{ user.email|nospam }}"
+                          >{{ SignOut.csrf_form }}<i
+                            class="fas fa-sign-out-alt fa-fw"
+                          ></i
+                          >Sign out</a
+                        >
+                      </li>
                     {% else %}
                       <li id="sign-in">
-                        <form action="{{ provider_login_url }}?next={{ request.get_full_path|urlencode }}" method="post">
+                        <form
+                          action="{{ provider_login_url }}?next={{ request.get_full_path|urlencode }}"
+                          method="post"
+                        >
                           {% csrf_token %}
                           <i class="fas fa-sign-in-alt fa-fw"></i>
                           <button type="submit">Sign in</button>
@@ -101,7 +209,6 @@
                   {% endif %}
                 </ul>
               </div>
-
             </div>
           </div>
         </nav>
@@ -117,8 +224,20 @@
 
     <!-- JavaScript at the bottom for fast page loading -->
     {% providers_media_js %}
-    <script type="text/javascript" charset="utf-8" src="{% static 'js/lib/jquery-3.6.1.js' %}"></script>
-    <script type="text/javascript" charset="utf-8" src="{% static 'js/lib/nprogress.js' %}"></script>
-    <script type="text/javascript" charset="utf-8" src="{% static 'js/main.js' %}"></script>
+    <script
+      type="text/javascript"
+      charset="utf-8"
+      src="{% static 'js/lib/jquery-3.6.1.js' %}"
+    ></script>
+    <script
+      type="text/javascript"
+      charset="utf-8"
+      src="{% static 'js/lib/nprogress.js' %}"
+    ></script>
+    <script
+      type="text/javascript"
+      charset="utf-8"
+      src="{% static 'js/main.js' %}"
+    ></script>
   </body>
 </html>

@@ -1,19 +1,19 @@
 {# Menu widget #}
 {% macro submenu(class='submenu') %}
-<div class="{{ class }}">
-  <ul class="links">
-    {{ caller() }}
-  </ul>
-</div>
+  <div class="{{ class }}">
+    <ul class="links">
+      {{ caller() }}
+    </ul>
+  </div>
 {% endmacro %}
 
 {# Menu item #}
 {% macro item(label, url, is_active, count=0, class=None, icon=None) %}
   <li {% if is_active %}class="active"{% endif %}>
-    <a href="{{ url }}"{% if class %} class="button"{% endif %}>
-        {% if icon %}<i class="fas fa-{{ icon }}"></i>{% endif %}
-        {{ label }}
-        {% if count > 0 %}<span class="count">{{ count }}</span>{% endif %}
+    <a href="{{ url }}" {% if class %}class="button"{% endif %}>
+      {% if icon %}<i class="fas fa-{{ icon }}"></i>{% endif %}
+      {{ label }}
+      {% if count > 0 %}<span class="count">{{ count }}</span>{% endif %}
     </a>
   </li>
 {% endmacro %}

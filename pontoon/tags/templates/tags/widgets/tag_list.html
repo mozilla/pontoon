@@ -10,9 +10,12 @@
         <th class="priority inverted asc">Priority<i class="fas"></i></th>
         <th class="latest-activity">Latest Activity<i class="fas"></i></th>
         <th class="progress">Progress<i class="fas"></i></th>
-        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fas fa-lightbulb"></span><i class="fas"></i></th>
+        <th class="unreviewed-status inverted" title="Unreviewed suggestions">
+          <span class="fas fa-lightbulb"></span><i class="fas"></i>
+        </th>
       </tr>
     </thead>
+    <!-- prettier-ignore-start -->
     <tbody>
 {% endmacro %}
 
@@ -23,12 +26,8 @@
         <a href="{{ main_link }}">{{ tag.name }}</a>
       </h4>
     </td>
-    <td class="priority">
-      {{ Priority.priority(tag.priority) }}
-    </td>
-    <td class="latest-activity">
-      {{ LatestActivity.span(latest_activity) }}
-    </td>
+    <td class="priority">{{ Priority.priority(tag.priority) }}</td>
+    <td class="latest-activity">{{ LatestActivity.span(latest_activity) }}</td>
     <td class="progress" colspan="2">
       {% if chart.total %}
         {{ ProgressChart.span(chart, chart_link, link_parameter, has_params) }}
@@ -40,6 +39,8 @@
 {% endmacro %}
 
 {% macro footer() %}
+  <!-- prettier-ignore-start -->
     </tbody>
+  <!-- prettier-ignore-end -->
   </table>
 {% endmacro %}

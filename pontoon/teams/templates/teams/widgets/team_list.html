@@ -10,12 +10,15 @@
         <th class="population">Speakers<i class="fas"></i></th>
         <th class="latest-activity">Latest Activity<i class="fas"></i></th>
         <th class="progress">Progress<i class="fas"></i></th>
-        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fas fa-lightbulb"></span><i class="fas"></i></th>
+        <th class="unreviewed-status inverted" title="Unreviewed suggestions">
+          <span class="fas fa-lightbulb"></span><i class="fas"></i>
+        </th>
         {% if request %}
           <th class="check">Request<i class="fas"></i></th>
         {% endif %}
       </tr>
     </thead>
+    <!-- prettier-ignore-start -->
     <tbody>
 {% endmacro %}
 
@@ -34,9 +37,7 @@
     <td class="population">
       <span>{{ locale.population|intcomma or 'Unknown' }}</span>
     </td>
-    <td class="latest-activity">
-      {{ LatestActivity.span(latest_activity) }}
-    </td>
+    <td class="latest-activity">{{ LatestActivity.span(latest_activity) }}</td>
     <td class="progress" colspan="2">
       {% if chart.total %}
         {{ ProgressChart.span(chart, chart_link, link_parameter, has_param) }}
@@ -51,31 +52,42 @@
 {% endmacro %}
 
 {% macro footer(request=False, form=None) %}
+  <!-- prettier-ignore-start -->
     </tbody>
+  <!-- prettier-ignore-end -->
   </table>
   {% if request %}
     {% if form %}
-    <form id="request-team-form">
-      <div id="team-form">
-        <div class="field">
-          {{ form.name.label_tag(label_suffix='') }}
-          {{ form.name }}
+      <form id="request-team-form">
+        <div id="team-form">
+          <div class="field">
+            {{ form.name.label_tag(label_suffix='') }}
+            {{ form.name }}
+          </div>
+          <div class="field">
+            {{ form.code.label_tag(label_suffix='') }}
+            {{ form.code }}
+          </div>
         </div>
-        <div class="field">
-          {{ form.code.label_tag(label_suffix='') }}
-          {{ form.code }}
+        <div id="request-item-note">
+          <p class="team">
+            The requested team won’t be enabled automatically: an email will be
+            sent to Pontoon admins to evaluate the request. We’ll try to respond
+            as soon as possible.
+          </p>
         </div>
-      </div>
-      <div id="request-item-note">
-        <p class="team">The requested team won’t be enabled automatically: an email will be sent to Pontoon admins to evaluate the request. We’ll try to respond as soon as possible.</p>
-      </div>
-      <button type="submit" class="request-item">Request new team</button>
-    </form>
+        <button type="submit" class="request-item">Request new team</button>
+      </form>
     {% else %}
-    <div id="request-item-note">
-      <p class="locale-projects">The requested language won’t be enabled automatically: an email will be sent to Pontoon admins and team managers to evaluate the request. We’ll try to respond as soon as possible. Please make sure to get in touch with the localization team if you are a new contributor.</p>
-    </div>
-    <button type="submit" class="request-item">Request new language</button>
+      <div id="request-item-note">
+        <p class="locale-projects">
+          The requested language won’t be enabled automatically: an email will
+          be sent to Pontoon admins and team managers to evaluate the request.
+          We’ll try to respond as soon as possible. Please make sure to get in
+          touch with the localization team if you are a new contributor.
+        </p>
+      </div>
+      <button type="submit" class="request-item">Request new language</button>
     {% endif %}
   {% endif %}
 {% endmacro %}

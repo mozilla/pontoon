@@ -1,23 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %} {{ title }} {% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block class %}homepage{% endblock %}
 
 {% block middle %}
 
-{% if user.is_superuser %}
-<div id="edit-homepage">
-  <div class="select controls">
-    <a class="button" target=blank href="{{ url('admin:homepage_homepage_change', homepage_id) }}">
-      <span class="fas fa-pencil-alt"></span>Edit Homepage
-    </a>
-  </div>
-</div>
-{% endif %}
+  {% if user.is_superuser %}
+    <div id="edit-homepage">
+      <div class="select controls">
+        <a
+          class="button"
+          target="blank"
+          href="{{ url('admin:homepage_homepage_change', homepage_id) }}"
+        >
+          <span class="fas fa-pencil-alt"></span>Edit Homepage
+        </a>
+      </div>
+    </div>
+  {% endif %}
 
-{{ content }}
-
+  {{ content }}
 {% endblock %}
 
 {% block extend_css %}

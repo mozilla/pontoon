@@ -11,44 +11,53 @@
 {% endblock %}
 
 {% block bottom %}
-<section id="main">
-  <div class="container">
-    <div id="insights">
+  <section id="main">
+    <div class="container">
+      <div id="insights">
         <section class="team-pretranslation-quality">
-            <figure class="block">
-                <h3 class="controls">
-                    Team pretranslation quality
-                    {{ Tooltip.display(intro='Approval rate of pretranslations for each team.') }}
-                </h3>
-                <div class="chart-wrapper">
-                    <canvas
-                        id="team-pretranslation-quality-chart"
-                        data-dataset="{{ team_pretranslation_quality.dataset }}"
-                        data-dates="{{ team_pretranslation_quality.dates }}">
-                    </canvas>
-                </div>
-                <div id="team-pretranslation-quality-chart-legend" class="legend" width="240"></div>
-            </figure>
+          <figure class="block">
+            <h3 class="controls">
+              Team pretranslation quality
+              {{ Tooltip.display(intro='Approval rate of pretranslations for each team.') }}
+            </h3>
+            <div class="chart-wrapper">
+              <canvas
+                id="team-pretranslation-quality-chart"
+                data-dataset="{{ team_pretranslation_quality.dataset }}"
+                data-dates="{{ team_pretranslation_quality.dates }}"
+              >
+              </canvas>
+            </div>
+            <div
+              id="team-pretranslation-quality-chart-legend"
+              class="legend"
+              width="240"
+            ></div>
+          </figure>
         </section>
         <section class="project-pretranslation-quality">
-            <figure class="block">
-                <h3 class="controls">
-                    Project pretranslation quality
-                    {{ Tooltip.display(intro='Approval rate of pretranslations for each project.') }}
-                </h3>
-                <div class="chart-wrapper">
-                    <canvas
-                        id="project-pretranslation-quality-chart"
-                        data-dataset="{{ project_pretranslation_quality.dataset }}"
-                        data-dates="{{ project_pretranslation_quality.dates }}">
-                    </canvas>
-                </div>
-                <div id="project-pretranslation-quality-chart-legend" class="legend"></div>
-            </figure>
+          <figure class="block">
+            <h3 class="controls">
+              Project pretranslation quality
+              {{ Tooltip.display(intro='Approval rate of pretranslations for each project.') }}
+            </h3>
+            <div class="chart-wrapper">
+              <canvas
+                id="project-pretranslation-quality-chart"
+                data-dataset="{{ project_pretranslation_quality.dataset }}"
+                data-dates="{{ project_pretranslation_quality.dates }}"
+              >
+              </canvas>
+            </div>
+            <div
+              id="project-pretranslation-quality-chart-legend"
+              class="legend"
+            ></div>
+          </figure>
         </section>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

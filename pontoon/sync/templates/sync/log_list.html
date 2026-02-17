@@ -8,14 +8,20 @@
 {% endblock %}
 
 {% block bottom %}
-{% set is_manager = request.user.has_perm("base.can_manage_project") %}
-<section id="main" class="clearfix">
-  <div class="container">
-    <menu class="controls">
-      <div class="search-wrapper small clearfix">
-        <div class="icon fas fa-search"></div>
-        <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter projects">
-      </div>
+  {% set is_manager = request.user.has_perm("base.can_manage_project") %}
+  <section id="main" class="clearfix">
+    <div class="container">
+      <menu class="controls">
+        <div class="search-wrapper small clearfix">
+          <div class="icon fas fa-search"></div>
+          <input
+            class="table-filter"
+            type="search"
+            autocomplete="off"
+            autofocus
+            placeholder="Filter projects"
+          />
+        </div>
         {% if show_no_changes %}
           {% set no_changes = 0 %}
           {% set button_title = "Hide syncs with no changes" %}
@@ -23,54 +29,86 @@
           {% set no_changes = 1 %}
           {% set button_title = "Show syncs with no changes" %}
         {% endif %}
-        <a class="button small view-toggle" href="{{ url('pontoon.sync.log.errors') }}">Sync Log Errors <span class="fas fa-chevron-right"></span></a>
-        <a class="button small no-changes-toggle" href="?no_changes={{ no_changes }}">{{ button_title }}</a>
-    </menu>
+        <a
+          class="button small view-toggle"
+          href="{{ url('pontoon.sync.log.errors') }}"
+          >Sync Log Errors <span class="fas fa-chevron-right"></span
+        ></a>
+        <a
+          class="button small no-changes-toggle"
+          href="?no_changes={{ no_changes }}"
+          >{{ button_title }}</a
+        >
+      </menu>
 
-    <table class="table table-sort log-list item-list">
+      <table class="table table-sort log-list item-list">
         <thead>
           <tr>
             <th class="project asc">Project<i class="fas"></i></th>
             <th class="latest-status">Latest Status<i class="fas"></i></th>
-            <th class="latest-start relative-time">Latest Start<i class="fas"></i></th>
+            <th class="latest-start relative-time">
+              Latest Start<i class="fas"></i>
+            </th>
             <th class="duration" data-sort="">Duration<i class="fas"></i></th>
             {% if settings.MANUAL_SYNC and is_manager %}
-            <th class="sync-now no-sort"></th>
+              <th class="sync-now no-sort"></th>
             {% endif %}
           </tr>
         </thead>
         <tbody>
-            {% for project in projects %}
+          {% for project in projects %}
             <tr class="limited">
               <td class="project">
                 <h4>
-                {% if is_manager %}
-                  <a href="{{ project.sync_url }}">{{ project.name }}</a>
-                {% else %}
-                  {{ project.name }}
-                {% endif %}
+                  {% if is_manager %}
+                    <a href="{{ project.sync_url }}">{{ project.name }}</a>
+                  {% else %}
+                    {{ project.name }}
+                  {% endif %}
                 </h4>
               </td>
-              <td class="latest-status {{ format_sync_status_class(project.sync_status) }}">
+              <td
+                class="latest-status {{ format_sync_status_class(project.sync_status) }}"
+              >
                 {{ format_sync_status_label(project.sync_status) }}
               </td>
               <td class="latest-start">
-                <time {% if project.sync_start_time %}datetime="{{ project.sync_start_time.isoformat() }}" title='{{ project.sync_start_time|date("Y-m-d H:i:s") }} UTC'{% endif %}>{{ project.sync_start_time|naturaltime or "―" }}</time>
+                <time
+                  {% if project.sync_start_time %}
+                    datetime="{{ project.sync_start_time.isoformat() }}"
+                    title='{{ project.sync_start_time|date("Y-m-d H:i:s") }}
+                    UTC'
+                  {% endif %}
+                  >{{ project.sync_start_time|naturaltime or "―" }}</time
+                >
               </td>
-              <td class="duration" title='{% if project.sync_end_time %}Latest End: {{ project.sync_end_time|date("Y-m-d H:i:s") }} UTC{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
+              <td
+                class="duration"
+                title="{% if project.sync_end_time %}
+                  Latest End: {{ project.sync_end_time|date("Y-m-d H:i:s") }}
+                  UTC
+                {% endif %}"
+                data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}"
+              >
                 {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
               </td>
               {% if settings.MANUAL_SYNC and is_manager and project.data_source != "database" %}
-              <td class="sync-now">
-                <button class="button sync" project-slug="{{ project.slug }}" title="Sync now"><i class="fas fa-sync-alt"></i></button>
-              </td>
+                <td class="sync-now">
+                  <button
+                    class="button sync"
+                    project-slug="{{ project.slug }}"
+                    title="Sync now"
+                  >
+                    <i class="fas fa-sync-alt"></i>
+                  </button>
+                </td>
               {% endif %}
             </tr>
           {% endfor %}
         </tbody>
-    </table>
-  </div>
-</section>
+      </table>
+    </div>
+  </section>
 {% endblock %}
 
 {% block extend_css %}

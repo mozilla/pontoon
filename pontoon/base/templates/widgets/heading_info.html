@@ -2,149 +2,186 @@
 {% import 'widgets/priority.html' as Priority %}
 
 {% macro heading_item(title, link, class='') %}
-<a class="{{ class }}" href="{{ link }}">{{ title }}</a>
+  <a class="{{ class }}" href="{{ link }}">{{ title }}</a>
 {% endmacro %}
 
 {% macro details_item(title, class, value, title_link=None, value_link=None, value_class=None) %}
-<li class="{{ class }}">
-  <span class="title">{{ title }}{% if title_link %}<sup><a href="{{ title_link }}" target="_blank" rel="noopener noreferrer">*</a></sup>{% endif %}</span>
-  <span class="value{% if value_class %} {{ value_class }}{% endif %}">
-    {% if value_link %}<a href="{{ value_link }}">{% endif %}
-    {{ value }}
-    {% if value_link %}</a>{% endif %}
-  </span>
-</li>
+  <li class="{{ class }}">
+    <span class="title"
+      >{{ title }}{% if title_link %}
+        <sup
+          ><a href="{{ title_link }}" target="_blank" rel="noopener noreferrer">
+            *</a
+          ></sup
+        >
+      {% endif %}</span
+    >
+    <span class="value {% if value_class %}{{ value_class }}{% endif %}">
+      {% if value_link %}
+        <a href="{{ value_link }}">{{ value }}</a>
+      {% else %}
+        {{ value }}
+      {% endif %}
+    </span>
+  </li>
 {% endmacro %}
 
 {% macro details_item_priority(priority, title='Priority') %}
-<li class="priority">
-  <span class="title">{{ title }}</span>
-  <span class="value">
-    {{ Priority.priority(priority) }}
-  </span>
-</li>
+  <li class="priority">
+    <span class="title">{{ title }}</span>
+    <span class="value"> {{ Priority.priority(priority) }} </span>
+  </li>
 {% endmacro %}
 
 {% macro details_item_deadline(deadline, complete) %}
-<li class="deadline">
-  <span class="title">Target Date</span>
-  <span class="value">
-    {{ Deadline.deadline(deadline, complete) }}
-  </span>
-</li>
+  <li class="deadline">
+    <span class="title">Target Date</span>
+    <span class="value"> {{ Deadline.deadline(deadline, complete) }} </span>
+  </li>
 {% endmacro %}
 
 {% macro details_item_url(title, class, url) %}
   {% if url %}
-  {{ details_item(
-    title=title,
-    class=class,
-    value=url|pretty_url,
-    value_link=url,
-    value_class='overflow')
-  }}
+    {{
+      details_item(
+      title=title,
+      class=class,
+      value=url|pretty_url,
+      value_link=url,
+      value_class='overflow')
+    }}
   {% endif %}
 {% endmacro %}
 
 {% macro details_item_resources(resources, locale_code=None) %}
   {% if resources|length %}
-  <li class="resources clearfix">
-    <span class="title">Resources</span>
-    <span class="value overflow">
-      {% for resource in resources %}
-        {% if loop.index != 1 %}&middot;{% endif %}
-        <a href="{{ resource.url|local_url(locale_code) }}">{{ resource.name }}</a>
-      {% endfor %}
-    </span>
-  </li>
+    <li class="resources clearfix">
+      <span class="title">Resources</span>
+      <span class="value overflow">
+        {% for resource in resources %}
+          {% if loop.index != 1 %}&middot;{% endif %}
+          <a href="{{ resource.url|local_url(locale_code) }}"
+            >{{ resource.name }}</a
+          >
+        {% endfor %}
+      </span>
+    </li>
   {% endif %}
 {% endmacro %}
 
 {% macro progress_chart() %}
-<div class="progress">
-  <canvas class="chart" height="130" width="130"></canvas>
-  <span class="number noselect"></span>
-</div>
+  <div class="progress">
+    <canvas class="chart" height="130" width="130"></canvas>
+    <span class="number noselect"></span>
+  </div>
 {% endmacro %}
 
 {% macro legend_item(title, class, value, link=None) %}
-<li class="{{ class }}">
-  {% if link %}<a href="{{ link }}">{% endif %}
-    {% if class != 'all' %}
-      <span class="fas status"></span>
+  <li class="{{ class }}">
+    {% if link %}
+      <a href="{{ link }}">
+        {% if class != 'all' %}<span class="fas status"></span>{% endif %}
+        {{ title }}
+        <span class="value" data-value="{{ value }}">{{ value|intcomma }}</span>
+      </a>
+    {% else %}
+      {% if class != 'all' %}<span class="fas status"></span>{% endif %}
+      {{ title }}
+      <span class="value" data-value="{{ value }}">{{ value|intcomma }}</span>
     {% endif %}
-    {{ title }}
-    <span class="value" data-value="{{ value }}">{{ value|intcomma }}</span>
-  {% if link %}</a>{% endif %}
-</li>
+  </li>
 {% endmacro %}
 
 {% macro progress_chart_legend(stats, link=None) %}
-<ul class="legend">
-  {{ legend_item(
-    title='Translated',
-    class='translated',
-    value=stats.approved,
-    link=(link + '?status=translated') if link else None)
-  }}
-  {{ legend_item(
-    title='Pretranslated',
-    class='pretranslated',
-    value=stats.pretranslated,
-    link=(link + '?status=pretranslated') if link else None)
-  }}
-  {{ legend_item(
-    title='Warnings',
-    class='warnings',
-    value=stats.warnings,
-    link=(link + '?status=warnings') if link else None)
-  }}
-  {{ legend_item(
-    title='Errors',
-    class='errors',
-    value=stats.errors,
-    link=(link + '?status=errors') if link else None)
-  }}
-  {{ legend_item(
-    title='Missing',
-    class='missing',
-    value=(stats.total - stats.approved - stats.pretranslated - stats.warnings - stats.errors),
-    link=(link + '?status=missing') if link else None)
-  }}
-</ul>
-<div class="non-plottable">
-  <div class="all">
-    {% if link %}<a href="{{ link }}">{% endif %}
-      <p class="title">All strings</p>
-      <p class="value" data-value="{{ stats.total }}">{{ stats.total|intcomma }}</p>
-    {% if link %}</a>{% endif %}
+  <ul class="legend">
+    {{
+      legend_item(
+      title='Translated',
+      class='translated',
+      value=stats.approved,
+      link=(link + '?status=translated') if link else None)
+    }}
+    {{
+      legend_item(
+      title='Pretranslated',
+      class='pretranslated',
+      value=stats.pretranslated,
+      link=(link + '?status=pretranslated') if link else None)
+    }}
+    {{
+      legend_item(
+      title='Warnings',
+      class='warnings',
+      value=stats.warnings,
+      link=(link + '?status=warnings') if link else None)
+    }}
+    {{
+      legend_item(
+      title='Errors',
+      class='errors',
+      value=stats.errors,
+      link=(link + '?status=errors') if link else None)
+    }}
+    {{
+      legend_item(
+      title='Missing',
+      class='missing',
+      value=(stats.total - stats.approved - stats.pretranslated - stats.warnings - stats.errors),
+      link=(link + '?status=missing') if link else None)
+    }}
+  </ul>
+  <div class="non-plottable">
+    <div class="all">
+      {% if link %}
+        <a href="{{ link }}">
+          <p class="title">All strings</p>
+          <p class="value" data-value="{{ stats.total }}">
+            {{ stats.total|intcomma }}
+          </p>
+        </a>
+      {% else %}
+        <p class="title">All strings</p>
+        <p class="value" data-value="{{ stats.total }}">
+          {{ stats.total|intcomma }}
+        </p>
+      {% endif %}
+    </div>
+    <div class="unreviewed {% if stats.unreviewed %}pending{% endif %}">
+      {% if link %}
+        <a href="{{ link + '?status=unreviewed' }}">
+          <p class="title">Unreviewed</p>
+          <p class="value">
+            <span class="fas status"></span>
+            <span class="text">{{ stats.unreviewed|intcomma }}</span>
+          </p>
+        </a>
+      {% else %}
+        <p class="title">Unreviewed</p>
+        <p class="value">
+          <span class="fas status"></span>
+          <span class="text">{{ stats.unreviewed|intcomma }}</span>
+        </p>
+      {% endif %}
+    </div>
   </div>
-  <div class="unreviewed{% if stats.unreviewed %} pending{% endif %}">
-    {% if link %}<a href="{{ link + '?status=unreviewed' }}">{% endif %}
-      <p class="title">Unreviewed</p>
-      <p class="value">
-        <span class="fas status"></span>
-        <span class="text">{{ stats.unreviewed|intcomma }}</span>
-      </p>
-    {% if link %}</a>{% endif %}
-  </div>
-</div>
 {% endmacro %}
 
 {% macro download_selector(locale, project) %}
-<div class="download-selector select">
-  <div class="button selector">
-    <i class="fas fa-cloud-download-alt"></i>
-  </div>
-  <div class="menu">
+  <div class="download-selector select">
+    <div class="button selector">
+      <i class="fas fa-cloud-download-alt"></i>
+    </div>
+    <div class="menu">
       <ul>
-          <li>
-              <a href="/terminology/{{ locale }}.tbx">Download Terminology</a>
-          </li>
-          <li>
-              <a href="/translation-memory/{{ locale }}.{{ project }}.tmx">Download Translation Memory</a>
-          </li>
+        <li>
+          <a href="/terminology/{{ locale }}.tbx">Download Terminology</a>
+        </li>
+        <li>
+          <a href="/translation-memory/{{ locale }}.{{ project }}.tmx"
+            >Download Translation Memory</a
+          >
+        </li>
       </ul>
+    </div>
   </div>
-</div>
 {% endmacro %}

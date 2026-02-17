@@ -3,115 +3,98 @@
 {% block title %}{{ subject }}{% endblock %}
 
 {% block extend_css %}
-h2.team-activity {
-    padding-top: 30px;
-}
-
-p.item {
-    margin: 0;
-}
-
-p.completion {
-    padding-top: 20px;
-}
-
-.bullet {
-    display: inline-block;
-    border: 1px solid;
-    border-radius: 50%;
-    margin: 1px 4px;
-    height: 7px;
-    width: 7px;
-}
-
-.bullet.missing {
-    background: #bec7d1;
-    border-color: #bec7d1;
-}
-
-.bullet.unreviewed {
-    background: #4fc4f6;
-    border-color: #4fc4f6;
-}
-
-.bullet.pretranslated {
-    background: #c0ff00;
-    border-color: #c0ff00;
-}
+  h2.team-activity { padding-top: 30px; } p.item { margin: 0; } p.completion {
+  padding-top: 20px; } .bullet { display: inline-block; border: 1px solid;
+  border-radius: 50%; margin: 1px 4px; height: 7px; width: 7px; }
+  .bullet.missing { background: #bec7d1; border-color: #bec7d1; }
+  .bullet.unreviewed { background: #4fc4f6; border-color: #4fc4f6; }
+  .bullet.pretranslated { background: #c0ff00; border-color: #c0ff00; }
 {% endblock %}
 
 {% block header %}Hello.{% endblock %}
 
-{% block subheader %}{% endblock %}
+{% block subheader %}
+{% endblock %}
 
 {% block content_class %}monthly-activity-summary{% endblock %}
 
 {% block content %}
-<p>Here's your monthly activity summary for {{ month }} {{ year }}.</p>
+  <p>Here's your monthly activity summary for {{ month }} {{ year }}.</p>
 
-{% if settings.EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO %}
-<p>{{ settings.EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO }}</p>
-{% endif %}
+  {% if settings.EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO %}
+    <p>{{ settings.EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO }}</p>
+  {% endif %}
 
-<h2>Your personal activity</h2>
-{{ actions_item("Translations submitted", user, "submitted") }}
-{{ actions_item("Suggestions reviewed", user, "reviewed") }}
+  <h2>Your personal activity</h2>
+  {{ actions_item("Translations submitted", user, "submitted") }}
+  {{ actions_item("Suggestions reviewed", user, "reviewed") }}
 
-{% for locale in locales %}
-<h2 class="team-activity">Team activity for {{ locale.name }} ({{ locale.code }})</h2>
+  {% for locale in locales %}
+    <h2 class="team-activity">
+      Team activity for {{ locale.name }} ({{ locale.code }})
+    </h2>
 
-{{ actions_item("New source strings added", locale, "added_source_strings") }}
-{{ actions_item("Translations submitted", locale, "submitted") }}
-{{ actions_item("Suggestions reviewed", locale, "reviewed") }}
+    {{ actions_item("New source strings added", locale, "added_source_strings") }}
+    {{ actions_item("Translations submitted", locale, "submitted") }}
+    {{ actions_item("Suggestions reviewed", locale, "reviewed") }}
 
-{{ contributors_item("New contributors", locale.contributors.new_contributors) }}
-{{ contributors_item("Recently active managers", locale.contributors.active_managers) }}
-{{ contributors_item("Recently active translators", locale.contributors.active_translators) }}
-{{ contributors_item("Recently active contributors", locale.contributors.active_contributors) }}
+    {{ contributors_item("New contributors", locale.contributors.new_contributors) }}
+    {{ contributors_item("Recently active managers", locale.contributors.active_managers) }}
+    {{ contributors_item("Recently active translators", locale.contributors.active_translators) }}
+    {{ contributors_item("Recently active contributors", locale.contributors.active_contributors) }}
 
-{{ status_item("Completion", locale, "completion", "completion", "", "%") }}
-{{ status_item("Strings with missing translations", locale, "missing_strings", "", "missing") }}
-{{ status_item("Unreviewed suggestions", locale, "unreviewed_strings", "", "unreviewed") }}
-{{ status_item("Unreviewed pretranslations", locale, "pretranslated_strings", "", "pretranslated") }}
-{% endfor %}
+    {{ status_item("Completion", locale, "completion", "completion", "", "%") }}
+    {{ status_item("Strings with missing translations", locale, "missing_strings", "", "missing") }}
+    {{ status_item("Unreviewed suggestions", locale, "unreviewed_strings", "", "unreviewed") }}
+    {{ status_item("Unreviewed pretranslations", locale, "pretranslated_strings", "", "pretranslated") }}
+  {% endfor %}
 {% endblock %}
 
 {% block footer %}
-If you no longer want to receive these activity summaries, you can turn off the “Monthly activity summary“ feature in
-your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
+  If you no longer want to receive these activity summaries, you can turn off
+  the “Monthly activity summary“ feature in your
+  <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 {% endblock %}
 
 {% macro actions_item(label, actions_object, attribute) %}
-<p class="item">
+  <p class="item">
     <span class="bullet"></span>
-    {{ label }}:
-    {{ actions_object.month_actions[attribute] or 0 }} (vs. {{ actions_object.previous_month_actions[attribute] or 0 }} in the previous month)
-</p>
+    {{ label }}: {{ actions_object.month_actions[attribute] or 0 }} (vs.
+    {{ actions_object.previous_month_actions[attribute] or 0 }} in the previous
+    month)
+  </p>
 {% endmacro %}
 
 {% macro contributors_item(label, contributors) %}
-{% if contributors %}
-<p class="item">
-    <span class="bullet"></span>
-    {{ label }}:
-    {% for contributor in contributors %}
-    <a href="{{ full_url('pontoon.contributors.contributor.username', contributor.username) }}">
-        <span class="name">{{ contributor.name_or_email }}</span></a>{% if not loop.last %}, {% endif %}
-    {% endfor %}
-</p>
-{% endif %}
+  {% if contributors %}
+    <p class="item">
+      <span class="bullet"></span>
+      {{ label }}:
+      {% for contributor in contributors %}
+        <a
+          href="{{ full_url('pontoon.contributors.contributor.username', contributor.username) }}"
+        >
+          <span class="name">{{ contributor.name_or_email }}</span></a
+        >{% if not loop.last %},{% endif %}
+      {% endfor %}
+    </p>
+  {% endif %}
 {% endmacro %}
 
 {% macro status_item(label, locale, attribute, cls="", url_parameter="", unit="") %}
-{% set value = locale.month_stats[attribute] %}
-<p class="item {{ cls }}">
+  {% set value = locale.month_stats[attribute] %}
+  <p class="item {{ cls }}">
     <span class="bullet {{ url_parameter }}"></span>
     {{ label }}:
     {% if url_parameter and value %}
-    <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status={{ url_parameter }}">{{ value or 0 }}{{ unit }}</a>
+      <a
+        href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status={{ url_parameter }}"
+        >{{ value or 0 }}{{ unit }}</a
+      >
     {% else %}
-    {{ value or 0 }}{{ unit }}
+      {{ value or 0 }}{{ unit }}
     {% endif %}
-    (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} in the previous month)
-</p>
+    (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} in the
+    previous month)
+  </p>
 {% endmacro %}

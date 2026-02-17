@@ -1,19 +1,24 @@
 <section id="main">
-
   <!-- Section-1: Introduction -->
   <section id="section-1" class="section">
     <div class="container">
       <h1>Welcome to Pontoon</h1>
       <p>
-        Pontoon is a translation management system used and developed by
-        the Mozilla localization community. It specializes in open source localization
-        that is driven by the community and uses version-control systems
-        for storing translations.
+        Pontoon is a translation management system used and developed by the
+        Mozilla localization community. It specializes in open source
+        localization that is driven by the community and uses version-control
+        systems for storing translations.
       </p>
       <div class="flex">
-        <a class="button primary" href="{{ start_url }}">Start Localizing Now</a>
+        <a class="button primary" href="{{ start_url }}"
+          >Start Localizing Now</a
+        >
         <span>or</span>
-        <a class="button" href="{% url 'pontoon.translate.locale.agnostic' 'tutorial' 'playground' %}">Take a Tour</a>
+        <a
+          class="button"
+          href="{% url 'pontoon.translate.locale.agnostic' 'tutorial' 'playground' %}"
+          >Take a Tour</a
+        >
       </div>
     </div>
     <div class="footer">
@@ -29,9 +34,10 @@
       <div class="content-wrapper flex-col-2 flex-direction-col">
         <h2>This is how it works.</h2>
         <p>
-          Pontoon is a simple and intuitive tool that requires little technical skills to use it.
-          Each language has its own team of localizers.
-          Join one, find a project you'd like to contribute to, and you're ready to start contributing!
+          Pontoon is a simple and intuitive tool that requires little technical
+          skills to use it. Each language has its own team of localizers. Join
+          one, find a project you'd like to contribute to, and you're ready to
+          start contributing!
         </p>
       </div>
       <div class="flex-col-2 flex">
@@ -55,10 +61,10 @@
       <div class="content-wrapper flex-col-2 flex-direction-col">
         <h2>Things which make it special.</h2>
         <p>
-          From the ground up, Pontoon has been designed as the tool
-          that brings all your team's localization tasks together in one place.
-          All the functionality and services you need are seamlessly integrated
-          into a single platform.
+          From the ground up, Pontoon has been designed as the tool that brings
+          all your team's localization tasks together in one place. All the
+          functionality and services you need are seamlessly integrated into a
+          single platform.
         </p>
       </div>
       <div class="flex-col-2">
@@ -102,9 +108,15 @@
       <div class="content-wrapper flex-direction-col">
         <h2>Join us.</h2>
         <p>Now that you know what Pontoon is, come on in!</p>
-        <a class="button primary" href="{{ start_url }}">Start Localizing Now</a>
+        <a class="button primary" href="{{ start_url }}"
+          >Start Localizing Now</a
+        >
         <p>Want to learn more?</p>
-        <a class="button" href="{% url 'pontoon.translate.locale.agnostic' 'tutorial' 'playground' %}">Take a Tour</a>
+        <a
+          class="button"
+          href="{% url 'pontoon.translate.locale.agnostic' 'tutorial' 'playground' %}"
+          >Take a Tour</a
+        >
       </div>
       <div class="footer flex">
         <div class="flex-col-3 mozilla">
@@ -116,10 +128,11 @@
           <a href="https://github.com/mozilla/pontoon/">Hack it on GitHub</a>
         </div>
         <div class="flex-col-3 contact">
-          <a href="https://github.com/mozilla/pontoon/discussions">Give Feedback</a>
+          <a href="https://github.com/mozilla/pontoon/discussions"
+            >Give Feedback</a
+          >
         </div>
       </div>
     </div>
   </section>
-
 </section>
