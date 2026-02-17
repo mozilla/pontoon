@@ -123,9 +123,9 @@ class TagInlineForm(forms.ModelForm):
         # If the project instance is available, filter resources for this project
         if kwargs.get("instance") and kwargs["instance"].project:
             project = kwargs["instance"].project
-            self.fields["resources"].queryset = Resource.objects.filter(
-                project=project
-            ).select_related()
+            self.fields["resources"].queryset = (
+                Resource.objects.current().filter(project=project).select_related()
+            )
 
 
 TagInlineFormSet = inlineformset_factory(Project, Tag, form=TagInlineForm, extra=1)

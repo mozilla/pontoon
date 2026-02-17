@@ -6,12 +6,12 @@ from pontoon.base.models import Entity, Resource, TranslatedResource
 
 
 def update_terminology_project_stats():
-    resource = Resource.objects.get(project__slug="terminology")
+    resource = Resource.objects.current().get(project__slug="terminology")
     resource.total_strings = Entity.objects.filter(
         resource=resource, obsolete=False
     ).count()
     resource.save(update_fields=["total_strings"])
-    TranslatedResource.objects.filter(resource=resource).calculate_stats()
+    TranslatedResource.objects.current().filter(resource=resource).calculate_stats()
 
 
 class TermQuerySet(models.QuerySet):
@@ -126,7 +126,7 @@ class Term(models.Model):
         - Entity.comment contains joint content of several fields:
           Term.part_of_speech. Term.definition. E.g.: Term.usage.
         """
-        resource = Resource.objects.get(project__slug="terminology")
+        resource = Resource.objects.current().get(project__slug="terminology")
 
         entity, created = Entity.objects.get_or_create(
             string=self.text,
