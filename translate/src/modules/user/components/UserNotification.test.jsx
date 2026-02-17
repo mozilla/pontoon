@@ -95,7 +95,7 @@ describe('<UserNotification>', () => {
     };
     const wrapper = mount(<UserNotification notification={notification} />);
 
-    expect(wrapper.find('.actor').text()).toBe('[Deleted User]');
+    expect(wrapper.find('.actor').text()).toBe('Deleted User');
   });
 
   it('shows other notification with deleted actor', () => {
@@ -106,7 +106,7 @@ describe('<UserNotification>', () => {
     };
     const wrapper = mount(<UserNotification notification={notification} />);
 
-    expect(wrapper.find('.actor').text()).toBe('[Deleted User]');
+    expect(wrapper.find('.actor').text()).toBe('Deleted User');
     expect(wrapper.find('.actor a')).toHaveLength(0);
   });
 });

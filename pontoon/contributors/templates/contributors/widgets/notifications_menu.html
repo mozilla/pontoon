@@ -56,7 +56,7 @@
           {% set actor_anchor = notification.actor.name_or_email|nospam %}
           {% set actor_url = full_url('pontoon.contributors.contributor.username', notification.actor.username) %}
         {% else %}
-          {% set actor_anchor = "[Deleted User]" %}
+          {% set actor_anchor = "Deleted User" %}
           {% set has_actor = false %}
         {% endif %}
 

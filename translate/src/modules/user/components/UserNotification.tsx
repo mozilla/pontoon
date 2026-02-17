@@ -68,7 +68,7 @@ const Comment = ({
     {actor ? (
       <span className='actor'>{actor.anchor}</span>
     ) : (
-      <span className='actor deleted'>[Deleted User]</span>
+      <span className='actor deleted'>Deleted User</span>
     )}
 
     <span className='verb'>
@@ -108,7 +108,7 @@ const Other = ({
         <a href={actor.url}>{actor.anchor}</a>
       </span>
     ) : (
-      <span className='actor deleted'>[Deleted User]</span>
+      <span className='actor deleted'>Deleted User</span>
     )}
 
     <span className='verb'>
