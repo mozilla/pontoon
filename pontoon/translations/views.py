@@ -26,7 +26,7 @@ from pontoon.translations import forms
 def _add_stats(response_data, resource, locale, stats):
     if stats:
         paths = [resource.path] if stats == "resource" else []
-        response_data["stats"] = TranslatedResource.objects.query_stats(
+        response_data["stats"] = TranslatedResource.objects.current().query_stats(
             resource.project, paths, locale
         )
 

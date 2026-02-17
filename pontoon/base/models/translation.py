@@ -23,9 +23,11 @@ class TranslationQuerySet(models.QuerySet):
     def translated_resources(self, locale):
         from pontoon.base.models.translated_resource import TranslatedResource
 
-        return TranslatedResource.objects.filter(
-            resource__entities__translation__in=self, locale=locale
-        ).distinct()
+        return (
+            TranslatedResource.objects.current()
+            .filter(resource__entities__translation__in=self, locale=locale)
+            .distinct()
+        )
 
     def authors(self):
         """
@@ -310,8 +312,10 @@ class Translation(DirtyFieldsMixin, models.Model):
             self.entity.reset_term_translation(self.locale)
 
         # We use get_or_create() instead of just get() to make it easier to test.
-        translatedresource, created = TranslatedResource.objects.get_or_create(
-            resource=self.entity.resource, locale=self.locale
+        translatedresource, created = (
+            TranslatedResource.objects.current().get_or_create(
+                resource=self.entity.resource, locale=self.locale
+            )
         )
 
         # Update latest translation where necessary
