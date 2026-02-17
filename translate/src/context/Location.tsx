@@ -96,7 +96,12 @@ function parse(
   };
   const list = params.get('list');
   const location: Location = list
-    ? { ...common, ...emptyParams, list: list.split(',').map(Number) }
+    ? {
+        ...common,
+        ...emptyParams,
+        list: list.split(',').map(Number),
+        search: params.get('search'),
+      }
     : {
         ...common,
         search: params.get('search'),
@@ -135,34 +140,31 @@ function stringify(prev: Location, next: string | Partial<Location>) {
   const params = new URLSearchParams();
   if (next.list) {
     params.set('list', next.list.join(','));
-  } else {
-    let keepList = !('list' in next);
-    for (const key of [
-      'search',
-      'status',
-      'extra',
-      'search_identifiers',
-      'search_exclude_source_strings',
-      'search_rejected_translations',
-      'search_match_case',
-      'search_match_whole_word',
-      'tag',
-      'author',
-      'time',
-      'reviewer',
-      'review_time',
-      'exclude_self_reviewed',
-    ] as const) {
-      const value = key in next ? next[key] : prev[key];
-      if (value) {
-        params.set(key, String(value));
-        keepList &&= false;
-      }
-    }
-    if (keepList && prev.list) {
-      params.set('list', prev.list.join(','));
+  } else if (prev.list && !('list' in next)) {
+    params.set('list', prev.list.join(','));
+  }
+  for (const key of [
+    'search',
+    'status',
+    'extra',
+    'search_identifiers',
+    'search_exclude_source_strings',
+    'search_rejected_translations',
+    'search_match_case',
+    'search_match_whole_word',
+    'tag',
+    'author',
+    'time',
+    'reviewer',
+    'review_time',
+    'exclude_self_reviewed',
+  ] as const) {
+    const value = key in next ? next[key] : prev[key];
+    if (value) {
+      params.set(key, String(value));
     }
   }
+
   const entity = 'entity' in next ? next.entity : prev.entity;
   if (entity) {
     params.set('string', String(entity));

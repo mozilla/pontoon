@@ -175,15 +175,18 @@ def authors_and_time_range(request, locale, slug, part):
 
 
 def _get_entities_list(locale, preferred_source_locale, project, form):
-    """Return a specific list of entities, as defined by the `entity_ids` field of the form.
+    """Return entities from a specified list, optionally filtered by search term.
 
-    This is used for batch editing.
+    Used for batch editing and list-based entity filtering (e.g. from notifications).
     """
-    entities = (
-        Entity.objects.filter(pk__in=form.cleaned_data["entity_ids"])
-        .distinct()
-        .order_by("order")
-    )
+    entity_ids = form.cleaned_data["entity_ids"]
+    entities = Entity.objects.filter(pk__in=entity_ids)
+
+    if form.cleaned_data.get("search"):
+        search_term = form.cleaned_data["search"]
+        entities = entities.filter(string__icontains=search_term)
+
+    entities = entities.distinct().order_by("order")
 
     return JsonResponse(
         {

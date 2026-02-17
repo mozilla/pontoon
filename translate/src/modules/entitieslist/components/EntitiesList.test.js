@@ -12,7 +12,7 @@ import {
 } from '~/test/store';
 
 import { EntitiesList } from './EntitiesList';
-import { vi } from 'vitest';
+import { expect, vi } from 'vitest';
 
 // Entities shared between tests
 const ENTITIES = [
@@ -216,5 +216,37 @@ describe('<EntitiesList>', () => {
         search_rejected_translations: false,
       },
     );
+  });
+
+  it('preserves search and list parameters when selecting an entity', () => {
+    const history = createMemoryHistory({
+      initialEntries: [
+        '/kg/firefox/all-resources/?list=1,2&search=test&string=1',
+      ],
+    });
+
+    const spy = vi.fn();
+    history.listen(spy);
+
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
+
+    const wrapper = mountComponentWithStore(EntitiesList, store, {}, history);
+
+    wrapper.find('.entity').at(1).simulate('click');
+
+    expect(spy).toHaveBeenCalled();
+    const lastCall = spy.mock.calls[spy.mock.calls.length - 1];
+    expect(lastCall[0]).toMatchObject({
+      pathname: '/kg/firefox/all-resources/',
+      search: expect.stringContaining('list=1,2'),
+    });
+
+    expect(lastCall[0].search).toContain('search=test');
+    expect(lastCall[0].search).toContain('string=2');
   });
 });
