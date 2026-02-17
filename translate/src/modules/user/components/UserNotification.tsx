@@ -123,7 +123,7 @@ const Other = ({
 
     <DateDisplay date={date} date_iso={date_iso} />
 
-    {description ? (
+    {description?.content ? (
       <div
         className='message'
         // We can safely use description as it is either generated

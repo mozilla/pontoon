@@ -80,7 +80,7 @@ describe('<UserNotification>', () => {
     };
     const wrapper = mount(<UserNotification notification={notification} />);
 
-    expect(wrapper.find('.message').text()).toBe('');
+    expect(wrapper.find('.message')).toHaveLength(0);
     expect(wrapper.find('.verb').text()).toBe('is Other');
   });
 
