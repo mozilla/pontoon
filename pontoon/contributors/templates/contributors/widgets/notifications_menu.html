@@ -42,6 +42,7 @@
       <div class="item-content">
         {% set target = notification.target %}
         {% set description = notification.description %}
+        {% set has_actor = true %}
 
         {% if notification.actor.slug %}
           {% set actor_anchor = notification.actor %}
@@ -55,7 +56,8 @@
           {% set actor_anchor = notification.actor.name_or_email|nospam %}
           {% set actor_url = full_url('pontoon.contributors.contributor.username', notification.actor.username) %}
         {% else %}
-          {% set actor_anchor = "(Deleted user)" %}
+          {% set actor_anchor = "[Deleted User]" %}
+          {% set has_actor = false %}
         {% endif %}
 
         {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
@@ -65,7 +67,7 @@
 
         {% elif target and target.resource %}
 
-          <span class="actor">
+          <span class="actor {% if not has_actor %}deleted{% endif %}">
             {{ actor_anchor }}
           </span>
 
@@ -77,15 +79,19 @@
           <span class="target">
             {{ target.resource.project.name }}
           </span>
-          
+
           {{ notification_time(notification) }}
-          
+
           <div class="message trim">{{ description|linkify|safe }}</div>
 
         {% else %}
 
-          <span class="actor">
-            <a href="{{ actor_url }}">{{ actor_anchor }}</a>
+          <span class="actor {% if not has_actor %}deleted{% endif %}">
+            {% if has_actor %}
+              <a href="{{ actor_url }}">{{ actor_anchor }}</a>
+            {% else %}
+              {{ actor_anchor }}
+            {% endif %}
           </span>
 
           <span class="verb">
@@ -97,7 +103,7 @@
               <a href="{{ full_url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
             </span>
           {% endif %}
-          
+
           {{ notification_time(notification )}}
 
           {% set description = notification.description %}
