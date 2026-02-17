@@ -862,6 +862,10 @@ header .right .select .menu {
   text-transform: uppercase;
 }
 
+.notifications .menu li.notification-item .deleted {
+  color: var(--light-grey-2);
+}
+
 #notifications .menu li.horizontal-separator {
   border-color: var(--main-border-1);
   margin: 0;

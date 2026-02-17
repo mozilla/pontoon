@@ -134,3 +134,7 @@
   text-align: right;
   text-transform: uppercase;
 }
+
+.user-notification .deleted {
+  color: var(--light-grey-2);
+}
