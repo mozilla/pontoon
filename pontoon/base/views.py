@@ -333,7 +333,7 @@ def get_translations_from_other_locales(request):
             status=400,
         )
 
-    visible_projects = Project.objects.visible()
+    visible_projects = Project.objects.visible().visible_for(request.user)
     entities = Entity.objects.filter(
         resource__project__in=visible_projects
     ).prefetch_related("resource")
@@ -380,7 +380,7 @@ def get_sibling_entities(request):
             status=400,
         )
 
-    visible_projects = Project.objects.visible()
+    visible_projects = Project.objects.visible().visible_for(request.user)
     entities = Entity.objects.filter(
         resource__project__in=visible_projects
     ).prefetch_related("resource")
@@ -498,7 +498,7 @@ def get_team_comments(request):
             status=400,
         )
 
-    visible_projects = Project.objects.visible()
+    visible_projects = Project.objects.visible().visible_for(request.user)
     entities = Entity.objects.filter(
         resource__project__in=visible_projects
     ).prefetch_related("resource")
