@@ -283,7 +283,7 @@ class EntityListView(RequestFieldsMixin, generics.ListAPIView):
     def get_queryset(self):
         visible_projects = Project.objects.visible().visible_for(self.request.user)
         qs = Entity.objects.filter(
-            resource__project__in=visible_projects, resource__project__disabled=False
+            resource__project__in=visible_projects,
         ).prefetch_related("resource")
 
         requested = self.request_fields()
@@ -300,7 +300,7 @@ class EntityIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
     def get_queryset(self):
         visible_projects = Project.objects.visible().visible_for(self.request.user)
         qs = Entity.objects.filter(
-            resource__project__in=visible_projects, resource__project__disabled=False
+            resource__project__in=visible_projects,
         )
 
         requested = self.request_fields()
