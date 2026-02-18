@@ -696,6 +696,36 @@ def test_disabled_projects(
 
 
 @pytest.mark.django_db
+def test_project_visibility(django_assert_num_queries, client_superuser):
+    ProjectFactory.create_batch(3, disabled=True, visibility="public")
+    ProjectFactory.create_batch(3, disabled=True, visibility="private")
+    ProjectFactory.create_batch(3, system_project=True, visibility="public")
+    ProjectFactory.create_batch(3, system_project=True, visibility="private")
+
+    url = "/api/v2/projects/?fields=slug,visibility&include_disabled=true&include_system=true"
+
+    # public API usage
+    with django_assert_num_queries(2):
+        response = APIClient().get(url)
+
+        assert response.status_code == 200
+
+    # 8 projects includes Tutorial & Terminology
+    assert response.data["count"] == 8
+    for res in response.data["results"]:
+        assert res["visibility"] == "public"
+
+    # admin API usage
+    with django_assert_num_queries(4):
+        response = client_superuser.get(url)
+
+        assert response.status_code == 200
+
+    # 14 projects includes Tutorial & Terminology
+    assert response.data["count"] == 14
+
+
+@pytest.mark.django_db
 def test_entity(django_assert_num_queries):
     project_a = ProjectFactory(
         slug="project_a",
