@@ -234,7 +234,12 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
         if include_system == "true":
             filters |= Q(system_project=True)
         if filters:
-            qs = qs | Project.objects.filter(filters).distinct()
+            qs = (
+                qs
+                | Project.objects.visible_for(self.request.user)
+                .filter(filters)
+                .distinct()
+            )
 
         # Only gather stats when requested
         if not requested or requested & set(TRANSLATION_STATS_FIELDS):
