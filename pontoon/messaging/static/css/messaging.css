@@ -278,6 +278,10 @@
         display: none;
       }
     }
+
+    ul {
+      max-height: none;
+    }
   }
 
   #sent {
