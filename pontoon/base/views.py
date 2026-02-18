@@ -333,12 +333,17 @@ def get_translations_from_other_locales(request):
             status=400,
         )
 
-    visible_projects = Project.objects.visible().visible_for(request.user)
-    entities = Entity.objects.filter(
-        resource__project__in=visible_projects
-    ).prefetch_related("resource")
+    entity = get_object_or_404(Entity, pk=entity)
+    project = entity.resource.project
+    if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Permission Denied: You do not have permission to access data for this project.",
+            },
+            status=403,
+        )
 
-    entity = get_object_or_404(entities, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
 
     translations = (
@@ -380,12 +385,17 @@ def get_sibling_entities(request):
             status=400,
         )
 
-    visible_projects = Project.objects.visible().visible_for(request.user)
-    entities = Entity.objects.filter(
-        resource__project__in=visible_projects
-    ).prefetch_related("resource")
+    entity = get_object_or_404(Entity, pk=entity)
+    project = entity.resource.project
+    if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Permission Denied: You do not have permission to access data for this project.",
+            },
+            status=403,
+        )
 
-    entity = get_object_or_404(entities, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
     preferred_source_locale = ""
     if request.user.is_authenticated:
@@ -498,12 +508,17 @@ def get_team_comments(request):
             status=400,
         )
 
-    visible_projects = Project.objects.visible().visible_for(request.user)
-    entities = Entity.objects.filter(
-        resource__project__in=visible_projects
-    ).prefetch_related("resource")
+    entity = get_object_or_404(Entity, pk=entity)
+    project = entity.resource.project
+    if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Permission Denied: You do not have permission to access data for this project.",
+            },
+            status=403,
+        )
 
-    entity = get_object_or_404(entities, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
     project_contact = entity.resource.project.contact
 
