@@ -41,17 +41,18 @@ describe('<MachineryTranslationComponent>', () => {
   });
 
   it('renders a translation correctly', () => {
-    const wrapper = createMachineryTranslation(DEFAULT_TRANSLATION);
+    const { container } = createMachineryTranslation(DEFAULT_TRANSLATION);
 
-    expect(wrapper.find('.original').find('GenericTranslation')).toHaveLength(
-      1,
+    expect(container.querySelector('.original').textContent).toContain(
+      'A horse, a horse!',
     );
-    expect(
-      wrapper.find('.suggestion').find('GenericTranslation').props().content,
-    ).toContain('Un cheval, un cheval !');
+
+    expect(container.querySelector('.suggestion').textContent).toContain(
+      'Un cheval, un cheval !',
+    );
 
     // No quality.
-    expect(wrapper.find('.quality')).toHaveLength(0);
+    expect(container.querySelector('.quality')).not.toBeInTheDocument();
   });
 
   it('shows quality when possible', () => {
@@ -59,9 +60,9 @@ describe('<MachineryTranslationComponent>', () => {
       ...DEFAULT_TRANSLATION,
       quality: 100,
     };
-    const wrapper = createMachineryTranslation(translation);
+    const { container } = createMachineryTranslation(translation);
 
-    expect(wrapper.find('.quality')).toHaveLength(1);
-    expect(wrapper.find('.quality').text()).toEqual('100%');
+    expect(container.querySelector('.quality')).toBeInTheDocument();
+    expect(container.querySelector('.quality')).toHaveTextContent('100%');
   });
 });

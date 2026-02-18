@@ -39,7 +39,7 @@ function mountForm(string) {
     return null;
   };
 
-  const wrapper = mountComponentWithStore(
+  const { container } = mountComponentWithStore(
     () => (
       <Locale.Provider value={DEFAULT_LOCALE}>
         <MockLocalizationProvider>
@@ -55,12 +55,9 @@ function mountForm(string) {
     store,
   );
 
-  const view = wrapper
-    .find('.singlefield')
-    .instance()
-    .querySelector('.cm-content').cmView.view;
+  const view = container.querySelector('.singlefield .cm-content').cmView.view;
 
-  return { actions, getResult: () => result, view, wrapper };
+  return { actions, getResult: () => result, view };
 }
 
 describe('<TranslationForm> with one field', () => {
@@ -80,21 +77,19 @@ describe('<TranslationForm> with one field', () => {
   });
 
   it('updates the translation when setEditorSelection is passed without focus', async () => {
-    const { wrapper, actions, getResult } = mountForm('Foo');
+    const { actions, getResult } = mountForm('Foo');
     act(() => actions.setEditorSelection(', Bar'));
-    wrapper.update();
 
     expect(getResult()[0].value).toBe('Foo, Bar');
   });
 
   it('updates the translation when setEditorSelection is passed with focus', async () => {
-    const { actions, getResult, view, wrapper } = mountForm('Hello');
+    const { actions, getResult, view } = mountForm('Hello');
     act(() => {
       view.focus();
       view.dispatch({ selection: { anchor: view.state.doc.length } });
       actions.setEditorSelection(', World');
     });
-    wrapper.update();
 
     expect(getResult()[0].value).toBe('Hello, World');
   });

@@ -10,7 +10,7 @@ import {
 } from '~/test/store';
 
 import { FailedChecks } from './FailedChecks';
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 
 function mountFailedChecks(failedChecks, user) {
   const store = createReduxStore({ project: { slug: 'firefox', tags: [] } });
@@ -30,56 +30,66 @@ describe('<FailedChecks>', () => {
   it('does not render if no errors or warnings present', () => {
     const wrapper = mountFailedChecks({ errors: [], warnings: [] });
 
-    expect(wrapper.find('.failed-checks')).toHaveLength(0);
+    expect(
+      wrapper.container.querySelector('.failed-checks'),
+    ).not.toBeInTheDocument();
   });
 
   it('renders popup with errors and warnings', () => {
-    const wrapper = mountFailedChecks({
-      errors: ['one error'],
-      warnings: ['a warning', 'two warnings'],
+    const errors = ['one error'];
+    const warnings = ['a warning', 'two warnings'];
+    const { container, getByRole, getByText } = mountFailedChecks({
+      errors,
+      warnings,
     });
 
-    expect(wrapper.find('.failed-checks')).toHaveLength(1);
-    expect(wrapper.find('#editor-FailedChecks--close')).toHaveLength(1);
-    expect(wrapper.find('#editor-FailedChecks--title')).toHaveLength(1);
-    expect(wrapper.find('.error')).toHaveLength(1);
-    expect(wrapper.find('.warning')).toHaveLength(2);
+    expect(container.querySelector('.failed-checks')).toBeInTheDocument();
+    expect(getByRole('button', { name: /Close/i })).toHaveTextContent('×');
+    getByText('THE FOLLOWING CHECKS HAVE FAILED');
+
+    for (const error of errors) {
+      getByText(error);
+    }
+
+    for (const warning of warnings) {
+      getByText(warning);
+    }
   });
 
   it('renders save anyway button if translation with warnings submitted', () => {
-    const wrapper = mountFailedChecks(
+    const { getByRole } = mountFailedChecks(
       { errors: [], warnings: ['a warning'], source: 'submitted' },
       { settings: { force_suggestions: false } },
     );
 
-    expect(wrapper.find('.save.anyway')).toHaveLength(1);
+    getByRole('button', { name: /save anyway/i });
   });
 
   it('renders suggest anyway button if translation with warnings suggested', () => {
-    const wrapper = mountFailedChecks(
+    const { getByRole } = mountFailedChecks(
       { errors: [], warnings: ['a warning'], source: 'submitted' },
       { settings: { force_suggestions: true } },
     );
 
-    expect(wrapper.find('.suggest.anyway')).toHaveLength(1);
+    getByRole('button', { name: /suggest anyway/i });
   });
 
   it('renders suggest anyway button if user does not have sufficient permissions', () => {
-    const wrapper = mountFailedChecks(
+    const { getByRole } = mountFailedChecks(
       { errors: [], warnings: ['a warning'], source: 'submitted' },
       { can_manage_locales: [] },
     );
 
-    expect(wrapper.find('.suggest.anyway')).toHaveLength(1);
+    getByRole('button', { name: /suggest anyway/i });
   });
 
   it('renders approve anyway button if translation with warnings approved', () => {
-    const wrapper = mountFailedChecks({
+    const { getByRole } = mountFailedChecks({
       errors: [],
       warnings: ['a warning'],
       source: 42,
     });
 
-    expect(wrapper.find('.approve.anyway')).toHaveLength(1);
+    getByRole('button', { name: /approve anyway/i });
   });
 });

@@ -290,10 +290,9 @@ describe('<EditorProvider>', () => {
       entity = useContext(EntityView).entity;
       return null;
     };
-    const wrapper = mountSpy(Spy, 'simple', 'translated');
+    mountSpy(Spy, 'simple', 'translated');
 
     act(() => location.push({ entity: 13 }));
-    wrapper.update();
 
     expect(editor).toMatchObject({
       initial: parseEntry('gettext', entity.translation.string),
@@ -322,9 +321,8 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    const wrapper = mountSpy(Spy, 'fluent', source);
+    mountSpy(Spy, 'fluent', source);
     act(() => actions.clearEditor());
-    wrapper.update();
 
     expect(editor).toMatchObject({
       sourceView: false,
@@ -360,9 +358,8 @@ describe('<EditorProvider>', () => {
       one {{ONE}}
       * {{OTHER}}
       `;
-    const wrapper = mountSpy(Spy, 'android', source, source);
+    mountSpy(Spy, 'android', source, source);
     act(() => actions.clearEditor());
-    wrapper.update();
 
     expect(editor).toMatchObject({
       sourceView: false,
@@ -393,7 +390,7 @@ describe('<EditorProvider>', () => {
       actions = useContext(EditorActions);
       return null;
     };
-    const wrapper = mountSpy(Spy, 'fluent', `key = VALUE\n`);
+    mountSpy(Spy, 'fluent', `key = VALUE\n`);
 
     const source = ftl`
       key =
@@ -403,7 +400,6 @@ describe('<EditorProvider>', () => {
           }
       `;
     act(() => actions.setEditorFromHistory(source));
-    wrapper.update();
 
     expect(editor).toMatchObject({
       sourceView: false,
@@ -445,9 +441,8 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    const wrapper = mountSpy(Spy, 'fluent', source);
+    mountSpy(Spy, 'fluent', source);
     act(() => actions.toggleSourceView());
-    wrapper.update();
 
     expect(editor).toMatchObject({
       sourceView: true,
@@ -464,7 +459,6 @@ describe('<EditorProvider>', () => {
     expect(result).toMatchObject([{ keys: [], name: '', value: source }]);
 
     act(() => actions.toggleSourceView());
-    wrapper.update();
 
     expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
     expect(result).toMatchObject([

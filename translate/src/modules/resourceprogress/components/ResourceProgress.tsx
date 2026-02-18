@@ -125,7 +125,7 @@ export function ResourceProgress(): React.ReactElement<'div'> | null {
 
   return (
     <div className='progress-chart'>
-      <div className='selector' onClick={toggleVisible}>
+      <div className='selector' role='button' onClick={toggleVisible}>
         <ProgressChart stats={stats} size={44} />
         <span className='percent unselectable'>{percent}</span>
       </div>

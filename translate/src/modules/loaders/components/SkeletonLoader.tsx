@@ -15,6 +15,7 @@ export function SkeletonLoader({
 
   return (
     <ul
+      data-testid='skeleton-loader'
       className={`skeleton-loader entities ${firstLoad ? null : 'scroll'}`}
       ref={sentryRef}
     >

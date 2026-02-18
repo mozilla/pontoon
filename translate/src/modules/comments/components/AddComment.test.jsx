@@ -5,6 +5,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { AddComment } from './AddComment';
 import { vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 
 const USER = {
   user: 'RSwanson',
@@ -23,14 +24,10 @@ describe('<AddComment>', () => {
         <AddComment onAddComment={submitCommentFn} user={USER} />
       </MentionUsers.Provider>
     );
-    const wrapper = mountComponentWithStore(Wrapper, store);
+    const { getByRole } = mountComponentWithStore(Wrapper, store);
 
-    const event = {
-      preventDefault: vi.fn(),
-    };
-
-    wrapper.find('button').simulate('click', event);
-    expect(submitCommentFn.calledOnce).toBeTruthy;
+    fireEvent.click(getByRole('button'));
+    expect(submitCommentFn).toHaveBeenCalledOnce();
   });
 
   it('fetches mentionable users on render', () => {
