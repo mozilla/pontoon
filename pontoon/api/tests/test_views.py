@@ -710,6 +710,7 @@ def test_project_visibility(django_assert_num_queries, client_superuser):
 
         assert response.status_code == 200
 
+    # 8 projects includes Tutorial & Terminology
     assert response.data["count"] == 8
     for res in response.data["results"]:
         assert res["visibility"] == "public"
@@ -720,6 +721,7 @@ def test_project_visibility(django_assert_num_queries, client_superuser):
 
         assert response.status_code == 200
 
+    # 14 projects includes Tutorial & Terminology
     assert response.data["count"] == 14
 
 
