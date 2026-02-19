@@ -8,8 +8,6 @@ from pontoon.test.factories import (
     TranslationFactory,
 )
 
-# For bug #3949: https://github.com/mozilla/pontoon/issues/3949
-
 
 @pytest.mark.django_db
 def test_get_suggestions_excludes_system_projects(
