@@ -29,24 +29,22 @@ function mountHistory(fetching, translations) {
 
 describe('<History>', () => {
   it('shows the correct number of translations', () => {
-    const wrapper = mountHistory(false, [
+    const { getAllByRole } = mountHistory(false, [
       { pk: 1, userBanner: '' },
       { pk: 2, userBanner: '' },
       { pk: 3, userBanner: '' },
     ]);
-
-    expect(wrapper.find('ul > *')).toHaveLength(3);
+    expect(getAllByRole('listitem')).toHaveLength(3);
   });
 
   it('returns null while history is loading', () => {
-    const wrapper = mountHistory(true, []);
-
-    expect(wrapper.find('HistoryTranslationComponent > *')).toHaveLength(0);
+    const { container, queryAllByRole } = mountHistory(true, []);
+    expect(container).toBeEmptyDOMElement();
+    expect(queryAllByRole('listitem')).toHaveLength(0);
   });
 
   it('renders a no results message if history is empty', () => {
-    const wrapper = mountHistory(false, []);
-
-    expect(wrapper.find('#history-History--no-translations')).toHaveLength(1);
+    const { getByText } = mountHistory(false, []);
+    getByText('No translations available.');
   });
 });

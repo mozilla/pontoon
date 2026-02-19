@@ -1,5 +1,3 @@
-import Tour from 'reactour';
-
 import * as hookModule from '~/hooks/useTranslator';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
@@ -10,6 +8,10 @@ beforeAll(() => {
   vi.mock('~/hooks/useTranslator', () => ({
     useTranslator: vi.fn(() => false),
   }));
+
+  vi.mock('reactour', () => ({
+    default: ({ isOpen }) => (isOpen ? <div data-testid='mock-tour' /> : null),
+  }));
 });
 afterAll(() => hookModule.useTranslator.mockRestore());
 
@@ -19,9 +21,9 @@ describe('<InteractiveTour>', () => {
       project: { slug: 'tutorial' },
       user: { isAuthenticated: false },
     });
-    const wrapper = mountComponentWithStore(InteractiveTour, store);
+    const { getByTestId } = mountComponentWithStore(InteractiveTour, store);
 
-    expect(wrapper.find(Tour)).toHaveLength(1);
+    getByTestId('mock-tour');
   });
 
   it('does not render on non-tutorial page', () => {
@@ -29,9 +31,9 @@ describe('<InteractiveTour>', () => {
       project: { slug: 'firefox' },
       user: { isAuthenticated: false },
     });
-    const wrapper = mountComponentWithStore(InteractiveTour, store);
+    const { queryByTestId } = mountComponentWithStore(InteractiveTour, store);
 
-    expect(wrapper.find(Tour)).toHaveLength(0);
+    expect(queryByTestId('mock-tour')).not.toBeInTheDocument();
   });
 
   it('does not render if the user has already seen the tutorial', () => {
@@ -39,8 +41,8 @@ describe('<InteractiveTour>', () => {
       project: { slug: 'tutorial' },
       user: { tourStatus: -1 },
     });
-    const wrapper = mountComponentWithStore(InteractiveTour, store);
+    const { queryByTestId } = mountComponentWithStore(InteractiveTour, store);
 
-    expect(wrapper.find(Tour)).toHaveLength(0);
+    expect(queryByTestId('mock-tour')).not.toBeInTheDocument();
   });
 });

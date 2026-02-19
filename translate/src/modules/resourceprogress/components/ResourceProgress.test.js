@@ -2,6 +2,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { ResourceProgress } from './ResourceProgress';
 import { vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 
 describe('<ResourceProgress>', () => {
   const STATS = {
@@ -28,21 +29,25 @@ describe('<ResourceProgress>', () => {
 
   it('shows only a selector by default', () => {
     const store = createReduxStore({ stats: STATS });
-    const wrapper = mountComponentWithStore(ResourceProgress, store, {
-      parameters: PARAMETERS,
-    });
+    const { getByRole, queryByRole } = mountComponentWithStore(
+      ResourceProgress,
+      store,
+      {
+        parameters: PARAMETERS,
+      },
+    );
 
-    expect(wrapper.find('.selector').exists()).toBeTruthy();
-    expect(wrapper.find('ResourceProgressDialog').exists()).toBeFalsy();
+    getByRole('button');
+    expect(queryByRole('complementary')).not.toBeInTheDocument();
   });
 
   it('shows the info menu after a click', () => {
     const store = createReduxStore({ stats: STATS });
-    const wrapper = mountComponentWithStore(ResourceProgress, store, {
+    const { getByRole } = mountComponentWithStore(ResourceProgress, store, {
       parameters: PARAMETERS,
     });
-    wrapper.find('.selector').simulate('click');
+    fireEvent.click(getByRole('button'));
 
-    expect(wrapper.find('ResourceProgressDialog').exists()).toBeTruthy();
+    getByRole('complementary');
   });
 });

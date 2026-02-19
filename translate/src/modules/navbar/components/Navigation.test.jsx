@@ -28,14 +28,14 @@ const NavigationWrapper = () => (
 describe('<Navigation>', () => {
   it('shows navigation', () => {
     const store = createReduxStore({ project: PROJECT });
-    const wrapper = mountComponentWithStore(
+    const { getByText } = mountComponentWithStore(
       NavigationWrapper,
       store,
       {},
       HISTORY,
     );
 
-    expect(wrapper.text()).toContain('Klingon');
-    expect(wrapper.text()).toContain('kg');
+    getByText('Klingon');
+    getByText('kg');
   });
 });

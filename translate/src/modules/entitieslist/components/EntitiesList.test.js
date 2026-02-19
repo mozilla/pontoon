@@ -13,6 +13,7 @@ import {
 
 import { EntitiesList } from './EntitiesList';
 import { expect, vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 
 // Entities shared between tests
 const ENTITIES = [
@@ -58,8 +59,8 @@ describe('<EntitiesList>', () => {
       entities: ENTITIES,
       hasMore: true,
     });
-    const wrapper = mountComponentWithStore(EntitiesList, store);
-    expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
+    const { getByTestId } = mountComponentWithStore(EntitiesList, store);
+    getByTestId('skeleton-loader');
   });
 
   it("doesn't display a loading animation when there aren't entities to load", () => {
@@ -69,18 +70,18 @@ describe('<EntitiesList>', () => {
       entities: ENTITIES,
       hasMore: false,
     });
-    const wrapper = mountComponentWithStore(EntitiesList, store);
+    const { queryByTestId } = mountComponentWithStore(EntitiesList, store);
 
-    expect(wrapper.find('SkeletonLoader')).toHaveLength(0);
+    expect(queryByTestId('skeleton-loader')).not.toBeInTheDocument();
   });
 
   // FIXME: https://github.com/mozilla/pontoon/issues/3883
   it.skip('shows a loading animation when entities are being fetched from the server', () => {
     const store = createReduxStore();
     store.dispatch({ type: EntitiesActions.REQUEST_ENTITIES });
-    const wrapper = mountComponentWithStore(EntitiesList, store);
+    const { getByTestId } = mountComponentWithStore(EntitiesList, store);
 
-    expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
+    getByTestId('skeleton-loader');
   });
 
   it('shows the correct number of entities', () => {
@@ -94,9 +95,14 @@ describe('<EntitiesList>', () => {
       entities: ENTITIES,
       hasMore: false,
     });
-    const wrapper = mountComponentWithStore(EntitiesList, store, {}, history);
+    const { getAllByRole } = mountComponentWithStore(
+      EntitiesList,
+      store,
+      {},
+      history,
+    );
 
-    expect(wrapper.find('Entity')).toHaveLength(2);
+    expect(getAllByRole('listitem')).toHaveLength(2);
   });
 
   // FIXME: https://github.com/mozilla/pontoon/issues/3883
@@ -157,9 +163,9 @@ describe('<EntitiesList>', () => {
     // HACK to get isTranslator === true in Entity
     createDefaultUser(store, { can_translate_locales: [''] });
 
-    const wrapper = mountComponentWithStore(EntitiesList, store);
+    const { container } = mountComponentWithStore(EntitiesList, store);
 
-    wrapper.find('.entity .status').first().simulate('click');
+    fireEvent.click(container.querySelector('.entity .status'));
 
     expect(BatchActions.toggleSelection).toHaveBeenCalledTimes(1);
   });
@@ -235,9 +241,14 @@ describe('<EntitiesList>', () => {
       hasMore: false,
     });
 
-    const wrapper = mountComponentWithStore(EntitiesList, store, {}, history);
+    const { container } = mountComponentWithStore(
+      EntitiesList,
+      store,
+      {},
+      history,
+    );
 
-    wrapper.find('.entity').at(1).simulate('click');
+    fireEvent.click(container.querySelectorAll('.entity')[1]);
 
     expect(spy).toHaveBeenCalled();
     const lastCall = spy.mock.calls[spy.mock.calls.length - 1];

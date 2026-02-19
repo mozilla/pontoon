@@ -10,29 +10,33 @@ describe('<TeamComments>', () => {
 
   it('shows correct message when no comments', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(TeamComments, store, {
+    const { getByText } = mountComponentWithStore(TeamComments, store, {
       teamComments: { entity: 267, comments: [] },
       user: DEFAULT_USER,
     });
 
-    expect(wrapper.find('p').text()).toEqual('No comments available.');
+    getByText('No comments available.');
   });
 
   it('renders correctly when there are comments', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(TeamComments, store, {
-      teamComments: {
-        entity: 267,
-        comments: [
-          { id: 1, content: '11', userBanner: '' },
-          { id: 2, content: '22', userBanner: '' },
-          { id: 3, content: '33', userBanner: '' },
-        ],
+    const { container, getAllByRole } = mountComponentWithStore(
+      TeamComments,
+      store,
+      {
+        teamComments: {
+          entity: 267,
+          comments: [
+            { id: 1, content: '11', userBanner: '' },
+            { id: 2, content: '22', userBanner: '' },
+            { id: 3, content: '33', userBanner: '' },
+          ],
+        },
+        user: DEFAULT_USER,
       },
-      user: DEFAULT_USER,
-    });
+    );
 
-    expect(wrapper.children()).toHaveLength(1);
-    expect(wrapper.find('li')).toHaveLength(3);
+    expect(container.childElementCount).toBe(1);
+    expect(getAllByRole('listitem')).toHaveLength(3);
   });
 });

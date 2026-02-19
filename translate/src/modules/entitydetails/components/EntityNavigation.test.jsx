@@ -6,6 +6,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { EntityNavigation } from './EntityNavigation';
 import { vi } from 'vitest';
+import { fireEvent } from '@testing-library/react';
 
 function mountEntityNav() {
   const store = createReduxStore({
@@ -51,18 +52,23 @@ describe('<EntityNavigation>', () => {
   });
 
   it('puts a copy of string link on clipboard', () => {
-    const { wrapper } = mountEntityNav();
+    const {
+      wrapper: { getByRole },
+    } = mountEntityNav();
 
-    wrapper.find('button.link').simulate('click');
+    fireEvent.click(getByRole('button', { name: /copy link/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       'http://localhost/kg/firefox/all-resources/?string=2',
     );
   });
 
   it('goes to the next entity on click on the Next button', () => {
-    const { history, wrapper } = mountEntityNav();
+    const {
+      history,
+      wrapper: { getByRole },
+    } = mountEntityNav();
 
-    wrapper.find('button.next').simulate('click');
+    fireEvent.click(getByRole('button', { name: /next/i }));
     expect(history.push).toHaveBeenCalledWith(
       '/kg/firefox/all-resources/?string=3',
     );
@@ -92,9 +98,12 @@ describe('<EntityNavigation>', () => {
   });
 
   it('goes to the previous entity on click on the Previous button', () => {
-    const { history, wrapper } = mountEntityNav();
+    const {
+      history,
+      wrapper: { getByRole },
+    } = mountEntityNav();
 
-    wrapper.find('button.previous').simulate('click');
+    fireEvent.click(getByRole('button', { name: /previous/i }));
     expect(history.push).toHaveBeenCalledWith(
       '/kg/firefox/all-resources/?string=1',
     );

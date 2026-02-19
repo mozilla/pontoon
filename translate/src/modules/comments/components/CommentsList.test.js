@@ -20,18 +20,21 @@ describe('<CommentsList>', () => {
 
   it('shows the correct number of comments', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(CommentsList, store, {
+    const comments = [
+      { id: 1, content: '11', userBanner: '' },
+      { id: 2, content: '22', userBanner: '' },
+      { id: 3, content: '33', userBanner: '' },
+    ];
+    const { getByText } = mountComponentWithStore(CommentsList, store, {
       translation: {
         ...DEFAULT_TRANSLATION,
-        comments: [
-          { id: 1, content: '11', userBanner: '' },
-          { id: 2, content: '22', userBanner: '' },
-          { id: 3, content: '33', userBanner: '' },
-        ],
+        comments,
       },
       user: DEFAULT_USER,
     });
 
-    expect(wrapper.find('ul > *')).toHaveLength(3);
+    for (const comment of comments) {
+      getByText(comment.content);
+    }
   });
 });
