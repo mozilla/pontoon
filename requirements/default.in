@@ -32,7 +32,7 @@ django-guardian==2.4.0
 django-jinja==2.11.0
 django-notifications-hq==1.8.3
 django-pipeline==3.0.0
-drf-spectacular==0.28.0
+drf-spectacular[sidecar]==0.28.0
 google-cloud-translate==3.16.0
 gunicorn==23.0.0
 jsonfield==3.1.0

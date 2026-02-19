@@ -283,6 +283,7 @@ INSTALLED_APPS = (
     "django_ace",
     "rest_framework",
     "drf_spectacular",
+    "drf_spectacular_sidecar",
 )
 
 # A list of IP addresses or IP ranges to be blocked from accessing the app,
@@ -1226,6 +1227,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "TITLE": "Pontoon API",
     "DESCRIPTION": "Pontoon is Mozilla's Open Source Localization Platform.",
     "VERSION": "1.0.0",
