@@ -28,11 +28,9 @@ function mountFailedChecks(failedChecks, user) {
 
 describe('<FailedChecks>', () => {
   it('does not render if no errors or warnings present', () => {
-    const wrapper = mountFailedChecks({ errors: [], warnings: [] });
+    const { container } = mountFailedChecks({ errors: [], warnings: [] });
 
-    expect(
-      wrapper.container.querySelector('.failed-checks'),
-    ).not.toBeInTheDocument();
+    expect(container.querySelector('.failed-checks')).not.toBeInTheDocument();
   });
 
   it('renders popup with errors and warnings', () => {
