@@ -425,6 +425,7 @@ django==4.2.28 \
     #   django-notifications-hq
     #   djangorestframework
     #   drf-spectacular
+    #   drf-spectacular-sidecar
     #   jsonfield
 django-ace==1.32.4 \
     --hash=sha256:65c709dfdd2766b4080676541d3889762500a8c8a9150d4356285903b89b4d3a \
@@ -478,10 +479,14 @@ djangorestframework==3.16.0 \
     # via
     #   -r default.in
     #   drf-spectacular
-drf-spectacular==0.28.0 \
+drf-spectacular[sidecar]==0.28.0 \
     --hash=sha256:2c778a47a40ab2f5078a7c42e82baba07397bb35b074ae4680721b2805943061 \
     --hash=sha256:856e7edf1056e49a4245e87a61e8da4baff46c83dbc25be1da2df77f354c7cb4
     # via -r default.in
+drf-spectacular-sidecar==2026.1.1 \
+    --hash=sha256:6f7c173a8ddbbbdafc7a27e028614b65f07a89ca90f996a432d57460463b56be \
+    --hash=sha256:af8df62f1b594ec280351336d837eaf2402ab25a6bc2a1fad7aee9935821070f
+    # via drf-spectacular
 fluent-syntax==0.19.0 \
     --hash=sha256:920326d7f46864b9758f0044e9968e3112198bc826acee16ddd8f11d359004fd \
     --hash=sha256:b352b3475fac6c6ed5f06527921f432aac073d764445508ee5218aeccc7cc5c4
@@ -920,9 +925,7 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.10.0 \
     --hash=sha256:817b46323b86185c48cc2261a4e0a28c02fdb2f2e3b9fe8894789657b7db6f07 \
     --hash=sha256:fc679d91491d5a3ba4c06f812bfb43506d0f93fb962c0544c949e4da9a35f225
-    # via
-    #   -r default.in
-    #   moz-l10n
+    # via -r default.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
