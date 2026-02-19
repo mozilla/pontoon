@@ -337,11 +337,8 @@ def get_translations_from_other_locales(request):
     project = entity.resource.project
     if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
         return JsonResponse(
-            {
-                "status": False,
-                "message": "Permission Denied: You do not have permission to access data for this project.",
-            },
-            status=403,
+            {"status": False, "message": "Project not found."},
+            status=404,
         )
 
     locale = get_object_or_404(Locale, code=locale)
@@ -389,11 +386,8 @@ def get_sibling_entities(request):
     project = entity.resource.project
     if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
         return JsonResponse(
-            {
-                "status": False,
-                "message": "Permission Denied: You do not have permission to access data for this project.",
-            },
-            status=403,
+            {"status": False, "message": "Project not found."},
+            status=404,
         )
 
     locale = get_object_or_404(Locale, code=locale)
@@ -512,11 +506,8 @@ def get_team_comments(request):
     project = entity.resource.project
     if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
         return JsonResponse(
-            {
-                "status": False,
-                "message": "Permission Denied: You do not have permission to access data for this project.",
-            },
-            status=403,
+            {"status": False, "message": "Project not found."},
+            status=404,
         )
 
     locale = get_object_or_404(Locale, code=locale)
