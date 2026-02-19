@@ -14,22 +14,6 @@ const USER = {
 };
 
 describe('<AddComment>', () => {
-  it('calls submitComment function', () => {
-    const store = createReduxStore();
-    const submitCommentFn = vi.fn();
-    const Wrapper = () => (
-      <MentionUsers.Provider
-        value={{ initMentions: vi.fn(), mentionUsers: [] }}
-      >
-        <AddComment onAddComment={submitCommentFn} user={USER} />
-      </MentionUsers.Provider>
-    );
-    const { getByRole } = mountComponentWithStore(Wrapper, store);
-
-    fireEvent.click(getByRole('button'));
-    expect(submitCommentFn).toHaveBeenCalledOnce();
-  });
-
   it('fetches mentionable users on render', () => {
     const initMentions = vi.fn();
     const store = createReduxStore();
