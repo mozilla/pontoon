@@ -21,9 +21,9 @@ describe('<InteractiveTour>', () => {
       project: { slug: 'tutorial' },
       user: { isAuthenticated: false },
     });
-    const { queryByTestId } = mountComponentWithStore(InteractiveTour, store);
+    const { getByTestId } = mountComponentWithStore(InteractiveTour, store);
 
-    expect(queryByTestId('mock-tour')).toBeInTheDocument();
+    getByTestId('mock-tour');
   });
 
   it('does not render on non-tutorial page', () => {

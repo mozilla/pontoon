@@ -37,7 +37,7 @@ describe('<ResourceProgress>', () => {
       },
     );
 
-    expect(getByRole('button')).toBeInTheDocument();
+    getByRole('button');
     expect(queryByRole('complementary')).not.toBeInTheDocument();
   });
 

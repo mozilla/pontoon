@@ -13,7 +13,7 @@ describe('<ProjectInfo>', () => {
       store,
     );
 
-    expect(getByRole('button')).toBeInTheDocument();
+    getByRole('button');
     expect(queryByRole('complementary')).not.toBeInTheDocument();
   });
 
@@ -22,7 +22,7 @@ describe('<ProjectInfo>', () => {
     const { getByRole } = mountComponentWithStore(ProjectInfo, store);
     fireEvent.click(getByRole('button'));
 
-    expect(getByRole('complementary')).toBeInTheDocument();
+    getByRole('complementary');
   });
 
   it('returns null when data is being fetched', () => {
