@@ -12,7 +12,9 @@ from pontoon.test.factories import (
 
 
 @pytest.mark.django_db
-def test_get_suggestions_excludes_system_projects(locale_a, project_a, system_project_a):
+def test_get_suggestions_excludes_system_projects(
+    locale_a, project_a, system_project_a
+):
     # regular project with suggestions included
     resource_regular = ResourceFactory.create(project=project_a)
     ProjectLocaleFactory.create(project=project_a, locale=locale_a)
