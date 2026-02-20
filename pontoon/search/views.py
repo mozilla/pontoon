@@ -74,9 +74,13 @@ def search(request):
 
     locales = list(Locale.objects.visible())
 
-    if not locale_code or not Locale.objects.filter(code=locale_code).exists():
+    if (
+        not locale_code
+        or not Locale.objects.visible().filter(code=locale_code).exists()
+    ):
         locale_code = (
-            get_project_locale_from_request(request, Locale.objects) or "en-GB"
+            get_project_locale_from_request(request, Locale.objects.visible())
+            or "en-GB"
         )
 
     locale = Locale.objects.get(code=locale_code)
@@ -113,9 +117,13 @@ def search_results(request):
     search_match_case = parse_bool(request.GET.get("search_match_case"))
     search_match_whole_word = parse_bool(request.GET.get("search_match_whole_word"))
 
-    if not locale_code or not Locale.objects.filter(code=locale_code).exists():
+    if (
+        not locale_code
+        or not Locale.objects.visible().filter(code=locale_code).exists()
+    ):
         locale_code = (
-            get_project_locale_from_request(request, Locale.objects) or "en-GB"
+            get_project_locale_from_request(request, Locale.objects.visible())
+            or "en-GB"
         )
 
     if page:
