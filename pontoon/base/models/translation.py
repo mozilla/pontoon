@@ -312,10 +312,8 @@ class Translation(DirtyFieldsMixin, models.Model):
             self.entity.reset_term_translation(self.locale)
 
         # We use get_or_create() instead of just get() to make it easier to test.
-        translatedresource, created = (
-            TranslatedResource.objects.get_or_create(
-                resource=self.entity.resource, locale=self.locale
-            )
+        translatedresource, created = TranslatedResource.objects.get_or_create(
+            resource=self.entity.resource, locale=self.locale
         )
 
         # Update latest translation where necessary
