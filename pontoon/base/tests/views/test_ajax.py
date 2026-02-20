@@ -11,6 +11,7 @@ from pontoon.base.views import (
     AjaxFormView,
     get_sibling_entities,
     get_team_comments,
+    get_translation_history,
     get_translations_from_other_locales,
     locale_project_parts,
 )
@@ -245,6 +246,33 @@ def test_get_sibling_entities_authentication(rf, user_a, admin):
     request_b.user = admin
 
     response = get_sibling_entities(request_b)
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_get_translation_history(rf, user_a, admin):
+    project_a = ProjectFactory(name="Project A", visibility="private")
+    resource_a = ResourceFactory(project=project_a)
+    entity_a = EntityFactory(string="Entity A", resource=resource_a)
+    locale_a = LocaleFactory(code="gs", name="Geonosian")
+
+    request_a = rf.get(
+        f"/get-history/?entity={entity_a.id}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request_a.user = user_a
+
+    with pytest.raises(Http404):
+        get_translation_history(request_a)
+
+    request_b = rf.get(
+        f"/get-history/?entity={entity_a.id}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request_b.user = admin
+
+    response = get_translation_history(request_b)
 
     assert response.status_code == 200
 
