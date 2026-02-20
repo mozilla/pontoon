@@ -4,7 +4,7 @@ from django.utils import timezone
 
 
 class ResourceQuerySet(models.QuerySet):
-    def obsolete(self, now):
+    def mark_as_obsolete(self, now):
         from pontoon.base.models.entity import Entity
 
         self.update(obsolete=True, date_obsoleted=now)
