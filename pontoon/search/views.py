@@ -16,6 +16,14 @@ from pontoon.base.utils import get_project_locale_from_request, parse_bool, requ
 from pontoon.settings.base import SITE_URL
 
 
+def get_valid_locale_code(request, locale_code):
+    """Return a valid locale code, falling back to project locale or en-GB."""
+    visible_locales = Locale.objects.visible()
+    if not locale_code or not visible_locales.filter(code=locale_code).exists():
+        return get_project_locale_from_request(request, visible_locales) or "en-GB"
+    return locale_code
+
+
 def create_api_url(
     search,
     project,
@@ -74,11 +82,7 @@ def search(request):
 
     locales = list(Locale.objects.visible())
 
-    if not locale_code or not Locale.objects.filter(code=locale_code).exists():
-        locale_code = (
-            get_project_locale_from_request(request, Locale.objects) or "en-GB"
-        )
-
+    locale_code = get_valid_locale_code(request, locale_code)
     locale = Locale.objects.get(code=locale_code)
 
     return render(
@@ -113,10 +117,7 @@ def search_results(request):
     search_match_case = parse_bool(request.GET.get("search_match_case"))
     search_match_whole_word = parse_bool(request.GET.get("search_match_whole_word"))
 
-    if not locale_code or not Locale.objects.filter(code=locale_code).exists():
-        locale_code = (
-            get_project_locale_from_request(request, Locale.objects) or "en-GB"
-        )
+    locale_code = get_valid_locale_code(request, locale_code)
 
     if page:
         try:
