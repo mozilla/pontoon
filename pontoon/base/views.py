@@ -103,7 +103,11 @@ def locale_projects(request, locale):
 def locale_stats(request, locale):
     """Get locale stats used in All Resources part."""
     locale = get_object_or_404(Locale, code=locale)
-    stats = TranslatedResource.objects.filter(locale=locale).string_stats(request.user)
+    stats = (
+        TranslatedResource.objects.current()
+        .filter(locale=locale)
+        .string_stats(request.user)
+    )
     stats["title"] = "all-resources"
     return JsonResponse([stats], safe=False)
 
@@ -115,9 +119,11 @@ def locale_project_parts(request, locale, slug):
     try:
         locale = Locale.objects.get(code=locale)
         project = Project.objects.visible_for(request.user).get(slug=slug)
-        tr = TranslatedResource.objects.filter(
-            locale=locale, resource__project=project
-        ).distinct()
+        tr = (
+            TranslatedResource.objects.current()
+            .filter(locale=locale, resource__project=project)
+            .distinct()
+        )
         details = list(
             tr.annotate(
                 title=F("resource__path"),
@@ -191,7 +197,7 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     return JsonResponse(
         {
             "entities": Entity.map_entities(locale, preferred_source_locale, entities),
-            "stats": TranslatedResource.objects.query_stats(
+            "stats": TranslatedResource.objects.current().query_stats(
                 project, form.cleaned_data["paths"], locale
             ),
         },
@@ -224,7 +230,7 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
                 requested_entity=requested_entity,
             ),
             "has_next": entities_page.has_next(),
-            "stats": TranslatedResource.objects.query_stats(
+            "stats": TranslatedResource.objects.current().query_stats(
                 project, form.cleaned_data["paths"], locale
             ),
         },
