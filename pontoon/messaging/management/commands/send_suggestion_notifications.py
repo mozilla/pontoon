@@ -76,7 +76,11 @@ class Command(BaseCommand):
         start = timezone.now() - timedelta(days=7)
 
         return Translation.objects.filter(
-            approved=False, pretranslated=False, rejected=False, fuzzy=False
+            approved=False,
+            pretranslated=False,
+            rejected=False,
+            fuzzy=False,
+            entity__resource__project__system_project=False,
         ).filter(
             Q(date__gt=start)
             | Q(unapproved_date__gt=start)
