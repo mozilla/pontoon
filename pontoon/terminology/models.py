@@ -126,7 +126,7 @@ class Term(models.Model):
         - Entity.comment contains joint content of several fields:
           Term.part_of_speech. Term.definition. E.g.: Term.usage.
         """
-        resource = Resource.objects.current().get(project__slug="terminology")
+        resource = Resource.objects.get(project__slug="terminology")
 
         entity, created = Entity.objects.get_or_create(
             string=self.text,

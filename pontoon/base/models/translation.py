@@ -313,7 +313,7 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         # We use get_or_create() instead of just get() to make it easier to test.
         translatedresource, created = (
-            TranslatedResource.objects.current().get_or_create(
+            TranslatedResource.objects.get_or_create(
                 resource=self.entity.resource, locale=self.locale
             )
         )
