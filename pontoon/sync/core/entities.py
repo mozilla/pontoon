@@ -118,7 +118,7 @@ def remove_resources(
     )
     removed_db_paths = {res.path for res in removed_resources}
     if removed_db_paths:
-        removed_resources.obsolete(now)
+        removed_resources.mark_as_obsolete(now)
         rm_count = len(removed_db_paths)
         str_source_files = "source file" if rm_count == 1 else "source files"
         log.info(
