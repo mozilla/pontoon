@@ -208,9 +208,8 @@ def test_get_translations_from_other_locales_authentication(rf, user_a, admin):
     )
     request_a.user = user_a
 
-    response = get_translations_from_other_locales(request_a)
-
-    assert response.status_code == 404
+    with pytest.raises(Http404):
+        get_translations_from_other_locales(request_a)
 
     request_b = rf.get(
         f"/other-locales/?entity={entity_a.id}&locale={locale_a.code}",
@@ -236,9 +235,8 @@ def test_get_sibling_entities_authentication(rf, user_a, admin):
     )
     request_a.user = user_a
 
-    response = get_sibling_entities(request_a)
-
-    assert response.status_code == 404
+    with pytest.raises(Http404):
+        get_sibling_entities(request_a)
 
     request_b = rf.get(
         f"/other-locales/?entity={entity_a.id}&locale={locale_a.code}",
@@ -264,9 +262,8 @@ def test_get_team_comments_authentication(rf, user_a, admin):
     )
     request_a.user = user_a
 
-    response = get_team_comments(request_a)
-
-    assert response.status_code == 404
+    with pytest.raises(Http404):
+        get_team_comments(request_a)
 
     request_b = rf.get(
         f"/other-locales/?entity={entity_a.id}&locale={locale_a.code}",
