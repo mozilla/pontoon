@@ -1,9 +1,9 @@
-import { mount } from 'enzyme';
 import React, { useContext } from 'react';
 
 import * as EntityView from './EntityView';
 import { FailedChecksData, FailedChecksProvider } from './FailedChecksData';
 import { vi } from 'vitest';
+import { act, render } from '@testing-library/react';
 
 describe('FailedChecksProvider', () => {
   beforeAll(() => {
@@ -25,7 +25,7 @@ describe('FailedChecksProvider', () => {
       failedChecks = useContext(FailedChecksData);
       return null;
     };
-    const wrapper = mount(
+    const { rerender } = render(
       <FailedChecksProvider>
         <Spy />
       </FailedChecksProvider>,
@@ -42,7 +42,12 @@ describe('FailedChecksProvider', () => {
       warnings: ['Warning1'],
       approved: true,
     });
-    wrapper.setProps({});
+
+    rerender(
+      <FailedChecksProvider>
+        <Spy />
+      </FailedChecksProvider>,
+    );
 
     expect(failedChecks).toMatchObject({
       errors: ['Error1'],
@@ -63,7 +68,7 @@ describe('FailedChecksProvider', () => {
       failedChecks = useContext(FailedChecksData);
       return null;
     };
-    mount(
+    render(
       <FailedChecksProvider>
         <Spy />
       </FailedChecksProvider>,

@@ -1,26 +1,26 @@
 import React from 'react';
-import { mount } from 'enzyme';
 
 import { TranslationDiff } from './TranslationDiff';
+import { render } from '@testing-library/react';
 
 describe('<TranslationDiff>', () => {
   it('returns the correct diff for provided strings', () => {
-    const wrapper = mount(
+    const { getByText, container } = render(
       <TranslationDiff base={'abcdef'} target={'cdefgh'} />,
     );
 
-    expect(wrapper.find('ins')).toHaveLength(1);
-    expect(wrapper.find('del')).toHaveLength(1);
-    expect(wrapper.childAt(1).text()).toEqual('cdef');
+    getByText('gh', { selector: 'ins' });
+    getByText('ab', { selector: 'del' });
+    expect(container.childNodes[1]).toHaveTextContent(/^cdef$/);
   });
 
   it('returns the same string if provided strings are equal', () => {
-    const wrapper = mount(
+    const { container } = render(
       <TranslationDiff base={'abcdef'} target={'abcdef'} />,
     );
 
-    expect(wrapper.find('ins')).toHaveLength(0);
-    expect(wrapper.find('del')).toHaveLength(0);
-    expect(wrapper.text()).toEqual('abcdef');
+    expect(container.querySelector('ins')).toBeNull();
+    expect(container.querySelector('del')).toBeNull();
+    expect(container).toHaveTextContent(/^abcdef$/);
   });
 });
