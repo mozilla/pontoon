@@ -1,6 +1,5 @@
-import { mount } from 'enzyme';
-import { createMemoryHistory } from 'history';
 import React from 'react';
+import { createMemoryHistory } from 'history';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
@@ -11,9 +10,7 @@ import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { EditorMenu } from './EditorMenu';
-import { EditorSettings } from './EditorSettings';
-import { KeyboardShortcuts } from './KeyboardShortcuts';
-import { TranslationLength } from './TranslationLength';
+import { render } from '@testing-library/react';
 
 const SELECTED_ENTITY = {
   pk: 1,
@@ -35,7 +32,7 @@ function createEditorMenu({
     initialEntries: ['/kg/firefox/all-resources/'],
   });
 
-  const wrapper = mount(
+  const wrapper = render(
     <Provider store={store}>
       <LocationProvider history={history}>
         <MockLocalizationProvider>
@@ -48,32 +45,31 @@ function createEditorMenu({
   );
 
   act(() => history.push(`?string=1`));
-  wrapper.update();
 
   return wrapper;
 }
 
-function expectHiddenSettingsAndActions(wrapper) {
-  expect(wrapper.find('button')).toHaveLength(0);
-  expect(wrapper.find(EditorSettings)).toHaveLength(0);
-  expect(wrapper.find(KeyboardShortcuts)).toHaveLength(0);
-  expect(wrapper.find(TranslationLength)).toHaveLength(0);
-  expect(wrapper.find('#editor-EditorMenu--button-copy')).toHaveLength(0);
+function expectHiddenSettingsAndActions({ container, queryByRole }) {
+  expect(queryByRole('button')).toBeNull();
+  expect(container.querySelector('.editor-settings')).toBeNull();
+  expect(container.querySelector('.keyboard-shortcuts')).toBeNull();
+  expect(container.querySelector('.translation-length')).toBeNull();
+  expect(queryByRole('button', { name: /^COPY$/i })).toBeNull();
 }
 
 describe('<EditorMenu>', () => {
   it('does not render while loading', () => {
-    const wrapper = createEditorMenu({ isAuthenticated: null });
-    expect(wrapper.find('EditorMenu').isEmptyRender()).toBeTruthy();
+    const { container } = createEditorMenu({ isAuthenticated: null });
+    expect(container.querySelector('menu')).toBeEmptyDOMElement();
   });
 
   it('renders correctly', () => {
-    const wrapper = createEditorMenu();
+    const { getByRole } = createEditorMenu();
 
     // 3 buttons to control the editor.
-    expect(wrapper.find('.action-copy').exists()).toBeTruthy();
-    expect(wrapper.find('.action-clear').exists()).toBeTruthy();
-    expect(wrapper.find('EditorMainAction')).toHaveLength(1);
+    getByRole('button', { name: /^COPY$/i });
+    getByRole('button', { name: /^CLEAR$/i });
+    getByRole('button', { name: /^SUGGEST$/i });
   });
 
   it('hides the settings and actions when the user is logged out', () => {
@@ -81,9 +77,7 @@ describe('<EditorMenu>', () => {
 
     expectHiddenSettingsAndActions(wrapper);
 
-    expect(
-      wrapper.find('#editor-EditorMenu--sign-in-to-translate'),
-    ).toHaveLength(1);
+    wrapper.getByText(/SIGN IN/i);
   });
 
   it('hides the settings and actions when the entity is read-only', () => {
@@ -92,8 +86,6 @@ describe('<EditorMenu>', () => {
 
     expectHiddenSettingsAndActions(wrapper);
 
-    expect(
-      wrapper.find('#editor-EditorMenu--read-only-localization'),
-    ).toHaveLength(1);
+    wrapper.getByText(/THIS IS A READ-ONLY LOCALIZATION/i);
   });
 });

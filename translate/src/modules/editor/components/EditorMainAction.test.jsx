@@ -1,4 +1,3 @@
-import { mount } from 'enzyme';
 import React, { useContext } from 'react';
 
 import * as Hooks from '~/hooks';
@@ -10,6 +9,7 @@ import * as UpdateTranslationStatus from '../hooks/useUpdateTranslationStatus';
 
 import { EditorMainAction } from './EditorMainAction';
 import { vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
 
 beforeAll(() => {
   vi.mock('react', async (importOriginal) => {
@@ -63,9 +63,8 @@ describe('<EditorMainAction>', () => {
       pk: 1,
     }));
 
-    const wrapper = mount(<EditorMainAction />);
-
-    wrapper.find('.action-approve').simulate('click');
+    const { getByRole } = render(<EditorMainAction />);
+    fireEvent.click(getByRole('button', { name: /APPROVE/i }));
     expect(spy.mock.calls).toMatchObject([[1, 'approve', false]]);
   });
 
@@ -74,18 +73,17 @@ describe('<EditorMainAction>', () => {
     SendTranslation.useSendTranslation.mockReturnValue(spy);
     Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
 
-    const wrapper = mount(<EditorMainAction />);
-
-    wrapper.find('.action-suggest').simulate('click');
+    const { getByRole } = render(<EditorMainAction />);
+    fireEvent.click(getByRole('button', { name: /SUGGEST/i }));
     expect(spy.mock.calls).toMatchObject([[]]);
   });
 
   it('renders the Suggest button when user does not have permission', () => {
     Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
 
-    const wrapper = mount(<EditorMainAction />);
+    const { getByRole } = render(<EditorMainAction />);
 
-    expect(wrapper.find('.action-suggest')).toHaveLength(1);
+    getByRole('button', { name: /SUGGEST/i });
   });
 
   it('shows a spinner and a disabled Suggesting button when running request', () => {
@@ -94,11 +92,12 @@ describe('<EditorMainAction>', () => {
     Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
     vi.mocked(useContext).mockReturnValue({ busy: true }); // EditorData.busy
 
-    const wrapper = mount(<EditorMainAction />);
+    const { getByRole } = render(<EditorMainAction />);
+    const button = getByRole('button');
 
-    expect(wrapper.find('.action-suggest .fa-spin')).toHaveLength(1);
+    expect(button.querySelector('.fa-spin')).toBeInTheDocument();
 
-    wrapper.find('.action-suggest').simulate('click');
+    fireEvent.click(button);
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -106,9 +105,8 @@ describe('<EditorMainAction>', () => {
     const spy = vi.fn();
     SendTranslation.useSendTranslation.mockReturnValue(spy);
 
-    const wrapper = mount(<EditorMainAction />);
-
-    wrapper.find('.action-save').simulate('click');
+    const { getByRole } = render(<EditorMainAction />);
+    fireEvent.click(getByRole('button', { name: /SAVE/i }));
     expect(spy.mock.calls).toMatchObject([[]]);
   });
 
@@ -117,11 +115,11 @@ describe('<EditorMainAction>', () => {
     SendTranslation.useSendTranslation.mockReturnValue(spy);
     vi.mocked(useContext).mockReturnValue({ busy: true }); // EditorData.busy
 
-    const wrapper = mount(<EditorMainAction />);
+    const { getByRole } = render(<EditorMainAction />);
+    const button = getByRole('button');
 
-    expect(wrapper.find('.action-save .fa-spin')).toHaveLength(1);
-
-    wrapper.find('.action-save').simulate('click');
+    expect(button.querySelector('.fa-spin')).toBeInTheDocument();
+    fireEvent.click(button);
     expect(spy).not.toHaveBeenCalled();
   });
 });

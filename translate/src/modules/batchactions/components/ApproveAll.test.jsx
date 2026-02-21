@@ -1,10 +1,10 @@
 import React from 'react';
-import { mount } from 'enzyme';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { ApproveAll } from './ApproveAll';
 import { vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -21,20 +21,19 @@ const WrapApproveAll = (props) => (
 
 describe('<ApproveAll>', () => {
   it('renders default button correctly', () => {
-    const wrapper = mount(
+    const { container, getByRole, queryByText } = render(
       <WrapApproveAll batchactions={DEFAULT_BATCH_ACTIONS} />,
     );
 
-    expect(wrapper.find('.approve-all')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fas')).toHaveLength(0);
+    getByRole('button', { name: /APPROVE ALL/i });
+    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(queryByText(/STRINGS APPROVED/i)).toBeNull();
+    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(container.querySelector('.fas')).toBeNull();
   });
 
   it('renders error button correctly', () => {
-    const wrapper = mount(
+    const { container, getByRole, queryByText } = render(
       <WrapApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -45,17 +44,15 @@ describe('<ApproveAll>', () => {
         }}
       />,
     );
-
-    expect(wrapper.find('.approve-all')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fas')).toHaveLength(0);
+    getByRole('button', { name: /SOMETHING WENT WRONG/i });
+    expect(queryByText(/APPROVE ALL/i)).toBeNull();
+    expect(queryByText(/STRINGS APPROVED/i)).toBeNull();
+    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(container.querySelector('.fas')).toBeNull();
   });
 
   it('renders success button correctly', () => {
-    const wrapper = mount(
+    const { container, getByRole, queryByText } = render(
       <WrapApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -66,17 +63,15 @@ describe('<ApproveAll>', () => {
         }}
       />,
     );
-
-    expect(wrapper.find('.approve-all')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fas')).toHaveLength(0);
+    getByRole('button', { name: /STRINGS APPROVED/i });
+    expect(queryByText(/APPROVE ALL/i)).toBeNull();
+    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(container.querySelector('.fas')).toBeNull();
   });
 
   it('renders success with invalid button correctly', () => {
-    const wrapper = mount(
+    const { container, getByRole, queryByText } = render(
       <WrapApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -89,18 +84,16 @@ describe('<ApproveAll>', () => {
       />,
     );
 
-    expect(wrapper.find('.approve-all')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(1);
-    expect(wrapper.find('.fas')).toHaveLength(0);
+    getByRole('button', { name: /^(?=.*STRINGS APPROVED)(?=.*FAILED).*/i });
+    expect(queryByText(/APPROVE ALL/i)).toBeNull();
+    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(container.querySelector('.fas')).toBeNull();
   });
 
   it('performs approve all action when Approve All button is clicked', () => {
     const mockApproveAll = vi.fn();
 
-    const wrapper = mount(
+    const { getByRole } = render(
       <WrapApproveAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         approveAll={mockApproveAll}
@@ -108,7 +101,7 @@ describe('<ApproveAll>', () => {
     );
 
     expect(mockApproveAll).not.toHaveBeenCalled();
-    wrapper.find('.approve-all').simulate('click');
+    fireEvent.click(getByRole('button'));
     expect(mockApproveAll).toHaveBeenCalled();
   });
 });

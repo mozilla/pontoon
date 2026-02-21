@@ -1,10 +1,10 @@
 import React from 'react';
-import { mount } from 'enzyme';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { ReplaceAll } from './ReplaceAll';
 import { vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -21,20 +21,19 @@ const WrapReplaceAll = (props) => (
 
 describe('<ReplaceAll>', () => {
   it('renders default button correctly', () => {
-    const wrapper = mount(
+    const { getByRole, queryByText, container } = render(
       <WrapReplaceAll batchactions={DEFAULT_BATCH_ACTIONS} />,
     );
 
-    expect(wrapper.find('.replace-all')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ReplaceAll--error')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fas')).toHaveLength(0);
+    getByRole('button', { name: /REPLACE ALL/i });
+    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(queryByText(/STRINGS REPLACED/i)).toBeNull();
+    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(container.querySelector('.fas')).toBeNull();
   });
 
   it('renders error button correctly', () => {
-    const wrapper = mount(
+    const { getByRole, queryByText, container } = render(
       <WrapReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -46,16 +45,15 @@ describe('<ReplaceAll>', () => {
       />,
     );
 
-    expect(wrapper.find('.replace-all')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ReplaceAll--error')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fas')).toHaveLength(0);
+    getByRole('button', { name: /SOMETHING WENT WRONG/i });
+    expect(queryByText(/REPLACE ALL/i)).toBeNull();
+    expect(queryByText(/STRINGS REPLACED/i)).toBeNull();
+    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(container.querySelector('.fas')).toBeNull();
   });
 
   it('renders success button correctly', () => {
-    const wrapper = mount(
+    const { getByRole, queryByText, container } = render(
       <WrapReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -66,17 +64,15 @@ describe('<ReplaceAll>', () => {
         }}
       />,
     );
-
-    expect(wrapper.find('.replace-all')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ReplaceAll--error')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fas')).toHaveLength(0);
+    getByRole('button', { name: /STRINGS REPLACED/i });
+    expect(queryByText(/REPLACE ALL/i)).toBeNull();
+    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(container.querySelector('.fas')).toBeNull();
   });
 
   it('renders success with invalid button correctly', () => {
-    const wrapper = mount(
+    const { getByRole, queryByText, container } = render(
       <WrapReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -89,18 +85,16 @@ describe('<ReplaceAll>', () => {
       />,
     );
 
-    expect(wrapper.find('.replace-all')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ReplaceAll--error')).toHaveLength(0);
-    expect(wrapper.find('#batchactions-ReplaceAll--success')).toHaveLength(1);
-    expect(wrapper.find('#batchactions-ReplaceAll--invalid')).toHaveLength(1);
-    expect(wrapper.find('.fas')).toHaveLength(0);
+    getByRole('button', { name: /^(?=.*STRINGS REPLACED)(?=.*FAILED).*/i });
+    expect(queryByText(/REPLACE ALL/i)).toBeNull();
+    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(container.querySelector('.fas')).toBeNull();
   });
 
   it('performs replace all action when Replace All button is clicked', () => {
     const mockReplaceAll = vi.fn();
 
-    const wrapper = mount(
+    const { getByRole } = render(
       <WrapReplaceAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         replaceAll={mockReplaceAll}
@@ -108,7 +102,7 @@ describe('<ReplaceAll>', () => {
     );
 
     expect(mockReplaceAll).not.toHaveBeenCalled();
-    wrapper.find('.replace-all').simulate('click');
+    fireEvent.click(getByRole('button', { name: /REPLACE ALL/i }));
     expect(mockReplaceAll).toHaveBeenCalled();
   });
 });
