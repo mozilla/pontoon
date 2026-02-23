@@ -215,6 +215,8 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
     entities_to_map = entities_page.object_list
     requested_entity = form.cleaned_data["entity"] if page == 1 else None
 
+    if requested_entity and not entities.filter(pk=requested_entity).exists():
+        requested_entity = None
     return JsonResponse(
         {
             "entities": Entity.map_entities(
