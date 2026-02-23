@@ -8,6 +8,7 @@ from pontoon.base.models import Entity, TranslatedResource
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
+    TranslationFactory,
 )
 
 
@@ -89,3 +90,35 @@ def test_view_get_entities_paging(
     assert response.status_code == 200
     assert json.loads(response.content)["has_next"] is False
     assert json.loads(response.content)["entities"][0]["pk"] == entities[-1].pk
+
+
+@pytest.mark.django_db
+def test_entities_string_not_shown_if_not_matching_filters(member, entity_a, locale_a):
+    """
+    Test that a string is not displayed if it doesn't match the active filters.
+    Regression test for https://github.com/mozilla/pontoon/issues/3148
+    """
+    ProjectLocaleFactory.create(project=entity_a.resource.project, locale=locale_a)
+    TranslatedResource.objects.create(resource=entity_a.resource, locale=locale_a)
+    entity_a.resource.total_strings = 1
+    entity_a.resource.save()
+
+    TranslationFactory.create(entity=entity_a, locale=locale_a, approved=True)
+
+    response = member.client.post(
+        "/get-entities/",
+        {
+            "project": entity_a.resource.project.slug,
+            "locale": locale_a.code,
+            "paths[]": [entity_a.resource.path],
+            "status": "missing",
+            "entity": entity_a.pk,
+            "page": 1,
+            "limit": 50,
+        },
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    data = json.loads(response.content)
+    entity_pks = [e["pk"] for e in data["entities"]]
+    assert entity_a.pk not in entity_pks
