@@ -22,7 +22,7 @@ const defaultText = /REJECT ALL/i;
 const errorText = /SOMETHING WENT WRONG/i;
 const successText = /STRINGS REJECTED/i;
 const invalidText = /FAILED/i;
-const dailogBoxText = /ARE YOU SURE/i;
+const dialogBoxText = /ARE YOU SURE/i;
 
 describe('<RejectAll>', () => {
   it('renders default button correctly', () => {
@@ -108,7 +108,7 @@ describe('<RejectAll>', () => {
     );
     fireEvent.click(getByRole('button'));
     expect(mockRejectAll).not.toHaveBeenCalled();
-    getByText(dailogBoxText);
+    getByText(dialogBoxText);
   });
 
   it('performs reject all action when Reject All button is confirmed', () => {
@@ -123,7 +123,7 @@ describe('<RejectAll>', () => {
 
     expect(mockRejectAll).not.toHaveBeenCalled();
     fireEvent.click(getByRole('button', { name: defaultText }));
-    fireEvent.click(getByRole('button', { name: dailogBoxText }));
+    fireEvent.click(getByRole('button', { name: dialogBoxText }));
     expect(mockRejectAll).toHaveBeenCalledOnce();
   });
 });
