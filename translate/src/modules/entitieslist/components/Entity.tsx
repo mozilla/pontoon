@@ -113,8 +113,13 @@ export function Entity({
   );
 
   return (
-    <li className={cn} onClick={handleSelectEntity}>
-      <span className='status fas' onClick={handleForBatchEditing} />
+    <li className={cn} role='button' onClick={handleSelectEntity}>
+      <span
+        className='status fas'
+        role='checkbox'
+        aria-selected={checkedForBatchEditing}
+        onClick={handleForBatchEditing}
+      />
       {selected && !entity.isSibling ? (
         <div>
           {!areSiblingsActive && showSiblingEntitiesButton() && (
