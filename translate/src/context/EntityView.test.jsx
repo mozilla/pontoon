@@ -1,9 +1,9 @@
-import { mount } from 'enzyme';
 import React, { useContext } from 'react';
 
 import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location } from './Location';
+import { render } from '@testing-library/react';
 
 const ENTITIES = [
   { pk: 1, original: 'hello' },
@@ -21,7 +21,7 @@ describe('<EntityViewProvider', () => {
       return null;
     };
 
-    const wrapper = mount(
+    const { rerender } = render(
       <Location.Provider value={{ entity: 1 }}>
         <Locale.Provider value={{ cldrPlurals: [1, 5] }}>
           <EntityViewProvider>
@@ -33,7 +33,15 @@ describe('<EntityViewProvider', () => {
 
     expect(view).toMatchObject({ entity: ENTITIES[0] });
 
-    wrapper.setProps({ value: { entity: 2 } });
+    rerender(
+      <Location.Provider value={{ entity: 2 }}>
+        <Locale.Provider value={{ cldrPlurals: [1, 5] }}>
+          <EntityViewProvider>
+            <Spy />
+          </EntityViewProvider>
+        </Locale.Provider>
+      </Location.Provider>,
+    );
 
     expect(view).toMatchObject({ entity: ENTITIES[1] });
   });

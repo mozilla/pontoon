@@ -1,16 +1,29 @@
-import { shallow } from 'enzyme';
-import React from 'react';
+import React, { useContext } from 'react';
 
-import { LocationProvider } from './Location';
+import { LocationProvider, Location } from './Location';
+import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 
 describe('LocationProvider', () => {
   it('correctly parses the pathname', () => {
+    let view;
+    const Spy = () => {
+      view = useContext(Location);
+      return null;
+    };
+
     const history = {
       location: { pathname: '/kg/waterwolf/path/to/RESOURCE.po/', search: '' },
+      listen: vi.fn(),
     };
-    const wrapper = shallow(<LocationProvider history={history} />);
 
-    expect(wrapper.prop('value')).toMatchObject({
+    render(
+      <LocationProvider history={history}>
+        <Spy />
+      </LocationProvider>,
+    );
+
+    expect(view).toMatchObject({
       locale: 'kg',
       project: 'waterwolf',
       resource: 'path/to/RESOURCE.po',
@@ -20,15 +33,25 @@ describe('LocationProvider', () => {
   });
 
   it('correctly parses a query string', () => {
+    let view;
+    const Spy = () => {
+      view = useContext(Location);
+      return null;
+    };
     const history = {
       location: {
         pathname: '/kg/waterwolf/path/',
         search: '?status=missing,warnings&string=42',
       },
+      listen: vi.fn(),
     };
-    const wrapper = shallow(<LocationProvider history={history} />);
+    render(
+      <LocationProvider history={history}>
+        <Spy />
+      </LocationProvider>,
+    );
 
-    expect(wrapper.prop('value')).toMatchObject({
+    expect(view).toMatchObject({
       locale: 'kg',
       project: 'waterwolf',
       resource: 'path',
@@ -38,15 +61,24 @@ describe('LocationProvider', () => {
   });
 
   it('correctly parses a query string with a list', () => {
+    let view;
+    const Spy = () => {
+      view = useContext(Location);
+      return null;
+    };
     const history = {
       location: {
         pathname: '/kg/waterwolf/path/',
         search: '?status=missing,warnings&list=13,42,99&string=42',
       },
+      listen: vi.fn(),
     };
-    const wrapper = shallow(<LocationProvider history={history} />);
-
-    expect(wrapper.prop('value')).toMatchObject({
+    render(
+      <LocationProvider history={history}>
+        <Spy />
+      </LocationProvider>,
+    );
+    expect(view).toMatchObject({
       locale: 'kg',
       project: 'waterwolf',
       resource: 'path',

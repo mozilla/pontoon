@@ -5,7 +5,6 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { AddComment } from './AddComment';
 import { vi } from 'vitest';
-import { fireEvent } from '@testing-library/react';
 
 const USER = {
   user: 'RSwanson',

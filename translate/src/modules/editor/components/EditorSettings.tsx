@@ -104,6 +104,7 @@ export function EditorSettings({
     <div className='editor-settings'>
       <div
         className='selector fas fa-cog'
+        role='button'
         title='Settings'
         onClick={toggleVisible}
       />

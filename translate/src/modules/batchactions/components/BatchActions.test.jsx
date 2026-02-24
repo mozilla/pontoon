@@ -1,15 +1,13 @@
-import { shallow } from 'enzyme';
 import React from 'react';
 
 import * as Hooks from '~/hooks';
 import * as Actions from '../actions';
 import { BATCHACTIONS } from '../reducer';
 
-import { ApproveAll } from './ApproveAll';
 import { BatchActions } from './BatchActions';
-import { RejectAll } from './RejectAll';
-import { ReplaceAll } from './ReplaceAll';
 import { vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
+import { MockLocalizationProvider } from '~/test/utils';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -40,46 +38,53 @@ describe('<BatchActions>', () => {
     Actions.selectAll.mockRestore();
   });
 
+  const WrapBatchAction = () => {
+    return (
+      <MockLocalizationProvider>
+        <BatchActions />
+      </MockLocalizationProvider>
+    );
+  };
+
   it('renders correctly', () => {
-    const wrapper = shallow(<BatchActions />);
+    const {
+      container,
+      getByRole,
+      getByText,
+      getByPlaceholderText,
+      getAllByRole,
+    } = render(<WrapBatchAction />);
 
-    expect(wrapper.find('.batch-actions')).toHaveLength(1);
+    expect(container.querySelector('.batch-actions')).toBeInTheDocument();
 
-    expect(wrapper.find('.topbar')).toHaveLength(1);
-    expect(wrapper.find('.selected-count')).toHaveLength(1);
-    expect(wrapper.find('.select-all')).toHaveLength(1);
+    expect(container.querySelector('.topbar')).toBeInTheDocument();
+    getByRole('button', { name: /STRINGS SELECTED/i });
+    getByRole('button', { name: /SELECT ALL/i });
 
-    expect(wrapper.find('.actions-panel')).toHaveLength(1);
+    expect(container.querySelector('.actions-panel')).toBeInTheDocument();
+    getByText(/Warning:/i);
 
-    expect(wrapper.find('#batchactions-BatchActions--warning')).toHaveLength(1);
+    getByText(/REVIEW TRANSLATIONS/i);
+    getByRole('button', { name: /APPROVE ALL/i });
+    getByRole('button', { name: /REJECT ALL/i });
+    getByRole('heading', { name: /FIND & REPLACE/i });
 
-    expect(
-      wrapper.find('#batchactions-BatchActions--review-heading'),
-    ).toHaveLength(1);
-    expect(wrapper.find(ApproveAll)).toHaveLength(1);
-    expect(wrapper.find(RejectAll)).toHaveLength(1);
-
-    expect(
-      wrapper.find('#batchactions-BatchActions--find-replace-heading'),
-    ).toHaveLength(1);
-    expect(wrapper.find('#batchactions-BatchActions--find')).toHaveLength(1);
-    expect(
-      wrapper.find('#batchactions-BatchActions--replace-with'),
-    ).toHaveLength(1);
-    expect(wrapper.find(ReplaceAll)).toHaveLength(1);
+    expect(getAllByRole('searchbox')).toHaveLength(2);
+    getByPlaceholderText(/FIND/i);
+    getByPlaceholderText(/REPLACE WITH/i);
+    getByRole('button', { name: /REPLACE ALL/i });
   });
 
   it('closes batch actions panel when the Close button with selected count is clicked', () => {
-    const wrapper = shallow(<BatchActions />);
-
-    wrapper.find('.selected-count').simulate('click');
+    const { getByRole } = render(<WrapBatchAction />);
+    fireEvent.click(getByRole('button', { name: /STRINGS SELECTED/i }));
     expect(Actions.resetSelection).toHaveBeenCalled();
   });
 
   it('selects all entities when the Select All button is clicked', () => {
-    const wrapper = shallow(<BatchActions />);
+    const { getByRole } = render(<WrapBatchAction />);
 
-    wrapper.find('.select-all').simulate('click');
+    fireEvent.click(getByRole('button', { name: /SELECT ALL/i }));
     expect(Actions.selectAll).toHaveBeenCalled();
   });
 });
