@@ -18,6 +18,10 @@ const WrapReplaceAll = (props) => (
     <ReplaceAll {...props} />
   </MockLocalizationProvider>
 );
+const defaultText = /REPLACE ALL/i;
+const errorText = /SOMETHING WENT WRONG/i;
+const successText = /STRINGS REPLACED/i;
+const invalidText = /FAILED/i;
 
 describe('<ReplaceAll>', () => {
   it('renders default button correctly', () => {
@@ -25,10 +29,10 @@ describe('<ReplaceAll>', () => {
       <WrapReplaceAll batchactions={DEFAULT_BATCH_ACTIONS} />,
     );
 
-    getByRole('button', { name: /REPLACE ALL/i });
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
-    expect(queryByText(/STRINGS REPLACED/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    getByRole('button', { name: defaultText });
+    expect(queryByText(errorText)).toBeNull();
+    expect(queryByText(successText)).toBeNull();
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -45,10 +49,10 @@ describe('<ReplaceAll>', () => {
       />,
     );
 
-    getByRole('button', { name: /SOMETHING WENT WRONG/i });
-    expect(queryByText(/REPLACE ALL/i)).toBeNull();
-    expect(queryByText(/STRINGS REPLACED/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    getByRole('button', { name: errorText });
+    expect(queryByText(successText)).toBeNull();
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -64,10 +68,10 @@ describe('<ReplaceAll>', () => {
         }}
       />,
     );
-    getByRole('button', { name: /STRINGS REPLACED/i });
-    expect(queryByText(/REPLACE ALL/i)).toBeNull();
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    expect(queryByText(errorText)).toBeNull();
+    getByRole('button', { name: successText });
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -85,9 +89,10 @@ describe('<ReplaceAll>', () => {
       />,
     );
 
-    getByRole('button', { name: /^(?=.*STRINGS REPLACED)(?=.*FAILED).*/i });
-    expect(queryByText(/REPLACE ALL/i)).toBeNull();
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    expect(queryByText(errorText)).toBeNull();
+    const button = getByRole('button', { name: successText });
+    expect(button).toHaveTextContent(invalidText);
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -102,7 +107,7 @@ describe('<ReplaceAll>', () => {
     );
 
     expect(mockReplaceAll).not.toHaveBeenCalled();
-    fireEvent.click(getByRole('button', { name: /REPLACE ALL/i }));
+    fireEvent.click(getByRole('button', { name: defaultText }));
     expect(mockReplaceAll).toHaveBeenCalled();
   });
 });

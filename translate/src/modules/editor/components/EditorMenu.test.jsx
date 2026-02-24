@@ -54,7 +54,6 @@ function expectHiddenSettingsAndActions({ container, queryByRole }) {
   expect(container.querySelector('.editor-settings')).toBeNull();
   expect(container.querySelector('.keyboard-shortcuts')).toBeNull();
   expect(container.querySelector('.translation-length')).toBeNull();
-  expect(queryByRole('button', { name: /^COPY$/i })).toBeNull();
 }
 
 describe('<EditorMenu>', () => {

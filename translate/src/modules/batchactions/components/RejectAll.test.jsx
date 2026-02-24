@@ -18,6 +18,11 @@ const WrapRejectAll = (props) => (
     <RejectAll {...props} />
   </MockLocalizationProvider>
 );
+const defaultText = /REJECT ALL/i;
+const errorText = /SOMETHING WENT WRONG/i;
+const successText = /STRINGS REJECTED/i;
+const invalidText = /FAILED/i;
+const dailogBoxText = /ARE YOU SURE/i;
 
 describe('<RejectAll>', () => {
   it('renders default button correctly', () => {
@@ -25,10 +30,10 @@ describe('<RejectAll>', () => {
       <WrapRejectAll batchactions={DEFAULT_BATCH_ACTIONS} />,
     );
 
-    getByRole('button', { name: /REJECT ALL/i });
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
-    expect(queryByText(/STRINGS REJECTED/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    getByRole('button', { name: defaultText });
+    expect(queryByText(errorText)).toBeNull();
+    expect(queryByText(successText)).toBeNull();
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -44,10 +49,10 @@ describe('<RejectAll>', () => {
         }}
       />,
     );
-    getByRole('button', { name: /SOMETHING WENT WRONG/i });
-    expect(queryByText(/REJECT ALL/i)).toBeNull();
-    expect(queryByText(/STRINGS REJECTED/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    getByRole('button', { name: errorText });
+    expect(queryByText(successText)).toBeNull();
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -64,10 +69,10 @@ describe('<RejectAll>', () => {
       />,
     );
 
-    getByRole('button', { name: /STRINGS REJECTED/i });
-    expect(queryByText(/REJECT ALL/i)).toBeNull();
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    expect(queryByText(errorText)).toBeNull();
+    getByRole('button', { name: successText });
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -85,9 +90,10 @@ describe('<RejectAll>', () => {
       />,
     );
 
-    getByRole('button', { name: /^(?=.*STRINGS REJECTED)(?=.*FAILED).*/i });
-    expect(queryByText(/REJECT ALL/i)).toBeNull();
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    expect(queryByText(errorText)).toBeNull();
+    const button = getByRole('button', { name: successText });
+    expect(button).toHaveTextContent(invalidText);
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -102,7 +108,7 @@ describe('<RejectAll>', () => {
     );
     fireEvent.click(getByRole('button'));
     expect(mockRejectAll).not.toHaveBeenCalled();
-    getByText(/ARE YOU SURE/i);
+    getByText(dailogBoxText);
   });
 
   it('performs reject all action when Reject All button is confirmed', () => {
@@ -116,8 +122,8 @@ describe('<RejectAll>', () => {
     );
 
     expect(mockRejectAll).not.toHaveBeenCalled();
-    fireEvent.click(getByRole('button', { name: /REJECT ALL/i }));
-    fireEvent.click(getByRole('button', { name: /ARE YOU SURE/i }));
+    fireEvent.click(getByRole('button', { name: defaultText }));
+    fireEvent.click(getByRole('button', { name: dailogBoxText }));
     expect(mockRejectAll).toHaveBeenCalledOnce();
   });
 });

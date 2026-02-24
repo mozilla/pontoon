@@ -18,6 +18,10 @@ const WrapApproveAll = (props) => (
     <ApproveAll {...props} />
   </MockLocalizationProvider>
 );
+const defaultText = /APPROVE ALL/i;
+const errorText = /SOMETHING WENT WRONG/i;
+const successText = /STRINGS APPROVED/i;
+const invalidText = /FAILED/i;
 
 describe('<ApproveAll>', () => {
   it('renders default button correctly', () => {
@@ -25,10 +29,10 @@ describe('<ApproveAll>', () => {
       <WrapApproveAll batchactions={DEFAULT_BATCH_ACTIONS} />,
     );
 
-    getByRole('button', { name: /APPROVE ALL/i });
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
-    expect(queryByText(/STRINGS APPROVED/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    getByRole('button', { name: defaultText });
+    expect(queryByText(errorText)).toBeNull();
+    expect(queryByText(successText)).toBeNull();
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -44,10 +48,10 @@ describe('<ApproveAll>', () => {
         }}
       />,
     );
-    getByRole('button', { name: /SOMETHING WENT WRONG/i });
-    expect(queryByText(/APPROVE ALL/i)).toBeNull();
-    expect(queryByText(/STRINGS APPROVED/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    getByRole('button', { name: errorText });
+    expect(queryByText(successText)).toBeNull();
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -63,10 +67,10 @@ describe('<ApproveAll>', () => {
         }}
       />,
     );
-    getByRole('button', { name: /STRINGS APPROVED/i });
-    expect(queryByText(/APPROVE ALL/i)).toBeNull();
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
-    expect(queryByText(/FAILED/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    expect(queryByText(errorText)).toBeNull();
+    getByRole('button', { name: successText });
+    expect(queryByText(invalidText)).toBeNull();
     expect(container.querySelector('.fas')).toBeNull();
   });
 
@@ -84,9 +88,10 @@ describe('<ApproveAll>', () => {
       />,
     );
 
-    getByRole('button', { name: /^(?=.*STRINGS APPROVED)(?=.*FAILED).*/i });
-    expect(queryByText(/APPROVE ALL/i)).toBeNull();
-    expect(queryByText(/SOMETHING WENT WRONG/i)).toBeNull();
+    expect(queryByText(defaultText)).toBeNull();
+    expect(queryByText(errorText)).toBeNull();
+    const button = getByRole('button', { name: successText });
+    expect(button).toHaveTextContent(invalidText);
     expect(container.querySelector('.fas')).toBeNull();
   });
 
