@@ -1,15 +1,45 @@
 {% extends 'messaging/emails/base.html' %}
 
 {% block title %}{{ subject }}{% endblock %}
-
+<!-- prettier-ignore-start -->
 {% block extend_css %}
-  h2.team-activity { padding-top: 30px; } p.item { margin: 0; } p.completion {
-  padding-top: 20px; } .bullet { display: inline-block; border: 1px solid;
-  border-radius: 50%; margin: 1px 4px; height: 7px; width: 7px; }
-  .bullet.missing { background: #bec7d1; border-color: #bec7d1; }
-  .bullet.unreviewed { background: #4fc4f6; border-color: #4fc4f6; }
-  .bullet.pretranslated { background: #c0ff00; border-color: #c0ff00; }
+  h2.team-activity {
+    padding-top: 30px;
+  }
+
+  p.item {
+    margin: 0;
+  }
+
+  p.completion {
+    padding-top: 20px;
+  }
+
+  .bullet {
+    display: inline-block;
+    border: 1px solid;
+    border-radius: 50%;
+    margin: 1px 4px;
+    height: 7px;
+    width: 7px;
+  }
+
+  .bullet.missing {
+    background: #bec7d1;
+    border-color: #bec7d1;
+  }
+
+  .bullet.unreviewed {
+    background: #4fc4f6;
+    border-color: #4fc4f6;
+  }
+
+  .bullet.pretranslated {
+    background: #c0ff00;
+    border-color: #c0ff00;
+  }
 {% endblock %}
+<!-- prettier-ignore-end -->
 
 {% block header %}Hello.{% endblock %}
 

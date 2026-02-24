@@ -11,6 +11,7 @@
       rel="stylesheet"
     />
 
+    <!-- prettier-ignore-start -->
     <style>
       body {
         margin: 0;
@@ -91,8 +92,10 @@
         margin-top: 20px;
         padding-top: 20px;
       }
+
+      {% block extend_css %}{% endblock %}
     </style>
-    {% block extend_css %}{% endblock %}
+    <!-- prettier-ignore-end -->
   </head>
 
   <body>
