@@ -102,7 +102,11 @@ describe('<EntitiesList>', () => {
       history,
     );
 
-    expect(getAllByRole('listitem')).toHaveLength(2);
+    expect(
+      getAllByRole('button', {
+        name: 'Select "{ $original }" for translation.',
+      }),
+    ).toHaveLength(2);
   });
 
   // FIXME: https://github.com/mozilla/pontoon/issues/3883
