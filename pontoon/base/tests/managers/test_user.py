@@ -1,6 +1,9 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from django.db.models import Q
+from django.utils import timezone
 
 from pontoon.base.utils import aware_datetime
 from pontoon.contributors.utils import users_with_translations_counts
@@ -322,3 +325,69 @@ def test_mgr_user_query_args_filtering(
     assert top_contribs[0].translations_approved_count == 11
     assert top_contribs[0].translations_rejected_count == 0
     assert top_contribs[0].translations_unapproved_count == 3
+
+
+@pytest.mark.django_db
+def test_mgr_user_translation_counts_after_resource_removed(
+    resource_a,
+    locale_a,
+):
+    """
+    Tests that contributor translation counts remain unchanged after
+    a resource is removed via remove_resources.
+
+    Translation counts should include translations from obsolete resources
+    since they represent the contributor's historical work.
+    """
+    from pontoon.sync.core.entities import remove_resources
+
+    contributor = UserFactory.create()
+    entities = EntityFactory.create_batch(size=12, resource=resource_a)
+
+    batch_kwargs = sum(
+        [
+            [dict(approved=True)] * 7,
+            [dict(approved=False, fuzzy=False, rejected=True)] * 3,
+            [dict(fuzzy=True)] * 2,
+        ],
+        [],
+    )
+
+    for i, kwa in enumerate(batch_kwargs):
+        TranslationFactory.create(
+            locale=locale_a,
+            user=contributor,
+            entity=entities[i],
+            approved=kwa.get("approved", False),
+            rejected=kwa.get("rejected", False),
+            fuzzy=kwa.get("fuzzy", False),
+        )
+
+    top_contribs = users_with_translations_counts()
+    assert len(top_contribs) == 1
+    assert top_contribs[0] == contributor
+    assert top_contribs[0].translations_count == 12
+    assert top_contribs[0].translations_approved_count == 7
+    assert top_contribs[0].translations_rejected_count == 3
+    assert top_contribs[0].translations_unapproved_count == 2
+
+    # Remove resource using remove_resources (simulates sync removing source file)
+    checkout = MagicMock()
+    checkout.path = "/path_1"
+    checkout.removed = [resource_a.path]
+
+    paths = MagicMock()
+    paths.ref_root = "/path_1"
+
+    remove_resources(resource_a.project, paths, checkout, timezone.now())
+
+    resource_a.refresh_from_db()
+    assert resource_a.obsolete is True
+
+    top_contribs = users_with_translations_counts()
+    assert len(top_contribs) == 1
+    assert top_contribs[0] == contributor
+    assert top_contribs[0].translations_count == 12
+    assert top_contribs[0].translations_approved_count == 7
+    assert top_contribs[0].translations_rejected_count == 3
+    assert top_contribs[0].translations_unapproved_count == 2
