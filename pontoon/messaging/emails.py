@@ -72,12 +72,16 @@ def _get_monthly_locale_actions(months_ago):
 
 def _get_monthly_locale_stats(months_ago):
     month_date = timezone.now() - relativedelta(months=months_ago)
-    last_day = calendar.monthrange(month_date.year, month_date.month)[1]
+
+    # collect_insights() takes data snapshots at midnight. To get the
+    # end-of-month state, use the snapshot from the first day of the following
+    # month.
+    next_month = month_date + relativedelta(months=1)
 
     snapshots = LocaleInsightsSnapshot.objects.filter(
-        created_at__day=last_day,
-        created_at__month=month_date.month,
-        created_at__year=month_date.year,
+        created_at__day=1,
+        created_at__month=next_month.month,
+        created_at__year=next_month.year,
     )
 
     return {snapshot.locale_id: snapshot for snapshot in snapshots}
@@ -108,7 +112,7 @@ def _get_monthly_locale_contributors(locales, months_ago):
     }
 
     # Get all contributors in the given month,
-    # grouped by locale and orderd by contribution count
+    # grouped by locale and ordered by contribution count
     monthly_contributors = (
         actions.filter(
             created_at__month=month_date.month,
