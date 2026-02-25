@@ -155,7 +155,7 @@ def count_activities(dt_max: datetime):
                 if user in pretranslation_users:
                     data.pretranslations_rejected.add(translation)
                     score = get_chrf_score(action, approved_translations)
-                    if score:
+                    if score is not None:
                         data.pretranslations_chrf_scores.append(score)
 
     return res
@@ -329,7 +329,7 @@ def projectlocale_insights(
             pretranslations_chrf_score=(
                 mean(ad.pretranslations_chrf_scores)
                 if ad.pretranslations_chrf_scores
-                else 0.0
+                else None
             ),
             pretranslations_approved=len(ad.pretranslations_approved),
             pretranslations_rejected=len(ad.pretranslations_rejected),
@@ -475,7 +475,7 @@ def get_locale_insights_snapshot(
     avg_suggestion_review_age, avg_pt_review_age = get_review_ages(activities)
     ma = merge_activities(activities)
     pt_chrf_score = (
-        mean(ma.pretranslations_chrf_scores) if ma.pretranslations_chrf_scores else 0
+        mean(ma.pretranslations_chrf_scores) if ma.pretranslations_chrf_scores else None
     )
 
     ls_total = 0
