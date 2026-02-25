@@ -475,8 +475,8 @@ describe('<HistoryTranslationComponent>', () => {
       expect(container.querySelector('.diff-visible')).toBeNull();
 
       const DiffToggle = getByRole('button', { name: 'DIFF' });
-      expect(DiffToggle.classList.contains('off')).toBeTruthy();
-      expect(DiffToggle.classList.contains('on')).toBeFalsy();
+      expect(DiffToggle).toHaveClass('off');
+      expect(DiffToggle).not.toHaveClass('on');
     });
 
     it('shows translation diff and the Hide diff button for a non-first translation if diff visible', () => {
@@ -496,8 +496,8 @@ describe('<HistoryTranslationComponent>', () => {
       expect(container.querySelector('.default')).toBeNull();
       expect(container.querySelector('.diff-visible')).toBeInTheDocument();
 
-      expect(DiffToggle.classList.contains('off')).toBeFalsy();
-      expect(DiffToggle.classList.contains('on')).toBeTruthy();
+      expect(DiffToggle).not.toHaveClass('off');
+      expect(DiffToggle).toHaveClass('on');
     });
   });
 });
