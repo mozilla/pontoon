@@ -212,7 +212,7 @@ describe('<Editor>', () => {
     expect(wrapper.find(EditField).text()).toEqual('Coucou');
   });
 
-  it('passes a reconstructed translation to sendTranslation', async () => {
+  it('passes a reconstructed translation to createTranslation', async () => {
     const createSpy = vi
       .spyOn(TranslationAPI, 'createTranslation')
       .mockReturnValue({});
@@ -226,6 +226,11 @@ describe('<Editor>', () => {
 
     expect(createSpy.mock.calls.length).toBe(1);
     const args = createSpy.mock.calls[0];
-    expect(args[1]).toBe('my-message = Coucou\n');
+    expect(args[1]).toMatchObject({
+      format: 'fluent',
+      id: 'my-message',
+      value: ['Coucou'],
+    });
+    expect(args[2]).toBe('my-message = Coucou\n');
   });
 });

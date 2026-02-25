@@ -69,7 +69,6 @@ def create_translation(request):
     ignore_warnings = form.cleaned_data["ignore_warnings"]
     approve = form.cleaned_data["approve"]
     force_suggestions = form.cleaned_data["force_suggestions"]
-    machinery_sources = form.cleaned_data["machinery_sources"]
     stats = form.cleaned_data["stats"]
 
     resource = entity.resource
@@ -118,10 +117,12 @@ def create_translation(request):
         entity=entity,
         locale=locale,
         string=string,
+        value=form.cleaned_data["value"],
+        properties=form.cleaned_data["properties"],
         user=user,
         date=now,
         approved=can_translate,
-        machinery_sources=machinery_sources,
+        machinery_sources=form.cleaned_data["machinery_sources"],
     )
 
     if can_translate:
