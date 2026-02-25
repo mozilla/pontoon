@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import patch
 
 import pytest
 
@@ -202,3 +203,71 @@ def test_locale_insights(
     (li,) = locale_insights(now, activities, new_entities, pl_stats)
     assert li.unreviewed_suggestions_lifespan >= timedelta(days=1)
     assert li.unreviewed_suggestions_lifespan <= timedelta(days=2)
+
+
+@pytest.mark.django_db
+def test_projectlocale_insights_no_pretranslations_chrf_score_is_none(
+    locale_a, project_locale_a, resource_a
+):
+    """When there are no pretranslation reviews, chrF++ score should be None,
+    not 0."""
+    now, t = now_times()
+    TranslatedResourceFactory.create(resource=resource_a, locale=locale_a)
+    activities = {
+        project_locale_a.pk: Activity(
+            locale=locale_a.pk,
+            human_translations={1},
+            new_suggestions={1},
+            peer_approved={1},
+        )
+    }
+    pl_stats = [
+        {
+            "approved": 9,
+            "errors": 0,
+            "locale": locale_a.pk,
+            "pretranslated": 0,
+            "projectlocale": project_locale_a.pk,
+            "total": 10,
+            "unreviewed": 0,
+            "warnings": 0,
+        }
+    ]
+    (pli,) = projectlocale_insights(now, activities, {}, pl_stats)
+    assert pli.pretranslations_chrf_score is None
+
+
+@pytest.mark.django_db
+def test_count_activities_chrf_score_zero_included(
+    user_a, gt_user, locale_a, project_locale_a, resource_a
+):
+    """A rejected pretranslation with a chrF++ score of 0.0 should be
+    included."""
+    now, t = now_times()
+    tr = TranslationFactory.create(
+        entity__resource=resource_a,
+        locale=locale_a,
+        user=gt_user,
+        date=t[1],
+        active=False,
+        approved=False,
+        rejected=True,
+        rejected_user=user_a,
+        rejected_date=t[2],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        created_at=t[1],
+        performed_by=gt_user,
+        translation=tr,
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+        created_at=t[2],
+        performed_by=user_a,
+        translation=tr,
+    )
+    with patch("pontoon.insights.tasks.get_chrf_score", return_value=0.0):
+        result = count_activities(now)
+    activity = result[project_locale_a.pk]
+    assert 0.0 in activity.pretranslations_chrf_scores

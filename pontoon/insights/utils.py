@@ -109,7 +109,7 @@ def get_chrf_score(insight):
     """Get chrF++ score."""
     score = insight["pretranslations_chrf_score_avg"]
 
-    if not score:
+    if score is None:
         return None
 
     return round(score, 2)
