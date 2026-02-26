@@ -1,5 +1,6 @@
 {% import 'widgets/latest_activity.html' as LatestActivity %}
 {% import 'widgets/progress_chart.html' as ProgressChart %}
+{% import 'widgets/progress_table_column.html' as ProgressTableColumn %}
 {% import 'widgets/deadline.html' as Deadline %}
 {% import 'widgets/priority.html' as Priority %}
 
@@ -13,7 +14,7 @@
         <th class="deadline">Target Date<i class="fas"></i></th>
         <th class="priority inverted">Priority<i class="fas"></i></th>
         <th class="latest-activity">Latest Activity<i class="fas"></i></th>
-        <th class="progress">Progress<i class="fas"></i></th>
+        {{ ProgressTableColumn.header() }}
         <th class="unreviewed-status inverted" title="Unreviewed suggestions">
           <span class="fas fa-lightbulb"></span><i class="fas"></i>
         </th>
