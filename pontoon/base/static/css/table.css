@@ -69,6 +69,13 @@ table.table.project-list.hidden {
   width: 16px;
 }
 
+.table th.progress button {
+  float: right;
+  margin-block-start: -3px;
+  padding-block: 3px;
+  padding-inline: 12px;
+}
+
 .table-sort th.unreviewed-status i {
   margin: -13px 0 0 13px;
 }
@@ -314,6 +321,14 @@ table.table.project-list.hidden {
 }
 
 .table tr:hover .progress .legend {
+  display: block;
+}
+
+.table .progress.show-detailed-view .chart-wrapper {
+  display: none;
+}
+
+.table .progress.show-detailed-view .legend {
   display: block;
 }
 
