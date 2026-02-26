@@ -38,10 +38,8 @@ def test_get_users_sorted_by_locale_activity(rf, admin):
     other_locale = LocaleFactory()
 
     # create a user that is from a different locale, not the current one
-    other_locale_user = UserFactory(
-        first_name="Michael", last_name="OtherLocale")
-    TranslationFactory(user=other_locale_user,
-                       locale=other_locale, entity=entity)
+    other_locale_user = UserFactory(first_name="Michael", last_name="OtherLocale")
+    TranslationFactory(user=other_locale_user, locale=other_locale, entity=entity)
 
     # create a user active in the current locale
     locale_user = UserFactory(first_name="Alice", last_name="ActiveLocale")
