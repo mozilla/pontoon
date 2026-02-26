@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-from django.db.models import F, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q
 from django.http import (
     Http404,
     HttpResponse,
@@ -741,7 +741,10 @@ def unpin_comment(request):
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
 def get_users(request):
-    """Get all users."""
+    """Get all users sorted by locale and project."""
+    locale_code = request.GET.get("locale")
+    project_slug = request.GET.get("project")
+
     users = (
         User.objects
         # Exclude system users
@@ -750,6 +753,16 @@ def get_users(request):
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
         # Prefetch profile for retrieving username
         .prefetch_related("profile")
+        .annotate(
+            in_locale=Count(
+                "translation", filter=Q(translation__locale__code=locale_code)
+            ),
+            in_project=Count(
+                "translation",
+                filter=Q(translation__entity__resource__project__slug=project_slug),
+            ),
+        )
+        .order_by("-in_locale", "-in_project", "first_name", "last_name")
     )
     payload = []
 

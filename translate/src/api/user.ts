@@ -69,8 +69,17 @@ export const dismissAddonPromotion = (): Promise<void> =>
 /** Return data about the current user from the server. */
 export const fetchUserData = (): Promise<ApiUserData> => GET('/user-data/');
 
-/** Get all users from server. */
-export const fetchUsersList = (): Promise<MentionUser[]> => GET('/get-users/');
+/** Get all users from server, sorted by activity in the current locale and project. */
+export const fetchUsersList = (
+  locale: string,
+  project: string,
+): Promise<MentionUser[]> => {
+  const params = new URLSearchParams();
+  if (locale) params.append('locale', locale);
+  if (project) params.append('project', project);
+
+  return GET(`/get-users/?${params}`);
+};
 
 /** Mark all notifications of the current user as read. */
 export const markAllNotificationsAsRead = (): Promise<void> =>
