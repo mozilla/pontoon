@@ -251,13 +251,6 @@ class EntityQuerySet(models.QuerySet):
 
         return entities
 
-    def obsolete(self, now):
-        self.update(
-            obsolete=True,
-            date_obsoleted=now,
-            section=None,
-        )
-
 
 class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
