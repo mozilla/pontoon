@@ -84,15 +84,15 @@ def test_remove_resource():
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (0, set(), {"c.ftl"})
-        assert {res.path for res in project.resources.all()} == {
+        assert {res.path: res.obsolete for res in project.resources.all()} == {
+            "a.ftl": False,
+            "b.po": False,
+            "c.ftl": True,
+        }
+        assert {res.path for res in project.resources.current()} == {
             "a.ftl",
             "b.po",
-            "c.ftl",
         }
-        assert project.resources.count() == 3
-        assert project.resources.get(path="c.ftl").obsolete is True
-        assert project.resources.get(path="a.ftl").obsolete is False
-        assert project.resources.get(path="b.po").obsolete is False
         assert TranslatedResource.objects.filter(resource=res_c).exists()
         assert Entity.objects.filter(pk=entity_c.pk).exists()
         assert Translation.objects.filter(pk=translation_c.pk).exists()
