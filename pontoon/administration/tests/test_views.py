@@ -383,7 +383,7 @@ def test_manage_project_strings_download_csv(client_superuser):
 @pytest.mark.django_db
 def test_manage_project_translate_link_excludes_obsolete_resources(client_superuser):
     """Test that translate_locale is only set when non-obsolete resources exist."""
-    locale_kl = LocaleFactory.create(code="kl", name="Klingon")
+    locale_kl = LocaleFactory.create(code="tlh", name="Klingon")
     project = ProjectFactory.create(
         data_source=Project.DataSource.DATABASE,
         locales=[locale_kl],
@@ -403,7 +403,7 @@ def test_manage_project_translate_link_excludes_obsolete_resources(client_superu
 
     response = client_superuser.get(url)
     assert response.status_code == 200
-    assert response.context["translate_locale"] == "kl"
+    assert response.context["translate_locale"] == "tlh"
 
 
 @pytest.mark.django_db
