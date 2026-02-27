@@ -42,7 +42,7 @@ def test_no_changes():
 
 
 @pytest.mark.django_db
-def test_remove_resource():
+def test_resource_obsoletion():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
@@ -52,10 +52,18 @@ def test_remove_resource():
         project = ProjectFactory.create(
             name="test-rm", locales=[locale], repositories=[repo]
         )
-        ResourceFactory.create(project=project, path="a.ftl", format="fluent")
-        ResourceFactory.create(project=project, path="b.po", format="gettext")
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        res_b = ResourceFactory.create(project=project, path="b.po", format="gettext")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
+        entity_a = EntityFactory.create(resource=res_a, string="Window")
+        entity_b = EntityFactory.create(resource=res_b, string="Close")
         entity_c = EntityFactory.create(resource=res_c, string="Hello")
+        translation_a = TranslationFactory.create(
+            entity=entity_a, locale=locale, string="Fenetre"
+        )
+        translation_b = TranslationFactory.create(
+            entity=entity_b, locale=locale, string="Ferme"
+        )
         translation_c = TranslationFactory.create(
             entity=entity_c, locale=locale, string="Bonjour"
         )
@@ -70,6 +78,12 @@ def test_remove_resource():
             },
         )
 
+        # check TranslatedResource objects before resource obsoletion
+        assert {
+            translated.resource.path
+            for translated in TranslatedResource.objects.current()
+        } == {"a.ftl", "b.po", "c.ftl", "common", "playground"}
+
         # Paths setup
         mock_checkout = Mock(
             Checkout,
@@ -80,7 +94,7 @@ def test_remove_resource():
         )
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
-        # Test
+        # Test sync_resources_from_repo
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (0, set(), {"c.ftl"})
@@ -94,8 +108,18 @@ def test_remove_resource():
             "b.po",
         }
         assert TranslatedResource.objects.filter(resource=res_c).exists()
+        assert {
+            translated.resource.path
+            for translated in TranslatedResource.objects.current()
+        } == {"a.ftl", "b.po", "common", "playground"}
         assert Entity.objects.filter(pk=entity_c.pk).exists()
-        assert Translation.objects.filter(pk=translation_c.pk).exists()
+
+        assert (
+            Translation.objects.filter(
+                pk__in=[translation_a.pk, translation_b.pk, translation_c.pk]
+            ).count()
+            == 3
+        )
 
 
 @pytest.mark.django_db
