@@ -65,7 +65,7 @@ def test_remove_resource():
         build_file_tree(
             repo.checkout_path,
             {
-                "en-US": {"a.ftl": "", "b.po": ""},
+                "en-US": {"a.ftl": "", "b.pot": ""},
                 "fr-Test": {"a.ftl": "", "b.po": "", "c.ftl": ""},
             },
         )
