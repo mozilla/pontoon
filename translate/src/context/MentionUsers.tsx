@@ -1,5 +1,6 @@
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { fetchUsersList, MentionUser } from '~/api/user';
+import { Location } from './Location';
 
 type MentionUsers = {
   /**
@@ -21,10 +22,11 @@ export function MentionUsersProvider({
 }: {
   children: React.ReactElement;
 }) {
+  const { locale, project } = useContext(Location);
   const [mentionUsers, setUsers] = useState<MentionUser[]>([]);
   const [initMentions, setInit] = useState(() => () => {
     setInit(() => () => {});
-    fetchUsersList().then((list) => {
+    fetchUsersList(locale, project).then((list) => {
       if (Array.isArray(list)) {
         setUsers(list);
       }
