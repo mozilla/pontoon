@@ -345,9 +345,9 @@ def test_mgr_user_translation_counts_after_resource_removed(
     entities = EntityFactory.create_batch(size=12, resource=resource_a)
 
     batch_kwargs = (
-        [dict(approved=True)] * 7 +
-        [dict(approved=False, fuzzy=False, rejected=True)] * 3 +
-        [dict(fuzzy=True)] * 2
+        [dict(approved=True)] * 7
+        + [dict(approved=False, fuzzy=False, rejected=True)] * 3
+        + [dict(fuzzy=True)] * 2
     )
 
     for i, kwa in enumerate(batch_kwargs):
