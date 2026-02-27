@@ -58,7 +58,7 @@ class LocaleQuerySet(models.QuerySet):
         from pontoon.base.models.translated_resource import TranslatedResource
 
         return self.filter(
-            pk__in=TranslatedResource.objects.values_list("locale", flat=True)
+            pk__in=TranslatedResource.objects.current().values_list("locale", flat=True)
         )
 
     def stats_data(self, project=None):
@@ -115,7 +115,7 @@ class Locale(models.Model, AggregatedStats):
     def aggregated_stats_query(self):
         from pontoon.base.models.translated_resource import TranslatedResource
 
-        return TranslatedResource.objects.filter(
+        return TranslatedResource.objects.current().filter(
             locale=self,
             resource__project__disabled=False,
             resource__project__system_project=False,

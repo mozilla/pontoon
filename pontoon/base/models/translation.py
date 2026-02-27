@@ -23,9 +23,11 @@ class TranslationQuerySet(models.QuerySet):
     def translated_resources(self, locale):
         from pontoon.base.models.translated_resource import TranslatedResource
 
-        return TranslatedResource.objects.filter(
-            resource__entities__translation__in=self, locale=locale
-        ).distinct()
+        return (
+            TranslatedResource.objects.current()
+            .filter(resource__entities__translation__in=self, locale=locale)
+            .distinct()
+        )
 
     def authors(self):
         """

@@ -28,7 +28,7 @@ log = logging.getLogger(__name__)
 def project_locale_removed(sender, **kwargs):
     project_locale = kwargs.get("instance", None)
     if project_locale is not None:
-        TranslatedResource.objects.filter(
+        TranslatedResource.objects.current().filter(
             resource__project=project_locale.project, locale=project_locale.locale
         ).delete()
 
@@ -173,7 +173,7 @@ def add_locale_to_system_projects(sender, instance, created, **kwargs):
         projects = Project.objects.filter(system_project=True)
         for project in projects:
             ProjectLocale.objects.create(project=project, locale=instance)
-            for resource in project.resources.all():
+            for resource in project.resources.current():
                 translated_resource = TranslatedResource.objects.create(
                     resource=resource,
                     locale=instance,
@@ -189,7 +189,7 @@ def add_locale_to_terminology_project(sender, instance, created, **kwargs):
     if created:
         project = Project.objects.get(slug="terminology")
         ProjectLocale.objects.create(project=project, locale=instance)
-        for resource in project.resources.all():
+        for resource in project.resources.current():
             translated_resource = TranslatedResource.objects.create(
                 resource=resource,
                 locale=instance,
