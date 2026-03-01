@@ -146,7 +146,7 @@
 
 .editor input[readonly],
 .editor .readonly .cm-editor {
-  background: #c7cacf;
+  background: var(--editor-readonly-background);
   cursor: default;
 }
 
