@@ -20,8 +20,10 @@ jobs:
     name: TypeScript
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with: { node-version: '22' }
       - name: Install dependencies
         run: npm ci
@@ -35,8 +37,10 @@ jobs:
   licenses:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with: { node-version: '22' }
       - name: Install globals
         run: npm install --global license-checker-rseidelsohn@4.4.2
@@ -53,15 +57,17 @@ jobs:
   test:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v5
-        - uses: actions/setup-node@v5
+        - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+          with:
+            persist-credentials: false
+        - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
           with: { node-version: '22' }
         - name: Install dependencies
           run: npm ci
         - name: vitest
           run: npm test -- --coverage
           working-directory: translate
-        - uses: codecov/codecov-action@v4
+        - uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
           with:
             flags: frontend
           env:
