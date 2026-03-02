@@ -1,0 +1,42 @@
+.tags-brace {
+  color: var(--tags-brace-color);
+  font-weight: bold;
+  white-space: pre;
+}
+
+.tags-bracket {
+  color: var(--tags-bracket-color);
+  font-family: monospace;
+  white-space: pre;
+}
+
+.tags-keyword {
+  color: var(--tags-keyword-color);
+  font-family: monospace;
+  white-space: pre;
+}
+
+.tags-literal {
+  color: var(--tags-literal-color);
+  white-space: pre-wrap;
+}
+
+.tags-name {
+  color: var(--tags-name-color);
+  white-space: pre;
+}
+
+.tags-quote {
+  color: var(--tags-quote-color);
+  white-space: pre-wrap;
+}
+
+.tags-tag-name {
+  color: var(--tags-tag-name-color);
+  font-family: monospace;
+  white-space: pre;
+}
+
+.tags-string {
+  white-space: pre-wrap;
+}

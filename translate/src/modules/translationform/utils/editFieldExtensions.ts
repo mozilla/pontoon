@@ -34,6 +34,7 @@ import {
 } from './editFieldShortcuts';
 import { fluentMode, commonMode, webextMode } from './editFieldModes';
 import { Message } from '@mozilla/l10n';
+import './editFieldExtensions.css';
 
 /**
  * Key handlers depend on application state,
@@ -68,22 +69,14 @@ export function useKeyHandlers() {
 }
 
 const style = HighlightStyle.define([
-  {
-    tag: tags.keyword,
-    color: '#872bff',
-    fontFamily: 'monospace',
-    whiteSpace: 'pre',
-  }, // printf
-  {
-    tag: [tags.bracket, tags.tagName],
-    color: '#3e9682',
-    fontFamily: 'monospace',
-    whiteSpace: 'pre',
-  }, // <...>
-  { tag: tags.brace, color: '#872bff', fontWeight: 'bold', whiteSpace: 'pre' }, // { }
-  { tag: tags.name, color: '#872bff', whiteSpace: 'pre' }, // {...}
-  { tag: [tags.quote, tags.literal], color: '#3e9682', whiteSpace: 'pre-wrap' }, // "..."
-  { tag: tags.string, whiteSpace: 'pre-wrap' },
+  { tag: tags.keyword, class: 'tags-keyword' }, // printf
+  { tag: tags.bracket, class: 'tags-bracket' }, // <...>
+  { tag: tags.tagName, class: 'tags-tag-name' }, // <...>
+  { tag: tags.brace, class: 'tags-brace' }, // { }
+  { tag: tags.name, class: 'tags-name' }, // {...}
+  { tag: tags.quote, class: 'tags-quote' }, // "..."
+  { tag: tags.literal, class: 'tags-literal' }, // "..."
+  { tag: tags.string },
 ]);
 
 export const getExtensions = (

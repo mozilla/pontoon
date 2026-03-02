@@ -67,6 +67,7 @@
   --editor-menu-background: #272a2f;
   --editor-menu-color: #aaaaaa;
   --editor-menu-action-button-color: #ffffff;
+  --editor-readonly-background: #c7cacf;
   --time-range-handles: #272a2f;
 
   /* Highlights */
@@ -76,6 +77,13 @@
   --diff-ins-color: #9cd699;
   --search-color: #ffa10f;
   --search-background: #676054;
+  --tags-brace-color: #872bff;
+  --tags-bracket-color: #3e9682;
+  --tags-keyword-color: #872bff;
+  --tags-literal-color: #3e9682;
+  --tags-name-color: #872bff;
+  --tags-quote-color: #3e9682;
+  --tags-tag-name-color: #3e9682;
 
   /* Chart colors */
   --green-blue: #4fc4f666;
