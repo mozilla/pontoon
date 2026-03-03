@@ -19,13 +19,15 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Build Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           file: docker/Dockerfile-mozcloud
@@ -45,20 +47,21 @@ jobs:
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
 
           # Get branch name from GitHub context
-          BRANCH_NAME=$(echo "${{ github.ref_name }}")
+          BRANCH_NAME=$(echo "${GITHUB_REF_NAME}")
 
           # Construct GAR image tag
-          GAR_TAG="us-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/pontoon-prod/pontoon:${BRANCH_NAME}-${SHORT_SHA}"
+          GAR_TAG="us-docker.pkg.dev/${GCP_PROJECT_ID}/pontoon-prod/pontoon:${BRANCH_NAME}-${SHORT_SHA}"
 
           # Tag the built image
           docker tag pontoon:latest ${GAR_TAG}
 
           # Output the tag for the push action
           echo "image_tags=${GAR_TAG}" >> $GITHUB_OUTPUT
-
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
       - name: Push Docker image to GAR
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
-        uses: mozilla-it/deploy-actions/docker-push@v6.2.2
+        uses: mozilla-it/deploy-actions/docker-push@4784cb70739a4f32ce010921f60fb1ebbc791a38 # v6.2.2
         with:
           image_tags: ${{ steps.tag.outputs.image_tags }}
           project_id: ${{ vars.GCP_PROJECT_ID }}
