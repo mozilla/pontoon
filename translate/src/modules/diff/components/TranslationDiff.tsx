@@ -1,6 +1,6 @@
 import { diff_match_patch, DIFF_INSERT, DIFF_DELETE } from 'diff-match-patch';
 import React from 'react';
-
+import { Highlight } from '~/modules/placeable/components/Highlight';
 import './TranslationDiff.css';
 
 const dmp = new diff_match_patch();
@@ -27,13 +27,21 @@ export function TranslationDiff({ base, target }: Props): React.ReactElement {
       {diff.map(([type, slice], index) => {
         switch (type) {
           case DIFF_INSERT:
-            return <ins key={index}>{slice}</ins>;
+            return (
+              <ins key={index}>
+                <Highlight>{slice}</Highlight>
+              </ins>
+            );
 
           case DIFF_DELETE:
-            return <del key={index}>{slice}</del>;
+            return (
+              <del key={index}>
+                <Highlight>{slice}</Highlight>
+              </del>
+            );
 
           default:
-            return slice;
+            return <Highlight key={index}>{slice}</Highlight>;
         }
       })}
     </>

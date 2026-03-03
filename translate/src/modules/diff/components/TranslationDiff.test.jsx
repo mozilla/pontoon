@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { TranslationDiff } from './TranslationDiff';
+import { MockLocalizationProvider } from '~/test/utils';
+import { mount } from 'enzyme';
 import { render } from '@testing-library/react';
 
 describe('<TranslationDiff>', () => {
@@ -22,5 +24,17 @@ describe('<TranslationDiff>', () => {
     expect(container.querySelector('ins')).toBeNull();
     expect(container.querySelector('del')).toBeNull();
     expect(container).toHaveTextContent(/^abcdef$/);
+  });
+
+  it('highlights placeables in diff slices', () => {
+    const wrapper = mount(
+      <MockLocalizationProvider>
+        <TranslationDiff
+          base={'Delavci { -brand-short-name } posodobljeno'}
+          target={'Delavci { -brand-short-name } posodobljeno'}
+        />
+      </MockLocalizationProvider>,
+    );
+    expect(wrapper.find('mark.placeable').length).toBeGreaterThan(0);
   });
 });
