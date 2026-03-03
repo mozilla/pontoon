@@ -62,7 +62,7 @@ jobs:
 
       - name: Push Docker image to GAR
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
-        uses: mozilla-it/deploy-actions@a34e7a868025b983d7c948354ca3d1e887ed778d # v5.3.4
+        uses: mozilla-it/deploy-actions/docker-push@a34e7a868025b983d7c948354ca3d1e887ed778d # v5.3.4
         with:
           image_tags: ${{ steps.tag.outputs.image_tags }}
           project_id: ${{ vars.GCP_PROJECT_ID }}
