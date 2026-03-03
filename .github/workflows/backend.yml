@@ -52,7 +52,7 @@ jobs:
           cache-dependency-glob: |
             **/requirements/*.txt
           # Version should match the one used in docker/Dockerfile*
-          version: "0.9.21"
+          version: "0.10.7"
       - name: Install requirements
         run: >
           uv pip install
