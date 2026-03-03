@@ -20,8 +20,8 @@ jobs:
     name: TypeScript
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with: { node-version: '22' }
       - name: Install dependencies
         run: npm ci
@@ -35,8 +35,8 @@ jobs:
   licenses:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with: { node-version: '22' }
       - name: Install globals
         run: npm install --global license-checker-rseidelsohn@4.4.2
@@ -53,15 +53,15 @@ jobs:
   test:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v5
-        - uses: actions/setup-node@v5
+        - uses: actions/checkout@v6
+        - uses: actions/setup-node@v6
           with: { node-version: '22' }
         - name: Install dependencies
           run: npm ci
         - name: vitest
           run: npm test -- --coverage
           working-directory: translate
-        - uses: codecov/codecov-action@v4
+        - uses: codecov/codecov-action@v5
           with:
             flags: frontend
           env:
