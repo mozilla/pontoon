@@ -9,5 +9,5 @@ trap sigint_handler INT
 
 npx concurrently -n translate,server,pg -c cyan,magenta,green,red \
   'npm start -w translate' \
-  'docker-compose logs --tail=0 --follow --no-log-prefix server' \
-  'docker-compose logs --tail=0 --follow --no-log-prefix postgresql' \
+  'docker compose logs --tail=0 --follow --no-log-prefix server' \
+  'docker compose logs --tail=0 --follow --no-log-prefix postgresql'
