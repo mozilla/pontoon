@@ -1,3 +1,5 @@
+import logging
+
 from datetime import date
 from unittest.mock import patch
 
@@ -63,3 +65,41 @@ def test_get_monthly_locale_stats_uses_end_of_month_snapshot():
     assert result[locale.pk].pk == snapshot_nov_1.pk
     assert result[locale.pk].approved_strings == 100
     assert result[locale.pk].completion == 100.0
+
+
+@pytest.mark.django_db
+def test_get_monthly_locale_stats_falls_back_to_last_day_of_month(caplog):
+    locale = LocaleFactory(code="x-test", name="Test Language")
+
+    # Only the Oct 31 snapshot exists; Nov 1 hasn't been taken yet.
+    snapshot_oct_31 = LocaleInsightsSnapshot.objects.create(
+        locale=locale,
+        created_at=date(2026, 10, 31),
+        total_strings=100,
+        approved_strings=94,
+        completion=94.0,
+    )
+
+    with patch("pontoon.messaging.emails.timezone") as mock_tz:
+        mock_tz.now.return_value = timezone.datetime(
+            2026, 11, 1, 0, 30, 0, tzinfo=timezone.utc
+        )
+        with caplog.at_level(logging.WARNING, logger="pontoon.messaging.emails"):
+            result = _get_monthly_locale_stats(months_ago=1)
+
+    assert locale.pk in result
+    assert result[locale.pk].pk == snapshot_oct_31.pk
+    assert "Falling back to 2026-10-31" in caplog.text
+
+
+@pytest.mark.django_db
+def test_get_monthly_locale_stats_returns_empty_when_no_snapshot(caplog):
+    with patch("pontoon.messaging.emails.timezone") as mock_tz:
+        mock_tz.now.return_value = timezone.datetime(
+            2026, 11, 1, 0, 30, 0, tzinfo=timezone.utc
+        )
+        with caplog.at_level(logging.WARNING, logger="pontoon.messaging.emails"):
+            result = _get_monthly_locale_stats(months_ago=1)
+
+    assert result == {}
+    assert "No LocaleInsightsSnapshot found for 2026-11-01" in caplog.text
