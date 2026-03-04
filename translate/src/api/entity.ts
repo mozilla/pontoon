@@ -1,4 +1,5 @@
 import { Location } from '~/context/Location';
+import { SEARCH_OPTION_KEYS } from '~/modules/search/constants';
 
 import { GET, POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';
@@ -124,14 +125,17 @@ function buildFetchPayload(
   if (entity) {
     payload.append('entity', String(entity));
   }
+  // Explicit values (true or false) are sent as-is; undefined (not provided in
+  // the URL) are not sent so the backend can apply the default.
+  for (const key of SEARCH_OPTION_KEYS) {
+    const value = location[key];
+    if (value !== undefined) {
+      payload.append(key, String(value));
+    }
+  }
   for (const key of [
     'search',
     'status',
-    'search_identifiers',
-    'search_exclude_source_strings',
-    'search_rejected_translations',
-    'search_match_case',
-    'search_match_whole_word',
     'extra',
     'tag',
     'author',

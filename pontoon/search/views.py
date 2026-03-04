@@ -54,13 +54,20 @@ def create_api_url(
     return f"{SITE_URL}/api/v2/search/translations/?{urlencode(query_params)}"
 
 
+def get_search_option(request, name):
+    """Return a search option from the URL, falling back to the user's profile setting."""
+    if name in request.GET:
+        return parse_bool(request.GET.get(name))
+    return request.user.is_authenticated and getattr(request.user.profile, name)
+
+
 def search(request):
     """Render the search page with filters for searching entities."""
     locale_code = request.GET.get("locale")
     project_slug = request.GET.get("project")
-    search_identifiers = parse_bool(request.GET.get("search_identifiers"))
-    search_match_case = parse_bool(request.GET.get("search_match_case"))
-    search_match_whole_word = parse_bool(request.GET.get("search_match_whole_word"))
+    search_identifiers = get_search_option(request, "search_identifiers")
+    search_match_case = get_search_option(request, "search_match_case")
+    search_match_whole_word = get_search_option(request, "search_match_whole_word")
 
     projects = list(
         Project.objects.visible()
