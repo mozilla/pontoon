@@ -1,6 +1,27 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
+
+
+class ActionLogQuerySet(models.QuerySet):
+    def visible_for(self, user):
+        """
+        The visiblity of actionlogs is determined by the role of the user:
+        * Administrators can access all logs related to public and private projects
+        * Other user can see logs only related to public projects
+        """
+        if user.is_superuser:
+            return self
+
+        from pontoon.base.models.project import Project
+
+        return self.filter(
+            Q(entity__resource__project__visibility=Project.Visibility.PUBLIC)
+            | Q(
+                translation__entity__resource__project__visibility=Project.Visibility.PUBLIC
+            )
+        )
 
 
 class ActionLog(models.Model):
@@ -64,6 +85,8 @@ class ActionLog(models.Model):
     # (e.g. TRANSLATION_REJECTED) without direct user intervention.
     # The latter actions should have `is_implicit_action` set to `True`.
     is_implicit_action = models.BooleanField(default=False)
+
+    objects = ActionLogQuerySet.as_manager()
 
     def validate_action_type_choice(self):
         valid_types = self.ActionType.values
