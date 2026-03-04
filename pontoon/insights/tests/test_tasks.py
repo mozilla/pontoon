@@ -267,7 +267,7 @@ def test_count_activities_chrf_score_zero_included(
         performed_by=user_a,
         translation=tr,
     )
-    with patch("pontoon.insights.tasks.get_chrf_score", return_value=0.0):
+    with patch("pontoon.insights.tasks.calculate_chrf_score", return_value=0.0):
         result = count_activities(now)
     activity = result[project_locale_a.pk]
     assert 0.0 in activity.pretranslations_chrf_scores

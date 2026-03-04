@@ -154,7 +154,7 @@ def count_activities(dt_max: datetime):
                         data.times_to_review_pretranslations.append(review_time)
                 if user in pretranslation_users:
                     data.pretranslations_rejected.add(translation)
-                    score = get_chrf_score(action, approved_translations)
+                    score = calculate_chrf_score(action, approved_translations)
                     if score is not None:
                         data.pretranslations_chrf_scores.append(score)
 
@@ -215,7 +215,7 @@ def get_approved_translations(
     return {(t["entity"], t["locale"]): t["string"] for t in approved_translations}
 
 
-def get_chrf_score(
+def calculate_chrf_score(
     action: dict[str, Any], approved_translations: dict[tuple[int, int], str]
 ):
     approved_translation = approved_translations.get(
