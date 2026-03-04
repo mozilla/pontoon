@@ -116,6 +116,31 @@ var Pontoon = (function (my) {
       })(),
 
       /*
+       * showDetailedView
+       *
+       * Toggle button to show/hide the detailed view in the progress column of tables.
+       */
+      showDetailedView: (function () {
+        $('body').on(
+          'click',
+          'table th.progress button#detailed-view-toggle',
+          function (e) {
+            // Do not reorder the list when clicking on the toggle button
+            e.stopPropagation();
+
+            $('td.progress').toggleClass('show-detailed-view');
+
+            const toggle = $('#detailed-view-toggle');
+            toggle.text(
+              $.trim(toggle.text()) === 'Show details'
+                ? 'Hide details'
+                : 'Show details',
+            );
+          },
+        );
+      })(),
+
+      /*
        * Sort table
        */
       sort: (function () {
