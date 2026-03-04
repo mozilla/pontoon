@@ -1,3 +1,5 @@
+from typing import cast
+
 from notifications.signals import notify
 
 from django.conf import settings
@@ -14,6 +16,9 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
 from pontoon.base.models import (
+    Entity,
+    Locale,
+    Resource,
     TranslatedResource,
     Translation,
 )
@@ -23,7 +28,7 @@ from pontoon.messaging.notifications import send_badge_notification
 from pontoon.translations import forms
 
 
-def _add_stats(response_data, resource, locale, stats):
+def _add_stats(response_data, resource: Resource, locale: Locale, stats):
     if stats:
         paths = [resource.path] if stats == "resource" else []
         response_data["stats"] = TranslatedResource.objects.query_stats(
@@ -56,16 +61,14 @@ def create_translation(request):
     if not form.is_valid():
         problems = []
         for field, errors in form.errors.items():
-            problems.append(
-                'Error validating field `{}`: "{}"'.format(field, " ".join(errors))
-            )
+            problems.append(f'Error validating field `{field}`: "{" ".join(errors)}"')
         return JsonResponse(
             {"status": False, "message": "\n".join(problems)}, status=400
         )
 
-    entity = form.cleaned_data["entity"]
+    entity = cast(Entity, form.cleaned_data["entity"])
     string = form.cleaned_data["translation"]
-    locale = form.cleaned_data["locale"]
+    locale = cast(Locale, form.cleaned_data["locale"])
     ignore_warnings = form.cleaned_data["ignore_warnings"]
     approve = form.cleaned_data["approve"]
     force_suggestions = form.cleaned_data["force_suggestions"]

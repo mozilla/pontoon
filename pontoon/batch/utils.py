@@ -8,7 +8,8 @@ from fluent.syntax import (
 
 from django.utils import timezone
 
-from pontoon.base.models import Entity, Resource
+from pontoon.base.models import Entity, Resource, User
+from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.libraries import run_checks
 
@@ -64,7 +65,9 @@ def ftl_find_and_replace(string, find, replace):
     return serializer.serialize_entry(new_ast)
 
 
-def find_and_replace(translations, find, replace, user):
+def find_and_replace(
+    translations: TranslationQuerySet, find: str, replace: str, user: User
+):
     """Replace text in a set of translation.
 
     :arg QuerySet translations: a list of Translation objects in which to search

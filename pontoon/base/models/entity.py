@@ -46,7 +46,7 @@ def combine_entity_filters(entities, filter_choices, filters, *args):
     return reduce(ior, filters)
 
 
-class EntityQuerySet(models.QuerySet):
+class EntityQuerySet(models.QuerySet["Entity"]):
     def _get_query(self, locale: Locale, project: Project | None, query: Q) -> Q:
         from pontoon.base.models.translation import Translation
 
@@ -253,7 +253,9 @@ class EntityQuerySet(models.QuerySet):
 
 
 class Entity(DirtyFieldsMixin, models.Model):
-    resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
+    resource: models.ForeignKey["Resource"] = models.ForeignKey(
+        Resource, models.CASCADE, related_name="entities"
+    )
     section = models.ForeignKey(
         Section, models.SET_NULL, related_name="entities", null=True, blank=True
     )

@@ -19,7 +19,7 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 
 
-class TranslationQuerySet(models.QuerySet):
+class TranslationQuerySet(models.QuerySet["Translation"]):
     def translated_resources(self, locale):
         from pontoon.base.models.translated_resource import TranslatedResource
 
