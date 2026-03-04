@@ -6,6 +6,8 @@ import React, {
   useState,
 } from 'react';
 
+import { SEARCH_OPTION_KEYS } from '~/modules/search/constants';
+
 export type Location = {
   push(location: string | Partial<Location>): void;
   replace(location: string | Partial<Location>): void;
@@ -20,11 +22,12 @@ export type Location = {
   search: string | null;
   status: string | null;
   extra: string | null;
-  search_identifiers: boolean;
-  search_exclude_source_strings: boolean;
-  search_rejected_translations: boolean;
-  search_match_case: boolean;
-  search_match_whole_word: boolean;
+  /** undefined = not provided in the URL, use default or profile setting instead */
+  search_identifiers: boolean | undefined;
+  search_exclude_source_strings: boolean | undefined;
+  search_rejected_translations: boolean | undefined;
+  search_match_case: boolean | undefined;
+  search_match_whole_word: boolean | undefined;
   tag: string | null;
   author: string | null;
   time: string | null;
@@ -38,11 +41,11 @@ const emptyParams = {
   search: null,
   status: null,
   extra: null,
-  search_identifiers: false,
-  search_exclude_source_strings: false,
-  search_rejected_translations: false,
-  search_match_case: false,
-  search_match_whole_word: false,
+  search_identifiers: undefined,
+  search_exclude_source_strings: undefined,
+  search_rejected_translations: undefined,
+  search_match_case: undefined,
+  search_match_whole_word: undefined,
   tag: null,
   author: null,
   time: null,
@@ -78,6 +81,13 @@ export function LocationProvider({
   return <Location.Provider value={state}>{children}</Location.Provider>;
 }
 
+function getSearchParam(
+  params: URLSearchParams,
+  key: string,
+): boolean | undefined {
+  return params.has(key) ? params.get(key) !== 'false' : undefined;
+}
+
 function parse(
   history: History.History,
   { pathname, search }: History.Location,
@@ -107,15 +117,20 @@ function parse(
         search: params.get('search'),
         status: params.get('status'),
         extra: params.get('extra'),
-        search_identifiers: params.has('search_identifiers'),
-        search_exclude_source_strings: params.has(
+        search_identifiers: getSearchParam(params, 'search_identifiers'),
+        search_exclude_source_strings: getSearchParam(
+          params,
           'search_exclude_source_strings',
         ),
-        search_rejected_translations: params.has(
+        search_rejected_translations: getSearchParam(
+          params,
           'search_rejected_translations',
         ),
-        search_match_case: params.has('search_match_case'),
-        search_match_whole_word: params.has('search_match_whole_word'),
+        search_match_case: getSearchParam(params, 'search_match_case'),
+        search_match_whole_word: getSearchParam(
+          params,
+          'search_match_whole_word',
+        ),
         tag: params.get('tag'),
         author: params.get('author'),
         time: params.get('time'),
@@ -143,15 +158,17 @@ function stringify(prev: Location, next: string | Partial<Location>) {
   } else if (prev.list && !('list' in next)) {
     params.set('list', prev.list.join(','));
   }
+  // Encode explicit search option values (omit undefined).
+  for (const key of SEARCH_OPTION_KEYS) {
+    const value = key in next ? next[key] : prev[key];
+    if (value !== undefined) {
+      params.set(key, String(value));
+    }
+  }
   for (const key of [
     'search',
     'status',
     'extra',
-    'search_identifiers',
-    'search_exclude_source_strings',
-    'search_rejected_translations',
-    'search_match_case',
-    'search_match_whole_word',
     'tag',
     'author',
     'time',

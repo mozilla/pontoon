@@ -235,6 +235,137 @@ describe('<SearchBoxBase>', () => {
       list: null,
     });
   });
+
+  it('applies profile default for search_identifiers when URL param is not provided', () => {
+    const wrapper = mount(
+      <SearchBoxBase
+        parameters={{}}
+        project={PROJECT}
+        searchAndFilters={SEARCH_AND_FILTERS}
+        searchDefaults={{ search_identifiers: true }}
+      />,
+    );
+    wrapper.update();
+
+    expect(
+      wrapper.find('SearchPanel').prop('searchOptions').search_identifiers,
+    ).toBe(true);
+  });
+
+  it('URL param takes precedence over profile default for search_identifiers', () => {
+    const wrapper = mount(
+      <SearchBoxBase
+        parameters={{ search_identifiers: false }}
+        project={PROJECT}
+        searchAndFilters={SEARCH_AND_FILTERS}
+        searchDefaults={{ search_identifiers: true }}
+      />,
+    );
+    wrapper.update();
+
+    expect(
+      wrapper.find('SearchPanel').prop('searchOptions').search_identifiers,
+    ).toBe(false);
+  });
+
+  it('falls back to global defaults when both URL params and profile settings are not provided', () => {
+    const wrapper = mount(
+      <SearchBoxBase
+        parameters={{}}
+        project={PROJECT}
+        searchAndFilters={SEARCH_AND_FILTERS}
+        // no searchDefaults → DEFAULT_SEARCH_OPTIONS used
+      />,
+    );
+    wrapper.update();
+
+    const opts = wrapper.find('SearchPanel').prop('searchOptions');
+    expect(opts.search_match_case).toBe(false);
+    expect(opts.search_match_whole_word).toBe(false);
+    expect(opts.search_identifiers).toBe(false);
+    expect(opts.search_rejected_translations).toBe(false);
+    expect(opts.search_exclude_source_strings).toBe(false);
+  });
+
+  it('applies profile defaults for all search options when URL params are not provided', () => {
+    const wrapper = mount(
+      <SearchBoxBase
+        parameters={{}}
+        project={PROJECT}
+        searchAndFilters={SEARCH_AND_FILTERS}
+        searchDefaults={{
+          search_match_case: true,
+          search_match_whole_word: true,
+          search_identifiers: true,
+          search_rejected_translations: true,
+          search_exclude_source_strings: true,
+        }}
+      />,
+    );
+    wrapper.update();
+
+    const opts = wrapper.find('SearchPanel').prop('searchOptions');
+    expect(opts.search_match_case).toBe(true);
+    expect(opts.search_match_whole_word).toBe(true);
+    expect(opts.search_identifiers).toBe(true);
+    expect(opts.search_rejected_translations).toBe(true);
+    expect(opts.search_exclude_source_strings).toBe(true);
+  });
+
+  it('encodes search options that differ from the global default, omits those matching it', () => {
+    const push = vi.fn();
+    const wrapper = mount(
+      <SearchBoxBase
+        dispatch={(a) => (typeof a === 'function' ? a() : {})}
+        parameters={{ push, search: '' }}
+        project={PROJECT}
+        searchAndFilters={SEARCH_AND_FILTERS}
+        searchDefaults={{
+          search_match_case: true,
+          search_identifiers: true,
+        }}
+        store={{ getState: () => ({ unsavedchanges: {} }) }}
+      />,
+    );
+    wrapper.update();
+
+    wrapper.find('SearchPanel').prop('applyOptions')();
+
+    // Options differing from the default should be added to the URL as
+    // parameters. Options matching the default should not.
+    expect(push).toHaveBeenCalledOnce();
+    const pushed = push.mock.calls[0][0];
+    expect(pushed.search_match_case).toBe(true);
+    expect(pushed.search_identifiers).toBe(true);
+    expect(pushed.search_match_whole_word).toBeUndefined();
+    expect(pushed.search_rejected_translations).toBeUndefined();
+    expect(pushed.search_exclude_source_strings).toBeUndefined();
+  });
+
+  it('omits a search option from URL when user unchecks a profile-default-true option', () => {
+    const push = vi.fn();
+    const wrapper = mount(
+      <SearchBoxBase
+        dispatch={(a) => (typeof a === 'function' ? a() : {})}
+        parameters={{ push, search: '', search_identifiers: true }}
+        project={PROJECT}
+        searchAndFilters={SEARCH_AND_FILTERS}
+        searchDefaults={{ search_identifiers: true }}
+        store={{ getState: () => ({ unsavedchanges: {} }) }}
+      />,
+    );
+    wrapper.update();
+
+    act(() => {
+      wrapper.find('SearchPanel').prop('toggleOption')('search_identifiers');
+    });
+    wrapper.update();
+
+    wrapper.find('SearchPanel').prop('applyOptions')();
+
+    const pushed = push.mock.calls[0][0];
+    expect(pushed.search_identifiers).toBeUndefined();
+  });
 });
 
 describe('<SearchBox>', () => {

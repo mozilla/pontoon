@@ -111,6 +111,13 @@ class UserProfile(models.Model):
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
 
+    # Search settings
+    search_exclude_source_strings = models.BooleanField(default=False)
+    search_identifiers = models.BooleanField(default=False)
+    search_match_case = models.BooleanField(default=False)
+    search_match_whole_word = models.BooleanField(default=False)
+    search_rejected_translations = models.BooleanField(default=False)
+
     # Used to redirect a user to a custom team page.
     custom_homepage = models.CharField(max_length=20, blank=True, null=True)
 
