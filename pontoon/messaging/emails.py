@@ -73,9 +73,9 @@ def _get_monthly_locale_actions(months_ago):
 def _get_monthly_locale_stats(months_ago):
     month_date = timezone.now() - relativedelta(months=months_ago)
 
-    # collect_insights() takes data snapshots at midnight. To get the
-    # end-of-month state, use the snapshot from the first day of the following
-    # month.
+    # collect_insights() takes data snapshots at the beginning of the day,
+    # every day. To represent the state of the past month, we should
+    # use the snapshot from the first day of the current month.
     next_month = month_date + relativedelta(months=1)
 
     snapshots = LocaleInsightsSnapshot.objects.filter(
