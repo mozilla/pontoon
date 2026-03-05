@@ -42,7 +42,7 @@ Specification (Recommended for Larger Features)
 
 For medium-to-large features (those affecting UX flows, data models, multiple areas, or needing community consensus):
 
-* Draft a specification document in Markdown format and submit it as a PR to the specs/ folder.
+* Draft a specification document in Markdown format and submit it as a PR to the `specs/` folder.
 * Follow the structure seen in existing specs (problem statement, goals, user stories, proposed solution, impacted areas, risks, alternatives, migration plan if applicable).
 * Get feedback and approval from core team members.
 
