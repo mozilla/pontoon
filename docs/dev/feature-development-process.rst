@@ -7,8 +7,8 @@ Landing a new feature or significant change in Pontoon follows a structured yet 
    :depth: 1
    :local:
 
-1. Propose the Idea (Filing an Issue)
--------------------------------------
+Propose the Idea (Filing an Issue)
+----------------------------------
 
 Anyone can suggest improvements: new features, enhancements to existing ones, or feature removals.
 
@@ -18,8 +18,8 @@ Anyone can suggest improvements: new features, enhancements to existing ones, or
   * Explain the motivation, expected impact, and user value.
   * Include relevant context (screenshots, use cases, alternatives considered).
 
-2. Triage
----------
+Triage
+------
 
 Core maintainers review new issues and perform triage on a weekly basis to assign:
 * Type: Bug, Feature, Task.
@@ -34,8 +34,8 @@ The issue is added to the Pontoon Roadmap GitHub project:
 * High-priority items ready for near-term work move to the top of the “Ready” column.
 * Larger initiatives (estimated to take months or quarters) are always kept in the "Not ready" column before they are split into smaller issues.
 
-3. Specification (Recommended for Larger Features)
---------------------------------------------------
+Specification (Recommended for Larger Features)
+-----------------------------------------------
 
 For medium-to-large features (those affecting UX flows, data models, multiple areas, or needing community consensus):
 * Draft a specification document in Markdown format and submit it as a PR to the specs/ folder.
@@ -44,8 +44,8 @@ For medium-to-large features (those affecting UX flows, data models, multiple ar
 
 Once approved, remove any “needs: specification” label and move the issue to “Ready” on the Roadmap.
 
-4. Implementation (Writing Code)
---------------------------------
+Implementation (Writing Code)
+-----------------------------
 
 * When ready to begin, assign yourself or get assigned to the issue.
 * The issue will then move to “In Progress” on the Roadmap.
@@ -55,8 +55,8 @@ Once approved, remove any “needs: specification” label and move the issue to
   * Unit and integration tests with good coverage.
   * Any necessary database migrations or data changes.
 
-5. Code Review
---------------
+Code Review
+-----------
 
 * Open a pull request targeting the “main” branch.
 * Make sure CI tests pass.
@@ -65,8 +65,8 @@ Once approved, remove any “needs: specification” label and move the issue to
 * Once approved, the PR is merged.
 * The associated issue is closed and moved to “Done” on the Roadmap.
 
-6. Testing
-----------
+Testing
+-------
 
 * The contributor is primarily responsible for thorough testing.
 * Verify the feature behaves as intended.
@@ -74,15 +74,15 @@ Once approved, remove any “needs: specification” label and move the issue to
 * For larger features, perform extensive testing in the development environment during/after review.
 * Core team may run additional testing.
 
-7. Release
-----------
+Release
+-------
 
 * Features are first deployed to the development environment for final validation.
 * Once confirmed stable, they go live on production.
 * Deployments are handled by core maintainers and occur as changes are ready (typically immediately after, no strict cadence).
 
-8. Documentation & Discoverability (as Needed)
-----------------------------------------------
+Documentation & Discoverability (as Needed)
+-------------------------------------------
 
 * If labeled “needs: documentation” or if the change affects users noticeably:
   * Update or add content in the Pontoon documentation for localizers.
