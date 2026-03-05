@@ -390,7 +390,7 @@ def ajax_translation_memory(request, locale):
 def ajax_translation_memory_edit(request, locale):
     """Edit Translation Memory entries."""
     ids = request.POST.getlist("ids[]")
-
+    locale_obj = get_object_or_404(Locale, code=locale)
     try:
         target = request.POST["target"]
     except MultiValueDictKeyError as e:
@@ -399,7 +399,7 @@ def ajax_translation_memory_edit(request, locale):
             status=400,
         )
 
-    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids)
+    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids, locale=locale_obj)
     tm_entries.update(target=target)
 
     log_action(
@@ -418,7 +418,8 @@ def ajax_translation_memory_edit(request, locale):
 def ajax_translation_memory_delete(request, locale):
     """Delete Translation Memory entries."""
     ids = request.POST.getlist("ids[]")
-    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids)
+    locale_obj = get_object_or_404(Locale, code=locale)
+    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids, locale=locale_obj)
 
     for tm_entry in tm_entries:
         if tm_entry.entity and tm_entry.locale:
