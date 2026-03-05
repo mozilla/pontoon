@@ -85,12 +85,10 @@ def _get_monthly_locale_stats(months_ago):
     )
 
     if not snapshots.exists():
-        # Log a warning if 1st-of-month snapshot is not available.
-        log.warning(
+        raise ValueError(
             f"No LocaleInsightsSnapshot found for "
             f"{next_month.year}-{next_month.month:02d}-01."
         )
-        return {}
 
     return {snapshot.locale_id: snapshot for snapshot in snapshots}
 
