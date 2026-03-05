@@ -68,7 +68,7 @@ Code Review
 * Review will be automatically requested from core Pontoon team members.
 * Address feedback on code quality, security, performance, test coverage, and best practices.
 * Once approved, the PR is merged.
-* The associated issue is closed and moved to “Done” on the Roadmap.
+* The associated issue is automatically closed and moved to “Done” on the Roadmap.
 
 Testing
 -------
