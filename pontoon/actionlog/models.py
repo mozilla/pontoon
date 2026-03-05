@@ -7,7 +7,7 @@ from django.utils import timezone
 class ActionLogQuerySet(models.QuerySet):
     def visible_for(self, user):
         """
-        The visiblity of actionlogs is determined by the role of the user:
+        The visibility of actionlogs is determined by the role of the user:
         * Administrators can access all logs related to public and private projects
         * Other user can see logs only related to public projects
         """
