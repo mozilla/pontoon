@@ -78,14 +78,16 @@ def _get_monthly_locale_stats(months_ago):
     # use the snapshot from the first day of the current month.
     next_month = month_date + relativedelta(months=1)
 
-    snapshots = LocaleInsightsSnapshot.objects.filter(
-        created_at__day=1,
-        created_at__month=next_month.month,
-        created_at__year=next_month.year,
+    snapshots = list(
+        LocaleInsightsSnapshot.objects.filter(
+            created_at__day=1,
+            created_at__month=next_month.month,
+            created_at__year=next_month.year,
+        )
     )
 
-    if not snapshots.exists():
-        raise ValueError(
+    if not snapshots:
+        raise LookupError(
             f"No LocaleInsightsSnapshot found for "
             f"{next_month.year}-{next_month.month:02d}-01."
         )
