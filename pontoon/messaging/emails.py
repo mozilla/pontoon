@@ -85,17 +85,12 @@ def _get_monthly_locale_stats(months_ago):
     )
 
     if not snapshots.exists():
-        # In case the 1st-of-month snapshot is not available, fall back to the
-        # last day of the target month and log a warning.
-        fallback_date = (next_month - datetime.timedelta(days=1)).date()
+        # Log a warning if 1st-of-month snapshot is not available.
         log.warning(
             f"No LocaleInsightsSnapshot found for "
-            f"{next_month.year}-{next_month.month:02d}-01. "
-            f"Falling back to {fallback_date}."
+            f"{next_month.year}-{next_month.month:02d}-01."
         )
-        snapshots = LocaleInsightsSnapshot.objects.filter(
-            created_at=fallback_date,
-        )
+        return {}
 
     return {snapshot.locale_id: snapshot for snapshot in snapshots}
 
