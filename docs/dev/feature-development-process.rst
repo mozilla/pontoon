@@ -14,6 +14,7 @@ Anyone can suggest improvements: new features, enhancements to existing ones, or
 
 * For trivial changes (typos, minor bugfixes), a pull request (PR) alone may suffice—no dedicated issue required.
 * For anything non-trivial, create a GitHub issue in the mozilla/pontoon repository.
+
   * Clearly describe the problem/opportunity.
   * Explain the motivation, expected impact, and user value.
   * Include relevant context (screenshots, use cases, alternatives considered).
@@ -22,12 +23,14 @@ Triage
 ------
 
 Core maintainers review new issues and perform triage on a weekly basis to assign:
+
 * Type: Bug, Feature, Task.
 * Priority label: P1 (must be fixed immediately) to P5 (valid bug, but you might need to fix it).
 * Labels such as “needs: specification” or “needs: documentation” if required.
 * Labels for rough time estimate: hours, days, weeks, months, quarters.
 
 The issue is added to the Pontoon Roadmap GitHub project:
+
 * Initially placed in “Needs triage”.
 * Moved to “Ready” once actionable.
 * Kept in “Not ready yet” if more discussion or a spec is needed.
@@ -38,6 +41,7 @@ Specification (Recommended for Larger Features)
 -----------------------------------------------
 
 For medium-to-large features (those affecting UX flows, data models, multiple areas, or needing community consensus):
+
 * Draft a specification document in Markdown format and submit it as a PR to the specs/ folder.
 * Follow the structure seen in existing specs (problem statement, goals, user stories, proposed solution, impacted areas, risks, alternatives, migration plan if applicable).
 * Get feedback and approval from core team members.
@@ -51,6 +55,7 @@ Implementation (Writing Code)
 * The issue will then move to “In Progress” on the Roadmap.
 * Work in a feature branch.
 * Deliver:
+
   * Clean, complete code.
   * Unit and integration tests with good coverage.
   * Any necessary database migrations or data changes.
@@ -85,7 +90,10 @@ Documentation & Discoverability (as Needed)
 -------------------------------------------
 
 * If labeled “needs: documentation” or if the change affects users noticeably:
+
   * Update or add content in the Pontoon documentation for localizers.
+
 * For major or high-impact features:
+
   * Core team may add in-app announcements.
   * The contributor might write a blog post on the Mozilla L10n blog.
