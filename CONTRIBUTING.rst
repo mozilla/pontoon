@@ -313,11 +313,6 @@ Then, to build the docs, run this:
 The HTML documentation will be in `docs/_build/html/`. Try to open `docs/_build/html/index.html`
 for example.
 
-.. note:: Pontoon uses `GraphViz`_ as part of the documentation generation, so
-   you'll need to install it to generate graphs that use it. Most package
-   managers, including `Homebrew`_, have a package available for install.
-
-.. _GraphViz: http://www.graphviz.org/
 .. _Homebrew: http://brew.sh/
 
 
