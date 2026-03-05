@@ -26,7 +26,7 @@ Core maintainers review new issues and perform triage on a weekly basis to assig
 
 * Type: Bug, Feature, Task.
 * Priority label: P1 (must be fixed immediately) to P5 (valid bug, but you might need to fix it).
-* Labels such as “needs: specification” or “needs: documentation” if required.
+* Labels such as “needs specification” or “needs documentation” if required.
 * Labels for rough time estimate: hours, days, weeks, months, quarters.
 
 The issue is added to the Pontoon Roadmap GitHub project:
@@ -46,7 +46,7 @@ For medium-to-large features (those affecting UX flows, data models, multiple ar
 * Follow the structure seen in existing specs (problem statement, goals, user stories, proposed solution, impacted areas, risks, alternatives, migration plan if applicable).
 * Get feedback and approval from core team members.
 
-Once approved, remove any “needs: specification” label and move the issue to “Ready” on the Roadmap.
+Once approved, remove any “needs specification” label and move the issue to “Ready” on the Roadmap.
 
 Implementation (Writing Code)
 -----------------------------
@@ -89,7 +89,7 @@ Release
 Documentation & Discoverability (as Needed)
 -------------------------------------------
 
-* If labeled “needs: documentation” or if the change affects users noticeably:
+* If labeled “needs documentation” or if the change affects users noticeably:
 
   * Update or add content in the Pontoon documentation for localizers.
 
