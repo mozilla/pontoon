@@ -1,5 +1,5 @@
-Feature Development Process in Pontoon
-======================================
+Feature Development Process
+===========================
 
 Landing a new feature or significant change in Pontoon follows a structured yet flexible process. The goal is to ensure high-quality, well-considered contributions that align with project priorities and community needs.
 
