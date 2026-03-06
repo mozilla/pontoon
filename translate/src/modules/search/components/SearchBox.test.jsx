@@ -339,23 +339,22 @@ describe('<SearchBoxBase>', () => {
         parameters={{ push, search: '' }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
-        searchDefaults={{
-          search_match_case: true,
-          search_identifiers: true,
-        }}
         store={{ getState: () => ({ unsavedchanges: {} }) }}
       />,
     );
     wrapper.update();
 
-    wrapper.find('SearchPanel').prop('applyOptions')();
+    // Toggle one option on — it auto-applies immediately.
+    act(() => {
+      wrapper.find('SearchPanel').prop('toggleOption')('search_match_case');
+    });
+    wrapper.update();
 
-    // Options differing from the default should be added to the URL as
-    // parameters. Options matching the default should not.
+    // The toggled option differs from the global default and should be encoded.
+    // Untouched options still match the default and should be omitted.
     expect(push).toHaveBeenCalledOnce();
     const pushed = push.mock.calls[0][0];
     expect(pushed.search_match_case).toBe(true);
-    expect(pushed.search_identifiers).toBe(true);
     expect(pushed.search_match_whole_word).toBeUndefined();
     expect(pushed.search_rejected_translations).toBeUndefined();
     expect(pushed.search_exclude_source_strings).toBeUndefined();
@@ -379,8 +378,6 @@ describe('<SearchBoxBase>', () => {
       wrapper.find('SearchPanel').prop('toggleOption')('search_identifiers');
     });
     wrapper.update();
-
-    wrapper.find('SearchPanel').prop('applyOptions')();
 
     const pushed = push.mock.calls[0][0];
     expect(pushed.search_identifiers).toBeUndefined();
@@ -421,9 +418,8 @@ describe('<SearchBox>', () => {
       code: 'Enter',
     });
 
-    expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenNthCalledWith(
-      1,
+    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledWith(
       {
         key: expect.anything(),
         pathname: '/kg/firefox/all-resources/',

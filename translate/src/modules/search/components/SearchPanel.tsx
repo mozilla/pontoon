@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import { SEARCH_OPTIONS } from '../constants';
@@ -10,14 +10,14 @@ import './SearchPanel.css';
 
 type Props = {
   searchOptions: SearchState;
-  applyOptions: () => void;
+  restoreDefaults: () => void;
   toggleOption: (searchOption: SearchType) => void;
 };
 
 type SearchPanelProps = {
-  selectedSearchOptions: SearchState;
-  onApplyOptions: () => void;
+  searchOptions: SearchState;
   onToggleOption: (searchOption: SearchType, event?: React.MouseEvent) => void;
+  onRestoreDefaults: () => void;
   onDiscard: () => void;
 };
 
@@ -48,10 +48,15 @@ const SearchOption = ({
   );
 };
 
+const SEPARATOR_AFTER = new Set([
+  'search_match_whole_word',
+  'search_exclude_source_strings',
+]);
+
 export function SearchPanelDialog({
-  selectedSearchOptions,
-  onApplyOptions,
+  searchOptions,
   onToggleOption,
+  onRestoreDefaults,
   onDiscard,
 }: SearchPanelProps): React.ReactElement<'div'> {
   const ref = React.useRef(null);
@@ -64,43 +69,44 @@ export function SearchPanelDialog({
       </Localized>
       <ul>
         {SEARCH_OPTIONS.map((search, i) => (
-          <SearchOption
-            onToggle={() => onToggleOption(search.slug)}
-            searchOption={search}
-            key={i}
-            selected={selectedSearchOptions[search.slug] ?? false}
-          />
+          <React.Fragment key={i}>
+            <SearchOption
+              onToggle={() => onToggleOption(search.slug)}
+              searchOption={search}
+              selected={searchOptions[search.slug] ?? false}
+            />
+            {SEPARATOR_AFTER.has(search.slug) && (
+              <li className='separator' role='separator' />
+            )}
+          </React.Fragment>
         ))}
-      </ul>
-
-      <Localized id='search-SearchPanel--apply-search-options'>
-        <button
-          title='Apply Selected Search Options'
-          onClick={onApplyOptions}
-          className='search-button'
+        <li
+          className='action-item'
+          onClick={(ev) => {
+            ev.stopPropagation();
+            onRestoreDefaults();
+          }}
         >
-          {'APPLY SEARCH OPTIONS'}
-        </button>
-      </Localized>
+          <Localized id='search-SearchPanel--restore-default-options'>
+            <span>{'Restore default options'}</span>
+          </Localized>
+        </li>
+        <li className='action-item'>
+          <Localized id='search-SearchPanel--change-default-search-settings'>
+            <a href='/settings/#search'>{'Change default search settings'}</a>
+          </Localized>
+        </li>
+      </ul>
     </div>
   );
 }
 
 export function SearchPanel({
   searchOptions,
-  applyOptions,
+  restoreDefaults,
   toggleOption,
 }: Props): React.ReactElement<'div'> | null {
   const [visible, setVisible] = useState(false);
-  // selectedSearchOptions maintains the visual state of the checkboxes, even on discard
-  const [selectedSearchOptions, setSelectedSearchOptions] =
-    useState(searchOptions);
-
-  useEffect(() => {
-    if (visible) {
-      setSelectedSearchOptions(searchOptions);
-    }
-  }, [visible, searchOptions]);
 
   const toggleVisible = useCallback(() => {
     setVisible((prev) => !prev);
@@ -113,19 +119,16 @@ export function SearchPanel({
   const handleToggleOption = useCallback(
     (searchOption: SearchType, ev?: React.MouseEvent) => {
       ev?.stopPropagation();
-      setSelectedSearchOptions((prev) => ({
-        ...prev,
-        [searchOption]: !prev[searchOption],
-      }));
+      setVisible(false);
       toggleOption(searchOption);
     },
     [toggleOption],
   );
 
-  const handleApplyOptions = useCallback(() => {
+  const handleRestoreDefaults = useCallback(() => {
     setVisible(false);
-    applyOptions();
-  }, [applyOptions]);
+    restoreDefaults();
+  }, [restoreDefaults]);
 
   return (
     <div className='search-panel'>
@@ -137,9 +140,9 @@ export function SearchPanel({
       </div>
       {visible ? (
         <SearchPanelDialog
-          selectedSearchOptions={selectedSearchOptions}
-          onApplyOptions={handleApplyOptions}
+          searchOptions={searchOptions}
           onToggleOption={handleToggleOption}
+          onRestoreDefaults={handleRestoreDefaults}
           onDiscard={handleDiscard}
         />
       ) : null}
