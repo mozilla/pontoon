@@ -243,8 +243,8 @@ def test_get_contribution_graph_data_without_actions(user_a):
 def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_user_b):
     # Truncate time
     date = action_user_a.created_at.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    assert utils.get_contribution_graph_data(user_a) == (
+    actions = ActionLog.objects.visible_for(user_a)
+    assert utils.get_contribution_graph_data(user_a, actions=actions) == (
         {
             convert_to_unix_time(date): 1,
         },
@@ -272,7 +272,9 @@ def test_get_contribution_timeline_data_with_actions(
         "review_time": f"{start.strftime('%Y%m%d%H%M')}-{end.strftime('%Y%m%d%H%M')}",
     }
 
-    assert utils.get_contribution_timeline_data(user_a) == (
+    actions = ActionLog.objects.visible_for(user_a)
+
+    assert utils.get_contribution_timeline_data(user_a, actions=actions) == (
         {
             date: {
                 "user_reviews": {

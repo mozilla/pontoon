@@ -279,13 +279,14 @@ def get_approvals_charts_data(user):
     }
 
 
-def get_contributions_map(user, contribution_period=None):
+def get_contributions_map(user, contribution_period=None, actions=None):
     """
     Return a map of contribution types and corresponding QuerySets of contributions.
 
     :param django.db.models.Q contribution_period: ActionLog time interval.
     """
-    actions = ActionLog.objects.all()
+    if actions is None:
+        actions = ActionLog.objects.all()
 
     if contribution_period is not None:
         actions = actions.filter(contribution_period)
@@ -324,12 +325,12 @@ def get_contributions_map(user, contribution_period=None):
     }
 
 
-def get_contribution_graph_data(user, contribution_type=None):
+def get_contribution_graph_data(user, contribution_type=None, actions=None):
     """
     Get data required to render the Contribution graph on the Profile page
     """
     contribution_period = Q(created_at__gte=timezone.now() - relativedelta(days=365))
-    contributions_map = get_contributions_map(user, contribution_period)
+    contributions_map = get_contributions_map(user, contribution_period, actions)
 
     if contribution_type not in contributions_map.keys():
         contribution_type = "all_user_contributions"
@@ -412,7 +413,7 @@ def get_project_locale_contribution_counts(contributions_qs):
 
 
 def get_contribution_timeline_data(
-    user, full_year=False, contribution_type=None, day=None
+    user, full_year=False, contribution_type=None, day=None, actions=None
 ):
     """
     Get data required to render the Contribution timeline on the Profile page
@@ -434,7 +435,7 @@ def get_contribution_timeline_data(
         end = start + relativedelta(days=1)
 
     contribution_period = Q(created_at__gte=start, created_at__lte=end)
-    contributions_map = get_contributions_map(user, contribution_period)
+    contributions_map = get_contributions_map(user, contribution_period, actions)
 
     # Get a list of explicit contribution types
     default_contribution_types = ["user_translations", "user_reviews"]

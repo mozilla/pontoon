@@ -30,6 +30,7 @@ from django.utils.html import escape
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
@@ -83,11 +84,12 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
+    actions = ActionLog.objects.visible_for(request.user)
     graph_data, graph_title = utils.get_contribution_graph_data(
-        user, "all_contributions"
+        user, "all_contributions", actions
     )
     timeline_data = utils.get_contribution_timeline_data(
-        user, False, "all_contributions"
+        user, False, "all_contributions", actions=actions
     )
 
     context = {
@@ -147,7 +149,11 @@ def update_contribution_graph(request):
             status=400,
         )
 
-    contributions, title = utils.get_contribution_graph_data(user, contribution_type)
+    actions = ActionLog.objects.visible_for(request.user)
+
+    contributions, title = utils.get_contribution_graph_data(
+        user, contribution_type, actions
+    )
     return JsonResponse({"contributions": contributions, "title": title})
 
 
@@ -166,8 +172,10 @@ def update_contribution_timeline(request):
             status=400,
         )
 
+    actions = ActionLog.objects.visible_for(request.user)
+
     contributions = utils.get_contribution_timeline_data(
-        user, full_year, contribution_type, day
+        user, full_year, contribution_type, day, actions
     )
 
     return render(
