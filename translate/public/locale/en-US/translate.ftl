@@ -300,6 +300,9 @@ entitydetails-ContextIssueButton--context-issue-button = REQUEST CONTEXT or REPO
 entitieslist-Entity--sibling-strings-title =
     .title = Click to reveal sibling strings
 
+entitieslist-Entity--listitem-label =
+    .aria-label = Select "{ $original }" for translation.
+
 entitieslist-EntitiesList--clear-selected = <glyph></glyph>CLEAR
     .title = Uncheck selected strings
 

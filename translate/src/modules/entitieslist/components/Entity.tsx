@@ -113,47 +113,63 @@ export function Entity({
   );
 
   return (
-    <li className={cn} onClick={handleSelectEntity}>
-      <span className='status fas' onClick={handleForBatchEditing} />
-      {selected && !entity.isSibling ? (
+    <Localized
+      id='entitieslist-Entity--listitem-label'
+      attrs={{ 'aria-label': true }}
+      vars={{ original: entity.original }}
+    >
+      <li
+        className={cn}
+        role='button'
+        aria-label={'Select "{ $original }" for translation.'}
+        onClick={handleSelectEntity}
+      >
+        <span
+          className='status fas'
+          role='checkbox'
+          aria-selected={checkedForBatchEditing}
+          onClick={handleForBatchEditing}
+        />
+        {selected && !entity.isSibling ? (
+          <div>
+            {!areSiblingsActive && showSiblingEntitiesButton() && (
+              <Localized id='entitieslist-Entity--sibling-strings-title'>
+                <i
+                  className={'sibling-entities-icon fas fa-expand-arrows-alt'}
+                  title='Click to reveal sibling strings'
+                  onClick={showSiblingEntities}
+                ></i>
+              </Localized>
+            )}
+          </div>
+        ) : null}
         <div>
-          {!areSiblingsActive && showSiblingEntitiesButton() && (
-            <Localized id='entitieslist-Entity--sibling-strings-title'>
-              <i
-                className={'sibling-entities-icon fas fa-expand-arrows-alt'}
-                title='Click to reveal sibling strings'
-                onClick={showSiblingEntities}
-              ></i>
-            </Localized>
-          )}
+          <p className='source-string'>
+            <Translation
+              content={entity.original}
+              format={entity.format}
+              search={
+                parameters.search_exclude_source_strings
+                  ? null
+                  : parameters.search
+              }
+            />
+          </p>
+          <p
+            className='translation-string'
+            dir={direction}
+            lang={code}
+            data-script={script}
+          >
+            <Translation
+              content={entity.translation?.string ?? ''}
+              format={entity.format}
+              search={parameters.search}
+            />
+          </p>
+          <div className='indicator fas fa-chevron-right'></div>
         </div>
-      ) : null}
-      <div>
-        <p className='source-string'>
-          <Translation
-            content={entity.original}
-            format={entity.format}
-            search={
-              parameters.search_exclude_source_strings
-                ? null
-                : parameters.search
-            }
-          />
-        </p>
-        <p
-          className='translation-string'
-          dir={direction}
-          lang={code}
-          data-script={script}
-        >
-          <Translation
-            content={entity.translation?.string ?? ''}
-            format={entity.format}
-            search={parameters.search}
-          />
-        </p>
-        <div className='indicator fas fa-chevron-right'></div>
-      </div>
-    </li>
+      </li>
+    </Localized>
   );
 }

@@ -1,8 +1,9 @@
 import ftl from '@fluent/dedent';
-import { shallow } from 'enzyme';
 import React from 'react';
 import { parseEntry } from '~/utils/message';
 import { FluentAttribute } from './FluentAttribute';
+import { render } from '@testing-library/react';
+import { MockLocalizationProvider } from '~/test/utils';
 
 describe('isSimpleSingleAttributeMessage', () => {
   it('renders nonempty for a string with a single attribute', () => {
@@ -11,8 +12,12 @@ describe('isSimpleSingleAttributeMessage', () => {
           .an-atribute = Hello!
       `;
     const entry = parseEntry('fluent', original);
-    const wrapper = shallow(<FluentAttribute entry={entry} />);
-    expect(wrapper.isEmptyRender()).toEqual(false);
+    const { container } = render(
+      <MockLocalizationProvider>
+        <FluentAttribute entry={entry} />
+      </MockLocalizationProvider>,
+    );
+    expect(container).not.toBeEmptyDOMElement();
   });
 
   it('renders null for string with value', () => {
@@ -21,8 +26,8 @@ describe('isSimpleSingleAttributeMessage', () => {
           .an-atribute = Hello!
       `;
     const entry = parseEntry('fluent', original);
-    const wrapper = shallow(<FluentAttribute entry={entry} />);
-    expect(wrapper.isEmptyRender()).toEqual(true);
+    const { container } = render(<FluentAttribute entry={entry} />);
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('renders null for string with several attributes', () => {
@@ -32,7 +37,7 @@ describe('isSimpleSingleAttributeMessage', () => {
           .two-attrites = World!
       `;
     const entry = parseEntry('fluent', original);
-    const wrapper = shallow(<FluentAttribute entry={entry} />);
-    expect(wrapper.isEmptyRender()).toEqual(true);
+    const { container } = render(<FluentAttribute entry={entry} />);
+    expect(container).toBeEmptyDOMElement();
   });
 });

@@ -1,64 +1,68 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { Screenshots } from './Screenshots';
-import { mount } from 'enzyme';
+import { fireEvent, render } from '@testing-library/react';
+import { expect } from 'vitest';
 
+// TODO: Replace the querySelector with testing-library-ish approaches
 describe('<Screenshots>', () => {
   it('finds several images', () => {
     const source = `
       Here we have 2 images: http://link.to/image.png
       and https://example.org/en-US/test.jpg
     `;
-    const wrapper = mount(<Screenshots locale='kg' source={source} />);
-
-    expect(wrapper.find('img')).toHaveLength(2);
-    expect(wrapper.find('img').at(0).prop('src')).toBe(
-      'http://link.to/image.png',
+    const { getAllByRole } = render(
+      <Screenshots locale='kg' source={source} />,
     );
-    expect(wrapper.find('img').at(1).prop('src')).toBe(
-      'https://example.org/kg/test.jpg',
-    );
+    const images = getAllByRole('img');
+    expect(images).toHaveLength(2);
+    expect(images[0]).toHaveAttribute('src', 'http://link.to/image.png');
+    expect(images[1]).toHaveAttribute('src', 'https://example.org/kg/test.jpg');
   });
 
   it('does not find non PNG or JPG images', () => {
     const source =
       'That is a non-supported image URL: http://link.to/image.bmp';
-    const wrapper = mount(<Screenshots locale='kg' source={source} />);
+    const { queryByRole } = render(<Screenshots locale='kg' source={source} />);
 
-    expect(wrapper.find('img')).toHaveLength(0);
+    expect(queryByRole('img')).toBeNull();
   });
 
   it('shows a Lightbox on image click', () => {
     const source = 'That is an image URL: http://link.to/image.png';
-    const wrapper = mount(<Screenshots locale='kg' source={source} />);
+    const { container, getByRole } = render(
+      <Screenshots locale='kg' source={source} />,
+    );
 
-    expect(wrapper.find('.lightbox')).toHaveLength(0);
+    expect(container.querySelector('.lightbox')).toBeNull();
+    fireEvent.click(getByRole('img'));
 
-    wrapper.find('img').simulate('click');
-
-    expect(wrapper.find('.lightbox')).toHaveLength(1);
+    expect(container.querySelector('.lightbox')).toBeInTheDocument();
   });
 
   it('Lightbox closes on click', () => {
     const source = 'That is an image URL: http://link.to/image.png';
-    const wrapper = mount(<Screenshots locale='kg' source={source} />);
-    wrapper.find('img').simulate('click');
-    wrapper.find('.lightbox').simulate('click');
+    const { getByRole, container } = render(
+      <Screenshots locale='kg' source={source} />,
+    );
+    fireEvent.click(getByRole('img'));
+    fireEvent.click(container.querySelector('.lightbox'));
 
-    expect(wrapper.find('.lightbox')).toHaveLength(0);
+    expect(container.querySelector('.lightbox')).toBeNull();
   });
 
   it('Lightbox closes on key press', () => {
     const source = 'That is an image URL: http://link.to/image.png';
-    const wrapper = mount(<Screenshots locale='kg' source={source} />);
-    wrapper.find('img').simulate('click');
+    const { getByRole, container } = render(
+      <Screenshots locale='kg' source={source} />,
+    );
+    fireEvent.click(getByRole('img'));
     act(() => {
       window.document.dispatchEvent(
         new KeyboardEvent('keydown', { code: 'Escape' }),
       );
     });
-    wrapper.update();
 
-    expect(wrapper.find('.lightbox')).toHaveLength(0);
+    expect(container.querySelector('.lightbox')).toBeNull();
   });
 });
