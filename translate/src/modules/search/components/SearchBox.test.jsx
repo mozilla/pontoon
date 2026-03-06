@@ -312,6 +312,25 @@ describe('<SearchBoxBase>', () => {
     expect(opts.search_exclude_source_strings).toBe(true);
   });
 
+  it('uses global defaults (not profile defaults) for options absent from a URL with an active search', () => {
+    // Loading a URL like ?search=foo (no parameters) should show
+    // search_identifiers as false in the UI, matching what the backend uses,
+    // even if the profile default is true.
+    const wrapper = mount(
+      <SearchBoxBase
+        parameters={{ search: 'foo' }}
+        project={PROJECT}
+        searchAndFilters={SEARCH_AND_FILTERS}
+        searchDefaults={{ search_identifiers: true }}
+      />,
+    );
+    wrapper.update();
+
+    expect(
+      wrapper.find('SearchPanel').prop('searchOptions').search_identifiers,
+    ).toBe(false);
+  });
+
   it('encodes search options that differ from the global default, omits those matching it', () => {
     const push = vi.fn();
     const wrapper = mount(
