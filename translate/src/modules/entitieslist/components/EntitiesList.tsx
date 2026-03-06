@@ -25,6 +25,7 @@ import {
   toggleSelection,
   uncheckSelection,
 } from '~/modules/batchactions/actions';
+import { DEFAULT_SEARCH_OPTIONS } from '~/modules/search/constants';
 import { useBatchactions } from '~/modules/batchactions/hooks';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 
@@ -165,11 +166,21 @@ export function EntitiesList(): React.ReactElement<'div'> {
         'Load: String list with search parameter',
         'Search Options Statistics',
         {
-          search_exclude_source_strings: location.search_exclude_source_strings,
-          search_identifiers: location.search_identifiers,
-          search_match_case: location.search_match_case,
-          search_match_whole_word: location.search_match_whole_word,
-          search_rejected_translations: location.search_rejected_translations,
+          search_exclude_source_strings:
+            location.search_exclude_source_strings ??
+            DEFAULT_SEARCH_OPTIONS.search_exclude_source_strings,
+          search_identifiers:
+            location.search_identifiers ??
+            DEFAULT_SEARCH_OPTIONS.search_identifiers,
+          search_match_case:
+            location.search_match_case ??
+            DEFAULT_SEARCH_OPTIONS.search_match_case,
+          search_match_whole_word:
+            location.search_match_whole_word ??
+            DEFAULT_SEARCH_OPTIONS.search_match_whole_word,
+          search_rejected_translations:
+            location.search_rejected_translations ??
+            DEFAULT_SEARCH_OPTIONS.search_rejected_translations,
         },
       );
     }

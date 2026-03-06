@@ -39,7 +39,15 @@ export type ApiUserData = {
   contributor_for_locales?: string[];
   translator_for_projects?: Record<string, boolean>;
   pm_for_projects?: string[];
-  settings?: { quality_checks: boolean; force_suggestions: boolean };
+  settings?: {
+    quality_checks: boolean;
+    force_suggestions: boolean;
+    search_exclude_source_strings: boolean;
+    search_identifiers: boolean;
+    search_match_case: boolean;
+    search_match_whole_word: boolean;
+    search_rejected_translations: boolean;
+  };
   tour_status?: number;
   has_dismissed_addon_promotion?: boolean;
   login_url?: string;

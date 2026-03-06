@@ -202,7 +202,8 @@
   }
 }
 
-#main .appearance .field .help {
+#main .appearance .field .help,
+#main .search .field .help {
   margin: 0 0 -12px;
 }
 

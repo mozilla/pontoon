@@ -61,8 +61,36 @@
         color: var(--white-1);
       }
 
-      &.search_identifiers {
-        margin-top: 10px;
+      &.separator {
+        border-top: 1px solid var(--main-border-1);
+        margin: 5px 0;
+        padding: 0;
+        cursor: default;
+
+        &:hover {
+          color: inherit;
+          background-color: transparent;
+        }
+      }
+
+      &.action-item {
+        color: var(--light-grey-7);
+        font-weight: 300;
+        padding: 4px 2px;
+
+        a {
+          color: inherit;
+          text-decoration: none;
+
+          &:hover {
+            color: var(--white-1);
+          }
+        }
+
+        &:hover {
+          color: var(--white-1);
+          background-color: var(--dark-grey-2);
+        }
       }
 
       &.check-box {
@@ -86,22 +114,6 @@
           background-color: var(--dark-grey-2);
         }
       }
-    }
-  }
-
-  .search-button {
-    float: right;
-    background: none;
-    border: none;
-    background: var(--button-background-1);
-    color: var(--light-grey-7);
-    font-weight: 300;
-    border-radius: 3px;
-    margin-bottom: 5px;
-    margin-top: 8px;
-
-    &:hover {
-      color: var(--status-translated);
     }
   }
 }

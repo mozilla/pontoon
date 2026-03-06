@@ -44,6 +44,7 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
+    UserProfile,
 )
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
@@ -289,6 +290,19 @@ def entities(request):
     form_data = {
         k: form.cleaned_data[k] for k in restrict_to_keys if k in form.cleaned_data
     }
+
+    # If search option params are not specified in the URL, read the default
+    # value from the model field (avoid specifying the default in two places).
+    search_option_names = (
+        "search_identifiers",
+        "search_exclude_source_strings",
+        "search_rejected_translations",
+        "search_match_case",
+        "search_match_whole_word",
+    )
+    for name in search_option_names:
+        if name not in request.POST:
+            form_data[name] = UserProfile._meta.get_field(name).default
 
     try:
         entities = Entity.for_project_locale(request.user, project, locale, **form_data)
@@ -964,6 +978,11 @@ def user_data(request):
             "settings": {
                 "quality_checks": user.profile.quality_checks,
                 "force_suggestions": user.profile.force_suggestions,
+                "search_exclude_source_strings": user.profile.search_exclude_source_strings,
+                "search_identifiers": user.profile.search_identifiers,
+                "search_match_case": user.profile.search_match_case,
+                "search_match_whole_word": user.profile.search_match_whole_word,
+                "search_rejected_translations": user.profile.search_rejected_translations,
             },
             "tour_status": user.profile.tour_status,
             "has_dismissed_addon_promotion": user.profile.has_dismissed_addon_promotion,

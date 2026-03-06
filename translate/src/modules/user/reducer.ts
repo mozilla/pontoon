@@ -1,3 +1,5 @@
+import { DEFAULT_SEARCH_OPTIONS } from '~/modules/search/constants';
+
 import { Action, UPDATE, UPDATE_SETTINGS, UPDATE_THEME } from './actions';
 
 // Name of this module.
@@ -7,11 +9,23 @@ export const USER = 'user';
 export type SettingsState = {
   readonly runQualityChecks: boolean;
   readonly forceSuggestions: boolean;
+  readonly searchExcludeSourceStrings: boolean;
+  readonly searchIdentifiers: boolean;
+  readonly searchMatchCase: boolean;
+  readonly searchMatchWholeWord: boolean;
+  readonly searchRejectedTranslations: boolean;
 };
 
 const initialSettings: SettingsState = {
   runQualityChecks: true,
   forceSuggestions: true,
+  searchExcludeSourceStrings:
+    DEFAULT_SEARCH_OPTIONS.search_exclude_source_strings,
+  searchIdentifiers: DEFAULT_SEARCH_OPTIONS.search_identifiers,
+  searchMatchCase: DEFAULT_SEARCH_OPTIONS.search_match_case,
+  searchMatchWholeWord: DEFAULT_SEARCH_OPTIONS.search_match_whole_word,
+  searchRejectedTranslations:
+    DEFAULT_SEARCH_OPTIONS.search_rejected_translations,
 };
 
 function settings(
@@ -26,6 +40,21 @@ function settings(
       return {
         runQualityChecks: action.data.settings.quality_checks,
         forceSuggestions: action.data.settings.force_suggestions,
+        searchExcludeSourceStrings:
+          action.data.settings.search_exclude_source_strings ??
+          DEFAULT_SEARCH_OPTIONS.search_exclude_source_strings,
+        searchIdentifiers:
+          action.data.settings.search_identifiers ??
+          DEFAULT_SEARCH_OPTIONS.search_identifiers,
+        searchMatchCase:
+          action.data.settings.search_match_case ??
+          DEFAULT_SEARCH_OPTIONS.search_match_case,
+        searchMatchWholeWord:
+          action.data.settings.search_match_whole_word ??
+          DEFAULT_SEARCH_OPTIONS.search_match_whole_word,
+        searchRejectedTranslations:
+          action.data.settings.search_rejected_translations ??
+          DEFAULT_SEARCH_OPTIONS.search_rejected_translations,
       };
     case UPDATE_SETTINGS:
       return {
