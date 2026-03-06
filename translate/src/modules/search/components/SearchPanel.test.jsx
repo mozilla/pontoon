@@ -7,7 +7,7 @@ import { SEARCH_OPTIONS } from '../constants';
 import { fireEvent, render } from '@testing-library/react';
 import { expect } from 'vitest';
 
-const selectedSearchOptions = {
+const searchOptions = {
   search_identifiers: false,
   search_exclude_source_strings: false,
   search_rejected_translations: true,
@@ -27,20 +27,22 @@ describe('<SearchPanelDialog>', () => {
   it('correctly sets search option as selected', () => {
     const store = createReduxStore();
     const { container } = mountComponentWithStore(SearchPanelDialog, store, {
-      options: selectedSearchOptions,
-      selectedSearchOptions,
+      searchOptions,
+      onToggleOption: vi.fn(),
+      onRestoreDefaults: vi.fn(),
+      onDiscard: vi.fn(),
     });
 
     for (const { slug } of SEARCH_OPTIONS) {
       expect(
         container.querySelector(`.menu .${slug}`).classList.contains('enabled'),
-      ).toBe(selectedSearchOptions[slug]);
+      ).toBe(searchOptions[slug]);
     }
   });
 
   for (const { slug, name } of SEARCH_OPTIONS) {
     describe(`option: ${slug}`, () => {
-      it('toggles a search option on click on the option icon', () => {
+      it('toggles a search option on click', () => {
         const onToggleOption = vi.fn();
         const store = createReduxStore();
 
@@ -48,9 +50,9 @@ describe('<SearchPanelDialog>', () => {
           SearchPanelDialog,
           store,
           {
-            selectedSearchOptions: selectedSearchOptions,
-            onApplyOptions: vi.fn(),
+            searchOptions,
             onToggleOption,
+            onRestoreDefaults: vi.fn(),
             onDiscard: vi.fn(),
           },
         );
@@ -62,28 +64,50 @@ describe('<SearchPanelDialog>', () => {
     });
   }
 
-  it('applies selected options on click on the Apply button', () => {
-    const onApplyOptions = vi.fn();
+  it('calls onRestoreDefaults on click on Restore default options', () => {
+    const onRestoreDefaults = vi.fn();
     const store = createReduxStore();
-    const { getByRole } = mountComponentWithStore(SearchPanelDialog, store, {
-      selectedSearchOptions: selectedSearchOptions,
-      onApplyOptions,
+    const { getByText } = mountComponentWithStore(SearchPanelDialog, store, {
+      searchOptions,
+      onToggleOption: vi.fn(),
+      onRestoreDefaults,
+      onDiscard: vi.fn(),
     });
 
-    fireEvent.click(getByRole('button', { name: 'APPLY SEARCH OPTIONS' }));
+    fireEvent.click(getByText('Restore default options'));
 
-    expect(onApplyOptions).toHaveBeenCalled();
+    expect(onRestoreDefaults).toHaveBeenCalled();
   });
 });
 
 describe('<SearchPanel>', () => {
   it('shows a panel with options on click', () => {
     const { queryByRole, getByRole } = render(
-      <SearchPanel searchOptions={selectedSearchOptions} />,
+      <SearchPanel
+        searchOptions={searchOptions}
+        restoreDefaults={vi.fn()}
+        toggleOption={vi.fn()}
+      />,
     );
 
     expect(queryByRole('banner')).not.toBeInTheDocument();
     fireEvent.click(getByRole('button'));
     expect(getByRole('banner')).toHaveTextContent('SEARCH OPTIONS');
+  });
+
+  it('hides the panel after selecting an option', () => {
+    const { queryByRole, getByRole, getByText } = render(
+      <SearchPanel
+        searchOptions={searchOptions}
+        restoreDefaults={vi.fn()}
+        toggleOption={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(getByRole('button'));
+    expect(getByRole('banner')).toBeInTheDocument();
+
+    fireEvent.click(getByText('Match case'));
+    expect(queryByRole('banner')).not.toBeInTheDocument();
   });
 });

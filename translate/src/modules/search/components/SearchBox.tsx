@@ -216,13 +216,53 @@ export function SearchBoxBase({
     [filters],
   );
 
+  const applyOptions = useCallback(
+    (opts: SearchState = searchOptions) =>
+      checkUnsavedChanges(() => {
+        dispatch(resetEntities());
+        // Only encode values that differ from the default. The goal is to
+        // keep URLs shareable regardless of individual profile settings.
+        const searchUpdates = Object.fromEntries(
+          SEARCH_OPTIONS.map(({ slug, default: def }) => [
+            slug,
+            opts[slug] !== def ? opts[slug] : undefined,
+          ]),
+        ) as Partial<Location>;
+        parameters.push({
+          ...parameters, // Persist all other variables to next state
+          search,
+          ...searchUpdates,
+          entity: 0, // With the new results, the current entity might not be available anymore.
+        });
+      }),
+    [dispatch, parameters, search, searchOptions],
+  );
+
   const toggleOption = useCallback(
     (searchOption: SearchType) => {
       const next = !searchOptions[searchOption];
+      const newOpts = { ...searchOptions, [searchOption]: next };
       updateSearchOptions([{ searchOption, value: next }]);
+      applyOptions(newOpts);
     },
-    [searchOptions],
+    [searchOptions, applyOptions],
   );
+
+  const restoreDefaults = useCallback(() => {
+    const defaults = Object.fromEntries(
+      SEARCH_OPTIONS.map(({ slug }) => [
+        slug,
+        searchDefaults?.[slug] ?? DEFAULT_SEARCH_OPTIONS[slug],
+      ]),
+    ) as SearchState;
+    updateSearchOptions(
+      SEARCH_OPTIONS.map(({ slug }) => ({
+        searchOption: slug,
+        value: defaults[slug],
+      })),
+    );
+    applyOptions(defaults);
+  }, [searchDefaults, applyOptions]);
 
   const resetFilters = useCallback(() => {
     updateFilters([
@@ -252,28 +292,6 @@ export function SearchBoxBase({
     dispatch(getAuthorsAndTimeRangeData(locale, project, resource));
   }, [parameters]);
 
-  const applyOptions = useCallback(
-    () =>
-      checkUnsavedChanges(() => {
-        dispatch(resetEntities());
-        // Only encode values that differ from the default. The goal is to
-        // keep URLs shareable regardless of individual profile settings.
-        const searchUpdates = Object.fromEntries(
-          SEARCH_OPTIONS.map(({ slug, default: def }) => [
-            slug,
-            searchOptions[slug] !== def ? searchOptions[slug] : undefined,
-          ]),
-        ) as Partial<Location>;
-        parameters.push({
-          ...parameters, // Persist all other variables to next state
-          search,
-          ...searchUpdates,
-          entity: 0, // With the new results, the current entity might not be available anymore.
-        });
-      }),
-    [dispatch, parameters, search, searchOptions],
-  );
-
   const applyFilters = useCallback(
     () =>
       checkUnsavedChanges(() => {
@@ -284,6 +302,12 @@ export function SearchBoxBase({
           status = null;
         }
         dispatch(resetEntities());
+        const searchUpdates = Object.fromEntries(
+          SEARCH_OPTIONS.map(({ slug, default: def }) => [
+            slug,
+            searchOptions[slug] !== def ? searchOptions[slug] : undefined,
+          ]),
+        ) as Partial<Location>;
         parameters.push({
           author: authors.join(','),
           extra: extras.join(','),
@@ -293,9 +317,10 @@ export function SearchBoxBase({
           time: timeRange ? `${timeRange.from}-${timeRange.to}` : null,
           entity: 0, // With the new results, the current entity might not be available anymore.
           list: parameters.list ?? null,
+          ...searchUpdates,
         });
       }),
-    [dispatch, parameters, search, filters],
+    [dispatch, parameters, search, filters, searchOptions],
   );
 
   useEffect(() => {
@@ -351,7 +376,6 @@ export function SearchBoxBase({
         onKeyDown={(ev) => {
           if (ev.key === 'Enter') {
             applyFilters();
-            applyOptions();
           }
         }}
       />
@@ -372,7 +396,7 @@ export function SearchBoxBase({
       />
       <SearchPanel
         searchOptions={searchOptions}
-        applyOptions={applyOptions}
+        restoreDefaults={restoreDefaults}
         toggleOption={toggleOption}
       />
     </div>
