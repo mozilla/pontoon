@@ -47,7 +47,7 @@ def test_get_users_sorted_by_locale_activity(rf, admin):
 
     request = rf.get(
         "/get-users/",
-        {"locale": locale.code, "project": project.slug},
+        {"locale": locale.code, "project": project.pk},
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 
@@ -58,4 +58,45 @@ def test_get_users_sorted_by_locale_activity(rf, admin):
     names = [u["name"] for u in data]
     assert names.index(locale_user.name_or_email) < names.index(
         other_locale_user.name_or_email
+    )
+
+
+# project & locale activity should be prioritized over alphabetic order
+# for users that are both active in the project or locale
+
+
+@pytest.mark.django_db
+def test_get_users_sorted_by_project_and_locale_activity(rf, admin):
+    locale = LocaleFactory()
+    project = ProjectFactory(locales=[locale])
+    resource = ResourceFactory(project=project)
+    entity = EntityFactory(resource=resource)
+
+    # create a user that is active in the current locale and project
+    active_user = UserFactory(first_name="Zara", last_name="ActiveUser")
+    TranslationFactory(user=active_user, locale=locale, entity=entity)
+
+    # create a user that is active in the current locale but not the project
+    other_project_user = UserFactory(first_name="Bob", last_name="OtherProject")
+    TranslationFactory(user=other_project_user, locale=locale)
+
+    # create a user that is active in the current project but not the locale
+    other_locale_user = UserFactory(first_name="Charlie", last_name="OtherLocale")
+    TranslationFactory(user=other_locale_user, entity=entity)
+
+    request = rf.get(
+        "/get-users/",
+        {"locale": locale.code, "project": project.pk},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    request.user = admin
+    response = get_users(request)
+    data = json.loads(response.content)
+
+    names = [u["name"] for u in data]
+    assert (
+        names.index(active_user.name_or_email)
+        < names.index(other_project_user.name_or_email)
+        < names.index(other_locale_user.name_or_email)
     )

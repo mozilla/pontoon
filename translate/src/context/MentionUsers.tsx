@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useMemo, useState } from 'react';
 import { fetchUsersList, MentionUser } from '~/api/user';
-import { Location } from './Location';
 
 type MentionUsers = {
   /**
@@ -8,7 +7,7 @@ type MentionUsers = {
    *
    * May be called multiple times, but data will only be fetched once.
    */
-  initMentions(): void;
+  initMentions(locale: string, projectId: number): void;
   mentionUsers: MentionUser[];
 };
 
@@ -22,19 +21,33 @@ export function MentionUsersProvider({
 }: {
   children: React.ReactElement;
 }) {
-  const { locale, project } = useContext(Location);
-  const [mentionUsers, setUsers] = useState<MentionUser[]>([]);
-  const [initMentions, setInit] = useState(() => () => {
-    setInit(() => () => {});
-    fetchUsersList(locale, project).then((list) => {
-      if (Array.isArray(list)) {
-        setUsers(list);
-      }
-    });
+  const [state, setState] = useState<{
+    projectId: number | undefined;
+    mentionUsers: MentionUser[];
+  }>(() => {
+    return {
+      projectId: undefined,
+      mentionUsers: [],
+    };
   });
+
+  const initMentions = useMemo(
+    () => (locale: string, projectId: number) => {
+      if (state.projectId === projectId && state.mentionUsers.length > 0) {
+        return;
+      }
+      fetchUsersList(locale, projectId).then((list) => {
+        if (Array.isArray(list)) {
+          setState({ projectId, mentionUsers: list });
+        }
+      });
+    },
+    [],
+  );
+
   const value = useMemo(
-    () => ({ initMentions, mentionUsers }),
-    [initMentions, mentionUsers],
+    () => ({ initMentions, mentionUsers: state.mentionUsers }),
+    [initMentions, state.mentionUsers],
   );
   return (
     <MentionUsers.Provider value={value}>{children}</MentionUsers.Provider>

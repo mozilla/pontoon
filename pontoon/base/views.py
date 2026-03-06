@@ -743,7 +743,9 @@ def unpin_comment(request):
 def get_users(request):
     """Get all users sorted by locale and project."""
     locale_code = request.GET.get("locale")
-    project_slug = request.GET.get("project")
+    project_id = request.GET.get("project")
+    if project_id:
+        project_id = int(project_id)
 
     users = (
         User.objects
@@ -759,7 +761,7 @@ def get_users(request):
             ),
             in_project=Count(
                 "translation",
-                filter=Q(translation__entity__resource__project__slug=project_slug),
+                filter=Q(translation__entity__resource__project__id=project_id),
             ),
         )
         .order_by("-in_locale", "-in_project", "first_name", "last_name")

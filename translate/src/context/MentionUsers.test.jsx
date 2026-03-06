@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from 'react';
 import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import { Location } from './Location';
 import { MentionUsers, MentionUsersProvider } from './MentionUsers';
 import { fetchUsersList } from '~/api/user';
 
@@ -15,19 +14,17 @@ describe('MentionUsersProvider', () => {
     const Trigger = () => {
       const { initMentions } = useContext(MentionUsers);
       useEffect(() => {
-        initMentions();
+        initMentions('sl', 42);
       }, []);
       return null;
     };
 
     render(
-      <Location.Provider value={{ locale: 'sl', project: 'pontoon-test' }}>
-        <MentionUsersProvider>
-          <Trigger />
-        </MentionUsersProvider>
-      </Location.Provider>,
+      <MentionUsersProvider>
+        <Trigger />
+      </MentionUsersProvider>,
     );
 
-    expect(fetchUsersList).toHaveBeenCalledWith('sl', 'pontoon-test');
+    expect(fetchUsersList).toHaveBeenCalledWith('sl', 42);
   });
 });

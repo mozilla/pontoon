@@ -26,6 +26,8 @@ import {
   withReact,
 } from 'slate-react';
 
+import { Location } from '~/context/Location';
+import { EntityView } from '~/context/EntityView';
 import type { MentionUser } from '~/api/user';
 import { MentionUsers } from '~/context/MentionUsers';
 import type { UserState } from '~/modules/user';
@@ -116,7 +118,10 @@ export function AddComment({
     [editor],
   );
 
-  useEffect(initMentions, []);
+  const { entity } = useContext(EntityView);
+  const { locale } = useContext(Location);
+
+  useEffect(() => initMentions(locale, entity.project.pk), []);
 
   // Insert project manager as mention when 'Request context / Report issue' button used
   // and then clear the value from state

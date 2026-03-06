@@ -72,11 +72,11 @@ export const fetchUserData = (): Promise<ApiUserData> => GET('/user-data/');
 /** Get all users from server, sorted by activity in the current locale and project. */
 export const fetchUsersList = (
   locale: string,
-  project: string,
+  projectId: number,
 ): Promise<MentionUser[]> => {
   const params = new URLSearchParams();
   if (locale) params.append('locale', locale);
-  if (project) params.append('project', project);
+  if (projectId) params.append('project', String(projectId));
 
   return GET(`/get-users/?${params}`);
 };
