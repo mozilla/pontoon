@@ -164,15 +164,17 @@ export function SearchBoxBase({
   }, [parameters]);
 
   const updateOptionsFromURL = useCallback(() => {
-    // undefined = parameter not provided in the URL. Use params if available,
-    // otherwise fall back to searchDefaults from the user profile, and
-    // finally fall back to hardcoded global defaults.
+    // undefined = parameter not provided in the URL.
+    // If there's an active search in the URL, use the hardcoded global default
+    // so the UI reflects the settings actually used for that search.
+    // If there's no active search, fall back to profile defaults so the user
+    // sees their preferred settings as a starting point.
     updateSearchOptions(
       SEARCH_OPTIONS.map(({ slug }) => ({
         searchOption: slug,
         value:
           parameters[slug] ??
-          searchDefaults[slug] ??
+          (parameters.search ? undefined : searchDefaults[slug]) ??
           DEFAULT_SEARCH_OPTIONS[slug],
       })),
     );
