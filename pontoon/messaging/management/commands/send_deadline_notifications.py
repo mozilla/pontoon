@@ -37,10 +37,14 @@ class Command(BaseCommand):
             locales = []
 
             for project_locale in project.project_locale.all():
-                pl_stats = TranslatedResource.objects.filter(
-                    locale=project_locale.locale,
-                    resource__project=project_locale.project,
-                ).string_stats()
+                pl_stats = (
+                    TranslatedResource.objects.current()
+                    .filter(
+                        locale=project_locale.locale,
+                        resource__project=project_locale.project,
+                    )
+                    .string_stats()
+                )
                 if pl_stats["approved"] < pl_stats["total"]:
                     locales.append(project_locale.locale)
 
