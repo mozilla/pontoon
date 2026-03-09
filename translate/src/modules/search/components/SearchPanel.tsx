@@ -34,7 +34,7 @@ const SearchOption = ({
 }) => {
   return (
     <li
-      className={classNames(`check-box ${slug}`, selected && 'enabled')}
+      className={classNames('check-box', slug, selected && 'enabled')}
       onClick={(ev) => {
         ev.stopPropagation();
         onToggle();
@@ -143,10 +143,6 @@ export function SearchPanel({
     applyOptions();
   }, [applyOptions]);
 
-  const handleRestoreDefaults = useCallback(() => {
-    restoreDefaults();
-  }, [restoreDefaults]);
-
   return (
     <div className='search-panel'>
       <div className='visibility-switch' role='button' onClick={toggleVisible}>
@@ -160,7 +156,7 @@ export function SearchPanel({
           searchOptions={searchOptions}
           onApplyOptions={handleApplyOptions}
           onToggleOption={handleToggleOption}
-          onRestoreDefaults={handleRestoreDefaults}
+          onRestoreDefaults={restoreDefaults}
           onDiscard={handleDiscard}
         />
       ) : null}

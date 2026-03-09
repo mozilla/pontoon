@@ -28,7 +28,18 @@ import {
 
 import { FiltersPanel } from './FiltersPanel';
 import { SearchPanel } from './SearchPanel';
+
 import './SearchBox.css';
+
+/** Returns search option overrides to encode in the URL, omitting values that match the global default. */
+function getSearchUpdates(searchOptions: SearchState): Partial<Location> {
+  return Object.fromEntries(
+    SEARCH_OPTIONS.map(({ slug, default: def }) => [
+      slug,
+      searchOptions[slug] !== def ? searchOptions[slug] : undefined,
+    ]),
+  ) as Partial<Location>;
+}
 
 export type TimeRangeType = {
   from: number;
@@ -48,12 +59,7 @@ type InternalProps = Props & {
 
 export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 
-export type SearchType =
-  | 'search_identifiers'
-  | 'search_exclude_source_strings'
-  | 'search_rejected_translations'
-  | 'search_match_case'
-  | 'search_match_whole_word';
+export type SearchType = (typeof SEARCH_OPTIONS)[number]['slug'];
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
@@ -222,16 +228,10 @@ export function SearchBoxBase({
         dispatch(resetEntities());
         // Only encode values that differ from the default. The goal is to
         // keep URLs shareable regardless of individual profile settings.
-        const searchUpdates = Object.fromEntries(
-          SEARCH_OPTIONS.map(({ slug, default: def }) => [
-            slug,
-            searchOptions[slug] !== def ? searchOptions[slug] : undefined,
-          ]),
-        ) as Partial<Location>;
         parameters.push({
           ...parameters, // Persist all other variables to next state
           search,
-          ...searchUpdates,
+          ...getSearchUpdates(searchOptions),
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),
@@ -250,7 +250,7 @@ export function SearchBoxBase({
     updateSearchOptions(
       SEARCH_OPTIONS.map(({ slug }) => ({
         searchOption: slug,
-        value: searchDefaults?.[slug] ?? DEFAULT_SEARCH_OPTIONS[slug],
+        value: searchDefaults[slug] ?? DEFAULT_SEARCH_OPTIONS[slug],
       })),
     );
   }, [searchDefaults]);
@@ -293,12 +293,6 @@ export function SearchBoxBase({
           status = null;
         }
         dispatch(resetEntities());
-        const searchUpdates = Object.fromEntries(
-          SEARCH_OPTIONS.map(({ slug, default: def }) => [
-            slug,
-            searchOptions[slug] !== def ? searchOptions[slug] : undefined,
-          ]),
-        ) as Partial<Location>;
         parameters.push({
           author: authors.join(','),
           extra: extras.join(','),
@@ -308,7 +302,7 @@ export function SearchBoxBase({
           time: timeRange ? `${timeRange.from}-${timeRange.to}` : null,
           entity: 0, // With the new results, the current entity might not be available anymore.
           list: parameters.list ?? null,
-          ...searchUpdates,
+          ...getSearchUpdates(searchOptions),
         });
       }),
     [dispatch, parameters, search, filters, searchOptions],
@@ -405,7 +399,13 @@ export function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
       search_match_case: userSettings.searchMatchCase,
       search_match_whole_word: userSettings.searchMatchWholeWord,
     }),
-    [userSettings],
+    [
+      userSettings.searchIdentifiers,
+      userSettings.searchExcludeSourceStrings,
+      userSettings.searchRejectedTranslations,
+      userSettings.searchMatchCase,
+      userSettings.searchMatchWholeWord,
+    ],
   );
   const state = {
     searchAndFilters: useAppSelector((state) => state[SEARCH]),

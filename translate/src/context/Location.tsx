@@ -85,7 +85,8 @@ function getSearchParam(
   params: URLSearchParams,
   key: string,
 ): boolean | undefined {
-  return params.has(key) ? params.get(key) !== 'false' : undefined;
+  const val = params.get(key);
+  return val !== null ? val !== 'false' : undefined;
 }
 
 function parse(

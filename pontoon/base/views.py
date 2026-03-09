@@ -293,14 +293,13 @@ def entities(request):
 
     # If search option params are not specified in the URL, read the default
     # value from the model field (avoid specifying the default in two places).
-    search_option_names = (
+    for name in (
         "search_identifiers",
         "search_exclude_source_strings",
         "search_rejected_translations",
         "search_match_case",
         "search_match_whole_word",
-    )
-    for name in search_option_names:
+    ):
         if name not in request.POST:
             form_data[name] = UserProfile._meta.get_field(name).default
 
