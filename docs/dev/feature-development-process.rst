@@ -82,7 +82,7 @@ Testing
 Release
 -------
 
-* Features are first deployed to the development environment for final validation.
+* Features are first deployed to the `development environments <https://pontoon.allizom.org/>`_ for final validation.
 * Once confirmed stable, they go live on production.
 * Deployments are handled by core maintainers and occur as changes are ready (typically immediately after, no strict cadence).
 
@@ -96,4 +96,4 @@ Documentation & Discoverability (as Needed)
 * For major or high-impact features:
 
   * Core team may add in-app announcements.
-  * The contributor might write a blog post on the Mozilla L10n blog.
+  * The contributor might write a blog post on the `Mozilla L10n blog <https://blog.mozilla.org/l10n/>`_.
