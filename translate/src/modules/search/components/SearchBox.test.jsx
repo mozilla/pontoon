@@ -344,14 +344,20 @@ describe('<SearchBoxBase>', () => {
     );
     wrapper.update();
 
-    // Toggle one option on — it auto-applies immediately.
+    // Toggle one option (does not trigger search by itself).
     act(() => {
       wrapper.find('SearchPanel').prop('toggleOption')('search_match_case');
     });
     wrapper.update();
 
-    // The toggled option differs from the global default and should be encoded.
-    // Untouched options still match the default and should be omitted.
+    expect(push).not.toHaveBeenCalled();
+
+    // Applying options encodes values differing from the global default.
+    act(() => {
+      wrapper.find('SearchPanel').prop('applyOptions')();
+    });
+    wrapper.update();
+
     expect(push).toHaveBeenCalledOnce();
     const pushed = push.mock.calls[0][0];
     expect(pushed.search_match_case).toBe(true);
@@ -376,6 +382,11 @@ describe('<SearchBoxBase>', () => {
 
     act(() => {
       wrapper.find('SearchPanel').prop('toggleOption')('search_identifiers');
+    });
+    wrapper.update();
+
+    act(() => {
+      wrapper.find('SearchPanel').prop('applyOptions')();
     });
     wrapper.update();
 

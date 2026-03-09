@@ -10,12 +10,14 @@ import './SearchPanel.css';
 
 type Props = {
   searchOptions: SearchState;
+  applyOptions: () => void;
   restoreDefaults: () => void;
   toggleOption: (searchOption: SearchType) => void;
 };
 
 type SearchPanelProps = {
   searchOptions: SearchState;
+  onApplyOptions: () => void;
   onToggleOption: (searchOption: SearchType, event?: React.MouseEvent) => void;
   onRestoreDefaults: () => void;
   onDiscard: () => void;
@@ -55,6 +57,7 @@ const SEPARATOR_AFTER = new Set([
 
 export function SearchPanelDialog({
   searchOptions,
+  onApplyOptions,
   onToggleOption,
   onRestoreDefaults,
   onDiscard,
@@ -97,12 +100,23 @@ export function SearchPanelDialog({
           </Localized>
         </li>
       </ul>
+
+      <Localized id='search-SearchPanel--apply-search-options'>
+        <button
+          title='Apply Selected Search Options'
+          onClick={onApplyOptions}
+          className='search-button'
+        >
+          {'APPLY SEARCH OPTIONS'}
+        </button>
+      </Localized>
     </div>
   );
 }
 
 export function SearchPanel({
   searchOptions,
+  applyOptions,
   restoreDefaults,
   toggleOption,
 }: Props): React.ReactElement<'div'> | null {
@@ -119,14 +133,17 @@ export function SearchPanel({
   const handleToggleOption = useCallback(
     (searchOption: SearchType, ev?: React.MouseEvent) => {
       ev?.stopPropagation();
-      setVisible(false);
       toggleOption(searchOption);
     },
     [toggleOption],
   );
 
-  const handleRestoreDefaults = useCallback(() => {
+  const handleApplyOptions = useCallback(() => {
     setVisible(false);
+    applyOptions();
+  }, [applyOptions]);
+
+  const handleRestoreDefaults = useCallback(() => {
     restoreDefaults();
   }, [restoreDefaults]);
 
@@ -141,6 +158,7 @@ export function SearchPanel({
       {visible ? (
         <SearchPanelDialog
           searchOptions={searchOptions}
+          onApplyOptions={handleApplyOptions}
           onToggleOption={handleToggleOption}
           onRestoreDefaults={handleRestoreDefaults}
           onDiscard={handleDiscard}

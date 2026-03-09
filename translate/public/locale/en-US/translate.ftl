@@ -687,6 +687,9 @@ search-SearchPanel--heading = SEARCH OPTIONS
 search-SearchPanel--apply-search-options = APPLY SEARCH OPTIONS
     .title = Apply Selected Search Options
 
+search-SearchPanel--restore-default-options = Restore default options
+search-SearchPanel--change-default-search-settings = Change default search settings
+
 ## Time Range Filter
 ## Time Range filter title, input fields and chart.
 

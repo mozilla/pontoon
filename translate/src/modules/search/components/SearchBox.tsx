@@ -217,7 +217,7 @@ export function SearchBoxBase({
   );
 
   const applyOptions = useCallback(
-    (opts: SearchState = searchOptions) =>
+    () =>
       checkUnsavedChanges(() => {
         dispatch(resetEntities());
         // Only encode values that differ from the default. The goal is to
@@ -225,7 +225,7 @@ export function SearchBoxBase({
         const searchUpdates = Object.fromEntries(
           SEARCH_OPTIONS.map(({ slug, default: def }) => [
             slug,
-            opts[slug] !== def ? opts[slug] : undefined,
+            searchOptions[slug] !== def ? searchOptions[slug] : undefined,
           ]),
         ) as Partial<Location>;
         parameters.push({
@@ -241,28 +241,19 @@ export function SearchBoxBase({
   const toggleOption = useCallback(
     (searchOption: SearchType) => {
       const next = !searchOptions[searchOption];
-      const newOpts = { ...searchOptions, [searchOption]: next };
       updateSearchOptions([{ searchOption, value: next }]);
-      applyOptions(newOpts);
     },
-    [searchOptions, applyOptions],
+    [searchOptions],
   );
 
   const restoreDefaults = useCallback(() => {
-    const defaults = Object.fromEntries(
-      SEARCH_OPTIONS.map(({ slug }) => [
-        slug,
-        searchDefaults?.[slug] ?? DEFAULT_SEARCH_OPTIONS[slug],
-      ]),
-    ) as SearchState;
     updateSearchOptions(
       SEARCH_OPTIONS.map(({ slug }) => ({
         searchOption: slug,
-        value: defaults[slug],
+        value: searchDefaults?.[slug] ?? DEFAULT_SEARCH_OPTIONS[slug],
       })),
     );
-    applyOptions(defaults);
-  }, [searchDefaults, applyOptions]);
+  }, [searchDefaults]);
 
   const resetFilters = useCallback(() => {
     updateFilters([
@@ -396,6 +387,7 @@ export function SearchBoxBase({
       />
       <SearchPanel
         searchOptions={searchOptions}
+        applyOptions={applyOptions}
         restoreDefaults={restoreDefaults}
         toggleOption={toggleOption}
       />

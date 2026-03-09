@@ -28,6 +28,7 @@ describe('<SearchPanelDialog>', () => {
     const store = createReduxStore();
     const { container } = mountComponentWithStore(SearchPanelDialog, store, {
       searchOptions,
+      onApplyOptions: vi.fn(),
       onToggleOption: vi.fn(),
       onRestoreDefaults: vi.fn(),
       onDiscard: vi.fn(),
@@ -51,6 +52,7 @@ describe('<SearchPanelDialog>', () => {
           store,
           {
             searchOptions,
+            onApplyOptions: vi.fn(),
             onToggleOption,
             onRestoreDefaults: vi.fn(),
             onDiscard: vi.fn(),
@@ -69,6 +71,7 @@ describe('<SearchPanelDialog>', () => {
     const store = createReduxStore();
     const { getByText } = mountComponentWithStore(SearchPanelDialog, store, {
       searchOptions,
+      onApplyOptions: vi.fn(),
       onToggleOption: vi.fn(),
       onRestoreDefaults,
       onDiscard: vi.fn(),
@@ -78,6 +81,22 @@ describe('<SearchPanelDialog>', () => {
 
     expect(onRestoreDefaults).toHaveBeenCalled();
   });
+
+  it('calls onApplyOptions on click on Apply search options', () => {
+    const onApplyOptions = vi.fn();
+    const store = createReduxStore();
+    const { getByText } = mountComponentWithStore(SearchPanelDialog, store, {
+      searchOptions,
+      onApplyOptions,
+      onToggleOption: vi.fn(),
+      onRestoreDefaults: vi.fn(),
+      onDiscard: vi.fn(),
+    });
+
+    fireEvent.click(getByText('APPLY SEARCH OPTIONS'));
+
+    expect(onApplyOptions).toHaveBeenCalled();
+  });
 });
 
 describe('<SearchPanel>', () => {
@@ -85,6 +104,7 @@ describe('<SearchPanel>', () => {
     const { queryByRole, getByRole } = render(
       <SearchPanel
         searchOptions={searchOptions}
+        applyOptions={vi.fn()}
         restoreDefaults={vi.fn()}
         toggleOption={vi.fn()}
       />,
@@ -95,10 +115,11 @@ describe('<SearchPanel>', () => {
     expect(getByRole('banner')).toHaveTextContent('SEARCH OPTIONS');
   });
 
-  it('hides the panel after selecting an option', () => {
-    const { queryByRole, getByRole, getByText } = render(
+  it('keeps the panel open after toggling an option', () => {
+    const { getByRole, getByText } = render(
       <SearchPanel
         searchOptions={searchOptions}
+        applyOptions={vi.fn()}
         restoreDefaults={vi.fn()}
         toggleOption={vi.fn()}
       />,
@@ -108,6 +129,23 @@ describe('<SearchPanel>', () => {
     expect(getByRole('banner')).toBeInTheDocument();
 
     fireEvent.click(getByText('Match case'));
+    expect(getByRole('banner')).toBeInTheDocument();
+  });
+
+  it('hides the panel after clicking Apply search options', () => {
+    const { queryByRole, getByRole, getByText } = render(
+      <SearchPanel
+        searchOptions={searchOptions}
+        applyOptions={vi.fn()}
+        restoreDefaults={vi.fn()}
+        toggleOption={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(getByRole('button'));
+    expect(getByRole('banner')).toBeInTheDocument();
+
+    fireEvent.click(getByText('APPLY SEARCH OPTIONS'));
     expect(queryByRole('banner')).not.toBeInTheDocument();
   });
 });

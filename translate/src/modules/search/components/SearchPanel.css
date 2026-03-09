@@ -116,4 +116,20 @@
       }
     }
   }
+
+  .search-button {
+    float: right;
+    background: none;
+    border: none;
+    background: var(--button-background-1);
+    color: var(--light-grey-7);
+    font-weight: 300;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    margin-top: 8px;
+
+    &:hover {
+      color: var(--status-translated);
+    }
+  }
 }
