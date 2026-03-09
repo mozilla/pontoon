@@ -65,7 +65,7 @@ Code Review
 
 * Open a pull request targeting the “main” branch.
 * Make sure CI tests pass.
-* Review will be automatically requested from core Pontoon team members.
+* Review is requested from core Pontoon team members.
 * Address feedback on code quality, security, performance, test coverage, and best practices.
 * Once approved, the PR is merged.
 * The associated issue is automatically closed and moved to “Done” on the Roadmap.
