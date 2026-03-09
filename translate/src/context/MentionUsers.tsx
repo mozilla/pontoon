@@ -22,18 +22,13 @@ export function MentionUsersProvider({
   children: React.ReactElement;
 }) {
   const [state, setState] = useState<{
-    projectId: number | undefined;
+    projectId: number;
     mentionUsers: MentionUser[];
-  }>(() => {
-    return {
-      projectId: undefined,
-      mentionUsers: [],
-    };
-  });
+  } | null>(null);
 
   const initMentions = useMemo(
     () => (locale: string, projectId: number) => {
-      if (state.projectId === projectId && state.mentionUsers.length > 0) {
+      if (state?.projectId === projectId && state.mentionUsers.length > 0) {
         return;
       }
       fetchUsersList(locale, projectId).then((list) => {
@@ -46,8 +41,8 @@ export function MentionUsersProvider({
   );
 
   const value = useMemo(
-    () => ({ initMentions, mentionUsers: state.mentionUsers }),
-    [initMentions, state.mentionUsers],
+    () => ({ initMentions, mentionUsers: state?.mentionUsers ?? [] }),
+    [state],
   );
   return (
     <MentionUsers.Provider value={value}>{children}</MentionUsers.Provider>
