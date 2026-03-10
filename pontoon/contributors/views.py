@@ -263,6 +263,12 @@ def toggle_user_profile_attribute(request):
         # Editor settings
         "quality_checks",
         "force_suggestions",
+        # Search settings
+        "search_exclude_source_strings",
+        "search_identifiers",
+        "search_match_case",
+        "search_match_whole_word",
+        "search_rejected_translations",
         # In-app notifications
         "new_string_notifications",
         "project_deadline_notifications",

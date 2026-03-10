@@ -15,13 +15,13 @@
 
     .fas {
       font-size: 17px;
-      margin-left: 1px;
+      margin-left: -5px;
       margin-top: 9px;
     }
 
     .fa-caret-down {
       font-size: 13px;
-      transform: translate(35%, -25%);
+      transform: translate(40%, -25%);
     }
   }
 
@@ -55,14 +55,45 @@
       color: var(--light-grey-7);
       cursor: pointer;
       font-weight: 300;
-      padding: 4px 2px;
+      padding: 2px 4px;
+      line-height: 22px;
 
       &:hover {
         color: var(--white-1);
       }
 
-      &.search_identifiers {
-        margin-top: 10px;
+      &.separator {
+        border-top: 1px solid var(--main-border-1);
+        margin: 5px 0;
+        padding: 0;
+        cursor: default;
+
+        &:hover {
+          color: inherit;
+          background-color: transparent;
+        }
+      }
+
+      &.action-item {
+        color: var(--light-grey-7);
+        font-weight: 300;
+        padding: 2px 4px;
+        line-height: 22px;
+
+        a {
+          color: inherit;
+          display: block;
+          text-decoration: none;
+
+          &:hover {
+            color: var(--white-1);
+          }
+        }
+
+        &:hover {
+          color: var(--white-1);
+          background-color: var(--dark-grey-2);
+        }
       }
 
       &.check-box {
@@ -90,6 +121,9 @@
   }
 
   .search-button {
+    width: 100%;
+    line-height: 22px;
+    padding: 3px;
     float: right;
     background: none;
     border: none;

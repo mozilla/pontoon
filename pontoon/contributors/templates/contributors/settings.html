@@ -358,6 +358,56 @@
         </div>
       </section>
 
+      <section id="default-search-options">
+        <h3>Default search options</h3>
+        <div class="check-list">
+          {{
+            Checkbox.checkbox(
+            'Match case',
+            class='search-match-case',
+            attribute='search_match_case',
+            is_enabled=user.profile.search_match_case,
+            title='Match case when searching')
+          }}
+
+          {{
+            Checkbox.checkbox(
+            'Match whole word',
+            class='search-match-whole-word',
+            attribute='search_match_whole_word',
+            is_enabled=user.profile.search_match_whole_word,
+            title='Match whole word when searching')
+          }}
+
+          {{
+            Checkbox.checkbox(
+            'Search in string identifiers',
+            class='search-identifiers',
+            attribute='search_identifiers',
+            is_enabled=user.profile.search_identifiers,
+            title='Include string identifiers when searching')
+          }}
+
+          {{
+            Checkbox.checkbox(
+            'Include rejected translations',
+            class='search-rejected-translations',
+            attribute='search_rejected_translations',
+            is_enabled=user.profile.search_rejected_translations,
+            title='Include rejected translations when searching')
+          }}
+
+          {{
+            Checkbox.checkbox(
+            'Exclude source strings',
+            class='search-exclude-source-strings',
+            attribute='search_exclude_source_strings',
+            is_enabled=user.profile.search_exclude_source_strings,
+            title='Exclude source strings when searching')
+          }}
+        </div>
+      </section>
+
       <section>
         <h3>Default locales</h3>
         <div id="locale-settings" class="clearfix">

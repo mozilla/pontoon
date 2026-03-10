@@ -12,17 +12,34 @@ import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { resetEntities } from '~/modules/entities/actions';
 import { ProjectState, useProject } from '~/modules/project';
+import { USER } from '~/modules/user';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import type { SearchAndFilters } from '~/modules/search';
 import { SEARCH } from '~/modules/search';
 import type { AppDispatch } from '~/store';
 
 import { getAuthorsAndTimeRangeData } from '../actions';
-import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
+import {
+  FILTERS_EXTRA,
+  FILTERS_STATUS,
+  DEFAULT_SEARCH_OPTIONS,
+  SEARCH_OPTIONS,
+} from '../constants';
 
 import { FiltersPanel } from './FiltersPanel';
 import { SearchPanel } from './SearchPanel';
+
 import './SearchBox.css';
+
+/** Returns search option overrides to encode in the URL, omitting values that match the global default. */
+function getSearchUpdates(searchOptions: SearchState): Partial<Location> {
+  return Object.fromEntries(
+    SEARCH_OPTIONS.map(({ slug, default: def }) => [
+      slug,
+      searchOptions[slug] !== def ? searchOptions[slug] : undefined,
+    ]),
+  ) as Partial<Location>;
+}
 
 export type TimeRangeType = {
   from: number;
@@ -33,6 +50,7 @@ type Props = {
   searchAndFilters: SearchAndFilters;
   parameters: Location;
   project: ProjectState;
+  searchDefaults?: Partial<SearchState>;
 };
 
 type InternalProps = Props & {
@@ -41,12 +59,7 @@ type InternalProps = Props & {
 
 export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 
-export type SearchType =
-  | 'search_identifiers'
-  | 'search_exclude_source_strings'
-  | 'search_rejected_translations'
-  | 'search_match_case'
-  | 'search_match_whole_word';
+export type SearchType = (typeof SEARCH_OPTIONS)[number]['slug'];
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
@@ -91,6 +104,7 @@ export function SearchBoxBase({
   parameters,
   project,
   searchAndFilters,
+  searchDefaults = DEFAULT_SEARCH_OPTIONS,
 }: InternalProps): React.ReactElement<'div'> {
   const { checkUnsavedChanges } = useContext(UnsavedActions);
   const applyOnChange = useRef(false);
@@ -129,13 +143,7 @@ export function SearchBoxBase({
       }
       return next;
     },
-    {
-      search_identifiers: false,
-      search_exclude_source_strings: false,
-      search_rejected_translations: false,
-      search_match_case: false,
-      search_match_whole_word: false,
-    },
+    DEFAULT_SEARCH_OPTIONS,
   );
 
   useEffect(() => {
@@ -162,40 +170,28 @@ export function SearchBoxBase({
   }, [parameters]);
 
   const updateOptionsFromURL = useCallback(() => {
-    const {
-      search_identifiers,
-      search_exclude_source_strings,
-      search_rejected_translations,
-      search_match_case,
-      search_match_whole_word,
-      time,
-    } = parameters;
-    updateSearchOptions([
-      { searchOption: 'search_identifiers', value: search_identifiers },
-      {
-        searchOption: 'search_exclude_source_strings',
-        value: search_exclude_source_strings,
-      },
-      {
-        searchOption: 'search_rejected_translations',
-        value: search_rejected_translations,
-      },
-      {
-        searchOption: 'search_match_case',
-        value: search_match_case,
-      },
-      {
-        searchOption: 'search_match_whole_word',
-        value: search_match_whole_word,
-      },
-    ]);
-    setTimeRange(time);
-  }, [parameters]);
+    // undefined = parameter not provided in the URL.
+    // If there's an active search in the URL, use the hardcoded global default
+    // so the UI reflects the settings actually used for that search.
+    // If there's no active search, fall back to profile defaults so the user
+    // sees their preferred settings as a starting point.
+    updateSearchOptions(
+      SEARCH_OPTIONS.map(({ slug }) => ({
+        searchOption: slug,
+        value:
+          parameters[slug] ??
+          (parameters.search ? undefined : searchDefaults[slug]) ??
+          DEFAULT_SEARCH_OPTIONS[slug],
+      })),
+    );
+    setTimeRange(parameters.time);
+  }, [parameters, searchDefaults]);
 
   // When the URL changes, for example from links in the ResourceProgress
   // component, reload the filters and search options from the URL parameters.
+  // Also re-run when searchDefaults changes.
   useEffect(updateFiltersFromURL, [parameters]);
-  useEffect(updateOptionsFromURL, [parameters]);
+  useEffect(updateOptionsFromURL, [parameters, searchDefaults]);
 
   const mounted = useRef(false);
   useEffect(() => {
@@ -226,6 +222,22 @@ export function SearchBoxBase({
     [filters],
   );
 
+  const applyOptions = useCallback(
+    () =>
+      checkUnsavedChanges(() => {
+        dispatch(resetEntities());
+        // Only encode values that differ from the default. The goal is to
+        // keep URLs shareable regardless of individual profile settings.
+        parameters.push({
+          ...parameters, // Persist all other variables to next state
+          search,
+          ...getSearchUpdates(searchOptions),
+          entity: 0, // With the new results, the current entity might not be available anymore.
+        });
+      }),
+    [dispatch, parameters, search, searchOptions],
+  );
+
   const toggleOption = useCallback(
     (searchOption: SearchType) => {
       const next = !searchOptions[searchOption];
@@ -233,6 +245,15 @@ export function SearchBoxBase({
     },
     [searchOptions],
   );
+
+  const restoreDefaults = useCallback(() => {
+    updateSearchOptions(
+      SEARCH_OPTIONS.map(({ slug }) => ({
+        searchOption: slug,
+        value: searchDefaults[slug] ?? DEFAULT_SEARCH_OPTIONS[slug],
+      })),
+    );
+  }, [searchDefaults]);
 
   const resetFilters = useCallback(() => {
     updateFilters([
@@ -262,31 +283,6 @@ export function SearchBoxBase({
     dispatch(getAuthorsAndTimeRangeData(locale, project, resource));
   }, [parameters]);
 
-  const applyOptions = useCallback(
-    () =>
-      checkUnsavedChanges(() => {
-        const {
-          search_identifiers,
-          search_exclude_source_strings,
-          search_rejected_translations,
-          search_match_case,
-          search_match_whole_word,
-        } = searchOptions;
-        dispatch(resetEntities());
-        parameters.push({
-          ...parameters, // Persist all other variables to next state
-          search,
-          search_identifiers: search_identifiers,
-          search_exclude_source_strings: search_exclude_source_strings,
-          search_rejected_translations: search_rejected_translations,
-          search_match_case: search_match_case,
-          search_match_whole_word: search_match_whole_word,
-          entity: 0, // With the new results, the current entity might not be available anymore.
-        });
-      }),
-    [dispatch, parameters, search, searchOptions],
-  );
-
   const applyFilters = useCallback(
     () =>
       checkUnsavedChanges(() => {
@@ -306,9 +302,10 @@ export function SearchBoxBase({
           time: timeRange ? `${timeRange.from}-${timeRange.to}` : null,
           entity: 0, // With the new results, the current entity might not be available anymore.
           list: parameters.list ?? null,
+          ...getSearchUpdates(searchOptions),
         });
       }),
-    [dispatch, parameters, search, filters],
+    [dispatch, parameters, search, filters, searchOptions],
   );
 
   useEffect(() => {
@@ -364,7 +361,6 @@ export function SearchBoxBase({
         onKeyDown={(ev) => {
           if (ev.key === 'Enter') {
             applyFilters();
-            applyOptions();
           }
         }}
       />
@@ -386,6 +382,7 @@ export function SearchBoxBase({
       <SearchPanel
         searchOptions={searchOptions}
         applyOptions={applyOptions}
+        restoreDefaults={restoreDefaults}
         toggleOption={toggleOption}
       />
     </div>
@@ -393,10 +390,28 @@ export function SearchBoxBase({
 }
 
 export function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
+  const userSettings = useAppSelector((state) => state[USER].settings);
+  const searchDefaults = useMemo(
+    () => ({
+      search_identifiers: userSettings.searchIdentifiers,
+      search_exclude_source_strings: userSettings.searchExcludeSourceStrings,
+      search_rejected_translations: userSettings.searchRejectedTranslations,
+      search_match_case: userSettings.searchMatchCase,
+      search_match_whole_word: userSettings.searchMatchWholeWord,
+    }),
+    [
+      userSettings.searchIdentifiers,
+      userSettings.searchExcludeSourceStrings,
+      userSettings.searchRejectedTranslations,
+      userSettings.searchMatchCase,
+      userSettings.searchMatchWholeWord,
+    ],
+  );
   const state = {
     searchAndFilters: useAppSelector((state) => state[SEARCH]),
     parameters: useContext(Location),
     project: useProject(),
+    searchDefaults,
   };
 
   return <SearchBoxBase {...state} dispatch={useAppDispatch()} />;

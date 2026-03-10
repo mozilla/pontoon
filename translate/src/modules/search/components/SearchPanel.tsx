@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import { SEARCH_OPTIONS } from '../constants';
@@ -11,13 +11,15 @@ import './SearchPanel.css';
 type Props = {
   searchOptions: SearchState;
   applyOptions: () => void;
+  restoreDefaults: () => void;
   toggleOption: (searchOption: SearchType) => void;
 };
 
 type SearchPanelProps = {
-  selectedSearchOptions: SearchState;
+  searchOptions: SearchState;
   onApplyOptions: () => void;
   onToggleOption: (searchOption: SearchType, event?: React.MouseEvent) => void;
+  onRestoreDefaults: () => void;
   onDiscard: () => void;
 };
 
@@ -32,7 +34,7 @@ const SearchOption = ({
 }) => {
   return (
     <li
-      className={classNames(`check-box ${slug}`, selected && 'enabled')}
+      className={classNames('check-box', slug, selected && 'enabled')}
       onClick={(ev) => {
         ev.stopPropagation();
         onToggle();
@@ -48,10 +50,16 @@ const SearchOption = ({
   );
 };
 
+const SEPARATOR_AFTER = new Set([
+  'search_match_whole_word',
+  'search_exclude_source_strings',
+]);
+
 export function SearchPanelDialog({
-  selectedSearchOptions,
+  searchOptions,
   onApplyOptions,
   onToggleOption,
+  onRestoreDefaults,
   onDiscard,
 }: SearchPanelProps): React.ReactElement<'div'> {
   const ref = React.useRef(null);
@@ -64,13 +72,35 @@ export function SearchPanelDialog({
       </Localized>
       <ul>
         {SEARCH_OPTIONS.map((search, i) => (
-          <SearchOption
-            onToggle={() => onToggleOption(search.slug)}
-            searchOption={search}
-            key={i}
-            selected={selectedSearchOptions[search.slug] ?? false}
-          />
+          <React.Fragment key={i}>
+            <SearchOption
+              onToggle={() => onToggleOption(search.slug)}
+              searchOption={search}
+              selected={searchOptions[search.slug] ?? false}
+            />
+            {SEPARATOR_AFTER.has(search.slug) && (
+              <li className='separator' role='separator' />
+            )}
+          </React.Fragment>
         ))}
+        <li
+          className='action-item'
+          onClick={(ev) => {
+            ev.stopPropagation();
+            onRestoreDefaults();
+          }}
+        >
+          <Localized id='search-SearchPanel--restore-default-options'>
+            <span>{'Restore default options'}</span>
+          </Localized>
+        </li>
+        <li className='action-item'>
+          <Localized id='search-SearchPanel--change-default-search-settings'>
+            <a href='/settings/#default-search-options'>
+              {'Change default search settings'}
+            </a>
+          </Localized>
+        </li>
       </ul>
 
       <Localized id='search-SearchPanel--apply-search-options'>
@@ -89,18 +119,10 @@ export function SearchPanelDialog({
 export function SearchPanel({
   searchOptions,
   applyOptions,
+  restoreDefaults,
   toggleOption,
 }: Props): React.ReactElement<'div'> | null {
   const [visible, setVisible] = useState(false);
-  // selectedSearchOptions maintains the visual state of the checkboxes, even on discard
-  const [selectedSearchOptions, setSelectedSearchOptions] =
-    useState(searchOptions);
-
-  useEffect(() => {
-    if (visible) {
-      setSelectedSearchOptions(searchOptions);
-    }
-  }, [visible, searchOptions]);
 
   const toggleVisible = useCallback(() => {
     setVisible((prev) => !prev);
@@ -113,10 +135,6 @@ export function SearchPanel({
   const handleToggleOption = useCallback(
     (searchOption: SearchType, ev?: React.MouseEvent) => {
       ev?.stopPropagation();
-      setSelectedSearchOptions((prev) => ({
-        ...prev,
-        [searchOption]: !prev[searchOption],
-      }));
       toggleOption(searchOption);
     },
     [toggleOption],
@@ -137,9 +155,10 @@ export function SearchPanel({
       </div>
       {visible ? (
         <SearchPanelDialog
-          selectedSearchOptions={selectedSearchOptions}
+          searchOptions={searchOptions}
           onApplyOptions={handleApplyOptions}
           onToggleOption={handleToggleOption}
+          onRestoreDefaults={restoreDefaults}
           onDiscard={handleDiscard}
         />
       ) : null}
