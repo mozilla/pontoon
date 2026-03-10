@@ -62,6 +62,7 @@ Contents
    dev/first-contribution
    dev/setup
    dev/contributing
+   dev/feature-development-process
    admin/deployment
    admin/maintenance
    user/localizing-your-projects
