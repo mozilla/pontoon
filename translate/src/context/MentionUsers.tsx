@@ -28,7 +28,7 @@ export function MentionUsersProvider({
 
   const initMentions = useMemo(
     () => (locale: string, projectId: number) => {
-      if (state?.projectId === projectId && state.mentionUsers.length > 0) {
+      if (state?.projectId === projectId) {
         return;
       }
       fetchUsersList(locale, projectId).then((list) => {
