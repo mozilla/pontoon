@@ -7,7 +7,7 @@ type MentionUsers = {
    *
    * May be called multiple times, but data will only be fetched once.
    */
-  initMentions(): void;
+  initMentions(locale: string, projectId: number): void;
   mentionUsers: MentionUser[];
 };
 
@@ -21,18 +21,28 @@ export function MentionUsersProvider({
 }: {
   children: React.ReactElement;
 }) {
-  const [mentionUsers, setUsers] = useState<MentionUser[]>([]);
-  const [initMentions, setInit] = useState(() => () => {
-    setInit(() => () => {});
-    fetchUsersList().then((list) => {
-      if (Array.isArray(list)) {
-        setUsers(list);
+  const [state, setState] = useState<{
+    projectId: number;
+    mentionUsers: MentionUser[];
+  } | null>(null);
+
+  const initMentions = useMemo(
+    () => (locale: string, projectId: number) => {
+      if (state?.projectId === projectId) {
+        return;
       }
-    });
-  });
+      fetchUsersList(locale, projectId).then((list) => {
+        if (Array.isArray(list)) {
+          setState({ projectId, mentionUsers: list });
+        }
+      });
+    },
+    [],
+  );
+
   const value = useMemo(
-    () => ({ initMentions, mentionUsers }),
-    [initMentions, mentionUsers],
+    () => ({ initMentions, mentionUsers: state?.mentionUsers ?? [] }),
+    [state],
   );
   return (
     <MentionUsers.Provider value={value}>{children}</MentionUsers.Provider>
