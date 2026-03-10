@@ -96,7 +96,9 @@ export function SearchPanelDialog({
         </li>
         <li className='action-item'>
           <Localized id='search-SearchPanel--change-default-search-settings'>
-            <a href='/settings/#search'>{'Change default search settings'}</a>
+            <a href='/settings/#default-search-options'>
+              {'Change default search settings'}
+            </a>
           </Localized>
         </li>
       </ul>

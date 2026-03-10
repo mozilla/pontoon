@@ -301,7 +301,7 @@ def entities(request):
         "search_match_whole_word",
     ):
         if name not in request.POST:
-            form_data[name] = UserProfile._meta.get_field(name).default
+            form_data[name] = UserProfile._meta.get_field(name).get_default()
 
     try:
         entities = Entity.for_project_locale(request.user, project, locale, **form_data)
