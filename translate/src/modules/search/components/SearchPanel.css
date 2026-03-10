@@ -15,13 +15,13 @@
 
     .fas {
       font-size: 17px;
-      margin-left: 1px;
+      margin-left: -5px;
       margin-top: 9px;
     }
 
     .fa-caret-down {
       font-size: 13px;
-      transform: translate(35%, -25%);
+      transform: translate(40%, -25%);
     }
   }
 
