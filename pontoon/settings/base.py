@@ -821,6 +821,7 @@ STATICFILES_FINDERS = (
 STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
+    ("docs", os.path.join(ROOT, "documentation", "site")),
 ]
 
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")
@@ -939,7 +940,10 @@ SECURE_SSL_REDIRECT = (
 )
 
 # Content-Security-Policy headers
-CSP_DEFAULT_SRC = ("'none'",)
+CSP_DEFAULT_SRC = (
+    # Needed for Docs
+    "'self'",
+)
 CSP_FRAME_SRC = ("https:",)
 CSP_WORKER_SRC = (
     "https:",
@@ -951,7 +955,11 @@ CSP_CONNECT_SRC = (
     "https://bugzilla.mozilla.org/rest/bug",
     "https://region1.google-analytics.com/g/collect",
 )
-CSP_FONT_SRC = ("'self'",)
+CSP_FONT_SRC = (
+    "'self'",
+    # Needed for Docs
+    "https://fonts.gstatic.com",
+)
 CSP_IMG_SRC = (
     "'self'",
     "https:",
@@ -968,10 +976,18 @@ CSP_SCRIPT_SRC = (
     # Needed for Google Analytics
     "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
     "https://www.googletagmanager.com/gtag/js",
+    # Needed for Docs
+    "'sha256-apoQPHefCNWjxbCm+HzVDOAW4CSVWhY7VylQjgOFyfk='",
+    "'sha256-DrEMJJ29sL7vIloQzly+VUGMxKcBTMII+OfW7Y8AkG4='",
+    "'sha256-/8wPdzX9q0NNJXyA5lzsLojXFpkeaXVxhbfkUOQaWy8='",
+    "'sha256-/K9p2JtEqCycL2fSbEonMakkteWpAHv57x2wndLqMNo='",
+    "'sha256-/nhm8p50KJxvwWLggwJ1OF8Xgq5W/b3iKECITLASfOg='",
 )
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
+    # Needed for Docs
+    "https://fonts.googleapis.com",
 )
 
 # Needed if site not hosted on HTTPS domains (like local setup)
