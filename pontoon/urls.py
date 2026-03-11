@@ -1,14 +1,23 @@
+import os
+
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import logout
-from django.urls import include, path, register_converter
+from django.http import HttpResponseRedirect
+from django.urls import include, path, re_path, register_converter
 from django.urls.converters import StringConverter
 from django.views.generic import RedirectView, TemplateView
+from django.views.static import serve
 
 from pontoon.teams.views import team
 
 
 class LocaleConverter(StringConverter):
     regex = r"[A-Za-z0-9\-\@\.]+"
+
+
+def docs_dir_index(request, path=""):
+    return HttpResponseRedirect(f"/docs/{path}index.html")
 
 
 register_converter(LocaleConverter, "locale")
@@ -50,6 +59,14 @@ urlpatterns = [
     path(
         "favicon.ico",
         RedirectView.as_view(url="/static/img/favicon.ico", permanent=True),
+    ),
+    # Docs
+    path("docs/", docs_dir_index),
+    re_path(r"^docs/(?P<path>.+/)$", docs_dir_index),
+    path(
+        "docs/<path:path>",
+        serve,
+        {"document_root": os.path.join(settings.STATIC_ROOT, "docs")},
     ),
     # Legacy
     path("in-context/", RedirectView.as_view(url="/", permanent=True)),
