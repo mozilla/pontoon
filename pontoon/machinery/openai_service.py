@@ -40,7 +40,7 @@ class OpenAIService:
 
         informal = textwrap.dedent(
             f"""{intro_text}
-            Revise the {target_language} translation to use simpler language,
+            Revise the {target_language} translation to use simpler language.
             {common_rules}
             3) Clarity and Simplicity: keep wording straightforward and consistent.
             Output only the revised translation."""
