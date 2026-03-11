@@ -22,7 +22,7 @@ class OpenAIService:
                 f"The target language '{target_language_name}' is not supported."
             )
 
-        intro_text = f"Refine the {target_language} machine translation to make it {characteristic}."
+        intro_text = f"Refine the {target_language} machine translation below to make it {characteristic}."
 
         common_rules = textwrap.dedent(
             """Follow these rules IN ORDER OF PRIORITY:
@@ -78,7 +78,7 @@ class OpenAIService:
         # Separate the instruction from the data.
         # It makes it hard for injected text to masquerade as instructions.
         user_prompt = (
-            f"Refine the {target_language} machine translation below to make it {characteristic}.\n\n"
+            f"{intro_text}\n\n"
             f"ENGLISH SOURCE:\n{english_text}\n\n"
             f"MACHINE TRANSLATION TO REFINE:\n{translated_text}"
         )
