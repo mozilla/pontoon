@@ -22,7 +22,7 @@ class OpenAIService:
                 f"The target language '{target_language_name}' is not supported."
             )
 
-        intro_text = f"Refine the {target_language_name} machine translation to make it {characteristic}."
+        intro_text = f"Refine the {target_language} machine translation to make it {characteristic}."
 
         common_rules = textwrap.dedent(
             """Follow these rules IN ORDER OF PRIORITY:
