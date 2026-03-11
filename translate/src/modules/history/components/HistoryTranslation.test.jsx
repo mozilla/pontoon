@@ -135,7 +135,7 @@ describe('<HistoryTranslationComponent>', () => {
 
   describe('review title', () => {
     it('returns the correct review title when approved and approved user is available', () => {
-      const ApprovedTitle = 'test-approved';
+      const approvedTitle = 'test-approved';
       const translation = {
         ...DEFAULT_TRANSLATION,
         ...{ approved: true, approvedUser: 'Cespenar' },
@@ -144,7 +144,7 @@ describe('<HistoryTranslationComponent>', () => {
       const { getAllByTitle } = render(
         <MockLocalizationProvider
           resource={`history-translation--approved =
-                      .title = ${ApprovedTitle}`}
+                      .title = ${approvedTitle}`}
         >
           <HistoryTranslationBase
             translation={translation}
@@ -154,11 +154,11 @@ describe('<HistoryTranslationComponent>', () => {
         </MockLocalizationProvider>,
       );
 
-      expect(getAllByTitle(ApprovedTitle)).toHaveLength(2);
+      expect(getAllByTitle(approvedTitle)).toHaveLength(2);
     });
 
     it('returns the correct review title when approved and approved user is not available', () => {
-      const ApprovedAnonymousTitle = 'test-approved-anonymous';
+      const approvedAnonymousTitle = 'test-approved-anonymous';
       const translation = {
         ...DEFAULT_TRANSLATION,
         ...{ approved: true },
@@ -166,7 +166,7 @@ describe('<HistoryTranslationComponent>', () => {
       const { getAllByTitle } = render(
         <MockLocalizationProvider
           resource={`history-translation--approved-anonymous =
-                      .title = ${ApprovedAnonymousTitle}`}
+                      .title = ${approvedAnonymousTitle}`}
         >
           <HistoryTranslationBase
             translation={translation}
@@ -176,11 +176,11 @@ describe('<HistoryTranslationComponent>', () => {
         </MockLocalizationProvider>,
       );
 
-      expect(getAllByTitle(ApprovedAnonymousTitle)).toHaveLength(2);
+      expect(getAllByTitle(approvedAnonymousTitle)).toHaveLength(2);
     });
 
     it('returns the correct review title when rejected and rejected user is available', () => {
-      const RejectedTitle = 'test-rejected';
+      const rejectedTitle = 'test-rejected';
       const translation = {
         ...DEFAULT_TRANSLATION,
         ...{ rejected: true, rejectedUser: 'Bhaal' },
@@ -188,7 +188,7 @@ describe('<HistoryTranslationComponent>', () => {
       const { getAllByTitle } = render(
         <MockLocalizationProvider
           resource={`history-translation--rejected =
-                      .title = ${RejectedTitle}`}
+                      .title = ${rejectedTitle}`}
         >
           <HistoryTranslationBase
             translation={translation}
@@ -198,11 +198,11 @@ describe('<HistoryTranslationComponent>', () => {
         </MockLocalizationProvider>,
       );
 
-      expect(getAllByTitle(RejectedTitle)).toHaveLength(2);
+      expect(getAllByTitle(rejectedTitle)).toHaveLength(2);
     });
 
     it('returns the correct review title when rejected and rejected user is not available', () => {
-      const RejectedAnonymousTitle = 'test-rejected-anonymous';
+      const rejectedAnonymousTitle = 'test-rejected-anonymous';
       const translation = {
         ...DEFAULT_TRANSLATION,
         ...{ rejected: true },
@@ -210,7 +210,7 @@ describe('<HistoryTranslationComponent>', () => {
       const { getAllByTitle } = render(
         <MockLocalizationProvider
           resource={`history-translation--rejected-anonymous =
-                      .title = ${RejectedAnonymousTitle}`}
+                      .title = ${rejectedAnonymousTitle}`}
         >
           <HistoryTranslationBase
             translation={translation}
@@ -220,15 +220,15 @@ describe('<HistoryTranslationComponent>', () => {
         </MockLocalizationProvider>,
       );
 
-      expect(getAllByTitle(RejectedAnonymousTitle)).toHaveLength(2);
+      expect(getAllByTitle(rejectedAnonymousTitle)).toHaveLength(2);
     });
 
     it('returns the correct approver title when neither approved or rejected', () => {
-      const UnreviewedTitle = 'test-unreviewed';
+      const unreviewedTitle = 'test-unreviewed';
       const { getAllByTitle } = render(
         <MockLocalizationProvider
           resource={`history-translation--unreviewed =
-                      .title = ${UnreviewedTitle}`}
+                      .title = ${unreviewedTitle}`}
         >
           <HistoryTranslationBase
             translation={DEFAULT_TRANSLATION}
@@ -237,7 +237,7 @@ describe('<HistoryTranslationComponent>', () => {
           />
         </MockLocalizationProvider>,
       );
-      expect(getAllByTitle(UnreviewedTitle)).toHaveLength(2);
+      expect(getAllByTitle(unreviewedTitle)).toHaveLength(2);
     });
   });
 
@@ -281,13 +281,13 @@ describe('<HistoryTranslationComponent>', () => {
   });
 
   describe('status', () => {
-    const Approve = 'Approve';
-    const Approved = 'Approved';
-    const Unapprove = 'Unapprove';
-    const NotApproved = 'Not approved';
-    const Reject = 'Reject';
-    const UnReject = 'Unreject';
-    const NotRejected = 'Not rejected';
+    const approve = 'Approve';
+    const approved = 'Approved';
+    const unapprove = 'Unapprove';
+    const notApproved = 'Not approved';
+    const reject = 'Reject';
+    const unReject = 'Unreject';
+    const notRejected = 'Not rejected';
 
     it('shows the correct buttons for approved translations', () => {
       const translation = {
@@ -302,10 +302,10 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(queryByRole('button', { name: Approve })).toBeNull();
-      expect(getByRole('button', { name: Approved })).toBeDisabled();
-      expect(getByRole('button', { name: NotRejected })).toBeDisabled();
-      expect(queryByRole('button', { name: UnReject })).toBeNull();
+      expect(queryByRole('button', { name: approve })).toBeNull();
+      expect(getByRole('button', { name: approved })).toBeDisabled();
+      expect(getByRole('button', { name: notRejected })).toBeDisabled();
+      expect(queryByRole('button', { name: unReject })).toBeNull();
     });
 
     it('shows the correct buttons for rejected translations', () => {
@@ -321,10 +321,10 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(getByRole('button', { name: NotApproved })).toBeDisabled();
-      expect(queryByRole('button', { name: Unapprove })).toBeNull();
-      expect(queryByRole('button', { name: Reject })).toBeNull();
-      expect(getByRole('button', { name: UnReject })).not.toBeDisabled();
+      expect(getByRole('button', { name: notApproved })).toBeDisabled();
+      expect(queryByRole('button', { name: unapprove })).toBeNull();
+      expect(queryByRole('button', { name: reject })).toBeNull();
+      expect(getByRole('button', { name: unReject })).not.toBeDisabled();
     });
 
     it('shows the correct buttons for unreviewed translations', () => {
@@ -335,17 +335,17 @@ describe('<HistoryTranslationComponent>', () => {
           user={DEFAULT_USER}
         />,
       );
-      expect(getByRole('button', { name: NotApproved })).toBeDisabled();
-      expect(queryByRole('button', { name: Unapprove })).toBeNull();
-      expect(getByRole('button', { name: Reject })).not.toBeDisabled();
-      expect(queryByRole('button', { name: UnReject })).toBeNull();
+      expect(getByRole('button', { name: notApproved })).toBeDisabled();
+      expect(queryByRole('button', { name: unapprove })).toBeNull();
+      expect(getByRole('button', { name: reject })).not.toBeDisabled();
+      expect(queryByRole('button', { name: unReject })).toBeNull();
     });
   });
 
   describe('permissions', () => {
-    const RejectButton = 'Reject';
-    const ApproveButton = 'Approve';
-    const DeleteButton = 'Delete';
+    const rejectButton = 'Reject';
+    const approveButton = 'Approve';
+    const deleteButton = 'Delete';
 
     it('allows the user to reject their own unapproved translation', () => {
       const { getByRole, queryByRole } = render(
@@ -356,8 +356,8 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      getByRole('button', { name: RejectButton });
-      expect(queryByRole('button', { name: ApproveButton })).toBeNull();
+      getByRole('button', { name: rejectButton });
+      expect(queryByRole('button', { name: approveButton })).toBeNull();
     });
 
     it('forbids the user to reject their own approved translation', () => {
@@ -370,8 +370,8 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(queryByRole('button', { name: RejectButton })).toBeNull();
-      expect(queryByRole('button', { name: ApproveButton })).toBeNull();
+      expect(queryByRole('button', { name: rejectButton })).toBeNull();
+      expect(queryByRole('button', { name: approveButton })).toBeNull();
     });
 
     it('allows translators to review the translation', () => {
@@ -384,8 +384,8 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      getByRole('button', { name: RejectButton });
-      getByRole('button', { name: ApproveButton });
+      getByRole('button', { name: rejectButton });
+      getByRole('button', { name: approveButton });
     });
 
     it('allows translators to delete the rejected translation', () => {
@@ -399,7 +399,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      getByRole('button', { name: DeleteButton });
+      getByRole('button', { name: deleteButton });
     });
 
     it('forbids translators to delete non-rejected translation', () => {
@@ -413,7 +413,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(queryByRole('button', { name: DeleteButton })).toBeNull();
+      expect(queryByRole('button', { name: deleteButton })).toBeNull();
     });
 
     it('allows the user to delete their own rejected translation', () => {
@@ -426,7 +426,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      getByRole('button', { name: DeleteButton });
+      getByRole('button', { name: deleteButton });
     });
 
     it('forbids the user to delete rejected translation of another user', () => {
@@ -439,7 +439,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(queryByRole('button', { name: DeleteButton })).toBeNull();
+      expect(queryByRole('button', { name: deleteButton })).toBeNull();
     });
   });
 
@@ -474,9 +474,9 @@ describe('<HistoryTranslationComponent>', () => {
       expect(container.querySelector('.default')).toBeInTheDocument();
       expect(container.querySelector('.diff-visible')).toBeNull();
 
-      const DiffToggle = getByRole('button', { name: 'DIFF' });
-      expect(DiffToggle).toHaveClass('off');
-      expect(DiffToggle).not.toHaveClass('on');
+      const diffToggle = getByRole('button', { name: 'DIFF' });
+      expect(diffToggle).toHaveClass('off');
+      expect(diffToggle).not.toHaveClass('on');
     });
 
     it('shows translation diff and the Hide diff button for a non-first translation if diff visible', () => {
@@ -489,15 +489,15 @@ describe('<HistoryTranslationComponent>', () => {
           index={1}
         />,
       );
-      const DiffToggle = getByRole('button', { name: 'DIFF' });
+      const diffToggle = getByRole('button', { name: 'DIFF' });
 
-      fireEvent.click(DiffToggle);
+      fireEvent.click(diffToggle);
 
       expect(container.querySelector('.default')).toBeNull();
       expect(container.querySelector('.diff-visible')).toBeInTheDocument();
 
-      expect(DiffToggle).not.toHaveClass('off');
-      expect(DiffToggle).toHaveClass('on');
+      expect(diffToggle).not.toHaveClass('off');
+      expect(diffToggle).toHaveClass('on');
     });
   });
 });

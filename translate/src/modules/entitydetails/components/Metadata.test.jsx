@@ -39,7 +39,7 @@ const TERMS = {
 const USER = {
   user: 'A_Ludgate',
 };
-const EntityCommentTitle = 'COMMENT';
+const entityCommentTitle = 'COMMENT';
 
 function createMetadata(entity = ENTITY) {
   const store = createReduxStore({ user: USER });
@@ -59,7 +59,7 @@ describe('<Metadata>', () => {
     const { getByText } = createMetadata();
 
     getByText(SRC_LOC);
-    getByText(EntityCommentTitle);
+    getByText(entityCommentTitle);
     getByText(ENTITY.comment);
     getByText(ENTITY.path);
   });
@@ -70,13 +70,13 @@ describe('<Metadata>', () => {
       comment: '',
     });
     getByText(SRC_LOC);
-    expect(queryByText(EntityCommentTitle)).toBeNull();
+    expect(queryByText(entityCommentTitle)).toBeNull();
   });
 
   it('does not require a source', () => {
     const { queryByText, getByText } = createMetadata({ ...ENTITY, meta: [] });
     expect(queryByText(SRC_LOC)).toBeNull();
-    getByText(EntityCommentTitle);
+    getByText(entityCommentTitle);
     getByText(ENTITY.comment);
   });
 
