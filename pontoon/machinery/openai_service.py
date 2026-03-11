@@ -75,8 +75,13 @@ class OpenAIService:
         if system_message is None:
             raise ValueError(f"Unrecognized characteristic: '{characteristic}'")
 
-        # Construct the user prompt with the language name
-        user_prompt = f"Refine the following {target_language} machine translation to make it {characteristic}: '{translated_text}' based on the original English text: '{english_text}'."
+        # Separate the instruction from the data.
+        # It makes it hard for injected text to masquerade as instructions.
+        user_prompt = (
+            f"Refine the {target_language} machine translation below to make it {characteristic}.\n\n"
+            f"ENGLISH SOURCE:\n{english_text}\n\n"
+            f"MACHINE TRANSLATION TO REFINE:\n{translated_text}"
+        )
 
         # Call the OpenAI API with the constructed prompt
         response = self.client.chat.completions.create(
