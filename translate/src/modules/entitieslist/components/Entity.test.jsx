@@ -1,9 +1,10 @@
-import { mount, shallow } from 'enzyme';
 import React from 'react';
 
 import * as hookModule from '~/hooks/useTranslator';
 import { Entity } from './Entity';
-import { vitest } from 'vitest';
+import { it, vitest } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
+import { MockLocalizationProvider } from '~/test/utils';
 
 beforeAll(() => {
   vitest.mock('~/hooks/useTranslator', () => ({
@@ -61,67 +62,70 @@ describe('<Entity>', () => {
       warnings: ['warning'],
     },
   };
+  const WrapEntity = (props) => {
+    return (
+      <MockLocalizationProvider>
+        <Entity {...props} />
+      </MockLocalizationProvider>
+    );
+  };
 
   it('renders the source string and the first translation', () => {
-    const wrapper = shallow(<Entity entity={ENTITY_A} parameters={{}} />);
-
-    const contents = wrapper.find('Translation');
-    expect(contents.first().props().content).toContain(ENTITY_A.original);
-    expect(contents.last().props().content).toContain(
-      ENTITY_A.translation.string,
+    const { getByText } = render(
+      <WrapEntity entity={ENTITY_A} parameters={{}} />,
     );
+
+    getByText(ENTITY_A.original);
+    getByText(ENTITY_A.translation.string);
   });
 
-  it('shows the correct status class', () => {
-    let wrapper = shallow(<Entity entity={ENTITY_A} parameters={{}} />);
-    expect(wrapper.find('.approved')).toHaveLength(1);
+  it.each([
+    { entity: ENTITY_A, classname: 'approved' },
+    { entity: ENTITY_B, classname: 'pretranslated' },
+    { entity: ENTITY_C, classname: 'missing' },
+    { entity: ENTITY_D, classname: 'errors' },
+    { entity: ENTITY_E, classname: 'warnings' },
+  ])('renders $classname state correctly', ({ entity, classname }) => {
+    const { container } = render(
+      <WrapEntity entity={entity} parameters={{}} />,
+    );
 
-    wrapper = shallow(<Entity entity={ENTITY_B} parameters={{}} />);
-    expect(wrapper.find('.pretranslated')).toHaveLength(1);
-
-    wrapper = shallow(<Entity entity={ENTITY_C} parameters={{}} />);
-    expect(wrapper.find('.missing')).toHaveLength(1);
-
-    wrapper = shallow(<Entity entity={ENTITY_D} parameters={{}} />);
-    expect(wrapper.find('.errors')).toHaveLength(1);
-
-    wrapper = shallow(<Entity entity={ENTITY_E} parameters={{}} />);
-    expect(wrapper.find('.warnings')).toHaveLength(1);
+    expect(container.querySelector(`.${classname}`)).toBeInTheDocument();
   });
 
   it('calls the selectEntity function on click on li', () => {
     const selectEntityFn = vi.fn();
-    const wrapper = mount(
-      <Entity
+    const { getByRole } = render(
+      <WrapEntity
         entity={ENTITY_A}
         selectEntity={selectEntityFn}
         parameters={{}}
       />,
     );
-    wrapper.find('li').simulate('click');
+    fireEvent.click(getByRole('button'));
     expect(selectEntityFn).toHaveBeenCalledOnce();
   });
 
   it('calls the toggleForBatchEditing function on click on .status', () => {
     hookModule.useTranslator.mockReturnValue(true);
     const toggleForBatchEditingFn = vi.fn();
-    const wrapper = mount(
-      <Entity
+    const { getByRole } = render(
+      <WrapEntity
         entity={ENTITY_A}
         isReadOnlyEditor={false}
         toggleForBatchEditing={toggleForBatchEditingFn}
         parameters={{}}
       />,
     );
-    wrapper.find('.status').simulate('click');
+    fireEvent.click(getByRole('checkbox'));
     expect(toggleForBatchEditingFn).toHaveBeenCalledOnce();
   });
 
   it('does not call the toggleForBatchEditing function if user not translator', () => {
     const toggleForBatchEditingFn = vi.fn();
     const selectEntityFn = vi.fn();
-    const wrapper = mount(
-      <Entity
+    const { getByRole } = render(
+      <WrapEntity
         entity={ENTITY_A}
         isReadOnlyEditor={false}
         toggleForBatchEditing={toggleForBatchEditingFn}
@@ -129,15 +133,15 @@ describe('<Entity>', () => {
         parameters={{}}
       />,
     );
-    wrapper.find('.status').simulate('click');
+    fireEvent.click(getByRole('checkbox'));
     expect(toggleForBatchEditingFn).not.toHaveBeenCalled();
   });
 
   it('does not call the toggleForBatchEditing function if read-only editor', () => {
     const toggleForBatchEditingFn = vi.fn();
     const selectEntityFn = vi.fn();
-    const wrapper = mount(
-      <Entity
+    const { getByRole } = render(
+      <WrapEntity
         entity={ENTITY_A}
         isReadOnlyEditor={true}
         toggleForBatchEditing={toggleForBatchEditingFn}
@@ -145,7 +149,7 @@ describe('<Entity>', () => {
         parameters={{}}
       />,
     );
-    wrapper.find('.status').simulate('click');
+    fireEvent.click(getByRole('checkbox'));
     expect(toggleForBatchEditingFn).not.toHaveBeenCalled();
   });
 });
