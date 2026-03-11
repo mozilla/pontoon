@@ -118,12 +118,7 @@ export function Entity({
       attrs={{ 'aria-label': true }}
       vars={{ original: entity.original }}
     >
-      <li
-        className={cn}
-        role='button'
-        aria-label={'Select "{ $original }" for translation.'}
-        onClick={handleSelectEntity}
-      >
+      <li className={cn} role='button' onClick={handleSelectEntity}>
         <span
           className='status fas'
           role='checkbox'

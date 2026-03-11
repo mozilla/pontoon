@@ -28,10 +28,12 @@ export const createReduxStore = (initialState = {}) =>
     preloadedState: initialState,
   });
 
-export const MockStore = ({ children, store, history = HISTORY }) => (
+export const MockStore = ({ children, store, history = HISTORY, resource }) => (
   <Provider store={store}>
     <LocationProvider history={history}>
-      <MockLocalizationProvider>{children}</MockLocalizationProvider>
+      <MockLocalizationProvider resource={resource}>
+        {children}
+      </MockLocalizationProvider>
     </LocationProvider>
   </Provider>
 );
@@ -41,9 +43,10 @@ export const mountComponentWithStore = (
   store,
   props = {},
   history,
+  resource,
 ) =>
   render(
-    <MockStore store={store} history={history}>
+    <MockStore store={store} history={history} resource={resource}>
       <Component {...props} />
     </MockStore>,
   );

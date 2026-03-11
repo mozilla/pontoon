@@ -88,6 +88,9 @@ describe('<EntitiesList>', () => {
     const history = createMemoryHistory({
       initialEntries: ['/kg/firefox/all-resources/?string=1'],
     });
+    const testLabel = 'test-listitem';
+    const resource = `entitieslist-Entity--listitem-label =
+                      .aria-label = ${testLabel}`;
 
     const store = createReduxStore();
     store.dispatch({
@@ -100,13 +103,10 @@ describe('<EntitiesList>', () => {
       store,
       {},
       history,
+      resource,
     );
 
-    expect(
-      getAllByRole('button', {
-        name: 'Select "{ $original }" for translation.',
-      }),
-    ).toHaveLength(2);
+    expect(getAllByRole('button', { name: testLabel })).toHaveLength(2);
   });
 
   // FIXME: https://github.com/mozilla/pontoon/issues/3883
