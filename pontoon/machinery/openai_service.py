@@ -22,8 +22,11 @@ class OpenAIService:
                 f"The target language '{target_language_name}' is not supported."
             )
 
+        intro_text = f"Refine the {target_language_name} machine translation to make it {characteristic}."
+
         common_rules = textwrap.dedent(
-            """1) ENDING PUNCTUATION — SEMANTICS, NOT LITERAL CHAR:
+            """Follow these rules IN ORDER OF PRIORITY:
+            1) ENDING PUNCTUATION — SEMANTICS, NOT LITERAL CHAR:
                 - Detect the English ending: none, ".", "?", "!", "…".
                 - The translation MUST express the same ending SEMANTIC:
                     • if English ends with "?" → translation ends with a question.
@@ -36,18 +39,16 @@ class OpenAIService:
         )
 
         informal = textwrap.dedent(
-            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            f"""{intro_text}
             Revise the {target_language} translation to use simpler language,
-            Follow these rules IN ORDER OF PRIORITY:
             {common_rules}
             3) Clarity and Simplicity: keep wording straightforward and consistent.
             Output only the revised translation."""
         )
 
         formal = textwrap.dedent(
-            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            f"""{intro_text}
             Revise the {target_language} translation to use a higher level of formality.
-            Follow these rules IN ORDER OF PRIORITY:
             {common_rules}
             3) Consistency: maintain a consistent level of formality throughout; do not mix formal and informal modes.
             4) Preserve all HTML tags and their order. Do not add, remove, or reorder tags.
@@ -56,9 +57,8 @@ class OpenAIService:
         )
 
         rephrased = textwrap.dedent(
-            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            f"""{intro_text}
             Provide an alternative translation that preserves the original meaning while varying the wording.
-            Follow these rules IN ORDER OF PRIORITY:
             {common_rules}
             3) Cultural and Idiomatic Fit: adapt idioms and culturally marked expressions appropriately for {target_language}; you may restructure sentences but must not introduce new information or omit essential meaning.
             4) Clarity and Naturalness: ensure the result reads naturally and is easy to understand.
