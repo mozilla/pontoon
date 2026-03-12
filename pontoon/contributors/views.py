@@ -30,7 +30,6 @@ from django.utils.html import escape
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
-from pontoon.actionlog.models import ActionLog
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
@@ -84,12 +83,11 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
-    actions = ActionLog.objects.visible_for(request.user)
     graph_data, graph_title = utils.get_contribution_graph_data(
-        user, "all_contributions", actions
+        user, request.user, "all_contributions"
     )
     timeline_data = utils.get_contribution_timeline_data(
-        user, False, "all_contributions", actions=actions
+        user, request.user, False, "all_contributions"
     )
 
     context = {
@@ -149,10 +147,8 @@ def update_contribution_graph(request):
             status=400,
         )
 
-    actions = ActionLog.objects.visible_for(request.user)
-
     contributions, title = utils.get_contribution_graph_data(
-        user, contribution_type, actions
+        user, request.user, contribution_type
     )
     return JsonResponse({"contributions": contributions, "title": title})
 
@@ -161,7 +157,7 @@ def update_contribution_graph(request):
 @transaction.atomic
 def update_contribution_timeline(request):
     try:
-        user = User.objects.get(pk=request.GET["user"])
+        contributor = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
         full_year = request.GET.get("full_year", False) == "true"
         day = request.GET.get("day", None)
@@ -172,10 +168,8 @@ def update_contribution_timeline(request):
             status=400,
         )
 
-    actions = ActionLog.objects.visible_for(request.user)
-
     contributions = utils.get_contribution_timeline_data(
-        user, full_year, contribution_type, day, actions
+        contributor, request.user, full_year, contribution_type, day
     )
 
     return render(

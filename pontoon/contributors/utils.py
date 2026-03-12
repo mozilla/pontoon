@@ -279,14 +279,14 @@ def get_approvals_charts_data(user):
     }
 
 
-def get_contributions_map(user, contribution_period=None, actions=None):
+def get_contributions_map(contributor, viewer, contribution_period=None):
     """
     Return a map of contribution types and corresponding QuerySets of contributions.
 
     :param django.db.models.Q contribution_period: ActionLog time interval.
     """
-    if actions is None:
-        actions = ActionLog.objects.all()
+
+    actions = ActionLog.objects.visible_for(viewer)
 
     if contribution_period is not None:
         actions = actions.filter(contribution_period)
@@ -297,13 +297,13 @@ def get_contributions_map(user, contribution_period=None, actions=None):
     ]
 
     user_translations = actions.filter(
-        performed_by=user, action_type=ActionLog.ActionType.TRANSLATION_CREATED
+        performed_by=contributor, action_type=ActionLog.ActionType.TRANSLATION_CREATED
     )
     user_reviews = actions.filter(
-        performed_by=user, action_type__in=review_action_types
+        performed_by=contributor, action_type__in=review_action_types
     )
     peer_reviews = actions.filter(
-        translation__user=user, action_type__in=review_action_types
+        translation__user=contributor, action_type__in=review_action_types
     )
 
     all_user_contributions = user_translations | user_reviews
@@ -325,12 +325,12 @@ def get_contributions_map(user, contribution_period=None, actions=None):
     }
 
 
-def get_contribution_graph_data(user, contribution_type=None, actions=None):
+def get_contribution_graph_data(contributor, viewer, contribution_type=None):
     """
     Get data required to render the Contribution graph on the Profile page
     """
     contribution_period = Q(created_at__gte=timezone.now() - relativedelta(days=365))
-    contributions_map = get_contributions_map(user, contribution_period, actions)
+    contributions_map = get_contributions_map(contributor, viewer, contribution_period)
 
     if contribution_type not in contributions_map.keys():
         contribution_type = "all_user_contributions"
@@ -413,7 +413,7 @@ def get_project_locale_contribution_counts(contributions_qs):
 
 
 def get_contribution_timeline_data(
-    user, full_year=False, contribution_type=None, day=None, actions=None
+    contributor, viewer, full_year=False, contribution_type=None, day=None
 ):
     """
     Get data required to render the Contribution timeline on the Profile page
@@ -435,7 +435,7 @@ def get_contribution_timeline_data(
         end = start + relativedelta(days=1)
 
     contribution_period = Q(created_at__gte=start, created_at__lte=end)
-    contributions_map = get_contributions_map(user, contribution_period, actions)
+    contributions_map = get_contributions_map(contributor, viewer, contribution_period)
 
     # Get a list of explicit contribution types
     default_contribution_types = ["user_translations", "user_reviews"]
@@ -452,15 +452,15 @@ def get_contribution_timeline_data(
     end_ = end.strftime("%Y%m%d%H%M")
     params_map = {
         "user_translations": {
-            "author": user.email,
+            "author": contributor.email,
             "time": f"{start_}-{end_}",
         },
         "user_reviews": {
-            "reviewer": user.email,
+            "reviewer": contributor.email,
             "review_time": f"{start_}-{end_}",
         },
         "peer_reviews": {
-            "author": user.email,
+            "author": contributor.email,
             "review_time": f"{start_}-{end_}",
             "exclude_self_reviewed": "",
         },

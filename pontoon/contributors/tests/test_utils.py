@@ -10,8 +10,16 @@ from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import User
+from pontoon.base.models.project import Project
+from pontoon.base.tests import EntityFactory
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.contributors import utils
+from pontoon.test.factories import (
+    LocaleFactory,
+    ProjectFactory,
+    ResourceFactory,
+    TranslationFactory,
+)
 
 
 @pytest.fixture
@@ -200,8 +208,8 @@ def test_get_approvals_charts_data_with_actions(user_a, action_user_a, action_us
 
 
 @pytest.mark.django_db
-def test_get_contributions_map_keys(user_a):
-    map = utils.get_contributions_map(user_a)
+def test_get_contributions_map_keys(user_a, user_b):
+    map = utils.get_contributions_map(user_a, user_b)
 
     assert list(map.keys()) == [
         "user_translations",
@@ -213,16 +221,16 @@ def test_get_contributions_map_keys(user_a):
 
 
 @pytest.mark.django_db
-def test_get_contributions_map_without_actions(user_a):
-    map = utils.get_contributions_map(user_a)
+def test_get_contributions_map_without_actions(user_a, user_b):
+    map = utils.get_contributions_map(user_a, user_b)
 
     for key, value in map.items():
         assert not value.exists()
 
 
 @pytest.mark.django_db
-def test_get_contributions_map_with_actions(user_a, action_user_a):
-    map = utils.get_contributions_map(user_a)
+def test_get_contributions_map_with_actions(user_a, action_user_a, user_b):
+    map = utils.get_contributions_map(user_a, user_b)
 
     for key, value in map.items():
         if key == "user_translations":
@@ -232,19 +240,18 @@ def test_get_contributions_map_with_actions(user_a, action_user_a):
 
 
 @pytest.mark.django_db
-def test_get_contribution_graph_data_without_actions(user_a):
-    assert utils.get_contribution_graph_data(user_a) == (
+def test_get_contribution_graph_data_without_actions(user_a, user_b):
+    assert utils.get_contribution_graph_data(user_a, user_b) == (
         {},
         "0 contributions in the last year",
     )
 
 
 @pytest.mark.django_db
-def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_user_b):
+def test_get_contribution_graph_data_with_actions(user_a, action_user_a, user_b):
     # Truncate time
     date = action_user_a.created_at.replace(hour=0, minute=0, second=0, microsecond=0)
-    actions = ActionLog.objects.visible_for(user_a)
-    assert utils.get_contribution_graph_data(user_a, actions=actions) == (
+    assert utils.get_contribution_graph_data(user_a, user_b) == (
         {
             convert_to_unix_time(date): 1,
         },
@@ -253,13 +260,13 @@ def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_
 
 
 @pytest.mark.django_db
-def test_get_contribution_timeline_data_without_actions(user_a):
-    assert utils.get_contribution_timeline_data(user_a) == ({})
+def test_get_contribution_timeline_data_without_actions(user_a, user_b):
+    assert utils.get_contribution_timeline_data(user_a, user_b) == ({})
 
 
 @pytest.mark.django_db
 def test_get_contribution_timeline_data_with_actions(
-    user_a, yesterdays_action_user_a, action_user_b
+    user_a, user_b, yesterdays_action_user_a, action_user_b
 ):
     end = timezone.now()
     start = end - relativedelta(day=1)
@@ -272,9 +279,7 @@ def test_get_contribution_timeline_data_with_actions(
         "review_time": f"{start.strftime('%Y%m%d%H%M')}-{end.strftime('%Y%m%d%H%M')}",
     }
 
-    actions = ActionLog.objects.visible_for(user_a)
-
-    assert utils.get_contribution_timeline_data(user_a, actions=actions) == (
+    assert utils.get_contribution_timeline_data(user_a, user_b) == (
         {
             date: {
                 "user_reviews": {
@@ -299,3 +304,42 @@ def test_get_contribution_timeline_data_with_actions(
             }
         }
     )
+
+
+@pytest.mark.django_db
+def test_get_contributions_map_hides_private_project_actions(user_a, user_b, admin):
+    """Regular user cannot see actions on private projects."""
+    locale_a = LocaleFactory(
+        code="thl",
+        name="Klingon",
+    )
+    project_a = ProjectFactory(
+        slug="project_a", name="Project A", visibility=Project.Visibility.PRIVATE
+    )
+
+    resource_a = ResourceFactory.create(
+        project=project_a, path=f"resource_{project_a.slug}.po", format="gettext"
+    )
+
+    entity_a = EntityFactory.create(string="Test String", resource=resource_a)
+
+    translation_a = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_a,
+        string="Translation for entity_a",
+    )
+
+    action_a = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+    action_a.created_at = timezone.make_aware(datetime(2020, 1, 1))
+    action_a.save()
+
+    map = utils.get_contributions_map(user_a, user_b)
+    assert not map["user_translations"].exists()
+
+    map = utils.get_contributions_map(user_a, admin)
+    assert map["user_translations"].exists()
