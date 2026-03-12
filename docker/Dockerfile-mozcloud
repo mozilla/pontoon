@@ -92,6 +92,9 @@ COPY --from=node-builder /app/translate/public /app/translate/public
 # Copy application code
 COPY . /app/
 
+# Build documentation with MkDocs (generates static files in documentation/site)
+RUN mkdocs build -f documentation/mkdocs.yml
+
 # Set up environment variables for collectstatic
 ENV YUGLIFY_BINARY=/app/node_modules/.bin/yuglify
 ENV TERSER_BINARY=/app/node_modules/.bin/terser
