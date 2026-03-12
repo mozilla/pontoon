@@ -84,10 +84,10 @@ def contributor_username(request, username):
 def contributor(request, user):
     """Contributor profile."""
     graph_data, graph_title = utils.get_contribution_graph_data(
-        user, "all_contributions"
+        user, request.user, "all_contributions"
     )
     timeline_data = utils.get_contribution_timeline_data(
-        user, False, "all_contributions"
+        user, request.user, False, "all_contributions"
     )
 
     context = {
@@ -147,7 +147,9 @@ def update_contribution_graph(request):
             status=400,
         )
 
-    contributions, title = utils.get_contribution_graph_data(user, contribution_type)
+    contributions, title = utils.get_contribution_graph_data(
+        user, request.user, contribution_type
+    )
     return JsonResponse({"contributions": contributions, "title": title})
 
 
@@ -155,7 +157,7 @@ def update_contribution_graph(request):
 @transaction.atomic
 def update_contribution_timeline(request):
     try:
-        user = User.objects.get(pk=request.GET["user"])
+        contributor = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
         full_year = request.GET.get("full_year", False) == "true"
         day = request.GET.get("day", None)
@@ -167,7 +169,7 @@ def update_contribution_timeline(request):
         )
 
     contributions = utils.get_contribution_timeline_data(
-        user, full_year, contribution_type, day
+        contributor, request.user, full_year, contribution_type, day
     )
 
     return render(
