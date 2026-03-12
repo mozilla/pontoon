@@ -22,6 +22,9 @@ else
   python manage.py migrate --noinput
 fi
 
+echo "Building documentation..."
+mkdocs build -f documentation/mkdocs.yml
+
 echo "Collecting static files..."
 ./manage.py collectstatic --noinput
 

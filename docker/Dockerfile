@@ -51,6 +51,9 @@ RUN npm install
 COPY --chown=pontoon:pontoon ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
 
+# Build documentation with MkDocs (generates static files in documentation/site)
+RUN mkdocs build -f documentation/mkdocs.yml
+
 RUN python manage.py collectstatic
 
 STOPSIGNAL SIGINT
