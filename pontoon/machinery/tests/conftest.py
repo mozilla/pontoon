@@ -15,3 +15,11 @@ def google_translate_api_key(settings):
     key = "2fffff"
     settings.GOOGLE_TRANSLATE_API_KEY = key
     return key
+
+
+@pytest.fixture
+def openai_api_key(settings):
+    """Set the settings.OPENAI_API_KEY for this test"""
+    key = "3fffff"
+    settings.OPENAI_API_KEY = key
+    return key
