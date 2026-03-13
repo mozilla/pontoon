@@ -10,6 +10,7 @@ from sacremoses import MosesDetokenizer
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
 from django.template.loader import get_template
@@ -17,7 +18,9 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.base.models import Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
+    ext_api_cache_set,
     get_concordance_search_data,
+    get_ext_api_cache_key,
     get_google_translate_data,
     get_translation_memory_data,
 )
@@ -102,6 +105,11 @@ def microsoft_translator(request):
             status=400,
         )
 
+    cache_key = get_ext_api_cache_key("microsoft", text, locale_code)
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return JsonResponse(cached)
+
     url = "https://api.cognitive.microsofttranslator.com/translate"
     headers = {"Ocp-Apim-Subscription-Key": api_key, "Content-Type": "application/json"}
     payload = {
@@ -126,7 +134,9 @@ def microsoft_translator(request):
                 status=400,
             )
 
-        return JsonResponse({"translation": root[0]["translations"][0]["text"]})
+        result = {"translation": root[0]["translations"][0]["text"]}
+        ext_api_cache_set(cache_key, result)
+        return JsonResponse(result)
 
     except requests.exceptions.RequestException as e:
         return JsonResponse(
