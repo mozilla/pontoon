@@ -115,9 +115,9 @@ def delete_removed_gettext_resources(
             Translation.objects.filter(entity__resource__project=project).filter(
                 rm_t
             ).delete()
-            TranslatedResource.objects.filter(resource__project=project).filter(
-                rm_tr
-            ).delete()
+            TranslatedResource.objects.current().filter(
+                resource__project=project
+            ).filter(rm_tr).delete()
     return count
 
 
@@ -178,9 +178,9 @@ def find_db_updates(
 
     resources: dict[str, Resource] = {
         res.path: res
-        for res in Resource.objects.filter(
-            project=project, path__in=resource_paths
-        ).iterator()
+        for res in Resource.objects.current()
+        .filter(project=project, path__in=resource_paths)
+        .iterator()
     }
 
     # Exclude translations for which DB & repo already match

@@ -70,7 +70,7 @@ def sync_resources_from_repo(
 
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)
-        removed_paths = remove_resources(project, paths, checkout)
+        removed_paths = remove_resources(project, paths, checkout, now)
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
         new_res_added_ent_count, _ = add_resources(project, updates, changed_paths, now)
         update_translated_resources(project, locale_map, paths)
@@ -103,7 +103,10 @@ def rename_resources(
 
 
 def remove_resources(
-    project: Project, paths: L10nConfigPaths | L10nDiscoverPaths, checkout: Checkout
+    project: Project,
+    paths: L10nConfigPaths | L10nDiscoverPaths,
+    checkout: Checkout,
+    now: datetime,
 ) -> set[str]:
     if not checkout.removed:
         return set()
@@ -115,8 +118,7 @@ def remove_resources(
     )
     removed_db_paths = {res.path for res in removed_resources}
     if removed_db_paths:
-        # FIXME: https://github.com/mozilla/pontoon/issues/2133
-        removed_resources.delete()
+        removed_resources.mark_as_obsolete(now)
         rm_count = len(removed_db_paths)
         str_source_files = "source file" if rm_count == 1 else "source files"
         log.info(
@@ -340,12 +342,13 @@ def update_translated_resources(
 ) -> None:
     prev_tr_keys: set[tuple[int, int]] = set(
         (tr["resource_id"], tr["locale_id"])
-        for tr in TranslatedResource.objects.filter(resource__project=project)
+        for tr in TranslatedResource.objects.current()
+        .filter(resource__project=project)
         .values("resource_id", "locale_id")
         .iterator()
     )
     add_tr: list[TranslatedResource] = []
-    for resource in Resource.objects.filter(project=project).iterator():
+    for resource in Resource.objects.current().filter(project=project).iterator():
         _, locales = paths.target(resource.path)
         for lc in locales:
             locale = locale_map.get(lc, None)
@@ -370,7 +373,7 @@ def update_translated_resources(
         del_tr_q = Q()
         for resource_id, locale_id in prev_tr_keys:
             del_tr_q |= Q(resource_id=resource_id, locale_id=locale_id)
-        _, del_dict = TranslatedResource.objects.filter(del_tr_q).delete()
+        _, del_dict = TranslatedResource.objects.current().filter(del_tr_q).delete()
         del_count = del_dict.get("base.translatedresource", 0)
         str_tr = "translated resource" if del_count == 1 else "translated resources"
         log.info(f"[{project.slug}] Removed {del_count} {str_tr}")
