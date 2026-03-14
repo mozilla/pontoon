@@ -1,9 +1,12 @@
 import json
 import urllib.parse
 
+from unittest.mock import MagicMock, patch
+
 import pytest
 import requests_mock
 
+from django.core.cache import cache
 from django.urls import reverse
 
 from pontoon.base.models import (
@@ -115,6 +118,82 @@ def test_view_google_translate_bad_locale(
     response = member.client.get(url, {"text": "text", "locale": "bad"})
 
     assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_view_microsoft_translator_cache(member, ms_locale, ms_api_key):
+    url = reverse("pontoon.microsoft_translator")
+    cache.clear()
+
+    with requests_mock.mock() as m:
+        data = [{"translations": [{"text": "target"}]}]
+        m.post("https://api.cognitive.microsofttranslator.com/translate", json=data)
+
+        response1 = member.client.get(
+            url, {"text": "text", "locale": ms_locale.ms_translator_code}
+        )
+        assert len(m.request_history) == 1
+
+        # Second identical request should be served from cache
+        response2 = member.client.get(
+            url, {"text": "text", "locale": ms_locale.ms_translator_code}
+        )
+        assert len(m.request_history) == 1
+
+    assert json.loads(response1.content) == json.loads(response2.content)
+
+
+@pytest.mark.django_db
+def test_view_google_translate_cache(
+    member, google_translate_locale, google_translate_api_key
+):
+    url = reverse("pontoon.google_translate")
+    cache.clear()
+
+    with requests_mock.mock() as m:
+        data = {"data": {"translations": [{"translatedText": "target"}]}}
+        m.post("https://translation.googleapis.com/language/translate/v2", json=data)
+
+        response1 = member.client.get(
+            url, {"text": "text", "locale": google_translate_locale.code}
+        )
+        assert len(m.request_history) == 1
+
+        # Second identical request should be served from cache
+        response2 = member.client.get(
+            url, {"text": "text", "locale": google_translate_locale.code}
+        )
+        assert len(m.request_history) == 1
+
+    assert json.loads(response1.content) == json.loads(response2.content)
+
+
+@pytest.mark.django_db
+def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "  formal translation  "
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        params = {
+            "english_text": "Hello",
+            "translated_text": "Hola",
+            "characteristic": "formal",
+            "locale": locale_a.name,
+        }
+
+        response1 = member.client.get(url, params)
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 1
+
+        # Second identical request should be served from cache
+        response2 = member.client.get(url, params)
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 1
+
+    assert json.loads(response1.content) == json.loads(response2.content)
 
 
 @pytest.mark.django_db
