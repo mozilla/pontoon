@@ -50,6 +50,7 @@ class ProjectFactory(DjangoModelFactory):
 
     class Meta:
         model = Project
+        skip_postgeneration_save = True
 
     @factory.post_generation
     def locales(self, create, extracted, **kwargs):

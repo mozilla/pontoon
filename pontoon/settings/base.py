@@ -1,5 +1,6 @@
 """Django settings for Pontoon."""
 
+import datetime as dt
 import logging
 import os
 import re
@@ -1190,7 +1191,7 @@ PERSONAL_ACCESS_TOKEN_MAX_COUNT = os.environ.get("PERSONAL_ACCESS_TOKEN_MAX_COUN
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
 try:
     BADGES_START_DATE = timezone.make_aware(
-        datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=timezone.utc
+        datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=dt.timezone.utc
     )
 except ValueError as e:
     raise ValueError(f"Error: {e}")
