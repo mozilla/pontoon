@@ -382,7 +382,7 @@ class TermSearchListView(RequestFieldsMixin, generics.ListAPIView):
     def get_queryset(self):
         locale = self.request.query_params.get("locale")
 
-        qs = Term.objects.all()
+        qs = Term.objects.order_by("id")
 
         requested = self.request_fields()
 
@@ -407,7 +407,9 @@ class TranslationMemorySearchListView(generics.ListAPIView):
     serializer_class = TranslationMemorySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = TranslationMemoryFilter
-    queryset = TranslationMemoryEntry.objects.select_related("project", "locale")
+    queryset = TranslationMemoryEntry.objects.select_related(
+        "project", "locale"
+    ).order_by("id")
 
 
 class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
