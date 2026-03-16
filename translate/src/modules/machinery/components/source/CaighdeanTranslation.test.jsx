@@ -1,16 +1,23 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 
 import { CaighdeanTranslation } from './CaighdeanTranslation';
+import { render } from '@testing-library/react';
+import { MockLocalizationProvider } from '~/test/utils';
 
 describe('<CaighdeanTranslation>', () => {
   it('renders the CaighdeanTranslation component properly', () => {
-    const wrapper = shallow(<CaighdeanTranslation />);
-
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('Localized').props().id).toEqual(
-      'machinery-CaighdeanTranslation--translation-source',
+    const message = 'test-caighdean-translation';
+    const { getByRole, getByText } = render(
+      <MockLocalizationProvider
+        resources={[
+          `machinery-CaighdeanTranslation--translation-source = ${message}`,
+        ]}
+      >
+        <CaighdeanTranslation />
+      </MockLocalizationProvider>,
     );
-    expect(wrapper.find('li span').text()).toEqual('CAIGHDEAN');
+
+    getByRole('listitem');
+    getByText(message);
   });
 });

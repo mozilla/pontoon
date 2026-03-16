@@ -29,7 +29,7 @@ export function OtherLocales({
   if (!translations.length) {
     return (
       <section className='other-locales'>
-        <Localized id='history-history-no-translations'>
+        <Localized id='history-History--no-translations'>
           <p>No translations available.</p>
         </Localized>
       </section>

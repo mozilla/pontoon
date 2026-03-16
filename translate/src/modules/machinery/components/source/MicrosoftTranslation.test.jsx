@@ -1,16 +1,24 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 
 import { MicrosoftTranslation } from './MicrosoftTranslation';
+import { render } from '@testing-library/react';
+import { MockLocalizationProvider } from '~/test/utils';
 
 describe('<MicrosoftTranslation>', () => {
   it('renders the MicrosoftTranslation component properly', () => {
-    const wrapper = shallow(<MicrosoftTranslation />);
-
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('Localized').props().id).toEqual(
-      'machinery-MicrosoftTranslation--translation-source',
+    const message = 'test-message';
+    const { getByRole } = render(
+      <MockLocalizationProvider
+        resources={[
+          `machinery-MicrosoftTranslation--translation-source = ${message}`,
+        ]}
+      >
+        <MicrosoftTranslation />
+      </MockLocalizationProvider>,
     );
-    expect(wrapper.find('li span').text()).toEqual('MICROSOFT TRANSLATOR');
+
+    expect(
+      getByRole('listitem').querySelector('span.translation-source'),
+    ).toHaveTextContent(message);
   });
 });
