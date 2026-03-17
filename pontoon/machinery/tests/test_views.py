@@ -317,6 +317,49 @@ def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
 
 
 @pytest.mark.django_db
+def test_view_gpt_transform_terms(member, locale_a, openai_api_key):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    terms = json.dumps(
+        [{"text": "browser", "part_of_speech": "noun", "translation": "navigateur"}]
+    )
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        params = {
+            "english_text": "Open browser",
+            "translated_text": "Ouvrir le navigateur",
+            "characteristic": "formal",
+            "locale": locale_a.name,
+            "string_id": "open-browser",
+            "string_comment": "Button label",
+            "group_comment": "Navigation section",
+            "resource_comment": "Main UI file",
+            "pinned_comments": json.dumps(["Use formal register", "Keep it short"]),
+            "terms": terms,
+        }
+
+        member.client.get(url, params)
+
+    call_kwargs = MockOpenAI.return_value.chat.completions.create.call_args
+    user_message = call_kwargs.kwargs["messages"][1]["content"]
+    assert "STRING ID:\nopen-browser" in user_message
+    assert "STRING COMMENT:\nButton label" in user_message
+    assert "GROUP COMMENT:\nNavigation section" in user_message
+    assert "RESOURCE COMMENT:\nMain UI file" in user_message
+    assert "PINNED COMMENTS:" in user_message
+    assert "Use formal register" in user_message
+    assert "Keep it short" in user_message
+    assert "TERMINOLOGY:" in user_message
+    assert '"browser" (noun) → "navigateur"' in user_message
+
+
+@pytest.mark.django_db
 def test_view_caighdean(client, entity_a):
     gd = Locale.objects.get(code="gd")
     url = reverse("pontoon.caighdean")

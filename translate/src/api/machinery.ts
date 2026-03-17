@@ -1,4 +1,5 @@
 import type { Locale } from '~/context/Locale';
+import type { TermType } from '~/api/terminology';
 
 import { GET } from './utils/base';
 
@@ -142,23 +143,52 @@ export async function fetchGoogleTranslation(
 }
 
 /**
- * Return refined translation by GPT-4.
+ * Return refined translation by GPT.
  */
 
 export async function fetchGPTTransform(
   englishText: string,
   translatedText: string,
-
   characteristic: string,
   locale: string,
+  stringId?: string,
+  stringComment?: string,
+  groupComment?: string,
+  resourceComment?: string,
+  pinnedComments?: string[],
+  terms?: TermType[],
 ): Promise<MachineryTranslation[]> {
   const url = '/gpt-transform/';
-  const params = {
+  const params: Record<string, string> = {
     english_text: englishText,
     translated_text: translatedText,
     characteristic: characteristic,
     locale: locale,
   };
+  if (stringId) {
+    params['string_id'] = stringId;
+  }
+  if (stringComment) {
+    params['string_comment'] = stringComment;
+  }
+  if (groupComment) {
+    params['group_comment'] = groupComment;
+  }
+  if (resourceComment) {
+    params['resource_comment'] = resourceComment;
+  }
+  if (pinnedComments && pinnedComments.length > 0) {
+    params['pinned_comments'] = JSON.stringify(pinnedComments);
+  }
+  if (terms && terms.length > 0) {
+    params['terms'] = JSON.stringify(
+      terms.map(({ text, partOfSpeech, translation }) => ({
+        text,
+        part_of_speech: partOfSpeech,
+        translation,
+      })),
+    );
+  }
 
   try {
     const { translation } = (await GET_(url, params)) as {

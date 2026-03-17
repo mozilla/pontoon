@@ -1,9 +1,15 @@
 import React, { useState, useRef, useContext } from 'react';
 import { Localized } from '@fluent/react';
 import type { MachineryTranslation } from '~/api/machinery';
+import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
+import { SearchData } from '~/context/SearchData';
 import { logUXAction } from '~/api/uxaction';
 import { useLLMTranslation } from '~/context/TranslationContext';
+import { getEntityStringId } from '~/modules/machinery/getEntityStringId';
+import { useAppSelector } from '~/hooks';
+import { TERM } from '~/modules/terms';
+import { TEAM_COMMENTS } from '~/modules/teamcomments/reducer';
 
 type Props = {
   isOpenAIChatGPTSupported: boolean;
@@ -24,8 +30,34 @@ export function GoogleTranslation({
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
+  const { entity } = useContext(EntityView);
+  const { query } = useContext(SearchData);
 
   const getLLMTranslationState = useLLMTranslation();
+  const termState = useAppSelector((state) => state[TERM]);
+  const teamCommentState = useAppSelector((state) => state[TEAM_COMMENTS]);
+
+  let stringId: string | undefined;
+  let stringComment: string | undefined;
+  let groupComment: string | undefined;
+  let resourceComment: string | undefined;
+  let pinnedComments: string[] | undefined;
+  if (!query) {
+    stringId = getEntityStringId(entity);
+    stringComment = entity.comment?.trim() || undefined;
+    groupComment = entity.group_comment?.trim() || undefined;
+    resourceComment = entity.resource_comment?.trim() || undefined;
+    const pinned = teamCommentState.comments
+      .filter((c) => c.pinned)
+      .map((c) => {
+        const doc = new DOMParser().parseFromString(c.content, 'text/html');
+        return doc.body.textContent?.trim() ?? '';
+      })
+      .filter(Boolean);
+    pinnedComments = pinned.length > 0 ? pinned : undefined;
+  }
+
+  const terms = termState.terms.length > 0 ? termState.terms : undefined;
 
   const { transformLLMTranslation, selectedOption, restoreOriginal } =
     getLLMTranslationState(translation);
@@ -43,7 +75,17 @@ export function GoogleTranslation({
     if (characteristic === 'original') {
       restoreOriginal(translation);
     } else {
-      await transformLLMTranslation(translation, characteristic, locale.name);
+      await transformLLMTranslation(
+        translation,
+        characteristic,
+        locale.name,
+        stringId,
+        stringComment,
+        groupComment,
+        resourceComment,
+        pinnedComments,
+        terms,
+      );
       logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
         optionSelected: characteristic,
         localeCode: locale.code,

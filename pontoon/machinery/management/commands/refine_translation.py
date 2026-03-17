@@ -4,7 +4,7 @@ from pontoon.machinery.openai_service import OpenAIService
 
 
 class Command(BaseCommand):
-    help = "Refines machine translations using OpenAI's GPT-4 API with specified characteristics"
+    help = "Refines machine translations using OpenAI's GPT API with specified characteristics"
 
     def add_arguments(self, parser):
         parser.add_argument(

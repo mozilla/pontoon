@@ -144,22 +144,38 @@ def google_translate(request):
 @login_required(redirect_field_name="", login_url="/403")
 def gpt_transform(request):
     """
-    Transforms and returns text using GPT-4 based on specified characteristics like rephrasing or changing formality, by fetching English text, its machine translation, desired transformation characteristic, and target language from the request.
+    Transforms and returns text using GPT based on specified characteristics like rephrasing or changing formality, by fetching English text, its machine translation, desired transformation characteristic, and target language from the request.
     """
     try:
         english_text = request.GET.get("english_text")
         translated_text = request.GET.get("translated_text")
         characteristic = request.GET.get("characteristic")
         target_language_name = request.GET.get("locale")
+        string_id = request.GET.get("string_id")
+        string_comment = request.GET.get("string_comment")
+        group_comment = request.GET.get("group_comment")
+        resource_comment = request.GET.get("resource_comment")
+        pinned_comments_json = request.GET.get("pinned_comments")
+        pinned_comments = (
+            json.loads(pinned_comments_json) if pinned_comments_json else None
+        )
+        terms_json = request.GET.get("terms")
+        terms = json.loads(terms_json) if terms_json else None
 
         service = OpenAIService()
-        return JsonResponse(
-            {
-                "translation": service.get_translation(
-                    english_text, translated_text, characteristic, target_language_name
-                )
-            }
+        transformed_text = service.get_translation(
+            english_text,
+            translated_text,
+            characteristic,
+            target_language_name,
+            string_id=string_id,
+            string_comment=string_comment,
+            group_comment=group_comment,
+            resource_comment=resource_comment,
+            pinned_comments=pinned_comments,
+            terms=terms,
         )
+        return JsonResponse({"translation": transformed_text})
 
     except Exception as e:
         return _machinery_error_response("GPT Transform", e)
