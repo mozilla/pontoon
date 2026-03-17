@@ -3,6 +3,8 @@ import pytest
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 
+from pontoon.base.models import Comment
+
 
 @pytest.mark.django_db
 def test_pin_comment(member, client, comment_a):
@@ -60,3 +62,59 @@ def test_unpin_comment(member, client, team_comment_a):
 
     team_comment_a.refresh_from_db()
     assert team_comment_a.pinned is False
+
+
+@pytest.mark.django_db
+def test_edit_comment(member, client, comment_a):
+    url = reverse("pontoon.edit_comment")
+
+    # a user cannot edit someone else's comment
+    response = member.client.post(
+        url,
+        {"comment_id": comment_a.pk, "content": "edited"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 403
+
+    # The author can edit their own comment
+    comment_a.author = member.user
+    comment_a.save()
+
+    response = member.client.post(
+        url,
+        {"comment_id": comment_a.pk, "content": "edited content"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 200
+    comment_a.refresh_from_db()
+    assert comment_a.content == "edited content"
+
+
+@pytest.mark.django_db
+def test_delete_comment(member, client, comment_a):
+    url = reverse("pontoon.delete_comment")
+
+    # a user cannot delete someone elses comment
+    response = member.client.post(
+        url,
+        {"comment_id": comment_a.pk, "content": "deleted"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 403
+
+    # the author can delete their comment
+    comment_a.author = member.user
+    comment_a.save()
+    comment_a.refresh_from_db()
+
+    response = member.client.post(
+        url,
+        {"comment_id": comment_a.pk, "content": "Deleted comment"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 200
+    assert not Comment.objects.filter(pk=comment_a.pk).exists()

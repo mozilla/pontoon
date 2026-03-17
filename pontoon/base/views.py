@@ -751,6 +751,61 @@ def unpin_comment(request):
     return JsonResponse({"status": True})
 
 
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def edit_comment(request):
+    """Edit a comment"""
+    comment_id = request.POST.get("comment_id", None)
+
+    if not comment_id:
+        return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
+
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if request.user != comment.author:
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: You can't edit this comment"},
+            status=403,
+        )
+
+    content = request.POST.get("content", None)
+
+    if not content:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Bad Request",
+            },
+            status=400,
+        )
+    comment.content = content
+    comment.save()
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def delete_comment(request):
+    """Delete a comment"""
+    comment_id = request.POST.get("comment_id", None)
+    if not comment_id:
+        return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
+
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if request.user != comment.author:
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: You can't delete this comment"},
+            status=403,
+        )
+
+    comment.delete()
+    return JsonResponse({"status": True})
+
+
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
 def get_users(request):

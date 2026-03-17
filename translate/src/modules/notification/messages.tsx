@@ -180,3 +180,17 @@ export const COMMENT_ADDED: NotificationMessage = {
   ),
   type: 'info',
 };
+
+export const COMMENT_EDITED: NotificationMessage = {
+  content: (
+    <Localized id='notification--comment-edited'>Comment edited</Localized>
+  ),
+  type: 'info',
+};
+
+export const COMMENT_DELETED: NotificationMessage = {
+  content: (
+    <Localized id='notification--comment-deleted'>Comment deleted</Localized>
+  ),
+  type: 'info',
+};

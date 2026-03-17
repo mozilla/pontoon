@@ -101,7 +101,9 @@ comments-Comment--unpin-button = UNPIN
 comments-Comment--pinned = PINNED
 comments-CommentsList--pinned-comments = PINNED COMMENTS
 comments-CommentsList--all-comments = ALL COMMENTS
-
+comments-Comment--edit-button = EDIT
+comments-Comment--delete-button = DELETE
+comments-Comment--cancel-edit = CANCEL EDIT
 
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
@@ -583,6 +585,8 @@ notification--ftl-not-supported-rich-editor = Translation not supported in rich 
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
 notification--comment-added = Comment added
+notification--comment-edited = Comment edited
+notification--comment-deleted = Comment deleted
 
 
 ## OtherLocales Translation
