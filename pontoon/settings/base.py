@@ -1,18 +1,16 @@
 """Django settings for Pontoon."""
 
-import datetime as dt
 import logging
 import os
 import re
 import socket
 import sys
 
-from datetime import datetime
+from datetime import datetime, timezone
 from ipaddress import ip_address, ip_network
 
 import dj_database_url
 
-from django.utils import timezone
 from django.utils.functional import lazy
 
 
@@ -1190,8 +1188,8 @@ PERSONAL_ACCESS_TOKEN_MAX_COUNT = os.environ.get("PERSONAL_ACCESS_TOKEN_MAX_COUN
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
 try:
-    BADGES_START_DATE = timezone.make_aware(
-        datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=dt.timezone.utc
+    BADGES_START_DATE = datetime.strptime(badges_start_date, "%Y-%m-%d").replace(
+        tzinfo=timezone.utc
     )
 except ValueError as e:
     raise ValueError(f"Error: {e}")
