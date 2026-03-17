@@ -10,8 +10,7 @@ from pontoon.db import IContainsCollate  # noqa
 
 
 @pytest.fixture
-@pytest.mark.django_db
-def collation_entities():
+def collation_entities(db):
     # Create a list of instances in order to filter them.
     EntityFactory.create_batch(10, string="qwertyuiop")
 

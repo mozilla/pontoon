@@ -1,10 +1,9 @@
-from datetime import date
+from datetime import date, datetime, timezone
 from unittest.mock import patch
 
 import pytest
 
 from django.test.client import RequestFactory
-from django.utils import timezone
 
 from pontoon.insights.models import LocaleInsightsSnapshot
 from pontoon.messaging.emails import (
@@ -54,9 +53,7 @@ def test_get_monthly_locale_stats_uses_end_of_month_snapshot():
     )
 
     with patch("pontoon.messaging.emails.timezone") as mock_tz:
-        mock_tz.now.return_value = timezone.datetime(
-            2025, 11, 1, 6, 30, 0, tzinfo=timezone.utc
-        )
+        mock_tz.now.return_value = datetime(2025, 11, 1, 6, 30, 0, tzinfo=timezone.utc)
         result = _get_monthly_locale_stats(months_ago=1)
 
     assert locale.pk in result
