@@ -63,12 +63,16 @@ class LocaleQuerySet(models.QuerySet):
 
     def stats_data(self, project=None):
         if project is not None:
-            query = self.filter(translatedresources__resource__project=project)
+            query = self.filter(
+                translatedresources__resource__project=project,
+                translatedresources__resource__obsolete=False,
+            )
         else:
             query = self.filter(
                 translatedresources__resource__project__disabled=False,
                 translatedresources__resource__project__system_project=False,
                 translatedresources__resource__project__visibility="public",
+                translatedresources__resource__obsolete=False,
             )
 
         return query.annotate(
