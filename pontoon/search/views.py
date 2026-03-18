@@ -55,9 +55,17 @@ def create_api_url(
 
 
 def get_search_option(request, name):
-    """Return a search option from the URL, falling back to the user's profile setting."""
+    """Return a search option from the URL, falling back to the user's profile setting.
+
+    If there's an active search in the URL but the option isn't explicitly set,
+    use the global default (False) so the UI reflects the settings actually used
+    for that search. If there's no active search, fall back to profile defaults
+    so the user sees their preferred settings as a starting point.
+    """
     if name in request.GET:
         return parse_bool(request.GET.get(name))
+    if request.GET.get("search"):
+        return False
     return request.user.is_authenticated and getattr(request.user.profile, name)
 
 
