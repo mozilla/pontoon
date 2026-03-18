@@ -82,7 +82,8 @@ describe('<Comment>', () => {
       <MockLocalizationProvider>
         <Comment
           comment={DEFAULT_COMMENT}
-          canEditAndDelete={true}
+          canEdit={true}
+          canDelete={true}
           user={DEFAULT_USER}
         />
       </MockLocalizationProvider>,
@@ -97,7 +98,8 @@ describe('<Comment>', () => {
       <MockLocalizationProvider>
         <Comment
           comment={DEFAULT_COMMENT}
-          canEditAndDelete={false}
+          canEdit={false}
+          canDelete={false}
           user={DEFAULT_USER}
         />
       </MockLocalizationProvider>,
@@ -114,7 +116,7 @@ describe('<Comment>', () => {
       <MockLocalizationProvider>
         <Comment
           comment={DEFAULT_COMMENT}
-          canEditAndDelete={true}
+          canDelete={true}
           onDeleteComment={onDeleteComment}
           user={DEFAULT_USER}
         />
@@ -132,7 +134,7 @@ describe('<Comment>', () => {
       <MockLocalizationProvider>
         <Comment
           comment={DEFAULT_COMMENT}
-          canEditAndDelete={true}
+          canEdit={true}
           onEditComment={onEditComment}
           user={DEFAULT_USER}
         />

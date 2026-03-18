@@ -28,7 +28,8 @@ export function CommentsList({
               comment={comment}
               key={comment.id}
               onDeleteComment={onDeleteComment}
-              canEditAndDelete={user.username === comment.username}
+              canEdit={user.username === comment.username}
+              canDelete={user.username === comment.username || user.isPM}
               user={user}
             />
           ))}

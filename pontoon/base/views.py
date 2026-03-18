@@ -796,7 +796,9 @@ def delete_comment(request):
 
     comment = get_object_or_404(Comment, id=comment_id)
 
-    if request.user != comment.author:
+    if request.user != comment.author and not request.user.has_perm(
+        "base.can_manage_project"
+    ):
         return JsonResponse(
             {"status": False, "message": "Forbidden: You can't delete this comment"},
             status=403,

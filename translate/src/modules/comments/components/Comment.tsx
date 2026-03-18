@@ -17,7 +17,8 @@ type Props = {
   togglePinnedStatus?: (status: boolean, id: number) => void;
   onEditComment?: (id: number, content: string) => void;
   onDeleteComment?: (id: number) => void;
-  canEditAndDelete?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
   user?: UserState;
 };
 
@@ -28,7 +29,8 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
     togglePinnedStatus,
     onEditComment,
     onDeleteComment,
-    canEditAndDelete,
+    canEdit,
+    canDelete,
     user,
   } = props;
 
@@ -156,7 +158,7 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
               </Localized>
             )
           ) : null}
-          {canEditAndDelete && (
+          {canEdit && (
             <>
               {isEditing ? (
                 <button className='pin-button' onClick={handleCancelEdit}>
@@ -173,16 +175,18 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
                   </button>
                 </Localized>
               )}
-              <Localized id='comments-Comment--delete-button'>
-                <button
-                  className='pin-button'
-                  title='Delete comment'
-                  onClick={handleDelete}
-                >
-                  {'DELETE'}
-                </button>
-              </Localized>
             </>
+          )}
+          {canDelete && (
+            <Localized id='comments-Comment--delete-button'>
+              <button
+                className='pin-button'
+                title='Delete comment'
+                onClick={handleDelete}
+              >
+                {'DELETE'}
+              </button>
+            </Localized>
           )}
         </div>
       </div>

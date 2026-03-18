@@ -56,7 +56,8 @@ export function TeamComments({
       canPin={user.isPM}
       key={comment.id}
       togglePinnedStatus={togglePinnedStatus}
-      canEditAndDelete={user.username === comment.username}
+      canEdit={user.username === comment.username}
+      canDelete={user.username === comment.username || user.isPM}
       onEditComment={onEditComment}
       onDeleteComment={onDeleteComment}
       user={user}
