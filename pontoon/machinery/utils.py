@@ -107,7 +107,6 @@ def get_google_automl_translation(
     cache_key = get_machinery_service_cache_key(
         "google_automl",
         text,
-        locale.google_automl_model,
         locale.code,
         format,
         preserve_placeables,
