@@ -31,13 +31,13 @@ log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
-def get_ext_api_cache_key(service, *parts):
+def get_machinery_service_cache_key(service, *parts):
     digest = hashlib.md5(":".join(str(p) for p in parts).encode()).hexdigest()
-    return f"ext_api:{service}:{digest}"
+    return f"machinery_service:{service}:{digest}"
 
 
-def ext_api_cache_set(key, value):
-    cache.set(key, value, settings.EXT_API_CACHE_TIMEOUT)
+def set_machinery_service_cache_key(key, value):
+    cache.set(key, value, settings.MACHINERY_SERVICE_CACHE_TIMEOUT)
 
 
 def get_google_translate_data(text, locale, format="text", preserve_placeables=False):
@@ -53,10 +53,10 @@ def get_google_translate_data(text, locale, format="text", preserve_placeables=F
 
 
 def get_google_generic_translation(text, locale_code, format="text"):
-    cache_key = get_ext_api_cache_key("google", text, locale_code, format)
+    cache_key = get_machinery_service_cache_key("google", text, locale_code, format)
     cached = cache.get(cache_key)
     if cached is not None:
-        return cached
+        return {"status": True, "translation": cached}
 
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
@@ -89,12 +89,9 @@ def get_google_generic_translation(text, locale_code, format="text"):
                 "message": f"Bad Request: {root}",
             }
 
-        result = {
-            "status": True,
-            "translation": root["data"]["translations"][0]["translatedText"],
-        }
-        ext_api_cache_set(cache_key, result)
-        return result
+        translation = root["data"]["translations"][0]["translatedText"]
+        set_machinery_service_cache_key(cache_key, translation)
+        return {"status": True, "translation": translation}
 
     except requests.exceptions.RequestException as e:
         log.error(f"Google Translate error: {e}")
@@ -107,17 +104,17 @@ def get_google_generic_translation(text, locale_code, format="text"):
 def get_google_automl_translation(
     text, locale, format="text", preserve_placeables=False
 ):
-    cache_key = get_ext_api_cache_key(
+    cache_key = get_machinery_service_cache_key(
         "google_automl",
         text,
         locale.google_automl_model,
-        locale.google_translate_code,
+        locale.code,
         format,
         preserve_placeables,
     )
     cached = cache.get(cache_key)
     if cached is not None:
-        return cached
+        return {"status": True, "translation": cached}
 
     try:
         client = translate.TranslationServiceClient()
@@ -169,12 +166,9 @@ def get_google_automl_translation(
             "message": "No translations found.",
         }
     else:
-        result = {
-            "status": True,
-            "translation": translations[0].translated_text,
-        }
-        ext_api_cache_set(cache_key, result)
-        return result
+        translation = translations[0].translated_text
+        set_machinery_service_cache_key(cache_key, translation)
+        return {"status": True, "translation": translation}
 
 
 def use_placeables_glossary(text, client, project_id, location, request_params):

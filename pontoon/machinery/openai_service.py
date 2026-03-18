@@ -6,7 +6,10 @@ from django.conf import settings
 from django.core.cache import cache
 
 from pontoon.base.models import Locale
-from pontoon.machinery.utils import ext_api_cache_set, get_ext_api_cache_key
+from pontoon.machinery.utils import (
+    get_machinery_service_cache_key,
+    set_machinery_service_cache_key,
+)
 
 
 class OpenAIService:
@@ -18,7 +21,7 @@ class OpenAIService:
     def get_translation(
         self, english_text, translated_text, characteristic, target_language_name
     ):
-        cache_key = get_ext_api_cache_key(
+        cache_key = get_machinery_service_cache_key(
             "openai",
             english_text,
             translated_text,
@@ -109,5 +112,5 @@ class OpenAIService:
         )
 
         result = response.choices[0].message.content.strip()
-        ext_api_cache_set(cache_key, result)
+        set_machinery_service_cache_key(cache_key, result)
         return result

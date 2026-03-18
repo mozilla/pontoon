@@ -18,11 +18,11 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.base.models import Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
-    ext_api_cache_set,
     get_concordance_search_data,
-    get_ext_api_cache_key,
     get_google_translate_data,
+    get_machinery_service_cache_key,
     get_translation_memory_data,
+    set_machinery_service_cache_key,
 )
 
 from .openai_service import OpenAIService
@@ -105,7 +105,7 @@ def microsoft_translator(request):
             status=400,
         )
 
-    cache_key = get_ext_api_cache_key("microsoft", text, locale_code)
+    cache_key = get_machinery_service_cache_key("microsoft", text, locale_code)
     cached = cache.get(cache_key)
     if cached is not None:
         return JsonResponse(cached)
@@ -135,7 +135,7 @@ def microsoft_translator(request):
             )
 
         result = {"translation": root[0]["translations"][0]["text"]}
-        ext_api_cache_set(cache_key, result)
+        set_machinery_service_cache_key(cache_key, result)
         return JsonResponse(result)
 
     except requests.exceptions.RequestException as e:
