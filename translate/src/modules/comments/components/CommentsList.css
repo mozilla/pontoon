@@ -29,7 +29,7 @@
 
 .comments-list .comment {
   display: flex;
-  margin-left: 58px;
+  margin-left: 0px;
 }
 
 .comments-list .comment .user-avatar {
