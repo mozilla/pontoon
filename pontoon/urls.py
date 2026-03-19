@@ -20,6 +20,10 @@ def docs_dir_index(request, path=""):
     return HttpResponseRedirect(f"/docs/{path}index.html")
 
 
+def docz_dir_index(request, path=""):
+    return HttpResponseRedirect(f"/docz/{path}index.html")
+
+
 register_converter(LocaleConverter, "locale")
 
 permission_denied_view = TemplateView.as_view(template_name="403.html")
@@ -67,6 +71,14 @@ urlpatterns = [
         "docs/<path:path>",
         serve,
         {"document_root": os.path.join(settings.STATIC_ROOT, "docs")},
+    ),
+    # Docz
+    path("docz/", docz_dir_index),
+    re_path(r"^docz/(?P<path>.+/)$", docz_dir_index),
+    path(
+        "docz/<path:path>",
+        serve,
+        {"document_root": os.path.join(settings.STATIC_ROOT, "docz")},
     ),
     # Legacy
     path("in-context/", RedirectView.as_view(url="/", permanent=True)),

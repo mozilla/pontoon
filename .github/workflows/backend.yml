@@ -80,6 +80,7 @@ jobs:
         working-directory: pontoon
       - run: mkdir -p translate/dist translate/public
       - run: mkdocs build -f documentation/mkdocs.yml
+      - run: zensical build -f docz/zensical.toml
       - run: python manage.py collectstatic
 
       # Check if there are missing migrations

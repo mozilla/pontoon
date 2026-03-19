@@ -163,4 +163,5 @@ requirements:
 
 docs:
 	"${DC}" run --rm server mkdocs build -f //app/documentation/mkdocs.yml
+	"${DC}" run --rm server zensical build -f //app/docz/zensical.toml
 	"${DC}" run --rm server python manage.py collectstatic --noinput

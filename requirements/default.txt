@@ -290,6 +290,7 @@ click==8.3.1 \
     #   click-repl
     #   mkdocs
     #   sacremoses
+    #   zensical
 click-didyoumean==0.3.1 \
     --hash=sha256:4f82fdff0dbe64ef8ab2279bd6aa3f6a99c3b28c05aa09cbfc07c9d7fbb5a463 \
     --hash=sha256:5c4bb6007cfea5f2fd6583a2fb6701a22a41eb98957e63d0fac41c10e7c3117c
@@ -412,6 +413,10 @@ cryptography==46.0.6 \
     --hash=sha256:ed418c37d095aeddf5336898a132fba01091f0ac5844e3e8018506f014b6d2c4 \
     --hash=sha256:ed418c37d095aeddf5336898a132fba01091f0ac5844e3e8018506f014b6d2c4
     # via pyjwt
+deepmerge==2.0 \
+    --hash=sha256:5c3d86081fbebd04dd5de03626a0607b809a98fb6ccba5770b62466fe940ff20 \
+    --hash=sha256:6de9ce507115cff0bed95ff0ce9ecc31088ef50cbdf09bc90a09349a318b3d00
+    # via zensical
 distro==1.9.0 \
     --hash=sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed \
     --hash=sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2
@@ -934,6 +939,7 @@ markdown==3.10.2 \
     #   mkdocs
     #   mkdocs-material
     #   pymdown-extensions
+    #   zensical
 markupsafe==2.0.1 \
     --hash=sha256:01a9b8ea66f1658938f65b93a85ebe8bc016e6769611be228d797c9d998dd298 \
     --hash=sha256:023cb26ec21ece8dc3907c0e8320058b2e0cb3c55cf9564da612bc325bed5e64 \
@@ -1368,7 +1374,9 @@ pydantic-core==2.41.5 \
 pygments==2.19.2 \
     --hash=sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887 \
     --hash=sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b
-    # via mkdocs-material
+    # via
+    #   mkdocs-material
+    #   zensical
 pyjwt[crypto]==2.12.0 \
     --hash=sha256:2f62390b667cd8257de560b850bb5a883102a388829274147f1d724453f8fb02 \
     --hash=sha256:9bb459d1bdd0387967d287f5656bf7ec2b9a26645d1961628cda1764e087fd6e
@@ -1378,7 +1386,9 @@ pyjwt[crypto]==2.12.0 \
 pymdown-extensions==10.21 \
     --hash=sha256:39f4a020f40773f6b2ff31d2cd2546c2c04d0a6498c31d9c688d2be07e1767d5 \
     --hash=sha256:91b879f9f864d49794c2d9534372b10150e6141096c3908a455e45ca72ad9d3f
-    # via mkdocs-material
+    # via
+    #   mkdocs-material
+    #   zensical
 python-binary-memcached==0.31.4 \
     --hash=sha256:f183bc67fd218c01ebc0bf4e9929a210dd5aa07fda53d5b627d0b443b76e2818 \
     --hash=sha256:f7a74f212567e37520dd550f0d088b99bb4bae01034d3078135bfc16285960f9
@@ -1478,6 +1488,7 @@ pyyaml==6.0.3 \
     #   mkdocs-get-deps
     #   pymdown-extensions
     #   pyyaml-env-tag
+    #   zensical
 pyyaml-env-tag==1.1 \
     --hash=sha256:17109e1a528561e32f026364712fee1264bc2ea6715120891174ed1b980d2e04 \
     --hash=sha256:2eb38b75a2d21ee0475d6d97ec19c63287a7e140231e4214969d0eac923cd7ff
@@ -2089,4 +2100,19 @@ webencodings==0.5.1 \
 whitenoise==5.2.0 \
     --hash=sha256:05ce0be39ad85740a78750c86a93485c40f08ad8c62a6006de0233765996e5c7 \
     --hash=sha256:05d00198c777028d72d8b0bbd234db605ef6d60e9410125124002518a48e515d
+    # via -r default.in
+zensical==0.0.27 \
+    --hash=sha256:06b9e308aec8c5db1cd623e2e98e1b25c3f5cab6b25fcc9bac1e16c0c2b93837 \
+    --hash=sha256:3e11d220181477040a4b22bf2b8678d5b0c878e7aae194fad4133561cb976d69 \
+    --hash=sha256:682085155126965b091cb9f915cd2e4297383ac500122fd4b632cf4511733eb2 \
+    --hash=sha256:6d8d74aba4a9f9505e6ba1c43d4c828ba4ff7bb1ff9b005e5174c5b92cf23419 \
+    --hash=sha256:847c881209e65e1db1291c59a9db77966ac50f7c66bf9a733c3c7832144dbfca \
+    --hash=sha256:99cbc493022f8749504ef10c71772d360b705b4e2fd1511421393157d07bdccf \
+    --hash=sha256:9d3b1fca7ea99a7b2a8db272dd7f7839587c4ebf4f56b84ff01c97b3893ec9f8 \
+    --hash=sha256:a627cd4599cf2c5a5a5205f0510667227d1fe4579b6f7445adba2d84bab9fbc8 \
+    --hash=sha256:b367c285157c8e1099ae9e2b36564e07d3124bf891e96194a093bc836f3058d2 \
+    --hash=sha256:d51ebf4b038f3eea99fd337119b99d92ad92bbe674372d5262e6dbbabbe4e9b5 \
+    --hash=sha256:da11e0f0861dbd7d3b5e6fe1e3a53b361b2181c53f3abe9fb4cdf2ed0cea47bf \
+    --hash=sha256:ecc20a85e8a23ad9ab809b2f268111321be7b2e214021b3b00f138936a87a434 \
+    --hash=sha256:f31ec13c700794be3f9c0b7d90f09a7d23575a3a27c464994b9bb441a22d880b
     # via -r default.in

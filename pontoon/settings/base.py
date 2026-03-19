@@ -824,6 +824,7 @@ STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
     ("docs", os.path.join(ROOT, "documentation", "site")),
+    ("docz", os.path.join(ROOT, "docz", "site")),
 ]
 
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")

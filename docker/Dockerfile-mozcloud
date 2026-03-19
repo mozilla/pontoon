@@ -92,8 +92,9 @@ COPY --from=node-builder /app/translate/public /app/translate/public
 # Copy application code
 COPY . /app/
 
-# Build documentation with MkDocs (generates static files in documentation/site)
+# Build documentation (generates static files)
 RUN mkdocs build -f documentation/mkdocs.yml
+RUN zensical build -f docz/zensical.toml
 
 # Set up environment variables for collectstatic
 ENV YUGLIFY_BINARY=/app/node_modules/.bin/yuglify
