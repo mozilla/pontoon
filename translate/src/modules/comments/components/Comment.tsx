@@ -64,7 +64,7 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
   };
 
   return (
-    <li className='comment'>
+    <li className={`comment${isEditing ? ' is-editing' : ''}`}>
       {!isEditing && (
         <UserAvatar
           username={comment.username}

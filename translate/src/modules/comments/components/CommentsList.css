@@ -3,6 +3,10 @@
   padding: 8px 0;
 }
 
+.comments-list .comment.is-editing .info {
+  margin-left: 44px;
+}
+
 .comments-list .pinned-comments > * {
   padding: 0 8px;
 }
