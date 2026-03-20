@@ -123,4 +123,4 @@ is correctly set.
 At this point, you can open the *Cygwin64 Terminal* and proceed with the
 installation (the content of `C:` will be available in `/cygdrive/c`).
 Once the Docker image is running, Pontoon\'s instance will be available
-at [http://localhost:8000]{.title-ref}.
+at <http://localhost:8000>.

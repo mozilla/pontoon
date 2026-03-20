@@ -824,7 +824,6 @@ STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
     ("docs", os.path.join(ROOT, "documentation", "site")),
-    ("docz", os.path.join(ROOT, "docz", "site")),
 ]
 
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")
@@ -980,11 +979,9 @@ CSP_SCRIPT_SRC = (
     "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
     "https://www.googletagmanager.com/gtag/js",
     # Needed for Docs
-    "'sha256-apoQPHefCNWjxbCm+HzVDOAW4CSVWhY7VylQjgOFyfk='",
     "'sha256-DrEMJJ29sL7vIloQzly+VUGMxKcBTMII+OfW7Y8AkG4='",
     "'sha256-/8wPdzX9q0NNJXyA5lzsLojXFpkeaXVxhbfkUOQaWy8='",
-    "'sha256-/K9p2JtEqCycL2fSbEonMakkteWpAHv57x2wndLqMNo='",
-    "'sha256-/nhm8p50KJxvwWLggwJ1OF8Xgq5W/b3iKECITLASfOg='",
+    "'sha256-9WmRqHphu0WtjGBriIQP5bBdmiqiG3tY04gCxNSST40='",
 )
 CSP_STYLE_SRC = (
     "'self'",

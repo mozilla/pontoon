@@ -52,8 +52,7 @@ COPY --chown=pontoon:pontoon ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
 
 # Build documentation (generates static files)
-RUN mkdocs build -f documentation/mkdocs.yml
-RUN zensical build -f docz/zensical.toml
+RUN zensical build -f documentation/zensical.toml
 
 RUN python manage.py collectstatic
 

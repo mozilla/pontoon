@@ -74,13 +74,13 @@ jobs:
           sed
           -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
           -e '/^SITE_URL=/d'
+
           docker/config/server.env.template > .env
       # Run collectstatic with minimal dependencies, skipping the actual front-end build
       - run: npm install
         working-directory: pontoon
       - run: mkdir -p translate/dist translate/public
-      - run: mkdocs build -f documentation/mkdocs.yml
-      - run: zensical build -f docz/zensical.toml
+      - run: zensical build -f documentation/zensical.toml
       - run: python manage.py collectstatic
 
       # Check if there are missing migrations

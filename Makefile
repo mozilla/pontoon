@@ -162,6 +162,5 @@ requirements:
 	"${DC}" run --rm server //app/docker/compile_requirements.sh ${opts}
 
 docs:
-	"${DC}" run --rm server mkdocs build -f //app/documentation/mkdocs.yml
-	"${DC}" run --rm server zensical build -f //app/docz/zensical.toml
+	"${DC}" run --rm server zensical build -f //app/documentation/zensical.toml
 	"${DC}" run --rm server python manage.py collectstatic --noinput

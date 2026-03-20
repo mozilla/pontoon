@@ -23,8 +23,7 @@ else
 fi
 
 echo "Building documentation..."
-mkdocs build -f documentation/mkdocs.yml
-zensical build -f docz/zensical.toml
+zensical build -f documentation/zensical.toml
 
 echo "Collecting static files..."
 ./manage.py collectstatic --noinput
