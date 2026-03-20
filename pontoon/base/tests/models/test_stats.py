@@ -5,6 +5,7 @@ Test consistency of calculations between `calculate_stats` and `translation.save
 import pytest
 
 from pontoon.base.models import TranslatedResource
+from pontoon.test.factories import TranslationFactory
 
 
 def get_stats(translation):
@@ -107,6 +108,42 @@ def test_translation_with_error(translation_a):
         "warnings": 0,
         "errors": 0,
     }
+
+
+@pytest.mark.django_db
+def test_approve_with_competing_translations(translation_a):
+    """
+    Approving one translation must reject all other unreviewed translations
+    for the same entity+locale and leave stats consistent.
+    """
+    translation_b = TranslationFactory(
+        entity=translation_a.entity,
+        locale=translation_a.locale,
+    )
+
+    assert get_stats(translation_a) == {
+        "total": 1,
+        "approved": 0,
+        "pretranslated": 0,
+        "unreviewed": 2,
+        "warnings": 0,
+        "errors": 0,
+    }
+
+    translation_a.approved = True
+    translation_a.save()
+
+    assert get_stats(translation_a) == {
+        "total": 1,
+        "approved": 1,
+        "pretranslated": 0,
+        "unreviewed": 0,
+        "warnings": 0,
+        "errors": 0,
+    }
+
+    translation_b.refresh_from_db()
+    assert translation_b.rejected
 
 
 @pytest.mark.django_db

@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from django.db.models import F, Q, Sum
+from django.db.models import Q, Sum
 
 from .locale import Locale
 from .project import Project
@@ -113,39 +113,6 @@ class TranslatedResource(models.Model):
             "warnings": self.strings_with_warnings,
             "unreviewed": self.unreviewed_strings,
         }
-
-    def adjust_stats(
-        self, before: dict[str, int], after: dict[str, int], tr_created: bool
-    ):
-        if tr_created:
-            self.total_strings = self.resource.total_strings
-        self.approved_strings = (
-            F("approved_strings") + after["approved"] - before["approved"]
-        )
-        self.pretranslated_strings = (
-            F("pretranslated_strings")
-            + after["pretranslated"]
-            - before["pretranslated"]
-        )
-        self.strings_with_errors = (
-            F("strings_with_errors") + after["errors"] - before["errors"]
-        )
-        self.strings_with_warnings = (
-            F("strings_with_warnings") + after["warnings"] - before["warnings"]
-        )
-        self.unreviewed_strings = (
-            F("unreviewed_strings") + after["unreviewed"] - before["unreviewed"]
-        )
-        self.save(
-            update_fields=[
-                "total_strings",
-                "approved_strings",
-                "pretranslated_strings",
-                "strings_with_errors",
-                "strings_with_warnings",
-                "unreviewed_strings",
-            ]
-        )
 
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""

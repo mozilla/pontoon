@@ -249,8 +249,6 @@ class Translation(DirtyFieldsMixin, models.Model):
         from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
-        stats_before = self.entity.get_stats(self.locale)
-
         super().save(*args, **kwargs)
 
         project = self.entity.resource.project
@@ -322,8 +320,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             save_failed_checks(self, failed_checks)
 
         # Update stats AFTER changing approval status.
-        stats_after = self.entity.get_stats(self.locale)
-        translatedresource.adjust_stats(stats_before, stats_after, created)
+        translatedresource.calculate_stats()
 
     def update_latest_translation(self):
         """
