@@ -74,7 +74,7 @@ export const SEARCH_OPTIONS = [
     default: false,
   },
   {
-    name: 'Include string identifiers',
+    name: 'Search in string identifiers',
     slug: 'search_identifiers',
     default: false,
   },
