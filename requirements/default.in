@@ -52,4 +52,4 @@ sacrebleu==2.4.3
 sacremoses==0.1.1
 translate-toolkit==3.19.3
 whitenoise==5.2.0
-zensical==0.0.27
+zensical==0.0.28

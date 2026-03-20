@@ -981,7 +981,9 @@ CSP_SCRIPT_SRC = (
     # Needed for Docs
     "'sha256-DrEMJJ29sL7vIloQzly+VUGMxKcBTMII+OfW7Y8AkG4='",
     "'sha256-/8wPdzX9q0NNJXyA5lzsLojXFpkeaXVxhbfkUOQaWy8='",
+    "'sha256-i0DgL2uLiE/Q2kHCFRPZIfz/mN3ZA/Sq08UynK9ZACY='",
     "'sha256-9WmRqHphu0WtjGBriIQP5bBdmiqiG3tY04gCxNSST40='",
+    "'sha256-cgPnO/p6B0QlYcCUC4Ur5FXogQxKDNDgWWH3Q010y7A='",
 )
 CSP_STYLE_SRC = (
     "'self'",
