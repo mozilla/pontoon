@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from django.db.models import Q, Sum
+from django.db.models import Count, Q, Sum
 
 from .locale import Locale
 from .project import Project
@@ -125,46 +125,46 @@ class TranslatedResource(models.Model):
             locale=self.locale,
         )
 
-        self.approved_strings = translations.filter(
-            approved=True,
-            errors__isnull=True,
-            warnings__isnull=True,
-        ).count()
-
-        self.pretranslated_strings = translations.filter(
-            pretranslated=True,
-            errors__isnull=True,
-            warnings__isnull=True,
-        ).count()
-
-        self.strings_with_errors = (
-            translations.filter(
-                Q(
+        stats = translations.aggregate(
+            approved_count=Count(
+                "pk",
+                filter=Q(approved=True, errors__isnull=True, warnings__isnull=True),
+            ),
+            pretranslated_count=Count(
+                "pk",
+                filter=Q(
+                    pretranslated=True, errors__isnull=True, warnings__isnull=True
+                ),
+            ),
+            errors_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
                     Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
                     & Q(errors__isnull=False)
                 ),
-            )
-            .distinct()
-            .count()
-        )
-
-        self.strings_with_warnings = (
-            translations.filter(
-                Q(
+            ),
+            warnings_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
                     Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
                     & Q(warnings__isnull=False)
                 ),
-            )
-            .distinct()
-            .count()
+            ),
+            unreviewed_count=Count(
+                "pk",
+                filter=Q(
+                    approved=False, rejected=False, pretranslated=False, fuzzy=False
+                ),
+            ),
         )
 
-        self.unreviewed_strings = translations.filter(
-            approved=False,
-            rejected=False,
-            pretranslated=False,
-            fuzzy=False,
-        ).count()
+        self.approved_strings = stats["approved_count"]
+        self.pretranslated_strings = stats["pretranslated_count"]
+        self.strings_with_errors = stats["errors_count"]
+        self.strings_with_warnings = stats["warnings_count"]
+        self.unreviewed_strings = stats["unreviewed_count"]
 
         if save:
             self.save(
