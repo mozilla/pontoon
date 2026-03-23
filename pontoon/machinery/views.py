@@ -19,6 +19,7 @@ from pontoon.base.models import Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
+    get_microsoft_translator_data,
     get_translation_memory_data,
 )
 
@@ -26,6 +27,18 @@ from .openai_service import OpenAIService
 
 
 log = logging.getLogger(__name__)
+
+
+def _machinery_error_response(service_name, e):
+    log.error(f"{service_name} error: {e}")
+    if isinstance(e, requests.exceptions.HTTPError):
+        return JsonResponse(
+            {"status": False, "message": f"{e}"},
+            status=e.response.status_code,
+        )
+    if isinstance(e, requests.exceptions.RequestException):
+        return JsonResponse({"status": False, "message": f"{e}"}, status=500)
+    return JsonResponse({"status": False, "message": f"{e}"}, status=400)
 
 
 def translation_memory(request):
@@ -92,47 +105,18 @@ def microsoft_translator(request):
         if not locale_code:
             raise ValueError("Locale code is empty")
 
-        api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
-        if not api_key:
-            raise ValueError("Missing api key")
-
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
-    url = "https://api.cognitive.microsofttranslator.com/translate"
-    headers = {"Ocp-Apim-Subscription-Key": api_key, "Content-Type": "application/json"}
-    payload = {
-        "api-version": "3.0",
-        "from": "en",
-        "to": locale_code,
-        "textType": "html",
-    }
-    body = [{"Text": text}]
-
-    r = None
     try:
-        r = requests.post(url, params=payload, headers=headers, json=body)
-        r.raise_for_status()
-
-        root = json.loads(r.content)
-
-        if "error" in root:
-            log.error(f"Microsoft Translator error: {root}")
-            return JsonResponse(
-                {"status": False, "message": f"Bad Request: {root}"},
-                status=400,
-            )
-
-        return JsonResponse({"translation": root[0]["translations"][0]["text"]})
-
-    except requests.exceptions.RequestException as e:
         return JsonResponse(
-            {"status": False, "message": f"{e}"},
-            status=r.status_code if r is not None else 500,
+            {"translation": get_microsoft_translator_data(text, locale_code)}
         )
+    except Exception as e:
+        return _machinery_error_response("Microsoft Translator", e)
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -151,12 +135,10 @@ def google_translate(request):
             status=400,
         )
 
-    data = get_google_translate_data(text, locale)
-
-    if not data["status"]:
-        return JsonResponse(data, status=400)
-
-    return JsonResponse(data)
+    try:
+        return JsonResponse({"translation": get_google_translate_data(text, locale)})
+    except Exception as e:
+        return _machinery_error_response("Google Translate", e)
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -171,14 +153,16 @@ def gpt_transform(request):
         target_language_name = request.GET.get("locale")
 
         service = OpenAIService()
-        transformed_text = service.get_translation(
-            english_text, translated_text, characteristic, target_language_name
+        return JsonResponse(
+            {
+                "translation": service.get_translation(
+                    english_text, translated_text, characteristic, target_language_name
+                )
+            }
         )
 
-        return JsonResponse({"translation": transformed_text})
-
     except Exception as e:
-        return JsonResponse({"status": False, "message": str(e)}, status=400)
+        return _machinery_error_response("GPT Transform", e)
 
 
 @login_required(redirect_field_name="", login_url="/403")

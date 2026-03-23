@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 import operator
@@ -18,6 +19,8 @@ from rapidfuzz.distance.Indel import normalized_distance
 
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.core.cache import cache
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 
 import pontoon.base as base
@@ -29,27 +32,39 @@ log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
+def get_machinery_service_cache_key(service, *parts):
+    digest = hashlib.md5(":".join(str(p) for p in parts).encode()).hexdigest()
+    return f"machinery_service:{service}:{digest}"
+
+
+def set_machinery_service_cache_key(key, value):
+    cache.set(key, value, settings.MACHINERY_SERVICE_CACHE_TIMEOUT)
+
+
 def get_google_translate_data(text, locale, format="text", preserve_placeables=False):
-    res = (
+    translation = (
         get_google_automl_translation(text, locale, format, preserve_placeables)
         if locale.google_automl_model
         else get_google_generic_translation(text, locale.google_translate_code, format)
     )
-    if format == "html" and "translation" in res:
-        res["translation"] = unescape(res["translation"])
+    if format == "html":
+        translation = unescape(translation)
 
-    return res
+    return translation
 
 
 def get_google_generic_translation(text, locale_code, format="text"):
+    cache_key = get_machinery_service_cache_key(
+        "google_generic", text, locale_code, format
+    )
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
-        log.error("GOOGLE_TRANSLATE_API_KEY not set")
-        return {
-            "status": False,
-            "message": "Bad Request: Missing api key.",
-        }
+        raise ImproperlyConfigured("GOOGLE_TRANSLATE_API_KEY not set")
 
     url = "https://translation.googleapis.com/language/translate/v2"
 
@@ -61,51 +76,43 @@ def get_google_generic_translation(text, locale_code, format="text"):
         "key": api_key,
     }
 
-    try:
-        r = requests.post(url, params=payload)
-        r.raise_for_status()
-        root = json.loads(r.content)
+    r = requests.post(url, params=payload)
+    r.raise_for_status()
+    root = json.loads(r.content)
 
-        if "data" not in root:
-            log.error(f"Google Translate error: {root}")
-            return {
-                "status": False,
-                "message": f"Bad Request: {root}",
-            }
+    if "data" not in root:
+        raise ValueError(f"Google Translate error: {root}")
 
-        return {
-            "status": True,
-            "translation": root["data"]["translations"][0]["translatedText"],
-        }
-
-    except requests.exceptions.RequestException as e:
-        log.error(f"Google Translate error: {e}")
-        return {
-            "status": False,
-            "message": f"{e}",
-        }
+    translation = root["data"]["translations"][0]["translatedText"]
+    set_machinery_service_cache_key(cache_key, translation)
+    return translation
 
 
 def get_google_automl_translation(
     text, locale, format="text", preserve_placeables=False
 ):
+    cache_key = get_machinery_service_cache_key(
+        "google_automl",
+        text,
+        locale.code,
+        format,
+        preserve_placeables,
+    )
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     try:
         client = translate.TranslationServiceClient()
     except DefaultCredentialsError as e:
-        log.error(f"Google AutoML Translation error: {e}")
-        return {
-            "status": False,
-            "message": f"{e}",
-        }
+        raise ImproperlyConfigured(
+            f"Google AutoML credentials incorrectly configured: {e}"
+        )
 
     project_id = settings.GOOGLE_AUTOML_PROJECT_ID
 
     if not project_id:
-        log.error("GOOGLE_AUTOML_PROJECT_ID not set")
-        return {
-            "status": False,
-            "message": "Bad Request: Missing Project ID.",
-        }
+        raise ImproperlyConfigured("GOOGLE_AUTOML_PROJECT_ID not set")
 
     # Google AutoML Translation requires location "us-central1"
     location = "us-central1"
@@ -134,15 +141,46 @@ def get_google_automl_translation(
         translations = response.glossary_translations
 
     if len(translations) == 0:
-        return {
-            "status": False,
-            "message": "No translations found.",
-        }
-    else:
-        return {
-            "status": True,
-            "translation": translations[0].translated_text,
-        }
+        raise ValueError("No translations found.")
+
+    translation = translations[0].translated_text
+    set_machinery_service_cache_key(cache_key, translation)
+    return translation
+
+
+def get_microsoft_translator_data(text, locale_code):
+    cache_key = get_machinery_service_cache_key(
+        "microsoft_translator", text, locale_code
+    )
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
+
+    if not api_key:
+        raise ImproperlyConfigured("MICROSOFT_TRANSLATOR_API_KEY not set")
+
+    url = "https://api.cognitive.microsofttranslator.com/translate"
+    headers = {"Ocp-Apim-Subscription-Key": api_key, "Content-Type": "application/json"}
+    payload = {
+        "api-version": "3.0",
+        "from": "en",
+        "to": locale_code,
+        "textType": "html",
+    }
+    body = [{"Text": text}]
+
+    r = requests.post(url, params=payload, headers=headers, json=body)
+    r.raise_for_status()
+    root = json.loads(r.content)
+
+    if "error" in root:
+        raise ValueError(f"Unexpected response: {root}")
+
+    translation = root[0]["translations"][0]["text"]
+    set_machinery_service_cache_key(cache_key, translation)
+    return translation
 
 
 def use_placeables_glossary(text, client, project_id, location, request_params):

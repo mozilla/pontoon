@@ -2,19 +2,36 @@ import textwrap
 
 from openai import OpenAI
 
+from django.conf import settings
+from django.core.cache import cache
+
 from pontoon.base.models import Locale
-from pontoon.settings.base import OPENAI_API_KEY
+from pontoon.machinery.utils import (
+    get_machinery_service_cache_key,
+    set_machinery_service_cache_key,
+)
 
 
 class OpenAIService:
     def __init__(self):
-        if not OPENAI_API_KEY:
+        if not settings.OPENAI_API_KEY:
             raise ValueError("Missing OpenAI API key")
         self.client = OpenAI()
 
     def get_translation(
         self, english_text, translated_text, characteristic, target_language_name
     ):
+        cache_key = get_machinery_service_cache_key(
+            "openai_chatgpt",
+            english_text,
+            translated_text,
+            characteristic,
+            target_language_name,
+        )
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+
         try:
             target_language = Locale.objects.get(name=target_language_name)
         except Locale.DoesNotExist:
@@ -94,4 +111,6 @@ class OpenAIService:
             top_p=1,  # Set top_p to 1 to consider the full distribution
         )
 
-        return response.choices[0].message.content.strip()
+        result = response.choices[0].message.content.strip()
+        set_machinery_service_cache_key(cache_key, result)
+        return result
