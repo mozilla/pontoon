@@ -12,6 +12,7 @@ import google.auth
 import google.auth.transport.requests
 import requests
 
+from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
 from google.oauth2 import service_account
 from rapidfuzz.distance.Indel import normalized_distance
@@ -19,6 +20,7 @@ from rapidfuzz.distance.Indel import normalized_distance
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.cache import cache
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 
 import pontoon.base as base
@@ -62,7 +64,7 @@ def get_google_generic_translation(text, locale_code, format="text"):
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
-        raise ValueError("GOOGLE_TRANSLATE_API_KEY not set")
+        raise ImproperlyConfigured("GOOGLE_TRANSLATE_API_KEY not set")
 
     url = "https://translation.googleapis.com/language/translate/v2"
 
@@ -100,12 +102,17 @@ def get_google_automl_translation(
     if cached is not None:
         return cached
 
-    client = translate.TranslationServiceClient()
+    try:
+        client = translate.TranslationServiceClient()
+    except DefaultCredentialsError as e:
+        raise ImproperlyConfigured(
+            f"Google AutoML credentials incorrectly configured: {e}"
+        )
 
     project_id = settings.GOOGLE_AUTOML_PROJECT_ID
 
     if not project_id:
-        raise ValueError("GOOGLE_AUTOML_PROJECT_ID not set")
+        raise ImproperlyConfigured("GOOGLE_AUTOML_PROJECT_ID not set")
 
     # Google AutoML Translation requires location "us-central1"
     location = "us-central1"
@@ -152,7 +159,7 @@ def get_microsoft_translator_data(text, locale_code):
     api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
 
     if not api_key:
-        raise ValueError("MICROSOFT_TRANSLATOR_API_KEY not set")
+        raise ImproperlyConfigured("MICROSOFT_TRANSLATOR_API_KEY not set")
 
     url = "https://api.cognitive.microsofttranslator.com/translate"
     headers = {"Ocp-Apim-Subscription-Key": api_key, "Content-Type": "application/json"}

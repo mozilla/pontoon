@@ -162,7 +162,7 @@ def gpt_transform(request):
         )
 
     except Exception as e:
-        return JsonResponse({"status": False, "message": str(e)}, status=400)
+        return _machinery_error_response("GPT Transform", e)
 
 
 @login_required(redirect_field_name="", login_url="/403")
