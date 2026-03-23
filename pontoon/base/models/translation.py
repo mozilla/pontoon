@@ -1,7 +1,7 @@
 from dirtyfields import DirtyFieldsMixin
 
 from django.contrib.postgres.fields import ArrayField
-from django.db import models
+from django.db import IntegrityError, models, transaction
 from django.db.models import Count, Q
 from django.utils import timezone
 
@@ -249,6 +249,8 @@ class Translation(DirtyFieldsMixin, models.Model):
         from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
+        stats_before = self._get_entity_stats()
+
         super().save(*args, **kwargs)
 
         project = self.entity.resource.project
@@ -320,7 +322,65 @@ class Translation(DirtyFieldsMixin, models.Model):
             save_failed_checks(self, failed_checks)
 
         # Update stats AFTER changing approval status.
-        translatedresource.calculate_stats()
+        # Use entity-scoped aggregate delta for performance. Fall back to a
+        # full resource recount on IntegrityError.
+        stats_after = self._get_entity_stats()
+        try:
+            with transaction.atomic():
+                translatedresource.adjust_stats(stats_before, stats_after, created)
+        except IntegrityError:
+            translatedresource.calculate_stats()
+
+    def _get_entity_stats(self) -> dict[str, int]:
+        """
+        Aggregate translation stats for this entity+locale pair.
+        Used to compute before/after deltas in save() without scanning
+        the entire resource.
+        """
+        stats = Translation.objects.filter(
+            entity=self.entity,
+            locale=self.locale,
+        ).aggregate(
+            approved_count=Count(
+                "pk",
+                filter=Q(approved=True, errors__isnull=True, warnings__isnull=True),
+            ),
+            pretranslated_count=Count(
+                "pk",
+                filter=Q(
+                    pretranslated=True, errors__isnull=True, warnings__isnull=True
+                ),
+            ),
+            errors_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
+                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                    & Q(errors__isnull=False)
+                ),
+            ),
+            warnings_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
+                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                    & Q(warnings__isnull=False)
+                ),
+            ),
+            unreviewed_count=Count(
+                "pk",
+                filter=Q(
+                    approved=False, rejected=False, pretranslated=False, fuzzy=False
+                ),
+            ),
+        )
+        return {
+            "approved": stats["approved_count"],
+            "pretranslated": stats["pretranslated_count"],
+            "errors": stats["errors_count"],
+            "warnings": stats["warnings_count"],
+            "unreviewed": stats["unreviewed_count"],
+        }
 
     def update_latest_translation(self):
         """

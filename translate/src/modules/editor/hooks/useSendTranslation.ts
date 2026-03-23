@@ -18,6 +18,7 @@ import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
   SAME_TRANSLATION,
   TRANSLATION_SAVED,
+  UNABLE_TO_SAVE_TRANSLATION,
 } from '~/modules/notification/messages';
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
@@ -109,6 +110,8 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       // The translation that was provided is the same as an existing
       // translation for that entity.
       showNotification(SAME_TRANSLATION);
+    } else {
+      showNotification(UNABLE_TO_SAVE_TRANSLATION);
     }
 
     setEditorBusy(false);

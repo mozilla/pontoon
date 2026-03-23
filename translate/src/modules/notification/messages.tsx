@@ -57,6 +57,15 @@ export const TRANSLATION_SAVED: NotificationMessage = {
   type: 'info',
 };
 
+export const UNABLE_TO_SAVE_TRANSLATION: NotificationMessage = {
+  content: (
+    <Localized id='notification--unable-to-save-translation'>
+      Unable to save translation
+    </Localized>
+  ),
+  type: 'error',
+};
+
 export const UNABLE_TO_APPROVE_TRANSLATION: NotificationMessage = {
   content: (
     <Localized id='notification--unable-to-approve-translation'>
