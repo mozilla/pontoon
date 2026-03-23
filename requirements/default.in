@@ -37,7 +37,7 @@ google-cloud-translate==3.16.0
 gunicorn==23.0.0
 jsonfield==3.1.0
 markupsafe==2.0.1
-moz.l10n[xml]==0.11.1
+moz.l10n[xml]==0.11.2
 newrelic==9.6.0
 openai==1.99.9
 psycopg2==2.9.6
