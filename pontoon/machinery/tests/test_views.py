@@ -4,6 +4,7 @@ import urllib.parse
 from unittest.mock import MagicMock, patch
 
 import pytest
+import requests
 import requests_mock
 
 from django.core.cache import cache
@@ -66,6 +67,62 @@ def test_view_microsoft_translator_bad_locale(member, ms_locale, ms_api_key):
 
 
 @pytest.mark.django_db
+def test_view_microsoft_translator_missing_api_key(member, ms_locale, settings):
+    settings.MICROSOFT_TRANSLATOR_API_KEY = ""
+    cache.clear()
+    url = reverse("pontoon.microsoft_translator")
+    response = member.client.get(
+        url, {"text": "text", "locale": ms_locale.ms_translator_code}
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_view_microsoft_translator_api_http_error(member, ms_locale, ms_api_key):
+    cache.clear()
+    url = reverse("pontoon.microsoft_translator")
+    with requests_mock.mock() as m:
+        m.post(
+            "https://api.cognitive.microsofttranslator.com/translate",
+            status_code=401,
+        )
+        response = member.client.get(
+            url, {"text": "text", "locale": ms_locale.ms_translator_code}
+        )
+    assert response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_view_microsoft_translator_api_connection_error(member, ms_locale, ms_api_key):
+    cache.clear()
+    url = reverse("pontoon.microsoft_translator")
+    with requests_mock.mock() as m:
+        m.post(
+            "https://api.cognitive.microsofttranslator.com/translate",
+            exc=requests.exceptions.ConnectionError,
+        )
+        response = member.client.get(
+            url, {"text": "text", "locale": ms_locale.ms_translator_code}
+        )
+    assert response.status_code == 500
+
+
+@pytest.mark.django_db
+def test_view_microsoft_translator_api_error_in_response(member, ms_locale, ms_api_key):
+    cache.clear()
+    url = reverse("pontoon.microsoft_translator")
+    with requests_mock.mock() as m:
+        m.post(
+            "https://api.cognitive.microsofttranslator.com/translate",
+            json={"error": {"code": 400000, "message": "Bad request"}},
+        )
+        response = member.client.get(
+            url, {"text": "text", "locale": ms_locale.ms_translator_code}
+        )
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
 def test_view_google_translate_not_logged_in(
     client, google_translate_locale, google_translate_api_key
 ):
@@ -93,7 +150,6 @@ def test_view_google_translate(
 
     assert response.status_code == 200
     assert json.loads(response.content) == {
-        "status": True,
         "translation": "target",
     }
 
@@ -117,6 +173,70 @@ def test_view_google_translate_bad_locale(
     url = reverse("pontoon.google_translate")
     response = member.client.get(url, {"text": "text", "locale": "bad"})
 
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_view_google_translate_missing_api_key(
+    member, google_translate_locale, settings
+):
+    settings.GOOGLE_TRANSLATE_API_KEY = ""
+    cache.clear()
+    url = reverse("pontoon.google_translate")
+    response = member.client.get(
+        url, {"text": "text", "locale": google_translate_locale.code}
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_view_google_translate_api_http_error(
+    member, google_translate_locale, google_translate_api_key
+):
+    cache.clear()
+    url = reverse("pontoon.google_translate")
+    with requests_mock.mock() as m:
+        m.post(
+            "https://translation.googleapis.com/language/translate/v2",
+            status_code=403,
+        )
+        response = member.client.get(
+            url, {"text": "text", "locale": google_translate_locale.code}
+        )
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_view_google_translate_api_connection_error(
+    member, google_translate_locale, google_translate_api_key
+):
+    cache.clear()
+    url = reverse("pontoon.google_translate")
+    with requests_mock.mock() as m:
+        m.post(
+            "https://translation.googleapis.com/language/translate/v2",
+            exc=requests.exceptions.ConnectionError,
+        )
+        response = member.client.get(
+            url, {"text": "text", "locale": google_translate_locale.code}
+        )
+    assert response.status_code == 500
+
+
+@pytest.mark.django_db
+def test_view_google_translate_api_unexpected_response(
+    member, google_translate_locale, google_translate_api_key
+):
+    cache.clear()
+    url = reverse("pontoon.google_translate")
+    with requests_mock.mock() as m:
+        m.post(
+            "https://translation.googleapis.com/language/translate/v2",
+            json={"unexpected": "response"},
+        )
+        response = member.client.get(
+            url, {"text": "text", "locale": google_translate_locale.code}
+        )
     assert response.status_code == 400
 
 
