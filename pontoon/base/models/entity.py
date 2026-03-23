@@ -7,7 +7,7 @@ from dirtyfields import DirtyFieldsMixin
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import F, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q
 from django.utils import timezone
 
 from pontoon.base import utils
@@ -290,34 +290,47 @@ class Entity(DirtyFieldsMixin, models.Model):
         :arg Locale locale: filter translations for this locale.
         :return: a dictionary with stats for the Entity+Locale
         """
-        approved = 0
-        pretranslated = 0
-        errors = 0
-        warnings = 0
-        unreviewed = 0
-
-        for t in self.translation_set.filter(locale=locale).prefetch_related(
-            "errors", "warnings"
-        ):
-            if t.errors.exists():
-                if t.approved or t.pretranslated or t.fuzzy:
-                    errors += 1
-            elif t.warnings.exists():
-                if t.approved or t.pretranslated or t.fuzzy:
-                    warnings += 1
-            elif t.approved:
-                approved += 1
-            elif t.pretranslated:
-                pretranslated += 1
-            if not (t.approved or t.pretranslated or t.fuzzy or t.rejected):
-                unreviewed += 1
-
+        stats = self.translation_set.filter(locale=locale).aggregate(
+            approved_count=Count(
+                "pk",
+                filter=Q(approved=True, errors__isnull=True, warnings__isnull=True),
+            ),
+            pretranslated_count=Count(
+                "pk",
+                filter=Q(
+                    pretranslated=True, errors__isnull=True, warnings__isnull=True
+                ),
+            ),
+            errors_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
+                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                    & Q(errors__isnull=False)
+                ),
+            ),
+            warnings_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
+                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                    & Q(warnings__isnull=False)
+                ),
+            ),
+            unreviewed_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
+                    approved=False, rejected=False, pretranslated=False, fuzzy=False
+                ),
+            ),
+        )
         return {
-            "approved": approved,
-            "pretranslated": pretranslated,
-            "errors": errors,
-            "warnings": warnings,
-            "unreviewed": unreviewed,
+            "approved": stats["approved_count"],
+            "pretranslated": stats["pretranslated_count"],
+            "errors": stats["errors_count"],
+            "warnings": stats["warnings_count"],
+            "unreviewed": stats["unreviewed_count"],
         }
 
     def has_changed(self, locale):
