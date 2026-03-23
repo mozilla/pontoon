@@ -105,10 +105,12 @@ def microsoft_translator(request):
             status=400,
         )
 
-    cache_key = get_machinery_service_cache_key("microsoft", text, locale_code)
+    cache_key = get_machinery_service_cache_key(
+        "microsoft_translator", text, locale_code
+    )
     cached = cache.get(cache_key)
     if cached is not None:
-        return JsonResponse(cached)
+        return JsonResponse({"translation": cached})
 
     url = "https://api.cognitive.microsofttranslator.com/translate"
     headers = {"Ocp-Apim-Subscription-Key": api_key, "Content-Type": "application/json"}
@@ -134,9 +136,9 @@ def microsoft_translator(request):
                 status=400,
             )
 
-        result = {"translation": root[0]["translations"][0]["text"]}
-        set_machinery_service_cache_key(cache_key, result)
-        return JsonResponse(result)
+        translation = root[0]["translations"][0]["text"]
+        set_machinery_service_cache_key(cache_key, translation)
+        return JsonResponse({"translation": translation})
 
     except requests.exceptions.RequestException as e:
         return JsonResponse(
@@ -181,11 +183,13 @@ def gpt_transform(request):
         target_language_name = request.GET.get("locale")
 
         service = OpenAIService()
-        transformed_text = service.get_translation(
-            english_text, translated_text, characteristic, target_language_name
+        return JsonResponse(
+            {
+                "translation": service.get_translation(
+                    english_text, translated_text, characteristic, target_language_name
+                )
+            }
         )
-
-        return JsonResponse({"translation": transformed_text})
 
     except Exception as e:
         return JsonResponse({"status": False, "message": str(e)}, status=400)

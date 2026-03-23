@@ -53,7 +53,9 @@ def get_google_translate_data(text, locale, format="text", preserve_placeables=F
 
 
 def get_google_generic_translation(text, locale_code, format="text"):
-    cache_key = get_machinery_service_cache_key("google", text, locale_code, format)
+    cache_key = get_machinery_service_cache_key(
+        "google_generic", text, locale_code, format
+    )
     cached = cache.get(cache_key)
     if cached is not None:
         return {"status": True, "translation": cached}

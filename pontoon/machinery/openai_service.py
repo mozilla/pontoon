@@ -22,7 +22,7 @@ class OpenAIService:
         self, english_text, translated_text, characteristic, target_language_name
     ):
         cache_key = get_machinery_service_cache_key(
-            "openai",
+            "openai_chatgpt",
             english_text,
             translated_text,
             characteristic,
