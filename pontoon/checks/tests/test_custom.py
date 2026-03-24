@@ -186,6 +186,20 @@ def test_android_apostrophes():
     assert run_custom_checks(entity, translation) == {}
 
 
+def test_android_percent_signs_same():
+    original = "Source string 100%"
+    translation = "Translation string 100%"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_android_percent_signs_more():
+    original = "Source string 100%"
+    translation = "Translation 100%! string 100%"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
 def test_android_literal_newline():
     original = "Source string"
     translation = r"Translation with an escaped \\n newline"
@@ -206,6 +220,15 @@ def test_android_missing_placeholder():
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
         "pndbWarnings": ["Placeholder %1$s not found in translation"]
+    }
+
+
+def test_android_mistyped_placeholder():
+    original = "Source string with a {$arg1 :string @source=|%1$s|}"
+    translation = "Translation %1"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ["Placeholder %1$s not found in translation"]
     }
 
 
