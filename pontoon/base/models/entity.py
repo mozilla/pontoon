@@ -7,7 +7,7 @@ from dirtyfields import DirtyFieldsMixin
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import F, Prefetch, Q
 from django.utils import timezone
 
 from pontoon.base import utils
@@ -282,56 +282,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def __str__(self):
         return self.string
-
-    def get_stats(self, locale) -> dict[str, int]:
-        """
-        Get stats for a single (entity, locale) pair.
-
-        :arg Locale locale: filter translations for this locale.
-        :return: a dictionary with stats for the Entity+Locale
-        """
-        stats = self.translation_set.filter(locale=locale).aggregate(
-            approved_count=Count(
-                "pk",
-                filter=Q(approved=True, errors__isnull=True, warnings__isnull=True),
-            ),
-            pretranslated_count=Count(
-                "pk",
-                filter=Q(
-                    pretranslated=True, errors__isnull=True, warnings__isnull=True
-                ),
-            ),
-            errors_count=Count(
-                "pk",
-                distinct=True,
-                filter=Q(
-                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                    & Q(errors__isnull=False)
-                ),
-            ),
-            warnings_count=Count(
-                "pk",
-                distinct=True,
-                filter=Q(
-                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                    & Q(warnings__isnull=False)
-                ),
-            ),
-            unreviewed_count=Count(
-                "pk",
-                distinct=True,
-                filter=Q(
-                    approved=False, rejected=False, pretranslated=False, fuzzy=False
-                ),
-            ),
-        )
-        return {
-            "approved": stats["approved_count"],
-            "pretranslated": stats["pretranslated_count"],
-            "errors": stats["errors_count"],
-            "warnings": stats["warnings_count"],
-            "unreviewed": stats["unreviewed_count"],
-        }
 
     def has_changed(self, locale):
         """

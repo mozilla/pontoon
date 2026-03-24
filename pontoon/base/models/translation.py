@@ -13,6 +13,7 @@ from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
+from pontoon.base.models.stats import aggregate_translation_stats
 from pontoon.base.models.user import User
 from pontoon.base.simple_preview import get_simple_preview
 from pontoon.checks import DB_FORMATS
@@ -249,7 +250,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
-        stats_before = self.entity.get_stats(self.locale)
+        stats_before = aggregate_translation_stats(
+            self.entity.translation_set.filter(locale=self.locale)
+        )
 
         super().save(*args, **kwargs)
 
@@ -324,7 +327,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Update stats AFTER changing approval status.
         # Use entity-scoped aggregate delta for performance. Fall back to a
         # full resource recount on IntegrityError.
-        stats_after = self.entity.get_stats(self.locale)
+        stats_after = aggregate_translation_stats(
+            self.entity.translation_set.filter(locale=self.locale)
+        )
         try:
             with transaction.atomic():
                 translatedresource.adjust_stats(stats_before, stats_after, created)

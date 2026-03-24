@@ -1,11 +1,12 @@
 import logging
 
 from django.db import models
-from django.db.models import Count, F, Q, Sum
+from django.db.models import F, Sum
 
 from .locale import Locale
 from .project import Project
 from .resource import Resource
+from .stats import aggregate_translation_stats
 from .translation import Translation
 from .user import User
 
@@ -158,46 +159,13 @@ class TranslatedResource(models.Model):
             locale=self.locale,
         )
 
-        stats = translations.aggregate(
-            approved_count=Count(
-                "pk",
-                filter=Q(approved=True, errors__isnull=True, warnings__isnull=True),
-            ),
-            pretranslated_count=Count(
-                "pk",
-                filter=Q(
-                    pretranslated=True, errors__isnull=True, warnings__isnull=True
-                ),
-            ),
-            errors_count=Count(
-                "pk",
-                distinct=True,
-                filter=Q(
-                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                    & Q(errors__isnull=False)
-                ),
-            ),
-            warnings_count=Count(
-                "pk",
-                distinct=True,
-                filter=Q(
-                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                    & Q(warnings__isnull=False)
-                ),
-            ),
-            unreviewed_count=Count(
-                "pk",
-                filter=Q(
-                    approved=False, rejected=False, pretranslated=False, fuzzy=False
-                ),
-            ),
-        )
+        stats = aggregate_translation_stats(translations)
 
-        self.approved_strings = stats["approved_count"]
-        self.pretranslated_strings = stats["pretranslated_count"]
-        self.strings_with_errors = stats["errors_count"]
-        self.strings_with_warnings = stats["warnings_count"]
-        self.unreviewed_strings = stats["unreviewed_count"]
+        self.approved_strings = stats["approved"]
+        self.pretranslated_strings = stats["pretranslated"]
+        self.strings_with_errors = stats["errors"]
+        self.strings_with_warnings = stats["warnings"]
+        self.unreviewed_strings = stats["unreviewed"]
 
         if save:
             self.save(
