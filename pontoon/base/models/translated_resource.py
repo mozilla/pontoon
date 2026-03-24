@@ -6,8 +6,7 @@ from django.db.models import F, Sum
 from .locale import Locale
 from .project import Project
 from .resource import Resource
-from .stats import aggregate_translation_stats
-from .translation import Translation
+from .translation import Translation, aggregate_translation_stats
 from .user import User
 
 
