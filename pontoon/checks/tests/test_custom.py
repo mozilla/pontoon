@@ -214,6 +214,24 @@ def test_android_same_placeholder():
     assert run_custom_checks(entity, translation) == {}
 
 
+def test_android_plural_placeholders():
+    original = """
+        .input {$n :number}
+        .match $n
+        one {{One item}}
+        * {{{$arg1 :number @source=|%1$d|} items}}
+    """
+    translation = """
+        .input {$n :number}
+        .match $n
+        one {{{$arg1 :number @source=|%1$d|} item}}
+        many {{{$arg1 :number @source=|%1$d|} items}}
+        * {{{$arg1 :number @source=|%1$d|} items}}
+    """
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
 def test_android_missing_placeholder():
     original = "Source string with a {$arg1 :string @source=|%1$s|}"
     translation = "Translation"

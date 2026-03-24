@@ -72,17 +72,17 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                 errors.append(f"Parse error: {e}")
 
             orig_pct_count = 0
-            orig_ps: set[str] = set()
+            orig_ph_strings: set[str] = set()
             try:
                 orig_msg = mf2_parse_message(entity.string)
                 for pattern in get_patterns(orig_msg):
-                    ppc = 0
+                    pattern_pct_count = 0
                     for el in pattern:
                         if isinstance(el, str):
-                            ppc += el.count("%")
+                            pattern_pct_count += el.count("%")
                         else:
-                            orig_ps.add(preview_placeholder(el))
-                    orig_pct_count = max(orig_pct_count, ppc)
+                            orig_ph_strings.add(preview_placeholder(el))
+                    orig_pct_count = max(orig_pct_count, pattern_pct_count)
             except ValueError:
                 orig_msg = None
 
@@ -102,20 +102,20 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                     android_msg = android_parse_message(
                         escape(get_simple_preview(Resource.Format.ANDROID, pattern))
                     )
-                    ppc = 0
+                    pattern_pct_count = 0
                     for el in android_msg.pattern:
                         if isinstance(el, str):
-                            ppc += el.count("%")
+                            pattern_pct_count += el.count("%")
                         else:
                             ps = preview_placeholder(el)
-                            if ps in orig_ps:
+                            if ps in orig_ph_strings:
                                 found_ps.add(ps)
                             else:
                                 errors.append(
                                     f"Placeholder {ps} not found in reference"
                                 )
-                    pct_count = max(pct_count, ppc)
-                for ps in orig_ps:
+                    pct_count = max(pct_count, pattern_pct_count)
+                for ps in orig_ph_strings:
                     if ps not in found_ps:
                         ew_list = errors if pct_count > orig_pct_count else warnings
                         ew_list.append(f"Placeholder {ps} not found in translation")
