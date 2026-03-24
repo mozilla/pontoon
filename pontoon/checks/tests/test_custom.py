@@ -227,6 +227,18 @@ def test_android_extra_placeholder_as_literal():
     }
 
 
+def test_android_changed_placeholder():
+    original = (
+        "New! {$arg :string @source=|%s|} email masks are now available on mobile."
+    )
+    translation = "Нав! Акнун ниқобҳои почтаи электронии «{$arg1 :string @source=|%@|}» дар дастгоҳҳои мобилӣ дастрасанд."
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ["Placeholder %@ not found in reference"],
+        "pndbWarnings": ["Placeholder %s not found in translation"],
+    }
+
+
 def test_android_protections():
     original = "Source {$string :xliff:g id=string @translate=no @source=String} with {$variable :xliff:g id=variable example=5 @translate=no @source=|%1$s|}"
     translation = "Translation String with %1$s"

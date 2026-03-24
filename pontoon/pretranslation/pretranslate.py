@@ -56,7 +56,9 @@ def get_pretranslation(
                 pt.message(prop)
         for key, prop in accesskeys:
             set_accesskey(entry, key, prop)
-        pt_res = FluentSerializer().serialize_entry(fluent_astify_entry(entry))
+        pt_res = FluentSerializer().serialize_entry(
+            fluent_astify_entry(entry, escape_syntax=False)
+        )
     else:
         if entity.resource.format in {
             Resource.Format.ANDROID,
@@ -152,7 +154,9 @@ class Pretranslation:
                 el.value
                 if isinstance(el, FTL.TextElement)
                 else serialize_expression(el)
-                for el in fluent_astify_message(PatternMessage(pattern)).elements
+                for el in fluent_astify_message(
+                    PatternMessage(pattern), escape_syntax=False
+                ).elements
             )
             if self.format == Format.fluent
             else self.source

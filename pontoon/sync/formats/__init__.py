@@ -65,7 +65,7 @@ def _unicode_unescape(m: Match[str]):
 def _as_string(format: Format | None, entry: Entry[Message]) -> str:
     match format:
         case Format.fluent:
-            fluent_entry = fluent_astify_entry(entry, lambda _: "")
+            fluent_entry = fluent_astify_entry(entry, comment_str=lambda _: "")
             return _fluent_serializer.serialize_entry(fluent_entry)
         case Format.android | Format.gettext | Format.webext | Format.xliff:
             return serialize_message(Format.mf2, entry.value)
