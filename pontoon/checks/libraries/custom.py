@@ -70,18 +70,21 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                 msg = None
                 patterns = ()
                 errors.append(f"Parse error: {e}")
+
+            orig_pct_count = 0
+            orig_ph_strings: set[str] = set()
             try:
                 orig_msg = mf2_parse_message(entity.string)
-                orig_ph_iter = (
-                    el
-                    for pattern in get_patterns(orig_msg)
-                    for el in pattern
-                    if not isinstance(el, str)
-                )
-                orig_ps = {preview_placeholder(ph) for ph in orig_ph_iter}
+                for pattern in get_patterns(orig_msg):
+                    pattern_pct_count = 0
+                    for el in pattern:
+                        if isinstance(el, str):
+                            pattern_pct_count += el.count("%")
+                        else:
+                            orig_ph_strings.add(preview_placeholder(el))
+                    orig_pct_count = max(orig_pct_count, pattern_pct_count)
             except ValueError:
                 orig_msg = None
-                orig_ps = set()
 
             if any(all(el == "" for el in pattern) for pattern in patterns):
                 errors.append("Empty translations are not allowed")
@@ -94,22 +97,28 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
             # Inlined Android checks from compare-locales to support <plurals>
             found_ps: set[str] = set()
             try:
+                pct_count = 0
                 for pattern in patterns:
                     android_msg = android_parse_message(
                         escape(get_simple_preview(Resource.Format.ANDROID, pattern))
                     )
+                    pattern_pct_count = 0
                     for el in android_msg.pattern:
-                        if not isinstance(el, str):
+                        if isinstance(el, str):
+                            pattern_pct_count += el.count("%")
+                        else:
                             ps = preview_placeholder(el)
-                            if ps in orig_ps:
+                            if ps in orig_ph_strings:
                                 found_ps.add(ps)
                             else:
                                 errors.append(
                                     f"Placeholder {ps} not found in reference"
                                 )
-                for ps in orig_ps:
+                    pct_count = max(pct_count, pattern_pct_count)
+                for ps in orig_ph_strings:
                     if ps not in found_ps:
-                        warnings.append(f"Placeholder {ps} not found in translation")
+                        ew_list = errors if pct_count > orig_pct_count else warnings
+                        ew_list.append(f"Placeholder {ps} not found in translation")
             except Exception as e:
                 errors.append(f"Parse error: {e}")
 
