@@ -103,7 +103,7 @@ comments-CommentsList--pinned-comments = PINNED COMMENTS
 comments-CommentsList--all-comments = ALL COMMENTS
 comments-Comment--edit-button = EDIT
 comments-Comment--delete-button = DELETE
-comments-Comment--cancel-edit-button = CANCEL EDIT
+comments-Comment--cancel-button = CANCEL
 
 ## Editor Menu
 ## Allows contributors to modify or propose a translation

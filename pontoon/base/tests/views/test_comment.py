@@ -105,14 +105,14 @@ def test_delete_comment(member, client, comment_a):
 
     assert response.status_code == 403
 
-    # the author can delete their comment
-    comment_a.author = member.user
-    comment_a.save()
-    comment_a.refresh_from_db()
+    # A user with can_manage_project permission can delete someone else's comment
+    permission = Permission.objects.get(codename="can_manage_project")
+    member.user.user_permissions.add(permission)
+    member.user.refresh_from_db()
 
     response = member.client.post(
         url,
-        {"comment_id": comment_a.pk, "content": "Deleted comment"},
+        {"comment_id": comment_a.pk},
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 

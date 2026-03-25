@@ -5,7 +5,7 @@
 
 .comments-list .comment.is-editing .info {
   margin-left: 44px;
-  margin-top: -16px; /* Offset editor height(-2px normal mode gap +  -14px edit mode gap) */
+  margin-top: -16px; /* Offset editor height(-2px normal mode gap + -14px edit mode gap) */
 }
 
 .comments-list .pinned-comments > * {

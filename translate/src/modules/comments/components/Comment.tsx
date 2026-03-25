@@ -162,7 +162,7 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
             <>
               {isEditing ? (
                 <button className='pin-button' onClick={handleCancelEdit}>
-                  {'CANCEL EDIT'}
+                  {'CANCEL'}
                 </button>
               ) : (
                 <Localized id='comments-Comment--edit-button'>
@@ -180,7 +180,7 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
           {canDelete && (
             <Localized id='comments-Comment--delete-button'>
               <button
-                className='pin-button'
+                className='delete-button'
                 title='Delete comment'
                 onClick={handleDelete}
               >
