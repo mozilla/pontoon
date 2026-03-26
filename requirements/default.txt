@@ -889,7 +889,9 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.11.2 \
     --hash=sha256:04e11f7fc7f1932dbd73a9a50b5e6dfb1767e0d27da2451c5579e9d2593459de \
     --hash=sha256:4e06e839c6c75dbad72a13672209f69893f594598887ceb52a5a8a4932b5efc1
-    # via -r default.in
+    # via
+    #   -r default.in
+    #   moz-l10n
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -1442,9 +1444,9 @@ regex==2024.9.11 \
     # via
     #   sacrebleu
     #   sacremoses
-requests==2.32.4 \
-    --hash=sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c \
-    --hash=sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422
+requests==2.33.0 \
+    --hash=sha256:3324635456fa185245e24865e810cecec7b4caf933d7eb133dcde67d48cee69b \
+    --hash=sha256:c7ebc5e8b0f21837386ad0e1c8fe8b829fa5f544d8df3b2253bff14ef29d7652
     # via
     #   django-allauth
     #   google-api-core
