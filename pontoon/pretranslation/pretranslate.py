@@ -197,26 +197,23 @@ class Pretranslation:
 
         if self.locale.google_translate_code:
             # Try to fetch from Google Translate
-            gt_response = get_google_translate_data(
+            gt_translation = get_google_translate_data(
                 text=gt_source,
                 locale=self.locale,
                 preserve_placeables=self.preserve_placeables,
             )
-            if gt_response["status"]:
-                self.services.append("gt")
-                return [
-                    el
-                    if idx % 2 == 0
-                    else (
-                        placeholders[int(el)]
-                        if int(el) < len(placeholders)
-                        else "{$" + el + "}"
-                    )
-                    for idx, el in enumerate(
-                        pt_placeholder.split(gt_response["translation"])
-                    )
-                    if el != ""
-                ]
+            self.services.append("gt")
+            return [
+                el
+                if idx % 2 == 0
+                else (
+                    placeholders[int(el)]
+                    if int(el) < len(placeholders)
+                    else "{$" + el + "}"
+                )
+                for idx, el in enumerate(pt_placeholder.split(gt_translation))
+                if el != ""
+            ]
 
         raise ValueError(
             f"Pretranslation for `{self.source}` to `{self.locale.code}` not available"
