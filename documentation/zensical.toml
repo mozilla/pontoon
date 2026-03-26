@@ -1,16 +1,12 @@
 # Pontoon docs configuration for Zensical
-# Derived from the current mkdocs.yml navigation and site metadata.
-# Notes:
-# - This keeps the same page structure and top-level nav as the MkDocs config.
-# - The MkDocs `glightbox` plugin is omitted because it does not have a direct
-#   Zensical equivalent in the currently documented feature set.
-# - Repository/edit-link wiring is left commented until you confirm the exact
-#   Zensical repository settings you want to use.
 
 [project]
 site_name = "Pontoon Documentation"
 site_description = "Pontoon is Mozilla's translation management system. This documentation covers everything from translating strings to deploying your own instance."
 site_url = "https://pontoon.mozilla.org/docs/"
+repo_url = "https://github.com/mozilla/pontoon"
+repo_name = "mozilla/pontoon"
+edit_uri = "edit/main/documentation/docs/"
 
 nav = [
   { "Home" = "index.md" },
@@ -57,14 +53,17 @@ language = "en"
 logo = "assets/pontoon-logo.svg"
 favicon = "assets/pontoon-logo.svg"
 features = [
+  "header.autohide",
+  "navigation.footer",
   "navigation.tabs",
-  "navigation.tabs.sticky",
   "navigation.sections",
   "navigation.expand",
   "navigation.path",
   "navigation.top",
   "navigation.instant",
   "search.highlight",
+  "content.action.edit",  # Edit this page
+  "content.action.view",  # View source of this page
   "content.code.copy",
   "toc.follow"
 ]
@@ -73,11 +72,13 @@ features = [
 # you can then re-enable "content.action.edit" above.
 
 [[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
 scheme = "default"
 toggle.icon = "lucide/sun"
 toggle.name = "Switch to dark mode"
 
 [[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
 scheme = "slate"
 toggle.icon = "lucide/moon"
 toggle.name = "Switch to light mode"
@@ -85,10 +86,6 @@ toggle.name = "Switch to light mode"
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
 link = "https://github.com/mozilla/pontoon"
-
-[[project.extra.social]]
-icon = "fontawesome/brands/firefox-browser"
-link = "https://pontoon.mozilla.org"
 
 [project.markdown_extensions.pymdownx.highlight]
 anchor_linenums = true
