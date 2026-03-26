@@ -2,6 +2,8 @@ from copy import deepcopy
 from re import compile
 from typing import Literal
 
+import requests
+
 from fluent.syntax import FluentSerializer, ast as FTL
 from fluent.syntax.serializer import serialize_expression
 from moz.l10n.formats import Format
@@ -215,7 +217,7 @@ class Pretranslation:
                     for idx, el in enumerate(pt_placeholder.split(gt_translation))
                     if el != ""
                 ]
-            except Exception:
+            except (ValueError, requests.exceptions.RequestException):
                 pass
 
         raise ValueError(
