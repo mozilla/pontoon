@@ -1,13 +1,14 @@
 import React from 'react';
-import { mount } from 'enzyme';
 
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 
 import { MachineryCount } from './MachineryCount';
+import { render } from '@testing-library/react';
+import { expect } from 'vitest';
 
 const mountMachineryCount = (translations, results) =>
-  mount(
+  render(
     <MachineryTranslations.Provider value={{ source: 'source', translations }}>
       <SearchData.Provider
         value={{
@@ -28,7 +29,7 @@ const mountMachineryCount = (translations, results) =>
 
 describe('<MachineryCount>', () => {
   it('shows the correct number of preferred translations', () => {
-    const wrapper = mountMachineryCount(
+    const { container } = mountMachineryCount(
       [
         { sources: ['translation-memory'] },
         { sources: ['translation-memory'] },
@@ -37,16 +38,16 @@ describe('<MachineryCount>', () => {
     );
 
     // There are only preferred results.
-    expect(wrapper.find('.count > span')).toHaveLength(1);
+    expect(container.querySelectorAll('.count > span')).toHaveLength(1);
 
     // And there are two of them.
-    expect(wrapper.find('.preferred').text()).toContain('2');
+    expect(container.querySelector('.preferred')).toHaveTextContent('2');
 
-    expect(wrapper.text()).not.toContain('+');
+    expect(container).not.toHaveTextContent('+');
   });
 
   it('shows the correct number of remaining translations', () => {
-    const wrapper = mountMachineryCount(
+    const { container } = mountMachineryCount(
       [
         { sources: ['microsoft'] },
         { sources: ['google'] },
@@ -59,17 +60,17 @@ describe('<MachineryCount>', () => {
     );
 
     // There are only remaining results.
-    expect(wrapper.find('.count > span')).toHaveLength(1);
-    expect(wrapper.find('.preferred')).toHaveLength(0);
+    expect(container.querySelectorAll('.count > span')).toHaveLength(1);
+    expect(container.querySelector('.preferred')).toBeNull();
 
     // And there are three of them.
-    expect(wrapper.find('.count > span').text()).toContain('5');
+    expect(container.querySelector('.count > span')).toHaveTextContent('5');
 
-    expect(wrapper.text()).not.toContain('+');
+    expect(container).not.toHaveTextContent('+');
   });
 
   it('shows the correct numbers of preferred and remaining translations', () => {
-    const wrapper = mountMachineryCount(
+    const { container } = mountMachineryCount(
       [
         { sources: ['translation-memory'] },
         { sources: ['translation-memory'] },
@@ -84,13 +85,14 @@ describe('<MachineryCount>', () => {
     );
 
     // There are both preferred and remaining, and the '+' sign.
-    expect(wrapper.find('.count > span')).toHaveLength(3);
+    expect(container.querySelectorAll('.count > span')).toHaveLength(3);
 
     // And each count is correct.
-    expect(wrapper.find('.preferred').text()).toContain('2');
-    expect(wrapper.find('.count > span').last().text()).toContain('5');
+    expect(container.querySelector('.preferred')).toHaveTextContent('2');
+    const spans = container.querySelectorAll('.count > span');
+    expect(spans[spans.length - 1]).toHaveTextContent('5');
 
     // And the final display is correct as well.
-    expect(wrapper.text()).toEqual('2+5');
+    expect(container).toHaveTextContent('2+5');
   });
 });

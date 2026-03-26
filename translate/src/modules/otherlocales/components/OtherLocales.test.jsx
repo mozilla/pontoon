@@ -1,7 +1,9 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 
 import { OtherLocales } from './OtherLocales';
+import { render } from '@testing-library/react';
+import { createReduxStore, mountComponentWithStore } from '../../../test/store';
+import { MockLocalizationProvider } from '../../../test/utils';
 
 describe('<OtherLocales>', () => {
   it('shows the correct number of translations', () => {
@@ -29,15 +31,24 @@ describe('<OtherLocales>', () => {
       project: 'tmo',
     };
     const user = {};
-    const wrapper = shallow(
-      <OtherLocales
-        otherlocales={otherlocales}
-        parameters={params}
-        user={user}
-      />,
+    const store = createReduxStore();
+    const testTitle = 'test-title';
+    const resources = `otherlocales-Translation--copy =
+                        .title = ${testTitle}`;
+    const { getAllByTitle } = mountComponentWithStore(
+      OtherLocales,
+      store,
+      {
+        entity: { format: '' },
+        otherlocales: otherlocales,
+        parameters: params,
+        user,
+      },
+      undefined,
+      resources,
     );
 
-    expect(wrapper.find('OtherLocaleTranslationComponent')).toHaveLength(3);
+    expect(getAllByTitle(testTitle)).toHaveLength(3);
   });
 
   it('returns null while otherlocales are loading', () => {
@@ -45,23 +56,27 @@ describe('<OtherLocales>', () => {
       fetching: true,
     };
     const user = {};
-    const wrapper = shallow(
+    const { container } = render(
       <OtherLocales otherlocales={otherlocales} user={user} />,
     );
 
-    expect(wrapper.type()).toBeNull();
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('renders a no results message if otherlocales is empty', () => {
+    const message = 'test-message';
     const otherlocales = {
       fetching: false,
       translations: [],
     };
     const user = {};
-    const wrapper = shallow(
-      <OtherLocales otherlocales={otherlocales} user={user} />,
+    const { getByText } = render(
+      <MockLocalizationProvider
+        resources={[`history-History--no-translations = ${message}`]}
+      >
+        <OtherLocales otherlocales={otherlocales} user={user} />,
+      </MockLocalizationProvider>,
     );
-
-    expect(wrapper.find('#history-history-no-translations')).toHaveLength(1);
+    getByText(message);
   });
 });
