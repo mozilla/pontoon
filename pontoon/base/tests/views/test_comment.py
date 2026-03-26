@@ -4,6 +4,7 @@ from django.contrib.auth.models import Permission
 from django.urls import reverse
 
 from pontoon.base.models import Comment
+from pontoon.test.factories import TranslationCommentFactory
 
 
 @pytest.mark.django_db
@@ -118,3 +119,17 @@ def test_delete_comment(member, client, comment_a):
 
     assert response.status_code == 200
     assert not Comment.objects.filter(pk=comment_a.pk).exists()
+
+    # the author can delete their comment
+    member.user.user_permissions.remove(permission)
+    member.user.refresh_from_db()
+
+    own_comment = TranslationCommentFactory(author=member.user)
+
+    response = member.client.post(
+        url,
+        {"comment_id": own_comment.pk},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 200
+    assert not Comment.objects.filter(pk=own_comment.pk).exists()
