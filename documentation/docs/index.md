@@ -4,6 +4,9 @@
 
 Pontoon specializes in community-driven open source localization, pulling strings directly from version control repositories (Git and Mercurial) and writing translations back automatically. It supports a wide range of localization file formats including Fluent, Gettext PO, XLIFF, .properties, DTD, and more.
 
+!!! info "Scope of this documentation"
+    While most of this documentation applies to any Pontoon deployment, the Mozilla instance is used as the primary example. Some sections — particularly in the Admin Guide — are specific to Mozilla's deployment.
+
 ---
 
 ## Who is this documentation for?
@@ -43,19 +46,13 @@ Pontoon specializes in community-driven open source localization, pulling string
 | I want to… | Go to |
 |---|---|
 | Start translating a project | [How to Translate](localizer/translate.md) |
-| Learn the translation workspace UI | [Translation Workspace](localizer/translation-workspace.md) |
-| Understand user roles | [User Accounts & Settings](localizer/users.md) |
 | Add a new project | [Adding a New Project](admin/adding-new-project.md) |
 | Add a new locale | [Adding a New Locale](admin/adding-new-locale.md) |
 | Set up Pontoon locally for development | [Developer Setup](dev/setup.md) |
 | Deploy Pontoon to production | [Deployment](dev/deployment.md) |
-| Make my first code contribution | [Your First Contribution](dev/first-contribution.md) |
 
 ---
 
 ## About Pontoon
 
 Pontoon is developed and maintained by Mozilla and is available as open source software at [github.com/mozilla/pontoon](https://github.com/mozilla/pontoon). The Mozilla instance is hosted at [pontoon.mozilla.org](https://pontoon.mozilla.org).
-
-!!! note "Scope of this documentation"
-    While most of this documentation applies to any Pontoon deployment, the Mozilla instance is used as the primary example. Some sections — particularly in the Admin Guide — are specific to Mozilla's deployment.

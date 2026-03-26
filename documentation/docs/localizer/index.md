@@ -38,16 +38,3 @@ This guide covers everything you need to know to translate and review strings in
     Definitions of key terms used throughout Pontoon and this documentation.
 
 </div>
-
-## User roles
-
-Pontoon has four user roles, each with different capabilities:
-
-| Role | Can submit translations | Can review | Can manage users |
-|---|---|---|---|
-| **Contributor** | Suggestions only | ✗ | ✗ |
-| **Translator** | ✓ (directly or via suggestion) | ✓ | ✗ |
-| **Team Manager** | ✓ | ✓ | ✓ (within their locale) |
-| **Administrator** | ✓ | ✓ | ✓ (all locales) |
-
-New users automatically start as Contributors and can be promoted by Team Managers or Administrators.

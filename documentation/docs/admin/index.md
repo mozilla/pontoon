@@ -2,8 +2,8 @@
 
 This guide covers administrative tasks in Pontoon — managing projects, locales, users, and communication tools.
 
-!!! note "Mozilla-specific content"
-    Most of this guide is specific to Mozilla's deployment of Pontoon at [pontoon.mozilla.org](https://pontoon.mozilla.org). Some procedures (such as URLs and Google AutoML details) will differ for other deployments.
+!!! note
+    The screenshots in this documentation use the dark theme, but a light theme is also available in your [profile settings](users.md).
 
 ## Sections
 
@@ -51,5 +51,5 @@ This guide covers administrative tasks in Pontoon — managing projects, locales
 
 The Pontoon admin console is available at `/admin/` (e.g., `pontoon.mozilla.org/admin/`). Django's standard admin interface is at `/a/`.
 
-!!! warning
+!!! info
     Only Administrators have access to the admin console. Changes made here affect all users and projects.
