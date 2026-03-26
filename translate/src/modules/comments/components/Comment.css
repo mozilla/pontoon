@@ -62,6 +62,7 @@
 .comments-list .comment .info .pin-button:before {
   content: '•';
   padding: 0 3px 0 3px;
+  color: var(--light-grey-7);
 }
 
 .comments-list .comment .info .pin-button {
@@ -71,6 +72,25 @@
   font-size: 11px;
   font-weight: 300;
   padding: 0;
+}
+
+.comments-list .comment .info .delete-button:before {
+  content: '•';
+  padding: 0 3px 0 3px;
+  color: var(--light-grey-7);
+}
+
+.comments-list .comment .info .delete-button {
+  background-color: transparent;
+  border: none;
+  color: var(--light-grey-7);
+  font-size: 11px;
+  font-weight: 300;
+  padding: 0;
+}
+
+.comments-list .comment .info .delete-button:hover {
+  color: var(--status-error);
 }
 
 .comments-list .comment .info .pin-button:hover {

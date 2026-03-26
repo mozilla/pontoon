@@ -84,6 +84,16 @@ urlpatterns = [
         name="pontoon.unpin_comment",
     ),
     path(
+        "edit-comment/",
+        views.edit_comment,
+        name="pontoon.edit_comment",
+    ),
+    path(
+        "delete-comment/",
+        views.delete_comment,
+        name="pontoon.delete_comment",
+    ),
+    path(
         "other-locales/",
         views.get_translations_from_other_locales,
         name="pontoon.other_locales",

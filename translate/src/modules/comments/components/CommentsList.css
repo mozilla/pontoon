@@ -3,6 +3,11 @@
   padding: 8px 0;
 }
 
+.comments-list .comment.is-editing .info {
+  margin-left: 44px;
+  margin-top: -16px; /* Offset editor height(-2px normal mode gap + -14px edit mode gap) */
+}
+
 .comments-list .pinned-comments > * {
   padding: 0 8px;
 }
@@ -25,7 +30,7 @@
 
 .comments-list .comment {
   display: flex;
-  margin-left: 58px;
+  margin-left: 0px;
 }
 
 .comments-list .comment .user-avatar {

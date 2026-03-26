@@ -59,3 +59,23 @@ export function setCommentPinned(
   const headers = new Headers({ 'X-CSRFToken': getCSRFToken() });
   return POST(url, payload, { headers });
 }
+
+export function editComment(commentId: number, content: string): Promise<void> {
+  const payload = new URLSearchParams({
+    comment_id: String(commentId),
+    content,
+  });
+  const url = '/edit-comment/';
+  const headers = new Headers({ 'X-CSRFToken': getCSRFToken() });
+  return POST(url, payload, { headers });
+}
+
+export function deleteComment(commentId: number): Promise<void> {
+  const payload = new URLSearchParams({
+    comment_id: String(commentId),
+  });
+
+  const url = '/delete-comment/';
+  const headers = new Headers({ 'X-CSRFToken': getCSRFToken() });
+  return POST(url, payload, { headers });
+}
