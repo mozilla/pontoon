@@ -2,8 +2,6 @@ from copy import deepcopy
 from re import compile
 from typing import Literal
 
-import requests
-
 from fluent.syntax import FluentSerializer, ast as FTL
 from fluent.syntax.serializer import serialize_expression
 from moz.l10n.formats import Format
@@ -199,26 +197,23 @@ class Pretranslation:
 
         if self.locale.google_translate_code:
             # Try to fetch from Google Translate
-            try:
-                gt_translation = get_google_translate_data(
-                    text=gt_source,
-                    locale=self.locale,
-                    preserve_placeables=self.preserve_placeables,
+            gt_translation = get_google_translate_data(
+                text=gt_source,
+                locale=self.locale,
+                preserve_placeables=self.preserve_placeables,
+            )
+            self.services.append("gt")
+            return [
+                el
+                if idx % 2 == 0
+                else (
+                    placeholders[int(el)]
+                    if int(el) < len(placeholders)
+                    else "{$" + el + "}"
                 )
-                self.services.append("gt")
-                return [
-                    el
-                    if idx % 2 == 0
-                    else (
-                        placeholders[int(el)]
-                        if int(el) < len(placeholders)
-                        else "{$" + el + "}"
-                    )
-                    for idx, el in enumerate(pt_placeholder.split(gt_translation))
-                    if el != ""
-                ]
-            except (ValueError, requests.exceptions.RequestException):
-                pass
+                for idx, el in enumerate(pt_placeholder.split(gt_translation))
+                if el != ""
+            ]
 
         raise ValueError(
             f"Pretranslation for `{self.source}` to `{self.locale.code}` not available"
