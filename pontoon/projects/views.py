@@ -39,7 +39,7 @@ def projects(request):
         "projects/projects.html",
         {
             "projects": projects,
-            "all_projects_stats": TranslatedResource.objects.all().string_stats(
+            "all_projects_stats": TranslatedResource.objects.current().string_stats(
                 request.user
             ),
             "project_stats": project_stats,
@@ -57,7 +57,7 @@ def project(request, slug):
         return project
 
     project_locales = project.project_locale
-    project_tr = TranslatedResource.objects.filter(resource__project=project)
+    project_tr = TranslatedResource.objects.current().filter(resource__project=project)
 
     # Only include filtered teams if provided
     teams = request.GET.get("teams", "").split(",")

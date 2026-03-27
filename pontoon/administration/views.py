@@ -306,7 +306,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
     }
 
     # Set locale in Translate link
-    if Resource.objects.filter(project=project).exists() and locales_selected:
+    if Resource.objects.current().filter(project=project).exists() and locales_selected:
         locale = (
             utils.get_project_locale_from_request(request, project.locales)
             or locales_selected[0].code
@@ -373,7 +373,7 @@ def _get_resource_for_database_project(project):
 
     """
     try:
-        return Resource.objects.get(
+        return Resource.objects.current().get(
             project=project,
         )
     except Resource.DoesNotExist:
@@ -492,7 +492,7 @@ def manage_project_strings(request, slug=None):
             # Get all strings, find the ones that changed, update them in the database.
             formset = EntityFormSet(request.POST, queryset=entities)
             if formset.is_valid():
-                resource = Resource.objects.filter(project=project).first()
+                resource = Resource.objects.current().filter(project=project).first()
                 entity_max_order = entities.aggregate(Max("order"))["order__max"]
                 try:
                     # This line can purposefully cause an exception, and that

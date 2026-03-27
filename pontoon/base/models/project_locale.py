@@ -32,7 +32,8 @@ class ProjectLocaleQuerySet(models.QuerySet):
     def stats_data(self, project=None, locale=None):
         if project:
             query = self.filter(
-                locale__translatedresources__resource__project=project
+                locale__translatedresources__resource__project=project,
+                locale__translatedresources__resource__obsolete=False,
             ).prefetch_related("locale")
             tr = "locale__translatedresources"
         elif locale:
@@ -41,6 +42,7 @@ class ProjectLocaleQuerySet(models.QuerySet):
                 project__disabled=False,
                 project__system_project=False,
                 project__visibility="public",
+                project__resources__obsolete=False,
             ).prefetch_related("project")
             tr = "project__resources__translatedresources"
         return query.annotate(
@@ -74,7 +76,7 @@ class ProjectLocale(models.Model, AggregatedStats):
     def aggregated_stats_query(self):
         from pontoon.base.models.translated_resource import TranslatedResource
 
-        return TranslatedResource.objects.filter(
+        return TranslatedResource.objects.current().filter(
             locale=self.locale, resource__project=self.project
         )
 

@@ -58,17 +58,21 @@ class LocaleQuerySet(models.QuerySet):
         from pontoon.base.models.translated_resource import TranslatedResource
 
         return self.filter(
-            pk__in=TranslatedResource.objects.values_list("locale", flat=True)
+            pk__in=TranslatedResource.objects.current().values_list("locale", flat=True)
         )
 
     def stats_data(self, project=None):
         if project is not None:
-            query = self.filter(translatedresources__resource__project=project)
+            query = self.filter(
+                translatedresources__resource__project=project,
+                translatedresources__resource__obsolete=False,
+            )
         else:
             query = self.filter(
                 translatedresources__resource__project__disabled=False,
                 translatedresources__resource__project__system_project=False,
                 translatedresources__resource__project__visibility="public",
+                translatedresources__resource__obsolete=False,
             )
 
         return query.annotate(
@@ -115,7 +119,7 @@ class Locale(models.Model, AggregatedStats):
     def aggregated_stats_query(self):
         from pontoon.base.models.translated_resource import TranslatedResource
 
-        return TranslatedResource.objects.filter(
+        return TranslatedResource.objects.current().filter(
             locale=self,
             resource__project__disabled=False,
             resource__project__system_project=False,
