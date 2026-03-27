@@ -3,6 +3,14 @@ import React from 'react';
 import { MachineryTranslationSource } from './MachineryTranslationSource';
 import { render } from '@testing-library/react';
 
+vi.mock('~/hooks', () => ({
+  useAppSelector: (selector) =>
+    selector({
+      term: { terms: [], fetching: false, sourceString: '' },
+      teamcomments: { comments: [], fetching: false, entity: null },
+    }),
+}));
+
 import { MockLocalizationProvider } from '~/test/utils';
 
 const DEFAULT_TRANSLATION = {

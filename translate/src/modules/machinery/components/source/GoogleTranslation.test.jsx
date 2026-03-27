@@ -4,6 +4,14 @@ import { GoogleTranslation } from './GoogleTranslation';
 import { fireEvent, render, within } from '@testing-library/react';
 import { MockLocalizationProvider } from '~/test/utils';
 
+vi.mock('~/hooks', () => ({
+  useAppSelector: (selector) =>
+    selector({
+      term: { terms: [], fetching: false, sourceString: '' },
+      teamcomments: { comments: [], fetching: false, entity: null },
+    }),
+}));
+
 describe('<GoogleTranslation>', () => {
   it('renders the GoogleTranslation component properly', () => {
     const message = 'test-source';
