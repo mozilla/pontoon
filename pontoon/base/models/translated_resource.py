@@ -1,12 +1,12 @@
 import logging
 
 from django.db import models
-from django.db.models import F, Q, Sum
+from django.db.models import F, Sum
 
 from .locale import Locale
 from .project import Project
 from .resource import Resource
-from .translation import Translation
+from .translation import Translation, aggregate_translation_stats
 from .user import User
 
 
@@ -158,46 +158,13 @@ class TranslatedResource(models.Model):
             locale=self.locale,
         )
 
-        self.approved_strings = translations.filter(
-            approved=True,
-            errors__isnull=True,
-            warnings__isnull=True,
-        ).count()
+        stats = aggregate_translation_stats(translations)
 
-        self.pretranslated_strings = translations.filter(
-            pretranslated=True,
-            errors__isnull=True,
-            warnings__isnull=True,
-        ).count()
-
-        self.strings_with_errors = (
-            translations.filter(
-                Q(
-                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                    & Q(errors__isnull=False)
-                ),
-            )
-            .distinct()
-            .count()
-        )
-
-        self.strings_with_warnings = (
-            translations.filter(
-                Q(
-                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                    & Q(warnings__isnull=False)
-                ),
-            )
-            .distinct()
-            .count()
-        )
-
-        self.unreviewed_strings = translations.filter(
-            approved=False,
-            rejected=False,
-            pretranslated=False,
-            fuzzy=False,
-        ).count()
+        self.approved_strings = stats["approved"]
+        self.pretranslated_strings = stats["pretranslated"]
+        self.strings_with_errors = stats["errors"]
+        self.strings_with_warnings = stats["warnings"]
+        self.unreviewed_strings = stats["unreviewed"]
 
         if save:
             self.save(

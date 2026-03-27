@@ -1,7 +1,7 @@
 from dirtyfields import DirtyFieldsMixin
 
 from django.contrib.postgres.fields import ArrayField
-from django.db import models
+from django.db import IntegrityError, models, transaction
 from django.db.models import Count, Q
 from django.utils import timezone
 
@@ -17,6 +17,52 @@ from pontoon.base.models.user import User
 from pontoon.base.simple_preview import get_simple_preview
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
+
+
+def aggregate_translation_stats(queryset) -> dict[str, int]:
+    """
+    Aggregate translation stats for a given Translation queryset.
+
+    :return: a dictionary with approved, pretranslated, errors, warnings,
+             and unreviewed counts.
+    """
+    stats = queryset.aggregate(
+        approved_count=Count(
+            "pk",
+            filter=Q(approved=True, errors__isnull=True, warnings__isnull=True),
+        ),
+        pretranslated_count=Count(
+            "pk",
+            filter=Q(pretranslated=True, errors__isnull=True, warnings__isnull=True),
+        ),
+        errors_count=Count(
+            "pk",
+            distinct=True,
+            filter=Q(
+                Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                & Q(errors__isnull=False)
+            ),
+        ),
+        warnings_count=Count(
+            "pk",
+            distinct=True,
+            filter=Q(
+                Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                & Q(warnings__isnull=False)
+            ),
+        ),
+        unreviewed_count=Count(
+            "pk",
+            filter=Q(approved=False, rejected=False, pretranslated=False, fuzzy=False),
+        ),
+    )
+    return {
+        "approved": stats["approved_count"],
+        "pretranslated": stats["pretranslated_count"],
+        "errors": stats["errors_count"],
+        "warnings": stats["warnings_count"],
+        "unreviewed": stats["unreviewed_count"],
+    }
 
 
 class TranslationQuerySet(models.QuerySet):
@@ -249,7 +295,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
-        stats_before = self.entity.get_stats(self.locale)
+        stats_before = aggregate_translation_stats(
+            self.entity.translation_set.filter(locale=self.locale)
+        )
 
         super().save(*args, **kwargs)
 
@@ -322,8 +370,16 @@ class Translation(DirtyFieldsMixin, models.Model):
             save_failed_checks(self, failed_checks)
 
         # Update stats AFTER changing approval status.
-        stats_after = self.entity.get_stats(self.locale)
-        translatedresource.adjust_stats(stats_before, stats_after, created)
+        # Use entity-scoped aggregate delta for performance. Fall back to a
+        # full resource recount on IntegrityError.
+        stats_after = aggregate_translation_stats(
+            self.entity.translation_set.filter(locale=self.locale)
+        )
+        try:
+            with transaction.atomic():
+                translatedresource.adjust_stats(stats_before, stats_after, created)
+        except IntegrityError:
+            translatedresource.calculate_stats()
 
     def update_latest_translation(self):
         """
