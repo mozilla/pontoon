@@ -84,7 +84,7 @@ export const fluentMode: StreamParser<Array<'expression' | 'literal' | 'tag'>> =
 // due to false positives.
 // https://github.com/mozilla/pontoon/issues/2988
 const printf =
-  /^%(\d\$|\(.*?\))?[-+0'#]*[\d*]*(\.[\d*])?(hh?|ll?|[jLtz])?[%@AacdEeFfGginopSsuXx]/;
+  /^%(\d\$|\(.*?\))?[-+0'#I,]*[\d*]*(\.[\d*])?(hh?|ll?|[jLtz])?[%@AacdEeFfGginopSsuXx]/;
 
 const pythonFormat = /^{[\w.[\]]*(![rsa])?(:.*?)?}/;
 
