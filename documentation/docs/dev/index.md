@@ -10,7 +10,7 @@ This guide covers everything you need to know to contribute to, deploy and maint
 
     Get started with contributing to Pontoon, including setting up your environment and submitting your first patch.
 
-- :material-tools: **[Setup](setup.md)**
+- :material-tools: **[Developer Setup](developer-setup.md)**
 
     How to set up Pontoon for local development.
 

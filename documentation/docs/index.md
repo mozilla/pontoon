@@ -48,7 +48,7 @@ Pontoon specializes in community-driven open source localization, pulling string
 | Start translating a project | [How to Translate](localizer/translate.md) |
 | Add a new project | [Adding a New Project](admin/adding-new-project.md) |
 | Add a new locale | [Adding a New Locale](admin/adding-new-locale.md) |
-| Set up Pontoon locally for development | [Developer Setup](dev/setup.md) |
+| Set up Pontoon locally for development | [Developer Setup](dev/developer-setup.md) |
 | Deploy Pontoon to production | [Deployment](dev/deployment.md) |
 
 ---

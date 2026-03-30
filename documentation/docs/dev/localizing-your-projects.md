@@ -81,6 +81,9 @@ and fill out the following required fields:
     it.
 1.  **Repository URL**: enter your repository's SSH URL of the form
     `git@github.com:user/repo.git`.
+
+Once you've filled all the required information:
+
 1.  Click "Save project" at the bottom of the page.
 1.  After the page reloads, click "Sync" and wait for Pontoon to
     import strings. You can monitor the progress in the Sync log

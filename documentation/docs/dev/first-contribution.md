@@ -38,7 +38,7 @@ first need to be able to run that project on your computer.
 The recommended method of installing Pontoon is using Docker and our
 scripts. It is straightforward if your computer is running with Linux or
 macOS, and a tad more difficult for Windows. In any case, follow the
-instructions in our [Setup page](setup.md).
+instructions in our [Developer Setup page](developer-setup.md).
 
 ## 3. Populate your database
 
