@@ -1,4 +1,4 @@
-# Contributing Guidelines
+# Contributing
 
 ## Source code
 
@@ -10,7 +10,7 @@ Pontoon source code is available on
 Our work is tracked in
 [GitHub](https://github.com/mozilla/pontoon/issues).
 
-[Report a new issue](https://github.com/mozilla/pontoon/issues/new).
+[Report a new issue](https://github.com/mozilla/pontoon/issues/new){ .md-button }
 
 ## Docker
 
@@ -18,46 +18,12 @@ While the front-end (JavaScript) build and tests use the host
 environment for development, the back-end systems (Python/Django,
 databases, etc.) run in Docker containers. For production use, also the
 front-end is built in a container. Thus Pontoon requires fewer things to
-get started and you\'re guaranteed to have the same server setup as
+get started and you're guaranteed to have the same server setup as
 everyone else.
 
-If you\'re not familiar with [Docker](https://docs.docker.com/) and
-[docker-compose](https://docs.docker.com/compose/overview/), it\'s worth
+If you're not familiar with [Docker](https://docs.docker.com/) and
+[docker-compose](https://docs.docker.com/compose/overview/), it's worth
 reading up on.
-
-## Writing to external repositories
-
-`Environment variables <../admin/deployment>`{.interpreted-text
-role="doc"} like `SSH_KEY` and `SSH_CONFIG` have no effect in a Docker
-setup.
-
-The [\~/.ssh]{.title-ref} folder of the host system is mapped
-automatically to the home folder within the container. In order to
-connect to a remote repository via SSH, you need to create a
-passwordless SSH key, and configure [\~/.ssh/config]{.title-ref}
-accordingly.
-
-Here\'s an example for GitHub, assuming the private key file is called
-[id_ed25519]{.title-ref} (see also [GitHub\'s
-instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
-to generate a new key):
-
-``` 
-Host github.com
-   User YOUR_USERNAME
-   IdentityFile ~/.ssh/id_ed25519
-   StrictHostKeyChecking no
-```
-
-The project\'s repository will use the format
-`git@github.com:{ORGANIZATION}/{REPOSITORY}.git` for the `URL` field.
-
-An alternative approach for GitHub is to use a [Personal Access Token
-(PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens),
-and set up the project\'s `URL` as [https://]{.title-ref} instead of
-[git@]{.title-ref}. In this case, the `URL` will need to include both
-the PAT and username, e.g.
-`https://{USER}:{TOKEN}@github.com/{REPOSITORY}`.
 
 ## JavaScript setup
 
@@ -95,21 +61,22 @@ $ docker-compose up -d postgresql
 ## Interactive shell
 
 If you need to run specific commands, that are not covered by our
-[Makefile]{.title-ref}, you can start an interactive shell inside a
-Pontoon container:
+`Makefile`, you can start an interactive
+shell inside a Pontoon container:
 
 ``` shell
 $ make shell
 ```
 
-[make shell-root]{.title-ref} is also available to log in as
-[root]{.title-ref}, instead of the default [pontoon]{.title-ref} user.
+`make shell-root` is also available to log
+in as `root`, instead of the default
+`pontoon` user.
 
 ## Browser Support
 
 The list of browsers supported by Pontoon is defined in the
-[\"browserslist\"]{.title-ref} entry of the root package.json, and
-contains by default:
+`"browserslist"` entry of the root
+package.json, and contains by default:
 
 ``` bash
 Firefox >= 78
@@ -122,7 +89,7 @@ Safari >= 13.1
 
 We use code formatters so that we do not have to fight over code style.
 You are free to write code however you like, because in the end the
-formatter is the one that will format it. We thus don\'t need to pay
+formatter is the one that will format it. We thus don't need to pay
 attention to style during code reviews, and are free from those
 never-ending code style discussions.
 
@@ -230,11 +197,11 @@ addresses.
 
 Pull request descriptions should cover at least some of the following:
 
-1.  what is the issue the pull request is addressing?
-2.  why does this pull request fix the issue?
-3.  how should a reviewer review the pull request?
-4.  what did you do to test the changes?
-5.  any steps-to-reproduce for the reviewer to use to test the changes
+1.  What is the issue the pull request is addressing?
+2.  Why does this pull request fix the issue?
+3.  How should a reviewer review the pull request?
+4.  What did you do to test the changes?
+5.  Any steps-to-reproduce for the reviewer to use to test the changes
 
 ## Code reviews
 
@@ -277,7 +244,7 @@ your docker environment:
 $ make build-server
 ```
 
-If there are problems, it\'ll tell you.
+If there are problems, it'll tell you.
 
 To upgrade existing dependencies within the given constraints of the
 input files, you can pass options through to the `uv pip compile`
@@ -289,28 +256,14 @@ $ make requirements opts=--upgrade
 
 ## Documentation
 
-Documentation for Pontoon is built with
-[Sphinx](http://www.sphinx-doc.org/en/stable/) and is available on
-ReadTheDocs.
+Documentation for Pontoon is built with [Zensical](https://zensical.org/)
+and is available on `http://localhost:8000/docs/`.
 
-Building docs is not covered with docker yet, so you will have to do it
-on your host. To make a virtualenv to build docs, do this:
+To build the docs, run:
 
 ``` shell
-$ cd docs/
-$ uv venv
-$ source .venv/bin/activate
-$ uv pip install -r requirements/default.txt
+$ make docs
 ```
-
-Then, to build the docs, run this:
-
-``` shell
-$ make html
-```
-
-The HTML documentation will be in [docs/\_build/html/]{.title-ref}. Try
-to open [docs/\_build/html/index.html]{.title-ref} for example.
 
 ## Running tests
 
@@ -332,8 +285,8 @@ To run only the Python tests:
 $ make pytest
 ```
 
-To run specific tests or specify arguments, you\'ll want to start a
-shell in the test container:
+To run specific tests or specify arguments, you'll want to start a shell
+in the test container:
 
 ``` shell
 $ make shell
@@ -365,7 +318,7 @@ app@...:/app$ pytest pontoon/base/tests/test_views.py
 Put your tests in the `tests/` directory of the appropriate app in
 `pontoon/`.
 
-## Mock usage
+### Mock usage
 
 [Mock](https://docs.python.org/dev/library/unittest.mock.html) is a
 python library for mocks objects. This allows us to write isolated tests
@@ -373,20 +326,20 @@ by simulating services besides using the real ones. Best examples are
 existing tests which admittedly do mocking different depending on the
 context.
 
-Tip! Try to mock in limited context so that individual tests don\'t
+Tip! Try to mock in limited context so that individual tests don't
 affect other tests. Use context managers instead of monkey patching
 imported modules.
 
 ## Updating Your Local Instance
 
-When changes are merged into the main Pontoon repository, you\'ll want
-to update your local development instance to reflect the latest version
-of the site. You can use Git as normal to pull the latest changes, but
-if the changes add any new dependencies or alter the database, you\'ll
-want to install any new libraries and run any new migrations.
+When changes are merged into the main Pontoon repository, you'll want to
+update your local development instance to reflect the latest version of
+the site. You can use Git as normal to pull the latest changes, but if
+the changes add any new dependencies or alter the database, you'll want
+to install any new libraries and run any new migrations.
 
-If you\'re unsure what needs to be run, it\'s safe to just perform all
-of these steps, as they don\'t affect your setup if nothing has changed:
+If you're unsure what needs to be run, it's safe to just perform all of
+these steps, as they don't affect your setup if nothing has changed:
 
 ``` shell
 # Pull the latest code (assuming you've already checked out main).
@@ -398,3 +351,37 @@ uv pip install -U --force -r requirements/default.txt
 # Run database migrations.
 python manage.py migrate
 ```
+
+## Writing to external repositories from a local instance
+
+[Environment variables](deployment.md#environment-variables) like `SSH_KEY` and
+`SSH_CONFIG` have no effect in a Docker setup.
+
+The `~/.ssh` folder of the host system is
+mapped automatically to the home folder within the container. In order
+to connect to a remote repository via SSH, you need to create a
+passwordless SSH key, and configure
+`~/.ssh/config` accordingly.
+
+Here's an example for GitHub, assuming the private key file is called
+`id_ed25519` (see [GitHub's
+instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+for generating a new key):
+
+```
+Host github.com
+   User YOUR_USERNAME
+   IdentityFile ~/.ssh/id_ed25519
+   StrictHostKeyChecking no
+```
+
+The project's repository will use the format
+`git@github.com:{ORGANIZATION}/{REPOSITORY}.git` for the `URL` field.
+
+An alternative approach for GitHub is to use a [Personal Access Token
+(PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens),
+and set up the project's `URL` as
+`https://` instead of
+`git@`. In this case, the `URL` will need
+to include both the PAT and username, e.g.
+`https://{USER}:{TOKEN}@github.com/{REPOSITORY}`.

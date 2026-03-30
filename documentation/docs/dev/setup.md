@@ -1,126 +1,74 @@
----
-title: Developer Setup
----
+# Developer Setup
 
-The following describes how to set up an instance of the site on your
-computer for development with Docker.
+The following describes how to set up an instance of the site on your computer for development with Docker.
 
-> ::: warning
-> ::: title
-> Warning
-> :::
->
-> These installation steps are made for development only. It is not
-> recommended to run Pontoon via Docker in production.
-> :::
+!!! info "Scope of this document"
+    These installation steps are made for development purposes only. To run Pontoon in the production environment, see the [Deployment](deployment.md) docs.
 
-# Prerequisites
+## Prerequisites
 
 1.  Install [Docker](https://docs.docker.com/install/).
-2.  Install [latest versions of Node.js and
-    npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
-3.  Install [make](https://www.gnu.org/software/make/) using either your
-    system\'s package manager (Linux) or Xcode command line developer
-    tools (OSX). On Windows, you can use
-    [MozillaBuild](https://wiki.mozilla.org/MozillaBuild).
+2.  Install [latest versions of Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+3.  Install [make](https://www.gnu.org/software/make/) using either your system's package manager (Linux) or Xcode command line developer tools (OSX). On Windows, you can use [MozillaBuild](https://wiki.mozilla.org/MozillaBuild).
 
-# Quickstart
+## Quickstart
 
 1.  Clone the [Pontoon repository](https://github.com/mozilla/pontoon):
 
-        $ git clone https://github.com/mozilla/pontoon.git
+    ```
+    $ git clone https://github.com/mozilla/pontoon.git
+    ```
 
-    ::: note
-    ::: title
-    Note
-    :::
-
-    To contribute changes to the project, you will need to
-    [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo)
-    the repository under your own GitHub account.
-    :::
+    !!! note "Note"
+        To contribute changes to the project, you will need to [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the repository under your own GitHub account.
 
 2.  From the root of the repository, run:
 
-        $ make build
+    ```
+    $ make build
+    ```
 
-    That will install Pontoon\'s JS dependencies, build the frontend
-    packages, and build the server container.
+    That will install Pontoon's JS dependencies, build the frontend packages, and build the server container.
 
-    ::: note
-    ::: title
-    Note
-    :::
-
-    If you want to share your development instance in your local
-    network, set SITE_URL to bind the server to any address you like,
-    e.g. `make build SITE_URL="http://192.168.1.14:8000"`.
-    :::
+    !!! tip "Tip"
+        If you want to share your development instance in your local network, set SITE_URL to bind the server to any address you like, e.g. `make build SITE_URL="http://192.168.1.14:8000"`.
 
 3.  Run the webapp:
 
-        $ make run
+    ```
+    $ make run
+    ```
 
-    ::: note
-    ::: title
-    Note
-    :::
+    !!! note "Note"
+        The first time you run this, the PostgreSQL container needs to do some work before it becomes available to the server container. Hence, the server might not be able to perform things like migrations. You can simply wait for the postgresql container to report that it's ready, then abort the process, then restart it. That should let the server do all its setup as expected.
 
-    The first time you run this, the PostgreSQL container needs to do
-    some work before it becomes available to the server container.
-    Hence, the server might not be able to perform things like
-    migrations. You can simply wait for the postgresql container to
-    report that it\'s ready, then abort the process, then restart it.
-    That should let the server do all its setup as expected.
+        Alternatively, you can run `docker-compose up postgresql` and wait until it reports that the database is ready, then stop that and run `make run`.
 
-    Alternatively, you can run `docker-compose up postgresql` and wait
-    until it reports that the database is ready, then stop that and run
-    `make run`.
-    :::
+4.  Finally, you need to run some setup steps, while the server is running:
 
-4.  Finally, you need to run some setup steps, while the server is
-    running:
+    ```
+    $ make setup
+    ```
 
-        $ make setup
+    This will ask you to create a superuser, and then will update your Firefox account settings.
 
-    This will ask you to create a superuser, and then will update your
-    Firefox account settings.
+The app should now be available at <http://localhost:8000> or the custom SITE_URL. 
 
-The app should now be available at <http://localhost:8000> or the custom
-SITE_URL.
+And with that, you're ready to start [Contributing](contributing.md)!
 
-And with that, you\'re ready to start `contributing`{.interpreted-text
-role="doc"}!
+## Installing Docker on Windows
 
-# Installing Docker on Windows Pro/Enterprise/Education
+To setup Pontoon for development on Windows Pro/Enterprise/Education, install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/).
 
-Install [Docker Desktop for
-Windows](https://docs.docker.com/desktop/install/windows-install/).
+Next, install other prerequisites using a package manager like [Chocolatey](https://chocolatey.org/install). Follow the installation instructions for Windows Powershell (Admin), then run `choco install make git cygwin` to install all packages.
 
-## Install tools (git, make, cygwin)
+Follow the prompt requests allowing script execution. At the end, verify that packages are available with `make --version` and `git --version`. It should return a version for each command.
 
-The easiest way is to use a package manager like
-[Chocolatey](https://chocolatey.org/install). Follow the installation
-instructions for Windows Powershell (Admin), then run
-`choco install make git cygwin` to install all packages.
+Also, you need to disable the config `core.autocrlf` before cloning the Pontoon repository, otherwise all files will use Windows line-endings (CRLF), and docker images will fail to build. To do so, open a Powershell as Admin (right click on the Start Menu, select *Windows Powershell (Admin)*), and run:
 
-Follow the prompt requests allowing script execution. At the end, verify
-that packages are available with `make --version` and `git --version`,
-it should return a version for each command.
+git config --system --unset core.autocrlf
+git config --global core.autocrlf false
 
-At this point you need to disable the config `core.autocrlf` before
-cloning the Pontoon repository, otherwise all files will use Windows
-line-endings (CRLF), and docker images will fail to build. To do so,
-open a Powershell as Admin (right click on the Start Menu, select
-*Windows Powershell (Admin)*), and run:
+You can use `git config -l` to verify that the value for `core.autocrlf` is correctly set.
 
-    git config --system --unset core.autocrlf
-    git config --global core.autocrlf false
-
-You can use `git config -l` to verify that the value for `core.autocrlf`
-is correctly set.
-
-At this point, you can open the *Cygwin64 Terminal* and proceed with the
-installation (the content of `C:` will be available in `/cygdrive/c`).
-Once the Docker image is running, Pontoon\'s instance will be available
-at <http://localhost:8000>.
+At this point, you can open the *Cygwin64 Terminal* and proceed with the installation (the content of `C:` will be available in `/cygdrive/c`). Once the Docker image is running, Pontoon's instance will be available at `http://localhost:8000`.

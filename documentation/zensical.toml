@@ -37,14 +37,13 @@ nav = [
 
   { "Developer Guide" = [
     { "Overview" = "dev/index.md" },
-    { "Your First Contribution" = "dev/first-contribution.md" },
-    { "Developer Setup" = "dev/setup.md" },
+    { "First Contribution" = "dev/first-contribution.md" },
+    { "Setup" = "dev/setup.md" },
     { "Contributing Guidelines" = "dev/contributing.md" },
     { "Feature Development Process" = "dev/feature-development-process.md" },
     { "Deployment" = "dev/deployment.md" },
     { "Maintenance" = "dev/maintenance.md" },
     { "Localizing Your Projects" = "dev/localizing-your-projects.md" },
-    { "Developer Setup (Virtualenv)" = "dev/setup-virtualenv.md" }
   ]}
 ]
 

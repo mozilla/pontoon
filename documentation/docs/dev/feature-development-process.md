@@ -5,108 +5,107 @@ structured yet flexible process. The goal is to ensure high-quality,
 well-considered contributions that align with project priorities and
 community needs.
 
-::: {.contents depth="1" local=""}
-Table of Contents
-:::
-
-## Propose the Idea (Filing an Issue)
+## Propose the Idea
 
 Anyone can suggest improvements: new features, enhancements to existing
 ones, or feature removals.
 
--   For trivial changes (typos, minor bugfixes), a pull request (PR)
-    alone may suffice---no dedicated issue required.
--   For anything non-trivial, create a GitHub issue in the
-    mozilla/pontoon repository.
-    -   Clearly describe the problem/opportunity.
-    -   Explain the motivation, expected impact, and user value.
-    -   Include relevant context (screenshots, use cases, alternatives
-        considered).
+- For trivial changes (typos, minor bugfixes), a pull request (PR) alone
+   may suffice—no dedicated issue required.
+- For anything non-trivial, [create a GitHub issue](https://github.com/mozilla/pontoon/issues/new):
+
+    - Clearly describe the problem/opportunity.
+    - Explain the motivation, expected impact, and user value.
+    - Include relevant context (screenshots, use cases, alternatives considered).
 
 ## Triage
 
 Core maintainers review new issues and perform triage on a weekly basis
 to assign:
 
--   Type: Bug, Feature, Task.
--   Priority label: P1 (must be fixed immediately) to P5 (valid bug, but
-    you might need to fix it).
--   Labels such as "needs specification" or "needs documentation" if
-    required.
--   Labels for rough time estimate: hours, days, weeks, months,
-    quarters.
+- Type: Bug, Feature, Task.
+- Priority label: P1 (must be fixed immediately) to P5 (valid bug, but
+  you might need to fix it).
+- Labels such as `needs specification` or `needs documentation` if
+  required.
+- Labels for rough time estimate: hours, days, weeks, months, quarters.
 
-The issue is added to the Pontoon Roadmap GitHub project:
+The issue is added to the [Pontoon Roadmap GitHub project](https://github.com/orgs/mozilla/projects/220):
 
--   Initially placed in "Needs triage".
--   Moved to "Ready" once actionable.
--   Kept in "Not ready yet" if more discussion or a spec is needed.
--   High-priority items ready for near-term work move to the top of the
-    "Ready" column.
--   Larger initiatives (estimated to take months or quarters) are always
-    kept in the \"Not ready\" column before they are split into smaller
-    issues.
+- Initially placed in “Needs triage”.
+- Moved to “Ready” once actionable.
+- Kept in “Not ready yet” if more discussion or a spec is needed.
+- High-priority items ready for near-term work move to the top of the
+  “Ready” column.
+- Larger initiatives (estimated to take months or quarters) are always
+  kept in the "Not ready" column before they are split into smaller
+  issues.
 
-## Specification (Recommended for Larger Features)
+## Specification
 
 For medium-to-large features (those affecting UX flows, data models,
 multiple areas, or needing community consensus):
 
--   Draft a specification document in Markdown format and submit it as a
-    PR to the [specs/]{.title-ref} folder.
--   Follow the structure seen in existing specs (problem statement,
-    goals, user stories, proposed solution, impacted areas, risks,
-    alternatives, migration plan if applicable).
--   Get feedback and approval from core team members.
+- Draft a specification document in Markdown format and submit it as a
+  PR to the `specs/` folder.
+- Follow the structure seen in the [template](https://github.com/mozilla/pontoon/blob/main/specs/0000-template.md) and the existing specs (problem statement, goals, user stories, 
+  proposed solution, impacted areas, risks, alternatives, migration plan 
+  if applicable).
+- Get feedback and approval from core team members. For larger specs,
+  it is advisable to use Google Docs for the authoring and review phase,
+  then export the spec as Markdown and publish it in the repository.
 
-Once approved, remove any "needs specification" label and move the issue
-to "Ready" on the Roadmap.
+Once approved, remove any `needs specification` label and move the issue
+to “Ready” on the Roadmap.
 
-## Implementation (Writing Code)
+## Implementation
 
--   When ready to begin, assign yourself or get assigned to the issue.
--   The issue will then move to "In Progress" on the Roadmap.
--   Work in a feature branch.
--   Deliver:
-    -   Clean, complete code.
-    -   Unit and integration tests with good coverage.
-    -   Any necessary database migrations or data changes.
+- When ready to begin, assign yourself or get assigned to the issue.
+- The issue will then move to “In Progress” on the Roadmap.
+- Work in a feature branch.
+- Deliver:
+
+    - Clean, complete code.
+    - Unit and integration tests with good coverage.
+    - Any necessary database migrations or data changes.
 
 ## Code Review
 
--   Open a pull request targeting the "main" branch.
--   Make sure CI tests pass.
--   Review is requested from core Pontoon team members.
--   Address feedback on code quality, security, performance, test
-    coverage, and best practices.
--   Once approved, the PR is merged.
--   The associated issue is automatically closed and moved to "Done" on
-    the Roadmap.
+- Open a pull request targeting the “main” branch.
+- Make sure CI tests pass.
+- Review is requested from core Pontoon team members.
+- Address feedback on code quality, security, performance, test
+  coverage, and best practices.
+- Once approved, the PR is merged.
+- The associated issue is automatically closed and moved to “Done” on
+  the Roadmap.
 
 ## Testing
 
--   The contributor is primarily responsible for thorough testing.
--   Verify the feature behaves as intended.
--   Check for regressions.
--   For larger features, perform extensive testing in the development
-    environment during/after review.
--   Core team may run additional testing.
+The contributor is primarily responsible for thorough testing.
+
+- Verify the feature behaves as intended.
+- Check for regressions.
+- For larger features, perform extensive testing in the development
+  environment during/after review.
+- Core team may run additional testing.
 
 ## Release
 
--   Features are first deployed to the [development
-    environments](https://pontoon.allizom.org/) for final validation.
--   Once confirmed stable, they go live on production.
--   Deployments are handled by core maintainers and occur as changes are
-    ready (typically immediately after, no strict cadence).
+Deployments are handled by core maintainers and occur as changes are ready (typically immediately after, no strict cadence).
 
-## Documentation & Discoverability (as Needed)
+- Features are first deployed to the [development
+  environment](https://pontoon.allizom.org/) for final validation.
+- Once confirmed stable, they go live on production.
 
--   If labeled "needs documentation" or if the change affects users
-    noticeably:
-    -   Update or add content in the Pontoon documentation for
-        localizers.
--   For major or high-impact features:
-    -   Core team may add in-app announcements.
-    -   The contributor might write a blog post on the [Mozilla L10n
-        blog](https://blog.mozilla.org/l10n/).
+## Documentation & Discoverability
+
+If labeled `needs documentation` or if the change affects users noticeably:
+
+  - Update or add content in the Pontoon documentation.
+
+For major or high-impact features:
+
+  - Core team may add in-app announcements.
+  - The contributor might write a blog post on the [Mozilla L10n
+  blog](https://blog.mozilla.org/l10n/).
