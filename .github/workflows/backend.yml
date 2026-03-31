@@ -74,7 +74,6 @@ jobs:
           sed
           -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
           -e '/^SITE_URL=/d'
-
           docker/config/server.env.template > .env
       # Run collectstatic with minimal dependencies, skipping the actual front-end build
       - run: npm install
