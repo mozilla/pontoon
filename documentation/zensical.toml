@@ -16,6 +16,7 @@ nav = [
     { "How to Translate" = "localizer/translate.md" },
     { "Translation Workspace" = "localizer/translation-workspace.md" },
     { "Team & Project Pages" = "localizer/teams-projects.md" },
+    { "Translation Search" = "localizer/search.md" },
     { "User Accounts & Settings" = "localizer/users.md" },
     { "Notifications" = "localizer/notifications.md" },
     { "Profile Page" = "localizer/profile.md" },

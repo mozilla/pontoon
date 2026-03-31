@@ -1,60 +1,87 @@
 # Glossary
 
-Key terms used throughout Pontoon and this documentation.
+Explanation of common terms and concepts used across documentation.
 
-## Contributor
-A user without translator permissions. Contributors can only submit **suggestions**, which must be reviewed and approved by a Translator or Team Manager before appearing in the product.
+## Comment
 
-## Concordance search
-A search feature in the Machinery tab that searches across **all projects** in Pontoon using either the source or target language. Results show the source string, translation, and project name; clicking a result fills the translation into the editor.
+Comments can be used, for example, to discuss possible translations with other team members or request more information from project managers.
+
+Pontoon supports two types of user comments:
+
+* *Source string comments* are associated with the source string and displayed in the `COMMENTS` tab in the right column.
+* *Translation comments* are associated with a specific translation and displayed under the editor in the [translation list](translation_workspace.md#translation-list).
+
+Comment authors can edit or delete their own comments. Project managers can also delete any comment for moderation purposes.
+
+User comments should not be confused with *Resource comments*, which developers can add directly to the resource file. This type of comment is displayed in the editing area, along with other information like the [resource path and context](#resource).
 
 ## Fuzzy
-An internal state available only in Gettext (`.po`) files. A string may be marked fuzzy when:
 
-- The source string changed after it was already translated.
-- A translator manually marked it for review.
-- New strings were merged into the localized files using the option to match existing translations.
+`fuzzy` is an internal state available only if the source file is a [gettext](https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html) (.po) file. A string can be marked as such in a few cases:
 
-Fuzzy strings are equivalent to "needs review" and are not used by the website or application.
+* The reference text changed after the string was already translated.
+* The string has been manually marked by translators because it needs review.
+* New strings were merged in the localized files, enabling the option to match existing translations (also called “fuzzy matching”).
+
+In all these cases a translation exists in the file, but is marked as fuzzy (equivalent to “need review”) and not used by the website or application. For more information, read the documentation about [Fuzzy Entries](https://www.gnu.org/software/gettext/manual/html_node/Fuzzy-Entries.html#Fuzzy-Entries) in gettext.
 
 ## Locale
-The combination of a language and a region, represented in Pontoon by a locale code. For example, American English is `en-US`, where `en` is the language and `US` is the region. In some cases, the region is omitted. Each locale in Pontoon maps to a **Team**.
+
+A locale is the combination of a language and a region, represented in Pontoon by a locale code. For example, American English is referred to as `en-US`, where `en` stands for the language (English), and `US` for the region (United States). In some cases, the region is omitted, because the language is mostly spoken in one region.
+
+In Pontoon, each locale maps to a team.
+
+## Permission
+
+Users in Pontoon can have different permissions depending on their role:
+
+* Translators can either submit approved translations directly or review suggestions from other users. Unlike in some other Translation Management Systems, this is a single permission in Pontoon, and it’s referred to as *Translator permission*.
+* Team managers have translator permissions, but can also change permissions assigned to other users (i.e., ”promote” or ”demote” them).
 
 ## Pretranslation
-An automated feature that uses **translation memory** (100% matches first) and **Google AutoML Translation** (a custom trained model) to automatically translate new strings. Pretranslated strings have the *Pretranslated* status and must be reviewed before they are considered final. For VCS projects, pretranslations are saved directly to localized files.
+
+Pretranslation is a feature in Pontoon that relies on machine translation ([Google AutoML Translation](https://cloud.google.com/translate/automl/docs)) and [translation memory](#translation-memory) to automatically translate strings and save them in localized files.
+
+If pretranslation is enabled for a combination of a locale and a project, when a new string is added in Pontoon:
+
+* It will be translated (pretranslated) using a 100% match from translation memory or, should that not be available, using the Google AutoML Translation engine with a custom model.
+* The string will be stored in Pontoon with the *pretranslated* status.
+* For projects using [version control systems](#version-control-system), the translation will be stored in localized files outside of Pontoon.
 
 ## Resource
-A localization file within a repository used to store source content and translations. Resources generally follow a key-value structure where the key (displayed as *Context* in Pontoon) is a unique identifier and the value is the text to translate. Supported formats include Fluent, Gettext PO, XLIFF, `.properties`, DTD, and others.
 
-## Suggestion
-A translation submitted by a Contributor, or by a Translator/Manager who has enabled *Make suggestions*. A suggestion exists only in the Pontoon database — it is not committed to the VCS or added to the translation memory until approved.
+Resources are localization files within a repository (see [version control system](#version-control-system)) used to store source content and translations. They can be in different file formats but generally follow the same key-value structure, where the key (displayed as `Context` in the Source string panel) is a unique identifier and the value is a text snippet that needs to be translated.
 
-## Sync
-The process by which Pontoon periodically (typically every 10 minutes) pulls source strings and translations from VCS repositories and writes approved translations back. Sync keeps the Pontoon database and the repository in sync.
+## Terminology
 
-## TBX (TermBase eXchange)
-A standard XML file format for exchanging **terminology** (glossary) data between translation tools.
+Terminology — sometimes also referred to as a *Glossary* — is a list of terms and their definitions. Pontoon will highlight any terms in the source string and show their definitions as well as translations into the target language.
 
-## Terminology / Glossary
-A curated list of terms and their definitions. Pontoon highlights recognized terms in source strings and shows their definitions and existing translations into the target language.
+`TBX`, or *TermBase eXchange*, is a standard file format used in the translation industry to represent and exchange terminological information. Pontoon Terminology can be downloaded in the `TBX` format.
 
-## TMX (Translation Memory eXchange)
-A standard XML file format for exchanging **translation memory** data between translation tools. Pontoon's translation memory can be downloaded as a TMX file from any Team page.
+## Translation
 
-## Translation memory (TM)
-A database of all approved translations for any string in Pontoon. It is used as a suggestion source in the Machinery tab and powers the pretranslation feature. Translation memory can be downloaded as a TMX file.
+A translation is any submission of the target content. There are several types of translations:
 
-## Translation Mode
-The editing mode available to Translators and Team Managers in which a green **SAVE** button is displayed. Saving a translation approves it directly, commits it to VCS (where applicable), and rejects all pending suggestions.
+* *Approved translations*: translations submitted directly or approved by users with translator permissions.
+* *Suggestions*: translations that have not been reviewed yet (pending).
+* *Pretranslations*: translations that have been authored by the pretranslation feature.
 
-## Suggestion Mode
-The editing mode (default for Contributors; optionally enabled by Translators/Managers) in which a blue **SUGGEST** button is displayed. Submissions are stored as unreviewed suggestions.
+## Translation memory
 
-## Translator
-A user with permission to submit approved translations directly and to review suggestions. See [User Accounts & Settings](users.md#roles-and-permissions).
+Translation memory is a list of all approved translations for any string. It can be leveraged to provide suggestions when translating new content.
 
-## Team Manager
-A user who has Translator permissions and can also manage permissions for other users within their locale. See [User Accounts & Settings](users.md#roles-and-permissions).
+`TMX`, or *Translation Memory eXchange*, is a standard file format used in the translation industry to represent and exchange translation memories. Pontoon Translation memory can be downloaded in the `TMX` format.
 
-## VCS (Version Control System)
-The external system where source strings and translations are stored — typically a Git or Mercurial repository. Pontoon reads from and writes to VCS repositories as part of the Sync process.
+## Translation mode
+
+Depending on their settings and permissions, users will be able to submit translations directly (*Translation Mode*), or only submit suggestions (*Suggestion Mode*).
+
+Contributors — users without translator permissions — can only access *Suggestion Mode*, while translators and team managers can manually switch between the modes.
+
+## Version Control System
+
+Most projects store source content and translations outside of Pontoon, in repositories that use [version control systems (VCS)](https://en.wikipedia.org/wiki/Version_control). The most popular are git and Mercurial (hg).
+
+Pontoon periodically (usually every 10 minutes) imports source content and translations from these repositories and writes translations back. This process is referred to as *Sync*.
+
+Pontoon also supports the so-called `DB projects`, where source content and translations are stored in Pontoon’s internal database (DB).
