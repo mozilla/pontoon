@@ -139,21 +139,13 @@ Installation
    Make sure that the email address you use for the superuser account matches
    the email that you will log in with via Firefox Accounts.
 
-8. After you've provided credentials for your django-allauth provider, you have to update them in database,
-   because it's required by django-allauth. You will have to call this command after every change in your
-   django-allauth settings (e.g. client key):
-
-   .. code-block:: bash
-
-      python manage.py update_auth_providers
-
-9. Install the required Node libraries using ``npm``:
+8. Install the required Node libraries using ``npm``:
 
    .. code-block:: bash
 
       npm install
 
-10. Build the client:
+9. Build the client:
 
    .. code-block:: bash
 

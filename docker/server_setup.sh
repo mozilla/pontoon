@@ -6,6 +6,3 @@ cd /app
 
 echo "Creating a new django superuser"
 python manage.py createsuperuser
-
-echo "Updating authentication provider settings"
-python manage.py update_auth_providers
