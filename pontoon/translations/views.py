@@ -75,6 +75,12 @@ def create_translation(request):
     resource = entity.resource
     project = resource.project
 
+    if entity.obsolete:
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: This string is obsolete."},
+            status=403,
+        )
+
     # Read-only translations cannot saved
     if utils.readonly_exists(project, locale):
         return JsonResponse(
