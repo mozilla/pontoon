@@ -1132,8 +1132,38 @@ SOCIALACCOUNT_PROVIDERS = {
         "SCOPE": FXA_SCOPE,
         "OAUTH_ENDPOINT": FXA_OAUTH_ENDPOINT,
         "PROFILE_ENDPOINT": FXA_PROFILE_ENDPOINT,
+        "APPS": [
+            {
+                "client_id": FXA_CLIENT_ID,
+                "secret": FXA_SECRET_KEY,
+            }
+        ],
     },
-    "gitlab": {"GITLAB_URL": GITLAB_URL, "SCOPE": ["read_user"]},
+    "github": {
+        "SCOPE": ["user:email"],
+        "APPS": [
+            {
+                "client_id": GITHUB_CLIENT_ID,
+                "secret": GITHUB_SECRET_KEY,
+            }
+        ],
+    },
+    "gitlab": {
+        "SCOPE": ["read_user"],
+        "GITLAB_URL": GITLAB_URL,
+        "APPS": [
+            {
+                "client_id": GITLAB_CLIENT_ID,
+                "secret": GITLAB_SECRET_KEY,
+            }
+        ],
+    },
+    "google": {
+        "SCOPE": ["profile", "email", "openid"],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "OAUTH_PKCE_ENABLED": True,
+        "APPS": [{"client_id": GOOGLE_CLIENT_ID, "secret": GOOGLE_SECRET_KEY}],
+    },
     "openid_connect": {
         "APPS": [
             {
