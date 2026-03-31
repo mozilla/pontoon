@@ -1,68 +1,73 @@
 # Adding a New Project
 
-This page explains how to add a standard VCS-backed project to Pontoon. For database-backed short-term projects (newsletters, campaigns, etc.), see [Adding a Short-Term Project](adding-short-term-project.md).
+## Verify that the project is properly localizable
 
-## Prerequisites
+Project owners can follow the [guidelines](../dev/localizing-your-projects.md) available in Pontoon Documentation to properly structure files inside the repository. Some things to check:
 
-Before adding a project to Pontoon, ensure that:
+* Files should be organized in subfolders, one per locale, and the filename should remain the same across locales. More details on the [supported formats](../index.md) and [folder structure](../dev/localizing-your-projects.md#folder-structure) are available in Pontoon’s documentation.
+* Pontoon needs write access to the repository ([see this document](../../misc/creating_new_repository.md#add-collaborators)).
 
-1. The project uses a [supported localization file format](../dev/localizing-your-projects.md#supported-file-formats).
-2. Localizable strings are extracted into resource files and pushed to a GitHub (or Mercurial) repository.
-3. Pontoon has **write access** to the repository — the recommended approach is to create a dedicated GitHub account for your Pontoon instance, add it as a collaborator to the repository, and configure `SSH_KEY` and `SSH_CONFIG` in your deployment.
+It’s important to also check the files for localization issues before exposing them to localizers: unclear strings, lack of localization comments, missing plural forms are some of the things to check.
 
-Check the repository structure against [Pontoon's requirements](../dev/localizing-your-projects.md#repository-structure). Review files for localization quality issues: unclear strings, missing localization comments, missing plural forms.
+## Create the project
 
-## Creating the project
+Access Pontoon’s [admin console](https://pontoon.mozilla.org/admin/) and click **ADD NEW PROJECT**.
 
-Access Pontoon's admin console at `/admin/` and click **ADD NEW PROJECT**.
+The new project will appear in the [public list of Projects](https://pontoon.mozilla.org/projects/) only after the next sync cycle.
 
-### Required fields
+* Name: name of the repository (it will be displayed in Pontoon’s project selector).
+* Slug: used in URLs, will be generated automatically based on the repository’s name.
+* Locales:
 
-| Field | Notes |
-|---|---|
-| **Name** | Displayed throughout Pontoon. Reserved names: *Terminology*, *Tutorial*, *Pontoon Intro*. |
-| **Slug** | Used in URLs; auto-generated from Name. |
-| **Locales** | Select at least one localizable locale by clicking on it. |
-| **Repository URL** | Use the SSH URL: `git@github.com:user/repo.git`. |
+  * Select at least one locale. To make things faster it’s possible to copy supported locales from an existing project.
+  * The *Read-only* column can be used to add languages in read-only mode. In this way, their translations will be available to other languages in the LOCALES tab when translating, but it won’t be possible to change or submit translations directly in Pontoon.
+  * You can uncheck the `Locales can opt-in` checkbox to prevent localizers from requesting this specific project.
 
-### Optional fields
+* Repositories: select the type of repository and URL. Make sure to use SSH to allow write access. For example, if the repository is `https://github.com/meandavejustice/min-vid`, the URL should be `git@github.com:meandavejustice/min-vid.git`. You can use the *Clone or download* button in the repository page on GitHub, making sure that *Clone with SSH* is selected.
+* Leave the `Branch` field empty, unless developers asked to commit translations in a specific branch instead of the default one (usually `main` or `master`).
+* Download prefix or path to TOML file: a URL prefix for downloading localized files. For GitHub repositories, select any localized file on GitHub, click `Raw` and replace locale code and the following bits in the URL with `{locale_code}`. For example, if the link is `https://raw.githubusercontent.com/bwinton/TabCenter-l10n/master/locales/en-US/addon.properties`, the field should be set to `https://raw.githubusercontent.com/bwinton/TabCenter-l10n/master/locales/{locale_code}`. If you use a project configuration file, you need to provide the path to the raw TOML file on GitHub, e.g. `https://raw.githubusercontent.com/mozilla/common-voice/main/l10n.toml`.
+* Public Repository Website: displayed on dashboards. E.g. `https://github.com/meandavejustice/min-vid`. Pontoon will try to prefill it after you enter Repository URL.
+* Project info: provide some information about the project to help localizers with context or testing instructions. HTML is supported, so you can add external links. For example:
 
-| Field | Notes |
-|---|---|
-| **Branch** | Leave empty to use the default branch (usually `main` or `master`). |
-| **Public Repository Website** | Displayed on dashboards. Pontoon attempts to prefill this from the Repository URL. |
-| **Download prefix or path to TOML file** | A URL prefix for downloading localized files. |
-| **Visibility** | `private` (default) — admins only; `public` — visible to all. |
-| **Project info** | Context or testing instructions for localizers. HTML supported. |
-| **Internal admin notes** | For developer contacts and PM handoff notes; not visible to localizers. |
-| **Deadline** | Format: `YYYY-MM-DD`. |
-| **Priority** | 1 (Lowest) to 5 (Highest). |
-| **Contact** | The L10n driver responsible for this project. |
-| **External Resources** | Links to preview environments, screenshots, etc. |
-| **Pretranslation** | See [Managing Pretranslation](managing-pretranslation.md). |
-| **Locales can opt-in** | Uncheck to prevent localizers from requesting this project. |
-| **Tags enabled** | Check to allow resource grouping by tag. |
-| **Read-only** | Column in the Locales section; marks a locale as read-only. |
+```HTML
+Localization for the <a href="https://testpilot.firefox.com/experiments/min-vid">Min Vid add-on</a>.
+```
 
-## First sync
+* Internal admin notes: use them e.g. for developer contacts and information that other PMs will find useful when covering for you.
+* Deadline: if available, enter project deadline in the YYYY-MM-DD format.
+* Priority: select priority level from one of the 5 levels available (Lowest, Low, Normal, High, Highest).
+* Contact: select the L10n driver in charge of the project, probably yourself.
+* External Resources: provide links to external resources like l10n preview environment. You need to enter the name and the URL for each resource. You can also pick one of the predefined names: Development site, Production site, Development build, Production build, Screenshots, Language pack.
+* Visibility: determines who can access the project. Pontoon supports the following visibility types:
 
-1. Click **SAVE PROJECT** at the bottom of the page.
-2. Click **SYNC** to run a test sync.
-3. Monitor progress in the **Sync log** at `/sync/log/`.
-4. Verify that imported resources and strings look correct.
+  * private (default) - only administrators can access the project.
+  * public - the project is visible for everyone.
 
-!!! important
-    The new project only appears in the public project list after the next sync cycle AND after you set **Visibility** to `Public`.
+* Pretranslation: see the [document dedicated to pretranslation](managing-pretranslation.md).
 
-## Tags
+Click **SAVE PROJECT** at the bottom of the page, then click **SYNC** to run a test sync. In the [Sync log](https://pontoon.mozilla.org/sync/log/) you should be able to see if it succeeded or failed. If all went well, the new project will appear in the [public list of Projects](https://pontoon.mozilla.org/projects/).
 
-Tags logically group resources and can be assigned a priority. To use tags:
+**IMPORTANT**
 
-1. Check **Tags enabled** and save the project.
-2. After saving, a tag management section appears — create tags and save again.
-3. Associate resources with tags via the resource section of the admin panel.
-4. It's also possible to set a **deadline** per Resource (not just per project) from the resource section.
+* The repository must include at least one file for one of the locales. If necessary, you will need to manually create it (it can be empty).
+* Once you verify the project works as expected, enable it for the general audience by setting Visibility to Public.
 
-## Read-only locales
+### Tags
 
-In the Locales table, the **Read-only** column marks a locale's translations as visible but not editable in Pontoon. Other locales can reference these translations in the LOCALES tab.
+Tags can be used in a project to logically group resources, assigning them a priority. To enable tags for a project, check *Tags enabled* and save the project.
+
+For each tag, it’s possible to define:
+
+* *Name*: it will be displayed in project (e.g. `/projects/firefox/tags/`) and localization dashboards (e.g. `/it/firefox/tags/`), but also in search filters.
+* *Slug*: used in URLs for tag dashboards, e.g. `/projects/firefox/tags/devtools/`.
+* *Priority*: like for a project, it’s possible to select a priority level from one of the 5 levels available (Lowest, Low, Normal, High, Highest).
+
+![Tags resources](../assets/admin/manage_tags_resources.png)
+
+Once you’ve created a new tag, you need to save the project in order to be able to manage the resources associated to the tag itself, using the button highlighted in green.
+
+### Resource deadline
+
+Like for a project, it’s possible to set a deadline for a Resource.
+
+Go to the [resource section](https://pontoon.mozilla.org/a/base/resource/) of the admin panel, then type the name of your project (e.g. `engagement`) and hit `Enter`. All the resources for your project should appear. Click on the one you want to edit, set the deadline in the `Deadline` field, then click `SAVE`.

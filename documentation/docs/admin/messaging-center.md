@@ -1,53 +1,58 @@
 # Messaging Center
 
-The Messaging Center allows Administrators to send targeted emails and in-app notifications to contributors, with advanced filtering options.
+Pontoon allows you to send emails and in-app notifications to contributors, with advanced filtering options.
+To access the Messaging Center, click [Messaging](https://pontoon.mozilla.org/messaging/) in the page header when logged in as Administrator.
 
-## Accessing the Messaging Center
+## Message type
 
-Click **Messaging** in the page header when logged in as an Administrator. The Messaging Center is at `/messaging/`.
+Once in the Messaging Center, you will be able to choose your message type at the top of the page. You can choose to send it as a `Notification`, an `Email`, or both (by selecting both types).
 
-## Composing a message
+By default, emails will only be sent to users who have opted in to `News and updates` in their settings. However, if the message is considered transactional (e.g. an email about a password reset) then the `Transactional` option can be selected and emails will also be sent to users who have not opted in to email communication.
 
-### Message type
+Note: Notifications sent via Messaging Center are not included in Notification email digests.
 
-At the top of the page, choose one or more delivery types:
+## Message content
 
-| Type | Notes |
-|---|---|
-| **Notification** | Sent as an in-app notification. Not included in notification email digests. |
-| **Email** | Sent as an email. By default, only sent to users who have opted in to *News and updates*. |
-| **Both** | Sends both a notification and an email. |
+Next, enter your message using the Subject and Body fields. Markdown is supported for advanced formatting, such as creating links.
 
-For emails, if the message is **transactional** (e.g., about an account action), check the **Transactional** option. Transactional emails are sent even to users who have not opted in to email communication.
+## Choosing recipients
 
-### Subject and body
+You can send messages to a wide range of targeted groups by applying precise filters.
 
-Enter your message using the **Subject** and **Body** fields.
+### Filter by user role
 
-## Audience filtering
+Select whether you’d like to send your message to Managers, Translators, Contributors, or all of them.
 
-### By role
+### Filter by locale
 
-Select whether to send to **Managers**, **Translators**, **Contributors**, or **All of them**.
+Checking the `Filter by Locale` checkbox opens the locale selector. You can choose which locales to include by moving them from the `Available` column on the left to the `Chosen` column on the right. You can also use the `MOVE ALL` options to move all locales from one column to the other.
 
-### By locale
+### Filter by project
 
-All locales are included by default (shown in the **Chosen** column). Remove individual locales by clicking them to move them to the **Available** column. Use **MOVE ALL** to move all locales at once between columns.
+Checking the `Filter by Project` checkbox opens the project selector. You can choose which projects to include by moving them from the `Available` column on the left to the `Chosen` column on the right. You can also use the `MOVE ALL` options to move all projects from one column to the other.
 
-### By project
+### Filter by submitted translations
 
-All projects are included by default. Remove individual projects by clicking them. Use **MOVE ALL** to move all projects.
+Filters users by the number of translations they have submitted, or when they submitted a translation. Note that submitted translations are counted even if they have not been approved.
 
-### By activity
+You can set a minimum threshold, maximum threshold, start of date range, and/or end of date range for submitted translations. Fields can be left empty (e.g. setting the minimum threshold to 5 and leaving maximum blank will set the filter to those with 5 or more translations).
 
-Filter recipients based on their contribution history:
+### Filter by performed reviews
 
-- **Number of translations submitted** — minimum or maximum threshold.
-- **When they last submitted a translation** — date range.
+Filter users based on the number of reviews they have conducted, or when they conducted a review.
 
-## Sending
+You can set a minimum threshold, maximum threshold, start of date range, and/or end of date range for reviews conducted. Fields can be left empty (e.g. setting the minimum threshold to 5 and leaving maximum blank will set the filter to those with 5 or more reviews).
 
-After configuring the message and audience, click **Send** to deliver. Recipients are determined by the intersection of all applied filters.
+### Filter by last login
 
-!!! note
-    Notifications sent via the Messaging Center are **not** included in the regular notification email digests that users receive.
+Filter contributors based on their last login activity.
+
+You can set the start of date range and/or end of date range. Fields can be left empty (e.g. setting just the `From` field will search for users who have logged in on the specified day or later.)
+
+## Reviewing and sending messages
+
+Click `REVIEW MESSAGE` at the bottom of the page to review your message content, recipients, and selected message type. You will have the option to either return to editing, send the message to yourself (to view the actual rendered notification or email), or send to recipients.
+
+The `SEND TO * RECIPIENTS` button will display the number of users who will receive the message. Review contents of the page carefully and if everything looks okay, complete sending the messages by clicking the button.
+
+A confirmation will appear at the top of the page once the messages have been sent out.

@@ -1,51 +1,54 @@
 # Managing Pretranslation
 
-Pretranslation automatically translates new strings using translation memory (TM) and machine translation, saving results as *Pretranslated* strings that can be reviewed before going live.
+## Opt-in guidelines to enable new locales
 
-When pretranslation is enabled for a locale+project combination and a new string is added to Pontoon:
+It’s important to note that **these are not strict criteria**: members of staff will evaluate each request to opt in individually, based on their knowledge of the project and direct experience with the locale.
 
-1. Pontoon checks for a **100% TM match** — if found, it is used directly.
-2. If no TM match exists, the **Google AutoML Translation** custom model for the locale is used.
-3. The string is saved with the *Pretranslated* status.
-4. For VCS projects, the pretranslation is stored in localized files outside Pontoon.
+**Criteria for enabling pretranslation for a new locale**
 
-## Enabling pretranslation for a project
+* Request needs to come from translators or managers active within the last month (translating or reviewing).
+* There is an active manager for the locale (last activity within 2 months).
 
-Access Pontoon's admin console → open the project → scroll to the **Pretranslation** section at the bottom of the page.
+**Criteria for enabling pretranslation for a new project**
 
-!!! important
-    If this is the **first project** being enabled for a locale, you must first train and set up a custom AutoML model (see below) before enabling pretranslation.
+* Less than 400 missing strings, except for projects or locales where existing pretranslation statistics provide high-confidence.
+* Average review time for pretranslations in existing projects is faster than 3 weeks.
 
-1. Check **PRETRANSLATION ENABLED**.
-2. Move the desired locales from the **Available** list to **Chosen**.
-3. Optionally, click **PRETRANSLATE** to immediately pretranslate all missing strings for enabled locales. Otherwise, pretranslation runs automatically as new strings are added.
+**Criteria for disabling the feature for a locale or a project**
 
-## Training a custom AutoML model
+* Approval rate drops below 40%.
+* Average review time for pretranslations is slower than 6 weeks.
 
-Custom models are trained per locale using Pontoon's translation memory, resulting in better quality than the generic Google Translate engine.
+Note that disabling a project would always involve a conversation with reviewers for the locale.
 
-### Step 1 — Download the TM
+## Enabling pretranslation in a project
 
-Go to the **Team page** for the locale → **TM** tab → download the TMX file.
+Access Pontoon’s [admin console](https://pontoon.mozilla.org/admin/), and select the project: at the bottom of the page there is a section dedicated to *Pretranslation*.
 
-### Step 2 — Import the TM into Google AutoML
+**IMPORTANT**: if this is the first project for a locale, the first step is to [train and set up the custom machine translation model](#train-and-set-up-a-custom-machine-translation-model) in Google AutoML Translation.
 
-1. Open the [Google Cloud Console](https://console.cloud.google.com) (requires permission).
-2. Navigate to **AutoML Translation** → **Datasets** → **CREATE DATASET**.
-3. Import the TMX file:
-   - Click **BROWSE** in the *Destination on Cloud Storage* field and select `pontoon-prod-model-data-c1107144`.
-   - Click **CONTINUE** to start the import.
-   - Wait for the Status column to show `Success: ImportData` (a few minutes; you can close the window and return).
+Use the checkbox `PRETRANSLATION ENABLED` to enable the feature for the project, then move the requested locales from the `Available` list to `Chosen`. Clicking the `PRETRANSLATE` button will pretranslate immediately all missing strings in enabled locales, otherwise pretranslation will run automatically as soon as new strings are added to the project.
 
-### Step 3 — Train the model
+## Train and set up a custom machine translation model
 
-1. Navigate to the **TRAIN** tab → click **START TRAINING**.
-2. Training is a background job that takes **several hours**. At most 4 locale models can train concurrently.
-3. Wait for the Status column to show `Success: CreateModel`.
-4. Note the model name (usually starts with `NM`, followed by alphanumeric characters).
+To improve performance of the machine translation engine powering the pretranslation feature, custom machine translation models are trained for each locale using Pontoon’s translation memory. That results in better translation quality than what’s provided by the generic machine translation engine.
 
-### Step 4 — Register the model in Pontoon
+To create a custom translation model, first go to the [team page](https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/teams_projects.html#team-page) of the locale you are creating a custom translation model for and download its [translation memory file](https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/translate.html#downloading-and-uploading-translations). Next, go to the [Google Cloud console](https://console.cloud.google.com/translation/datasets?project=moz-fx-pontoon-prod) (requires permission) and follow these instructions — in case of doubt, consult the [official instructions](https://cloud.google.com/translate/automl/docs/create-machine-translation-model).
 
-In Django's admin interface at `/a/` → **Locales** → find the locale → set the **Google automl model** field to the model name noted above.
+The first step is to create a translation dataset. In the `Datasets` panel, select `CREATE DATASET`:
 
-From this point, the Machinery tab uses the custom model and pretranslation is ready to be enabled.
+* For the `Dataset name`, follow the pattern used by existing datasets: `dataset_LOCALE_YYYY_MM_DD` (e.g. `dataset_pt_BR_2023_09_20`, note that `-` is not allowed).
+* Select the `Translate from…` language (`English (EN)`) and the `Translate to…` language (e.g. `Portuguese (PT)` for `pt-BR`).
+* Click `CREATE`.
+
+This operation will take a few seconds. At the end, an empty dataset with the selected name will be available in the list, with `0` in the `Total pairs` column. It’s now time to import Pontoon’s translation memory and train the model:
+
+* Click the dataset, then navigate to the `IMPORT` tab.
+* Use `SELECT FILES` to select the downloaded TMX file from your device.
+* Click `BROWSE` in the `Destination on Cloud Storage` field and select `pontoon-prod-model-data-c1107144`.
+* Click `CONTINUE` to start the import process. The import process will take a few minutes (it’s possible to close this window and return later to the list of datasets, when completed the `Status` column will say `Success: ImportData`).
+* Once the import is completed, navigate to the `TRAIN` tab and click `START TRAINING`.
+
+Note that creating the model is a background job which takes a few hours (when completed the `Status` column will say `Success: CreateModel`), and models for at most 4 locales can be trained concurrently. When the model is created, store its name (usually starting with `NM`, followed by a series of alphanumeric characters) under *Google automl model* in the [Django’s admin interface](https://pontoon.mozilla.org/a/) of the locale.
+
+From that point on, Machinery will start using the custom machine translation model instead of the generic one and you’ll be set to enable pretranslation for the locale.

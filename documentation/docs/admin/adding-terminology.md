@@ -1,25 +1,22 @@
-# Adding Terminology
+# Adding New Terminology
 
-The **Terminology** project is a special built-in project in Pontoon that powers the glossary feature. When a source string contains a recognized term, Pontoon highlights it and shows its definition and existing translations.
+To add new terms to Pontoon, access Django’s admin interface at `https://pontoon.mozilla.org/a/` (note that this is not the usual admin interface), then follow the steps below.
 
-## Accessing the Terminology project
+Find and click `Terms` on the navigation pane on the left. Check on the following page to make sure a term does not already exist by searching in the search field near the top.
 
-The Terminology project is managed like any other project. Access it from Pontoon's admin console → **Terminology** project, or navigate directly to `/admin/projects/terminology/`.
+To add a new term, click `ADD TERM +`. The next page will have the following fields:
 
-## Adding a new term
+* Text (required): Term you wish to register.
+* Part of speech (required): Select the part of speech that applies to your term. In some cases the same string can be registered twice with different parts of speech, e.g. bookmark as a noun (“open your bookmarks”) or as a verb (“bookmark this website”).
+* Definition: Meaning of the term, or explanation of what the term is.
+* Usage: Example usage of the term.
+* Notes: Any other notes or context that could be relevant.
+* Case sensitive: Select if the term should only match when case matches.
+* Do not translate: Select if the term should not be translated (example brand names like Firefox).
+* Forbidden: Select if this term should not be used.
 
-1. Go to the Terminology project admin page.
-2. Under **Strings**, click **MANAGE STRINGS**.
-3. Click **NEW STRING**.
-4. Enter:
-   - **String** — the term in the source language (English).
-   - **Comment** — the definition or usage notes.
-5. Click **SAVE STRINGS**.
+Once the necessary information has been filled out, click one of the three save options `Save and add another`, `Save and continue editing`, or `SAVE` to register the term to Pontoon.
 
-## Translating terminology
+This term will automatically populate in the terminology projects for all locales for translation, and will also appear in the `TERMS` pane of the translation UI when it appears in a string.
 
-Once a term is added as a source string, localizers can translate it in the Terminology project like any other string. Translations appear in the **Terminology** tab of the translation workspace when a matching term is found in a source string.
-
-## Downloading terminology
-
-The full glossary can be downloaded as a **TBX** (TermBase eXchange) file. Click the profile icon in the top-right corner of any Pontoon page and select **Download Terminology**.
+Note that only the following fields are displayed in Pontoon as a localization comment for the term: part of speech, definition, usage.
