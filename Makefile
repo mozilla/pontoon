@@ -163,4 +163,4 @@ requirements:
 
 docs:
 	"${DC}" run --rm server zensical build -f //app/documentation/zensical.toml
-	"${DC}" run --rm server python manage.py collectstatic --noinput
+	"${DC}" run --rm server .//manage.py collectstatic --noinput
