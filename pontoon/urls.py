@@ -3,8 +3,7 @@ import os
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
-from django.urls import include, path, re_path, register_converter
+from django.urls import include, path, register_converter
 from django.urls.converters import StringConverter
 from django.views.generic import RedirectView, TemplateView
 from django.views.static import serve
@@ -16,8 +15,13 @@ class LocaleConverter(StringConverter):
     regex = r"[A-Za-z0-9\-\@\.]+"
 
 
-def docs_dir_index(request, path=""):
-    return HttpResponseRedirect(f"/docs/{path}index.html")
+def docs_serve(request, path="index.html"):
+    if not path or path.endswith("/"):
+        path = f"{path}index.html"
+
+    return serve(
+        request, path, document_root=os.path.join(settings.STATIC_ROOT, "docs")
+    )
 
 
 register_converter(LocaleConverter, "locale")
@@ -61,13 +65,8 @@ urlpatterns = [
         RedirectView.as_view(url="/static/img/favicon.ico", permanent=True),
     ),
     # Docs
-    path("docs/", docs_dir_index),
-    re_path(r"^docs/(?P<path>.+/)$", docs_dir_index),
-    path(
-        "docs/<path:path>",
-        serve,
-        {"document_root": os.path.join(settings.STATIC_ROOT, "docs")},
-    ),
+    path("docs/", docs_serve),
+    path("docs/<path:path>", docs_serve),
     # Legacy
     path("in-context/", RedirectView.as_view(url="/", permanent=True)),
     # Include URL configurations from installed apps
