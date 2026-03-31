@@ -12,6 +12,7 @@ from pontoon.base.models import Entity, Resource, User
 from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.libraries import run_checks
+from pontoon.translations.utils import parse_db_string_to_json
 
 
 parser = FluentParser()
@@ -100,7 +101,8 @@ def find_and_replace(
         # Cache the old value to identify changed translations
         new_translation = deepcopy(translation)
 
-        if translation.entity.resource.format == Resource.Format.FLUENT:
+        res_format = translation.entity.resource.format
+        if res_format == Resource.Format.FLUENT:
             new_translation.string = ftl_find_and_replace(
                 translation.string, find, replace
             )
@@ -122,15 +124,21 @@ def find_and_replace(
         new_translation.pretranslated = False
         new_translation.fuzzy = False
 
-        if new_translation.entity.resource.format in DB_FORMATS:
+        errors = False
+        try:
+            new_translation.value, new_translation.properties = parse_db_string_to_json(
+                res_format, new_translation.string
+            )
+        except ValueError:
+            errors = True
+
+        if not errors and res_format in DB_FORMATS:
             errors = run_checks(
                 new_translation.entity,
                 new_translation.locale.code,
                 new_translation.string,
                 use_tt_checks=False,
             )
-        else:
-            errors = {}
 
         if errors:
             translations_with_errors.append(translation.pk)
