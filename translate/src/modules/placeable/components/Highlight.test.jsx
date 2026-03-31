@@ -257,6 +257,7 @@ describe('specific marker', () => {
     ['There were %Id cows', '%Id'],
     ['There were %d %s', '%d', '%s'],
     ['%1$s was kicked by %2$s', '%1$s', '%2$s'],
+    ['You have %1$s items and %2$,d points', '%1$s', '%2$,d'],
     ['There were %Id cows', '%Id'],
     ["There were %'f cows", "%'f"],
     ['There were %#x cows', '%#x'],
