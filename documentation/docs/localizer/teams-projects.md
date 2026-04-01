@@ -89,7 +89,7 @@ The following actions are available:
 
 ### Projects page
 
-The Projects page lists all projects that are available in Pontoon. It can be reached by clicking `Projects` in the page header (not displayed when translating a project) or by using the `/projects` URL (e.g. [pontoon.mozilla.org/projects](https://pontoon.mozilla.org/teams/)). Clicking on a specific [Project page](#project-page) will open the project’s [Project page](#project-page).
+The Projects page lists all projects that are available in Pontoon. It can be reached by clicking `Projects` in the page header (not displayed when translating a project) or by using the `/projects` URL (e.g. [pontoon.mozilla.org/projects](https://pontoon.mozilla.org/projects/)). Clicking on a specific project will open the [Project page](#project-page).
 
 ### Project page
 
@@ -110,7 +110,7 @@ It also includes an indication of the overall status of completion and statistic
 Underneath the header, the following tabs are available to navigate between various Team page panels:
 
 * **Teams**: a list of all locales enabled in Pontoon for this project.
-* **Tags**: a list of tags defined for this project. This tab will be visible only in projects where tags are enabled. For more information about tags, see [this page]translation_workspace.md#tags).
+* **Tags**: a list of tags defined for this project. This tab will be visible only in projects where tags are enabled. For more information about tags, see [this page](translation-workspace.md#tags).
 * **Contributors**: a list of active contributors with their statistics, filterable by time (all time, last 12/6/3/1 months).
 * [**Insights**](#insights-graphs): data and trends on contributor and localization activity.
 * **Info**: information about the project.
@@ -141,7 +141,7 @@ The page header contains useful information about the current project (same as t
 Underneath the header, the following tabs are available to navigate between various Team page panels:
 
 * **Resources**: files available in the project.
-* **Tags**: a list of tags defined for this project. This tab will be visible only in projects where tags are enabled. For more information about tags, see [this page](translation_workspace.md#tags).
+* **Tags**: a list of tags defined for this project. This tab will be visible only in projects where tags are enabled. For more information about tags, see [this page](translation-workspace.md#tags).
 * **Contributors**: a list of active contributors with their statistics, filterable by time. Unlike the tab available in the Team page, this only includes contributions to localization of the project for the current locale.
 * [**Insights**](#insights-graphs): data and trends on contributor and localization activity.
 * **Project info**: same content as the Info tab in the Project page.
@@ -154,7 +154,7 @@ The Insights tab, accessible from either the Project, Team, or Localization page
 The following insights appear on all pages:
 
 * **Review activity**: shows the number of unreviewed suggestions as a trend line. The Team page also shows the number of peer-approved, self-approved, and rejected suggestions for each month as a bar graph to display the impact of the review process on the number of unreviewed suggestions. New suggestions (hidden by default) can also be shown by clicking `New suggestions` at the bottom of the graph. Hover over a data point to get the detailed number of strings and percentages for that month.
-* **Translation activity**: shows the translation completion percentage for the locale as a trend line. The Team page also shows the number of human translations and [machinery translations](translation_workspace.md#machinery) for each month as a bar graph to display the impact of the translation process on the number of completed translations. New source strings (hidden by default) can also be shown by clicking `New source strings` at the bottom of the graph. Hover over a data point to get the detailed number of strings and percentages for that month.
+* **Translation activity**: shows the translation completion percentage for the locale as a trend line. The Team page also shows the number of human translations and [machinery translations](translation-workspace.md#machinery) for each month as a bar graph to display the impact of the translation process on the number of completed translations. New source strings (hidden by default) can also be shown by clicking `New source strings` at the bottom of the graph. Hover over a data point to get the detailed number of strings and percentages for that month.
 
 The following insights only appear on Team pages:
 

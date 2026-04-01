@@ -3,7 +3,7 @@
 This guide covers administrative tasks in Pontoon — managing projects, locales, users, and communication tools.
 
 !!! note
-    The screenshots in this documentation use the dark theme, but a light theme is also available in your [profile settings](users.md).
+    The screenshots in this documentation use the dark theme, but a light theme is also available in your [profile settings](../localizer/users.md).
 
 ## Sections
 

@@ -2,7 +2,7 @@
 
 ## Creating an account
 
-While Pontoon can be configured to use [different login systems](../admin/deployment.md#environment-variables) (Django, GitHub, etc.), the Mozilla instance hosted at [pontoon.mozilla.org](https://pontoon.mozilla.org/) uses Firefox accounts.
+While Pontoon can be configured to use [different login systems](../dev/deployment.md#environment-variables) (Django, GitHub, etc.), the Mozilla instance hosted at [pontoon.mozilla.org](https://pontoon.mozilla.org/) uses Firefox accounts.
 
 To create an account, click on the `Sign In` button in the top right corner and follow the instructions.
 
@@ -95,7 +95,7 @@ Note that the current search options can always be overridden directly in the se
 It’s possible to set the default homepage displayed when visiting Pontoon as a logged-in user. Current options are:
 
 * Default homepage (Pontoon’s homepage).
-* [A Team page](teams_projects.md#team-page).
+* [A Team page](teams-projects.md#team-page).
 
 `Preferred source locales` can be used to display a different source locale when translating. In Mozilla projects, the source locale is always English (en-US).
 

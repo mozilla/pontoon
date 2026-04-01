@@ -9,7 +9,7 @@ Comments can be used, for example, to discuss possible translations with other t
 Pontoon supports two types of user comments:
 
 * *Source string comments* are associated with the source string and displayed in the `COMMENTS` tab in the right column.
-* *Translation comments* are associated with a specific translation and displayed under the editor in the [translation list](translation_workspace.md#translation-list).
+* *Translation comments* are associated with a specific translation and displayed under the editor in the [translation list](translation-workspace.md#translation-list).
 
 Comment authors can edit or delete their own comments. Project managers can also delete any comment for moderation purposes.
 

@@ -1,6 +1,6 @@
 # How to Translate
 
-This document describes briefly how to translate and review strings in Pontoon and provides an [example of translation workflow within a team](#workflow-example). The documentation also includes a dedicated page about Pontoon’s [translation workspace](translation-workspace.md), including [translation tools](translation_workspace.md#translation-tools-and-comments).
+This document describes briefly how to translate and review strings in Pontoon and provides an [example of translation workflow within a team](#workflow-example). The documentation also includes a dedicated page about Pontoon’s [translation workspace](translation-workspace.md), including [translation tools](translation-workspace.md#translation-tools-and-comments).
 
 ## Translating strings
 
@@ -16,7 +16,7 @@ To suggest a translation, the user can input the text in the editor and click `S
 
 Note that a suggestion exists only in the Pontoon database, and it’s not added to the [translation memory](glossary.md#translation-memory). For projects using [version control systems](glossary.md#version-control-system), the translation is not stored in localized files outside of Pontoon.
 
-When the user is in *Translation Mode*, a green `SAVE` button will be displayed instead of `SUBMIT`. When saving a translation:
+When the user is in *Translation Mode*, a green `SAVE` button will be displayed instead of `SUGGEST`. When saving a translation:
 
 * The translation will be displayed directly below the editing space and in the sidebar.
 * The translation will be stored in the version control system (where applicable).
@@ -32,7 +32,7 @@ To switch back to *Translation Mode*, click the settings icon again and turn off
 
 ## Reviewing strings
 
-To review a suggestion or pretranslation, [search](translation_workspace.md#search) for unreviewed or pretranslated strings in the sidebar.
+To review a suggestion or pretranslation, [search](translation-workspace.md#search) for unreviewed or pretranslated strings in the sidebar.
 
 If the current translation is acceptable, either click on the `APPROVE` button in the lower-right side of the editing space, or click on the approve icon to the right of the text. This will transform the suggestion or pretranslation into an approved translation. In the case of suggestions, the approved translation will also be stored in the version control system (where applicable).
 
@@ -125,14 +125,14 @@ This workflow utilizes the full power of Pontoon’s online translation features
 
 1. Log in to Pontoon.
 2. Browse to the [project](teams-projects.md).
-3. Using [filters](translation_workspace.md#search) select `Missing` to display only the strings currently missing a translation, marked as [fuzzy](glossary.md#fuzzy) or containing errors.
+3. Using [filters](translation-workspace.md#search) select `Missing` to display only the strings currently missing a translation, marked as [fuzzy](glossary.md#fuzzy) or containing errors.
 4. Access personal settings by clicking on the gear icon below the editing field and turn on `Make suggestions`.<br>Note that new contributors who have not yet been granted [Translator permissions](users.md#user-roles) will only have the ability to `Make suggestions`, which will be enabled by default.
 5. For each string, type a translation and save it with the blue `SUGGEST` button. The string will be stored and displayed under the editor. Each translation submitted shows the name of the author and when it was saved.
-    * If something is unclear or there is a question about the source string, use the [REQUEST CONTEXT or REPORT ISSUE](translation_workspace.md#source-string) feature to ask the [Project manager](users.md#user-roles).
+    * If something is unclear or there is a question about the source string, use the [REQUEST CONTEXT or REPORT ISSUE](translation-workspace.md#source-string) feature to ask the [Project manager](users.md#user-roles).
 
 General notes:
 
-* Rely on Pontoon’s [translation tools](translation_workspace.md#translation-tools-and-comments) to ensure consistency and make the translation process faster.
+* Rely on Pontoon’s [translation tools](translation-workspace.md#translation-tools-and-comments) to ensure consistency and make the translation process faster.
 * When using Firefox, make sure to have a [dictionary](https://addons.mozilla.org/firefox/language-tools/) installed for the translation language, and that spell checking is enabled in the translation text area.
 
 ### Phase 2: review suggestions
@@ -141,7 +141,7 @@ General notes:
 
 1. Log in to Pontoon.
 2. Browse to the [project](teams-projects.md).
-3. In [filters](translation_workspace.md#search) select `Unreviewed`, to isolate the strings previously suggested by another translator.
+3. In [filters](translation-workspace.md#search) select `Unreviewed`, to isolate the strings previously suggested by another translator.
 4. Review the suggested strings.
      * If a suggestion is acceptable:
         * Confirm it as an approved translation by clicking the green `SAVE` button or the checkmark icon near the string in the list below the editor (it turns green when hovered).

@@ -13,7 +13,7 @@ The main toolbar at the top of the page allows users to navigate to the dashboar
 
 ![Navigating in the main toolbar](../assets/localizer/translation-workspace/main_nav.png "Screenshot of the main toolbar, with the resource dropdown expanded")
 
-Clicking the locale name will open the [Team page](teams_projects.md#team-page) for that locale, while clicking the project name will open the [Localization page](teams_projects.md#localization-page) for that project.
+Clicking the locale name will open the [Team page](teams-projects.md#team-page) for that locale, while clicking the project name will open the [Localization page](teams-projects.md#localization-page) for that project.
 
 Clicking on the current resource (or `All Resources`) will display a list of all resources available for that project. It’s possible to search for a resource, and click one to load only the entities included in it. Clicking `All Resources` at the bottom of the list will go back to display all resources, while `All Projects` will show entities for all projects under the selected locale.
 
@@ -153,7 +153,7 @@ In the same area, the `REQUEST CONTEXT or REPORT ISSUE` button can be used to re
 
 #### Context
 
-Sometimes you may want to investigate more context about a particular string through an external resource such as a [Version Control System](glossary.md#version-control-system). The `CONTEXT` information provided underneath the source string shows the identifier, file, and project for the string — allowing you to find the string within the codebase of the project. For example, for some Mozilla projects these can be used to [track strings to bugs](../mercurial/tracking_back_string_to_bug.md).
+Sometimes you may want to investigate more context about a particular string through an external resource such as a [Version Control System](glossary.md#version-control-system). The `CONTEXT` information provided underneath the source string shows the identifier, file, and project for the string — allowing you to find the string within the codebase of the project. For example, for some Mozilla projects these can be used to [track strings to bugs](https://mozilla-l10n.github.io/localizer-documentation/tools/mercurial/tracking_back_string_to_bug.html).
 
 ![Context](../assets/localizer/translation-workspace/context.png)
 
@@ -239,7 +239,7 @@ The following image is an example of a string with plurals: while English only h
 
 ![Translation editing space for Fluent string with plurals](../assets/localizer/translation-workspace/editing_space_ftl_plurals.png "Screenshot of the translation editing space for Fluent string with plurals")
 
-In the bottom left corner, the FTL button (highlighted in yellow) allows to switch between the standard UI (*Simple FTL mode*) and the *Advanced FTL mode*, where it’s possible to edit the original syntax directly, as you would in a text editor. For details on the Fluent syntax, see [Fluent for localizers](../fluent/).
+In the bottom left corner, the FTL button (highlighted in yellow) allows to switch between the standard UI (*Simple FTL mode*) and the *Advanced FTL mode*, where it’s possible to edit the original syntax directly, as you would in a text editor. For details on the Fluent syntax, see [Fluent for localizers](https://mozilla-l10n.github.io/localizer-documentation/tools/fluent/index.html).
 
 ![Translation editing space for Fluent string in source view](../assets/localizer/translation-workspace/editing_space_ftl_sourceview.png "Screenshot of the translation editing space for Fluent string in source view")
 
