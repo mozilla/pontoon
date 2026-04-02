@@ -53,7 +53,6 @@ language = "en"
 logo = "assets/pontoon-logo.svg"
 favicon = "assets/pontoon-logo.svg"
 features = [
-  "header.autohide",
   "navigation.footer",
   "navigation.tabs",
   "navigation.sections",
