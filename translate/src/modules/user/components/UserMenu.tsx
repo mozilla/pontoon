@@ -218,11 +218,7 @@ export function UserMenuDialog({
           id='user-UserMenu--help'
           elems={{ glyph: <i className='fas fa-life-ring fa-fw' /> }}
         >
-          <a
-            href='/docs/localizer/'
-            rel='noopener noreferrer'
-            target='_blank'
-          >
+          <a href='/docs/localizer/' rel='noopener noreferrer' target='_blank'>
             {'<glyph></glyph>Help'}
           </a>
         </Localized>
