@@ -3,7 +3,7 @@ hide:
   - toc
 ---
 
-# Pontoon Documentation
+# Welcome to Pontoon Documentation
 
 **Pontoon** is Mozilla's translation management system (TMS) — a web-based platform that enables the Mozilla localization community to translate, review, and manage strings for Mozilla's products and websites.
 
