@@ -26,7 +26,7 @@ nav = [
   { "Admin Guide" = [
     { "Overview" = "admin/index.md" },
     { "Adding a New Project" = "admin/adding-new-project.md" },
-    { "Adding a Short-Term Project" = "admin/adding-short-term-project.md" },
+    { "Adding a New DB Project" = "admin/adding-new-db-project.md" },
     { "Adding a New Locale" = "admin/adding-new-locale.md" },
     { "Managing Pretranslation" = "admin/managing-pretranslation.md" },
     { "Messaging Center" = "admin/messaging-center.md" },
@@ -44,7 +44,6 @@ nav = [
     { "Feature Development Process" = "dev/feature-development-process.md" },
     { "Deployment" = "dev/deployment.md" },
     { "Maintenance" = "dev/maintenance.md" },
-    { "Localizing Your Projects" = "dev/localizing-your-projects.md" },
   ]}
 ]
 

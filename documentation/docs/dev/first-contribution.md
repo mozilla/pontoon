@@ -126,12 +126,10 @@ where to make your contributions. Here are a few links to important
 documentation resources:
 
 - If you want to work on the front-end, it is important that you read
-  the [Front-End
-  Documentation](https://github.com/mozilla/pontoon/tree/HEAD/translate).
+  the [Front-End Documentation](https://github.com/mozilla/pontoon/tree/HEAD/translate).
 - Most of the documentation around installing and developing can be
   found in the [Developer Guide](index.md).
 - For documentation about using Pontoon to localize, see the [Localizer Guide](../localizer/index.md).
-- For documentation about making a project localizable on Pontoon, see [Localizing your projects](localizing-your-projects.md).
 - For documentation about managing projects, locales and users, see the [Admin Guide](../admin/index.md).
 
 ## 7. Communicate with us

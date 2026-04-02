@@ -1,13 +1,54 @@
 # Adding a New Project
 
+The following page describes how to make your projects localizable with your Pontoon instance.
+
+Pontoon specializes in using version control systems as the source and store of localizable strings. While [internal Pontoon DB](adding-new-db-project.md) can be used for that purpose as well, steps below assume you store strings in a [GitHub repository](https://help.github.com/en/articles/create-a-repo).
+
 ## Verify that the project is properly localizable
 
-Project owners can follow the [guidelines](../dev/localizing-your-projects.md) available in Pontoon Documentation to properly structure files inside the repository. Some things to check:
+Before you can set up a new project in Pontoon:
 
-* Files should be organized in subfolders, one per locale, and the filename should remain the same across locales. More details on the [supported formats](../dev/localizing-your-projects/#prerequisites) and [folder structure](../dev/localizing-your-projects.md#folder-structure) are available in Pontoon’s documentation.
-* Pontoon needs write access to the repository ([see this document](https://mozilla-l10n.github.io/documentation/misc/creating_new_repository.html#add-collaborators)).
+1.  Ensure your project works with one of the supported l10n frameworks:
+    * `.dtd`
+    * `.ftl` (Fluent)
+    * `.ini`
+    * `.json` (WebExtensions)
+    * `.json` (key-value)
+    * `.po` (Gettext)
+    * `.properties`
+    * `.xliff`
+    * `.xml` (Android)
+
+2.  Extract localizable strings into resource files.
+
+3.  Push resource files to your GitHub repository.
+
+4.  Make sure your Pontoon instance has write access to your repository ([see this document](https://mozilla-l10n.github.io/documentation/misc/creating_new_repository.html#add-collaborators)).
+
+!!! tip "Tip"
+    The recommended way for that is to create a dedicated GitHub account for your Pontoon instance, [add it as a collaborator](https://help.github.com/en/articles/inviting-collaborators-to-a-personal-repository) to your repository, and set `SSH_KEY` and `SSH_CONFIG`.
 
 It’s important to also check the files for localization issues before exposing them to localizers: unclear strings, lack of localization comments, missing plural forms are some of the things to check.
+
+## Folder structure
+
+To let Pontoon discover your localizable files, you'll either need to specify paths in the [project configuration file](https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html) or strictly follow the file and folder structure as expected by Pontoon:
+
+1. Locale folders (including source locale) must be located at the same nesting level of the directory tree. You may want to put all locale folders under a `locales` folder.
+1. Source locale needs to be called `templates`, `en-US`, `en-us` or `en`. If multiple folders with such name exist in the repository and contain files in a supported file format, the first one will be used.
+1. Locale folder names must always match locale identifiers used by Pontoon. If your application requires different identifiers, you can try creating symbolic links to locale folders.
+1. Locale code must not be part of the file name.
+
+Correct pattern:
+
+    locales/{locale_code}/path/to/file.extension
+
+Incorrect pattern:
+
+    locales/{locale_code}/path/to/file.{locale_code}.extension
+
+!!! note "Gettext .po files"
+    For Gettext files, you will need to ensure that `.po` files are included in the repository for each target locale for which they are to be translated (these files may be initially empty). For all other supported formats, Pontoon will automatically add files for each locale when it is translated.
 
 ## Create the project
 

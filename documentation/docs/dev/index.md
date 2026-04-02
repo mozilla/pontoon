@@ -35,8 +35,4 @@ This guide covers everything you need to know to contribute to, deploy and maint
 
     Routine maintenance tasks and responsibilities.
 
-- :material-translate: **[Localizing Your Projects](localizing-your-projects.md)**
-
-    Learn how to integrate your project with Pontoon for localization.
-
 </div>
