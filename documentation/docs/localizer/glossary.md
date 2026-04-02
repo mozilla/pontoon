@@ -31,6 +31,12 @@ A locale is the combination of a language and a region, represented in Pontoon b
 
 In Pontoon, each locale maps to a team.
 
+## Machine Translation
+
+Machine Translation (MT) is the translation of text from one language to another, performed by software without human involvement. There are different types of machine translation solutions (or "engines"), but all modern systems are based on a neural network approach (vs statistical or rule-based).
+
+In Pontoon, machine translation is used as part of the [pretranslation](#pretranslation) feature, powered by [Google AutoML Translation](https://cloud.google.com/translate/automl/docs) with custom models trained on existing translation memories.
+
 ## Permission
 
 Users in Pontoon can have different permissions depending on their role:

@@ -2,24 +2,7 @@
 
 ## Opt-in guidelines to enable new locales
 
-It’s important to note that **these are not strict criteria**: members of staff will evaluate each request to opt in individually, based on their knowledge of the project and direct experience with the locale.
-
-**Criteria for enabling pretranslation for a new locale**
-
-* Request needs to come from translators or managers active within the last month (translating or reviewing).
-* There is an active manager for the locale (last activity within 2 months).
-
-**Criteria for enabling pretranslation for a new project**
-
-* Less than 400 missing strings, except for projects or locales where existing pretranslation statistics provide high-confidence.
-* Average review time for pretranslations in existing projects is faster than 3 weeks.
-
-**Criteria for disabling the feature for a locale or a project**
-
-* Approval rate drops below 40%.
-* Average review time for pretranslations is slower than 6 weeks.
-
-Note that disabling a project would always involve a conversation with reviewers for the locale.
+See [this page](https://mozilla-l10n.github.io/localizer-documentation/tools/pretranslation.html#opt-in-guidelines) for the opt-in guidelines.
 
 ## Enabling pretranslation in a project
 
