@@ -166,10 +166,10 @@ export async function fetchGPTTransform(
     locale: locale,
   };
   if (stringId) {
-    params['string_id'] = stringId;
+    params['entity_id'] = stringId;
   }
   if (stringComment) {
-    params['string_comment'] = stringComment;
+    params['entity_comment'] = stringComment;
   }
   if (groupComment) {
     params['group_comment'] = groupComment;

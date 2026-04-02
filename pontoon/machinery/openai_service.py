@@ -24,8 +24,8 @@ class OpenAIService:
         translated_text,
         characteristic,
         target_language_name,
-        string_id=None,
-        string_comment=None,
+        entity_id=None,
+        entity_comment=None,
         group_comment=None,
         resource_comment=None,
         pinned_comments=None,
@@ -43,8 +43,8 @@ class OpenAIService:
             translated_text,
             characteristic,
             target_language_name,
-            string_id or "",
-            string_comment or "",
+            entity_id or "",
+            entity_comment or "",
             group_comment or "",
             resource_comment or "",
             pinned_comments_cache_key,
@@ -74,14 +74,14 @@ class OpenAIService:
         # Separate the instruction from the data.
         # It makes it hard for injected text to masquerade as instructions.
         context_parts = []
-        if string_id:
-            context_parts.append(f"STRING ID:\n{string_id}")
+        if entity_id:
+            context_parts.append(f"STRING ID:\n{entity_id}")
         if resource_comment:
             context_parts.append(f"RESOURCE COMMENT:\n{resource_comment}")
         if group_comment:
             context_parts.append(f"GROUP COMMENT:\n{group_comment}")
-        if string_comment:
-            context_parts.append(f"STRING COMMENT:\n{string_comment}")
+        if entity_comment:
+            context_parts.append(f"STRING COMMENT:\n{entity_comment}")
         if pinned_comments:
             pinned_block = "\n".join(f"- {c}" for c in pinned_comments)
             context_parts.append(f"PINNED COMMENTS:\n{pinned_block}")
@@ -115,7 +115,7 @@ class OpenAIService:
         )
 
         context_instructions = []
-        if string_id:
+        if entity_id:
             context_instructions.append(
                 "STRING ID: use it to infer the UI context (e.g., button, menu item, page title, tooltip) and adapt length and phrasing accordingly."
             )
@@ -127,7 +127,7 @@ class OpenAIService:
             context_instructions.append(
                 "GROUP COMMENT: notes about the group of messages this string belongs to — use it as additional context."
             )
-        if string_comment:
+        if entity_comment:
             context_instructions.append(
                 "STRING COMMENT: treat it as authoritative translator notes — it may specify placeholders to preserve exactly, terms that must not be translated, or other constraints. STRING COMMENT requirements take precedence over all stylistic choices."
             )

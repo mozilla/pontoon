@@ -23,14 +23,14 @@ describe('fetchGPTTransform', () => {
     await fetchGPTTransform('hello', 'hola', 'informal', 'Spanish');
 
     const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
-    expect(params.get('string_id')).toBeNull();
-    expect(params.get('string_comment')).toBeNull();
+    expect(params.get('entity_id')).toBeNull();
+    expect(params.get('entity_comment')).toBeNull();
     expect(params.get('group_comment')).toBeNull();
     expect(params.get('resource_comment')).toBeNull();
     expect(params.get('pinned_comments')).toBeNull();
   });
 
-  it('includes string_id when provided', async () => {
+  it('includes entity_id when provided', async () => {
     await fetchGPTTransform(
       'hello',
       'hola',
@@ -40,11 +40,11 @@ describe('fetchGPTTransform', () => {
     );
 
     const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
-    expect(params.get('string_id')).toBe('msg-id.value');
-    expect(params.get('string_comment')).toBeNull();
+    expect(params.get('entity_id')).toBe('msg-id.value');
+    expect(params.get('entity_comment')).toBeNull();
   });
 
-  it('includes string_comment when provided', async () => {
+  it('includes entity_comment when provided', async () => {
     await fetchGPTTransform(
       'hello',
       'hola',
@@ -55,11 +55,11 @@ describe('fetchGPTTransform', () => {
     );
 
     const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
-    expect(params.get('string_id')).toBeNull();
-    expect(params.get('string_comment')).toBe('Do not translate brand name');
+    expect(params.get('entity_id')).toBeNull();
+    expect(params.get('entity_comment')).toBe('Do not translate brand name');
   });
 
-  it('includes both string_id and string_comment when provided', async () => {
+  it('includes both entity_id and entity_comment when provided', async () => {
     await fetchGPTTransform(
       'hello',
       'hola',
@@ -70,8 +70,8 @@ describe('fetchGPTTransform', () => {
     );
 
     const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
-    expect(params.get('string_id')).toBe('msg-id.aria-label');
-    expect(params.get('string_comment')).toBe(
+    expect(params.get('entity_id')).toBe('msg-id.aria-label');
+    expect(params.get('entity_comment')).toBe(
       'Tooltip text for the close button',
     );
   });

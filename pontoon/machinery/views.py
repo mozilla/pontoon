@@ -151,8 +151,8 @@ def gpt_transform(request):
         translated_text = request.GET.get("translated_text")
         characteristic = request.GET.get("characteristic")
         target_language_name = request.GET.get("locale")
-        string_id = request.GET.get("string_id")
-        string_comment = request.GET.get("string_comment")
+        entity_id = request.GET.get("entity_id")
+        entity_comment = request.GET.get("entity_comment")
         group_comment = request.GET.get("group_comment")
         resource_comment = request.GET.get("resource_comment")
         pinned_comments_json = request.GET.get("pinned_comments")
@@ -168,8 +168,8 @@ def gpt_transform(request):
             translated_text,
             characteristic,
             target_language_name,
-            string_id=string_id,
-            string_comment=string_comment,
+            entity_id=entity_id,
+            entity_comment=entity_comment,
             group_comment=group_comment,
             resource_comment=resource_comment,
             pinned_comments=pinned_comments,
