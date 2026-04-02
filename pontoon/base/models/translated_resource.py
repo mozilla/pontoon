@@ -6,7 +6,7 @@ from django.db.models import F, Sum
 from .locale import Locale
 from .project import Project
 from .resource import Resource
-from .translation import Translation, aggregate_translation_stats
+from .translation import Translation
 from .user import User
 
 
@@ -158,7 +158,7 @@ class TranslatedResource(models.Model):
             locale=self.locale,
         )
 
-        stats = aggregate_translation_stats(translations)
+        stats = translations.aggregate_stats()
 
         self.approved_strings = stats["approved"]
         self.pretranslated_strings = stats["pretranslated"]

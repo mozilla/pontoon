@@ -19,53 +19,56 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 
 
-def aggregate_translation_stats(queryset) -> dict[str, int]:
-    """
-    Aggregate translation stats for a given Translation queryset.
-
-    :return: a dictionary with approved, pretranslated, errors, warnings,
-             and unreviewed counts.
-    """
-    stats = queryset.aggregate(
-        approved_count=Count(
-            "pk",
-            filter=Q(approved=True, errors__isnull=True, warnings__isnull=True),
-        ),
-        pretranslated_count=Count(
-            "pk",
-            filter=Q(pretranslated=True, errors__isnull=True, warnings__isnull=True),
-        ),
-        errors_count=Count(
-            "pk",
-            distinct=True,
-            filter=Q(
-                Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                & Q(errors__isnull=False)
-            ),
-        ),
-        warnings_count=Count(
-            "pk",
-            distinct=True,
-            filter=Q(
-                Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                & Q(warnings__isnull=False)
-            ),
-        ),
-        unreviewed_count=Count(
-            "pk",
-            filter=Q(approved=False, rejected=False, pretranslated=False, fuzzy=False),
-        ),
-    )
-    return {
-        "approved": stats["approved_count"],
-        "pretranslated": stats["pretranslated_count"],
-        "errors": stats["errors_count"],
-        "warnings": stats["warnings_count"],
-        "unreviewed": stats["unreviewed_count"],
-    }
-
-
 class TranslationQuerySet(models.QuerySet):
+    def aggregate_stats(self) -> dict[str, int]:
+        """
+        Aggregate translation stats for this queryset.
+
+        :return: a dictionary with approved, pretranslated, errors, warnings,
+                 and unreviewed counts.
+        """
+        stats = self.aggregate(
+            approved_count=Count(
+                "pk",
+                filter=Q(approved=True, errors__isnull=True, warnings__isnull=True),
+            ),
+            pretranslated_count=Count(
+                "pk",
+                filter=Q(
+                    pretranslated=True, errors__isnull=True, warnings__isnull=True
+                ),
+            ),
+            errors_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
+                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                    & Q(errors__isnull=False)
+                ),
+            ),
+            warnings_count=Count(
+                "pk",
+                distinct=True,
+                filter=Q(
+                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                    & Q(warnings__isnull=False)
+                ),
+            ),
+            unreviewed_count=Count(
+                "pk",
+                filter=Q(
+                    approved=False, rejected=False, pretranslated=False, fuzzy=False
+                ),
+            ),
+        )
+        return {
+            "approved": stats["approved_count"],
+            "pretranslated": stats["pretranslated_count"],
+            "errors": stats["errors_count"],
+            "warnings": stats["warnings_count"],
+            "unreviewed": stats["unreviewed_count"],
+        }
+
     def translated_resources(self, locale):
         from pontoon.base.models.translated_resource import TranslatedResource
 
@@ -295,9 +298,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
-        stats_before = aggregate_translation_stats(
-            self.entity.translation_set.filter(locale=self.locale)
-        )
+        stats_before = self.entity.translation_set.filter(
+            locale=self.locale
+        ).aggregate_stats()
 
         super().save(*args, **kwargs)
 
@@ -372,9 +375,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         # Update stats AFTER changing approval status.
         # Use entity-scoped aggregate delta for performance. Fall back to a
         # full resource recount on IntegrityError.
-        stats_after = aggregate_translation_stats(
-            self.entity.translation_set.filter(locale=self.locale)
-        )
+        stats_after = self.entity.translation_set.filter(
+            locale=self.locale
+        ).aggregate_stats()
         try:
             with transaction.atomic():
                 translatedresource.adjust_stats(stats_before, stats_after, created)
