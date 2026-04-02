@@ -19,9 +19,11 @@ def docs_serve(request, path="index.html"):
     if not path or path.endswith("/"):
         path = f"{path}index.html"
 
-    return serve(
-        request, path, document_root=os.path.join(settings.STATIC_ROOT, "docs")
-    )
+    docs_dir = os.path.join(settings.ROOT, "documentation", "site")
+    if not os.path.isdir(docs_dir):
+        docs_dir = os.path.join(settings.STATIC_ROOT, "docs")
+
+    return serve(request, path, document_root=docs_dir)
 
 
 register_converter(LocaleConverter, "locale")
