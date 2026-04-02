@@ -219,7 +219,7 @@ export function UserMenuDialog({
           elems={{ glyph: <i className='fas fa-life-ring fa-fw' /> }}
         >
           <a
-            href='https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/'
+            href='/docs/localizer/'
             rel='noopener noreferrer'
             target='_blank'
           >

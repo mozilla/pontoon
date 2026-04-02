@@ -65,7 +65,7 @@ urlpatterns = [
         RedirectView.as_view(url="/static/img/favicon.ico", permanent=True),
     ),
     # Docs
-    path("docs/", docs_serve),
+    path("docs/", docs_serve, name="pontoon.docs"),
     path("docs/<path:path>", docs_serve),
     # Legacy
     path("in-context/", RedirectView.as_view(url="/", permanent=True)),
