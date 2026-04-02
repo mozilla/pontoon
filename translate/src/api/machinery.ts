@@ -1,7 +1,8 @@
 import type { Locale } from '~/context/Locale';
 import type { TermType } from '~/api/terminology';
 
-import { GET } from './utils/base';
+import { GET, POST } from './utils/base';
+import { getCSRFToken } from './utils/csrfToken';
 
 /*
  * Translation that comes from a machine (Machine Translation,
@@ -159,39 +160,45 @@ export async function fetchGPTTransform(
   terms?: TermType[],
 ): Promise<MachineryTranslation[]> {
   const url = '/gpt-transform/';
-  const params: Record<string, string> = {
+  const payload = new URLSearchParams({
+    csrfmiddlewaretoken: getCSRFToken(),
     english_text: englishText,
     translated_text: translatedText,
     characteristic: characteristic,
     locale: locale,
-  };
+  });
   if (stringId) {
-    params['entity_id'] = stringId;
+    payload.append('entity_id', stringId);
   }
   if (stringComment) {
-    params['entity_comment'] = stringComment;
+    payload.append('entity_comment', stringComment);
   }
   if (groupComment) {
-    params['group_comment'] = groupComment;
+    payload.append('group_comment', groupComment);
   }
   if (resourceComment) {
-    params['resource_comment'] = resourceComment;
+    payload.append('resource_comment', resourceComment);
   }
   if (pinnedComments && pinnedComments.length > 0) {
-    params['pinned_comments'] = JSON.stringify(pinnedComments);
+    payload.append('pinned_comments', JSON.stringify(pinnedComments));
   }
   if (terms && terms.length > 0) {
-    params['terms'] = JSON.stringify(
-      terms.map(({ text, partOfSpeech, translation }) => ({
-        text,
-        part_of_speech: partOfSpeech,
-        translation,
-      })),
+    payload.append(
+      'terms',
+      JSON.stringify(
+        terms.map(({ text, partOfSpeech, translation }) => ({
+          text,
+          part_of_speech: partOfSpeech,
+          translation,
+        })),
+      ),
     );
   }
 
   try {
-    const { translation } = (await GET_(url, params)) as {
+    const { translation } = (await POST(url, payload, {
+      signal: abortController.signal,
+    })) as {
       translation: string;
     };
     if (translation) {

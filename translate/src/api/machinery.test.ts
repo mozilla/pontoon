@@ -2,16 +2,21 @@ import { fetchGPTTransform } from './machinery';
 import * as base from './utils/base';
 
 vi.mock('./utils/base', () => ({
-  GET: vi.fn(() => Promise.resolve({ translation: 'resultado' })),
+  GET: vi.fn(),
+  POST: vi.fn(() => Promise.resolve({ translation: 'resultado' })),
+}));
+
+vi.mock('./utils/csrfToken', () => ({
+  getCSRFToken: vi.fn(() => 'test-csrf-token'),
 }));
 
 describe('fetchGPTTransform', () => {
-  const GET = vi.mocked(base.GET);
+  const POST = vi.mocked(base.POST);
 
   it('sends required params', async () => {
     await fetchGPTTransform('hello', 'hola', 'informal', 'Spanish');
 
-    const [url, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [url, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(url).toBe('/gpt-transform/');
     expect(params.get('english_text')).toBe('hello');
     expect(params.get('translated_text')).toBe('hola');
@@ -22,7 +27,7 @@ describe('fetchGPTTransform', () => {
   it('omits optional params when not provided', async () => {
     await fetchGPTTransform('hello', 'hola', 'informal', 'Spanish');
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('entity_id')).toBeNull();
     expect(params.get('entity_comment')).toBeNull();
     expect(params.get('group_comment')).toBeNull();
@@ -39,7 +44,7 @@ describe('fetchGPTTransform', () => {
       'msg-id.value',
     );
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('entity_id')).toBe('msg-id.value');
     expect(params.get('entity_comment')).toBeNull();
   });
@@ -54,7 +59,7 @@ describe('fetchGPTTransform', () => {
       'Do not translate brand name',
     );
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('entity_id')).toBeNull();
     expect(params.get('entity_comment')).toBe('Do not translate brand name');
   });
@@ -69,7 +74,7 @@ describe('fetchGPTTransform', () => {
       'Tooltip text for the close button',
     );
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('entity_id')).toBe('msg-id.aria-label');
     expect(params.get('entity_comment')).toBe(
       'Tooltip text for the close button',
@@ -87,7 +92,7 @@ describe('fetchGPTTransform', () => {
       'Navigation section',
     );
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('group_comment')).toBe('Navigation section');
   });
 
@@ -103,14 +108,14 @@ describe('fetchGPTTransform', () => {
       'Main UI file',
     );
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('resource_comment')).toBe('Main UI file');
   });
 
   it('omits pinned_comments when not provided', async () => {
     await fetchGPTTransform('hello', 'hola', 'informal', 'Spanish');
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('pinned_comments')).toBeNull();
   });
 
@@ -127,7 +132,7 @@ describe('fetchGPTTransform', () => {
       ['First note', 'Second note'],
     );
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(JSON.parse(params.get('pinned_comments') as string)).toEqual([
       'First note',
       'Second note',
@@ -137,7 +142,7 @@ describe('fetchGPTTransform', () => {
   it('omits terms when not provided', async () => {
     await fetchGPTTransform('hello', 'hola', 'informal', 'Spanish');
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('terms')).toBeNull();
   });
 
@@ -164,7 +169,7 @@ describe('fetchGPTTransform', () => {
       ],
     );
 
-    const [, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(JSON.parse(params.get('terms') as string)).toEqual([
       { text: 'browser', part_of_speech: 'noun', translation: 'navigateur' },
     ]);
@@ -188,7 +193,7 @@ describe('fetchGPTTransform', () => {
   });
 
   it('returns empty array when response has no translation', async () => {
-    GET.mockResolvedValueOnce({});
+    POST.mockResolvedValueOnce({});
     const result = await fetchGPTTransform(
       'hello',
       'hola',

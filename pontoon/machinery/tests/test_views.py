@@ -306,11 +306,11 @@ def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
             "locale": locale_a.name,
         }
 
-        response1 = member.client.get(url, params)
+        response1 = member.client.post(url, params)
         assert MockOpenAI.return_value.chat.completions.create.call_count == 1
 
         # Second identical request should be served from cache
-        response2 = member.client.get(url, params)
+        response2 = member.client.post(url, params)
         assert MockOpenAI.return_value.chat.completions.create.call_count == 1
 
     assert json.loads(response1.content) == json.loads(response2.content)
@@ -344,7 +344,7 @@ def test_view_gpt_transform_terms(member, locale_a, openai_api_key):
             "terms": terms,
         }
 
-        member.client.get(url, params)
+        member.client.post(url, params)
 
     call_kwargs = MockOpenAI.return_value.chat.completions.create.call_args
     user_message = call_kwargs.kwargs["messages"][1]["content"]
