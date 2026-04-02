@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Admin Guide
 
 This guide covers administrative tasks in Pontoon — managing projects, locales, users, and communication tools.

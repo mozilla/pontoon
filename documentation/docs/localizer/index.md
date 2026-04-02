@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Localizer Guide
 
 This guide covers everything you need to know to translate and review strings in Pontoon, from day-to-day translation work to managing your account and notifications.

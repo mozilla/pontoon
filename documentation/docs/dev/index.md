@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Developer Guide
 
 This guide covers everything you need to know to contribute to, deploy and maintain Pontoon.
