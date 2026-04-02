@@ -6,10 +6,6 @@ import { Locale } from '~/context/Locale';
 import { SearchData } from '~/context/SearchData';
 import { logUXAction } from '~/api/uxaction';
 import { useLLMTranslation } from '~/context/TranslationContext';
-import { getEntityStringId } from '~/modules/machinery/getEntityStringId';
-import { useAppSelector } from '~/hooks';
-import { TERM } from '~/modules/terms';
-import { TEAM_COMMENTS } from '~/modules/teamcomments/reducer';
 
 type Props = {
   isOpenAIChatGPTSupported: boolean;
@@ -34,30 +30,6 @@ export function GoogleTranslation({
   const { query } = useContext(SearchData);
 
   const getLLMTranslationState = useLLMTranslation();
-  const termState = useAppSelector((state) => state[TERM]);
-  const teamCommentState = useAppSelector((state) => state[TEAM_COMMENTS]);
-
-  let stringId: string | undefined;
-  let stringComment: string | undefined;
-  let groupComment: string | undefined;
-  let resourceComment: string | undefined;
-  let pinnedComments: string[] | undefined;
-  if (!query) {
-    stringId = getEntityStringId(entity);
-    stringComment = entity.comment?.trim() || undefined;
-    groupComment = entity.group_comment?.trim() || undefined;
-    resourceComment = entity.resource_comment?.trim() || undefined;
-    const pinned = teamCommentState.comments
-      .filter((c) => c.pinned)
-      .map((c) => {
-        const doc = new DOMParser().parseFromString(c.content, 'text/html');
-        return doc.body.textContent?.trim() ?? '';
-      })
-      .filter(Boolean);
-    pinnedComments = pinned.length > 0 ? pinned : undefined;
-  }
-
-  const terms = termState.terms.length > 0 ? termState.terms : undefined;
 
   const { transformLLMTranslation, selectedOption, restoreOriginal } =
     getLLMTranslationState(translation);
@@ -78,13 +50,8 @@ export function GoogleTranslation({
       await transformLLMTranslation(
         translation,
         characteristic,
-        locale.name,
-        stringId,
-        stringComment,
-        groupComment,
-        resourceComment,
-        pinnedComments,
-        terms,
+        locale.code,
+        query ? undefined : entity.pk,
       );
       logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
         optionSelected: characteristic,

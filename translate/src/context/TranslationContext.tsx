@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useRef } from 'react';
 import { type MachineryTranslation, fetchGPTTransform } from '~/api/machinery';
-import type { TermType } from '~/api/terminology';
 
 type SelState = {
   loading: boolean;
@@ -13,13 +12,8 @@ interface LLMTranslationContextType {
   transformLLMTranslation: (
     mt: MachineryTranslation,
     characteristic: string,
-    localeName: string,
-    stringId?: string,
-    stringComment?: string,
-    groupComment?: string,
-    resourceComment?: string,
-    pinnedComments?: string[],
-    terms?: TermType[],
+    localeCode: string,
+    entityPk?: number,
   ) => Promise<void>;
   restoreOriginal: (mt: MachineryTranslation) => void;
 }
@@ -47,13 +41,8 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
   const transformLLMTranslation = async (
     mt: MachineryTranslation,
     characteristic: string,
-    localeName: string,
-    stringId?: string,
-    stringComment?: string,
-    groupComment?: string,
-    resourceComment?: string,
-    pinnedComments?: string[],
-    terms?: TermType[],
+    localeCode: string,
+    entityPk?: number,
   ) => {
     const currentState = getSelState(mt);
     stateRef.current.set(mt, {
@@ -66,13 +55,8 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
       mt.original,
       mt.translation,
       characteristic,
-      localeName,
-      stringId,
-      stringComment,
-      groupComment,
-      resourceComment,
-      pinnedComments,
-      terms,
+      localeCode,
+      entityPk,
     );
     if (machineryTranslations.length > 0) {
       stateRef.current.set(mt, {

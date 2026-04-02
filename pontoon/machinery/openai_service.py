@@ -5,7 +5,6 @@ from openai import OpenAI
 from django.conf import settings
 from django.core.cache import cache
 
-from pontoon.base.models import Locale
 from pontoon.machinery.utils import (
     get_machinery_service_cache_key,
     set_machinery_service_cache_key,
@@ -23,7 +22,7 @@ class OpenAIService:
         english_text,
         translated_text,
         characteristic,
-        target_language_name,
+        locale,
         entity_id=None,
         entity_comment=None,
         group_comment=None,
@@ -42,7 +41,7 @@ class OpenAIService:
             english_text,
             translated_text,
             characteristic,
-            target_language_name,
+            locale.code,
             entity_id or "",
             entity_comment or "",
             group_comment or "",
@@ -54,17 +53,10 @@ class OpenAIService:
         if cached is not None:
             return cached
 
-        try:
-            target_language = Locale.objects.get(name=target_language_name)
-        except Locale.DoesNotExist:
-            raise ValueError(
-                f"The target language '{target_language_name}' is not supported."
-            )
-
         style_goals = {
-            "informal": f"Use simple, everyday {target_language_name} ({target_language.code}) — avoid jargon, technical terms, and formal constructions.",
-            "formal": f"Use formal {target_language_name} ({target_language.code}) throughout; maintain a consistent register and do not mix formal and informal modes.",
-            "rephrased": f"Provide an alternative wording that preserves the original meaning; adapt idioms and culturally marked expressions for {target_language_name} ({target_language.code}); you may restructure sentences but must not introduce new information or omit essential meaning.",
+            "informal": f"Use simple, everyday {locale.name} ({locale.code}) — avoid jargon, technical terms, and formal constructions.",
+            "formal": f"Use formal {locale.name} ({locale.code}) throughout; maintain a consistent register and do not mix formal and informal modes.",
+            "rephrased": f"Provide an alternative wording that preserves the original meaning; adapt idioms and culturally marked expressions for {locale.name} ({locale.code}); you may restructure sentences but must not introduce new information or omit essential meaning.",
         }
 
         style_goal = style_goals.get(characteristic)
@@ -107,9 +99,9 @@ class OpenAIService:
 
         system_header = textwrap.dedent(
             f"""\
-            You are an expert {target_language_name} ({target_language.code}) localization specialist.
+            You are an expert {locale.name} ({locale.code}) localization specialist.
 
-            Your task: produce a {characteristic} {target_language_name} ({target_language.code}) translation of a UI string.
+            Your task: produce a {characteristic} {locale.name} ({locale.code}) translation of a UI string.
             Use the provided machine translation as a reference, but you are not bound by it — rewrite freely to achieve the best result.
             """
         )

@@ -1,5 +1,4 @@
 import type { Locale } from '~/context/Locale';
-import type { TermType } from '~/api/terminology';
 
 import { GET, POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';
@@ -151,13 +150,8 @@ export async function fetchGPTTransform(
   englishText: string,
   translatedText: string,
   characteristic: string,
-  locale: string,
-  stringId?: string,
-  stringComment?: string,
-  groupComment?: string,
-  resourceComment?: string,
-  pinnedComments?: string[],
-  terms?: TermType[],
+  localeCode: string,
+  entityPk?: number,
 ): Promise<MachineryTranslation[]> {
   const url = '/gpt-transform/';
   const payload = new URLSearchParams({
@@ -165,34 +159,10 @@ export async function fetchGPTTransform(
     english_text: englishText,
     translated_text: translatedText,
     characteristic: characteristic,
-    locale: locale,
+    locale: localeCode,
   });
-  if (stringId) {
-    payload.append('entity_id', stringId);
-  }
-  if (stringComment) {
-    payload.append('entity_comment', stringComment);
-  }
-  if (groupComment) {
-    payload.append('group_comment', groupComment);
-  }
-  if (resourceComment) {
-    payload.append('resource_comment', resourceComment);
-  }
-  if (pinnedComments && pinnedComments.length > 0) {
-    payload.append('pinned_comments', JSON.stringify(pinnedComments));
-  }
-  if (terms && terms.length > 0) {
-    payload.append(
-      'terms',
-      JSON.stringify(
-        terms.map(({ text, partOfSpeech, translation }) => ({
-          text,
-          part_of_speech: partOfSpeech,
-          translation,
-        })),
-      ),
-    );
+  if (entityPk !== undefined) {
+    payload.append('entity_pk', String(entityPk));
   }
 
   try {
