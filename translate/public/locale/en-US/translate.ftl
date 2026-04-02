@@ -572,6 +572,7 @@ notification--translation-unrejected = Translation unrejected
 notification--translation-deleted = Translation deleted
 notification--translation-saved = Translation saved
 notification--unable-to-approve-translation = Unable to approve translation
+notification--unable-to-save-translation = Unable to save translation
 notification--unable-to-unapprove-translation = Unable to unapprove translation
 notification--unable-to-reject-translation = Unable to reject translation
 notification--unable-to-unreject-translation = Unable to unreject translation
