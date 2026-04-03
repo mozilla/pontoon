@@ -24,6 +24,7 @@ from django.utils.html import escape
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
 
+from pontoon.base.placeables import get_placeables
 from pontoon.base.simple_preview import get_simple_preview
 
 
@@ -84,6 +85,24 @@ def static(path):
 def full_static(path):
     """Generate an absolute URL for a static file."""
     return urljoin(settings.SITE_URL, static(path))
+
+
+@library.filter
+def highlight_placeables(text):
+    if not text:
+        return text
+
+    placeables = get_placeables(text)
+    escaped = html.escape(text)
+
+    for p in placeables:
+        escaped_p = html.escape(p)
+        escaped = escaped.replace(
+            escaped_p,
+            f'<mark class="placeable" data-match="{escaped_p}">{escaped_p}</mark>',
+        )
+
+    return markupsafe.Markup(escaped)
 
 
 @library.filter

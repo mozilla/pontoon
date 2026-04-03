@@ -13,11 +13,11 @@
 {% for entry in tm_entries %}
   <tr data-ids="{{ entry.ids }}">
     <td class="source text">
-      {{ linkify(entry.source|highlight_matches(search_query), entry.entity_ids) }}
+      {{ linkify(entry.source|highlight_placeables|highlight_matches(search_query), entry.entity_ids) }}
     </td>
     <td class="target text">
       <div class="content-wrapper">
-        {{ linkify(entry.target|highlight_matches(search_query), entry.entity_ids) }}
+        {{ linkify(entry.source|highlight_placeables|highlight_matches(search_query), entry.entity_ids) }}
       </div>
       <textarea>{{ entry.target }}</textarea>
     </td>
