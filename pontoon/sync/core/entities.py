@@ -72,12 +72,14 @@ def sync_resources_from_repo(
         renamed_paths = rename_resources(project, paths, checkout)
         removed_paths = remove_resources(project, paths, checkout)
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
-        new_res_added_ent_count, _ = add_resources(project, updates, changed_paths, now)
+        new_res_added_ent_count, added_paths = add_resources(
+            project, updates, changed_paths, now
+        )
         update_translated_resources(project, locale_map, paths)
 
     return (
         old_res_added_ent_count + new_res_added_ent_count,
-        renamed_paths | changed_paths,
+        renamed_paths | changed_paths | added_paths,
         removed_paths,
     )
 
