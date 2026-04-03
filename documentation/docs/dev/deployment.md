@@ -1,0 +1,495 @@
+# Deployment
+
+Pontoon is designed to be deployed on Google Cloud Platform. Docker images are built from the [Dockerfile](https://github.com/mozilla/pontoon/blob/main/docker/Dockerfile-mozcloud) and pushed to Google Artifact Registry (GAR) every time changes are merged to the `main` or `dev` branch. 
+
+Two Pontoon instances are available on MozCloud - Mozilla's internal developer platform:
+
+* **Production server**: [pontoon.mozilla.org](https://pontoon.mozilla.org/)
+* **Development server**: [pontoon.allizom.org](https://pontoon.allizom.org/)
+
+## Environment Variables
+
+The following is a list of environment variables you'll want to set on the app you create:
+
+`ADMIN_EMAIL`  
+Optional. Email address for the `ADMINS` setting.
+
+`ADMIN_NAME`  
+Optional. Name for the `ADMINS` setting.
+
+`AUTHENTICATION_METHOD`  
+The default value is `django`, which allows you to log in via accounts created using `manage.py shell`. 
+Set to `fxa` if you want to use "Mozilla Accounts" (corresponding `FXA_*` settings must be set). 
+Set to `github` if you want to use "GitHub" (corresponding `GITHUB_*` settings must be set). 
+Set to `gitlab` if you want to use "GitLab" (corresponding `GITLAB_*` settings must be set if required).
+Set to `google` if you want to use "Google" (corresponding `GOOGLE_*`
+settings must be set).
+
+`USE_X_FORWARDED_HOST`  
+Optional. If using a reverse proxy, set to True to make django-allauth
+redirect_url work as expected. Default value is
+`False`.
+
+`BADGES_START_DATE`  
+Optional. Specifies the start date from which user activities count
+towards badge achievements. This variable should be in `YYYY-MM-DD`
+format.
+
+`BADGES_PROMOTION_THRESHOLDS`  
+Optional. A comma-separated list of numeric thresholds for different
+levels of the Community Builder badge.
+
+`BADGES_REVIEW_THRESHOLDS`  
+Optional. A comma-separated list of numeric thresholds for different
+levels of the Review Master badge.
+
+`BADGES_TRANSLATION_THRESHOLDS`  
+Optional. A comma-separated list of numeric thresholds for different
+levels of the Translation Champion badge.
+
+`BLOCKED_IPS`  
+A comma-separated list of IP addresses or IP ranges (expressed using the
+[CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation), e.g. `192.168.1.0/24`)
+to be blocked from accessing the app, for example because they are
+DDoS'ing the server.
+
+`CELERY_ALWAYS_EAGER`  
+Controls whether asynchronous tasks (mainly used during sync) are sent
+to Celery or executed immediately and synchronously. Set this to `False`
+on production.
+
+`CELERYD_MAX_TASKS_PER_CHILD`  
+Maximum number of tasks a Celery worker process can execute before it’s
+replaced with a new one. Defaults to 20 tasks.
+
+`DATABASE_SSLMODE`  
+Optional. Controls if the database needs a secure connection with the
+app. Default value is `True`.
+
+`DEFAULT_FROM_EMAIL`  
+Optional. Default email address to send emails from. Default value: `Pontoon <pontoon@hostname>`.
+
+`DISABLE_COLLECTSTATIC`  
+Disables running `./manage.py collectstatic` during the build. Should be
+set to `1`.
+
+`DJANGO_DEBUG`  
+Controls `DEBUG` mode for the site. Should be set to
+`False` in production.
+
+`DJANGO_DEBUG_TOOLBAR`  
+Enables Django Debug Toolbar (default: `False`). `DJANGO_DEV` must be
+set to `True`.
+
+`DJANGO_DEV`  
+Signifies whether this is a development server or not. Should be
+`False` in production. Adds some additional
+django apps that can be helpful during day to day development.
+
+`EMAIL_HOST`  
+SMTP host (default: `smtp.sendgrid.net`).
+
+`EMAIL_HOST_PASSWORD`  
+Password for the SMTP connection.
+
+`EMAIL_HOST_USER`  
+Username for the SMTP connection (default: `apikey`).
+
+`EMAIL_PORT`  
+SMTP port (default: `587`).
+
+`EMAIL_USE_TLS`  
+Use explicit TLS for the SMTP connection (default: `True`).
+
+`EMAIL_USE_SSL`  
+Use implicit TLS for the SMTP connection (default: `False`).
+
+`EMAIL_CONSENT_ENABLED`  
+Optional. Enables Email consent page (default: `False`).
+
+`EMAIL_CONSENT_TITLE`  
+Optional, unless `EMAIL_CONSENT_ENABLED` is `True`. Title of the Email
+consent page.
+
+`EMAIL_CONSENT_MAIN_TEXT`  
+Optional, unless `EMAIL_CONSENT_ENABLED` is `True`. Main text of the
+Email consent page. You can use that to explain what type of
+communication to expect among other things.
+
+`EMAIL_CONSENT_PRIVACY_NOTICE`  
+Optional. Privacy notice on the Email consent page. It's possible to use
+HTML and link to external privacy notice page.
+
+`EMAIL_COMMUNICATIONS_HELP_TEXT`  
+Optional. Help text to use under the Email communications checkbox in
+user settings. It allows to explain what type of communication to expect
+and to link to deployment-specific privacy notices among other things.
+
+`EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT`  
+Optional. Text to be shown in the footer of the non-transactional emails
+sent using the Messaging Center, just above the unsubscribe text.
+
+`EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO`  
+Optional. Custom text to be shown in the Monthly activity summary emails
+after the greeting and before the stats.
+
+`ENABLE_BUGS_TAB`  
+Optional. Enables Bugs tab on team pages, which pulls team data from
+bugzilla.mozilla.org. Specific for Mozilla deployments.
+
+`ENABLE_INSIGHTS`  
+Optional. Enables Insights pages, which present data that needs to be
+collected by the [Collect Insights](#collect-insights) scheduled job. It is advised to run
+the job at least once before enabling the tab, otherwise the content
+will be empty. See [the
+spec](https://github.com/mozilla/pontoon/blob/HEAD/specs/0108-community-health-dashboard.md)
+for more information.
+
+`GOOGLE_ANALYTICS_KEY`  
+Optional. Set your [Google Analytics
+key](https://www.google.com/analytics/) to use Google Analytics.
+
+`GOOGLE_TRANSLATE_API_KEY`  
+Optional. Set your [Google Cloud Translation
+API](https://cloud.google.com/translate/) key to use generic machine
+translation engine by Google.
+
+`GOOGLE_AUTOML_PROJECT_ID`  
+Optional. Set your [Google Cloud AutoML
+Translation](https://cloud.google.com/translate/) model ID to use custom
+machine translation engine by Google.
+
+`GOOGLE_APPLICATION_CREDENTIALS`  
+Optional. Path to a Google Cloud service account JSON key file used by
+Google client libraries for authentication.
+
+`INACTIVE_CONTRIBUTOR_PERIOD`  
+Optional. Number of months in which the contributor needs to log in in
+order not to receive the inactive account email. The default value is 6.
+
+`INACTIVE_TRANSLATOR_PERIOD`  
+Optional. Number of months in which the locale translator needs to
+submit or review at least one translation in order not to receive the
+inactive account email. The default value is 2.
+
+`INACTIVE_MANAGER_PERIOD`  
+Optional. Number of months in which the locale manager needs to submit
+or review at least one translation in order not to receive the inactive
+account email. The default value is 2.
+
+`LOG_TO_FILE`  
+Optional. Enables logging to a file (default: `False`). This is useful
+for retaining log data for later analysis or troubleshooting.
+
+`MANUAL_SYNC`  
+Optional. Enable Sync button in project Admin.
+
+`MEDIA_ROOT`  
+Optional. The absolute path of the "media" folder the projects will be
+cloned into (it is located next to the "pontoon" Python module by
+default).
+
+`MICROSOFT_TRANSLATOR_API_KEY`  
+Optional. Set your [Microsoft Translator
+API](http://msdn.microsoft.com/en-us/library/hh454950) key to use
+machine translation by Microsoft.
+
+`MONTHLY_ACTIVITY_SUMMARY_DAY`  
+Optional. Integer representing a day of the month on which the Monthly
+activity summary emails will be sent. 1 represents the first day of the
+month. The default value is 1.
+
+`NEW_RELIC_API_KEY`  
+Optional. API key for accessing the New Relic REST API. Used to mark
+deploys on New Relic.
+
+`NEW_RELIC_APP_NAME`  
+Optional. Name to give to this app on New Relic. Required if you're
+using New Relic.
+
+`NOTIFICATION_DIGEST_DAY`  
+Optional. Integer representing a day of the week on which the weekly
+notification digest email will be sent. 0 represents Monday, 6
+represents Sunday. The default value is 4 (Friday).
+
+`ONBOARDING_EMAIL_2_DELAY`  
+Optional. The number of days to wait after user registration before
+sending the 2nd onboarding email. The default value is 2.
+
+`ONBOARDING_EMAIL_3_DELAY`  
+Optional. The number of days to wait after user registration before
+sending the 3rd onboarding email. The default value is 7.
+
+`OPENAI_API_KEY`  
+Optional. Set your `OpenAI API` key to add
+the ability to refine machine translations using ChatGPT.
+
+`PERSONAL_ACCESS_TOKEN_MAX_COUNT`  
+Optional. The maximum number of personal access tokens a user can
+create. The default value is 10.
+
+`PRETRANSLATION_API_MAX_CHARS`  
+Optional. Specifies the maximum length of input text allowed for
+pretranslation API. The default value is 2048.
+
+`PROJECT_MANAGERS`  
+Optional. A list of project manager email addresses to send project
+requests to
+
+`PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION`  
+Required. Must be set to `python`. Needed for Google AutoML Translation.
+Learn more on [Protocol Buffers
+Homepage](https://developers.google.com/protocol-buffers/docs/news/2022-05-06#python-updates).
+
+`SECRET_KEY`  
+Required. Secret key used for sessions, cryptographic signing, etc.
+
+`SITE_URL`  
+Controls the base URL for the site, including the protocol and port.
+Defaults to `http://localhost:8000`, should always be set in production.
+
+`ALLOWED_HOSTS`  
+A list of strings representing the host/domain names the site can serve.
+Defaults to `.localhost, 127.0.0.1, [::1]`, should always be set in
+production.
+
+`SECURE_SSL_REDIRECT`  
+Optional. If True, redirects all non-HTTPS requests to HTTPS. Default
+value is `True`. Learn more in the [Django
+documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secure-ssl-redirect).
+
+`CSRF_TRUSTED_ORIGINS`  
+Optional. A comma-separated list of trusted origins for unsafe requests.
+It should contain the domains where the app is available. The setting
+also supports subdomains, so you could add `https://*.example.com`, for
+example, to allow access from all subdomains of `example.com`. Default
+value is an empty string. Learn more in the [Django
+documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#csrf-trusted-origins).
+
+`SSH_CONFIG`  
+Contents of the `~/.ssh/config` file used when Pontoon connects to VCS
+servers via SSH. Used for disabling strict key checking and setting the
+default user for SSH. For example:
+
+    StrictHostKeyChecking=no
+
+    Host hg.mozilla.org
+    User pontoon@mozilla.com
+
+`SSH_KEY`  
+SSH private key to use for authentication when Pontoon connects to VCS
+servers via SSH.
+
+`STATIC_HOST`  
+Optional. Hostname to prepend to static resources paths. Useful for
+serving static files from a CDN. Example: `//asdf.cloudfront.net`.
+
+`SUGGESTION_NOTIFICATIONS_DAY`  
+Optional. Integer representing a day of the week on which the
+`send_suggestion_notifications` management
+command will run. 0 represents Monday, 6 represents Sunday. The default
+value is 4 (Friday).
+
+`SYNC_TASK_TIMEOUT`  
+Optional. Multiple sync tasks for the same project cannot run
+concurrently to prevent potential DB and VCS inconsistencies. We store
+the information about the running task in cache and clear it after the
+task completes. In case of an error, we might never clear the cache, so
+we use SYNC_TASK_TIMEOUT as the longest possible period after which the
+cache is cleared and the subsequent task can run. The value should
+exceed the longest sync task of the instance. The default value is 3600
+seconds (1 hour).
+
+`SYSTRAN_TRANSLATE_API_KEY`  
+Optional. Set your [Systran Translate](https://auth.systran.net/oidc/interaction/OcxBMUAbEIkN6tIg1yIcp) API key to use machine translation by Systran.
+
+`TBX_DESCRIPTION`  
+Optional. Description to be used in the header of the Terminology (`.TBX`)
+files.
+
+`TBX_TITLE`  
+Optional. Title to be used in the header of the Terminology (`.TBX`)
+files.
+
+`THROTTLE_ENABLED`  
+Optional. Enables traffic throttling based on IP address (default:
+`False`).
+
+`THROTTLE_MAX_COUNT`  
+Optional. Maximum number of requests allowed in
+`THROTTLE_OBSERVATION_PERIOD` (default: `300`).
+
+`THROTTLE_OBSERVATION_PERIOD`  
+Optional. A period (in seconds) in which `THROTTLE_MAX_COUNT` requests
+are allowed. (default: `60`). If longer than `THROTTLE_BLOCK_DURATION`,
+`THROTTLE_BLOCK_DURATION` will be used.
+
+`THROTTLE_BLOCK_DURATION`  
+Optional. A duration (in seconds) for which IPs are blocked (default:
+`600`).
+
+`TZ`  
+Timezone for the dynos that will run the app. Pontoon operates in UTC,
+so set this to `UTC`.
+
+`VCS_SYNC_NAME`  
+Optional. Default committer's name used when committing translations to
+version control system.
+
+`VCS_SYNC_EMAIL`  
+Optional. Default committer's email used when committing translations to
+version control system.
+
+## Scheduled Jobs
+
+Pontoon requires several scheduled jobs to run regularly.
+
+### Sync Projects
+
+While internal Pontoon DB can be used for storing localizable strings,
+Pontoon specializes in using version control systems for that purpose.
+If you choose this option as well, you'll need to run the following
+scheduled job:
+
+``` bash
+./manage.py sync_projects
+```
+
+It's recommended to run this job at least once an hour. It commits any
+string changes in the database to the remote VCS servers associated with
+each project, and pulls down the latest changes to keep the database in
+sync.
+
+The command supports the following options:
+
+- `--force` -- Consider all version control repository files to have
+  changed.
+- `--no-pull` -- Do not pull new changes for version control
+  repositories.
+- `--no-commit` -- Do not commit and push any new changes to version
+  control.
+
+### Send Deadline Notifications
+
+Pontoon allows you to set deadlines for projects. This job sends
+deadline reminders to contributors of projects when they are due in 7
+days. If 2 days before the deadline project still isn't complete for the
+contributor's locale, notifications are sent again. The command is
+designed to run daily.
+
+``` bash
+./manage.py send_deadline_notifications
+```
+
+### Send Suggestion Notifications
+
+This job sends notifications about newly created unreviewed suggestions
+that were submitted, unapproved or unrejected in the last 7 days.
+Recipients of notifications are users with permission to review them, as
+well as authors of any previous translations or comments of the same
+string. The command is designed to run on a weekly basis.
+
+``` bash
+./manage.py send_suggestion_notifications
+```
+
+### Send Review Notifications
+
+This job sends notifications about newly reviewed (approved or rejected)
+suggestions to the authors of those suggestions. The command is designed
+to run on a daily basis.
+
+``` bash
+./manage.py send_review_notifications
+```
+
+### Send Notification Emails
+
+This job sends notifications in daily and weekly email digests. Daily
+notifications are sent every time the command runs, while weekly
+notifications are sent only on the configured day (e.g., Friday).
+
+``` bash
+./manage.py send_notification_emails
+```
+
+### Send Monthly Activity Emails
+
+This job sends a summary of monthly activity to users via email. It is
+designed to run on a specific day of the month but can be forced to run
+at any time using the `--force` option.
+
+``` bash
+./manage.py send_monthly_activity_emails
+```
+
+### Send Onboarding Emails
+
+Pontoon sends onboarding emails to new users. The first one is sent upon
+registration, while this job sends the 2nd and 3rd email. You can
+configure the number of days to wait before sending the 2nd and 3rd
+emails. The command is designed to run daily.
+
+``` bash
+./manage.py send_onboarding_emails
+```
+
+### Send Inactive Account Emails
+
+This command sends reminder emails to inactive users. Users in different
+roles get different emails based on different activity criteria, which
+can be configured in settings. The command is designed to run daily.
+
+``` bash
+./manage.py send_inactive_account_emails
+```
+
+### Collect Insights
+
+The Insights tab in the dashboards presents data that cannot be
+retrieved from the existing data models efficiently upon each request.
+This job gathers all the required data and stores it in a dedicated
+denormalized data model. The job is designed to run in the beginning of
+the day, every day.
+
+``` bash
+./manage.py collect_insights
+```
+
+### Warm up cache
+
+We cache data for some of the views (e.g. Contributors) for a day. Some
+of them don't get a lot of visits, not even one per day, meaning that
+the visitors of these pages often hit the cold cache. We use this job to
+refresh data in the cache every day, because it changes often. The
+command is designed to run daily.
+
+``` bash
+./manage.py warmup_cache
+```
+
+### Clearing the session store
+
+When a user logs in, Django adds a row to the `django_session` database
+table. If the user logs out manually, Django deletes the row. But if the
+user does not log out, the row never gets deleted.
+
+Django does not provide automatic purging of expired sessions.
+Therefore, it’s your job to purge expired sessions on a regular basis.
+Django provides a clean-up management command for this purpose:
+`clearsessions`. It’s recommended to run this command as a daily cron
+job.
+
+``` bash
+./manage.py clearsessions
+```
+
+### Sync Log Retention
+
+You may also optionally run the `clear_old_sync_logs` management command
+on a schedule to remove sync logs from the database that are over 90
+days old:
+
+``` bash
+./manage.py clear_old_sync_logs
+```

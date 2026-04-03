@@ -1,0 +1,108 @@
+# Pontoon docs configuration for Zensical
+
+[project]
+site_name = "Pontoon Documentation"
+site_description = "Pontoon is Mozilla's translation management system. This documentation covers everything from translating strings to deploying your own instance."
+site_url = "https://pontoon.mozilla.org/docs/"
+repo_url = "https://github.com/mozilla/pontoon"
+repo_name = "mozilla/pontoon"
+edit_uri = "edit/main/documentation/docs/"
+
+nav = [
+  { "Home" = "index.md" },
+
+  { "Localizer Guide" = [
+    { "Overview" = "localizer/index.md" },
+    { "How to Translate" = "localizer/translate.md" },
+    { "Translation Workspace" = "localizer/translation-workspace.md" },
+    { "Team & Project Pages" = "localizer/teams-projects.md" },
+    { "Translation Search" = "localizer/search.md" },
+    { "User Accounts & Settings" = "localizer/users.md" },
+    { "Notifications" = "localizer/notifications.md" },
+    { "Profile Page" = "localizer/profile.md" },
+    { "Glossary" = "localizer/glossary.md" }
+  ]},
+
+  { "Admin Guide" = [
+    { "Overview" = "admin/index.md" },
+    { "Adding a New Project" = "admin/adding-new-project.md" },
+    { "Adding a New DB Project" = "admin/adding-new-db-project.md" },
+    { "Adding a New Locale" = "admin/adding-new-locale.md" },
+    { "Managing Pretranslation" = "admin/managing-pretranslation.md" },
+    { "Messaging Center" = "admin/messaging-center.md" },
+    { "Renaming a Localization File" = "admin/renaming-file.md" },
+    { "Renaming a Project" = "admin/renaming-project.md" },
+    { "Managing Users" = "admin/managing-users.md" },
+    { "Adding Terminology" = "admin/adding-terminology.md" }
+  ]},
+
+  { "Developer Guide" = [
+    { "Overview" = "dev/index.md" },
+    { "First Contribution" = "dev/first-contribution.md" },
+    { "Developer Setup" = "dev/developer-setup.md" },
+    { "Contributing Guidelines" = "dev/contributing.md" },
+    { "Feature Development Process" = "dev/feature-development-process.md" },
+    { "Deployment" = "dev/deployment.md" },
+    { "Maintenance" = "dev/maintenance.md" },
+  ]}
+]
+
+[project.theme]
+language = "en"
+logo = "assets/pontoon-logo.svg"
+favicon = "assets/pontoon-logo.svg"
+features = [
+  "navigation.footer",
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.expand",
+  "navigation.path",
+  "navigation.top",
+  "navigation.instant",
+  "search.highlight",
+  "content.action.edit",  # Edit this page
+  "content.action.view",  # View source of this page
+  "content.code.copy",
+  "toc.follow"
+]
+
+# If you confirm the repository settings syntax you want to use in Zensical,
+# you can then re-enable "content.action.edit" above.
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/mozilla/pontoon"
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+
+[project.markdown_extensions.toc]
+permalink = true
+
+# Enabled without extra options in mkdocs.yml:
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.snippets]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.md_in_html]

@@ -15,6 +15,7 @@ services:
     ports:
       - '8000:8000'
     volumes:
+      - ./documentation:/app/documentation
       - ./pontoon:/app/pontoon
       - ./requirements:/app/requirements
       - ./translate:/app/translate
