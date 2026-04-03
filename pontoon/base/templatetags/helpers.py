@@ -24,8 +24,9 @@ from django.utils.html import escape
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.safestring import mark_safe
 
-from pontoon.base.simple_preview import get_simple_preview
 from pontoon.base.placeables import get_placeables
+from pontoon.base.simple_preview import get_simple_preview
+
 
 register = template.Library()
 
