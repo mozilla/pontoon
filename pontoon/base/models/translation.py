@@ -19,7 +19,7 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 
 
-class TranslationQuerySet(models.QuerySet):
+class TranslationQuerySet(models.QuerySet["Translation"]):
     def aggregate_stats(self) -> dict[str, int]:
         """
         Aggregate translation stats for this queryset.
@@ -154,6 +154,8 @@ class Translation(DirtyFieldsMixin, models.Model):
     locale = models.ForeignKey(Locale, models.CASCADE)
     user = models.ForeignKey(User, models.SET_NULL, null=True, blank=True)
     string = models.TextField()
+    value = models.JSONField()
+    properties = models.JSONField(null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
 
     # Active translations are displayed in the string list and as the first

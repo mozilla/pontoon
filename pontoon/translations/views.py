@@ -1,3 +1,5 @@
+from typing import cast
+
 from notifications.signals import notify
 
 from django.conf import settings
@@ -14,16 +16,21 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
 from pontoon.base.models import (
+    Entity,
+    Locale,
+    Resource,
     TranslatedResource,
     Translation,
 )
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
 from pontoon.messaging.notifications import send_badge_notification
-from pontoon.translations import forms
+
+from .forms import CreateTranslationForm
+from .utils import parse_db_string_to_json
 
 
-def _add_stats(response_data, resource, locale, stats):
+def _add_stats(response_data, resource: Resource, locale: Locale, stats):
     if stats:
         paths = [resource.path] if stats == "resource" else []
         response_data["stats"] = TranslatedResource.objects.query_stats(
@@ -51,25 +58,22 @@ def create_translation(request):
     """
     Create a new translation.
     """
-    form = forms.CreateTranslationForm(request.POST)
+    form = CreateTranslationForm(request.POST)
 
     if not form.is_valid():
         problems = []
         for field, errors in form.errors.items():
-            problems.append(
-                'Error validating field `{}`: "{}"'.format(field, " ".join(errors))
-            )
+            problems.append(f'Error validating field `{field}`: "{" ".join(errors)}"')
         return JsonResponse(
             {"status": False, "message": "\n".join(problems)}, status=400
         )
 
-    entity = form.cleaned_data["entity"]
+    entity = cast(Entity, form.cleaned_data["entity"])
     string = form.cleaned_data["translation"]
-    locale = form.cleaned_data["locale"]
+    locale = cast(Locale, form.cleaned_data["locale"])
     ignore_warnings = form.cleaned_data["ignore_warnings"]
     approve = form.cleaned_data["approve"]
     force_suggestions = form.cleaned_data["force_suggestions"]
-    machinery_sources = form.cleaned_data["machinery_sources"]
     stats = form.cleaned_data["stats"]
 
     resource = entity.resource
@@ -109,6 +113,8 @@ def create_translation(request):
         if are_blocking_checks(failed_checks, ignore_warnings):
             return JsonResponse({"status": False, "failedChecks": failed_checks})
 
+    value, properties = parse_db_string_to_json(resource.format, string)
+
     now = timezone.now()
     can_translate = user.can_translate(project=project, locale=locale) and (
         not force_suggestions or approve
@@ -118,10 +124,12 @@ def create_translation(request):
         entity=entity,
         locale=locale,
         string=string,
+        value=value,
+        properties=properties,
         user=user,
         date=now,
         approved=can_translate,
-        machinery_sources=machinery_sources,
+        machinery_sources=form.cleaned_data["machinery_sources"],
     )
 
     if can_translate:

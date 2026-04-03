@@ -135,6 +135,7 @@ class TranslationFactory(DjangoModelFactory):
     entity = SubFactory(EntityFactory)
     locale = SubFactory(LocaleFactory)
     string = Sequence(lambda n: f"translation {n}")
+    value = Sequence(lambda n: [f"translation {n}"])
     user = SubFactory(UserFactory)
 
     class Meta:
