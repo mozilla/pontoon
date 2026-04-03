@@ -144,22 +144,7 @@ $(function () {
   });
 
   $(window).on('popstate', function () {
-    url.href = window.location.href;
-    const search = url.searchParams.get('search');
-    currentPage = 1;
-    hasMore = false;
-
-    if (search) {
-      $('#entity-list').empty();
-      $('#no-results').hide();
-      $('.search-input').val(search);
-      const pages = parseInt(url.searchParams.get('pages')) || 1;
-      loadMoreEntries({ pages });
-    } else {
-      $('#entity-list').empty().hide();
-      $('#no-results').hide();
-      $('.search-input').val('');
-    }
+    location.reload();
   });
 
   if (url.searchParams.get('search')) {
