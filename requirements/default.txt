@@ -993,9 +993,7 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.11.2 \
     --hash=sha256:04e11f7fc7f1932dbd73a9a50b5e6dfb1767e0d27da2451c5579e9d2593459de \
     --hash=sha256:4e06e839c6c75dbad72a13672209f69893f594598887ceb52a5a8a4932b5efc1
-    # via
-    #   -r default.in
-    #   moz-l10n
+    # via -r default.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -1105,9 +1103,9 @@ oauthlib==3.3.1 \
     --hash=sha256:0f0f8aa759826a193cf66c12ea1af1637f87b9b4622d46e866952bb022e538c9 \
     --hash=sha256:88119c938d2b8fb88561af5f6ee0eec8cc8d552b7bb1f712743136eb7523b7a1
     # via django-allauth
-openai==1.99.9 \
-    --hash=sha256:9dbcdb425553bae1ac5d947147bebbd630d91bbfc7788394d4c4f3a35682ab3a \
-    --hash=sha256:f2082d155b1ad22e83247c3de3958eb4255b20ccf4a1de2e6681b6957b554e92
+openai==2.30.0 \
+    --hash=sha256:92f7661c990bda4b22a941806c83eabe4896c3094465030dd882a71abe80c885 \
+    --hash=sha256:9a5ae616888eb2748ec5e0c5b955a51592e0b201a11f4262db920f2a78c5231d
     # via -r default.in
 packaging==26.0 \
     --hash=sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4 \

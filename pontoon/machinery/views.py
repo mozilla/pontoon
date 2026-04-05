@@ -14,14 +14,17 @@ from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils.html import strip_tags
+from django.views.decorators.http import require_POST
 
-from pontoon.base.models import Entity, Locale, Project, Translation
+from pontoon.base.models import Comment, Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
+from pontoon.terminology.models import Term
 
 from .openai_service import OpenAIService
 
@@ -141,25 +144,72 @@ def google_translate(request):
         return _machinery_error_response("Google Translate", e)
 
 
+@require_POST
 @login_required(redirect_field_name="", login_url="/403")
 def gpt_transform(request):
     """
-    Transforms and returns text using GPT-4 based on specified characteristics like rephrasing or changing formality, by fetching English text, its machine translation, desired transformation characteristic, and target language from the request.
+    Transforms and returns text using GPT based on specified characteristics
+    like rephrasing or changing formality. Fetches all entity context (comments,
+    terminology) from the database using the entity PK.
     """
     try:
-        english_text = request.GET.get("english_text")
-        translated_text = request.GET.get("translated_text")
-        characteristic = request.GET.get("characteristic")
-        target_language_name = request.GET.get("locale")
+        english_text = request.POST.get("english_text")
+        translated_text = request.POST.get("translated_text")
+        characteristic = request.POST.get("characteristic")
+        locale_code = request.POST.get("locale")
+        entity_pk = request.POST.get("entity_pk")
+
+        locale = Locale.objects.get(code=locale_code)
+
+        entity_id = None
+        entity_comment = None
+        group_comment = None
+        resource_comment = None
+        pinned_comments = None
+        terms = None
+
+        if entity_pk:
+            entity = Entity.objects.select_related("resource", "section").get(
+                pk=entity_pk
+            )
+            entity_id = entity.key[0] if entity.key else None
+            entity_comment = entity.comment or None
+            group_comment = (entity.section.comment if entity.section else None) or None
+            resource_comment = entity.resource.comment or None
+
+            pinned = [
+                stripped
+                for content in Comment.objects.filter(
+                    entity=entity, pinned=True
+                ).values_list("content", flat=True)
+                if (stripped := strip_tags(content).strip())
+            ]
+            pinned_comments = pinned if pinned else None
+
+            terms_list = [
+                {
+                    "text": term.text,
+                    "part_of_speech": term.part_of_speech,
+                    "translation": term.translation(locale),
+                }
+                for term in Term.objects.for_string(english_text)
+            ]
+            terms = terms_list if terms_list else None
 
         service = OpenAIService()
-        return JsonResponse(
-            {
-                "translation": service.get_translation(
-                    english_text, translated_text, characteristic, target_language_name
-                )
-            }
+        transformed_text = service.get_translation(
+            english_text,
+            translated_text,
+            characteristic,
+            locale,
+            entity_id=entity_id,
+            entity_comment=entity_comment,
+            group_comment=group_comment,
+            resource_comment=resource_comment,
+            pinned_comments=pinned_comments,
+            terms=terms,
         )
+        return JsonResponse({"translation": transformed_text})
 
     except Exception as e:
         return _machinery_error_response("GPT Transform", e)

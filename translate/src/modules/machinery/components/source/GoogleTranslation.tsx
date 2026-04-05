@@ -1,7 +1,9 @@
 import React, { useState, useRef, useContext } from 'react';
 import { Localized } from '@fluent/react';
 import type { MachineryTranslation } from '~/api/machinery';
+import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
+import { SearchData } from '~/context/SearchData';
 import { logUXAction } from '~/api/uxaction';
 import { useLLMTranslation } from '~/context/TranslationContext';
 
@@ -24,6 +26,8 @@ export function GoogleTranslation({
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
+  const { entity } = useContext(EntityView);
+  const { query } = useContext(SearchData);
 
   const getLLMTranslationState = useLLMTranslation();
 
@@ -43,7 +47,12 @@ export function GoogleTranslation({
     if (characteristic === 'original') {
       restoreOriginal(translation);
     } else {
-      await transformLLMTranslation(translation, characteristic, locale.name);
+      await transformLLMTranslation(
+        translation,
+        characteristic,
+        locale.code,
+        query ? undefined : entity.pk,
+      );
       logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
         optionSelected: characteristic,
         localeCode: locale.code,

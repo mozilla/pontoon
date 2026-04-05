@@ -16,6 +16,10 @@ from pontoon.base.models import (
 )
 from pontoon.test.factories import (
     EntityFactory,
+    SectionFactory,
+    TeamCommentFactory,
+    TermFactory,
+    TermTranslationFactory,
     TranslationFactory,
     TranslationMemoryFactory,
 )
@@ -303,17 +307,82 @@ def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
             "english_text": "Hello",
             "translated_text": "Hola",
             "characteristic": "formal",
-            "locale": locale_a.name,
+            "locale": locale_a.code,
         }
 
-        response1 = member.client.get(url, params)
+        response1 = member.client.post(url, params)
         assert MockOpenAI.return_value.chat.completions.create.call_count == 1
 
         # Second identical request should be served from cache
-        response2 = member.client.get(url, params)
+        response2 = member.client.post(url, params)
         assert MockOpenAI.return_value.chat.completions.create.call_count == 1
 
     assert json.loads(response1.content) == json.loads(response2.content)
+
+
+@pytest.mark.django_db
+def test_view_gpt_transform_context(member, locale_a, openai_api_key):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    # Create entity with full context: key, comment, group (section) comment,
+    # resource comment
+    section = SectionFactory(key=["nav"], comment="Navigation section")
+    entity = EntityFactory(
+        key=["open-browser"],
+        string="Open browser",
+        comment="Button label",
+        resource=section.resource,
+        section=section,
+    )
+    entity.resource.comment = "Main UI file"
+    entity.resource.save(update_fields=["comment"])
+
+    # Pinned comment
+    TeamCommentFactory(
+        entity=entity,
+        locale=locale_a,
+        content="<p>Use formal register</p>",
+        pinned=True,
+    )
+    TeamCommentFactory(
+        entity=entity, locale=locale_a, content="Keep it short", pinned=True
+    )
+
+    # Term matching the source string, with a translation for the target locale
+    term = TermFactory(
+        text="browser", part_of_speech="noun", definition="A web browser"
+    )
+    TermTranslationFactory(term=term, locale=locale_a, text="navigateur")
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(
+            url,
+            {
+                "english_text": "Open browser",
+                "translated_text": "Ouvrir le navigateur",
+                "characteristic": "formal",
+                "locale": locale_a.code,
+                "entity_pk": entity.pk,
+            },
+        )
+
+    call_kwargs = MockOpenAI.return_value.chat.completions.create.call_args
+    user_message = call_kwargs.kwargs["messages"][1]["content"]
+    assert "STRING ID:\nopen-browser" in user_message
+    assert "STRING COMMENT:\nButton label" in user_message
+    assert "GROUP COMMENT:\nNavigation section" in user_message
+    assert "RESOURCE COMMENT:\nMain UI file" in user_message
+    assert "PINNED COMMENTS:" in user_message
+    assert "Use formal register" in user_message
+    assert "Keep it short" in user_message
+    assert "TERMINOLOGY:" in user_message
+    assert '"browser" (noun) → "navigateur"' in user_message
 
 
 @pytest.mark.django_db
