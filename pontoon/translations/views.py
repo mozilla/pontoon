@@ -26,7 +26,7 @@ from pontoon.translations import forms
 def _add_stats(response_data, resource, locale, stats):
     if stats:
         paths = [resource.path] if stats == "resource" else []
-        response_data["stats"] = TranslatedResource.objects.query_stats(
+        response_data["stats"] = TranslatedResource.objects.current().query_stats(
             resource.project, paths, locale
         )
 
@@ -74,6 +74,12 @@ def create_translation(request):
 
     resource = entity.resource
     project = resource.project
+
+    if entity.obsolete:
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: This string is obsolete."},
+            status=403,
+        )
 
     # Read-only translations cannot saved
     if utils.readonly_exists(project, locale):
