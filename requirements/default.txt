@@ -435,9 +435,9 @@ django-ace==1.32.4 \
     --hash=sha256:65c709dfdd2766b4080676541d3889762500a8c8a9150d4356285903b89b4d3a \
     --hash=sha256:d1bd881ed85acd261d4e996c41b44ea02168ca59991cb2229669688f91ba5fd1
     # via -r default.in
-django-allauth[socialaccount]==65.13.0 \
-    --hash=sha256:119c0cf1cc2e0d1a0fe2f13588f30951d64989256084de2d60f13ab9308f9fa0 \
-    --hash=sha256:7d7b7e7ad603eb3864c142f051e2cce7be2f9a9c6945a51172ec83d48c6c843b
+django-allauth[socialaccount]==65.14.1 \
+    --hash=sha256:204d8a07f217c41769a62aa4c7ae7afeb2886c841bebda6964e613e5be72e8b3 \
+    --hash=sha256:2467656d0adc835607e407847054979ab5a943778f6eb8980ed2a29eee6c5790
     # via -r default.in
 django-bmemcached==0.3.0 \
     --hash=sha256:4e4b7d97216dbae331c1de10e699ca22804b94ec3a90d2762dd5d146e6986a8a
