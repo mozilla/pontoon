@@ -161,7 +161,7 @@ def gpt_transform(request):
 
         locale = Locale.objects.get(code=locale_code)
 
-        entity_id = None
+        entity_key = None
         entity_comment = None
         group_comment = None
         resource_comment = None
@@ -172,7 +172,7 @@ def gpt_transform(request):
             entity = Entity.objects.select_related("resource", "section").get(
                 pk=entity_pk
             )
-            entity_id = entity.key[0] if entity.key else None
+            entity_key = entity.key[0] if entity.key else None
             entity_comment = entity.comment or None
             group_comment = (entity.section.comment if entity.section else None) or None
             resource_comment = entity.resource.comment or None
@@ -202,7 +202,7 @@ def gpt_transform(request):
             translated_text,
             characteristic,
             locale,
-            entity_id=entity_id,
+            entity_key=entity_key,
             entity_comment=entity_comment,
             group_comment=group_comment,
             resource_comment=resource_comment,

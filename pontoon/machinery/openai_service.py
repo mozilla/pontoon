@@ -23,7 +23,7 @@ class OpenAIService:
         translated_text,
         characteristic,
         locale,
-        entity_id=None,
+        entity_key=None,
         entity_comment=None,
         group_comment=None,
         resource_comment=None,
@@ -42,7 +42,7 @@ class OpenAIService:
             translated_text,
             characteristic,
             locale.code,
-            entity_id or "",
+            entity_key or "",
             entity_comment or "",
             group_comment or "",
             resource_comment or "",
@@ -66,8 +66,8 @@ class OpenAIService:
         # Separate the instruction from the data.
         # It makes it hard for injected text to masquerade as instructions.
         context_parts = []
-        if entity_id:
-            context_parts.append(f"STRING ID:\n{entity_id}")
+        if entity_key:
+            context_parts.append(f"STRING ID:\n{entity_key}")
         if resource_comment:
             context_parts.append(f"RESOURCE COMMENT:\n{resource_comment}")
         if group_comment:
@@ -107,7 +107,7 @@ class OpenAIService:
         )
 
         context_instructions = []
-        if entity_id:
+        if entity_key:
             context_instructions.append(
                 "STRING ID: use it to infer the UI context (e.g., button, menu item, page title, tooltip) and adapt length and phrasing accordingly."
             )
@@ -158,13 +158,6 @@ class OpenAIService:
         )
 
         system_message = system_header + context_block + system_rules
-
-        # TODO: remove before merge.
-        # Print the full prompt before sending to help with debug.
-        if settings.DEBUG:
-            print(
-                f"[OpenAI] system:\n{system_message}\n\n[OpenAI] user:\n{user_prompt}"
-            )
 
         # Call the OpenAI API with the constructed prompt
         response = self.client.chat.completions.create(
