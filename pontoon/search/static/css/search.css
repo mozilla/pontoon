@@ -164,7 +164,7 @@
   color: var(--translation-secondary-color);
   font-style: italic;
   line-height: 22px;
-  margin-top: 20px;
+  margin-top: 8px;
 }
 
 .entity-info-container a,
@@ -189,7 +189,6 @@
   align-items: flex-end;
   gap: 8px;
   margin-bottom: 0;
-  margin-top: 20px;
   font-size: 13px;
 }
 
@@ -203,7 +202,6 @@
   background-color: var(--dark-grey-1);
   border-radius: 6px;
   font-size: 16px;
-  margin-bottom: 20px;
   padding: 16px;
 
   .translation-info-container {
@@ -232,7 +230,7 @@
 
   .translation-container {
     border-bottom: 1px solid var(--main-border-1);
-    padding: 16px;
+    padding: 8px 16px 8px 16px;
 
     .translation-info-container {
       display: flex;
@@ -244,7 +242,6 @@
 
       .locale-container {
         font-style: italic;
-        margin-top: 20px;
 
         .translation-locale-name {
           color: var(--light-grey-7);
