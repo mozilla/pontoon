@@ -1270,6 +1270,10 @@ TBX_TITLE = os.environ.get("TBX_TITLE", "Pontoon Terminology")
 TBX_DESCRIPTION = os.environ.get("TBX_DESCRIPTION", "Terms localized in Pontoon")
 
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "pontoon.api.authentication.PersonalAccessTokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PAGINATION_CLASS": "pontoon.api.pagination.DynamicPageNumberPagination",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",

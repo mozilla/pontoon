@@ -1835,3 +1835,66 @@ def test_pretranslation_tm(member):
     )
 
     assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_pat_auth_on_locales_endpoint(member):
+    """PAT authentication works on non-pretranslation endpoints."""
+    token = PersonalAccessToken.objects.create(
+        user=member.user,
+        name="Test Token PAT Locales",
+        token_hash="hashed_token",
+        expires_at=now() + timedelta(days=1),
+    )
+    token_id = token.id
+    token_unhashed = "unhashed-token"
+    token.token_hash = make_password(token_unhashed)
+    token.save()
+
+    response = APIClient().get(
+        "/api/v2/locales/",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_session_auth_still_works_on_user_actions(member):
+    """Session authentication continues to work after PAT auth is added to defaults."""
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+
+    project = ProjectFactory(slug="test-session-project")
+    date = now().strftime("%Y-%m-%d")
+
+    response = client.get(
+        f"/api/v2/user-actions/{date}/project/{project.slug}/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_expired_pat_rejected_on_non_pretranslation_endpoint(member):
+    """Expired PAT returns 403 on non-pretranslation endpoints."""
+    token = PersonalAccessToken.objects.create(
+        user=member.user,
+        name="Test Token Expired",
+        token_hash="hashed_token",
+        expires_at=now() - timedelta(days=1),
+    )
+    token_id = token.id
+    token_unhashed = "unhashed-token"
+    token.token_hash = make_password(token_unhashed)
+    token.save()
+
+    response = APIClient().get(
+        "/api/v2/locales/",
+        HTTP_ACCEPT="application/json",
+        headers={"Authorization": f"Bearer {token_id}_{token_unhashed}"},
+    )
+
+    assert response.status_code == 403

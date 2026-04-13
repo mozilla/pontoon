@@ -18,9 +18,7 @@ class PersonalAccessTokenAuthentication(BaseAuthentication):
         auth_header = request.headers.get("Authorization")
 
         if not auth_header or not auth_header.startswith("Bearer "):
-            raise AuthenticationFailed(
-                {"detail": "Missing or invalid Authorization header."}
-            )
+            return None
 
         try:
             token_id, unhashed_token = auth_header.split(" ")[1].split("_")
