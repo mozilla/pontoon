@@ -18,6 +18,8 @@ class PersonalAccessTokenAuthentication(BaseAuthentication):
         auth_header = request.headers.get("Authorization")
 
         if not auth_header or not auth_header.startswith("Bearer "):
+            # Return None to let DRF try the next authenticator (e.g. session auth).
+            # Raising AuthenticationFailed here would block all non-Bearer requests.
             return None
 
         try:
