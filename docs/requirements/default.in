@@ -10,7 +10,7 @@ markupsafe==2.1.5
 packaging==24.1
 pygments==2.20.0
 readthedocs-sphinx-search==0.3.2
-requests==2.32.4
+requests==2.33.0
 snowballstemmer==2.2.0
 sphinx==7.4
 sphinx-rtd-theme==2.0.0
