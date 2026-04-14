@@ -93,9 +93,10 @@ def highlight_placeables(text):
         return text
 
     placeables = get_placeables(text)
-    escaped = html.escape(text)
 
-    for p in placeables:
+    escaped = str(text) if isinstance(text, markupsafe.Markup) else html.escape(text)
+
+    for p in sorted(placeables, key=len, reverse=True):
         escaped_p = html.escape(p)
         escaped = escaped.replace(
             escaped_p,
@@ -322,7 +323,11 @@ def highlight_matches(
     if not search_query:
         return text
 
-    escaped_text = escape(text)
+    if isinstance(text, markupsafe.Markup):
+        escaped_text = str(text)
+    else:
+        escaped_text = escape(text)
+
     flags = 0 if match_case_enabled else re.IGNORECASE
 
     if advanced:
