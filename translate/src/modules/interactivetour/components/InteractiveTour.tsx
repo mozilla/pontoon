@@ -312,14 +312,14 @@ export function InteractiveTour(): React.ReactElement | null {
             elems={{
               a: (
                 // eslint-disable-next-line
-                <a href='https://mozilla-l10n.github.io/localizer-documentation/' />
+                <a href='/docs/localizer/' />
               ),
             }}
           >
             <p>{`There’s a wide variety of tools to help you with translations,
               some of which we didn’t mention in this tutorial. For more
               topics of interest for localizers at Mozilla, please have a look
-              at the <a>Localizer Documentation</a>.`}</p>
+              at the <a>Localizer Guide</a>.`}</p>
           </Localized>
           <Localized
             id='interactivetour-InteractiveTour--end-footer'

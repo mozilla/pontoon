@@ -38,9 +38,17 @@ def test_authenticate_missing_authorization_header():
     auth = PersonalAccessTokenAuthentication()
     request = type("Request", (), {"headers": {}})
 
-    with pytest.raises(AuthenticationFailed) as excinfo:
-        auth.authenticate(request)
-    assert excinfo.value.detail["detail"] == "Missing or invalid Authorization header."
+    result = auth.authenticate(request)
+    assert result is None
+
+
+@pytest.mark.django_db
+def test_authenticate_non_bearer_authorization_header():
+    auth = PersonalAccessTokenAuthentication()
+    request = type("Request", (), {"headers": {"Authorization": "Basic dXNlcjpwYXNz"}})
+
+    result = auth.authenticate(request)
+    assert result is None
 
 
 @pytest.mark.django_db

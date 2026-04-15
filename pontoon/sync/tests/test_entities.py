@@ -176,7 +176,7 @@ def test_add_resource():
         # Test
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (3, set(), set())
+        ) == (3, {"c.ftl"}, set())
         res_c = project.resources.get(path="c.ftl")
         TranslatedResource.objects.get(resource=res_c)
         assert set(tuple(ent.key) for ent in Entity.objects.filter(resource=res_c)) == {

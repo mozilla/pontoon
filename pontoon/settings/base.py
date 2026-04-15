@@ -180,6 +180,7 @@ SYSTRAN_TRANSLATE_PROFILE_OWNER = os.environ.get("SYSTRAN_TRANSLATE_PROFILE_OWNE
 
 # Microsoft Translator API Key
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4.1-2025-04-14")
 
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = os.environ.get("GOOGLE_ANALYTICS_KEY", "")
@@ -823,6 +824,7 @@ STATICFILES_FINDERS = (
 STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
+    ("docs", os.path.join(ROOT, "documentation", "site")),
 ]
 
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")
@@ -941,7 +943,10 @@ SECURE_SSL_REDIRECT = (
 )
 
 # Content-Security-Policy headers
-CSP_DEFAULT_SRC = ("'none'",)
+CSP_DEFAULT_SRC = (
+    # Needed for Docs
+    "'self'",
+)
 CSP_FRAME_SRC = ("https:",)
 CSP_WORKER_SRC = (
     "https:",
@@ -953,7 +958,11 @@ CSP_CONNECT_SRC = (
     "https://bugzilla.mozilla.org/rest/bug",
     "https://region1.google-analytics.com/g/collect",
 )
-CSP_FONT_SRC = ("'self'",)
+CSP_FONT_SRC = (
+    "'self'",
+    # Needed for Docs
+    "https://fonts.gstatic.com",
+)
 CSP_IMG_SRC = (
     "'self'",
     "https:",
@@ -970,10 +979,18 @@ CSP_SCRIPT_SRC = (
     # Needed for Google Analytics
     "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
     "https://www.googletagmanager.com/gtag/js",
+    # Needed for Docs
+    "'sha256-DrEMJJ29sL7vIloQzly+VUGMxKcBTMII+OfW7Y8AkG4='",
+    "'sha256-/8wPdzX9q0NNJXyA5lzsLojXFpkeaXVxhbfkUOQaWy8='",
+    "'sha256-i0DgL2uLiE/Q2kHCFRPZIfz/mN3ZA/Sq08UynK9ZACY='",
+    "'sha256-9WmRqHphu0WtjGBriIQP5bBdmiqiG3tY04gCxNSST40='",
+    "'sha256-cgPnO/p6B0QlYcCUC4Ur5FXogQxKDNDgWWH3Q010y7A='",
 )
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
+    # Needed for Docs
+    "https://fonts.googleapis.com",
 )
 
 # Needed if site not hosted on HTTPS domains (like local setup)
@@ -1253,6 +1270,10 @@ TBX_TITLE = os.environ.get("TBX_TITLE", "Pontoon Terminology")
 TBX_DESCRIPTION = os.environ.get("TBX_DESCRIPTION", "Terms localized in Pontoon")
 
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "pontoon.api.authentication.PersonalAccessTokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PAGINATION_CLASS": "pontoon.api.pagination.DynamicPageNumberPagination",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",

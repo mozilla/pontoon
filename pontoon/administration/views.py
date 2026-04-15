@@ -18,6 +18,7 @@ from pontoon.administration.forms import (
     RepositoryInlineFormSet,
     TagInlineFormSet,
 )
+from pontoon.administration.tasks import calculate_stats_task
 from pontoon.base import utils
 from pontoon.base.models import (
     Entity,
@@ -542,6 +543,19 @@ def manage_project_strings(request, slug=None):
         "entities_form": formset,
     }
     return render(request, "admin_project_strings.html", data)
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def manually_calculate_stats(request):
+    if not request.user.has_perm("base.can_manage_project"):
+        return HttpResponseForbidden(
+            "Forbidden: You don't have permission for calculating statistics"
+        )
+
+    calculate_stats_task.delay()
+
+    return HttpResponse("ok")
 
 
 @login_required(redirect_field_name="", login_url="/403")

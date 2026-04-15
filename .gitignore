@@ -21,6 +21,7 @@ venv/
 /docker/config/server.env
 /docs/_build
 /docs/_gh-pages
+/documentation/site/
 /env/
 /media/
 /pontoon/coverage.xml

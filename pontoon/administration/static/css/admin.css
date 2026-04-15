@@ -1,11 +1,17 @@
-.add {
-  float: right;
-}
-
 menu.controls {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+menu.controls .search-wrapper {
+  flex: 1;
+}
+
+menu.controls #add-project,
+menu.controls #toggle-projects {
+  flex-shrink: 0;
+  width: 200px;
 }
 
 .disabled-projects {
@@ -23,4 +29,15 @@ menu.controls {
 .request-toggle:after,
 .request-toggle.back:before {
   content: '';
+}
+
+#recalculate-stats {
+  float: right;
+  width: 200px;
+  background: var(--button-background-2);
+  color: var(--light-grey-7);
+}
+
+#recalculate-stats:hover {
+  background: var(--button-background-hover-2);
 }

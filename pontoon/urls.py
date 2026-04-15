@@ -1,14 +1,29 @@
+import os
+
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import logout
 from django.urls import include, path, register_converter
 from django.urls.converters import StringConverter
 from django.views.generic import RedirectView, TemplateView
+from django.views.static import serve
 
 from pontoon.teams.views import team
 
 
 class LocaleConverter(StringConverter):
     regex = r"[A-Za-z0-9\-\@\.]+"
+
+
+def docs_serve(request, path="index.html"):
+    if not path or path.endswith("/"):
+        path = f"{path}index.html"
+
+    docs_dir = os.path.join(settings.ROOT, "documentation", "site")
+    if not os.path.isdir(docs_dir):
+        docs_dir = os.path.join(settings.STATIC_ROOT, "docs")
+
+    return serve(request, path, document_root=docs_dir)
 
 
 register_converter(LocaleConverter, "locale")
@@ -51,6 +66,9 @@ urlpatterns = [
         "favicon.ico",
         RedirectView.as_view(url="/static/img/favicon.ico", permanent=True),
     ),
+    # Docs
+    path("docs/", docs_serve, name="pontoon.docs"),
+    path("docs/<path:path>", docs_serve),
     # Legacy
     path("in-context/", RedirectView.as_view(url="/", permanent=True)),
     # Include URL configurations from installed apps

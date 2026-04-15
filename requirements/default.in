@@ -19,10 +19,10 @@ bleach==6.1.0
 celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==2.1.0
-Django==4.2.29
+Django==4.2.30
 djangorestframework==3.16.0
 django-ace==1.32.4
-django-allauth[socialaccount]==65.13.0
+django-allauth[socialaccount]==65.14.1
 django-bmemcached==0.3.0
 django-cors-headers==4.3.1
 django-csp==3.8
@@ -39,7 +39,7 @@ jsonfield==3.1.0
 markupsafe==2.0.1
 moz.l10n[xml]==0.11.2
 newrelic==9.6.0
-openai==1.99.9
+openai==2.30.0
 psycopg2==2.9.6
 PyJWT==2.12.0
 python-dateutil==2.9.0
@@ -49,3 +49,4 @@ sacrebleu==2.4.3
 sacremoses==0.1.1
 translate-toolkit==3.19.3
 whitenoise==5.2.0
+zensical==0.0.32
