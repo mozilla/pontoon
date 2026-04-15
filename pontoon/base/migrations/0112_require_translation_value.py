@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0109_add_translation_value_and_properties_data"),
+        ("base", "0111_add_translation_value_and_properties_data"),
     ]
 
     operations = [

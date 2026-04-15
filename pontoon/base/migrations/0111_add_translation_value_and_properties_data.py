@@ -93,7 +93,7 @@ def set_value_and_properties(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [("base", "0108_add_translation_value_and_properties_schema")]
+    dependencies = [("base", "0110_add_translation_value_and_properties_schema")]
 
     operations = [
         migrations.RunPython(

@@ -4,7 +4,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [("base", "0107_add_search_settings_to_userprofile")]
+    dependencies = [("base", "0109_fix_xcode_translations")]
 
     operations = [
         migrations.AddField(
