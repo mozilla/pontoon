@@ -245,9 +245,7 @@ def entities(request):
         return JsonResponse(
             {
                 "status": False,
-                "message": "{error}".format(
-                    error=form.errors.as_json(escape_html=True)
-                ),
+                "message": form.errors,
             },
             status=400,
         )
@@ -666,9 +664,7 @@ def add_comment(request):
         return JsonResponse(
             {
                 "status": False,
-                "message": "{error}".format(
-                    error=form.errors.as_json(escape_html=True)
-                ),
+                "message": form.errors,
             },
             status=400,
         )
@@ -762,9 +758,7 @@ def edit_comment(request):
         return JsonResponse(
             {
                 "status": False,
-                "message": "{error}".format(
-                    error=form.errors.as_json(escape_html=True)
-                ),
+                "message": form.errors,
             },
             status=400,
         )
