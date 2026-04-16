@@ -400,6 +400,15 @@ class AddCommentForm(forms.Form):
     translation = forms.IntegerField(required=False)
 
 
+class EditCommentForm(forms.Form):
+    """
+    Form for parameters to the `edit_comment` view.
+    """
+
+    comment_id = forms.IntegerField()
+    content = HtmlField()
+
+
 class CreateTokenForm(forms.ModelForm):
     """
     Form for creating Personal Access Tokens.

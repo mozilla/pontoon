@@ -753,15 +753,23 @@ def unpin_comment(request):
 
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
+@utils.require_AJAX
 @transaction.atomic
 def edit_comment(request):
-    """Edit a comment"""
-    comment_id = request.POST.get("comment_id", None)
+    """Edit a comment."""
+    form = forms.EditCommentForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "{error}".format(
+                    error=form.errors.as_json(escape_html=True)
+                ),
+            },
+            status=400,
+        )
 
-    if not comment_id:
-        return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
-
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment, id=form.cleaned_data["comment_id"])
 
     if request.user != comment.author:
         return JsonResponse(
@@ -769,17 +777,7 @@ def edit_comment(request):
             status=403,
         )
 
-    content = request.POST.get("content", None)
-
-    if not content:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Bad Request",
-            },
-            status=400,
-        )
-    comment.content = content
+    comment.content = form.cleaned_data["content"]
     comment.save()
 
     return JsonResponse({"status": True})
