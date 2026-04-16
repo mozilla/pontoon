@@ -94,12 +94,8 @@ urlpatterns = [
 ]
 
 # Conditionally include Django Debug Toolbar
-try:
-    import debug_toolbar
-
-    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
-except ModuleNotFoundError:
-    pass  # debug_toolbar not installed, skip it
+if "debug_toolbar" in settings.INSTALLED_APPS:
+    urlpatterns += [path("__debug__/", include("debug_toolbar.urls"))]
 
 # Team page: Must be at the end
 urlpatterns += [
