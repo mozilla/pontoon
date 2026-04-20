@@ -17,6 +17,7 @@ export default [
       '**/.venv/',
       '**/venv/',
       'translate/dist/',
+      'documentation/site/',
       // Jinja templates
       'translate/public/translate.html',
       '**/templates/**/*.html',
