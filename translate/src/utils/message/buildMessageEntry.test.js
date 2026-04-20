@@ -3,7 +3,6 @@ import { getEmptyMessageEntry } from './getEmptyMessage';
 import { getPlaceholderMap } from './placeholders';
 import { parseEntry } from './parseEntry';
 import { serializeEntry } from './serializeEntry';
-import { pojoEquals } from '../pojo';
 
 const LOCALE = { code: 'en-US' };
 
@@ -21,9 +20,7 @@ describe('buildMessageEntry', () => {
     ]);
     const empty = getEmptyMessageEntry(base, LOCALE);
 
-    // serializeEntry() returns the same result for [] and [''], so using
-    // pojoEquals() in this test.
-    expect(pojoEquals(result, empty)).toBe(true);
+    expect(result).toEqual(empty);
   });
 
   it('replaces a placeholder in a non-empty value', () => {

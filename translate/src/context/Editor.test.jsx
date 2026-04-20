@@ -198,7 +198,7 @@ describe('<EditorProvider>', () => {
     const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: { id: '', value: [''] },
+      initial: { id: '', value: [] },
       placeholders: new Map([['%1$s', arg1]]),
       fields: [
         {

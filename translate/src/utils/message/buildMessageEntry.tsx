@@ -79,5 +79,5 @@ function buildPattern(
     pos = end;
   }
   if (pos < str.length) pattern.push(str.substring(pos));
-  return pattern.length > 0 ? pattern : [str];
+  return pattern;
 }
