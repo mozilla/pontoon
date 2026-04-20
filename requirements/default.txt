@@ -425,8 +425,7 @@ django==4.2.30 \
     #   django-filter
     #   django-guardian
     #   django-jinja
-    #   django-model-utils
-    #   django-notifications-hq
+    #   django-notifications-community
     #   djangorestframework
     #   drf-spectacular
     #   drf-spectacular-sidecar
@@ -466,12 +465,9 @@ django-jinja==2.11.0 \
     --hash=sha256:47c06d3271e6b2f27d3596278af517bfe2e19c1eb36ae1c0b1cc302d7f0259af \
     --hash=sha256:cc4c72246a6e346aa0574e0c56c3e534c1a20ef47b8476f05d7287781f69a0a9
     # via -r default.in
-django-model-utils==5.0.0 \
-    --hash=sha256:041cdd6230d2fbf6cd943e1969318bce762272077f4ecd333ab2263924b4e5eb \
-    --hash=sha256:fec78e6c323d565a221f7c4edc703f4567d7bb1caeafe1acd16a80c5ff82056b
-    # via django-notifications-hq
-django-notifications-hq==1.8.3 \
-    --hash=sha256:0f4b216bb382b7c7c4eef273eb211e59c1c6a0ea38cba6077415ac031d330725
+django-notifications-community==1.11.3.post1 \
+    --hash=sha256:6d1e56805a0068c447198bc94c8481522ad03f9c555d23c94172cd796d5cdfcf \
+    --hash=sha256:e6112764aab9f0a490d4fd093e8d9f6a2d50c673b3a28108257ebe4ae0affb84
     # via -r default.in
 django-pipeline==3.0.0 \
     --hash=sha256:49a8bee298668100bb6e8a2144dff8c607baa5297820a2503793c38693f34103 \
@@ -751,9 +747,7 @@ joblib==1.5.3 \
 jsonfield==3.1.0 \
     --hash=sha256:7e4e84597de21eeaeeaaa7cc5da08c61c48a9b64d0c446b2d71255d01812887a \
     --hash=sha256:df857811587f252b97bafba42e02805e70a398a7a47870bc6358a0308dd689ed
-    # via
-    #   -r default.in
-    #   django-notifications-hq
+    # via -r default.in
 jsonschema==4.26.0 \
     --hash=sha256:0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326 \
     --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
@@ -1332,10 +1326,6 @@ python-dotenv==1.0.1 \
     --hash=sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca \
     --hash=sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a
     # via -r default.in
-pytz==2026.1.post1 \
-    --hash=sha256:3378dde6a0c3d26719182142c56e60c7f9af7e968076f31aae569d72a0358ee1 \
-    --hash=sha256:f2fd16142fda348286a75e1a524be810bb05d444e5a081f37f7affc635035f7a
-    # via django-notifications-hq
 pyyaml==6.0.3 \
     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \
     --hash=sha256:0150219816b6a1fa26fb4699fb7daa9caf09eb1999f3b70fb6e786805e80375a \
@@ -1802,10 +1792,6 @@ sqlparse==0.5.5 \
     --hash=sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba \
     --hash=sha256:e20d4a9b0b8585fdf63b10d30066c7c94c5d7a7ec47c889a2d83a3caa93ff28e
     # via django
-swapper==1.4.0 \
-    --hash=sha256:57b8378aad234242542fe32dc6e8cff0ed24b63493d20b3c88ee01f894b9345e \
-    --hash=sha256:9e083af114ee0593241a7b877e3e0e7d3a580454f5d59016c667a5563306f8fe
-    # via django-notifications-hq
 tabulate==0.10.0 \
     --hash=sha256:e2cfde8f79420f6deeffdeda9aaec3b6bc5abce947655d17ac662b126e48a60d \
     --hash=sha256:f0b0622e567335c8fabaaa659f1b33bcb6ddfe2e496071b743aa113f8774f2d3

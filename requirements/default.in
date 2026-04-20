@@ -30,7 +30,7 @@ django-dirtyfields==1.9.2
 django-filter==25.1
 django-guardian==2.4.0
 django-jinja==2.11.0
-django-notifications-hq==1.8.3
+django-notifications-community==1.11.3.post1
 django-pipeline==3.0.0
 drf-spectacular[sidecar]==0.28.0
 google-cloud-translate==3.16.0
