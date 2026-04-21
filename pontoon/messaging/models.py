@@ -42,11 +42,11 @@ class Message(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=Q(notification=True) | Q(email=True),
+                condition=Q(notification=True) | Q(email=True),
                 name="at_least_one_message_type",
             ),
             models.CheckConstraint(
-                check=Q(managers=True) | Q(translators=True) | Q(contributors=True),
+                condition=Q(managers=True) | Q(translators=True) | Q(contributors=True),
                 name="at_least_one_user_role",
             ),
         ]

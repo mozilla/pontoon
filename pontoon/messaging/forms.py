@@ -104,5 +104,5 @@ class EmailContentForm(forms.ModelForm):
         model = EmailContent
         fields = "__all__"
         widgets = {
-            "body": AceWidget(mode="html", width="100%"),
+            "body": AceWidget(mode="html", width="100%", height="400px"),
         }
