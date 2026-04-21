@@ -71,17 +71,31 @@ class ProjectForm(forms.ModelForm):
         ).order_by("email")
 
 
+class RepositoryForm(forms.ModelForm):
+    website = forms.URLField(required=False, assume_scheme="https")
+
+    class Meta:
+        model = Repository
+        fields = ("type", "url", "branch", "website", "source_repo")
+
+
 RepositoryInlineFormSet = inlineformset_factory(
     Project,
     Repository,
+    form=RepositoryForm,
     extra=1,
     min_num=0,
     validate_min=True,
-    fields=("type", "url", "branch", "website", "source_repo"),
 )
 
 
 class ExternalResourceInlineForm(forms.ModelForm):
+    url = forms.URLField(
+        label="URL",
+        required=False,
+        assume_scheme="https",
+    )
+
     class Meta:
         model = ExternalResource
         widgets = {
