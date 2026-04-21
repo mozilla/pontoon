@@ -19,7 +19,7 @@ bleach==6.1.0
 celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==3.1.2
-Django==4.2.30
+Django==5.2.13
 djangorestframework==3.17.1
 django-ace==1.43.5
 django-allauth[socialaccount]==65.16.1
@@ -27,7 +27,7 @@ django-bmemcached==0.3.0
 django-cors-headers==4.9.0
 django-csp==4.0
 django-dirtyfields==1.9.9
-django-filter==25.1
+django-filter==25.2
 django-guardian==3.3.1
 django-jinja==2.11.0
 django-notifications-community==1.11.3.post1
