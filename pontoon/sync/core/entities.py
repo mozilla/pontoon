@@ -155,7 +155,7 @@ def update_resources(
             f"[{project.slug}] De-obsoleted source files: {', '.join(deobsoletion_paths)}"
         )
 
-    changed_res_paths: set[str] = set(res.path for res in changed_resources.values())
+    changed_res_paths: set[str] = {res.path for res in changed_resources.values()}
     log.info(f"[{project.slug}] Changed source files: {', '.join(changed_res_paths)}")
 
     prev_entities: dict[tuple[str, L10nId], Entity] = {
@@ -358,12 +358,12 @@ def update_translated_resources(
     locale_map: dict[str, Locale],
     paths: L10nConfigPaths | L10nDiscoverPaths,
 ) -> None:
-    prev_tr_keys: set[tuple[int, int]] = set(
+    prev_tr_keys: set[tuple[int, int]] = {
         (tr["resource_id"], tr["locale_id"])
         for tr in TranslatedResource.objects.filter(resource__project=project)
         .values("resource_id", "locale_id")
         .iterator()
-    )
+    }
     add_tr: list[TranslatedResource] = []
     for resource in Resource.objects.current().filter(project=project).iterator():
         _, locales = paths.target(resource.path)

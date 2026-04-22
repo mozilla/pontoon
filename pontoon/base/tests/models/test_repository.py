@@ -34,7 +34,9 @@ def test_repo_checkout_path_source_repo(settings, repo_git):
     repo_git.url = "https://example.com/path/to/locale/"
     repo_git.save()
     assert repo_git.checkout_path == (
-        "%s/projects/%s/path/to/locale" % (settings.MEDIA_ROOT, repo_git.project.slug)
+        "{}/projects/{}/path/to/locale".format(
+            settings.MEDIA_ROOT, repo_git.project.slug
+        )
     )
 
 

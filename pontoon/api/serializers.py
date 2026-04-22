@@ -71,7 +71,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """
 
     def __init__(self, *args, **kwargs):
-        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         request = self.context.get("request")
         if request:

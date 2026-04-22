@@ -55,7 +55,7 @@ class RequestFieldsMixin:
 
     def request_fields(self):
         fields_param = self.request.query_params.get("fields", "")
-        return set(fs for f in fields_param.split(",") if (fs := f.strip()))
+        return {fs for f in fields_param.split(",") if (fs := f.strip())}
 
 
 class UserActionsView(APIView):

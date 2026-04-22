@@ -26,10 +26,10 @@ def test_no_config_one_repo():
         paths = find_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
         assert paths.ref_root == join(root, "repo", "en-US")
         assert paths.base == join(root, "repo")
-        assert set(paths.ref_paths) == set(
+        assert set(paths.ref_paths) == {
             join(root, "repo", "en-US", file)
             for file in ["bar.ftl", "foo.pot", "missing.ftl"]
-        )
+        }
         assert paths.find_reference("fr/bar.ftl") == (
             join(root, "repo", "en-US", "bar.ftl"),
             {"locale": "fr"},
@@ -64,9 +64,9 @@ def test_no_config_two_repos():
         paths = find_paths(mock_project, checkouts)
         assert paths.ref_root == join(root, "source")
         assert paths.base == join(root, "target")
-        assert set(paths.ref_paths) == set(
+        assert set(paths.ref_paths) == {
             join(root, "source", file) for file in ["bar.ftl", "foo.pot"]
-        )
+        }
         assert paths.find_reference(join(root, "target", "de", "bar.ftl")) == (
             join(root, "source", "bar.ftl"),
             {"locale": "de"},
@@ -101,12 +101,10 @@ def test_config_one_repo():
         paths = find_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
         assert paths.ref_root == join(root, "repo")
         assert paths.base == join(root, "repo")
-        assert set(paths.ref_paths) == set(
-            [
-                join(root, "repo", "bar", "en", "bar.ftl"),
-                join(root, "repo", "foo", "en", "foo.pot"),
-            ]
-        )
+        assert set(paths.ref_paths) == {
+            join(root, "repo", "bar", "en", "bar.ftl"),
+            join(root, "repo", "foo", "en", "foo.pot"),
+        }
         assert paths.find_reference(join(root, "repo", "foo", "fr", "foo.po")) == (
             join(root, "repo", "foo", "en", "foo.pot"),
             {"locale": "fr"},
@@ -148,12 +146,10 @@ def test_config_two_repos():
         paths = find_paths(mock_project, checkouts)
         assert paths.ref_root == join(root, "source")
         assert paths.base == join(root, "target")
-        assert set(paths.ref_paths) == set(
-            [
-                join(root, "source", "bar", "en", "bar.ftl"),
-                join(root, "source", "foo", "en", "foo.pot"),
-            ]
-        )
+        assert set(paths.ref_paths) == {
+            join(root, "source", "bar", "en", "bar.ftl"),
+            join(root, "source", "foo", "en", "foo.pot"),
+        }
         assert paths.find_reference(join(root, "target", "foo", "fr", "foo.po")) == (
             join(root, "source", "foo", "en", "foo.pot"),
             {"locale": "fr"},

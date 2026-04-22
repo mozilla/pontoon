@@ -178,7 +178,7 @@ def test_locale_parts_stats_no_page_multiple_resources(rf, locale_parts):
     request_b.user = UserFactory()
     response = locale_project_parts(request_b, locale_b.code, project.slug)
     assert response.status_code == 200
-    assert set(data["title"] for data in json.loads(response.content)) == {
+    assert {data["title"] for data in json.loads(response.content)} == {
         "/other/path.po",
         "all-resources",
     }
@@ -189,7 +189,7 @@ def test_locale_parts_stats_no_page_multiple_resources(rf, locale_parts):
     request_c.user = UserFactory()
     response = locale_project_parts(request_c, locale_c.code, project.slug)
     assert response.status_code == 200
-    assert set(data["title"] for data in json.loads(response.content)) == {
+    assert {data["title"] for data in json.loads(response.content)} == {
         entityX.resource.path,
         "/other/path.po",
         "all-resources",

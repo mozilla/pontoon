@@ -119,7 +119,7 @@ def test_update_ftl_translations():
         translations = Translation.objects.filter(
             entity__resource=res["c"], locale=locale
         )
-        assert set((*trans.entity.key, trans.approved) for trans in translations) == {
+        assert {(*trans.entity.key, trans.approved) for trans in translations} == {
             ("key-c-0", False),
             ("key-c-1", False),
             ("key-c-1", True),
@@ -249,9 +249,9 @@ def test_android_translation_changes():
         assert (removed_resources, updated_translations) == (0, 2)
 
         translations = Translation.objects.filter(entity__resource=res, locale=locale)
-        assert set(
+        assert {
             (*trans.entity.key, trans.approved, trans.string) for trans in translations
-        ) == {
+        } == {
             ("k1", True, "target same"),
             ("k2", True, "target spaces changed from normalized"),
             ("k3", False, "target \t spaces  \n  changed from not normalized"),
@@ -341,7 +341,7 @@ def test_ini_translations():
         )
         assert (removed_resources, updated_translations) == (0, 0)
         translations = Translation.objects.filter(entity__resource=res, locale=locale)
-        assert set((*trans.entity.key, trans.approved) for trans in translations) == {
+        assert {(*trans.entity.key, trans.approved) for trans in translations} == {
             ("Strings", "key", True),
         }
 

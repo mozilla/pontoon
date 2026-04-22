@@ -1,10 +1,11 @@
 import logging
 
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from itertools import groupby
 from statistics import mean
-from typing import Any, Iterable, Iterator
+from typing import Any
 
 from celery import shared_task
 from dateutil.relativedelta import relativedelta

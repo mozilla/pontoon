@@ -405,7 +405,7 @@ def test_android():
 
         # Test
         sync_project_task(project.pk)
-        assert set(ent.string for ent in Entity.objects.filter(resource=res)) == {
+        assert {ent.string for ent in Entity.objects.filter(resource=res)} == {
             "'Hello' \"source\"",
             "literal escaped \n newlines",
         }

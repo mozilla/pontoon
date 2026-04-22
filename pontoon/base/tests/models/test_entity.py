@@ -452,12 +452,12 @@ def test_entity_project_comments(admin, resource_a, locale_a):
     EntityFactory(resource=resource_a, section=s2, string="e3")
     EntityFactory(resource=resource_a, section=None, string="e4")
 
-    assert set(
+    assert {
         (e["original"], e["group_comment"], e["resource_comment"])
         for e in Entity.map_entities(
             locale_a, "", Entity.objects.filter(resource=resource_a)
         )
-    ) == {
+    } == {
         ("e0", "s0 comment", "rc"),
         ("e1", "s0 comment", "rc"),
         ("e2", "s1 comment", "rc"),

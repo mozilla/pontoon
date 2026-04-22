@@ -1,6 +1,6 @@
+from collections.abc import Iterable, Iterator
 from html import escape
 from re import fullmatch
-from typing import Iterable, Iterator
 
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor

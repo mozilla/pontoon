@@ -30,9 +30,7 @@ class OpenAIService:
         pinned_comments=None,
         terms=None,
     ):
-        terms_cache_key = (
-            str(sorted((t.get("text", "") for t in terms))) if terms else ""
-        )
+        terms_cache_key = str(sorted(t.get("text", "") for t in terms)) if terms else ""
         pinned_comments_cache_key = (
             str(sorted(pinned_comments)) if pinned_comments else ""
         )

@@ -33,9 +33,7 @@ def migrate_translations_to_actionlog(apps, schema_editor):
     }
 
     # Timestamp of the first Translation created after the introduction of ActionLog
-    end_date = datetime.datetime(
-        2020, 1, 7, 9, 25, 11, 829125, tzinfo=datetime.timezone.utc
-    )
+    end_date = datetime.datetime(2020, 1, 7, 9, 25, 11, 829125, tzinfo=datetime.UTC)
 
     actions_to_log = []
 

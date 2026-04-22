@@ -1,9 +1,9 @@
 from os import mkdir
 from os.path import join
-from typing import Dict, Union
+from typing import Union
 
 
-FileTree = Dict[str, Union[str, "FileTree"]]
+FileTree = dict[str, Union[str, "FileTree"]]
 """Strings are files, dicts are directories."""
 
 

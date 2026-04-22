@@ -2,10 +2,10 @@
 Parsing resource files.
 """
 
+from collections.abc import Iterator
 from dataclasses import dataclass
 from os.path import splitext
 from re import Match, compile
-from typing import Iterator
 
 from fluent.syntax import FluentSerializer
 from moz.l10n.formats import Format, detect_format, l10n_extensions
