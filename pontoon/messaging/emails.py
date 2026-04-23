@@ -6,7 +6,7 @@ from collections import defaultdict
 
 from celery import shared_task
 from dateutil.relativedelta import relativedelta
-from django_jinja.backend import Jinja2
+from jinja2.sandbox import SandboxedEnvironment
 from notifications.models import Notification
 
 from django.conf import settings
@@ -18,13 +18,21 @@ from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Locale, UserProfile
+from pontoon.base.templatetags.helpers import full_url
 from pontoon.insights.models import LocaleInsightsSnapshot
 from pontoon.messaging.models import EmailContent
 from pontoon.messaging.utils import html_to_plain_text_with_links
+from pontoon.settings.base import (
+    INACTIVE_CONTRIBUTOR_PERIOD,
+    INACTIVE_MANAGER_PERIOD,
+    INACTIVE_TRANSLATOR_PERIOD,
+)
 
 
-jinja_env = Jinja2.get_default().env
+jinja_env = SandboxedEnvironment()
 log = logging.getLogger(__name__)
+
+jinja_env.globals["full_url"] = full_url
 
 
 def _get_monthly_user_actions(users, months_ago):
@@ -334,7 +342,9 @@ def send_onboarding_email_1(user):
     Sends 1st onboarding email to a new user.
     """
     email_content = EmailContent.objects.get(email="onboarding_1")
-    content = jinja_env.from_string(email_content.body).render()
+    content = jinja_env.from_string(email_content.body).render(
+        {"INACTIVE_CONTRIBUTOR_PERIOD": INACTIVE_CONTRIBUTOR_PERIOD}
+    )
 
     subject = email_content.subject
     template = get_template("messaging/emails/transactional.html")
@@ -442,7 +452,9 @@ def send_inactive_contributor_emails(users):
     log.info("Start sending inactive contributor emails.")
 
     email_content = EmailContent.objects.get(email="inactive_contributor")
-    content = jinja_env.from_string(email_content.body).render()
+    content = jinja_env.from_string(email_content.body).render(
+        {"INACTIVE_CONTRIBUTOR_PERIOD": INACTIVE_CONTRIBUTOR_PERIOD}
+    )
 
     subject = email_content.subject
     template = get_template("messaging/emails/transactional.html")
@@ -490,7 +502,9 @@ def send_inactive_translator_emails(users, translator_map):
             log.error(f"User {user} is not a translator of any locale.")
             continue
 
-        content = jinja_env.from_string(email_content.body).render({"locale": locale})
+        content = jinja_env.from_string(email_content.body).render(
+            {"locale": locale, "INACTIVE_TRANSLATOR_PERIOD": INACTIVE_TRANSLATOR_PERIOD}
+        )
         body_html = template.render(
             {
                 "content": content,
@@ -533,7 +547,9 @@ def send_inactive_manager_emails(users, manager_map):
             log.error(f"User {user} is not a manager of any locale.")
             continue
 
-        content = jinja_env.from_string(email_content.body).render({"locale": locale})
+        content = jinja_env.from_string(email_content.body).render(
+            {"locale": locale, "INACTIVE_MANAGER_PERIOD": INACTIVE_MANAGER_PERIOD}
+        )
         body_html = template.render(
             {
                 "content": content,
