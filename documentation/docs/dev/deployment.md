@@ -340,6 +340,59 @@ version control system.
 Optional. Default committer's email used when committing translations to
 version control system.
 
+### Authentication provider configuration
+
+When using a third-party authentication method, you must configure the corresponding environment variables.
+These values are typically obtained by registering an OAuth application with the provider.
+
+#### GitHub
+
+To use GitHub authentication (`AUTHENTICATION_METHOD=github`), create an OAuth app in GitHub and set:
+
+- `GITHUB_CLIENT_ID` – OAuth app client ID
+- `GITHUB_SECRET_KEY` – OAuth app client secret
+
+---
+
+#### GitLab
+
+To use GitLab authentication (`AUTHENTICATION_METHOD=gitlab`):
+
+- `GITLAB_URL` – GitLab instance URL (default: `https://gitlab.com`)
+- `GITLAB_CLIENT_ID`
+- `GITLAB_SECRET_KEY`
+
+---
+
+#### Google
+
+To use Google authentication (`AUTHENTICATION_METHOD=google`):
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_SECRET_KEY`
+
+---
+
+#### Mozilla Accounts (Firefox Accounts)
+
+To use Mozilla Accounts (`AUTHENTICATION_METHOD=fxa`):
+
+- `FXA_CLIENT_ID`
+- `FXA_SECRET_KEY`
+- `FXA_OAUTH_ENDPOINT`
+- `FXA_PROFILE_ENDPOINT`
+- `FXA_SCOPE` (default scopes are already defined in settings)
+
+---
+
+#### Keycloak
+
+To use Keycloak authentication:
+
+- `KEYCLOAK_CLIENT_ID`
+- `KEYCLOAK_CLIENT_SECRET`
+- `KEYCLOAK_CLIENT_URL` – OpenID configuration endpoint
+
 ## Scheduled Jobs
 
 Pontoon requires several scheduled jobs to run regularly.
