@@ -1,5 +1,5 @@
 # Stage 1: Python dependencies builder
-FROM python:3.12-bookworm AS python-builder
+FROM python:3.13-bookworm AS python-builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -49,7 +49,7 @@ RUN npm run build:prod
 
 
 # Stage 3: Static files builder
-FROM python:3.12-slim-bookworm AS static-builder
+FROM python:3.13-slim-bookworm AS static-builder
 
 # SECRET_KEY and DATABASE_URL are set only to prevent collectstatic from
 # failing—their actual values don’t matter. collectstatic loads settings/base.py,
@@ -107,7 +107,7 @@ RUN echo "${GIT_REVISION}" > static/revision.txt
 
 
 # Stage 4: Final runtime image
-FROM python:3.12-slim-bookworm AS server
+FROM python:3.13-slim-bookworm AS server
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000

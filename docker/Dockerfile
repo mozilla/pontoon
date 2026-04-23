@@ -1,4 +1,4 @@
-FROM python:3.12-bookworm AS server
+FROM python:3.13-bookworm AS server
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
