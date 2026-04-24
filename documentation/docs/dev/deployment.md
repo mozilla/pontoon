@@ -18,12 +18,11 @@ Optional. Email address for the `ADMINS` setting.
 Optional. Name for the `ADMINS` setting.
 
 `AUTHENTICATION_METHOD`  
-The default value is `django`, which allows you to log in via accounts created using `manage.py shell`. 
-Set to `fxa` if you want to use "Mozilla Accounts" (corresponding `FXA_*` settings must be set). 
-Set to `github` if you want to use "GitHub" (corresponding `GITHUB_*` settings must be set). 
-Set to `gitlab` if you want to use "GitLab" (corresponding `GITLAB_*` settings must be set if required).
-Set to `google` if you want to use "Google" (corresponding `GOOGLE_*`
-settings must be set).
+The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
+
+Set to one of: `fxa`, `github`, `gitlab`, `google`.
+
+See [Authentication provider configuration](#authentication-provider-configuration) for required environment variables.
 
 `USE_X_FORWARDED_HOST`  
 Optional. If using a reverse proxy, set to True to make django-allauth
@@ -340,40 +339,13 @@ version control system.
 Optional. Default committer's email used when committing translations to
 version control system.
 
-### Authentication provider configuration
+<a id="authentication-provider-configuration"></a>
+## Authentication provider configuration
 
 When using a third-party authentication method, you must configure the corresponding environment variables.
 These values are typically obtained by registering an OAuth application with the provider.
 
-#### GitHub
-
-To use GitHub authentication (`AUTHENTICATION_METHOD=github`), create an OAuth app in GitHub and set:
-
-- `GITHUB_CLIENT_ID` – OAuth app client ID
-- `GITHUB_SECRET_KEY` – OAuth app client secret
-
----
-
-#### GitLab
-
-To use GitLab authentication (`AUTHENTICATION_METHOD=gitlab`):
-
-- `GITLAB_URL` – GitLab instance URL (default: `https://gitlab.com`)
-- `GITLAB_CLIENT_ID`
-- `GITLAB_SECRET_KEY`
-
----
-
-#### Google
-
-To use Google authentication (`AUTHENTICATION_METHOD=google`):
-
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_SECRET_KEY`
-
----
-
-#### Mozilla Accounts (Firefox Accounts)
+### Mozilla Accounts (Firefox Accounts)
 
 To use Mozilla Accounts (`AUTHENTICATION_METHOD=fxa`):
 
@@ -381,17 +353,37 @@ To use Mozilla Accounts (`AUTHENTICATION_METHOD=fxa`):
 - `FXA_SECRET_KEY`
 - `FXA_OAUTH_ENDPOINT`
 - `FXA_PROFILE_ENDPOINT`
-- `FXA_SCOPE` (default scopes are already defined in settings)
+- `FXA_SCOPE` 
 
----
+### GitHub
 
-#### Keycloak
+To use GitHub authentication (`AUTHENTICATION_METHOD=github`), create an OAuth app in GitHub and set:
+
+- `GITHUB_CLIENT_ID`
+- `GITHUB_SECRET_KEY`
+
+### GitLab
+
+To use GitLab authentication (`AUTHENTICATION_METHOD=gitlab`):
+
+- `GITLAB_URL`
+- `GITLAB_CLIENT_ID`
+- `GITLAB_SECRET_KEY`
+
+### Google
+
+To use Google authentication (`AUTHENTICATION_METHOD=google`):
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_SECRET_KEY`
+
+### Keycloak
 
 To use Keycloak authentication:
 
 - `KEYCLOAK_CLIENT_ID`
 - `KEYCLOAK_CLIENT_SECRET`
-- `KEYCLOAK_CLIENT_URL` – OpenID configuration endpoint
+- `KEYCLOAK_CLIENT_URL`
 
 ## Scheduled Jobs
 
