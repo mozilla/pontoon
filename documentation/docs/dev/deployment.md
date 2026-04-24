@@ -19,9 +19,6 @@ Optional. Name for the `ADMINS` setting.
 
 `AUTHENTICATION_METHOD`  
 The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
-
-Set to one of: `fxa`, `github`, `gitlab`, `google`.
-
 See [Authentication provider configuration](#authentication-provider-configuration) for required environment variables.
 
 `USE_X_FORWARDED_HOST`  
@@ -352,8 +349,7 @@ To use Mozilla Accounts (`AUTHENTICATION_METHOD=fxa`):
 - `FXA_CLIENT_ID`
 - `FXA_SECRET_KEY`
 - `FXA_OAUTH_ENDPOINT`
-- `FXA_PROFILE_ENDPOINT`
-- `FXA_SCOPE` 
+- `FXA_PROFILE_ENDPOINT` 
 
 ### GitHub
 
@@ -379,7 +375,7 @@ To use Google authentication (`AUTHENTICATION_METHOD=google`):
 
 ### Keycloak
 
-To use Keycloak authentication:
+To use Keycloak authentication (`AUTHENTICATION_METHOD=keycloak`):
 
 - `KEYCLOAK_CLIENT_ID`
 - `KEYCLOAK_CLIENT_SECRET`
