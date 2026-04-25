@@ -19,7 +19,8 @@ Optional. Name for the `ADMINS` setting.
 
 `AUTHENTICATION_METHOD`  
 The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
-See [Authentication provider configuration](#authentication-provider-configuration) for required environment variables.
+See [Authentication provider configuration](#authentication-provider-configuration) 
+for more information about third-party authentication methods.
 
 `USE_X_FORWARDED_HOST`  
 Optional. If using a reverse proxy, set to True to make django-allauth
@@ -336,7 +337,6 @@ version control system.
 Optional. Default committer's email used when committing translations to
 version control system.
 
-<a id="authentication-provider-configuration"></a>
 ## Authentication provider configuration
 
 When using a third-party authentication method, you must configure the corresponding environment variables.
