@@ -20,14 +20,12 @@ def set_value_and_properties(apps, schema_editor):
 
     def print_progress():
         nonlocal batch_count
-        if batch_count % 10 == 0:
+        batch_count += 1
+        if batch_count % 10 == 0 or batch_count == batch_total:
             print(
                 f"Progress: {batch_count}/{batch_total} ({batch_count / batch_total:.1%})",
                 flush=True,
             )
-        else:
-            print(f"Progress: {batch_count}/{batch_total}", flush=True)
-        batch_count += 1
 
     pv_trans = []
     v_trans = []
