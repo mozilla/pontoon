@@ -5,7 +5,6 @@ import pytest
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from pontoon.base.models.translation import Translation
 from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
@@ -239,17 +238,6 @@ def test_ajax_projects_request_more_projects_button_visibility(
         f"/{locale_a.code}/ajax/",
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
-
-    user_can_request_projects = member.user.is_authenticated and (
-        not locale_a.managers_group.user_set.exists()
-        or Translation.objects.filter(
-            user=member.user,
-            locale=locale_a,
-            approved=True,
-        ).exists()
-    )
-
-    print("user can request projects: ", user_can_request_projects)
 
     assert response.status_code == 200
     assert b"request-projects" not in response.content
