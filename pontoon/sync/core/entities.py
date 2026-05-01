@@ -139,6 +139,20 @@ def update_resources(
     )
     if not changed_resources:
         return 0, set()
+
+    # De-obsolete any resources that were previously marked obsolete
+    # TODO: Entity de-obsoletion needs to accompany Resource de-obsoletion
+    deobsoletion_paths = [
+        res.path for res in changed_resources.values() if res.obsolete
+    ]
+    if deobsoletion_paths:
+        Resource.objects.filter(project=project, path__in=deobsoletion_paths).update(
+            obsolete=False
+        )
+        log.info(
+            f"[{project.slug}] De-obsoleted source files: {', '.join(deobsoletion_paths)}"
+        )
+
     changed_res_paths: set[str] = set(res.path for res in changed_resources.values())
     log.info(f"[{project.slug}] Changed source files: {', '.join(changed_res_paths)}")
 
@@ -282,43 +296,10 @@ def add_resources(
     now: datetime,
 ) -> tuple[int, set[str]]:
 
-    existing_resources = dict(
-        Resource.objects.filter(project=project, path__in=updates.keys()).values_list(
-            "path", "obsolete"
-        )
-    )
-
-    valid_updates = {}
-    deobsoletion_paths = []
-
-    for db_path, res in updates.items():
-        res_exists = db_path in existing_resources
-        res_obsolete = res_exists and existing_resources[db_path]
-
-        has_entries = False
-        if not res_obsolete:
-            has_entries = next(res.all_entries(), None) is not None
-
-        if (has_entries and db_path not in changed_paths) or res_obsolete:
-            valid_updates[db_path] = res
-
-            if res_obsolete:
-                deobsoletion_paths.append(db_path)
-
-    if not valid_updates:
-        return 0, set()
-
-    # Resource de-obsoletion for existing Resources that are added back in
-    # TODO Entity de-obsoletion needs to accompany Resource de-obsoletion
-    if deobsoletion_paths:
-        Resource.objects.filter(project=project, path__in=deobsoletion_paths).update(
-            obsolete=False
-        )
-
     new_resources = [
         Resource(project=project, path=db_path, format=get_res_format(res))
-        for db_path, res in valid_updates.items()
-        if db_path not in existing_resources
+        for db_path, res in updates.items()
+        if next(res.all_entries(), None) and db_path not in changed_paths
     ]
 
     if not new_resources:
