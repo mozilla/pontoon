@@ -54,8 +54,8 @@ information, read the [LICENSE](https://github.com/mozilla/pontoon/blob/HEAD/LIC
 
 ## Screenshots
 
-![](docs/img/screenshots/teams-dashboard.png)
+![](documentation/docs/assets/screenshots/teams-dashboard.png)
 _Teams dashboard_
 
-![](docs/img/screenshots/translation-app.png)
+![](documentation/docs/assets/screenshots/translation-app.png)
 _Translation app_
