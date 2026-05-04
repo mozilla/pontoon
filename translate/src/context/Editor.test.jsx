@@ -15,6 +15,7 @@ import {
 import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
+import { UnsavedChanges, UnsavedChangesProvider } from './UnsavedChanges';
 
 function mountSpy(Spy, format, translation, original) {
   const history = createMemoryHistory({
@@ -65,9 +66,11 @@ function mountSpy(Spy, format, translation, original) {
     <LocationProvider history={history}>
       <Locale.Provider value={{ code: 'sl', cldrPlurals: [1, 2, 3, 5] }}>
         <EntityViewProvider>
-          <EditorProvider>
-            <Spy />
-          </EditorProvider>
+          <UnsavedChangesProvider>
+            <EditorProvider>
+              <Spy />
+            </EditorProvider>
+          </UnsavedChangesProvider>
         </EntityViewProvider>
       </Locale.Provider>
     </LocationProvider>
@@ -195,7 +198,7 @@ describe('<EditorProvider>', () => {
     const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: { id: '', value: [''] },
+      initial: { id: '', value: [] },
       placeholders: new Map([['%1$s', arg1]]),
       fields: [
         {
@@ -465,5 +468,20 @@ describe('<EditorProvider>', () => {
       { keys: ['one'], name: '', value: 'ONE' },
       { keys: [{ '*': 'other' }], name: '', value: 'OTHER' },
     ]);
+  });
+
+  it('reports no pending changes for empty android entry with placeholders', () => {
+    let unsaved;
+    const Spy = () => {
+      unsaved = useContext(UnsavedChanges);
+      return null;
+    };
+    mountSpy(
+      Spy,
+      'android',
+      undefined,
+      'Hello, {$arg1 :string @source=|%1$s|}!',
+    );
+    expect(unsaved.check()).toBe(false);
   });
 });

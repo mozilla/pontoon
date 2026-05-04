@@ -46,7 +46,7 @@ def combine_entity_filters(entities, filter_choices, filters, *args):
     return reduce(ior, filters)
 
 
-class EntityQuerySet(models.QuerySet):
+class EntityQuerySet(models.QuerySet["Entity"]):
     def _get_query(self, locale: Locale, project: Project | None, query: Q) -> Q:
         from pontoon.base.models.translation import Translation
 
@@ -253,7 +253,9 @@ class EntityQuerySet(models.QuerySet):
 
 
 class Entity(DirtyFieldsMixin, models.Model):
-    resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
+    resource: models.ForeignKey["Resource"] = models.ForeignKey(
+        Resource, models.CASCADE, related_name="entities"
+    )
     section = models.ForeignKey(
         Section, models.SET_NULL, related_name="entities", null=True, blank=True
     )
@@ -282,43 +284,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def __str__(self):
         return self.string
-
-    def get_stats(self, locale) -> dict[str, int]:
-        """
-        Get stats for a single (entity, locale) pair.
-
-        :arg Locale locale: filter translations for this locale.
-        :return: a dictionary with stats for the Entity+Locale
-        """
-        approved = 0
-        pretranslated = 0
-        errors = 0
-        warnings = 0
-        unreviewed = 0
-
-        for t in self.translation_set.filter(locale=locale).prefetch_related(
-            "errors", "warnings"
-        ):
-            if t.errors.exists():
-                if t.approved or t.pretranslated or t.fuzzy:
-                    errors += 1
-            elif t.warnings.exists():
-                if t.approved or t.pretranslated or t.fuzzy:
-                    warnings += 1
-            elif t.approved:
-                approved += 1
-            elif t.pretranslated:
-                pretranslated += 1
-            if not (t.approved or t.pretranslated or t.fuzzy or t.rejected):
-                unreviewed += 1
-
-        return {
-            "approved": approved,
-            "pretranslated": pretranslated,
-            "errors": errors,
-            "warnings": warnings,
-            "unreviewed": unreviewed,
-        }
 
     def has_changed(self, locale):
         """

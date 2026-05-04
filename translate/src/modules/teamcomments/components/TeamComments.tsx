@@ -4,7 +4,11 @@ import { TranslationComment } from '~/api/comment';
 
 import { AddComment } from '~/modules/comments/components/AddComment';
 import { Comment } from '~/modules/comments/components/Comment';
-import { useAddCommentAndRefresh } from '~/modules/comments/hooks';
+import {
+  useAddCommentAndRefresh,
+  useDeleteCommentAndRefresh,
+  useEditCommentAndRefresh,
+} from '~/modules/comments/hooks';
 import type { UserState } from '~/modules/user';
 import type { TeamCommentState } from '~/modules/teamcomments';
 
@@ -28,6 +32,8 @@ export function TeamComments({
   resetContactPerson,
 }: Props): null | React.ReactElement<'section'> {
   const onAddComment = useAddCommentAndRefresh(null);
+  const onDeleteComment = useDeleteCommentAndRefresh(null);
+  const onEditComment = useEditCommentAndRefresh(null);
 
   if (fetching || !comments) {
     return null;
@@ -50,6 +56,11 @@ export function TeamComments({
       canPin={user.isPM}
       key={comment.id}
       togglePinnedStatus={togglePinnedStatus}
+      canEdit={user.username === comment.username}
+      canDelete={user.username === comment.username || user.isPM}
+      onEditComment={onEditComment}
+      onDeleteComment={onDeleteComment}
+      user={user}
     />
   );
 

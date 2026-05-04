@@ -71,10 +71,7 @@ def test_get_pretranslations_tm_match(entity_a, entity_b, locale_b):
 @pytest.mark.django_db
 def test_get_pretranslations_gt_match(gt_mock, entity_a, google_translate_locale):
     # 100% TM match does not exist and locale.google_translate_code is not None
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     response = get_pretranslation(entity_a, google_translate_locale)
     assert response == ("gt_translation", "gt")
@@ -96,10 +93,7 @@ def test_get_pretranslations_fluent_simple(
     gt_mock, fluent_resource, google_translate_locale
 ):
     # Entity.string is a simple Fluent string
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     fluent_string = "hello-world = Hello World!"
     fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
@@ -115,10 +109,7 @@ def test_get_pretranslations_fluent_empty(
     gt_mock, fluent_resource, google_translate_locale
 ):
     # Entity.string is an empty Fluent string
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     fluent_string = 'hello-world = { "" }\n'
     fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
@@ -142,10 +133,7 @@ def test_get_pretranslations_fluent_accesskeys_no_attribute_source(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -178,10 +166,7 @@ def test_get_pretranslations_fluent_accesskeys_opt_out(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -212,10 +197,7 @@ def test_get_pretranslations_fluent_accesskeys_value(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -248,10 +230,7 @@ def test_get_pretranslations_fluent_accesskeys_label_attribute(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -286,10 +265,7 @@ def test_get_pretranslations_fluent_accesskeys_value_attribute(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -322,10 +298,7 @@ def test_get_pretranslations_fluent_accesskeys_aria_label_attribute(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -357,10 +330,7 @@ def test_get_pretranslations_fluent_accesskeys_prefixed_label_attribute(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -392,10 +362,7 @@ def test_get_pretranslations_fluent_accesskeys_ignore_placeables(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "{ $0 } gt_translation",
-    }
+    gt_mock.return_value = "{ $0 } gt_translation"
 
     # The `title` value here is hacky, but demonstrates that
     # a Google Translate response that includes an unexpected `{$0}`
@@ -436,10 +403,7 @@ def test_get_pretranslations_fluent_accesskeys_select_expression_source(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -479,10 +443,7 @@ def test_get_pretranslations_fluent_accesskeys_select_expression_accesskey(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     expected = dedent(
         """
@@ -580,10 +541,7 @@ def test_get_pretranslations_fluent_accesskeys_number_literal_source(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
+    gt_mock.return_value = "gt_translation"
 
     google_translate_locale.cldr_plurals = "1,5"
 
@@ -642,10 +600,7 @@ def test_get_pretranslations_fluent_plural(
     gt_mock, fluent_resource, google_translate_locale
 ):
     # Various types of whitespace should be preserved
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "GT",
-    }
+    gt_mock.return_value = "GT"
 
     google_translate_locale.cldr_plurals = "1,2,3,5"
 
@@ -690,10 +645,7 @@ def test_get_pretranslations_fluent_complex(
     # - Uplift selector and repeat shared parts within variants.
     # - Only translate text nodes.
     # - Service with most translated nodes is picked as translation author.
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "GT: Open Options and select Search.",
-    }
+    gt_mock.return_value = "GT: Open Options and select Search."
 
     TranslationMemoryFactory.create(
         entity=entity_a,
@@ -747,7 +699,7 @@ def test_get_pretranslations_fluent_placeholders(
     # - Placeholders are replaced by {$0}, {$1}, ... when passing to Google Translate.
     # - Original placeholders are retained in final result.
     def gt_mock_fn(**kwargs):
-        return {"status": True, "translation": f"GT: {kwargs['text']}"}
+        return f"GT: {kwargs['text']}"
 
     gt_mock.side_effect = gt_mock_fn
 

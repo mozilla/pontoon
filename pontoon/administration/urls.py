@@ -36,6 +36,12 @@ urlpatterns = [
             ]
         ),
     ),
+    # Calculate Stats
+    path(
+        "calculate-stats/",
+        views.manually_calculate_stats,
+        name="pontoon.admin.calculate-stats",
+    ),
     # AJAX view: Get slug
     path("get-slug/", views.get_slug, name="pontoon.admin.project.slug"),
     # AJAX view: Get project locales

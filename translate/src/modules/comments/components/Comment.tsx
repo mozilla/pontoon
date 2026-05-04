@@ -1,27 +1,44 @@
 import { Localized } from '@fluent/react';
 import parse from 'html-react-parser';
-import React from 'react';
+import React, { useState } from 'react';
 // @ts-expect-error Working types are unavailable for react-linkify 0.2.2
 import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago';
 
 import type { TranslationComment } from '~/api/comment';
-import { UserAvatar } from '~/modules/user';
+import { UserAvatar, UserState } from '~/modules/user';
 
 import './Comment.css';
+import { AddComment } from './AddComment';
 
 type Props = {
   comment: TranslationComment;
   canPin?: boolean;
   togglePinnedStatus?: (status: boolean, id: number) => void;
+  onEditComment?: (id: number, content: string) => void;
+  onDeleteComment?: (id: number) => void;
+  canEdit?: boolean;
+  canDelete?: boolean;
+  user?: UserState;
 };
 
 export function Comment(props: Props): null | React.ReactElement<'li'> {
-  const { comment, canPin, togglePinnedStatus } = props;
+  const {
+    comment,
+    canPin,
+    togglePinnedStatus,
+    onEditComment,
+    onDeleteComment,
+    canEdit,
+    canDelete,
+    user,
+  } = props;
 
   if (!comment) {
     return null;
   }
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const handlePinAndUnpin = () => {
     if (!togglePinnedStatus) {
@@ -30,48 +47,80 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
     togglePinnedStatus(!comment.pinned, comment.id);
   };
 
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    if (!onDeleteComment) {
+      return;
+    }
+
+    onDeleteComment(comment.id);
+  };
+
   return (
-    <li className='comment'>
-      <UserAvatar
-        username={comment.username}
-        imageUrl={comment.userGravatarUrlSmall}
-        userBanner={comment.userBanner}
-      />
+    <li className={`comment${isEditing ? ' is-editing' : ''}`}>
+      {!isEditing && (
+        <UserAvatar
+          username={comment.username}
+          imageUrl={comment.userGravatarUrlSmall}
+          userBanner={comment.userBanner}
+        />
+      )}
       <div className='container'>
-        <div className='content'>
-          <div>
-            <a
-              className='comment-author'
-              href={`/contributors/${comment.username}`}
-              target='_blank'
-              rel='noopener noreferrer'
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            >
-              {comment.author}
-            </a>
-            <Linkify
-              properties={{
-                target: '_blank',
-                rel: 'noopener noreferrer',
-              }}
-            >
-              {/* We can safely use parse with comment.content as it is
-               * sanitized when coming from the DB. See:
-               *   - pontoon.base.forms.AddCommentForm(}
-               *   - pontoon.base.forms.HtmlField()
-               */}
-              <span dir='auto'>{parse(comment.content)}</span>
-            </Linkify>
-            {!comment.pinned ? null : (
-              <div className='comment-pin'>
-                <div className='fas fa-thumbtack'></div>
-                <Localized id='comments-Comment--pinned'>
-                  <span className='pinned'>PINNED</span>
-                </Localized>
-              </div>
-            )}
+        {isEditing && user ? (
+          <AddComment
+            initFocus
+            initialContent={comment.content}
+            onAddComment={(newContent) => {
+              if (onEditComment) {
+                onEditComment(comment.id, newContent);
+                setIsEditing(false);
+              }
+            }}
+            user={user}
+          />
+        ) : (
+          <div className='content'>
+            <div>
+              <a
+                className='comment-author'
+                href={`/contributors/${comment.username}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              >
+                {comment.author}
+              </a>
+              <Linkify
+                properties={{
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                }}
+              >
+                {/* We can safely use parse with comment.content as it is
+                 * sanitized when coming from the DB. See:
+                 *   - pontoon.base.forms.AddCommentForm(}
+                 *   - pontoon.base.forms.HtmlField()
+                 */}
+                <span dir='auto'>{parse(comment.content)}</span>
+              </Linkify>
+              {!comment.pinned ? null : (
+                <div className='comment-pin'>
+                  <div className='fas fa-thumbtack'></div>
+                  <Localized id='comments-Comment--pinned'>
+                    <span className='pinned'>PINNED</span>
+                  </Localized>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         <div className='info'>
           <ReactTimeAgo
             dir='ltr'
@@ -109,6 +158,36 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
               </Localized>
             )
           ) : null}
+          {canEdit && (
+            <>
+              {isEditing ? (
+                <button className='pin-button' onClick={handleCancelEdit}>
+                  {'CANCEL'}
+                </button>
+              ) : (
+                <Localized id='comments-Comment--edit-button'>
+                  <button
+                    className='pin-button'
+                    title='Edit comment'
+                    onClick={handleEdit}
+                  >
+                    {'EDIT'}
+                  </button>
+                </Localized>
+              )}
+            </>
+          )}
+          {canDelete && (
+            <Localized id='comments-Comment--delete-button'>
+              <button
+                className='delete-button'
+                title='Delete comment'
+                onClick={handleDelete}
+              >
+                {'DELETE'}
+              </button>
+            </Localized>
+          )}
         </div>
       </div>
     </li>

@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-translate build-server server-env setup run clean shell ci test test-translate test-server vitest pytest format lint types eslint prettier check-prettier ruff check-ruff dropdb dumpdb loaddb sync-projects requirements
+.PHONY: build build-translate build-server server-env setup run clean shell ci test test-translate test-server vitest pytest format lint types eslint prettier check-prettier ruff check-ruff dropdb dumpdb loaddb sync-projects requirements docs
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -39,7 +39,8 @@ help:
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  sync-projects    Runs the synchronization task on all projects"
-	@echo "  requirements     Compiles all requirements files with uv pip compile\n"
+	@echo "  requirements     Compiles all requirements files with uv pip compile"
+	@echo "  docs             Builds the documentation site\n"
 
 translate/dist:
 	make build-translate
@@ -159,3 +160,7 @@ requirements:
 	# Pass --upgrade to upgrade all dependencies
 	# The arguments are passed through to `uv pip compile`
 	"${DC}" run --rm server //app/docker/compile_requirements.sh ${opts}
+
+docs:
+	"${DC}" run --rm server zensical build -f //app/documentation/zensical.toml
+	"${DC}" run --rm server .//manage.py collectstatic --noinput

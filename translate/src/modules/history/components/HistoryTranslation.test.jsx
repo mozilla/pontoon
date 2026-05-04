@@ -143,8 +143,10 @@ describe('<HistoryTranslationComponent>', () => {
 
       const { getAllByTitle } = render(
         <MockLocalizationProvider
-          resource={`history-translation--approved =
-                      .title = ${approvedTitle}`}
+          resources={[
+            `history-translation--approved =
+                      .title = ${approvedTitle}`,
+          ]}
         >
           <HistoryTranslationBase
             translation={translation}
@@ -165,8 +167,10 @@ describe('<HistoryTranslationComponent>', () => {
       };
       const { getAllByTitle } = render(
         <MockLocalizationProvider
-          resource={`history-translation--approved-anonymous =
-                      .title = ${approvedAnonymousTitle}`}
+          resources={[
+            `history-translation--approved-anonymous =
+                      .title = ${approvedAnonymousTitle}`,
+          ]}
         >
           <HistoryTranslationBase
             translation={translation}
@@ -187,8 +191,10 @@ describe('<HistoryTranslationComponent>', () => {
       };
       const { getAllByTitle } = render(
         <MockLocalizationProvider
-          resource={`history-translation--rejected =
-                      .title = ${rejectedTitle}`}
+          resources={[
+            `history-translation--rejected =
+                      .title = ${rejectedTitle}`,
+          ]}
         >
           <HistoryTranslationBase
             translation={translation}
@@ -209,8 +215,10 @@ describe('<HistoryTranslationComponent>', () => {
       };
       const { getAllByTitle } = render(
         <MockLocalizationProvider
-          resource={`history-translation--rejected-anonymous =
-                      .title = ${rejectedAnonymousTitle}`}
+          resources={[
+            `history-translation--rejected-anonymous =
+                      .title = ${rejectedAnonymousTitle}`,
+          ]}
         >
           <HistoryTranslationBase
             translation={translation}
@@ -227,8 +235,10 @@ describe('<HistoryTranslationComponent>', () => {
       const unreviewedTitle = 'test-unreviewed';
       const { getAllByTitle } = render(
         <MockLocalizationProvider
-          resource={`history-translation--unreviewed =
-                      .title = ${unreviewedTitle}`}
+          resources={[
+            `history-translation--unreviewed =
+                      .title = ${unreviewedTitle}`,
+          ]}
         >
           <HistoryTranslationBase
             translation={DEFAULT_TRANSLATION}

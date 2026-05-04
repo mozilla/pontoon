@@ -55,7 +55,7 @@ function buildPattern(
   str: string,
   placeholders: Map<string, Expression | Markup> | null,
 ): Pattern {
-  if (!placeholders?.size) return [str];
+  if (!placeholders?.size) return str ? [str] : [];
   const replacements: {
     start: number;
     end: number;

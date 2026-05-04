@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from pontoon.base.models import Translation
 from pontoon.checks.models import FailedCheck, Warning
-from pontoon.test.factories import TranslationFactory
+from pontoon.test.factories import EntityFactory, ResourceFactory, TranslationFactory
 
 
 def request_create_translation(client, **args):
@@ -34,6 +34,50 @@ def test_create_translation_success(member, entity_a, locale_a, project_locale_a
     assert Translation.objects.filter(
         entity=entity_a, locale=locale_a, string=content
     ).exists()
+
+
+@pytest.mark.django_db
+def test_create_translation_success_fluent(
+    member, project_a, locale_a, project_locale_a
+):
+    resource = ResourceFactory(project=project_a, path="resource.ftl", format="fluent")
+    entity = EntityFactory(resource=resource, key=["key"], string="key = value\n")
+    string = "key = Bonjour !\n"
+    response = request_create_translation(
+        member.client,
+        entity=entity.pk,
+        locale=locale_a.code,
+        translation=string,
+    )
+    assert response.status_code == 200
+    assert response.json()["status"]
+
+    translation = Translation.objects.get(entity=entity, locale=locale_a, string=string)
+    assert translation.value == ["Bonjour !"]
+
+
+@pytest.mark.django_db
+def test_create_translation_success_mf2(member, project_a, locale_a, project_locale_a):
+    resource = ResourceFactory(project=project_a, path="strings.xml", format="android")
+    entity = EntityFactory(
+        resource=resource, key=["key"], string="the {$arg :string @source=|%s|} message"
+    )
+    string = "le {$arg :string @source=|%s|} message"
+    response = request_create_translation(
+        member.client,
+        entity=entity.pk,
+        locale=locale_a.code,
+        translation=string,
+    )
+    assert response.status_code == 200
+    assert response.json()["status"]
+
+    translation = Translation.objects.get(entity=entity, locale=locale_a, string=string)
+    assert translation.value == [
+        "le ",
+        {"$": "arg", "fn": "string", "attr": {"source": "%s"}},
+        " message",
+    ]
 
 
 @pytest.mark.django_db
@@ -311,6 +355,8 @@ def test_view_translation_delete(approved_translation, rejected_translation, mem
     rejected_translation = Translation.objects.create(
         entity=approved_translation.entity,
         locale=approved_translation.locale,
+        string="",
+        value=[],
         user=member.user,
         rejected=True,
     )

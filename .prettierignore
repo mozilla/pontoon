@@ -2,6 +2,7 @@
 translate/dist/
 coverage/
 docs/_build/
+documentation/
 package-lock.json
 specs/
 .venv/

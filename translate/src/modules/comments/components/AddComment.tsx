@@ -40,6 +40,7 @@ import { MentionList } from './MentionList';
 type Props = {
   contactPerson?: string;
   initFocus: boolean;
+  initialContent?: string;
   onAddComment(comment: string): void;
   resetContactPerson?: () => void;
   user: UserState;
@@ -81,6 +82,7 @@ function isEditable(elem: Element | null): boolean {
 export function AddComment({
   contactPerson,
   initFocus,
+  initialContent,
   onAddComment,
   resetContactPerson,
   user: { gravatarURLSmall, username },
@@ -94,7 +96,10 @@ export function AddComment({
   const { initMentions, mentionUsers } = useContext(MentionUsers);
   const [slateKey, resetValue] = useReducer((key) => key + 1, 0);
   const initialValue = useMemo<Paragraph[]>(
-    () => [{ type: 'paragraph', children: [{ text: '' }] }],
+    () =>
+      initialContent
+        ? deserialize(initialContent)
+        : [{ type: 'paragraph', children: [{ text: '' }] }],
     [slateKey],
   );
 
@@ -338,6 +343,31 @@ function serialize(node: Descendant, users: MentionUser[]): string {
     default:
       return children;
   }
+}
+
+function deserialize(html: string): Paragraph[] {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const paragraphs = Array.from(doc.body.querySelectorAll('p'));
+
+  if (!paragraphs.length) {
+    return [{ type: 'paragraph', children: [{ text: html }] }];
+  }
+
+  return paragraphs.map((p) => ({
+    type: 'paragraph',
+    children: Array.from(p.childNodes).map((node) => {
+      if (node.nodeName === 'A') {
+        const a = node as HTMLAnchorElement;
+        return {
+          type: 'mention',
+          character: a.textContent ?? '',
+          url: a.href,
+          children: [{ text: a.textContent ?? '' }],
+        } as Mention;
+      }
+      return { text: node.textContent ?? '' };
+    }),
+  }));
 }
 
 const RenderElement = ({

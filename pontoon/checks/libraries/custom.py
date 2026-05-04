@@ -80,7 +80,7 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                     for el in pattern:
                         if isinstance(el, str):
                             pattern_pct_count += el.count("%")
-                        else:
+                        elif not (isinstance(el, Expression) and el.arg in ("%", "\n")):
                             orig_ph_strings.add(preview_placeholder(el))
                     orig_pct_count = max(orig_pct_count, pattern_pct_count)
             except ValueError:
@@ -106,7 +106,7 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                     for el in android_msg.pattern:
                         if isinstance(el, str):
                             pattern_pct_count += el.count("%")
-                        else:
+                        elif not (isinstance(el, Expression) and el.arg in ("%", "\n")):
                             ps = preview_placeholder(el)
                             if ps in orig_ph_strings:
                                 found_ps.add(ps)

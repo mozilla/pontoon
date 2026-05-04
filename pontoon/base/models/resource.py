@@ -2,6 +2,8 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
 
+from pontoon.base.models.project import Project
+
 
 class ResourceQuerySet(models.QuerySet):
     def mark_as_obsolete(self, now=None):
@@ -26,7 +28,9 @@ class ResourceQuerySet(models.QuerySet):
 
 
 class Resource(models.Model):
-    project = models.ForeignKey("Project", models.CASCADE, related_name="resources")
+    project: models.ForeignKey["Project"] = models.ForeignKey(
+        "Project", models.CASCADE, related_name="resources"
+    )
     path = models.TextField()  # Path to localization file
     meta = ArrayField(ArrayField(models.TextField(), size=2), default=list)
     comment = models.TextField(blank=True)

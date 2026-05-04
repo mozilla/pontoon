@@ -1,0 +1,61 @@
+.machinery-skeleton-loader {
+  animation: fading 1.5s infinite;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+  overflow: hidden;
+  height: 100%;
+}
+
+.machinery-skeleton-loader.scroll {
+  height: auto;
+}
+
+.machinery-skeleton-loader p {
+  height: 0.8125rem;
+  background-color: var(--translation-secondary-color);
+  padding-bottom: 3px;
+}
+
+.machinery-skeleton-loader .machinery-item-skeleton {
+  border-bottom: 1px solid var(--main-border-1);
+  padding: 10px;
+}
+
+.machinery-skeleton-loader .machinery-item-skeleton p {
+  background-color: var(--translation-secondary-color);
+  margin-bottom: 8px;
+}
+
+.machinery-skeleton-loader .machinery-item-skeleton p.suggestion {
+  width: 75%;
+  margin-bottom: 0;
+}
+
+.machinery-skeleton-loader .machinery-item-skeleton header {
+  display: block;
+  padding: 1px 0 5px;
+  text-align: right;
+}
+
+.machinery-skeleton-loader .machinery-item-skeleton header .skeleton-bar {
+  background-color: var(--translation-secondary-color);
+  display: inline-block;
+  height: 0.6875rem;
+  width: 40%;
+}
+
+@keyframes fading {
+  0% {
+    opacity: 0.1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+
+  100% {
+    opacity: 0.1;
+  }
+}

@@ -1,6 +1,7 @@
 import type { Locale } from '~/context/Locale';
 
-import { GET } from './utils/base';
+import { GET, POST } from './utils/base';
+import { getCSRFToken } from './utils/csrfToken';
 
 /*
  * Translation that comes from a machine (Machine Translation,
@@ -22,7 +23,11 @@ export type MachineryTranslation = {
   original: string;
   translation: string;
   quality?: number;
-  projectNames?: Array<string | null>;
+  projects?: {
+    name: string;
+    slug: string;
+  }[];
+  entities?: number[];
 };
 
 type ConcordanceTranslations = {
@@ -65,7 +70,11 @@ export async function fetchConcordanceResults(
     results: Array<{
       source: string;
       target: string;
-      project_names: string[];
+      projects: {
+        name: string;
+        slug: string;
+      }[];
+      entities: number[];
     }>;
     has_next: boolean;
   };
@@ -76,7 +85,11 @@ export async function fetchConcordanceResults(
           sources: ['concordance-search'],
           original: item.source,
           translation: item.target,
-          projectNames: item.project_names,
+          projects: item.projects.map((entry) => ({
+            name: entry.name,
+            slug: entry.slug,
+          })),
+          entities: item.entities,
         })),
         hasMore: has_next,
       }
@@ -142,26 +155,32 @@ export async function fetchGoogleTranslation(
 }
 
 /**
- * Return refined translation by GPT-4.
+ * Return refined translation by GPT.
  */
 
 export async function fetchGPTTransform(
   englishText: string,
   translatedText: string,
-
   characteristic: string,
-  locale: string,
+  localeCode: string,
+  entityPk?: number,
 ): Promise<MachineryTranslation[]> {
   const url = '/gpt-transform/';
-  const params = {
+  const payload = new URLSearchParams({
+    csrfmiddlewaretoken: getCSRFToken(),
     english_text: englishText,
     translated_text: translatedText,
     characteristic: characteristic,
-    locale: locale,
-  };
+    locale: localeCode,
+  });
+  if (entityPk !== undefined) {
+    payload.append('entity_pk', String(entityPk));
+  }
 
   try {
-    const { translation } = (await GET_(url, params)) as {
+    const { translation } = (await POST(url, payload, {
+      signal: abortController.signal,
+    })) as {
       translation: string;
     };
     if (translation) {

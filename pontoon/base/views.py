@@ -245,9 +245,7 @@ def entities(request):
         return JsonResponse(
             {
                 "status": False,
-                "message": "{error}".format(
-                    error=form.errors.as_json(escape_html=True)
-                ),
+                "message": form.errors,
             },
             status=400,
         )
@@ -666,9 +664,7 @@ def add_comment(request):
         return JsonResponse(
             {
                 "status": False,
-                "message": "{error}".format(
-                    error=form.errors.as_json(escape_html=True)
-                ),
+                "message": form.errors,
             },
             status=400,
         )
@@ -748,6 +744,59 @@ def unpin_comment(request):
     comment.pinned = False
     comment.save()
 
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@utils.require_AJAX
+@transaction.atomic
+def edit_comment(request):
+    """Edit a comment."""
+    form = forms.EditCommentForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse(
+            {
+                "status": False,
+                "message": form.errors,
+            },
+            status=400,
+        )
+
+    comment = get_object_or_404(Comment, id=form.cleaned_data["comment_id"])
+
+    if request.user != comment.author:
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: You can't edit this comment"},
+            status=403,
+        )
+
+    comment.content = form.cleaned_data["content"]
+    comment.save()
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def delete_comment(request):
+    """Delete a comment"""
+    comment_id = request.POST.get("comment_id", None)
+    if not comment_id:
+        return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
+
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if request.user != comment.author and not request.user.has_perm(
+        "base.can_manage_project"
+    ):
+        return JsonResponse(
+            {"status": False, "message": "Forbidden: You can't delete this comment"},
+            status=403,
+        )
+
+    comment.delete()
     return JsonResponse({"status": True})
 
 

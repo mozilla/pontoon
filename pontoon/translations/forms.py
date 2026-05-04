@@ -29,7 +29,7 @@ class CreateTranslationForm(forms.Form):
     def clean_entity(self):
         pk = self.cleaned_data["entity"]
         try:
-            return Entity.objects.get(pk=pk)
+            return Entity.objects.select_related("resource__project").get(pk=pk)
         except Entity.DoesNotExist:
             raise forms.ValidationError(f"Entity `{pk}` could not be found")
 

@@ -51,6 +51,9 @@ RUN npm install
 COPY --chown=pontoon:pontoon ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
 
+# Build documentation (generates static files)
+RUN zensical build -f documentation/zensical.toml
+
 RUN python manage.py collectstatic
 
 STOPSIGNAL SIGINT

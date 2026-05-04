@@ -18,11 +18,13 @@ import { Locale } from './Locale';
 import { SearchData } from './SearchData';
 
 export type MachineryTranslations = {
+  fetching: boolean;
   source: string;
   translations: MachineryTranslation[];
 };
 
 const initTranslations: MachineryTranslations = {
+  fetching: false,
   source: '',
   translations: [],
 };
@@ -58,10 +60,15 @@ export function MachineryProvider({
     format = entity.format;
   }
 
-  const [translations, setTranslations] =
-    useState<MachineryTranslations>(initTranslations);
+  const [fetching, setFetching] = useState(false);
+  const [translations, setTranslations] = useState({
+    source: '',
+    translations: [] as MachineryTranslation[],
+  });
 
   useEffect(() => {
+    let cancelled = false;
+
     const addResults = (newTranslations: MachineryTranslation[]) => {
       if (newTranslations.length > 0) {
         setTranslations((prev) => {
@@ -93,8 +100,13 @@ export function MachineryProvider({
     setTranslations({ source: plain, translations: [] });
 
     if (plain) {
+      setFetching(true);
+      const promises: Promise<void>[] = [];
+
       if (pk) {
-        fetchTranslationMemory(plain, locale, pk).then(addResults);
+        promises.push(
+          fetchTranslationMemory(plain, locale, pk).then(addResults),
+        );
       }
 
       // Only make requests to paid services if user is authenticated
@@ -109,26 +121,40 @@ export function MachineryProvider({
           root?.dataset.isSystranTranslateSupported === 'true';
 
         if (isGoogleTranslateSupported && locale.googleTranslateCode) {
-          fetchGoogleTranslation(plain, locale).then(addResults);
+          promises.push(fetchGoogleTranslation(plain, locale).then(addResults));
         }
 
         if (isMicrosoftTranslatorSupported && locale.msTranslatorCode) {
-          fetchMicrosoftTranslation(plain, locale).then(addResults);
+          promises.push(
+            fetchMicrosoftTranslation(plain, locale).then(addResults),
+          );
         }
 
         if (isSystranTranslateSupported && locale.systranTranslateCode) {
-          fetchSystranTranslation(plain, locale).then(addResults);
+          promises.push(
+            fetchSystranTranslation(plain, locale).then(addResults),
+          );
         }
       }
 
       if (locale.code === 'ga-IE' && pk) {
-        fetchCaighdeanTranslation(pk).then(addResults);
+        promises.push(fetchCaighdeanTranslation(pk).then(addResults));
       }
+
+      Promise.allSettled(promises).then(() => {
+        if (!cancelled) {
+          setFetching(false);
+        }
+      });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [isAuthenticated, locale, source, pk, format]);
 
   return (
-    <MachineryTranslations.Provider value={translations}>
+    <MachineryTranslations.Provider value={{ ...translations, fetching }}>
       {children}
     </MachineryTranslations.Provider>
   );

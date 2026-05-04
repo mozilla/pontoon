@@ -18,14 +18,15 @@ from google.oauth2 import service_account
 from rapidfuzz.distance.Indel import normalized_distance
 
 from django.conf import settings
-from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.aggregates import ArrayAgg, JSONBAgg
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
+from django.db.models.functions import JSONObject
 
-import pontoon.base as base
-
+from pontoon.base.models import Locale, Project, ProjectLocale, TranslationMemoryEntry
 from pontoon.base.placeables import get_placeables
+from pontoon.base.utils import get_search_phrases
 
 
 log = logging.getLogger(__name__)
@@ -238,7 +239,7 @@ def get_existing_terms(url, headers):
 
 def store_new_terms(url, headers, new_terms):
     locale_codes = ["en"] + sorted(
-        base.models.Locale.objects.exclude(google_translate_code__in=["en", ""])
+        Locale.objects.exclude(google_translate_code__in=["en", ""])
         .order_by()  # Clear default ordering on the Locale model
         .values_list("google_translate_code", flat=True)
         .distinct()
@@ -264,8 +265,8 @@ def store_new_terms(url, headers, new_terms):
             log.error(f"Adding new glossary terms failed: {r.content}")
 
 
-def get_concordance_search_data(text, locale):
-    search_phrases = base.utils.get_search_phrases(text)
+def get_concordance_search_data(user, text, locale):
+    search_phrases = get_search_phrases(text)
     search_filters = (
         Q(
             Q(target__icontains_collate=(phrase, locale.db_collation))
@@ -276,11 +277,32 @@ def get_concordance_search_data(text, locale):
     )
     search_query = reduce(operator.and_, search_filters)
 
+    projects = Project.objects.visible_for(user)
+    pl_project_ids = ProjectLocale.objects.filter(locale=locale).values_list(
+        "project_id", flat=True
+    )
+
     search_results = (
-        base.models.TranslationMemoryEntry.objects.filter(search_query)
+        TranslationMemoryEntry.objects.filter(search_query, project__in=projects)
         .values("source", "target")
-        .annotate(project_names=ArrayAgg("project__name", distinct=True))
-        .distinct()
+        .annotate(
+            projects=JSONBAgg(
+                JSONObject(
+                    name="project__name",
+                    slug="project__slug",
+                ),
+                distinct=True,
+            ),
+            entities=ArrayAgg(
+                "entity",
+                filter=Q(
+                    entity__isnull=False,
+                    project__disabled=False,
+                    project__id__in=pl_project_ids,
+                ),
+                distinct=True,
+            ),
+        )
     )
 
     def sort_by_quality(entity):
@@ -294,14 +316,14 @@ def get_concordance_search_data(text, locale):
                 levenshtein_distance(text, entity["target"]),
                 levenshtein_distance(text, entity["source"]),
             ),
-            len(entity["project_names"]),
+            len(entity["projects"]),
         )
 
     return sorted(search_results, key=sort_by_quality, reverse=True)
 
 
 def get_translation_memory_data(text, locale, pk=None):
-    entries = base.models.TranslationMemoryEntry.objects.filter(
+    entries = TranslationMemoryEntry.objects.filter(
         locale=locale
     ).minimum_levenshtein_ratio(text)
 

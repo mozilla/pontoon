@@ -147,7 +147,7 @@ const createSimpleMessageEntry = (
 ): MessageEntry => ({
   format: getMessageEntryFormat(format),
   id: key[0] ?? '',
-  value: [value],
+  value: value ? [value] : [],
 });
 
 const initEditorData: EditorData = {

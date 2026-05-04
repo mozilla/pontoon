@@ -57,6 +57,15 @@ export const TRANSLATION_SAVED: NotificationMessage = {
   type: 'info',
 };
 
+export const UNABLE_TO_SAVE_TRANSLATION: NotificationMessage = {
+  content: (
+    <Localized id='notification--unable-to-save-translation'>
+      Unable to save translation
+    </Localized>
+  ),
+  type: 'error',
+};
+
 export const UNABLE_TO_APPROVE_TRANSLATION: NotificationMessage = {
   content: (
     <Localized id='notification--unable-to-approve-translation'>
@@ -177,6 +186,20 @@ export const STRING_LINK_COPIED: NotificationMessage = {
 export const COMMENT_ADDED: NotificationMessage = {
   content: (
     <Localized id='notification--comment-added'>Comment added</Localized>
+  ),
+  type: 'info',
+};
+
+export const COMMENT_EDITED: NotificationMessage = {
+  content: (
+    <Localized id='notification--comment-edited'>Comment edited</Localized>
+  ),
+  type: 'info',
+};
+
+export const COMMENT_DELETED: NotificationMessage = {
+  content: (
+    <Localized id='notification--comment-deleted'>Comment deleted</Localized>
   ),
   type: 'info',
 };

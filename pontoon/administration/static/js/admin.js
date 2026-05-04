@@ -18,3 +18,33 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleBtn.dataset.showDisabled = (!showingDisabled).toString();
   });
 });
+
+$(function () {
+  $('#recalculate-stats').on('click', function (e) {
+    e.preventDefault();
+
+    const button = $(this),
+      title = button.html();
+
+    if (button.is('.in-progress')) {
+      return;
+    }
+
+    button.addClass('in-progress').html('Calculating...');
+
+    $.ajax({
+      url: '/admin/calculate-stats/',
+      success() {
+        button.html('Done');
+      },
+      error() {
+        button.html('Whoops!');
+      },
+      complete() {
+        setTimeout(function () {
+          button.removeClass('in-progress').html(title);
+        }, 2000);
+      },
+    });
+  });
+});

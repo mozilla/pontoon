@@ -289,7 +289,7 @@ def get_contributions_map(contributor, viewer, contribution_period=None):
     actions = ActionLog.objects.visible_for(viewer)
 
     if contribution_period is not None:
-        actions = actions.filter(contribution_period)
+        actions = actions.filter(contribution_period, is_implicit_action=False)
 
     review_action_types = [
         ActionLog.ActionType.TRANSLATION_APPROVED,

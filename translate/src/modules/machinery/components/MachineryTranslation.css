@@ -39,9 +39,13 @@
   pointer-events: auto;
 }
 
-.machinery .translation > header > ul > li:not(:first-child)::before {
+.sources.projects > li:not(:first-child)::before {
   content: '•';
   padding-right: 3px;
+}
+
+.machinery .translation > header div {
+  cursor: default;
 }
 
 .machinery .translation > header li.google-translation {

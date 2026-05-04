@@ -10,7 +10,7 @@ class HomepageForm(forms.ModelForm):
         model = models.Homepage
         fields = "__all__"
         widgets = {
-            "text": AceWidget(mode="django", width="100%"),
+            "text": AceWidget(mode="django", width="100%", height="400px"),
         }
         help_texts = {
             "text": """To keep the content compatible with the current slide structure of the

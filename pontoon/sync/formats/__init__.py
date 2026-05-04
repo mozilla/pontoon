@@ -34,6 +34,8 @@ class RepoTranslation:
 
     key: tuple[str, ...]
     string: str
+    value: Message
+    properties: dict[str, Message] | None = None
     fuzzy: bool = False
 
 
@@ -94,6 +96,8 @@ def as_repo_translations(res: MozL10nResource[Message]) -> Iterator[RepoTranslat
                 yield RepoTranslation(
                     key=section.id + entry.id,
                     string=_as_string(res.format, entry),
+                    value=entry.value,
+                    properties=entry.properties,
                     fuzzy=fuzzy,
                 )
 

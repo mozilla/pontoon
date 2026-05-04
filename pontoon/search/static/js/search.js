@@ -1,5 +1,11 @@
 $(function () {
-  function updateURL() {
+  const url = new URL(window.location.href);
+  const pages = parseInt(url.searchParams.get('pages')) || 1;
+  let currentPage = 1;
+  let hasMore = false;
+  let isLoading = false;
+
+  function updateURL(mode) {
     const pagesLoaded = currentPage - 1;
     if (pagesLoaded > 1) {
       url.searchParams.set('pages', pagesLoaded);
@@ -7,7 +13,11 @@ $(function () {
       url.searchParams.delete('pages');
     }
 
-    history.replaceState(null, '', url);
+    if (mode === 'push') {
+      history.pushState('', '', url);
+    } else {
+      history.replaceState('', '', url);
+    }
   }
 
   function loadMoreEntries(options) {
@@ -19,12 +29,12 @@ $(function () {
     const pageCount = (options && options.pages) || 1;
 
     const data = {
-      search: params.get('search'),
-      locale: params.get('locale'),
-      project: params.get('project'),
-      search_identifiers: params.get('search_identifiers'),
-      search_match_case: params.get('search_match_case'),
-      search_match_whole_word: params.get('search_match_whole_word'),
+      search: url.searchParams.get('search'),
+      locale: url.searchParams.get('locale'),
+      project: url.searchParams.get('project'),
+      search_identifiers: url.searchParams.get('search_identifiers'),
+      search_match_case: url.searchParams.get('search_match_case'),
+      search_match_whole_word: url.searchParams.get('search_match_whole_word'),
     };
 
     if (options && options.pages) {
@@ -42,7 +52,10 @@ $(function () {
         $('#entity-list-header').css('display', 'flex');
         hasMore = response['has_more'];
         currentPage += pageCount;
-        updateURL();
+
+        if (options?.mode) {
+          updateURL(options.mode);
+        }
       },
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.');
@@ -77,15 +90,15 @@ $(function () {
     $('#no-results').hide();
 
     url.search = '';
-    params.set('search', search);
+    url.searchParams.set('search', search);
 
     const locale = $('.locale .selector .language').data().code;
-    params.set('locale', locale);
+    url.searchParams.set('locale', locale);
 
     const project = $('.project .selector .selected-project').data().slug;
 
     if (project && project !== 'all-projects') {
-      params.set('project', project);
+      url.searchParams.set('project', project);
     }
 
     const checkboxParamMap = {
@@ -98,13 +111,13 @@ $(function () {
       const attr = $(this).data('attribute');
       const param = checkboxParamMap[attr];
       if (param) {
-        params.set(param, 'true');
+        url.searchParams.set(param, 'true');
       }
     });
 
     currentPage = 1;
     $('#entity-list').empty();
-    loadMoreEntries();
+    loadMoreEntries({ mode: 'push' });
   });
 
   $('#search-menu .search.button').click(function () {
@@ -122,7 +135,7 @@ $(function () {
         $(document).height() - 2000 &&
       hasMore
     ) {
-      loadMoreEntries();
+      loadMoreEntries({ mode: 'replace' });
     }
   });
 
@@ -130,14 +143,11 @@ $(function () {
     e.preventDefault();
   });
 
-  const url = new URL(window.location.href);
-  const params = url.searchParams;
-  const pages = parseInt(params.get('pages')) || 1;
-  let currentPage = 1;
-  let hasMore = false;
-  let isLoading = false;
+  $(window).on('popstate', function () {
+    location.reload();
+  });
 
-  if (params.get('search')) {
+  if (url.searchParams.get('search')) {
     loadMoreEntries({ pages: pages });
   }
 

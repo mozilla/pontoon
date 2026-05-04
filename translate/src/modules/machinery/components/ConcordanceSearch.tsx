@@ -11,19 +11,22 @@ type Props = {
   translation: MachineryTranslation;
 };
 
-function ProjectList({ projects }: { projects: (string | null)[] }) {
-  const notEmpty = projects.filter(Boolean) as string[];
+type project = {
+  name: string;
+  slug: string;
+};
 
-  if (notEmpty.length === 0) {
+function ProjectList({ projects }: { projects: project[] }) {
+  if (projects.length === 0) {
     return <TranslationMemory />;
   }
 
   return (
     <>
-      {notEmpty.map((project) => (
-        <li key={project}>
+      {projects.map((project) => (
+        <li key={project.name}>
           <span className='translation-source'>
-            <span>{project.toUpperCase()}</span>
+            <span>{project.name.toUpperCase()}</span>
           </span>
         </li>
       ))}
@@ -36,15 +39,30 @@ export function ConcordanceSearch({
   translation,
 }: Props): React.ReactElement {
   const { code, direction, script } = useContext(Locale);
-  const projects = translation.projectNames;
-  const title = projects?.filter(Boolean).join(' • ');
+  const projects = translation.projects;
+  const entities = translation.entities;
+
+  const title = projects?.map((project) => project.name).join(' • ');
+
+  const projectListContainer = (
+    <ul className='sources projects' title={title}>
+      {projects && <ProjectList projects={projects} />}
+    </ul>
+  );
 
   return (
     <>
       <header>
-        <ul className='sources projects' title={title}>
-          {projects && <ProjectList projects={projects} />}
-        </ul>
+        {entities && entities.length > 0 ? (
+          <a
+            href={`/${code}/all-projects/all-resources/?list=${entities.join(',')}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {projectListContainer}
+          </a>
+        ) : (
+          <div>{projectListContainer}</div>
+        )}
       </header>
       <p className='original'>
         <GenericTranslation

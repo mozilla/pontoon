@@ -19,7 +19,17 @@
 {% block class %}admin{% endblock %}
 
 {% block heading %}
-  {{ Heading.heading(title='Admin', subtitle="Don't mess it up. Please.") }}
+  <section id="heading">
+    <div class="container clearfix">
+      <div class="controls">
+        <button id="recalculate-stats" class="button">
+          Re-calculate stats
+        </button>
+      </div>
+      <h1 id="title">Admin</h1>
+      <h2 id="subtitle">Don't mess it up. Please.</h2>
+    </div>
+  </section>
 {% endblock %}
 
 {% block bottom %}
@@ -38,6 +48,7 @@
         </div>
         <a
           class="add button small"
+          id="add-project"
           href="{{ url('pontoon.admin.project.new') }}"
           >Add new project</a
         >

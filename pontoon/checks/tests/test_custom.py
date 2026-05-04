@@ -315,6 +315,13 @@ def test_android_bad_html():
     }
 
 
+def test_android_extra_percent():
+    original = "Source percent"
+    translation = "Translation {|%| @source=|%%|}"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
 def test_webext_literal_index_placeholder_as_placeholder():
     original = "Source string with a {$arg1 @source=|$1|}"
     translation = "Translation with a {$arg1 @source=|$1|}"

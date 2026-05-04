@@ -1,4 +1,3 @@
-import { mount } from 'enzyme';
 import React from 'react';
 
 import { Locale } from '~/context/Locale';
@@ -6,6 +5,7 @@ import { Locale } from '~/context/Locale';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { MicrosoftTerminology } from './MicrosoftTerminology';
+import { render } from '@testing-library/react';
 
 const LOCALE = { msTerminologyCode: 'en-US' };
 const PROPS = {
@@ -14,18 +14,21 @@ const PROPS = {
 
 describe('<MicrosoftTerminology>', () => {
   it('renders the MicrosoftTerminology component properly', () => {
-    const wrapper = mount(
+    const message = 'test-message';
+    const { getByRole } = render(
       <Locale.Provider value={LOCALE}>
-        <MockLocalizationProvider>
+        <MockLocalizationProvider
+          resources={[
+            `machinery-MicrosoftTerminology--translation-source = ${message}`,
+          ]}
+        >
           <MicrosoftTerminology original={PROPS.original} />
         </MockLocalizationProvider>
       </Locale.Provider>,
     );
 
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('Localized').props().id).toEqual(
-      'machinery-MicrosoftTerminology--translation-source',
-    );
-    expect(wrapper.find('li span').text()).toEqual('MICROSOFT');
+    expect(
+      getByRole('listitem').querySelector('span.translation-source'),
+    ).toHaveTextContent(message);
   });
 });

@@ -123,6 +123,16 @@
             border-radius: 3px;
           }
 
+          mark.placeable {
+            background: var(--dark-grey-2);
+            border: 1px solid var(--light-grey-1);
+            border-radius: 2px;
+            color: var(--light-grey-6);
+            font-style: normal;
+            font-weight: normal;
+            margin: 0 1px;
+          }
+
           .empty {
             border: 1px solid var(--main-border-1);
             border-radius: 3px;

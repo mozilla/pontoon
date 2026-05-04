@@ -37,10 +37,10 @@ export function getEmptyMessageEntry(
 }
 
 function getEmptyMessage(source: Message, { code }: Locale): Message {
-  if (Array.isArray(source)) return [''];
+  if (Array.isArray(source)) return [];
 
   const decl = structuredClone(source.decl);
-  if (source.msg) return { decl, msg: [''] };
+  if (source.msg) return { decl, msg: [] };
 
   const sel: string[] = [];
   const plurals = findPluralSelectors(source);
@@ -91,8 +91,8 @@ function getEmptyMessage(source: Message, { code }: Locale): Message {
     }
   }
 
-  if (sel.length === 0) return { decl, msg: [''] };
+  if (sel.length === 0) return { decl, msg: [] };
 
-  const alt = variantKeys.map((keys) => ({ keys, pat: [''] }));
+  const alt = variantKeys.map((keys) => ({ keys, pat: [] }));
   return { decl, sel: sel, alt };
 }

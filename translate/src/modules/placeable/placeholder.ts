@@ -5,8 +5,9 @@ export const placeholder = (() => {
   const curly = '{(?:(?:"[^"]*")|[^}])*}}?';
   // All printf-ish formats, including Python's.
   // Excludes Python's ` ` conversion flag, due to false positives -- https://github.com/mozilla/pontoon/issues/2988
+  // Includes `,` (thousands-separator flag) used in Java/Android format strings, e.g. `%2$,d`
   const printf =
-    "%(?:\\d\\$|\\(.*?\\))?[-+0'#I]*[\\d*]*(?:\\.[\\d*])?(?:hh?|ll?|[jLtz])?[%@AaCcdEeFfGginopSsuXx]";
+    "%(?:\\d\\$|\\(.*?\\))?[-+0'#I,]*[\\d*]*(?:\\.[\\d*])?(?:hh?|ll?|[jLtz])?[%@AaCcdEeFfGginopSsuXx]";
   // Qt placeholders -- https://doc.qt.io/qt-5/qstring.html#arg
   const qt = '%L?\\d{1,2}';
   // HTML/XML &entities;

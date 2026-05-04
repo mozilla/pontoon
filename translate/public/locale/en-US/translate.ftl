@@ -101,7 +101,9 @@ comments-Comment--unpin-button = UNPIN
 comments-Comment--pinned = PINNED
 comments-CommentsList--pinned-comments = PINNED COMMENTS
 comments-CommentsList--all-comments = ALL COMMENTS
-
+comments-Comment--edit-button = EDIT
+comments-Comment--delete-button = DELETE
+comments-Comment--cancel-button = CANCEL
 
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
@@ -570,6 +572,7 @@ notification--translation-unrejected = Translation unrejected
 notification--translation-deleted = Translation deleted
 notification--translation-saved = Translation saved
 notification--unable-to-approve-translation = Unable to approve translation
+notification--unable-to-save-translation = Unable to save translation
 notification--unable-to-unapprove-translation = Unable to unapprove translation
 notification--unable-to-reject-translation = Unable to reject translation
 notification--unable-to-unreject-translation = Unable to unreject translation
@@ -583,6 +586,8 @@ notification--ftl-not-supported-rich-editor = Translation not supported in rich 
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
 notification--comment-added = Comment added
+notification--comment-edited = Comment edited
+notification--comment-deleted = Comment deleted
 
 
 ## OtherLocales Translation

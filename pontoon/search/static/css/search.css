@@ -60,6 +60,8 @@
         .check-list {
           display: inline-block;
           vertical-align: bottom;
+          width: 490px;
+          text-align: right;
 
           .check-box {
             display: inline-block;
@@ -67,7 +69,7 @@
 
             .check-box-wrapper {
               font-size: 15px;
-              margin-left: 20px;
+              margin-left: 15px;
               width: auto;
 
               .fas {
