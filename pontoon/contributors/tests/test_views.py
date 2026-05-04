@@ -97,7 +97,7 @@ def test_profileform_user_locales_order(member):
             ),
         },
     )
-    assert response.status_code, 200
+    assert response.status_code == 200
     assert list(User.objects.get(pk=member.user.pk).profile.sorted_locales) == [
         locale1,
         locale2,
@@ -261,11 +261,15 @@ def test_toggle_active_user_status(client_superuser, user_a):
     # request on active user --> user disabled
     assert user_a.is_active is True
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-    assert response.status_code == 200, User.objects.get(pk=user_a).is_active is False
+    assert response.status_code == 200
+    user_a.refresh_from_db()
+    assert user_a.is_active is False
 
     # request on disabled user --> user enabled
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-    assert response.status_code == 200, User.objects.get(pk=user_a).is_active is True
+    assert response.status_code == 200
+    user_a.refresh_from_db()
+    assert user_a.is_active is True
 
 
 @pytest.mark.django_db

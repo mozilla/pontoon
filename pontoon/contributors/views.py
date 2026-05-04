@@ -140,20 +140,6 @@ def contributor(request, user):
     )
 
 
-def log_user_ban(actor, target, reason):
-    action_type = (
-        UserBanLog.ActionType.UNBANNED
-        if target.is_active
-        else UserBanLog.ActionType.BANNED
-    )
-    UserBanLog.objects.create(
-        performed_by=actor,
-        performed_on=target,
-        action_reason=reason,
-        action_type=action_type,
-    )
-
-
 @require_AJAX
 @transaction.atomic
 def update_contribution_graph(request):
@@ -753,7 +739,7 @@ def toggle_active_user_status(request, username):
     user = get_object_or_404(User, username=username)
     user.is_active = not user.is_active
     user.save(update_fields=["is_active"])
-    log_user_ban(request.user, user, request.POST.get("action_reason", ""))
+    utils.log_user_ban(request.user, user, request.POST.get("action_reason", ""))
     return JsonResponse({"status": True})
 
 

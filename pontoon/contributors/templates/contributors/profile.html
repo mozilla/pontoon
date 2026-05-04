@@ -31,9 +31,13 @@
             <div class="desc">Update profile picture</div>
           {% endif %}
           {% if profile_is_disabled %}
+            {% set disable_by = ("Disabled by " + (ban_activity.performed_by.first_name or ban_activity.performed_by.username)) if (ban_activity and ban_activity.performed_by) else "" %}
+            {% set disable_reason = (": " + ban_activity.action_reason) if (ban_activity and ban_activity.action_reason) else "" %}
             <div class="status">
               <i class="fas fa-exclamation-circle fa-sm"></i>
-              <span>Account disabled by an administrator</span>
+              <span title="{{ disable_by + disable_reason }}"
+                >Account disabled by an administrator</span
+              >
             </div>
           {% endif %}
           <img
@@ -123,18 +127,15 @@
               method="POST"
             >
               {% csrf_token %}
-              <h4 class="subtitle account-status-heading">
-                {{ 'Disable' if contributor.is_active else 'Enable' }} account
-              </h4>
-              <textarea
-                class="text-area"
-                name="action_reason"
-                placeholder="Reason (optional)"
-                rows="5"
-              ></textarea>
               {% if contributor.is_active %}
+                <textarea
+                  class="disable-reason hidden"
+                  name="action_reason"
+                  placeholder="Reason for disabling (optional)"
+                  rows="5"
+                ></textarea>
                 <button class="button" type="submit">
-                  <i class="icon fas fa-lock fa-sm"></i>Disable
+                  <i class="icon fas fa-ban fa-sm"></i>Disable
                 </button>
               {% else %}
                 <button class="button" type="submit">
@@ -208,21 +209,18 @@
           </div>
           {% if ban_activity and not contributor.is_active and is_admin %}
             <div class="block">
-              <h4 class="subtitle">Latest ban</h4>
+              <h4 class="subtitle">Disabled on</h4>
               <div class="item-with-icon">
                 <span class="icon fas fa-ban"></span>
                 <span
+                  title="{% if ban_activity.performed_by %}
+                    Disabled by
+                    {{ ban_activity.performed_by.first_name or ban_activity.performed_by.username }}
+                  {% endif %}{% if ban_activity.action_reason %}
+                    : {{ ban_activity.action_reason }}
+                  {% endif %}"
                   >{{ ban_activity.created_at|format_datetime("date") }}</span
                 >
-                {% if ban_activity.performed_by %}
-                  <span
-                    >by
-                    {{ ban_activity.performed_by.first_name or ban_activity.performed_by.username }}</span
-                  >
-                {% endif %}
-                {% if ban_activity.action_reason %}
-                  <span>— {{ ban_activity.action_reason }}</span>
-                {% endif %}
               </div>
             </div>
           {% endif %}
