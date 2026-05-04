@@ -1,0 +1,4 @@
+# Folder exclusion for directory searches
+.git/
+node_modules/
+documentation/.cache
