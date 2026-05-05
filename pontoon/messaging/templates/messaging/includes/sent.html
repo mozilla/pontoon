@@ -7,7 +7,7 @@
   {% endif %}
   <ul>
     {% for message in sent_messages %}
-      <li class="message{% if message.is_new() %}new{% endif %}">
+      <li class="message {% if message.is_new() %}new{% endif %}">
         <div class="user-avatar">
           <a
             href="{{ url('pontoon.contributors.contributor.username', message.sender.username) }}"
