@@ -6,6 +6,6 @@ It consolidates Pontoon documentation from three previously separate sites:
 
 | Audience | Previous location |
 |---|---|
-| Developers | [docs/](https://mozilla-pontoon.readthedocs.io/en/latest/) |
+| Developers | [docs/](https://pontoon.mozilla.org/docs/dev/) |
 | Localizers | [mozilla-l10n/localizer-documentation](https://mozilla-l10n.github.io/localizer-documentation/) |
 | Admins | [mozilla-l10n/documentation](https://mozilla-l10n.github.io/documentation/) |

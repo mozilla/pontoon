@@ -32,7 +32,7 @@ It’s important to also check the files for localization issues before exposing
 
 ## Folder structure
 
-To let Pontoon discover your localizable files, you'll either need to specify paths in the [project configuration file](https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html) or strictly follow the file and folder structure as expected by Pontoon:
+To let Pontoon discover your localizable files, you'll either need to specify paths in the [project configuration file](https://github.com/mozilla/moz-l10n/wiki/L10nConfigPaths-file-format) or strictly follow the file and folder structure as expected by Pontoon:
 
 1. Locale folders (including source locale) must be located at the same nesting level of the directory tree. You may want to put all locale folders under a `locales` folder.
 1. Source locale needs to be called `templates`, `en-US`, `en-us` or `en`. If multiple folders with such name exist in the repository and contain files in a supported file format, the first one will be used.

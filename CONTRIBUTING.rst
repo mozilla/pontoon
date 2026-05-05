@@ -291,27 +291,15 @@ files, you can pass options through to the ``uv pip compile`` invocations, i.e.
 Documentation
 =============
 
-Documentation for Pontoon is built with `Sphinx
-<http://www.sphinx-doc.org/en/stable/>`_ and is available on ReadTheDocs.
+Documentation for Pontoon is built with [Zensical](https://zensical.org/)
+and is available on `http://localhost:8000/docs/`.
 
-Building docs is not covered with docker yet, so you will have to do it on your host. To make
-a virtualenv to build docs, do this:
-
-.. code-block:: shell
-
-    $ cd docs/
-    $ uv venv
-    $ source .venv/bin/activate
-    $ uv pip install -r requirements/default.txt
-
-Then, to build the docs, run this:
+To build the docs, run:
 
 .. code-block:: shell
 
-    $ make html
+    $ make docs
 
-The HTML documentation will be in `docs/_build/html/`. Try to open `docs/_build/html/index.html`
-for example.
 
 .. _Homebrew: http://brew.sh/
 

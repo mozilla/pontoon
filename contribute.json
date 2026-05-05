@@ -7,7 +7,7 @@
   },
   "participate": {
     "home": "https://wiki.mozilla.org/Webdev/GetInvolved/pontoon.mozilla.org",
-    "docs": "https://mozilla-pontoon.readthedocs.io/",
+    "docs": "https://pontoon.mozilla.org/docs/dev/",
     "chat": "https://chat.mozilla.org/#/room/#pontoon:mozilla.org",
     "chat-contacts": ["mathjazz", "eemeli"],
     "mailing-list": "https://github.com/mozilla/pontoon/discussions"

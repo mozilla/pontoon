@@ -5,7 +5,7 @@ Pontoon is a translation management system used and developed by the
 specializes in open source localization that is driven by the community and
 uses version control systems for storing translations.
 
-[📚 **Documentation**](https://mozilla-pontoon.readthedocs.io/)
+[📚 **Documentation**](https://pontoon.mozilla.org/docs/dev/)
 
 ## Installing Pontoon
 
@@ -16,14 +16,14 @@ Heroku** button below.
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/mozilla/pontoon)
 
 Alternatively, you can deploy to Heroku manually by following our
-[Deployment Documentation](https://mozilla-pontoon.readthedocs.io/en/latest/admin/deployment.html).
+[Deployment Documentation](https://pontoon.mozilla.org/docs/dev/deployment/).
 
 We don't have documentation for deploying to other platforms yet, so we recommend that
 you read the previously linked documentation and adapt it for your needs.
 
 If you only want to deploy a **local instance of Pontoon**, for development or
 testing for example, see our
-[Developer Setup using Docker](https://mozilla-pontoon.readthedocs.io/en/latest/dev/setup.html).
+[Developer Setup using Docker](https://pontoon.mozilla.org/docs/dev/developer-setup/).
 Please note that you should **not** deploy a production instance with Docker.
 
 ## Contributing to Pontoon
@@ -31,7 +31,7 @@ Please note that you should **not** deploy a production instance with Docker.
 Do you want to help us make Pontoon better? We are very glad!
 
 To help you get started with contributing, we wrote
-[**The Guide to your First Contribution to Pontoon**](https://mozilla-pontoon.readthedocs.io/en/latest/dev/first-contribution.html).
+[**The Guide to your First Contribution to Pontoon**](https://pontoon.mozilla.org/docs/dev/first-contribution/).
 It contains all the information you need to know to install Pontoon, populate its
 database, run tests, and send your contribution.
 
