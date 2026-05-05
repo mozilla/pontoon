@@ -92,6 +92,10 @@
   outline: none;
 }
 
+.cm-editor .cm-content {
+  caret-color: var(--editor-color);
+}
+
 .cm-editor .cm-scroller {
   font-family: inherit;
   line-height: 22px;
