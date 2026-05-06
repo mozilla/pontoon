@@ -396,14 +396,14 @@ def test_manage_project_translate_link_excludes_obsolete_resources(client_superu
     url = reverse("pontoon.admin.project", args=(project.slug,))
     response = client_superuser.get(url)
     assert response.status_code == 200
-    assert "translate_locale" not in response.context
+    assert "Translate" not in response.content.decode()
 
     # add non-obsolete resource
     ResourceFactory.create(project=project, obsolete=False)
 
     response = client_superuser.get(url)
     assert response.status_code == 200
-    assert response.context["translate_locale"] == "tlh"
+    assert "Translate" in response.content.decode()
 
 
 @pytest.mark.django_db
