@@ -83,11 +83,15 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
+    is_own_profile = request.user.is_authenticated and request.user == user
+    default_contribution_type = (
+        "all_contributions" if is_own_profile else "all_user_contributions"
+    )
     graph_data, graph_title = utils.get_contribution_graph_data(
-        user, request.user, "all_contributions"
+        user, request.user, default_contribution_type
     )
     timeline_data = utils.get_contribution_timeline_data(
-        user, request.user, False, "all_contributions"
+        user, request.user, False, default_contribution_type
     )
 
     context = {
