@@ -56,18 +56,18 @@
 
   /* Translation workspace */
   --translation-background: #3f4752;
-  --translation-border: #5e6475;
+  --translation-border: #7a8898;
   --translation-color: #ffffff;
   --translation-secondary-color: #aaaaaa;
   --translation-main-button-color: #272a2f;
   --translation-subtitle-color: #888888;
-  --editor-background: #333941;
+  --editor-background: #272a2f;
   --editor-color: #ffffff;
-  --editor-form-background: #272a2f;
+  --editor-form-background: #4d5967;
   --editor-menu-background: #272a2f;
   --editor-menu-color: #aaaaaa;
   --editor-menu-action-button-color: #ffffff;
-  --editor-readonly-background: #272a2f;
+  --editor-readonly-background: #333941;
   --time-range-handles: #272a2f;
 
   /* Highlights */

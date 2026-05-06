@@ -38,8 +38,10 @@
 }
 
 .translationform .accesskey-input {
+  background: var(--editor-background);
   border: none;
   box-sizing: border-box;
+  color: var(--editor-color);
   float: left;
   font-size: 14px;
   height: 24px;
@@ -59,7 +61,7 @@
 }
 
 .translationform .accesskeys .key {
-  border: 1px solid var(--light-grey-1);
+  border: 1px solid var(--grey-3);
   background: var(--grey-3);
   color: var(--white-1);
   cursor: pointer;
