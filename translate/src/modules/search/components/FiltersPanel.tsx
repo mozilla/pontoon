@@ -1,6 +1,12 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useContext,
+} from 'react';
 
 import type { Author } from '~/api/filter';
 import type { Tag } from '~/api/project';
@@ -12,6 +18,7 @@ import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 import './FiltersPanel.css';
 import type { FilterState, FilterType, TimeRangeType } from './SearchBox';
 import { TimeRangeFilter } from './TimeRangeFilter';
+import { Locale } from '~/context/Locale';
 
 type Props = {
   filters: FilterState;
@@ -56,12 +63,14 @@ const StatusFilter = ({
   selected,
   stats,
   status,
+  code,
 }: {
   onSelect: () => void;
   onToggle: () => void;
   selected: boolean;
   stats: Stats;
   status: (typeof FILTERS_STATUS)[number];
+  code: string;
 }) => (
   <li
     className={classNames(
@@ -81,7 +90,10 @@ const StatusFilter = ({
       <span className='title'>{status.name}</span>
     </Localized>
     <span className='count'>
-      {asLocaleString(stats['stat' in status ? status.stat : status.slug])}
+      {asLocaleString(
+        stats['stat' in status ? status.stat : status.slug],
+        code,
+      )}
     </span>
   </li>
 );
@@ -146,11 +158,13 @@ const AuthorFilter = ({
   onSelect,
   onToggle,
   selected,
+  code,
 }: {
   author: Author;
   onSelect: () => void;
   onToggle: () => void;
   selected: boolean;
+  code: string;
 }) => (
   <li
     className={classNames('author', selected && 'selected')}
@@ -177,7 +191,7 @@ const AuthorFilter = ({
         <p className='name'>{display_name}</p>
         <p className='role'>{role}</p>
       </figcaption>
-      <span className='count'>{asLocaleString(translation_count)}</span>
+      <span className='count'>{asLocaleString(translation_count, code)}</span>
     </figure>
   </li>
 );
@@ -244,6 +258,7 @@ export function FiltersPanelDialog({
   onDiscard,
 }: FiltersPanelProps): React.ReactElement<'div'> {
   const stats = useStats();
+  const { code } = useContext(Locale);
   const ref = React.useRef(null);
   useOnDiscard(ref, onDiscard);
 
@@ -262,6 +277,7 @@ export function FiltersPanelDialog({
             selected={statuses.includes(status.slug)}
             stats={stats}
             status={status}
+            code={code}
           />
         ))}
 
@@ -317,6 +333,7 @@ export function FiltersPanelDialog({
                 onSelect={() => onApplyFilter(author.email, 'authors')}
                 onToggle={() => onToggleFilter(author.email, 'authors')}
                 selected={authors.includes(author.email)}
+                code={code}
               />
             ))}
           </>

@@ -1,10 +1,11 @@
 import { Localized } from '@fluent/react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useContext } from 'react';
 import { Link } from '~/context/Location';
 import { Stats, useStats } from '~/modules/stats';
 import { asLocaleString, useOnDiscard } from '~/utils';
 import { ProgressChart } from './ProgressChart';
 import './ResourceProgress.css';
+import { Locale } from '~/context/Locale';
 
 type Props = {
   percent: number;
@@ -24,6 +25,7 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
   } = stats;
 
   const ref = React.useRef<HTMLElement>(null);
+  const { code } = useContext(Locale);
   useOnDiscard(ref, onDiscard);
 
   return (
@@ -34,13 +36,13 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
             <Localized id='resourceprogress-ResourceProgress--all-strings'>
               ALL STRINGS
             </Localized>
-            <span className='value'>{asLocaleString(total)}</span>
+            <span className='value'>{asLocaleString(total, code)}</span>
           </h2>
           <h2 className='small'>
             <Localized id='resourceprogress-ResourceProgress--unreviewed'>
               UNREVIEWED
             </Localized>
-            <span className='value'>{asLocaleString(unreviewed)}</span>
+            <span className='value'>{asLocaleString(unreviewed, code)}</span>
           </h2>
         </header>
         <ProgressChart stats={stats} size={220} />
@@ -55,7 +57,7 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
           </span>
           <p className='value' onClick={onDiscard}>
             <Link to={{ status: 'translated' }}>
-              {asLocaleString(approved)}
+              {asLocaleString(approved, code)}
             </Link>
           </p>
         </div>
@@ -67,7 +69,7 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
           </span>
           <p className='value' onClick={onDiscard}>
             <Link to={{ status: 'pretranslated' }}>
-              {asLocaleString(pretranslated)}
+              {asLocaleString(pretranslated, code)}
             </Link>
           </p>
         </div>
@@ -78,7 +80,9 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
-            <Link to={{ status: 'warnings' }}>{asLocaleString(warnings)}</Link>
+            <Link to={{ status: 'warnings' }}>
+              {asLocaleString(warnings, code)}
+            </Link>
           </p>
         </div>
         <div className='errors'>
@@ -88,7 +92,9 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
-            <Link to={{ status: 'errors' }}>{asLocaleString(errors)}</Link>
+            <Link to={{ status: 'errors' }}>
+              {asLocaleString(errors, code)}
+            </Link>
           </p>
         </div>
         <div className='missing'>
@@ -98,7 +104,9 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
-            <Link to={{ status: 'missing' }}>{asLocaleString(missing)}</Link>
+            <Link to={{ status: 'missing' }}>
+              {asLocaleString(missing, code)}
+            </Link>
           </p>
         </div>
       </div>
