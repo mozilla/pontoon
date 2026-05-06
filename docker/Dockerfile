@@ -1,4 +1,4 @@
-FROM python:3.13-bookworm AS server
+FROM python:3.13-trixie AS server
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -13,8 +13,6 @@ ENV PYTHONPATH /app
 
 # Install required software.
 RUN apt-get update \
-    # Enable downloading packages over https
-    && apt-get install -y apt-transport-https \
     # Add NodeSource v24.x and install nodejs
     && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     # Install software
@@ -24,7 +22,8 @@ RUN apt-get update \
         libmemcached-dev \
         nodejs \
         postgresql-client \
-        postgresql-server-dev-15 \
+        # required to build psycopg2
+        libpq-dev \
     # Clean up what can be cleaned up.
     && apt-get autoremove -y
 
