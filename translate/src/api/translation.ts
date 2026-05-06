@@ -1,5 +1,6 @@
 import { POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';
+import type { MessageEntry } from '~/utils/message';
 import type { TranslationComment } from './comment';
 import type { SourceType } from './machinery';
 
@@ -80,22 +81,26 @@ type CreateTranslationResponse =
  */
 export function createTranslation(
   entityId: number,
-  translation: string,
+  entry: MessageEntry,
   localeCode: string,
   forceSuggestions: boolean,
-  resource: string,
+  allResources: boolean,
   ignoreWarnings: boolean,
   machinerySources: SourceType[],
 ): Promise<CreateTranslationResponse> {
   const payload = new URLSearchParams({
     entity: String(entityId),
-    translation,
+    value: JSON.stringify(entry.value ?? []),
     locale: localeCode,
     force_suggestions: String(forceSuggestions),
     machinery_sources: String(machinerySources),
-    stats: resource == 'all-resources' ? 'all' : 'resource',
+    stats: allResources ? 'all' : 'resource',
   });
 
+  if (entry.attributes?.size) {
+    const attrObj = Object.fromEntries(entry.attributes);
+    payload.append('properties', JSON.stringify(attrObj));
+  }
   if (ignoreWarnings) {
     payload.append('ignore_warnings', ignoreWarnings.toString());
   }
