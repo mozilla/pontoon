@@ -6,7 +6,6 @@ from collections import defaultdict
 
 from celery import shared_task
 from dateutil.relativedelta import relativedelta
-from jinja2.sandbox import SandboxedEnvironment
 from notifications.models import Notification
 
 from django.conf import settings
@@ -22,17 +21,9 @@ from pontoon.base.templatetags.helpers import full_url
 from pontoon.insights.models import LocaleInsightsSnapshot
 from pontoon.messaging.models import EmailContent
 from pontoon.messaging.utils import html_to_plain_text_with_links
-from pontoon.settings.base import (
-    INACTIVE_CONTRIBUTOR_PERIOD,
-    INACTIVE_MANAGER_PERIOD,
-    INACTIVE_TRANSLATOR_PERIOD,
-)
 
 
-jinja_env = SandboxedEnvironment()
 log = logging.getLogger(__name__)
-
-jinja_env.globals["full_url"] = full_url
 
 
 def _get_monthly_user_actions(users, months_ago):
@@ -342,8 +333,15 @@ def send_onboarding_email_1(user):
     Sends 1st onboarding email to a new user.
     """
     email_content = EmailContent.objects.get(email="onboarding_1")
-    content = jinja_env.from_string(email_content.body).render(
-        {"INACTIVE_CONTRIBUTOR_PERIOD": INACTIVE_CONTRIBUTOR_PERIOD}
+    content = email_content.body.format_map(
+        {
+            "INACTIVE_CONTRIBUTOR_PERIOD": settings.INACTIVE_CONTRIBUTOR_PERIOD,
+            "translate_url": full_url(
+                "pontoon.translate", "projects", "tutorial", "playground"
+            ),
+            "settings_url": full_url("pontoon.contributors.settings"),
+            "teams_url": full_url("pontoon.teams"),
+        }
     )
 
     subject = email_content.subject
@@ -380,7 +378,13 @@ def send_onboarding_emails_2(users):
     log.info("Start sending 2nd onboarding emails.")
 
     email_content = EmailContent.objects.get(email="onboarding_2")
-    content = jinja_env.from_string(email_content.body).render()
+    content = email_content.body.format_map(
+        {
+            "homepage_url": full_url("pontoon.homepage"),
+            "projects_url": full_url("pontoon.projects"),
+            "teams_url": full_url("pontoon.teams"),
+        }
+    )
 
     subject = email_content.subject
     template = get_template("messaging/emails/transactional.html")
@@ -416,7 +420,11 @@ def send_onboarding_emails_3(users):
     log.info("Start sending 3rd onboarding emails.")
 
     email_content = EmailContent.objects.get(email="onboarding_3")
-    content = jinja_env.from_string(email_content.body).render()
+    content = email_content.body.format_map(
+        {
+            "settings_url": full_url("pontoon.contributors.settings"),
+        }
+    )
 
     subject = email_content.subject
     template = get_template("messaging/emails/transactional.html")
@@ -452,8 +460,11 @@ def send_inactive_contributor_emails(users):
     log.info("Start sending inactive contributor emails.")
 
     email_content = EmailContent.objects.get(email="inactive_contributor")
-    content = jinja_env.from_string(email_content.body).render(
-        {"INACTIVE_CONTRIBUTOR_PERIOD": INACTIVE_CONTRIBUTOR_PERIOD}
+    content = email_content.body.format_map(
+        {
+            "INACTIVE_CONTRIBUTOR_PERIOD": settings.INACTIVE_CONTRIBUTOR_PERIOD,
+            "homepage_url": full_url("pontoon.homepage"),
+        }
     )
 
     subject = email_content.subject
@@ -502,8 +513,12 @@ def send_inactive_translator_emails(users, translator_map):
             log.error(f"User {user} is not a translator of any locale.")
             continue
 
-        content = jinja_env.from_string(email_content.body).render(
-            {"locale": locale, "INACTIVE_TRANSLATOR_PERIOD": INACTIVE_TRANSLATOR_PERIOD}
+        content = email_content.body.format_map(
+            {
+                "locale": locale,
+                "INACTIVE_TRANSLATOR_PERIOD": settings.INACTIVE_TRANSLATOR_PERIOD,
+                "team_url": full_url("pontoon.teams.team", locale.code),
+            }
         )
         body_html = template.render(
             {
@@ -546,9 +561,13 @@ def send_inactive_manager_emails(users, manager_map):
         except IndexError:
             log.error(f"User {user} is not a manager of any locale.")
             continue
-
-        content = jinja_env.from_string(email_content.body).render(
-            {"locale": locale, "INACTIVE_MANAGER_PERIOD": INACTIVE_MANAGER_PERIOD}
+        content = email_content.body.format_map(
+            {
+                "locale": locale,
+                "INACTIVE_MANAGER_PERIOD": settings.INACTIVE_MANAGER_PERIOD,
+                "contributors_url": full_url("pontoon.teams.contributors", locale.code),
+                "team_url": full_url("pontoon.teams.team", locale.code),
+            }
         )
         body_html = template.render(
             {
