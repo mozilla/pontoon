@@ -25,4 +25,4 @@ Removing a user **permanently deletes** their account. This is irreversible and 
 
 ## Adjusting permissions
 
-To change a user's role (Contributor, Translator, Team Manager), use the **Permissions** tab on the relevant Team page. See [User Accounts & Settings](../localizer/users.md#managing-permissions-team-managers) for details.
+To change a user's role (Contributor, Translator, Team Manager), use the **Permissions** tab on the relevant Team page. See [User Accounts & Settings](../localizer/users.md#managing-permissions) for details.

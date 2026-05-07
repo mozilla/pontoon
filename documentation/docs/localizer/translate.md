@@ -64,7 +64,7 @@ Examples include missing punctuation, differences in number of sentences and cap
 
 ![Internal check: warning](../assets/localizer/translate/check_warning.png "Example of warning")
 
-Certain types of checks reported by the Translate Toolkit library may result in many false positives. For this reason, they can be [completely disabled](users.md#editor-settings).
+Certain types of checks reported by the Translate Toolkit library may result in many false positives. For this reason, they can be [completely disabled](users.md#editor).
 
 ## Performing batch actions on strings
 

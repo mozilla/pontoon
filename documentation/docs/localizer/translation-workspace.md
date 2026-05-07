@@ -149,7 +149,7 @@ The top of this space contains a string navigation interface. It’s possible to
 ### Source string
 
 Below the navigation interface, the user can view the source string, any comments present in the resource regarding the string, and the resource path where the string is located.
-In the same area, the `REQUEST CONTEXT or REPORT ISSUE` button can be used to request more information about the current string: it will focus the [COMMENTS section](##source-string-comments), and mention the project manager for the project.
+In the same area, the `REQUEST CONTEXT or REPORT ISSUE` button can be used to request more information about the current string: it will focus the [COMMENTS section](#source-string-comments), and mention the project manager for the project.
 
 #### Context
 
