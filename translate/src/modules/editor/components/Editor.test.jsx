@@ -213,7 +213,7 @@ describe('<Editor>', () => {
   });
 
   it('passes a reconstructed translation to sendTranslation', async () => {
-    const createSpy = vi
+    using createSpy = vi
       .spyOn(TranslationAPI, 'createTranslation')
       .mockReturnValue({});
 
