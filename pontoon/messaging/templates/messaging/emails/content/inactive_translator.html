@@ -9,10 +9,10 @@
 <p>
   As part of our efforts to keep our localization community active and engaged,
   we periodically review account activity. We’ve noticed that in the past
-  {{ settings.INACTIVE_TRANSLATOR_PERIOD }} months you have not submitted any
-  translations or reviewed any translation submissions for your locale. We
-  understand that life can get busy, and finding time to contribute to projects
-  isn't always easy. We get it.
+  {INACTIVE_TRANSLATOR_PERIOD} months you have not submitted any translations or
+  reviewed any translation submissions for your locale. We understand that life
+  can get busy, and finding time to contribute to projects isn't always easy. We
+  get it.
 </p>
 
 <p>
@@ -37,9 +37,7 @@
 </ul>
 
 <p>
-  <a href="{{ full_url('pontoon.teams.team', locale.code) }}"
-    >{{ full_url('pontoon.teams.team', locale.code) }}</a
-  >
+  <a href="{team_url}">{team_url}</a>
 </p>
 
 <p>

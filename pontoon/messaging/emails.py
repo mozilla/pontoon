@@ -341,7 +341,6 @@ def send_onboarding_email_1(user):
     content = email_content.body.format_map(
         SafeDict(
             {
-                "INACTIVE_CONTRIBUTOR_PERIOD": settings.INACTIVE_CONTRIBUTOR_PERIOD,
                 "translate_url": full_url(
                     "pontoon.translate", "projects", "tutorial", "playground"
                 ),
@@ -432,6 +431,7 @@ def send_onboarding_emails_3(users):
     content = email_content.body.format_map(
         SafeDict(
             {
+                "docs_url": full_url("pontoon.docs", "localizer"),
                 "settings_url": full_url("pontoon.contributors.settings"),
             }
         )
