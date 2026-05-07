@@ -26,6 +26,11 @@ from pontoon.messaging.utils import html_to_plain_text_with_links
 log = logging.getLogger(__name__)
 
 
+class SafeDict(dict):
+    def __missing__(self, key):
+        return "{" + key + "}"
+
+
 def _get_monthly_user_actions(users, months_ago):
     month_date = timezone.now() - relativedelta(months=months_ago)
 
@@ -334,14 +339,16 @@ def send_onboarding_email_1(user):
     """
     email_content = EmailContent.objects.get(email="onboarding_1")
     content = email_content.body.format_map(
-        {
-            "INACTIVE_CONTRIBUTOR_PERIOD": settings.INACTIVE_CONTRIBUTOR_PERIOD,
-            "translate_url": full_url(
-                "pontoon.translate", "projects", "tutorial", "playground"
-            ),
-            "settings_url": full_url("pontoon.contributors.settings"),
-            "teams_url": full_url("pontoon.teams"),
-        }
+        SafeDict(
+            {
+                "INACTIVE_CONTRIBUTOR_PERIOD": settings.INACTIVE_CONTRIBUTOR_PERIOD,
+                "translate_url": full_url(
+                    "pontoon.translate", "projects", "tutorial", "playground"
+                ),
+                "settings_url": full_url("pontoon.contributors.settings"),
+                "teams_url": full_url("pontoon.teams"),
+            }
+        )
     )
 
     subject = email_content.subject
@@ -379,11 +386,13 @@ def send_onboarding_emails_2(users):
 
     email_content = EmailContent.objects.get(email="onboarding_2")
     content = email_content.body.format_map(
-        {
-            "homepage_url": full_url("pontoon.homepage"),
-            "projects_url": full_url("pontoon.projects"),
-            "teams_url": full_url("pontoon.teams"),
-        }
+        SafeDict(
+            {
+                "homepage_url": full_url("pontoon.homepage"),
+                "projects_url": full_url("pontoon.projects"),
+                "teams_url": full_url("pontoon.teams"),
+            }
+        )
     )
 
     subject = email_content.subject
@@ -421,9 +430,11 @@ def send_onboarding_emails_3(users):
 
     email_content = EmailContent.objects.get(email="onboarding_3")
     content = email_content.body.format_map(
-        {
-            "settings_url": full_url("pontoon.contributors.settings"),
-        }
+        SafeDict(
+            {
+                "settings_url": full_url("pontoon.contributors.settings"),
+            }
+        )
     )
 
     subject = email_content.subject
@@ -461,10 +472,12 @@ def send_inactive_contributor_emails(users):
 
     email_content = EmailContent.objects.get(email="inactive_contributor")
     content = email_content.body.format_map(
-        {
-            "INACTIVE_CONTRIBUTOR_PERIOD": settings.INACTIVE_CONTRIBUTOR_PERIOD,
-            "homepage_url": full_url("pontoon.homepage"),
-        }
+        SafeDict(
+            {
+                "INACTIVE_CONTRIBUTOR_PERIOD": settings.INACTIVE_CONTRIBUTOR_PERIOD,
+                "homepage_url": full_url("pontoon.homepage"),
+            }
+        )
     )
 
     subject = email_content.subject
@@ -514,11 +527,12 @@ def send_inactive_translator_emails(users, translator_map):
             continue
 
         content = email_content.body.format_map(
-            {
-                "locale": locale,
-                "INACTIVE_TRANSLATOR_PERIOD": settings.INACTIVE_TRANSLATOR_PERIOD,
-                "team_url": full_url("pontoon.teams.team", locale.code),
-            }
+            SafeDict(
+                {
+                    "INACTIVE_TRANSLATOR_PERIOD": settings.INACTIVE_TRANSLATOR_PERIOD,
+                    "team_url": full_url("pontoon.teams.team", locale.code),
+                }
+            )
         )
         body_html = template.render(
             {
@@ -562,12 +576,15 @@ def send_inactive_manager_emails(users, manager_map):
             log.error(f"User {user} is not a manager of any locale.")
             continue
         content = email_content.body.format_map(
-            {
-                "locale": locale,
-                "INACTIVE_MANAGER_PERIOD": settings.INACTIVE_MANAGER_PERIOD,
-                "contributors_url": full_url("pontoon.teams.contributors", locale.code),
-                "team_url": full_url("pontoon.teams.team", locale.code),
-            }
+            SafeDict(
+                {
+                    "INACTIVE_MANAGER_PERIOD": settings.INACTIVE_MANAGER_PERIOD,
+                    "contributors_url": full_url(
+                        "pontoon.teams.contributors", locale.code
+                    ),
+                    "team_url": full_url("pontoon.teams.team", locale.code),
+                }
+            )
         )
         body_html = template.render(
             {
