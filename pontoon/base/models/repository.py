@@ -4,8 +4,6 @@ import re
 from os.path import join, normpath
 from urllib.parse import urlparse
 
-from jsonfield import JSONField
-
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
@@ -47,7 +45,7 @@ class Repository(models.Model):
 
     website = models.URLField("Public Repository Website", blank=True, max_length=2000)
 
-    last_synced_revisions = JSONField(blank=True, default=dict)
+    last_synced_revisions = models.JSONField(blank=True, default=dict)
     """
     Mapping with a single key named "single_locale" with the VCS revision of its last sync.
     """
