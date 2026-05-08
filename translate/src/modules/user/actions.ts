@@ -17,8 +17,17 @@ import type { AppThunk } from '~/store';
 export const UPDATE = 'user/UPDATE';
 export const UPDATE_SETTINGS = 'user/UPDATE_SETTINGS';
 export const UPDATE_THEME = 'user/UPDATE_THEME';
+export const MARK_ALL_NOTIFICATIONS_READ = 'user/MARK_ALL_NOTIFICATIONS_READ';
 
-export type Action = UpdateAction | UpdateSettingsAction | UpdateThemeAction;
+export type MarkAllNotificationsReadAction = {
+  readonly type: typeof MARK_ALL_NOTIFICATIONS_READ;
+};
+
+export type Action =
+  | UpdateAction
+  | UpdateSettingsAction
+  | UpdateThemeAction
+  | MarkAllNotificationsReadAction;
 
 /**
  * Update the user data.
@@ -85,7 +94,7 @@ export function saveTheme(theme: string, username: string): AppThunk {
 
 export const markAllNotificationsAsRead_ = (): AppThunk => async (dispatch) => {
   await markAllNotificationsAsRead();
-  dispatch(getUserData());
+  dispatch({ type: MARK_ALL_NOTIFICATIONS_READ });
 };
 
 /**
