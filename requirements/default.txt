@@ -429,7 +429,6 @@ django==5.2.13 \
     #   djangorestframework
     #   drf-spectacular
     #   drf-spectacular-sidecar
-    #   jsonfield
 django-ace==1.43.5 \
     --hash=sha256:36cb72215ac6def45e90cb246bad9efcb2e58685f6f9be6411eb111c5a68fc43 \
     --hash=sha256:b5a7104345ddddace4a3e96c330428af436728cfcb7de96f4891610719b047d4
@@ -744,10 +743,6 @@ joblib==1.5.3 \
     --hash=sha256:5fc3c5039fc5ca8c0276333a188bbd59d6b7ab37fe6632daa76bc7f9ec18e713 \
     --hash=sha256:8561a3269e6801106863fd0d6d84bb737be9e7631e33aaed3fb9ce5953688da3
     # via sacremoses
-jsonfield==3.1.0 \
-    --hash=sha256:7e4e84597de21eeaeeaaa7cc5da08c61c48a9b64d0c446b2d71255d01812887a \
-    --hash=sha256:df857811587f252b97bafba42e02805e70a398a7a47870bc6358a0308dd689ed
-    # via -r default.in
 jsonschema==4.26.0 \
     --hash=sha256:0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326 \
     --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
