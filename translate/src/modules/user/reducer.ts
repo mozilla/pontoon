@@ -1,6 +1,12 @@
 import { DEFAULT_SEARCH_OPTIONS } from '~/modules/search/constants';
 
-import { Action, UPDATE, UPDATE_SETTINGS, UPDATE_THEME } from './actions';
+import {
+  Action,
+  MARK_ALL_NOTIFICATIONS_READ,
+  UPDATE,
+  UPDATE_SETTINGS,
+  UPDATE_THEME,
+} from './actions';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
@@ -69,7 +75,7 @@ function settings(
 export type Notification = {
   readonly id: number;
   readonly level: string;
-  readonly unread: string;
+  readonly unread: boolean;
   readonly description: {
     readonly content: string;
     readonly is_comment: boolean;
@@ -197,6 +203,18 @@ export function reducer(state: UserState = initial, action: Action): UserState {
       return {
         ...state,
         theme: action.theme,
+      };
+    case MARK_ALL_NOTIFICATIONS_READ:
+      return {
+        ...state,
+        notifications: {
+          has_unread: false,
+          unread_count: '0',
+          notifications: state.notifications.notifications.map((n) => ({
+            ...n,
+            unread: false,
+          })),
+        },
       };
     default:
       return state;
