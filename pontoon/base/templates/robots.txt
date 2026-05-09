@@ -4,3 +4,17 @@ Disallow: /admin/
 Disallow: /contributors/
 Disallow: /*insights/
 Disallow: /api/
+
+User-agent: AhrefsBot
+User-agent: AliyunSecBot
+User-agent: Amazonbot
+User-agent: Barkrowler
+User-agent: BLEXBot
+User-agent: Bytespider
+User-agent: ClaudeBot
+User-agent: GPTBot
+User-agent: meta-externalagent
+User-agent: MJ12bot
+User-agent: PetalBot
+User-agent: SemrushBot
+Disallow: /
