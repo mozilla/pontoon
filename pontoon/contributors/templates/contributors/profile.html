@@ -39,8 +39,10 @@
           {% if profile_is_disabled %}
             <div class="status">
               <i class="fas fa-exclamation-circle fa-sm"></i>
-              <span title="{{ disabled_title }}"
-                >Account disabled by an administrator</span
+              <span
+                {% if disabled_title %}title="{{ disabled_title }}"{% endif %}
+              >
+                Account disabled by an administrator</span
               >
             </div>
           {% endif %}
@@ -217,12 +219,7 @@
               <div class="item-with-icon">
                 <span class="icon fas fa-ban"></span>
                 <span
-                  title="{% if ban_activity.performed_by %}
-                    Disabled by
-                    {{ ban_activity.performed_by.first_name or ban_activity.performed_by.username }}
-                  {% endif %}{% if ban_activity.action_reason %}
-                    : {{ ban_activity.action_reason }}
-                  {% endif %}"
+                  {% if disabled_title %}title="{{ disabled_title }}"{% endif %}
                   >{{ ban_activity.created_at|format_datetime("date") }}</span
                 >
               </div>
