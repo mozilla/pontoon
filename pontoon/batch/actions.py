@@ -297,7 +297,7 @@ def copy_translation_from_locale(form, user, translations, locale):
         entity__translation__approved=True,
     )
 
-    # translations to create in the current locale
+    # Translations to create in the current locale
     translations_to_create = []
     for t in other_locale_translations:
         value, properties = parse_db_string_to_json(t.entity.resource.format, t.string)
@@ -309,6 +309,7 @@ def copy_translation_from_locale(form, user, translations, locale):
                 approved=False,
                 rejected=False,
                 fuzzy=False,
+                active=True,
                 user=user,
                 value=value,
                 properties=properties,
@@ -320,7 +321,7 @@ def copy_translation_from_locale(form, user, translations, locale):
         translations_to_create,
     )
 
-    # requery translation to get PKs
+    # Requery translation to get PKs
     changed_translations_qs = Translation.objects.filter(
         pk__in=[t.pk for t in changed_translations]
     )
