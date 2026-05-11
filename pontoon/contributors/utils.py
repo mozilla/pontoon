@@ -24,6 +24,7 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Locale,
     Translation,
+    UserBanLog,
 )
 from pontoon.base.templatetags.helpers import intcomma
 from pontoon.base.utils import convert_to_unix_time
@@ -520,3 +521,17 @@ def get_contribution_timeline_data(
     )
 
     return sorted_contributions
+
+
+def log_user_ban(actor, target, reason):
+    action_type = (
+        UserBanLog.ActionType.UNBANNED
+        if target.is_active
+        else UserBanLog.ActionType.BANNED
+    )
+    UserBanLog.objects.create(
+        performed_by=actor,
+        performed_on=target,
+        action_reason=reason,
+        action_type=action_type,
+    )

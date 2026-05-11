@@ -9,6 +9,8 @@ Deactivating a user prevents them from logging in but preserves their contributi
 3. Uncheck the **Active** checkbox on the user's record.
 4. Click **Save**.
 
+Users can also be deactivated directly from their Profile page, where an optional reason for disabling can be provided.
+
 Deactivation is reversible — you can reactivate the user by checking **Active** again.
 
 ## Removing users

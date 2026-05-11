@@ -411,6 +411,17 @@ $('body').on('click', '#insights .chart-group-navigation li', function () {
   $('.chart-group').css('marginLeft', -index * itemWidth);
 });
 
+$('#account-status-form button[type="submit"]').on('click', function (event) {
+  const form = $(this).closest('form');
+  const textarea = form.find('.disable-reason');
+
+  if (textarea.length && textarea.hasClass('hidden')) {
+    event.preventDefault();
+    textarea.removeClass('hidden').focus();
+    return;
+  }
+});
+
 $('#account-status-form').on('submit', function (event) {
   event.preventDefault();
 
@@ -418,9 +429,7 @@ $('#account-status-form').on('submit', function (event) {
   $.ajax({
     url: form.attr('action'),
     type: 'POST',
-    data: {
-      csrfmiddlewaretoken: $('body').data('csrf'),
-    },
+    data: form.serialize(),
     success: function () {
       location.reload();
     },

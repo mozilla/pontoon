@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.timezone import make_aware, now
 
 from pontoon.api.models import PersonalAccessToken
-from pontoon.base.models import User
+from pontoon.base.models import User, UserBanLog
 from pontoon.base.tests import (
     LocaleFactory,
     TranslationFactory,
@@ -97,7 +97,7 @@ def test_profileform_user_locales_order(member):
             ),
         },
     )
-    assert response.status_code, 200
+    assert response.status_code == 200
     assert list(User.objects.get(pk=member.user.pk).profile.sorted_locales) == [
         locale1,
         locale2,
@@ -261,11 +261,15 @@ def test_toggle_active_user_status(client_superuser, user_a):
     # request on active user --> user disabled
     assert user_a.is_active is True
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-    assert response.status_code == 200, User.objects.get(pk=user_a).is_active is False
+    assert response.status_code == 200
+    user_a.refresh_from_db()
+    assert user_a.is_active is False
 
     # request on disabled user --> user enabled
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-    assert response.status_code == 200, User.objects.get(pk=user_a).is_active is True
+    assert response.status_code == 200
+    user_a.refresh_from_db()
+    assert user_a.is_active is True
 
 
 @pytest.mark.django_db
@@ -288,6 +292,65 @@ def test_toggle_active_user_status_requires_admin(member, admin, client_superuse
     member.client.force_login(admin)
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_toggle_active_user_status_creates_ban_log(client_superuser, user_a):
+    url = reverse(
+        "pontoon.contributors.toggle_active_user_status", args=[user_a.username]
+    )
+
+    client_superuser.post(
+        url,
+        {"action_reason": "Spamming translations"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    log = UserBanLog.objects.get(performed_on=user_a)
+    assert log.action_type == UserBanLog.ActionType.BANNED
+    assert log.action_reason == "Spamming translations"
+
+
+@pytest.mark.django_db
+def test_toggle_active_user_status_creates_unban_log(client_superuser, user_a):
+    url = reverse(
+        "pontoon.contributors.toggle_active_user_status", args=[user_a.username]
+    )
+
+    # ban first
+    client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+    # then unban
+    client_superuser.post(
+        url,
+        {"action_reason": "Appeal approved"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    logs = UserBanLog.objects.filter(performed_on=user_a).order_by("created_at")
+    assert logs[0].action_type == UserBanLog.ActionType.BANNED
+    assert logs[1].action_type == UserBanLog.ActionType.UNBANNED
+    assert logs[1].action_reason == "Appeal approved"
+
+
+@pytest.mark.django_db
+def test_ban_activity_hidden_from_non_superuser(
+    member, client_superuser, user_a, mock_profile_render
+):
+    toggle_url = reverse(
+        "pontoon.contributors.toggle_active_user_status", args=[user_a.username]
+    )
+    client_superuser.post(toggle_url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+
+    profile_url = f"/contributors/{user_a.username}/"
+
+    client_superuser.get(profile_url)
+    superuser_context = mock_profile_render.call_args[0][2]
+    assert superuser_context["ban_activity"] is not None
+
+    member.client.force_login(member.user)
+    member.client.get(profile_url)
+    non_admin_context = mock_profile_render.call_args[0][2]
+    assert non_admin_context["ban_activity"] is None
 
 
 @pytest.mark.django_db

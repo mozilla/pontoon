@@ -13,6 +13,7 @@ from pontoon.base.models.translated_resource import TranslatedResource
 from pontoon.base.models.translation import Translation
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
 from pontoon.base.models.user import User
+from pontoon.base.models.user_banlog import UserBanLog
 from pontoon.base.models.user_profile import UserProfile
 from pontoon.db import IContainsCollate  # noqa
 
@@ -36,6 +37,7 @@ __all__ = [
     "Translation",
     "TranslationMemoryEntry",
     "User",
+    "UserBanLog",
     "UserProfile",
     "repository_url_validator",
     "validate_cldr",
