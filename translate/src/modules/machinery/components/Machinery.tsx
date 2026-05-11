@@ -76,10 +76,10 @@ export function Machinery(): React.ReactElement<'section'> {
           <ul>
             {results.map((result, index) => (
               <MachineryTranslationComponent
-                index={index + translations.length}
+                index={index}
                 sourceString={query}
                 translation={result}
-                key={index + translations.length}
+                key={index}
               />
             ))}
           </ul>
