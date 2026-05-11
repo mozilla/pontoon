@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
+from django.core import mail
 from django.template import TemplateSyntaxError
 from django.test.client import RequestFactory
 from django.urls import NoReverseMatch
@@ -86,6 +87,9 @@ def test_send_onboarding_email_1(user_a):
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {e}")
 
+    assert len(mail.outbox) == 2
+    assert mail.outbox[0].to == [user_a.contact_email]
+
 
 @pytest.mark.django_db
 def test_send_onboarding_emails_2(user_a):
@@ -102,6 +106,9 @@ def test_send_onboarding_emails_2(user_a):
         pytest.fail(f"Template is broken: {e}")
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {e}")
+
+    assert len(mail.outbox) == 2
+    assert mail.outbox[0].to == [user_a.contact_email]
 
 
 @pytest.mark.django_db
@@ -120,6 +127,9 @@ def test_send_onboarding_emails_3(user_a):
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {e}")
 
+    assert len(mail.outbox) == 2
+    assert mail.outbox[0].to == [user_a.contact_email]
+
 
 @pytest.mark.django_db
 def test_send_inactive_contributor_emails(user_a):
@@ -136,6 +146,9 @@ def test_send_inactive_contributor_emails(user_a):
         pytest.fail(f"Template is broken: {e}")
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {e}")
+
+    assert len(mail.outbox) == 2
+    assert mail.outbox[0].to == [user_a.contact_email]
 
 
 @pytest.mark.django_db
@@ -155,6 +168,9 @@ def test_send_inactive_translator_emails(user_a, locale_a):
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {e}")
 
+    assert len(mail.outbox) == 2
+    assert mail.outbox[0].to == [user_a.contact_email]
+
 
 @pytest.mark.django_db
 def test_send_inactive_manager_emails(user_a, locale_a):
@@ -173,3 +189,6 @@ def test_send_inactive_manager_emails(user_a, locale_a):
         pytest.fail(f"Template is broken: {e}")
     except Exception as e:
         pytest.fail(f"An unexpected error occurred: {e}")
+
+    assert len(mail.outbox) == 2
+    assert mail.outbox[0].to == [user_a.contact_email]
