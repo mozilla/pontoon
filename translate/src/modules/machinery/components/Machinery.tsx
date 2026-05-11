@@ -23,6 +23,7 @@ export function Machinery(): React.ReactElement<'section'> {
   } = useContext(MachineryTranslations);
   const { fetching, hasMore, input, query, results, setInput, getResults } =
     useContext(SearchData);
+  const isConcordanceSearchActive = query.trim().length > 0;
 
   const [sentryRef, { rootRef }] = useInfiniteScroll({
     loading: fetching,
@@ -71,18 +72,7 @@ export function Machinery(): React.ReactElement<'section'> {
         </form>
       </div>
       <div className='list-wrapper' ref={rootRef}>
-        {results.length === 0 ? (
-          <ul>
-            {translations.map((translation, index) => (
-              <MachineryTranslationComponent
-                index={index}
-                sourceString={source}
-                translation={translation}
-                key={index}
-              />
-            ))}
-          </ul>
-        ) : (
+        {isConcordanceSearchActive ? (
           <ul>
             {results.map((result, index) => (
               <MachineryTranslationComponent
@@ -90,6 +80,17 @@ export function Machinery(): React.ReactElement<'section'> {
                 sourceString={query}
                 translation={result}
                 key={index + translations.length}
+              />
+            ))}
+          </ul>
+        ) : (
+          <ul>
+            {translations.map((translation, index) => (
+              <MachineryTranslationComponent
+                index={index}
+                sourceString={source}
+                translation={translation}
+                key={index}
               />
             ))}
           </ul>

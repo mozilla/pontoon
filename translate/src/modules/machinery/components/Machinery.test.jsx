@@ -54,7 +54,7 @@ describe('<Machinery>', () => {
     getByRole('searchbox');
   });
 
-  it('shows the correct number of translations', () => {
+  it('shows machinery translations when concordance search is not active', () => {
     const { getAllByRole, getAllByTitle } = mountMachinery(
       [
         { original: '1', sources: [] },
@@ -62,12 +62,66 @@ describe('<Machinery>', () => {
         { original: '3', sources: [] },
       ],
       {
-        results: [],
+        query: '',
+        results: [
+          {
+            original: 'concordance-only',
+            translation: 'x',
+            sources: ['concordance-search'],
+          },
+        ],
       },
     );
 
     expect(getAllByRole('listitem')).toHaveLength(3);
     expect(getAllByTitle(copyListItemTitle)).toHaveLength(3);
+  });
+
+  it('shows concordance search results only when a query is active, not machinery translations', () => {
+    const { getAllByRole, queryByText } = mountMachinery(
+      [
+        { original: 'machinery-a', sources: ['google-translate'] },
+        { original: 'machinery-b', sources: ['translation-memory'] },
+        { original: 'machinery-c', sources: ['translation-memory'] },
+      ],
+      {
+        input: 'find me',
+        query: 'find me',
+        results: [
+          {
+            original: 'one',
+            translation: 'uno',
+            sources: ['concordance-search'],
+          },
+          {
+            original: 'two',
+            translation: 'dos',
+            sources: ['concordance-search'],
+          },
+        ],
+      },
+    );
+
+    expect(getAllByRole('listitem')).toHaveLength(2);
+    expect(queryByText('machinery-a')).not.toBeInTheDocument();
+    expect(queryByText('one')).toBeInTheDocument();
+    expect(queryByText('two')).toBeInTheDocument();
+  });
+
+  it('shows no list rows when concordance search is active but has no results', () => {
+    const { queryAllByRole } = mountMachinery(
+      [
+        { original: 'machinery-a', sources: ['google-translate'] },
+        { original: 'machinery-b', sources: ['translation-memory'] },
+      ],
+      {
+        input: 'nothing',
+        query: 'nothing',
+        results: [],
+      },
+    );
+
+    expect(queryAllByRole('listitem')).toHaveLength(0);
   });
 
   it('renders a reset button if a search query is present', () => {
