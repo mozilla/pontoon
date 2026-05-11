@@ -22,7 +22,13 @@
         {% set manager_for_locales = contributor.manager_for_locales %}
         {% set user_is_translator = user.can_translate_locales %}
         {% set profile_is_disabled = contributor.is_active == False %}
-
+        {% if ban_activity %}
+          {%
+            set disabled_title =
+            "Disabled by " ~ ban_activity.performed_by.display_name ~
+            (": " ~ ban_activity.action_reason if ban_activity.action_reason else "")
+          %}
+        {% endif %}
         <a
           class="avatar"
           href="{% if is_my_profile %}https://gravatar.com/{% endif %}"
@@ -31,11 +37,9 @@
             <div class="desc">Update profile picture</div>
           {% endif %}
           {% if profile_is_disabled %}
-            {% set disable_by = ("Disabled by " + (ban_activity.performed_by.first_name or ban_activity.performed_by.username)) if (ban_activity and ban_activity.performed_by) else "" %}
-            {% set disable_reason = (": " + ban_activity.action_reason) if (ban_activity and ban_activity.action_reason) else "" %}
             <div class="status">
               <i class="fas fa-exclamation-circle fa-sm"></i>
-              <span title="{{ disable_by + disable_reason }}"
+              <span title="{{ disabled_title }}"
                 >Account disabled by an administrator</span
               >
             </div>
