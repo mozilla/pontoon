@@ -341,7 +341,7 @@ def send_onboarding_email_1(user):
     content = email_content.body.format_map(
         SafeDict(
             {
-                "translate_url": full_url(
+                "tutorial_url": full_url(
                     "pontoon.translate", "projects", "tutorial", "playground"
                 ),
                 "settings_url": full_url("pontoon.contributors.settings"),
