@@ -12,6 +12,7 @@ import { ApproveAll } from './ApproveAll';
 import './BatchActions.css';
 import { RejectAll } from './RejectAll';
 import { ReplaceAll } from './ReplaceAll';
+import { CopyFromLocale } from './CopyFromLocale';
 
 /**
  * Renders batch editor, used for performing mass actions on translations.
@@ -24,6 +25,7 @@ export function BatchActions(): React.ReactElement<'div'> {
 
   const find = useRef<HTMLInputElement>(null);
   const replace = useRef<HTMLInputElement>(null);
+  const otherLocale = useRef<HTMLInputElement>(null);
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
@@ -92,12 +94,42 @@ export function BatchActions(): React.ReactElement<'div'> {
     }
   }, [location, batchactions]);
 
+  const copyFromLocale = useCallback(() => {
+    if (otherLocale.current && !batchactions.requestInProgress) {
+      const olv = otherLocale.current.value;
+
+      if (olv === '') {
+        otherLocale.current.focus();
+      } else {
+        dispatch(
+          performAction(
+            location,
+            'copy_from_locale',
+            batchactions.entities,
+            showBadgeTooltip,
+            undefined,
+            undefined,
+            olv,
+          ),
+        );
+      }
+    }
+  }, [location, batchactions, showBadgeTooltip]);
+
   const submitReplaceForm = useCallback(
     (ev: React.SyntheticEvent<HTMLFormElement>) => {
       ev.preventDefault();
       replaceAll();
     },
     [replaceAll],
+  );
+
+  const submitCopyFromLocaleForm = useCallback(
+    (ev: React.SyntheticEvent<HTMLFormElement>) => {
+      ev.preventDefault();
+      copyFromLocale();
+    },
+    [copyFromLocale],
   );
 
   return (
@@ -195,6 +227,27 @@ export function BatchActions(): React.ReactElement<'div'> {
             </Localized>
 
             <ReplaceAll replaceAll={replaceAll} batchactions={batchactions} />
+          </form>
+        </div>
+        <div className='copy-from-locale'>
+          <Localized id='batchactions-BatchActions--copy-from-locale-heading'>
+            <h2>COPY FROM OTHER LOCALE</h2>
+          </Localized>
+          <form onSubmit={submitCopyFromLocaleForm}>
+            <Localized
+              id='batchactions-BatchActions--copy-from-locale'
+              attrs={{ placeholder: true }}
+            >
+              <input
+                className='other-locale'
+                placeholder='Source locale, e.g. en-US'
+                ref={otherLocale}
+              />
+            </Localized>
+            <CopyFromLocale
+              copyFromLocale={copyFromLocale}
+              batchactions={batchactions}
+            />
           </form>
         </div>
       </div>
