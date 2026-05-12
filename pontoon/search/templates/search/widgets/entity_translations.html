@@ -31,41 +31,46 @@
     </div>
   </div>
 
+  <div id="translation-list-header">
+    <span class="locale-header">LOCALE</span>
+    <span class="translation-header">Translation</span>
+  </div>
   <ul id="translation-list">
     {% for translation in entity.translations %}
       <li class="translation-container">
-        <div class="translation-string-container">
-          <span class="translation-string">{{ translation.string }}</span>
-        </div>
-
-        <div class="translation-info-container">
-          <div class="locale-container">
-            <a href="{{ url('pontoon.teams.team', translation.locale.code ) }}">
-              <span class="translation-locale-name"
-                >{{ translation.locale.name }}</span
+        <div class="translation-row">
+          <div class="translation-info-container">
+            <div class="locale-container">
+              <a
+                href="{{ url('pontoon.teams.team', translation.locale.code ) }}"
               >
-              <span class="divider">&bull;</span>
-              <span class="translation-locale-code"
-                >{{ translation.locale.code }}</span
-              >
-            </a>
+                <span
+                  class="translation-locale-code"
+                  title="{{ translation.locale.name }}"
+                  >{{ translation.locale.code }}</span
+                >
+              </a>
+            </div>
           </div>
-          <div class="utility-container controls">
-            <a
-              class="edit button"
-              href="{{ url('pontoon.translate', locale=translation.locale.code, project=entity.project.slug, resource=entity.resource.path) }}?string={{ entity.id }}"
-            >
-              <span class="fas fa-pencil-alt"></span>
-              Edit
-            </a>
-            <button
-              class="copy button"
-              type="button"
-              data-clipboard-text="{{ translation.string }}"
-            >
-              <span class="far fa-copy"></span>
-              Copy
-            </button>
+          <div class="translation-string-container">
+            <span class="translation-string">{{ translation.string }}</span>
+            <div class="utility-container controls">
+              <a
+                class="edit button"
+                href="{{ url('pontoon.translate', locale=translation.locale.code, project=entity.project.slug, resource=entity.resource.path) }}?string={{ entity.id }}"
+              >
+                <span class="fas fa-pencil-alt"></span>
+                Edit
+              </a>
+              <button
+                class="copy button"
+                type="button"
+                data-clipboard-text="{{ translation.string }}"
+              >
+                <span class="far fa-copy"></span>
+                Copy
+              </button>
+            </div>
           </div>
         </div>
       </li>
