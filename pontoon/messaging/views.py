@@ -328,7 +328,7 @@ def send_message(request):
                 recipient=recipient,
                 verb="has sent you a message",
                 target=None,
-                description=f"{subject}<br/><br/>{body}",
+                description=f'<span class="subject">{subject}</span><br/><br/>{body}',
                 identifier=identifier,
                 category="direct_message",
             )
