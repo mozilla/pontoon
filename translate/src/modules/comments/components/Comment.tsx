@@ -88,15 +88,21 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
         ) : (
           <div className='content'>
             <div>
-              <a
-                className='comment-author'
-                href={`/contributors/${comment.username}`}
-                target='_blank'
-                rel='noopener noreferrer'
-                onClick={(e: React.MouseEvent) => e.stopPropagation()}
-              >
-                {comment.author}
-              </a>
+              {comment.username ? (
+                <a
+                  className='comment-author'
+                  href={`/contributors/${comment.username}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                >
+                  {comment.author}
+                </a>
+              ) : (
+                <span className='comment-author deleted-user'>
+                  {comment.author}
+                </span>
+              )}
               <Linkify
                 properties={{
                   target: '_blank',

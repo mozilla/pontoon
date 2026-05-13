@@ -35,8 +35,13 @@ export function CommentsList({
               key={comment.id}
               onDeleteComment={onDeleteComment}
               onEditComment={onEditComment}
-              canEdit={user.username === comment.username}
-              canDelete={user.username === comment.username || user.isPM}
+              canEdit={
+                comment.username !== null && user.username === comment.username
+              }
+              canDelete={
+                comment.username !== null &&
+                (user.username === comment.username || user.isPM)
+              }
               user={user}
             />
           ))}

@@ -28,11 +28,21 @@ class Comment(models.Model):
 
     def serialize(self, project_contact):
         locale = self.locale or self.translation.locale
+        if self.author is None:
+            author = "Deleted"
+            username = None
+            user_banner = ("", "")
+            user_gravatar_url_small = None
+        else:
+            author = self.author.name_or_email
+            username = self.author.username
+            user_banner = self.author.banner(locale, project_contact)
+            user_gravatar_url_small = self.author.gravatar_url(88)
         return {
-            "author": self.author.name_or_email,
-            "username": self.author.username,
-            "user_banner": self.author.banner(locale, project_contact),
-            "user_gravatar_url_small": self.author.gravatar_url(88),
+            "author": author,
+            "username": username,
+            "user_banner": user_banner,
+            "user_gravatar_url_small": user_gravatar_url_small,
             "created_at": self.timestamp.strftime("%b %d, %Y %H:%M"),
             "date_iso": self.timestamp.isoformat(),
             "content": self.content,
