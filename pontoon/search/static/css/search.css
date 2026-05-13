@@ -203,6 +203,7 @@
   border-radius: 6px;
   font-size: 16px;
   padding: 16px;
+  margin-bottom: 20px;
 
   .translation-info-container {
     display: flex;
@@ -215,7 +216,7 @@
   }
 
   .button {
-    background: var(--background-1);
+    background: var(--button-background-2);
   }
 
   .button:hover {
@@ -271,6 +272,7 @@
         height: 28px;
 
         .translation-locale-code {
+          font-style: italic;
           color: var(--status-translated-alt);
           vertical-align: sub;
         }
