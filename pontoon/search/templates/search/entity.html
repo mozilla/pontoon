@@ -16,6 +16,21 @@
     <div class="container">
       {% if entity.translations %}
         {{ Translations.list_translations(entity) }}
+        <div class="footer">
+          <div class="api-row">
+            <span class="chip"> API </span>
+            <span
+              >These results are also available as an
+              <a
+                href="{{ url('entity-individual', entity.id) }}?include_translations=True"
+                >API request</a
+              >.</span
+            >
+          </div>
+          <a href="https://github.com/mozilla/pontoon/tree/main/pontoon/api"
+            >Learn more about the Pontoon API.</a
+          >
+        </div>
       {% else %}
         {{ Translations.no_translations() }}
       {% endif %}
