@@ -43,9 +43,12 @@ def sync_project(
         lc.code: lc for lc in project.locales.order_by("code")
     }
     paths.locales = list(locale_map.keys())
-    added_entities_count, changed_paths, removed_paths = sync_resources_from_repo(
-        project, locale_map, checkouts.source, paths, now
-    )
+    (
+        added_entities_count,
+        changed_paths,
+        removed_paths,
+        empty_gettext_locales,
+    ) = sync_resources_from_repo(project, locale_map, checkouts.source, paths, now)
 
     db_changes = ChangedEntityLocale.objects.filter(
         entity__resource__project=project, when__lte=now
@@ -72,6 +75,7 @@ def sync_project(
         changed_paths,
         removed_paths,
         now,
+        empty_gettext_locales,
     )
     if commit:
         db_changes.delete()

@@ -23,6 +23,7 @@ from pontoon.base.models import (
     TranslatedResource,
 )
 from pontoon.sync.core.checkout import Checkout
+from pontoon.sync.core.gettext import find_empty_gettext_locales
 from pontoon.sync.formats import as_entity
 
 
@@ -35,10 +36,10 @@ def sync_resources_from_repo(
     checkout: Checkout,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     now: datetime,
-) -> tuple[int, set[str], set[str]]:
-    """(added_entities_count, changed_source_paths, removed_source_paths"""
+) -> tuple[int, set[str], set[str], set[str]]:
+    """(added_entities_count, changed_source_paths, removed_source_paths, empty_gettext_locales)"""
     if not checkout.changed and not checkout.removed and not checkout.renamed:
-        return 0, set(), set()
+        return 0, set(), set(), set()
     log.info(f"[{project.slug}] Syncing entities from repo...")
     # db_path -> parsed_resource
     updates: dict[str, L10nResource[Message]] = {}
@@ -75,12 +76,15 @@ def sync_resources_from_repo(
         new_res_added_ent_count, added_paths = add_resources(
             project, updates, changed_paths, now
         )
-        update_translated_resources(project, locale_map, paths)
+        # Snapshot of locales whose gettext target folders are empty.
+        empty_gettext_locales = find_empty_gettext_locales(project, locale_map, paths)
+        update_translated_resources(project, locale_map, paths, empty_gettext_locales)
 
     return (
         old_res_added_ent_count + new_res_added_ent_count,
         renamed_paths | changed_paths | added_paths,
         removed_paths,
+        empty_gettext_locales,
     )
 
 
@@ -357,6 +361,7 @@ def update_translated_resources(
     project: Project,
     locale_map: dict[str, Locale],
     paths: L10nConfigPaths | L10nDiscoverPaths,
+    empty_gettext_locales: set[str],
 ) -> None:
     prev_tr_keys: set[tuple[int, int]] = {
         (tr["resource_id"], tr["locale_id"])
@@ -369,7 +374,7 @@ def update_translated_resources(
         _, locales = paths.target(resource.path)
         for lc in locales:
             locale = locale_map.get(lc, None)
-            if is_translated_resource(paths, resource, locale):
+            if is_translated_resource(paths, resource, locale, empty_gettext_locales):
                 assert locale is not None
                 key = (resource.pk, locale.pk)
                 if key in prev_tr_keys:
@@ -400,18 +405,21 @@ def is_translated_resource(
     paths: L10nConfigPaths | L10nDiscoverPaths,
     resource: Resource,
     locale: Locale | None,
+    empty_gettext_locales: set[str],
 ) -> bool:
     if locale is None:
         return False
 
     if resource.format == Resource.Format.GETTEXT:
-        # For gettext, only create TranslatedResource
-        # if the resource exists for the locale.
+        # Consider this a translated resource if the .po file exists on disk, or
+        # if the locale's folder is empty (the bootstrap pass will create it).
         target, _ = paths.target(resource.path)
         if target is None:
             return False
         target_path = paths.format_target_path(target, locale.code)
-        return isfile(target_path)
+        if isfile(target_path):
+            return True
+        return locale.code in empty_gettext_locales
     return True
 
 

@@ -80,6 +80,7 @@ def test_remove_resource():
             set(),
             {"c.ftl"},
             now,
+            set(),
         )
         assert exists(join(repo.checkout_path, "fr-Test", "b.po"))
         assert not exists(join(repo.checkout_path, "fr-Test", "c.ftl"))
@@ -163,6 +164,7 @@ def test_remove_entity():
             {"c.ftl"},
             set(),
             now,
+            set(),
         )
         with open(join(repo.checkout_path, "fr-Test", "c.ftl")) as file:
             assert file.read() == dedent(
@@ -281,7 +283,16 @@ def test_add_translation():
         )
         assert len(db_changes) == 4
         sync_translations_to_repo(
-            project, False, locale_map, checkouts, paths, db_changes, set(), set(), now
+            project,
+            False,
+            locale_map,
+            checkouts,
+            paths,
+            db_changes,
+            set(),
+            set(),
+            now,
+            set(),
         )
         with open(join(repo.checkout_path, "fr-Test", "c.ftl")) as file:
             assert file.read() == dedent(
@@ -359,6 +370,7 @@ def test_directory_creation_on_translation_update():
             {"nested_dir/deeper_dir/c.ftl"},
             set(),
             now,
+            set(),
         )
         target_path = join(
             repo.checkout_path, "fr-Test", "nested_dir", "deeper_dir", "c.ftl"

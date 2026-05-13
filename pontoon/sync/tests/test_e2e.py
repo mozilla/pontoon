@@ -227,7 +227,10 @@ def test_add_resources():
         # Sync with no translations
         sync_project_task(project.pk)
 
-        # Test that entities are generated, translations are not, and FTL & XLIFF are localizable
+        # Test that entities are generated, translations are not, and all three
+        # formats become localizable. The empty `de-Test` folder triggers the
+        # gettext bootstrap so `file.po` is automatically created alongside
+        # FTL/XLIFF.
         assert {
             (ent.resource.path, *ent.key)
             for ent in Entity.objects.filter(resource__project=project)
@@ -242,7 +245,24 @@ def test_add_resources():
         assert {
             (tr.resource.path, tr.locale.code)
             for tr in TranslatedResource.objects.filter(resource__project=project)
-        } == {("file.ftl", "de-Test"), ("file.xliff", "de-Test")}
+        } == {
+            ("file.ftl", "de-Test"),
+            ("file.po", "de-Test"),
+            ("file.xliff", "de-Test"),
+        }
+        tgt_po_path = join(repo.checkout_path, "de-Test", "file.po")
+        with open(tgt_po_path) as file:
+            assert file.read() == dedent("""\
+                #
+                msgid ""
+                msgstr ""
+                "Language: de_Test\\n"
+                "Plural-Forms: nplurals=1; plural=0;\\n"
+                "Generated-By: Pontoon\\n"
+
+                msgid "source"
+                msgstr ""
+            """)
 
         # Add an XLIFF translation
         TranslationFactory.create(
@@ -256,10 +276,7 @@ def test_add_resources():
         )
         sync_project_task(project.pk)
 
-        # Test that gettext is not written, while XLIFF is
-        tgt_po_path = join(repo.checkout_path, "de-Test", "file.po")
         tgt_xliff_path = join(repo.checkout_path, "de-Test", "file.xliff")
-        assert not isfile(tgt_po_path)
         with open(tgt_xliff_path) as file:
             assert file.read() == dedent("""\
                 <?xml version="1.0" encoding="utf-8"?>
@@ -275,32 +292,143 @@ def test_add_resources():
                 </xliff>
             """)
 
-        # Add an empty target gettext file
-        with open(tgt_po_path, "x") as file:
-            file.write("\n")
+
+@pytest.mark.django_db
+def test_gettext_partial_locale_not_bootstrapped():
+    """When a locale folder already has some .po files, missing ones are NOT
+    automatically created."""
+    with mock_setup() as (repo, locale):
+        # Database setup
+        project = ProjectFactory.create(
+            name="partial-gettext", locales=[locale], repositories=[repo]
+        )
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        pot_a = dedent("""
+            #
+            msgid ""
+            msgstr ""
+
+            msgid "from-a"
+            msgstr "from-a"
+        """)
+        pot_b = dedent("""
+            #
+            msgid ""
+            msgstr ""
+
+            msgid "from-b"
+            msgstr "from-b"
+        """)
+        po_a_de = dedent("""\
+            #
+            msgid ""
+            msgstr ""
+
+            msgid "from-a"
+            msgstr ""
+        """)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"a.pot": pot_a, "b.pot": pot_b},
+                "de-Test": {"a.po": po_a_de},
+            },
+        )
+
         sync_project_task(project.pk)
 
-        # Test that the gettext file is now localizable
+        # Only `a.po` is localizable for de-Test; `b.po` must stay missing.
+        assert {
+            (tr.resource.path, tr.locale.code)
+            for tr in TranslatedResource.objects.filter(resource__project=project)
+        } == {("a.po", "de-Test")}
+        assert not isfile(join(repo.checkout_path, "de-Test", "b.po"))
+
+
+@pytest.mark.django_db
+def test_gettext_toml_bootstrap_respects_config():
+    """With a TOML configuration file and an empty locale folder, only the
+    gettext files the TOML lists for that locale are bootstrapped."""
+    with mock_setup() as (repo, locale_de):
+        locale_tg = cast(
+            Locale, LocaleFactory.create(code="tg-Test", name="Test Tajik")
+        )
+        project = ProjectFactory.create(
+            name="toml-gettext",
+            locales=[locale_de, locale_tg],
+            repositories=[repo],
+            configuration_file="l10n.toml",
+        )
+
+        pot_a = dedent("""\
+            #
+            msgid ""
+            msgstr ""
+
+            msgid "from-a"
+            msgstr "from-a"
+        """)
+        pot_b = dedent("""\
+            #
+            msgid ""
+            msgstr ""
+
+            msgid "from-b"
+            msgstr "from-b"
+        """)
+        po_existing = dedent("""\
+            #
+            msgid ""
+            msgstr ""
+
+            msgid "from-a"
+            msgstr ""
+        """)
+        po_b_existing = dedent("""\
+            #
+            msgid ""
+            msgstr ""
+
+            msgid "from-b"
+            msgstr ""
+        """)
+        toml = dedent("""\
+            basepath = "."
+            locales = ["de-Test", "tg-Test"]
+            [[paths]]
+                reference = "templates/a.pot"
+                l10n = "{locale}/a.po"
+            [[paths]]
+                reference = "templates/b.pot"
+                l10n = "{locale}/b.po"
+                locales = ["de-Test"]
+        """)
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "l10n.toml": toml,
+                "templates": {"a.pot": pot_a, "b.pot": pot_b},
+                "de-Test": {"a.po": po_existing, "b.po": po_b_existing},
+            },
+        )
+
+        sync_project_task(project.pk)
+
+        # tg-Test/a.po IS created (TOML configures `a.pot` for tg-Test).
+        # tg-Test/b.po is NOT created (TOML restricts `b.pot` to de-Test).
+        assert isfile(join(repo.checkout_path, "tg-Test", "a.po"))
+        assert not isfile(join(repo.checkout_path, "tg-Test", "b.po"))
         assert {
             (tr.resource.path, tr.locale.code)
             for tr in TranslatedResource.objects.filter(resource__project=project)
         } == {
-            ("file.ftl", "de-Test"),
-            ("file.po", "de-Test"),
-            ("file.xliff", "de-Test"),
+            ("templates/a.pot", "de-Test"),
+            ("templates/a.pot", "tg-Test"),
+            ("templates/b.pot", "de-Test"),
         }
-        with open(tgt_po_path) as file:
-            assert file.read() == dedent("""\
-                #
-                msgid ""
-                msgstr ""
-                "Language: de_Test\\n"
-                "Plural-Forms: nplurals=1; plural=0;\\n"
-                "Generated-By: Pontoon\\n"
-
-                msgid "source"
-                msgstr ""
-            """)
 
 
 @pytest.mark.django_db

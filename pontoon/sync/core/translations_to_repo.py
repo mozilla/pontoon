@@ -68,11 +68,15 @@ def sync_translations_to_repo(
     changed_source_paths: set[str],
     removed_source_paths: set[str],
     now: datetime,
+    empty_gettext_locales: set[str],
 ) -> bool:
     """Returns `True` if the sync includes changes to the repo."""
     readonly_locales = project.locales.filter(project_locale__readonly=True)
     removed = delete_removed_resources(
         project, paths, locale_map, readonly_locales, removed_source_paths
+    )
+    bootstrapped, bootstrap_locales = bootstrap_missing_gettext_files(
+        project, paths, locale_map, readonly_locales, empty_gettext_locales
     )
     updated, updated_locales, translators = update_changed_resources(
         project,
@@ -83,6 +87,8 @@ def sync_translations_to_repo(
         changed_source_paths,
         now,
     )
+    updated += bootstrapped
+    updated_locales |= bootstrap_locales
     if not removed and not updated:
         return False
 
@@ -145,6 +151,66 @@ def delete_removed_resources(
         else:
             log.error(f"{log_scope} Invalid resource path")
     return count
+
+
+def bootstrap_missing_gettext_files(
+    project: Project,
+    paths: L10nConfigPaths | L10nDiscoverPaths,
+    locale_map: dict[str, Locale],
+    readonly_locales: list[Locale] | QuerySet[Locale],
+    empty_gettext_locales: set[str],
+) -> tuple[int, set[Locale]]:
+    count = 0
+    updated_locales: set[Locale] = set()
+    readonly_codes = {loc.code for loc in readonly_locales}
+    eligible_codes = (empty_gettext_locales & set(locale_map)) - readonly_codes
+    if not eligible_codes:
+        return count, updated_locales
+
+    gettext_paths = project.resources.filter(
+        format="gettext", obsolete=False
+    ).values_list("path", flat=True)
+    for path in gettext_paths:
+        log_scope = f"[{project.slug}:{path}]"
+        target, locale_codes = paths.target(path)
+        if target is None:
+            continue
+        if commonpath((paths.base or "", target)) != paths.base:
+            log.error(f"{log_scope} Invalid resource path")
+            continue
+        eligible = sorted(set(locale_codes) & eligible_codes)
+        if not eligible:
+            continue
+        ref_path = normpath(join(paths.ref_root, path))
+        if ref_path.endswith(".po"):
+            ref_path += "t"
+        if not isfile(ref_path):
+            log.error(f"{log_scope} Missing source file")
+            continue
+        for lc in eligible:
+            locale = locale_map[lc]
+            target_path = paths.format_target_path(target, lc)
+            if isfile(target_path):
+                continue
+            lc_scope = f"[{project.slug}:{path}, {lc}]"
+            try:
+                res = parse_resource(ref_path)
+                # Empty translations list still sets the gettext header block
+                # (Language, Plural-Forms, Generated-By) for this locale.
+                set_translations(locale, [], res)
+                makedirs(dirname(target_path), exist_ok=True)
+                with open(target_path, "w", encoding="utf-8") as file:
+                    for line in serialize_resource(
+                        res, gettext_plurals=locale.cldr_plurals_list()
+                    ):
+                        file.write(line)
+                updated_locales.add(locale)
+                count += 1
+                log.info(f"{lc_scope} Created empty gettext file for new locale")
+            except Exception as error:
+                log.error(f"{lc_scope} Bootstrap failed: {error}")
+                continue
+    return count, updated_locales
 
 
 def update_changed_resources(

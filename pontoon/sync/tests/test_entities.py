@@ -38,7 +38,7 @@ def test_no_changes():
         Mock(Checkout, changed=[], removed=[], renamed=[]),
         Mock(L10nDiscoverPaths),
         now,
-    ) == (0, set(), set())
+    ) == (0, set(), set(), set())
 
 
 @pytest.mark.django_db
@@ -94,9 +94,10 @@ def test_resource_obsoletion():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test sync_resources_from_repo
-        assert sync_resources_from_repo(
+        added, changed, removed, _ = sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (0, set(), {"c.ftl"})
+        )
+        assert (added, changed, removed) == (0, set(), {"c.ftl"})
         assert {res.path: res.obsolete for res in project.resources.all()} == {
             "a.ftl": False,
             "b.po": False,
@@ -174,9 +175,10 @@ def test_resource_deobsoletion():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
-        assert sync_resources_from_repo(
+        added, changed, removed, _ = sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (3, {"c.ftl"}, set())
+        )
+        assert (added, changed, removed) == (3, {"c.ftl"}, set())
 
         res_c = project.resources.get(path="c.ftl")
 
@@ -233,9 +235,10 @@ def test_rename_resource():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
-        assert sync_resources_from_repo(
+        added, changed, removed, _ = sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (0, {"d.ftl"}, set())
+        )
+        assert (added, changed, removed) == (0, {"d.ftl"}, set())
         assert {res.path for res in project.resources.all()} == {
             "a.ftl",
             "b.po",
@@ -287,9 +290,10 @@ def test_add_resource():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
-        assert sync_resources_from_repo(
+        added, changed, removed, _ = sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (3, {"c.ftl"}, set())
+        )
+        assert (added, changed, removed) == (3, {"c.ftl"}, set())
         res_c = project.resources.get(path="c.ftl")
         TranslatedResource.objects.get(resource=res_c)
         assert {tuple(ent.key) for ent in Entity.objects.filter(resource=res_c)} == {
@@ -356,9 +360,10 @@ def test_update_resource():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test sync
-        assert sync_resources_from_repo(
+        added, changed, removed, _ = sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (1, {"c.ftl"}, set())
+        )
+        assert (added, changed, removed) == (1, {"c.ftl"}, set())
         assert {
             (*ent.key, ent.obsolete) for ent in Entity.objects.filter(resource=res["c"])
         } == {
@@ -434,9 +439,10 @@ def test_change_entities():
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test sync
-        assert sync_resources_from_repo(
+        added, changed, removed, _ = sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (0, {"res.ftl"}, set())
+        )
+        assert (added, changed, removed) == (0, {"res.ftl"}, set())
         assert {
             tuple(ent.key): (ent.value, ent.comment)
             for ent in Entity.objects.filter(resource=res)

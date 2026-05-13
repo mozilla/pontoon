@@ -48,7 +48,11 @@ Incorrect pattern:
     locales/{locale_code}/path/to/file.{locale_code}.extension
 
 !!! note "Gettext .po files"
-    For Gettext files, you will need to ensure that `.po` files are included in the repository for each target locale for which they are to be translated (these files may be initially empty). For all other supported formats, Pontoon will automatically add files for each locale when it is translated.
+    When a locale's folder in the repository is empty (contains no `.po` files yet), Pontoon will create one `.po` file per source resource from the matching `.pot` template on the next sync.
+
+    When a locale's folder already contains some `.po` files, Pontoon trusts the repository and will *not* create the missing ones. This preserves projects that intentionally ship a partial subset of resources per locale (ideally declared via a TOML configuration file). For such projects, the relevant `.po` files must continue to be added to the repository before the locale starts producing translations for them.
+
+    For all other supported formats, Pontoon automatically adds files for each locale when it is translated.
 
 ## Create the project
 
