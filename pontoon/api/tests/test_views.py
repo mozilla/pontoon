@@ -147,6 +147,7 @@ def test_locale(django_assert_num_queries):
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 17,
         "complete": False,
         "projects": ["terminology"],
     }
@@ -163,6 +164,7 @@ def test_locale(django_assert_num_queries):
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 17,
         "complete": False,
     } in localizations
 
@@ -228,6 +230,7 @@ def test_locales(django_assert_num_queries):
             "strings_with_errors": loc.strings_with_errors,
             "missing_strings": loc.missing_strings,
             "unreviewed_strings": loc.unreviewed_strings,
+            "completed_strings": loc.completed_strings,
             "complete": loc.complete,
         }
         for loc in sorted(
@@ -327,6 +330,7 @@ def test_project(django_assert_num_queries):
         "strings_with_errors": 6,
         "missing_strings": 10,
         "unreviewed_strings": 10,
+        "completed_strings": 34,
         "complete": False,
         "tags": [],
         "locales": [
@@ -454,6 +458,7 @@ def test_project(django_assert_num_queries):
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 17,
         "complete": False,
     } in localizations
 
@@ -469,6 +474,7 @@ def test_project(django_assert_num_queries):
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 17,
         "complete": False,
     } in localizations
 
@@ -566,6 +572,7 @@ def test_projects(django_assert_num_queries):
             "strings_with_errors": p.strings_with_errors,
             "missing_strings": p.missing_strings,
             "unreviewed_strings": p.unreviewed_strings,
+            "completed_strings": p.completed_strings,
             "complete": p.complete,
         }
         for p in sorted(Project.objects.all(), key=lambda p: p.pk)
@@ -622,6 +629,7 @@ def test_system_projects(
             "strings_with_errors": p.strings_with_errors,
             "missing_strings": p.missing_strings,
             "unreviewed_strings": p.unreviewed_strings,
+            "completed_strings": p.completed_strings,
             "complete": p.complete,
         }
         for p in sorted(
@@ -674,6 +682,7 @@ def test_disabled_projects(
             "strings_with_errors": p.strings_with_errors,
             "missing_strings": p.missing_strings,
             "unreviewed_strings": p.unreviewed_strings,
+            "completed_strings": p.completed_strings,
             "complete": p.complete,
         }
         for p in sorted(
@@ -967,6 +976,7 @@ def test_project_locale(django_assert_num_queries):
             "strings_with_errors": 3,
             "missing_strings": 5,
             "unreviewed_strings": 5,
+            "completed_strings": 17,
             "complete": False,
         },
         "total_strings": 25,
@@ -976,6 +986,7 @@ def test_project_locale(django_assert_num_queries):
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 17,
         "complete": False,
         "project": {
             "slug": "terminology",
@@ -996,6 +1007,7 @@ def test_project_locale(django_assert_num_queries):
             "strings_with_errors": 6,
             "missing_strings": 10,
             "unreviewed_strings": 10,
+            "completed_strings": 34,
             "complete": False,
         },
     }
