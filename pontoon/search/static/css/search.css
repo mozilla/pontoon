@@ -1,4 +1,7 @@
 #main {
+  .button {
+    user-select: none;
+  }
   .container {
     menu {
       margin-bottom: 40px;
