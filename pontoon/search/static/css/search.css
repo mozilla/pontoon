@@ -1,4 +1,7 @@
 #main {
+  .button {
+    user-select: none;
+  }
   .container {
     menu {
       margin-bottom: 40px;
@@ -164,7 +167,7 @@
   color: var(--translation-secondary-color);
   font-style: italic;
   line-height: 22px;
-  margin-top: 20px;
+  margin-top: 8px;
 }
 
 .entity-info-container a,
@@ -189,7 +192,6 @@
   align-items: flex-end;
   gap: 8px;
   margin-bottom: 0;
-  margin-top: 20px;
   font-size: 13px;
 }
 
@@ -203,8 +205,8 @@
   background-color: var(--dark-grey-1);
   border-radius: 6px;
   font-size: 16px;
-  margin-bottom: 20px;
   padding: 16px;
+  margin-bottom: 20px;
 
   .translation-info-container {
     display: flex;
@@ -217,11 +219,36 @@
   }
 
   .button {
-    background: var(--background-1);
+    background: var(--button-background-2);
   }
 
   .button:hover {
     background: var(--status-translated);
+  }
+}
+
+#translation-list-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--main-border-1);
+
+  span {
+    box-sizing: border-box;
+    color: var(--light-grey-7);
+    font-weight: bold;
+    min-width: 0;
+    padding: 10px 16px;
+    text-transform: uppercase;
+  }
+
+  .locale-header {
+    flex: 1;
+    padding-right: 8px;
+  }
+
+  .translation-header {
+    flex: 9;
+    padding-left: 8px;
   }
 }
 
@@ -230,40 +257,82 @@
   line-height: 1.5;
   font-size: 14px;
 
+  .translation-row {
+    display: flex;
+  }
+
   .translation-container {
     border-bottom: 1px solid var(--main-border-1);
-    padding: 16px;
+    padding: 8px 16px 8px 16px;
 
     .translation-info-container {
       display: flex;
-
-      locale-container,
-      .utility-container {
-        flex: 1;
-      }
+      flex: 1;
+      min-width: 0;
 
       .locale-container {
-        font-style: italic;
-        margin-top: 20px;
-
-        .translation-locale-name {
-          color: var(--light-grey-7);
-          vertical-align: sub;
-        }
-
-        .translation-locale-name:hover {
-          color: var(--status-translated);
-        }
+        flex: 1;
+        height: 28px;
 
         .translation-locale-code {
+          font-style: italic;
           color: var(--status-translated-alt);
-          vertical-align: sub;
-        }
-
-        .divider {
           vertical-align: sub;
         }
       }
     }
+
+    .translation-string-container {
+      position: relative;
+      flex: 9;
+      min-width: 0;
+      padding-left: 16px;
+
+      .translation-string {
+        vertical-align: sub;
+      }
+
+      .utility-container {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        visibility: hidden;
+        padding: 7px 0 0 7px;
+        background-color: var(--black-3);
+      }
+
+      &:hover .utility-container {
+        visibility: visible;
+      }
+    }
+  }
+}
+
+.footer {
+  margin: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  .api-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chip {
+    background: var(--status-translated);
+    border-radius: 3px;
+    color: var(--translation-main-button-color);
+    padding: 4px;
+  }
+
+  .api-text {
+    color: var(--light-grey-7);
+  }
+
+  a {
+    color: var(--status-translated);
   }
 }
