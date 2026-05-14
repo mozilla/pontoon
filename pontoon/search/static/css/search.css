@@ -297,9 +297,7 @@
         bottom: 0;
         right: 0;
         visibility: hidden;
-        border-width: 7px 0 0 7px;
-        border-style: solid;
-        border-color: var(--black-3);
+        padding: 7px 0 0 7px;
         background-color: var(--black-3);
       }
 
