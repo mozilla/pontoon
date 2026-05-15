@@ -8,7 +8,8 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from pontoon.base import models
-from pontoon.base.utils import anonymize_user, get_m2m_changes
+from pontoon.base.models.user import anonymize_user
+from pontoon.base.utils import get_m2m_changes
 from pontoon.teams.utils import log_user_groups
 
 

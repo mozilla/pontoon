@@ -1,3 +1,5 @@
+import uuid
+
 from datetime import timedelta
 from hashlib import md5
 from urllib.parse import quote, urlencode
@@ -13,6 +15,35 @@ from django.urls import reverse
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.api.models import PersonalAccessToken
+from pontoon.base.models.comment import Comment
+from pontoon.base.models.permission_changelog import PermissionChangelog
+from pontoon.base.models.project import Project
+from pontoon.base.models.translation import Translation
+from pontoon.terminology.models import Term
+
+
+def anonymize_user(user):
+    random_hash = uuid.uuid4().hex
+    new_user = User.objects.create_user(
+        username="deleted-user-" + random_hash,
+        email="deleted-user-" + random_hash + "@example.com",
+        first_name="Deleted User",
+        is_active=False,
+    )
+
+    ActionLog.objects.filter(performed_by=user).update(performed_by=new_user)
+    PermissionChangelog.objects.filter(performed_by=user).update(performed_by=new_user)
+    PermissionChangelog.objects.filter(performed_on=user).update(performed_on=new_user)
+    Project.objects.filter(contact=user).update(contact=new_user)
+    Translation.objects.filter(user=user).update(user=new_user)
+    Translation.objects.filter(approved_user=user).update(approved_user=new_user)
+    Translation.objects.filter(unapproved_user=user).update(unapproved_user=new_user)
+    Translation.objects.filter(rejected_user=user).update(rejected_user=new_user)
+    Translation.objects.filter(unrejected_user=user).update(unrejected_user=new_user)
+    Term.objects.filter(created_by=user).update(created_by=new_user)
+    Comment.objects.filter(author=user).update(author=new_user)
+    PersonalAccessToken.objects.filter(user=user).update(revoked=True)
 
 
 @property
