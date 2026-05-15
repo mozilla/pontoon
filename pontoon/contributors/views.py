@@ -32,8 +32,8 @@ from django.views.generic import TemplateView
 
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base import forms
+from pontoon.base.admin import anonymize_user
 from pontoon.base.models import Locale, Project, UserBanLog, UserProfile
-from pontoon.base.models.user import anonymize_user
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors import utils
 from pontoon.messaging.emails import send_verification_email

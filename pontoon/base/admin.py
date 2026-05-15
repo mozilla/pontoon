@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
@@ -7,10 +9,43 @@ from django.forms.models import ModelForm
 from django.urls import reverse
 from django.utils.html import format_html
 
+from pontoon.actionlog.models import ActionLog
+from pontoon.api.models import PersonalAccessToken
 from pontoon.base import models
-from pontoon.base.models.user import anonymize_user
 from pontoon.base.utils import get_m2m_changes
 from pontoon.teams.utils import log_user_groups
+from pontoon.terminology.models import Term
+
+
+def anonymize_user(user):
+    random_hash = uuid.uuid4().hex
+    new_user = User.objects.create_user(
+        username="deleted-user-" + random_hash,
+        email="deleted-user-" + random_hash + "@example.com",
+        first_name="Deleted User",
+        is_active=False,
+    )
+
+    ActionLog.objects.filter(performed_by=user).update(performed_by=new_user)
+    models.PermissionChangelog.objects.filter(performed_by=user).update(
+        performed_by=new_user
+    )
+    models.PermissionChangelog.objects.filter(performed_on=user).update(
+        performed_on=new_user
+    )
+    models.Project.objects.filter(contact=user).update(contact=new_user)
+    models.Translation.objects.filter(user=user).update(user=new_user)
+    models.Translation.objects.filter(approved_user=user).update(approved_user=new_user)
+    models.Translation.objects.filter(unapproved_user=user).update(
+        unapproved_user=new_user
+    )
+    models.Translation.objects.filter(rejected_user=user).update(rejected_user=new_user)
+    models.Translation.objects.filter(unrejected_user=user).update(
+        unrejected_user=new_user
+    )
+    Term.objects.filter(created_by=user).update(created_by=new_user)
+    models.Comment.objects.filter(author=user).update(author=new_user)
+    PersonalAccessToken.objects.filter(user=user).update(revoked=True)
 
 
 AGGREGATED_STATS_FIELDS = (
