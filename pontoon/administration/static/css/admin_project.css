@@ -185,7 +185,10 @@ form a:visited {
 }
 
 .double-list-selector .locale.select .menu {
+  background: transparent;
+  border-bottom: 1px solid var(--main-border-1);
   margin: 2px 0 -4px -1px;
+  overflow: auto;
   padding: 10px 0;
   width: 295px;
 }
@@ -228,6 +231,11 @@ form .locale.select.selected {
 
 form .locales-pretranslate .locale.select.selected {
   margin-left: 49px;
+}
+
+form .locales-pretranslate .item.select.selected {
+  float: none;
+  margin: 0 49px;
 }
 
 .locale.select.readonly {
