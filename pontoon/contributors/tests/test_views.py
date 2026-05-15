@@ -10,12 +10,14 @@ from django.utils.timezone import make_aware, now
 
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base.models import User, UserBanLog
+from pontoon.base.models.translation import Translation
 from pontoon.base.tests import (
     LocaleFactory,
     TranslationFactory,
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.contributors import views
+from pontoon.test.factories import EntityFactory, ProjectFactory, ResourceFactory
 
 
 def commajoin(*items):
@@ -415,7 +417,32 @@ def test_personal_access_token_deletion_correct_permissions(member, user_b):
 
 @pytest.mark.django_db
 def test_delete_user(member):
-    """Test if user can delete their own account."""
+    """
+    Test if user can delete their own account. Check if user relationships are assigned
+    to a new placeholder user.
+    """
+    locale_a = LocaleFactory(
+        code="kg",
+        name="Klingon",
+    )
+    project_a = ProjectFactory(
+        slug="project_a",
+        name="Project A",
+    )
+    resource_a = ResourceFactory.create(
+        path="resource_a",
+        project=project_a,
+    )
+    entity_a = EntityFactory.create(string="Test String", resource=resource_a)
+
+    TranslationFactory.create(
+        string="String A",
+        locale=locale_a,
+        user=member.user,
+        entity=entity_a,
+    )
+    assert Translation.objects.filter(user=member.user).exists()
+
     url = reverse("pontoon.contributors.delete_user")
     user_pk = member.user.pk
 
@@ -425,3 +452,4 @@ def test_delete_user(member):
     assert response.json()["status"] == "success"
     assert response.json()["message"] == "User deleted successfully."
     assert not User.objects.filter(pk=user_pk).exists()
+    assert not Translation.objects.filter(user=member.user).exists()

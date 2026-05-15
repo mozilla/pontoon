@@ -42,6 +42,9 @@ class PersonalAccessTokenAuthentication(BaseAuthentication):
         if pat.expires_at and pat.expires_at.astimezone() < timezone.now():
             raise AuthenticationFailed({"detail": "Token has expired."})
 
+        if not pat.user.is_active:
+            raise AuthenticationFailed({"detail": "User is disabled."})
+
         pat.last_used = timezone.now()
         pat.save(update_fields=["last_used"])
 

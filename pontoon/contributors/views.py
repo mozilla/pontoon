@@ -32,6 +32,7 @@ from django.views.generic import TemplateView
 
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base import forms
+from pontoon.base.admin import anonymize_user
 from pontoon.base.models import Locale, Project, UserBanLog, UserProfile
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors import utils
@@ -605,6 +606,7 @@ def delete_token(request, token_id):
 @transaction.atomic
 def delete_user(request):
     try:
+        anonymize_user(request.user)
         request.user.delete()
         logout(request)
         messages.success(request, "Your account has been deleted.")

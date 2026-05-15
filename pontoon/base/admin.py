@@ -10,9 +10,42 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base import models, utils
+from pontoon.api.models import PersonalAccessToken
+from pontoon.base import models
+from pontoon.base.utils import get_m2m_changes
 from pontoon.teams.utils import log_user_groups
 from pontoon.terminology.models import Term
+
+
+def anonymize_user(user):
+    random_hash = uuid.uuid4().hex
+    new_user = User.objects.create_user(
+        username="deleted-user-" + random_hash,
+        email="deleted-user-" + random_hash + "@example.com",
+        first_name="Deleted User",
+        is_active=False,
+    )
+
+    ActionLog.objects.filter(performed_by=user).update(performed_by=new_user)
+    models.PermissionChangelog.objects.filter(performed_by=user).update(
+        performed_by=new_user
+    )
+    models.PermissionChangelog.objects.filter(performed_on=user).update(
+        performed_on=new_user
+    )
+    models.Project.objects.filter(contact=user).update(contact=new_user)
+    models.Translation.objects.filter(user=user).update(user=new_user)
+    models.Translation.objects.filter(approved_user=user).update(approved_user=new_user)
+    models.Translation.objects.filter(unapproved_user=user).update(
+        unapproved_user=new_user
+    )
+    models.Translation.objects.filter(rejected_user=user).update(rejected_user=new_user)
+    models.Translation.objects.filter(unrejected_user=user).update(
+        unrejected_user=new_user
+    )
+    Term.objects.filter(created_by=user).update(created_by=new_user)
+    models.Comment.objects.filter(author=user).update(author=new_user)
+    PersonalAccessToken.objects.filter(user=user).update(revoked=True)
 
 
 AGGREGATED_STATS_FIELDS = (
@@ -57,7 +90,7 @@ class UserAdmin(AuthUserAdmin):
 
         # Users can only be moved between groups upon editing, not creation
         if "groups" in form.cleaned_data:
-            add_groups, remove_groups = utils.get_m2m_changes(
+            add_groups, remove_groups = get_m2m_changes(
                 obj.groups, form.cleaned_data["groups"]
             )
 
@@ -68,38 +101,7 @@ class UserAdmin(AuthUserAdmin):
     # move user data we care about to it and then delete the user.
     # See bug 1561663 for details.
     def delete_model(self, request, obj):
-        random_hash = uuid.uuid4().hex
-        new_user = User.objects.create_user(
-            username="deleted-user-" + random_hash,
-            email="deleted-user-" + random_hash + "@example.com",
-            first_name="Deleted User",
-            is_active=False,
-        )
-
-        ActionLog.objects.filter(performed_by=obj).update(performed_by=new_user)
-        models.PermissionChangelog.objects.filter(performed_by=obj).update(
-            performed_by=new_user
-        )
-        models.PermissionChangelog.objects.filter(performed_on=obj).update(
-            performed_on=new_user
-        )
-        models.Project.objects.filter(contact=obj).update(contact=new_user)
-        models.Translation.objects.filter(user=obj).update(user=new_user)
-        models.Translation.objects.filter(approved_user=obj).update(
-            approved_user=new_user
-        )
-        models.Translation.objects.filter(unapproved_user=obj).update(
-            unapproved_user=new_user
-        )
-        models.Translation.objects.filter(rejected_user=obj).update(
-            rejected_user=new_user
-        )
-        models.Translation.objects.filter(unrejected_user=obj).update(
-            unrejected_user=new_user
-        )
-        Term.objects.filter(created_by=obj).update(created_by=new_user)
-        models.Comment.objects.filter(author=obj).update(author=new_user)
-
+        anonymize_user(obj)
         super().delete_model(request, obj)
 
     # This method is to override bulk delete method from the user list page
