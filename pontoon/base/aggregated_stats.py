@@ -51,11 +51,7 @@ class AggregatedStats:
 
     @property
     def completed_strings(self) -> int:
-        return (
-            self.approved_strings
-            + self.pretranslated_strings
-            + self.strings_with_warnings
-        )
+        return self.approved_strings + self.strings_with_warnings
 
     @property
     def complete(self) -> bool:
