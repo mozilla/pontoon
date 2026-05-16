@@ -7,6 +7,7 @@ from pontoon.base.models import (
 )
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
+from pontoon.translations.utils import parse_db_string_to_json
 
 
 def batch_action_template(form, user, translations, locale):
@@ -276,6 +277,85 @@ def replace_translations(form, user, translations, locale):
     }
 
 
+def copy_translation_from_locale(form, user, translations, locale):
+    """
+    Copy translations that are approved in a simlar locale eg [en-GB] and not yet translated in another locale eg [en-ZA]
+    and have them as suggestions. This is useful for translators to easily copy translations
+    from a similar locale and then approve them in the new locale.
+    """
+
+    otherLocale = form.cleaned_data["other_locale"]
+
+    # Get translations that are approved in the source locale and not yet translated in the current locale and add those as
+    # suggestions in the current locale
+    other_locale_translations = Translation.objects.filter(
+        locale__code=otherLocale,
+        entity__pk__in=form.cleaned_data["entities"],
+        approved=True,
+    ).exclude(
+        entity__translation__locale=locale,
+        entity__translation__approved=True,
+    )
+
+    # Translations to create in the current locale
+    translations_to_create = []
+    for t in other_locale_translations:
+        value, properties = parse_db_string_to_json(t.entity.resource.format, t.string)
+        translations_to_create.append(
+            Translation(
+                locale=locale,
+                entity=t.entity,
+                string=t.string,
+                approved=False,
+                rejected=False,
+                fuzzy=False,
+                active=True,
+                user=user,
+                value=value,
+                properties=properties,
+            )
+        )
+
+    # Create new translations
+    changed_translations = Translation.objects.bulk_create(
+        translations_to_create,
+    )
+
+    # Requery translation to get PKs
+    changed_translations_qs = Translation.objects.filter(
+        pk__in=[t.pk for t in changed_translations]
+    )
+
+    count, translated_resources, changed_entities = utils.get_translations_info(
+        changed_translations_qs,
+        locale,
+    )
+
+    # Log creating actions
+    actions_to_log = [
+        ActionLog(
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            performed_by=user,
+            translation=t,
+        )
+        for t in changed_translations
+    ]
+    ActionLog.objects.bulk_create(actions_to_log)
+
+    changed_translation_pks = [t.pk for t in changed_translations]
+    return {
+        "count": count,
+        "translated_resources": translated_resources,
+        "changed_entities": changed_entities,
+        "latest_translation_pk": max(changed_translation_pks)
+        if changed_translation_pks
+        else None,
+        "changed_translation_pks": changed_translation_pks,
+        "invalid_translation_pks": [],
+        "badge_update": {},
+    }
+
+
 """A map of action names to functions.
 
 The keys define the available batch actions in the `batch_edit_translations`
@@ -287,4 +367,5 @@ ACTIONS_FN_MAP = {
     "approve": approve_translations,
     "reject": reject_translations,
     "replace": replace_translations,
+    "copy_from_locale": copy_translation_from_locale,
 }
