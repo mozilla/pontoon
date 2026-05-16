@@ -3,7 +3,7 @@
 {% import "widgets/toggle.html" as Toggle %}
 {% import 'widgets/field.html' as Field %}
 {% import "widgets/theme_toggle.html" as ThemeToggle %}
-{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
+{% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 {% import 'teams/widgets/team_selector.html' as team_selector %}
 
 {% block title %}Settings{% endblock %}
@@ -426,7 +426,7 @@
         <h3>Preferred locales to get suggestions from</h3>
         <div>
           {{
-            multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order',
+            multiple_item_selector.render(available_locales, selected_locales, form_field='locales_order',
             sortable=True)
           }}
         </div>

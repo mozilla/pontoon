@@ -190,7 +190,7 @@ $(function () {
 
     // Locales
     updateMultipleItemSelector(
-      '.locale',
+      '.locale .item',
       '.locales',
       '.code',
       '[name="locale_toggle"]',

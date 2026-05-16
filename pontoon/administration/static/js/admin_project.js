@@ -13,10 +13,6 @@ $(function () {
         selector: '.admin-team-selector .locale.readonly',
         input: $('#id_locales_readonly'),
       },
-      {
-        selector: '.multiple-team-selector .locale.selected',
-        input: $('#id_locales_pretranslate'),
-      },
     ];
 
     locales.forEach(function (type) {

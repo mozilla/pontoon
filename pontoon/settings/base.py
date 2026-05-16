@@ -446,7 +446,6 @@ PIPELINE_CSS = {
         "source_filenames": (
             "css/double_list_selector.css",
             "css/multiple_item_selector.css",
-            "css/multiple_team_selector.css",
             "css/admin_project.css",
         ),
         "output_filename": "css/admin_project.min.css",
@@ -458,7 +457,6 @@ PIPELINE_CSS = {
             "css/contributors.css",
             "css/heading_info.css",
             "css/sidebar_menu.css",
-            "css/multiple_team_selector.css",
             "css/manual_notifications.css",
             "css/insights_charts.css",
             "css/insights_tab.css",
@@ -532,7 +530,7 @@ PIPELINE_CSS = {
     },
     "settings": {
         "source_filenames": (
-            "css/multiple_team_selector.css",
+            "css/multiple_item_selector.css",
             "css/contributor.css",
             "css/team_selector.css",
             "css/check-box.css",
@@ -573,7 +571,6 @@ PIPELINE_CSS = {
     "messaging": {
         "source_filenames": (
             "css/sidebar_menu.css",
-            "css/multiple_team_selector.css",
             "css/multiple_item_selector.css",
             "css/check-box.css",
             "css/messaging.css",
@@ -619,7 +616,6 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/double_list_selector.js",
             "js/multiple_item_selector.js",
-            "js/multiple_team_selector.js",
             "js/admin_project.js",
         ),
         "output_filename": "js/admin_project.min.js",
@@ -655,7 +651,6 @@ PIPELINE_JS = {
             "js/progress-chart.js",
             "js/tabs.js",
             "js/sidebar_menu.js",
-            "js/multiple_team_selector.js",
             "js/manual_notifications.js",
             "js/insights_charts.js",
             "js/insights_tab.js",
@@ -715,7 +710,7 @@ PIPELINE_JS = {
     "settings": {
         "source_filenames": (
             "js/lib/jquery-ui-1.13.2.js",
-            "js/multiple_team_selector.js",
+            "js/multiple_item_selector.js",
             "js/team_selector.js",
             "js/lib/clipboard.min.js",
             "js/settings.js",
@@ -740,7 +735,6 @@ PIPELINE_JS = {
     "messaging": {
         "source_filenames": (
             "js/lib/showdown.js",
-            "js/multiple_team_selector.js",
             "js/multiple_item_selector.js",
             "js/messaging.js",
         ),

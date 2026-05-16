@@ -1,3 +1,18 @@
+form.user-locales-settings {
+  width: 620px;
+}
+
+form.user-locales-settings div {
+  text-align: right;
+}
+
+form a:link,
+form a:visited {
+  color: var(--status-translated-alt);
+  float: right;
+  text-transform: uppercase;
+}
+
 #heading {
   text-align: center;
 }
