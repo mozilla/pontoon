@@ -2,6 +2,7 @@ import ftl from '@fluent/dedent';
 import { createMemoryHistory } from 'history';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { editMessageEntry, parseEntry } from '~/utils/message';
@@ -157,6 +158,7 @@ describe('<EditorProvider>', () => {
   });
 
   it('provides a forced source Fluent value', () => {
+    using warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     let editor, result;
     const Spy = () => {
       editor = useContext(EditorData);
@@ -180,6 +182,7 @@ describe('<EditorProvider>', () => {
       ],
     });
     expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
+    expect(warn).toHaveBeenCalledTimes(2);
   });
 
   it('provides a simple Android value with no translation', () => {

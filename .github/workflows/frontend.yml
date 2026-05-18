@@ -24,7 +24,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with: { node-version: '22' }
+        with: { node-version: '24' }
       - name: Install dependencies
         run: npm ci
       - name: Check TypeScript
@@ -41,7 +41,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with: { node-version: '22' }
+        with: { node-version: '24' }
       - name: Install globals
         run: npm install --global license-checker-rseidelsohn@4.4.2
       - name: Install dependencies
@@ -61,7 +61,7 @@ jobs:
           with:
             persist-credentials: false
         - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-          with: { node-version: '22' }
+          with: { node-version: '24' }
         - name: Install dependencies
           run: npm ci
         - name: vitest

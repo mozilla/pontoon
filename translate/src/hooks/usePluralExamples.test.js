@@ -1,5 +1,5 @@
 import { usePluralExamples } from './usePluralExamples';
-import { vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 describe('usePluralExamples', () => {
   beforeAll(() => {
@@ -17,7 +17,7 @@ describe('usePluralExamples', () => {
   });
 
   it('returns a map of Slovenian plural examples', () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error');
+    using consoleErrorSpy = vi.spyOn(console, 'error');
     const res = usePluralExamples({
       cldrPlurals: [1, 2, 3, 5],
       pluralRule:
@@ -29,7 +29,9 @@ describe('usePluralExamples', () => {
   });
 
   it('prevents infinite loop if locale plurals are not configured properly', () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error');
+    using consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     const res = usePluralExamples({
       cldrPlurals: [0, 1, 2, 3, 4, 5],
       pluralRule: '(n != 1)',
