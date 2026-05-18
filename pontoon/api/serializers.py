@@ -24,6 +24,7 @@ TRANSLATION_STATS_FIELDS = [
     "strings_with_errors",
     "missing_strings",
     "unreviewed_strings",
+    "completed_strings",
     "complete",
 ]
 
@@ -37,6 +38,7 @@ class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
     strings_with_errors = serializers.SerializerMethodField()
     missing_strings = serializers.SerializerMethodField()
     unreviewed_strings = serializers.SerializerMethodField()
+    completed_strings = serializers.SerializerMethodField()
     complete = serializers.SerializerMethodField()
 
     def get_total_strings(self, obj):
@@ -59,6 +61,9 @@ class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
 
     def get_unreviewed_strings(self, obj):
         return obj.unreviewed
+
+    def get_completed_strings(self, obj):
+        return obj.completed
 
     def get_complete(self, obj):
         return obj.is_complete

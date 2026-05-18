@@ -22,7 +22,13 @@
         {% set manager_for_locales = contributor.manager_for_locales %}
         {% set user_is_translator = user.can_translate_locales %}
         {% set profile_is_disabled = contributor.is_active == False %}
-
+        {% if ban_activity %}
+          {%
+            set disabled_title =
+            "Disabled by " ~ ban_activity.performed_by.display_name ~
+            (": " ~ ban_activity.action_reason if ban_activity.action_reason else "")
+          %}
+        {% endif %}
         <a
           class="avatar"
           href="{% if is_my_profile %}https://gravatar.com/{% endif %}"
@@ -33,7 +39,11 @@
           {% if profile_is_disabled %}
             <div class="status">
               <i class="fas fa-exclamation-circle fa-sm"></i>
-              <span>Account disabled by an administrator</span>
+              <span
+                {% if disabled_title %}title="{{ disabled_title }}"{% endif %}
+              >
+                Account disabled by an administrator</span
+              >
             </div>
           {% endif %}
           <img
@@ -124,8 +134,14 @@
             >
               {% csrf_token %}
               {% if contributor.is_active %}
+                <textarea
+                  class="disable-reason hidden"
+                  name="action_reason"
+                  placeholder="Reason for disabling (optional)"
+                  rows="5"
+                ></textarea>
                 <button class="button" type="submit">
-                  <i class="icon fas fa-lock fa-sm"></i>Disable
+                  <i class="icon fas fa-ban fa-sm"></i>Disable
                 </button>
               {% else %}
                 <button class="button" type="submit">
@@ -197,6 +213,18 @@
               <span>{{ contributor.date_joined|format_datetime("date") }}</span>
             </div>
           </div>
+          {% if ban_activity and not contributor.is_active and is_admin %}
+            <div class="block">
+              <h4 class="subtitle">Disabled on</h4>
+              <div class="item-with-icon">
+                <span class="icon fas fa-ban"></span>
+                <span
+                  {% if disabled_title %}title="{{ disabled_title }}"{% endif %}
+                  >{{ ban_activity.created_at|format_datetime("date") }}</span
+                >
+              </div>
+            </div>
+          {% endif %}
         </div>
 
         {% if translator_for_locales or manager_for_locales or contact_for.exists() or contributor.is_superuser %}

@@ -110,8 +110,8 @@ def test_locale(django_assert_num_queries):
     )
 
     translated_resource.total_strings = 25
-    translated_resource.approved_strings = 15
-    translated_resource.pretranslated_strings = 0
+    translated_resource.approved_strings = 10
+    translated_resource.pretranslated_strings = 5
     translated_resource.strings_with_errors = 3
     translated_resource.strings_with_warnings = 2
     translated_resource.missing_strings = 5
@@ -141,12 +141,13 @@ def test_locale(django_assert_num_queries):
         "systran_translate_code": "",
         "team_description": "",
         "total_strings": 25,
-        "approved_strings": 15,
-        "pretranslated_strings": 0,
+        "approved_strings": 10,
+        "pretranslated_strings": 5,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 12,
         "complete": False,
         "projects": ["terminology"],
     }
@@ -157,12 +158,13 @@ def test_locale(django_assert_num_queries):
             "name": "Terminology",
         },
         "total_strings": 25,
-        "approved_strings": 15,
-        "pretranslated_strings": 0,
+        "approved_strings": 10,
+        "pretranslated_strings": 5,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 12,
         "complete": False,
     } in localizations
 
@@ -199,8 +201,8 @@ def test_locales(django_assert_num_queries):
 
     for translated_resource in translated_resources:
         translated_resource.total_strings = 25
-        translated_resource.approved_strings = 15
-        translated_resource.pretranslated_strings = 0
+        translated_resource.approved_strings = 10
+        translated_resource.pretranslated_strings = 5
         translated_resource.strings_with_errors = 3
         translated_resource.strings_with_warnings = 2
         translated_resource.missing_strings = 5
@@ -228,6 +230,7 @@ def test_locales(django_assert_num_queries):
             "strings_with_errors": loc.strings_with_errors,
             "missing_strings": loc.missing_strings,
             "unreviewed_strings": loc.unreviewed_strings,
+            "completed_strings": loc.completed_strings,
             "complete": loc.complete,
         }
         for loc in sorted(
@@ -292,8 +295,8 @@ def test_project(django_assert_num_queries):
 
     for translated_resource in translated_resources:
         translated_resource.total_strings = 25
-        translated_resource.approved_strings = 15
-        translated_resource.pretranslated_strings = 0
+        translated_resource.approved_strings = 10
+        translated_resource.pretranslated_strings = 5
         translated_resource.strings_with_errors = 3
         translated_resource.strings_with_warnings = 2
         translated_resource.missing_strings = 5
@@ -321,12 +324,13 @@ def test_project(django_assert_num_queries):
         "sync_disabled": True,
         "pretranslation_enabled": False,
         "total_strings": 50,
-        "approved_strings": 30,
-        "pretranslated_strings": 0,
+        "approved_strings": 20,
+        "pretranslated_strings": 10,
         "strings_with_warnings": 4,
         "strings_with_errors": 6,
         "missing_strings": 10,
         "unreviewed_strings": 10,
+        "completed_strings": 24,
         "complete": False,
         "tags": [],
         "locales": [
@@ -448,12 +452,13 @@ def test_project(django_assert_num_queries):
             "name": "Klingon",
         },
         "total_strings": 25,
-        "approved_strings": 15,
-        "pretranslated_strings": 0,
+        "approved_strings": 10,
+        "pretranslated_strings": 5,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 12,
         "complete": False,
     } in localizations
 
@@ -463,12 +468,13 @@ def test_project(django_assert_num_queries):
             "name": "Afrikaans",
         },
         "total_strings": 25,
-        "approved_strings": 15,
-        "pretranslated_strings": 0,
+        "approved_strings": 10,
+        "pretranslated_strings": 5,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 12,
         "complete": False,
     } in localizations
 
@@ -538,8 +544,8 @@ def test_projects(django_assert_num_queries):
 
     for translated_resource in translated_resources:
         translated_resource.total_strings = 25
-        translated_resource.approved_strings = 15
-        translated_resource.pretranslated_strings = 0
+        translated_resource.approved_strings = 10
+        translated_resource.pretranslated_strings = 5
         translated_resource.strings_with_errors = 3
         translated_resource.strings_with_warnings = 2
         translated_resource.missing_strings = 5
@@ -566,6 +572,7 @@ def test_projects(django_assert_num_queries):
             "strings_with_errors": p.strings_with_errors,
             "missing_strings": p.missing_strings,
             "unreviewed_strings": p.unreviewed_strings,
+            "completed_strings": p.completed_strings,
             "complete": p.complete,
         }
         for p in sorted(Project.objects.all(), key=lambda p: p.pk)
@@ -622,6 +629,7 @@ def test_system_projects(
             "strings_with_errors": p.strings_with_errors,
             "missing_strings": p.missing_strings,
             "unreviewed_strings": p.unreviewed_strings,
+            "completed_strings": p.completed_strings,
             "complete": p.complete,
         }
         for p in sorted(
@@ -674,6 +682,7 @@ def test_disabled_projects(
             "strings_with_errors": p.strings_with_errors,
             "missing_strings": p.missing_strings,
             "unreviewed_strings": p.unreviewed_strings,
+            "completed_strings": p.completed_strings,
             "complete": p.complete,
         }
         for p in sorted(
@@ -932,8 +941,8 @@ def test_project_locale(django_assert_num_queries):
 
     for translated_resource in translated_resources:
         translated_resource.total_strings = 25
-        translated_resource.approved_strings = 15
-        translated_resource.pretranslated_strings = 0
+        translated_resource.approved_strings = 10
+        translated_resource.pretranslated_strings = 5
         translated_resource.strings_with_errors = 3
         translated_resource.strings_with_warnings = 2
         translated_resource.missing_strings = 5
@@ -961,21 +970,23 @@ def test_project_locale(django_assert_num_queries):
             "systran_translate_code": "",
             "team_description": "",
             "total_strings": 25,
-            "approved_strings": 15,
-            "pretranslated_strings": 0,
+            "approved_strings": 10,
+            "pretranslated_strings": 5,
             "strings_with_warnings": 2,
             "strings_with_errors": 3,
             "missing_strings": 5,
             "unreviewed_strings": 5,
+            "completed_strings": 12,
             "complete": False,
         },
         "total_strings": 25,
-        "approved_strings": 15,
-        "pretranslated_strings": 0,
+        "approved_strings": 10,
+        "pretranslated_strings": 5,
         "strings_with_warnings": 2,
         "strings_with_errors": 3,
         "missing_strings": 5,
         "unreviewed_strings": 5,
+        "completed_strings": 12,
         "complete": False,
         "project": {
             "slug": "terminology",
@@ -990,12 +1001,13 @@ def test_project_locale(django_assert_num_queries):
             "sync_disabled": True,
             "pretranslation_enabled": False,
             "total_strings": 50,
-            "approved_strings": 30,
-            "pretranslated_strings": 0,
+            "approved_strings": 20,
+            "pretranslated_strings": 10,
             "strings_with_warnings": 4,
             "strings_with_errors": 6,
             "missing_strings": 10,
             "unreviewed_strings": 10,
+            "completed_strings": 24,
             "complete": False,
         },
     }

@@ -4,7 +4,7 @@ import { getCSRFToken } from './utils/csrfToken';
 export type Notification = {
   id: number;
   level: string;
-  unread: string;
+  unread: boolean;
   description: {
     content: string;
     is_comment: boolean;

@@ -109,6 +109,16 @@ h2 {
   color: var(--status-translated-alt);
 }
 
+.account-status-heading {
+  margin-bottom: 8px;
+}
+
+.personal-information form .disable-reason {
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
 .personal-information .button {
   background: var(--dark-grey-1);
   border-radius: 3px;

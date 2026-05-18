@@ -1,5 +1,5 @@
 # Stage 1: Python dependencies builder
-FROM python:3.13-bookworm AS python-builder
+FROM python:3.13-trixie AS python-builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -8,7 +8,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         libmemcached-dev \
-        postgresql-server-dev-15 \
+        # required to build psycopg2
+        libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv (version should match the one used in Python GitHub workflows)
@@ -27,7 +28,7 @@ RUN uv pip install -r requirements/default.txt
 
 
 # Stage 2: Node.js frontend builder
-FROM node:24-bookworm-slim AS node-builder
+FROM node:24-trixie-slim AS node-builder
 
 WORKDIR /app
 
@@ -49,7 +50,7 @@ RUN npm run build:prod
 
 
 # Stage 3: Static files builder
-FROM python:3.13-slim-bookworm AS static-builder
+FROM python:3.13-slim-trixie AS static-builder
 
 # SECRET_KEY and DATABASE_URL are set only to prevent collectstatic from
 # failing—their actual values don’t matter. collectstatic loads settings/base.py,
@@ -65,8 +66,6 @@ ENV PYTHONPATH=/app
 
 # Install Node.js for building frontend
 RUN apt-get update \
-    # Enable downloading packages over https
-    && apt-get install -y apt-transport-https \
     # Add NodeSource v24.x and install nodejs
     && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     # Install software
@@ -107,7 +106,7 @@ RUN echo "${GIT_REVISION}" > static/revision.txt
 
 
 # Stage 4: Final runtime image
-FROM python:3.13-slim-bookworm AS server
+FROM python:3.13-slim-trixie AS server
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -124,7 +123,7 @@ ENV PYTHONPATH=/app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         git \
-        libmemcached11 \
+        libmemcached11t64 \
         libpq5 \
         mercurial \
         openssh-client \

@@ -19,7 +19,7 @@ bleach==6.1.0
 celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==3.1.2
-Django==5.2.13
+Django==5.2.14
 djangorestframework==3.17.1
 django-ace==1.43.5
 django-allauth[socialaccount]==65.16.1
@@ -35,7 +35,6 @@ django-pipeline==4.1.0
 drf-spectacular[sidecar]==0.29.0
 google-cloud-translate==3.16.0
 gunicorn==23.0.0
-jsonfield==3.1.0
 markupsafe==2.0.1
 moz.l10n[xml]==0.11.2
 newrelic==9.6.0

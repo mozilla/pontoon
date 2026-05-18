@@ -9,6 +9,8 @@ Deactivating a user prevents them from logging in but preserves their contributi
 3. Uncheck the **Active** checkbox on the user's record.
 4. Click **Save**.
 
+Users can also be deactivated directly from their Profile page, where an optional reason for disabling can be provided.
+
 Deactivation is reversible — you can reactivate the user by checking **Active** again.
 
 ## Removing users
@@ -25,4 +27,4 @@ Removing a user **permanently deletes** their account. This is irreversible and 
 
 ## Adjusting permissions
 
-To change a user's role (Contributor, Translator, Team Manager), use the **Permissions** tab on the relevant Team page. See [User Accounts & Settings](../localizer/users.md#managing-permissions-team-managers) for details.
+To change a user's role (Contributor, Translator, Team Manager), use the **Permissions** tab on the relevant Team page. See [User Accounts & Settings](../localizer/users.md#managing-permissions) for details.

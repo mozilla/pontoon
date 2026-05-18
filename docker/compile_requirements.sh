@@ -11,5 +11,11 @@ cd "$(dirname "$0")/../requirements"
 requirement_files=(default dev lint test)
 
 for name in "${requirement_files[@]}"; do
-  uv pip compile --generate-hashes --no-strip-extras $@ "$name.in" -o "$name.txt"
+  # --no-emit-package matches pip-tools' default "unsafe packages" set, so the
+  # lockfile stays stable when Dependabot (which uses pip-tools) recompiles it.
+  uv pip compile --generate-hashes --no-strip-extras \
+    --no-emit-package distribute \
+    --no-emit-package pip \
+    --no-emit-package setuptools \
+    $@ "$name.in" -o "$name.txt"
 done

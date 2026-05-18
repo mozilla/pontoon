@@ -88,6 +88,7 @@ class LocaleQuerySet(models.QuerySet):
             - F("pretranslated")
             - F("errors")
             - F("warnings"),
+            completed=F("approved") + F("warnings"),
             is_complete=Case(
                 When(
                     total=F("approved") + F("warnings"),
