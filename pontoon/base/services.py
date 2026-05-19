@@ -18,13 +18,6 @@ from pontoon.terminology.models import Term
 
 
 def readonly_exists(projects, locale):
-    """
-    :arg list projects: a list of Project instances.
-    :arg Locale locale: Locale instance.
-    :returns: True if a read-only ProjectLocale instance for given Projects and
-        Locale exists.
-    """
-
     if not isinstance(projects, (QuerySet, tuple, list)):
         projects = [projects]
 
