@@ -31,7 +31,7 @@ function Title({
   if (action !== 'copy_from_locale') {
     return (
       <Localized id='batchactions-CopyFromLocale--default'>
-        COPY FROM ANOTHER LOCALE
+        COPY AS SUGGESTIONS
       </Localized>
     );
   }

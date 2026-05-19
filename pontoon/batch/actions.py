@@ -1,3 +1,4 @@
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
@@ -289,14 +290,17 @@ def copy_translation_from_locale(form, user, translations, locale):
 
     # Get translations that are approved in the source locale and not yet translated in the current locale and add those as
     # suggestions in the current locale
+    approved_in_target = Translation.objects.filter(
+        entity=OuterRef("entity"),
+        locale=locale,
+        approved=True,
+    )
+
     other_locale_translations = Translation.objects.filter(
         locale__code=otherLocale,
         entity__pk__in=form.cleaned_data["entities"],
         approved=True,
-    ).exclude(
-        entity__translation__locale=locale,
-        entity__translation__approved=True,
-    )
+    ).exclude(Exists(approved_in_target))
 
     # Translations to create in the current locale
     translations_to_create = []
