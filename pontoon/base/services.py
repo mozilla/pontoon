@@ -8,7 +8,7 @@ from django.urls import reverse
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.models import PersonalAccessToken
-from pontoon.base.models import Comment
+from pontoon.base.models.comment import Comment
 from pontoon.base.models.locale import Locale, LocaleCodeHistory
 from pontoon.base.models.permission_changelog import PermissionChangelog
 from pontoon.base.models.project import Project, ProjectSlugHistory
