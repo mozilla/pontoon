@@ -4,7 +4,8 @@ from django.template import Context, Template
 from django.urls import reverse
 
 from pontoon.base.models import Locale
-from pontoon.base.utils import get_locale_or_redirect, get_project_locale_from_request
+from pontoon.base.services import get_locale_or_redirect
+from pontoon.base.utils import get_project_locale_from_request
 from pontoon.homepage.models import Homepage
 
 

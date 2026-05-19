@@ -46,7 +46,8 @@ from pontoon.base.models import (
 )
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.translation import Translation
-from pontoon.base.utils import get_locale_or_redirect, require_AJAX
+from pontoon.base.services import get_locale_or_redirect
+from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm

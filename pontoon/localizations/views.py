@@ -12,11 +12,8 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslatedResource,
 )
-from pontoon.base.utils import (
-    get_locale_or_redirect,
-    get_project_or_redirect,
-    require_AJAX,
-)
+from pontoon.base.services import get_locale_or_redirect, get_project_or_redirect
+from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.tags.utils import Tags

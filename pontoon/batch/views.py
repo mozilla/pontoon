@@ -14,10 +14,8 @@ from pontoon.base.models import (
     Translation,
     TranslationMemoryEntry,
 )
-from pontoon.base.utils import (
-    readonly_exists,
-    require_AJAX,
-)
+from pontoon.base.services import readonly_exists
+from pontoon.base.utils import require_AJAX
 from pontoon.batch import forms
 from pontoon.batch.actions import ACTIONS_FN_MAP
 

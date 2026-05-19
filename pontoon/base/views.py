@@ -46,6 +46,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
     UserProfile,
 )
+from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
@@ -920,7 +921,7 @@ def upload(request):
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
     if not request.user.can_translate(
         project=project, locale=locale
-    ) or utils.readonly_exists(project, locale):
+    ) or readonly_exists(project, locale):
         return HttpResponseForbidden("You don't have permission to upload files.")
     get_object_or_404(Resource, project=project, path=res_path)
 
