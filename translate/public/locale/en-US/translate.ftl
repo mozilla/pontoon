@@ -46,10 +46,7 @@ batchactions-BatchActions--replace-with =
     .placeholder = Replace with
 
 
-batchactions-BatchActions--copy-from-locale-heading = COPY FROM A SIMILAR LOCALE
-batchactions-BatchActions--copy-from-locale =
-    .placeholder = Source locale, e.g. en-US
-
+batchactions-BatchActions--copy-from-locale-heading = COPY FROM ANOTHER LOCALE
 
 ## RejectAll
 ## Renders Reject All batch action button.
@@ -80,7 +77,7 @@ batchactions-ReplaceAll--error = OOPS, SOMETHING WENT WRONG
 
 ## CopyFromLocale
 ## Renders Copy From a Similar Locale button.
-batchactions-CopyFromLocale--default = COPY FROM A SIMILAR LOCALE
+batchactions-CopyFromLocale--default = COPY AS SUGGESTIONS
 batchactions-CopyFromLocale--success =
     {
         $changedCount ->

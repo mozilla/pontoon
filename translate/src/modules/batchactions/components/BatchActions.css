@@ -117,6 +117,39 @@
   padding: 15px 0 5px;
 }
 
+/* Copy from Locale */
+.batch-actions #copy-locale-form {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#copy-locale-form select {
+  text-align: center;
+  text-align-last: center;
+  border: none;
+  border-radius: 3px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23ffffff' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 24px center;
+  padding-right: 30px;
+  color: var(--white-1);
+  background-color: var(--icon-background-2);
+  font-weight: 600;
+}
+
+#copy-locale-form button {
+  margin-top: 0px;
+}
+
+.copy-from-locale form select,
+.copy-from-locale form button {
+  flex: 1;
+}
+
 /* Remove highlight in Chrome */
 .batch-actions .actions-panel input:focus {
   outline: none;

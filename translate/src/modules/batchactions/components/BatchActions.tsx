@@ -1,5 +1,11 @@
 import { Localized } from '@fluent/react';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { Location } from '~/context/Location';
 import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
@@ -13,7 +19,8 @@ import './BatchActions.css';
 import { RejectAll } from './RejectAll';
 import { ReplaceAll } from './ReplaceAll';
 import { CopyFromLocale } from './CopyFromLocale';
-
+import { fetchAllLocales } from '~/api/other-locales';
+import type { LocaleOption } from '~/api/other-locales';
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
@@ -25,7 +32,9 @@ export function BatchActions(): React.ReactElement<'div'> {
 
   const find = useRef<HTMLInputElement>(null);
   const replace = useRef<HTMLInputElement>(null);
-  const otherLocale = useRef<HTMLInputElement>(null);
+
+  const [otherLocale, setOtherLocale] = useState('');
+  const [locales, setLocales] = useState<LocaleOption[]>([]);
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
@@ -38,6 +47,12 @@ export function BatchActions(): React.ReactElement<'div'> {
 
     document.addEventListener('keydown', handleShortcuts);
     return () => document.removeEventListener('keydown', handleShortcuts);
+  }, []);
+
+  useEffect(() => {
+    fetchAllLocales().then((all) => {
+      setLocales(all);
+    });
   }, []);
 
   const selectAllEntities = useCallback(
@@ -95,26 +110,21 @@ export function BatchActions(): React.ReactElement<'div'> {
   }, [location, batchactions]);
 
   const copyFromLocale = useCallback(() => {
-    if (otherLocale.current && !batchactions.requestInProgress) {
-      const olv = otherLocale.current.value;
-
-      if (olv === '') {
-        otherLocale.current.focus();
-      } else {
-        dispatch(
-          performAction(
-            location,
-            'copy_from_locale',
-            batchactions.entities,
-            showBadgeTooltip,
-            undefined,
-            undefined,
-            olv,
-          ),
-        );
-      }
+    if (!batchactions.requestInProgress && otherLocale) {
+      dispatch(
+        performAction(
+          location,
+          'copy_from_locale',
+          batchactions.entities,
+          showBadgeTooltip,
+          undefined,
+          undefined,
+          otherLocale,
+        ),
+      );
+      setOtherLocale('');
     }
-  }, [location, batchactions, showBadgeTooltip]);
+  }, [location, batchactions, showBadgeTooltip, otherLocale]);
 
   const submitReplaceForm = useCallback(
     (ev: React.SyntheticEvent<HTMLFormElement>) => {
@@ -231,19 +241,26 @@ export function BatchActions(): React.ReactElement<'div'> {
         </div>
         <div className='copy-from-locale'>
           <Localized id='batchactions-BatchActions--copy-from-locale-heading'>
-            <h2>COPY FROM OTHER LOCALE</h2>
+            <h2>COPY FROM ANOTHER LOCALE</h2>
           </Localized>
-          <form onSubmit={submitCopyFromLocaleForm}>
-            <Localized
-              id='batchactions-BatchActions--copy-from-locale'
-              attrs={{ placeholder: true }}
+          <form id='copy-locale-form' onSubmit={submitCopyFromLocaleForm}>
+            <select
+              className='other-locale'
+              value={otherLocale}
+              onChange={(ev) => setOtherLocale(ev.target.value)}
+              disabled={locales.length === 0}
             >
-              <input
-                className='other-locale'
-                placeholder='Source locale, e.g. en-US'
-                ref={otherLocale}
-              />
-            </Localized>
+              <option value='' disabled>
+                SOURCE LOCALE
+              </option>
+              {locales
+                .filter((l: LocaleOption) => l.code !== location.locale)
+                .map(({ code, name }: LocaleOption) => (
+                  <option key={code} value={code}>
+                    {name} ({code})
+                  </option>
+                ))}
+            </select>
             <CopyFromLocale
               copyFromLocale={copyFromLocale}
               batchactions={batchactions}
