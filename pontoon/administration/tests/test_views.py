@@ -382,7 +382,7 @@ def test_manage_project_strings_download_csv(client_superuser):
 
 @pytest.mark.django_db
 def test_manage_project_translate_link_excludes_obsolete_resources(client_superuser):
-    """Test that translate_locale is only set when non-obsolete resources exist."""
+    """Test that Translate link is only shown when non-obsolete resources exist."""
     locale_kl = LocaleFactory.create(code="tlh", name="Klingon")
     project = ProjectFactory.create(
         data_source=Project.DataSource.DATABASE,
@@ -390,20 +390,24 @@ def test_manage_project_translate_link_excludes_obsolete_resources(client_superu
         repositories=[],
     )
 
+    url = reverse("pontoon.admin.project", args=(project.slug,))
+    translate_url = reverse(
+        "pontoon.localizations.localization", args=(locale_kl.code, project.slug)
+    )
+
     # add obsolete resource
     ResourceFactory.create(project=project, obsolete=True)
 
-    url = reverse("pontoon.admin.project", args=(project.slug,))
     response = client_superuser.get(url)
     assert response.status_code == 200
-    assert "translate_locale" not in response.context
+    assert translate_url.encode() not in response.content
 
     # add non-obsolete resource
     ResourceFactory.create(project=project, obsolete=False)
 
     response = client_superuser.get(url)
     assert response.status_code == 200
-    assert response.context["translate_locale"] == "tlh"
+    assert translate_url.encode() in response.content
 
 
 @pytest.mark.django_db
