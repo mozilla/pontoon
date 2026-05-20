@@ -9,10 +9,7 @@ from guardian.decorators import permission_required as guardian_permission_requi
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models.query import QuerySet
-from django.http import Http404, HttpResponseBadRequest
-from django.shortcuts import redirect
-from django.urls import reverse
+from django.http import HttpResponseBadRequest
 from django.utils.text import slugify
 from django.utils.timezone import make_aware
 from django.utils.translation import trans_real
@@ -221,26 +218,6 @@ def get_m2m_changes(current_qs, new_qs):
     return list(add_items), list(remove_items)
 
 
-def readonly_exists(projects, locale):
-    """
-    :arg list projects: a list of Project instances.
-    :arg Locale locale: Locale instance.
-    :returns: True if a read-only ProjectLocale instance for given Projects and
-        Locale exists.
-    """
-    # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.base.models import ProjectLocale
-
-    if not isinstance(projects, (QuerySet, tuple, list)):
-        projects = [projects]
-
-    return ProjectLocale.objects.filter(
-        project__in=projects,
-        locale=locale,
-        readonly=True,
-    ).exists()
-
-
 def get_search_phrases(search):
     """
     Split the search phrase into separate search queries.
@@ -281,66 +258,6 @@ def is_email(email):
         return True
     except ValidationError:
         return False
-
-
-def get_project_or_redirect(
-    slug, redirect_view_name, slug_arg_name, request_user, **kwargs
-):
-    """
-    Attempts to get a project with the given slug. If the project doesn't exist, it checks if the slug is in the
-    ProjectSlugHistory and if so, it redirects to the current project slug URL. If the old slug is not found in the
-    history, it raises an Http404 error.
-    """
-    # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.base.models import Project, ProjectSlugHistory
-
-    try:
-        project = Project.objects.visible_for(request_user).available().get(slug=slug)
-        return project
-    except Project.DoesNotExist:
-        slug_history = (
-            ProjectSlugHistory.objects.filter(old_slug=slug)
-            .order_by("-created_at")
-            .first()
-        )
-        if slug_history is not None:
-            redirect_kwargs = {slug_arg_name: slug_history.project.slug}
-            redirect_kwargs.update(kwargs)
-            redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
-            return redirect(redirect_url)
-        else:
-            raise Http404
-
-
-def get_locale_or_redirect(code, redirect_view_name=None, url_arg_name=None, **kwargs):
-    """
-    Attempts to retrieve a locale using the given code. If the locale does not exist, it checks the LocaleCodeHistory
-    for a record of the old code. If an entry is found, it either redirects to the view specified by redirect_view_name
-    using the new locale code or returns the Locale object if no redirect_view_name is provided.
-    The url_arg_name parameter specifies the argument name for the locale code used in the URL pattern of the redirect view.
-    If the old code is not found in the history, it raises an Http404 error.
-    """
-    # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.base.models import Locale, LocaleCodeHistory
-
-    try:
-        return Locale.objects.get(code=code)
-    except Locale.DoesNotExist:
-        code_history = (
-            LocaleCodeHistory.objects.filter(old_code=code)
-            .order_by("-created_at")
-            .first()
-        )
-    if code_history:
-        if not redirect_view_name or not url_arg_name:
-            return code_history.locale
-
-        redirect_kwargs = {url_arg_name: code_history.locale.code}
-        redirect_kwargs.update(kwargs)
-        redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
-        return redirect(redirect_url)
-
-    raise Http404
 
 
 def parse_bool(value) -> bool:

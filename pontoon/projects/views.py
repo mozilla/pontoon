@@ -11,7 +11,8 @@ from django.views.generic.detail import DetailView
 
 from pontoon.base.aggregated_stats import get_top_instances
 from pontoon.base.models import Locale, Project, TranslatedResource, Translation
-from pontoon.base.utils import get_project_or_redirect, require_AJAX
+from pontoon.base.services import get_project_or_redirect
+from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.tags.utils import Tags

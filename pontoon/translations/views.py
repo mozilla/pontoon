@@ -22,6 +22,7 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
 )
+from pontoon.base.services import readonly_exists
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
 from pontoon.messaging.notifications import send_badge_notification
@@ -86,7 +87,7 @@ def create_translation(request):
         )
 
     # Read-only translations cannot saved
-    if utils.readonly_exists(project, locale):
+    if readonly_exists(project, locale):
         return JsonResponse(
             {
                 "status": False,
@@ -211,7 +212,7 @@ def delete_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be deleted
-    if utils.readonly_exists(project, locale):
+    if readonly_exists(project, locale):
         return JsonResponse(
             {
                 "status": False,
@@ -267,7 +268,7 @@ def approve_translation(request):
     user = request.user
 
     # Read-only translations cannot be approved
-    if utils.readonly_exists(project, locale):
+    if readonly_exists(project, locale):
         return JsonResponse(
             {
                 "status": False,
@@ -352,7 +353,7 @@ def unapprove_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be un-approved
-    if utils.readonly_exists(project, locale):
+    if readonly_exists(project, locale):
         return JsonResponse(
             {
                 "status": False,
@@ -409,7 +410,7 @@ def reject_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be rejected
-    if utils.readonly_exists(project, locale):
+    if readonly_exists(project, locale):
         return JsonResponse(
             {
                 "status": False,
@@ -480,7 +481,7 @@ def unreject_translation(request):
     locale = translation.locale
 
     # Read-only translations cannot be un-rejected
-    if utils.readonly_exists(project, locale):
+    if readonly_exists(project, locale):
         return JsonResponse(
             {
                 "status": False,
