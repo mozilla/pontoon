@@ -42,7 +42,7 @@ def dedup_userprofile_usernames(apps, _):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0112_require_translation_value"),
+        ("base", "0113_userbanlog"),
     ]
 
     operations = [
