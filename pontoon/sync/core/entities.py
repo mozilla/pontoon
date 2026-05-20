@@ -299,7 +299,13 @@ def add_resources(
 ) -> tuple[int, set[str]]:
 
     new_resources = [
-        Resource(project=project, path=db_path, format=get_res_format(res))
+        Resource(
+            project=project,
+            path=db_path,
+            format=get_res_format(res),
+            comment=res.comment,
+            meta=[[m.key, m.value] for m in res.meta],
+        )
         for db_path, res in updates.items()
         if next(res.all_entries(), None) and db_path not in changed_paths
     ]

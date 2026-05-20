@@ -300,6 +300,70 @@ def test_add_resource():
 
 
 @pytest.mark.django_db
+def test_add_resource_with_comments():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-add-comments", locales=[locale], repositories=[repo]
+        )
+
+        # Filesystem setup: FTL file with a license header, a resource comment (###)
+        # and a group comment (##).
+        c_ftl = dedent(
+            """\
+            # This Source Code Form is subject to the terms of the Mozilla Public
+            # License, v. 2.0.
+
+            ### Resource-level comment for this file.
+
+            ## Group comment for the first section.
+
+            key-1 = Message 1
+            key-2 = Message 2
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"c.ftl": c_ftl},
+                "fr-Test": {},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("en-US", "c.ftl")],
+            removed=[],
+            renamed=[],
+        )
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
+
+        # Test
+        assert sync_resources_from_repo(
+            project, locale_map, mock_checkout, paths, now
+        ) == (2, {"c.ftl"}, set())
+        res_c = project.resources.get(path="c.ftl")
+        assert res_c.comment == "Resource-level comment for this file."
+        assert res_c.meta == [
+            [
+                "info",
+                "This Source Code Form is subject to the terms of the Mozilla Public\n"
+                "License, v. 2.0.",
+            ]
+        ]
+        sections = list(res_c.sections.all())
+        assert len(sections) == 1
+        assert sections[0].comment == "Group comment for the first section."
+
+
+@pytest.mark.django_db
 def test_update_resource():
     with TemporaryDirectory() as root:
         # Database setup
