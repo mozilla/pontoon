@@ -4,18 +4,24 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic.detail import DetailView
 
 from pontoon.base.aggregated_stats import get_top_instances
-from pontoon.base.models import Locale, Project, TranslatedResource, Translation
+from pontoon.base.models import (
+    Locale,
+    Project,
+    TranslatedResource,
+    Translation,
+)
 from pontoon.base.models.locale import LocaleQuerySet
 from pontoon.base.models.project import ProjectQuerySet
 from pontoon.base.services import get_project_or_redirect
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
+from pontoon.projects import utils
 from pontoon.tags.utils import Tags
 
 
@@ -184,3 +190,38 @@ class ProjectContributorsView(ContributorsMixin, DetailView):
 
     def contributors_filter(self, **kwargs):
         return Q(entity__resource__project=self.object)
+
+
+def export_csv(request, slug=None):
+    """
+    Export the translations and statistics of a project to a CSV file.
+    """
+    if slug:
+        user = request.user
+        project = get_object_or_404(Project, slug=slug)
+        return utils.generate_translation_stats_csv(project=project, user=user)
+    else:
+        return redirect("pontoon.error")
+
+
+def import_csv(request, slug=None):
+    """
+    Upload translations from a CSV file to a project.
+    """
+    # Check if a file was uploaded
+    if "importCsvFile" not in request.FILES:
+        return JsonResponse({"message": "No file was uploaded."}, status=400)
+
+    # Get the uploaded file
+    csv_file = request.FILES["importCsvFile"]
+
+    user = request.user
+    project = get_object_or_404(Project, slug=slug)
+    if project and user:
+        if response := utils.upload_translations(
+            csv_file=csv_file, project=project, user=user
+        ):
+            return response
+        return redirect("pontoon.projects.project", slug=project.slug)
+    else:
+        return redirect("pontoon.error")

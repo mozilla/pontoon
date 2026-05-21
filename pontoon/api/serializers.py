@@ -222,7 +222,12 @@ class NestedIndividualLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
         return [pl.project.slug for pl in getattr(obj, "fetched_project_locales", [])]
 
     def get_localizations(self, obj):
-        project_locales = obj.project_locale.stats_data(locale=obj)
+        request = self.context.get("request")
+        if not request:
+            return None
+
+        user = getattr(request, "user", None)
+        project_locales = obj.project_locale.stats_data(locale=obj, user=user)
         serialized = ProjectLocaleSerializer(project_locales, many=True).data
         return [{k: v for k, v in item.items() if k != "locale"} for item in serialized]
 

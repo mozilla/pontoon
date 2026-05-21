@@ -35,7 +35,7 @@ class ProjectLocaleQuerySet(models.QuerySet["ProjectLocale"]):
             project__system_project=False,
         ).distinct()
 
-    def stats_data(self, project=None, locale=None):
+    def stats_data(self, project=None, locale=None, user=None):
         if project:
             query = self.filter(
                 locale__translatedresources__resource__project=project,
@@ -115,9 +115,7 @@ class ProjectLocale(models.Model, AggregatedStats):
     )
 
     # Defines if locale has a translators group for the specific project.
-    has_custom_translators = models.BooleanField(
-        default=False,
-    )
+    has_custom_translators = models.BooleanField(default=True)
 
     objects = ProjectLocaleQuerySet.as_manager()
 

@@ -1,5 +1,6 @@
 DC := "docker compose"
 DOCKER := "docker"
+CURRENT_VERSION := $(shell awk -F '= ' '/^current_version/ {print $1}' .bumpversion.cfg | cut -d " " -f 3)
 
 # *IMPORTANT*
 # Don't use this instance in a production setting. More info at:
@@ -166,3 +167,6 @@ requirements:
 docs:
 	"${DC}" run --rm server zensical build -f //app/documentation/zensical.toml
 	"${DC}" run --rm server .//manage.py collectstatic --noinput
+
+version:
+	@echo "${CURRENT_VERSION}"

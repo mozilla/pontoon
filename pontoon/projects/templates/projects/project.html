@@ -27,6 +27,14 @@
           link=url('pontoon.projects.project', project.slug))
         }}
       </h1>
+      <div class="controls" style="display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 20px; gap: 16px;">
+          <a href="{{ url('pontoon.projects.export_csv', project.slug) }}" class="button" style="white-space: nowrap;">EXPORT TO CSV</a>
+          <form id="importCsvForm" name="importCsvForm" action="{{ url('pontoon.projects.import_csv', project.slug) }}" method="post" enctype="multipart/form-data">
+              <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken" />
+              <label for="importCsvInput" class="button" style="white-space: nowrap;">IMPORT FROM CSV</label>
+              <input type="file" id="importCsvInput" name="importCsvFile" style="display: none;">
+          </form>
+      </div>
 
       <ul class="details">
         {{ HeadingInfo.details_item_priority(project.priority) }}

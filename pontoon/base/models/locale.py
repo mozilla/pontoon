@@ -68,7 +68,22 @@ class LocaleQuerySet(models.QuerySet["Locale"]):
             pk__in=TranslatedResource.objects.values_list("locale", flat=True)
         )
 
-    def stats_data(self, project=None):
+    def visible_for(self, user):
+        """
+        Visible locales are filtered based on the visibility of their projects
+        for the given user.
+        """
+        from pontoon.base.models.project import Project
+        from pontoon.base.models.project_locale import ProjectLocale
+
+        user_projects = Project.objects.visible_for(user).values_list("pk", flat=True)
+        return self.available().filter(
+            pk__in=ProjectLocale.objects.filter(project__in=user_projects).values_list(
+                "locale", flat=True
+            )
+        )
+
+    def stats_data(self, project=None, user=None):
         if project is not None:
             query = self.filter(
                 translatedresources__resource__project=project,
@@ -81,6 +96,18 @@ class LocaleQuerySet(models.QuerySet["Locale"]):
                 translatedresources__resource__project__visibility="public",
                 translatedresources__resource__obsolete=False,
             )
+            if user is None:
+                query = query.filter(
+                    translatedresources__resource__project__visibility="public"
+                )
+            elif not user.is_superuser:
+                from pontoon.base.models.project import Project
+
+                query = query.filter(
+                    translatedresources__resource__project__in=Project.objects.visible_for(
+                        user
+                    )
+                )
 
         return query.annotate(
             total=Sum("translatedresources__total_strings", default=0),

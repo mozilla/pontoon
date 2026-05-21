@@ -19,7 +19,6 @@ node_modules/
 tmp/
 venv/
 
-/docker/config/server.env
 /docs/_build
 /docs/_gh-pages
 /documentation/site/

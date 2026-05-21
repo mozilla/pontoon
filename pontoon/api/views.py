@@ -146,7 +146,7 @@ class LocaleListView(RequestFieldsMixin, generics.ListAPIView):
     serializer_class = NestedLocaleSerializer
 
     def get_queryset(self):
-        qs = Locale.objects.visible()
+        qs = Locale.objects.visible_for(self.request.user)
 
         requested = self.request_fields()
 

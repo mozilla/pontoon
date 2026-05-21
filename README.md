@@ -183,8 +183,8 @@ docker push 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:$(make version)
 - [✓] Fix unauthorized page showing Django debug page instead of login page.
 - [✓] Add project action for exporting project translations
 - [ ] Correlate Keycloak user groups with user groups in Pontoon
-- [ ] Export/import translations in project page
-- [ ] Add versioning using bumpversion
+- [✓] Export/import translations in project page
+- [✓] Add versioning using bumpversion
 
 # References
 

@@ -649,6 +649,7 @@ PIPELINE_JS = {
             "js/manual_notifications.js",
             "js/insights_charts.js",
             "js/insights_tab.js",
+            "js/import_csv.js",
         ),
         "output_filename": "js/project.min.js",
     },
