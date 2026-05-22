@@ -90,23 +90,23 @@ class LocaleQuerySet(models.QuerySet["Locale"]):
                 translatedresources__resource__obsolete=False,
             )
         else:
-            query = self.filter(
-                translatedresources__resource__project__disabled=False,
-                translatedresources__resource__project__system_project=False,
-                translatedresources__resource__project__visibility="public",
-                translatedresources__resource__obsolete=False,
-            )
-            if user is None:
-                query = query.filter(
-                    translatedresources__resource__project__visibility="public"
-                )
-            elif not user.is_superuser:
+            if user is not None and not user.is_anonymous:
                 from pontoon.base.models.project import Project
 
-                query = query.filter(
-                    translatedresources__resource__project__in=Project.objects.visible_for(
-                        user
-                    )
+                visible_projects = Project.objects.visible_for(user).filter(
+                    disabled=False,
+                    system_project=False,
+                )
+                query = self.filter(
+                    translatedresources__resource__project__in=visible_projects,
+                    translatedresources__resource__obsolete=False,
+                )
+            else:
+                query = self.filter(
+                    translatedresources__resource__project__disabled=False,
+                    translatedresources__resource__project__system_project=False,
+                    translatedresources__resource__project__visibility="public",
+                    translatedresources__resource__obsolete=False,
                 )
 
         return query.annotate(

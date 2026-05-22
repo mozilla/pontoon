@@ -165,9 +165,9 @@ class LocaleListView(RequestFieldsMixin, generics.ListAPIView):
 
         # Only gather stats when requested
         if not requested or requested & set(TRANSLATION_STATS_FIELDS):
-            qs = qs.stats_data()
+            qs = qs.stats_data(user=self.request.user)
 
-        return qs.distinct().order_by("code")
+        return qs.order_by("code")
 
 
 class LocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
@@ -194,7 +194,7 @@ class LocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
 
         # Only gather stats when requested
         if not requested or requested & set(TRANSLATION_STATS_FIELDS):
-            qs = qs.stats_data()
+            qs = qs.stats_data(user=self.request.user)
 
         return qs
 

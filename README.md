@@ -33,7 +33,7 @@ git remote add upstream https://github.com/mozilla/pontoon
 
 ```sh
 pyenv install `pyenv local`
-nvm install v22 --lts
+nvm install v24 --lts
 
 python -m venv venv
 pip install -r requirements/default.txt

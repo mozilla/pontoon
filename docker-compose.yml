@@ -21,11 +21,10 @@ services:
       - ./pontoon:/app/pontoon
       - ./requirements:/app/requirements
       - ./translate:/app/translate
-      - ~/.ssh:/home/pontoon/.ssh
 
   # Database
   postgres:
-    image: postgres:15
+    image: postgres:14
     environment:
       # Create the superuser account
       - POSTGRES_USER=pontoon
