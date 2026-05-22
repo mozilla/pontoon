@@ -1,6 +1,6 @@
-from notifications.signals import notify
+import random
+import string
 
-from django.contrib.auth.models import User
 from django.db import migrations
 
 
@@ -13,31 +13,15 @@ def dedup_userprofile_usernames(apps, _):
     for profile in (
         UserProfile.objects.exclude(username=None)
         .exclude(username="")
-        .order_by("user__date_joined", "user_id")
+        .order_by("user_id")
     ):
         key = profile.username.lower()
+        random_key = "".join(random.choices(string.ascii_letters + string.digits, k=5))
         if key in seen:
-            profile.username = f"{profile.username}_{profile.user_id}"
+            profile.username = f"{profile.username}_{random_key}"
             conflicts.append(profile)
         else:
             seen[key] = profile.user_id
-
-    UserProfile.objects.bulk_update(conflicts, ["username"])
-
-    real_users = User.objects.in_bulk([p.user_id for p in conflicts])
-
-    for profile in conflicts:
-        user = real_users[profile.user_id]
-        notify.send(
-            sender=user,
-            recipient=user,
-            verb="",
-            description=(
-                f"Your Pontoon username has been updated to "
-                f"<strong>{profile.username}</strong> to ensure uniqueness."
-            ),
-            category="direct_message",
-        )
 
 
 class Migration(migrations.Migration):
