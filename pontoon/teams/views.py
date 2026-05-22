@@ -352,7 +352,8 @@ def ajax_translation_memory(request, locale):
 
     tm_entries = (
         # Group by "source" and "target"
-        tm_entries.values("source", "target").annotate(
+        tm_entries.values("source", "target")
+        .annotate(
             count=Count("id"),
             ids=ArrayAgg("id"),
             # Concatenate entity IDs
@@ -360,6 +361,7 @@ def ajax_translation_memory(request, locale):
                 Cast("entity_id", output_field=TextField()), delimiter=","
             ),
         )
+        .order_by("source", "target")
     )
 
     entries_per_page = 100
