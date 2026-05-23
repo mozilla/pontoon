@@ -25,6 +25,7 @@ def dedup_userprofile_usernames(apps, _):
 
     UserProfile.objects.bulk_update(conflicts, ["username"])
 
+
 class Migration(migrations.Migration):
     dependencies = [
         ("base", "0113_userbanlog"),
