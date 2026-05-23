@@ -17,6 +17,8 @@ class UserProfile(models.Model):
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
     # Personal information
+    # Renamed conflicting usernames before enforcing case-insensitive uniqueness.
+    # Random Suffix reduces but does not eliminate collisions.
     username = models.SlugField(blank=True, null=True)
     bio = models.TextField(max_length=160, blank=True, null=True)
 

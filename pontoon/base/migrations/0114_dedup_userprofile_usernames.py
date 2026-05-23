@@ -16,13 +16,14 @@ def dedup_userprofile_usernames(apps, _):
         .order_by("user_id")
     ):
         key = profile.username.lower()
-        random_key = "".join(random.choices(string.ascii_letters + string.digits, k=5))
+        random_key = "".join(random.choices(string.ascii_letters + string.digits, k=7))
         if key in seen:
             profile.username = f"{profile.username}_{random_key}"
             conflicts.append(profile)
         else:
             seen[key] = profile.user_id
 
+    UserProfile.objects.bulk_update(conflicts, ["username"])
 
 class Migration(migrations.Migration):
     dependencies = [
