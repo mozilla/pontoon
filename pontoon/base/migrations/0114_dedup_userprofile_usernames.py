@@ -16,8 +16,12 @@ def dedup_userprofile_usernames(apps, _):
         .order_by("user_id")
     ):
         key = profile.username.lower()
-        random_key = "".join(random.choices(string.ascii_letters + string.digits, k=7))
         if key in seen:
+            # Renamed conflicting usernames before enforcing case-insensitive uniqueness.
+            # Random Suffix reduces but does not eliminate collisions.
+            random_key = "".join(
+                random.choices(string.ascii_letters + string.digits, k=7)
+            )
             profile.username = f"{profile.username}_{random_key}"
             conflicts.append(profile)
         else:
