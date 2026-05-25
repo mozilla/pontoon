@@ -279,6 +279,7 @@ def entities(request):
         "search_match_case",
         "search_match_whole_word",
         "time",
+        "created_time",
         "author",
         "review_time",
         "reviewer",

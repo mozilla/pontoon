@@ -990,3 +990,57 @@ def test_lookup_collation(resource_a, locale_a):
     assert set(Translation.objects.filter(string__icontains="string")) == {
         translations[n] for n in [0, 2, 3, 4]
     }
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_created_time(admin, resource_a, locale_a):
+    """
+    created_time filters Entity.for_project_locale by Entity.date_created,
+    which is how the new-string notification link points to the exact
+    batch of strings added in a single sync.
+    """
+    from datetime import datetime, timezone
+
+    TranslatedResourceFactory.create(locale=locale_a, resource=resource_a)
+
+    older = EntityFactory.create(resource=resource_a, string="older")
+    newer_a = EntityFactory.create(resource=resource_a, string="newer a")
+    newer_b = EntityFactory.create(resource=resource_a, string="newer b")
+
+    # Two distinct bulk batches: 2026-05-22 12:48 (newer) and 2026-05-22 05:20 (older).
+    Entity.objects.filter(pk=older.pk).update(
+        date_created=datetime(2026, 5, 22, 5, 20, 8, 146586, tzinfo=timezone.utc),
+    )
+    Entity.objects.filter(pk__in=[newer_a.pk, newer_b.pk]).update(
+        date_created=datetime(2026, 5, 22, 12, 48, 35, 638056, tzinfo=timezone.utc),
+    )
+
+    # created_time=202605221248-202605221248 matches the 12:48 batch only.
+    assert set(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            created_time="202605221248-202605221248",
+        )
+    ) == {newer_a, newer_b}
+
+    # created_time=202605220520-202605220520 matches the 05:20 batch only.
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            created_time="202605220520-202605220520",
+        )
+    ) == [older]
+
+    # A malformed value is ignored (mirrors the existing `time` filter pattern).
+    assert set(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            created_time="not-a-range",
+        )
+    ) == {older, newer_a, newer_b}

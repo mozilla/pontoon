@@ -140,6 +140,7 @@ function buildFetchPayload(
     'tag',
     'author',
     'time',
+    'created_time',
     'reviewer',
     'review_time',
     'exclude_self_reviewed',

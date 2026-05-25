@@ -193,6 +193,9 @@ class EntityQuerySet(models.QuerySet["Entity"]):
     def between_time_interval(self, locale, start, end):
         return Q(translation__locale=locale, translation__date__range=(start, end))
 
+    def between_created_time_interval(self, start, end):
+        return Q(date_created__range=(start, end))
+
     def between_review_time_interval(self, locale, start, end):
         return Q(
             Q(translation__locale=locale)
@@ -359,6 +362,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         search_match_case=None,
         search_match_whole_word=None,
         time=None,
+        created_time=None,
         author=None,
         review_time=None,
         reviewer=None,
@@ -377,6 +381,13 @@ class Entity(DirtyFieldsMixin, models.Model):
                 start, end = utils.parse_time_interval(time)
                 pre_filters.append(
                     Entity.objects.between_time_interval(locale, start, end)
+                )
+
+        if created_time:
+            if match("^[0-9]{12}-[0-9]{12}$", created_time):
+                start, end = utils.parse_time_interval(created_time)
+                pre_filters.append(
+                    Entity.objects.between_created_time_interval(start, end)
                 )
 
         if review_time:
