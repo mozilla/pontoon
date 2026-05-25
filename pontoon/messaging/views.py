@@ -268,7 +268,7 @@ def get_recipients(form):
             profile__email_communications_enabled=True
         )
 
-    return recipients
+    return recipients.filter(profile__system_user=False)
 
 
 @permission_required_or_403("base.can_manage_project")

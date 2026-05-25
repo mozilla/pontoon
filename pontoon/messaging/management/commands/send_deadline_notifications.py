@@ -49,6 +49,7 @@ class Command(BaseCommand):
                     translation__entity__resource__project=project,
                     translation__locale__in=locales,
                     profile__project_deadline_notifications=True,
+                    profile__system_user=False,
                 ).distinct(),
             )
 

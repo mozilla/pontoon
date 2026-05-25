@@ -168,7 +168,8 @@ def create_translation(request):
         )
 
         for manager in locale.managers_group.user_set.filter(
-            profile__new_contributor_notifications=True
+            profile__new_contributor_notifications=True,
+            profile__system_user=False,
         ):
             notify.send(
                 sender=manager,

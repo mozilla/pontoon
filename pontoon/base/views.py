@@ -607,6 +607,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     for recipient in User.objects.filter(
         pk__in=recipients,
         profile__comment_notifications=True,
+        profile__system_user=False,
     ).exclude(pk=user.pk):
         notify.send(
             user,
@@ -638,9 +639,10 @@ def _send_pin_comment_notifications(user, comment):
             if u:
                 recipient_data[u.pk].append(t.locale.pk)
 
-    for recipient in User.objects.filter(pk__in=recipient_data.keys()).exclude(
-        pk=user.pk
-    ):
+    for recipient in User.objects.filter(
+        pk__in=recipient_data.keys(),
+        profile__system_user=False,
+    ).exclude(pk=user.pk):
         # Send separate notification for each locale (which results in links to corresponding translate views)
         for locale in Locale.objects.filter(pk__in=recipient_data[recipient.pk]):
             notify.send(

@@ -113,7 +113,9 @@ class Command(BaseCommand):
 
         pks = [user.pk for user in data.keys()]
         recipients = User.objects.filter(
-            pk__in=pks, profile__unreviewed_suggestion_notifications=True
+            pk__in=pks,
+            profile__unreviewed_suggestion_notifications=True,
+            profile__system_user=False,
         )
 
         for recipient in recipients:

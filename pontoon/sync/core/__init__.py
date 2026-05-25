@@ -94,6 +94,7 @@ def notify_users(project: Project, count: int) -> None:
     users = User.objects.filter(
         translation__entity__resource__project=project,
         profile__new_string_notifications=True,
+        profile__system_user=False,
     ).distinct()
     new_strings = f"{count} new {'string' if count == 1 else 'strings'}"
     log.info(f"[{project.slug}] Notifying {len(users)} users about {new_strings}")

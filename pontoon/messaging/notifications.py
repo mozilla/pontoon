@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 
 
 def send_badge_notification(user, badge, level):
+    if user.profile.system_user:
+        return
     desc = render_to_string(
         "messaging/notifications/badge_notification.html",
         {"badge": badge, "level": level, "user": user},
