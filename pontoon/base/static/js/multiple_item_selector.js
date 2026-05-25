@@ -5,7 +5,6 @@ $(function () {
    */
   function updateSelectedItems(element) {
     const widget = $(element).parents('.multiple-item-selector');
-    const selectElement = widget.find('select');
     const selectedItems = widget
       .find('.item.selected li[data-id]')
       .map(function () {
@@ -13,8 +12,16 @@ $(function () {
       })
       .get();
 
-    for (const option of selectElement[0].options) {
-      option.selected = selectedItems.includes(parseInt(option.value));
+    const selectElement = widget.find('select');
+    if (selectElement.length) {
+      for (const option of selectElement[0].options) {
+        option.selected = selectedItems.includes(parseInt(option.value));
+      }
+    }
+
+    const hiddenInput = widget.find('.item.selected input[type=hidden]');
+    if (hiddenInput.length) {
+      hiddenInput.val(selectedItems.join(','));
     }
   }
 

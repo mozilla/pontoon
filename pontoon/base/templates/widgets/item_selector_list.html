@@ -1,4 +1,4 @@
-{% macro list(id, title, items, left_shortcut=None, right_shortcut=None, sortable=False) %}
+{% macro list(id, title, items, left_shortcut=None, right_shortcut=None, sortable=False, form_field=None) %}
   <div class="item select {{ id }}">
     <label for="{{ id }}">
       {% if left_shortcut %}
@@ -19,11 +19,24 @@
         {% for item in items %}
           <li class="clearfix" data-id="{{ item.id }}">
             <span class="arrow fas"></span>
-            <span class="item">{{ item.name }}</span>
+            {% if item.code %}
+              <span class="language {{ item.code }}">{{ item.name }}</span>
+              <span class="code">{{ item.code }}</span>
+            {% else %}
+              <span class="item">{{ item.name }}</span>
+            {% endif %}
           </li>
         {% endfor %}
         <li class="no-match">No results</li>
       </ul>
     </div>
+
+    {% if form_field %}
+      <input
+        type="hidden"
+        name="{{ form_field }}"
+        value="{{ items|map(attribute='pk')|join(',') }}"
+      />
+    {% endif %}
   </div>
 {% endmacro %}
