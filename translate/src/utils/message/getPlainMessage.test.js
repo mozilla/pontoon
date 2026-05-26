@@ -1,3 +1,5 @@
+import { describe, expect, it, vi } from 'vitest';
+
 import { getPlainMessage } from './getPlainMessage';
 import { parseEntry } from './parseEntry';
 import { serializeEntry } from './serializeEntry';
@@ -13,9 +15,11 @@ describe('getPlainMessage', () => {
     });
 
     it('works for a non-FTL string', () => {
+      using warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       expect(getPlainMessage('I am inevitable', 'fluent')).toEqual(
         'I am inevitable',
       );
+      expect(warn).toHaveBeenCalledOnce();
     });
 
     it('returns the value for a simple Message', () => {
