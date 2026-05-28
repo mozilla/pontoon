@@ -263,7 +263,11 @@ describe('<TranslationForm> with multiple fields', () => {
     act(() => actions.setEditorSelection('Add'));
 
     const result = getResult();
-    expect(result[0].value).toEqual('ValueAdd');
-    expect(result[1].value).toEqual('Something');
+    expect(result).toMatchObject({
+      format: 'fluent',
+      id: 'title',
+      value: ['ValueAdd'],
+      attributes: new Map([['label', ['Something']]]),
+    });
   });
 });

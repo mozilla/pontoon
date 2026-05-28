@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import type { HistoryTranslation } from '~/api/translation';
-import { EditorData, useEditorMessageEntry } from '~/context/Editor';
+import { EditorData, EditorResult } from '~/context/Editor';
 import { EntityView, useActiveTranslation } from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
 import { parseEntry, serializeEntry } from '~/utils/message';
@@ -18,7 +18,7 @@ export function useExistingTranslationGetter() {
   const { translations } = useContext(HistoryData);
   const { format } = useContext(EntityView).entity;
   const { initial } = useContext(EditorData);
-  const entry = useEditorMessageEntry();
+  const entry = useContext(EditorResult);
 
   return () => {
     if (activeTranslation?.pk && pojoEquals(initial, entry)) {

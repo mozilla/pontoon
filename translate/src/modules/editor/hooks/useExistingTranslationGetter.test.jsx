@@ -5,7 +5,11 @@ import { render } from '@testing-library/react';
 import { EditorData, EditorResult } from '~/context/Editor';
 import * as Entity from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
-import { editMessageEntry, parseEntry } from '~/utils/message';
+import {
+  buildMessageEntry,
+  editMessageEntry,
+  parseEntry,
+} from '~/utils/message';
 
 import { useExistingTranslationGetter } from './useExistingTranslationGetter';
 
@@ -28,11 +32,7 @@ const HISTORY_FLUENT = {
 };
 
 function mountSpy(format, history, editor) {
-  const result = editor.fields.map(({ handle, keys, name }) => ({
-    name,
-    keys,
-    value: handle.current.value,
-  }));
+  const result = buildMessageEntry(editor.base, null, editor.fields);
 
   let res;
   const Spy = () => {

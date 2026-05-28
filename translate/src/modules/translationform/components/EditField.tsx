@@ -68,7 +68,7 @@ export const EditField = memo(
                     onFocus();
                   }
                   if (update.docChanged) {
-                    setResultFromInput(index, update.state.doc.toString());
+                    setResultFromInput();
                   }
                 }),
               );
