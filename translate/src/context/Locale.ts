@@ -19,7 +19,6 @@ export type Locale = Readonly<{
   teamDescription: string;
   googleTranslateCode: string;
   msTranslatorCode: string;
-  systranTranslateCode: string;
   msTerminologyCode: string;
   localizations: readonly Localization[];
 
@@ -37,7 +36,6 @@ export const initLocale = (set: (locale: Locale) => void): Locale => ({
   teamDescription: '',
   googleTranslateCode: '',
   msTranslatorCode: '',
-  systranTranslateCode: '',
   msTerminologyCode: '',
   localizations: [],
   fetching: false,

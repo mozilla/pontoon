@@ -1,9 +1,5 @@
-import json
 import logging
 
-import requests
-
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -186,26 +182,6 @@ class Locale(models.Model, AggregatedStats):
         """,
     )
 
-    # Fields used by optional SYSTRAN services
-    systran_translate_code = models.CharField(
-        max_length=20,
-        blank=True,
-        help_text="""
-        SYSTRAN maintains its own list of
-        <a href="https://platform.systran.net/index">supported locales</a>.
-        Choose a matching locale from the list or leave blank to disable
-        support for SYSTRAN machine translation service.
-        """,
-    )
-    systran_translate_profile = models.CharField(
-        max_length=128,
-        blank=True,
-        help_text="""
-        SYSTRAN Profile UUID to specify the engine trained on the en-locale language pair.
-        The field is updated automatically after the systran_translate_code field changes.
-        """,
-    )
-
     db_collation = models.CharField(
         max_length=20,
         blank=True,
@@ -336,7 +312,6 @@ class Locale(models.Model, AggregatedStats):
             "script": self.script,
             "google_translate_code": self.google_translate_code,
             "ms_translator_code": self.ms_translator_code,
-            "systran_translate_code": self.systran_translate_code,
             "ms_terminology_code": self.ms_terminology_code,
         }
 
@@ -369,50 +344,3 @@ class Locale(models.Model, AggregatedStats):
         return (
             self.latest_translation.latest_activity if self.latest_translation else None
         )
-
-    def save(self, *args, **kwargs):
-        old = Locale.objects.get(pk=self.pk) if self.pk else None
-        super().save(*args, **kwargs)
-
-        # If SYSTRAN Translate code changes, update SYSTRAN Profile UUID.
-        if old is None or old.systran_translate_code == self.systran_translate_code:
-            return
-
-        if not self.systran_translate_code:
-            return
-
-        api_key = settings.SYSTRAN_TRANSLATE_API_KEY
-        server = settings.SYSTRAN_TRANSLATE_SERVER
-        profile_owner = settings.SYSTRAN_TRANSLATE_PROFILE_OWNER
-        if not (api_key or server or profile_owner):
-            return
-
-        url = f"{server}/translation/supportedLanguages"
-
-        payload = {
-            "key": api_key,
-            "source": "en",
-            "target": self.systran_translate_code,
-        }
-
-        try:
-            r = requests.post(url, params=payload)
-            root = json.loads(r.content)
-
-            if "error" in root:
-                log.error(
-                    "Unable to retrieve SYSTRAN Profile UUID: {error}".format(
-                        error=root
-                    )
-                )
-                return
-
-            for languagePair in root["languagePairs"]:
-                for profile in languagePair["profiles"]:
-                    if profile["selectors"]["owner"] == profile_owner:
-                        self.systran_translate_profile = profile["id"]
-                        self.save(update_fields=["systran_translate_profile"])
-                        return
-
-        except requests.exceptions.RequestException as e:
-            log.error(f"Unable to retrieve SYSTRAN Profile UUID: {e}")

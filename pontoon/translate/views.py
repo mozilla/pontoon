@@ -70,7 +70,6 @@ def translate(request, locale, project, resource):
             settings.MICROSOFT_TRANSLATOR_API_KEY
         ),
         "is_openai_chatgpt_supported": bool(settings.OPENAI_API_KEY),
-        "is_systran_translate_supported": bool(settings.SYSTRAN_TRANSLATE_API_KEY),
         "locale": get_preferred_locale(request),
         "notifications": [],
     }

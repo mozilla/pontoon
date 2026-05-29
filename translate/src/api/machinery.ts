@@ -12,7 +12,6 @@ export type SourceType =
   | 'translation-memory'
   | 'google-translate'
   | 'microsoft-translator'
-  | 'systran-translate'
   | 'microsoft-terminology'
   | 'gpt-transform'
   | 'caighdean';
@@ -219,28 +218,6 @@ export async function fetchMicrosoftTranslation(
 
   return translation
     ? [{ sources: ['microsoft-translator'], original, translation }]
-    : [];
-}
-
-/**
- * Return translations by SYSTRAN.
- */
-export async function fetchSystranTranslation(
-  original: string,
-  locale: Locale,
-): Promise<MachineryTranslation[]> {
-  const url = '/systran-translate/';
-  const params = {
-    text: original,
-    locale: locale.systranTranslateCode,
-  };
-
-  const { translation } = (await GET_(url, params)) as {
-    translation: string;
-  };
-
-  return translation
-    ? [{ sources: ['systran-translate'], original, translation }]
     : [];
 }
 

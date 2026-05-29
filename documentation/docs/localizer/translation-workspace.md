@@ -273,7 +273,6 @@ Machinery shows possible translations from a variety of sources. These sources i
 
 * [Pontoon’s internal translation memory](translate.md#downloading-and-uploading-translations).
 * [Google Translate](https://translate.google.com).
-* [SYSTRAN](https://www.systran.net/).
 * [Caighdean](https://github.com/kscanne/caighdean).
 * [Bing Translator](https://www.bing.com/translator) (not currently enabled on pontoon.mozilla.org).
 

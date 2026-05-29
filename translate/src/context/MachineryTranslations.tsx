@@ -5,7 +5,6 @@ import {
   fetchCaighdeanTranslation,
   fetchGoogleTranslation,
   fetchMicrosoftTranslation,
-  fetchSystranTranslation,
   fetchTranslationMemory,
   MachineryTranslation,
 } from '~/api/machinery';
@@ -117,8 +116,6 @@ export function MachineryProvider({
           root?.dataset.isGoogleTranslateSupported === 'true';
         const isMicrosoftTranslatorSupported =
           root?.dataset.isMicrosoftTranslatorSupported === 'true';
-        const isSystranTranslateSupported =
-          root?.dataset.isSystranTranslateSupported === 'true';
 
         if (isGoogleTranslateSupported && locale.googleTranslateCode) {
           promises.push(fetchGoogleTranslation(plain, locale).then(addResults));
@@ -127,12 +124,6 @@ export function MachineryProvider({
         if (isMicrosoftTranslatorSupported && locale.msTranslatorCode) {
           promises.push(
             fetchMicrosoftTranslation(plain, locale).then(addResults),
-          );
-        }
-
-        if (isSystranTranslateSupported && locale.systranTranslateCode) {
-          promises.push(
-            fetchSystranTranslation(plain, locale).then(addResults),
           );
         }
       }
