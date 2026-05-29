@@ -11,6 +11,11 @@ urlpatterns = [
         name="pontoon.translation_memory",
     ),
     path(
+        "machinery-composed/",
+        views.machinery_composed,
+        name="pontoon.machinery_composed",
+    ),
+    path(
         "concordance-search/",
         views.concordance_search,
         name="pontoon.concordance_search",
