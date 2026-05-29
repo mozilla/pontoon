@@ -1,6 +1,6 @@
 from copy import deepcopy
 from re import compile
-from typing import Literal
+from typing import Callable, Literal
 
 from fluent.syntax import FluentSerializer, ast as FTL
 from fluent.syntax.serializer import serialize_expression
@@ -28,6 +28,9 @@ from pontoon.machinery.utils import get_google_translate_data
 pt_placeholder = compile(r"{ *\$(\d+) *}")
 
 
+MTProvider = Callable[..., str]
+
+
 def get_pretranslation(
     entity: Entity, locale: Locale, preserve_placeables: bool = False
 ) -> tuple[str, Literal["gt", "tm"]]:
@@ -42,39 +45,8 @@ def get_pretranslation(
         - a pretranslation of the entity
         - a pretranslation service identifier, either "gt" or "tm"
     """
-
     pt = Pretranslation(entity, locale, preserve_placeables)
-    if entity.resource.format == Resource.Format.FLUENT:
-        entry = fluent_parse_entry(entity.string, with_linepos=False)
-        if entry.value:
-            pt.message(entry.value)
-        accesskeys: list[tuple[str, Message]] = []
-        for key, prop in entry.properties.items():
-            if key.endswith("accesskey"):
-                accesskeys.append((key, prop))
-            else:
-                pt.message(prop)
-        for key, prop in accesskeys:
-            set_accesskey(entry, key, prop)
-        pt_res = FluentSerializer().serialize_entry(
-            fluent_astify_entry(entry, escape_syntax=False)
-        )
-    else:
-        if entity.resource.format in {
-            Resource.Format.ANDROID,
-            Resource.Format.GETTEXT,
-            Resource.Format.WEBEXT,
-            Resource.Format.XCODE,
-            Resource.Format.XLIFF,
-        }:
-            format = Format.mf2
-            msg = parse_message(format, entity.string)
-        else:
-            format = None
-            msg = PatternMessage([entity.string])
-        pt.message(msg)
-        pt_res = serialize_message(format, msg)
-
+    pt_res = pt.walk_entity()
     pt_service = max(set(pt.services), key=pt.services.count) if pt.services else "tm"
     return (pt_res, pt_service)
 
@@ -83,10 +55,30 @@ class Pretranslation:
     format: Format | None
     locale: Locale
     preserve_placeables: bool
-    services: list[Literal["gt", "tm"]]
+    services: list[str]
     source: str
 
-    def __init__(self, entity: Entity, locale: Locale, preserve_placeables: bool):
+    def __init__(
+        self,
+        entity: Entity,
+        locale: Locale,
+        preserve_placeables: bool,
+        *,
+        mt_provider: MTProvider | None = None,
+        mt_service_name: str = "gt",
+        mt_supported: bool | None = None,
+    ):
+        """
+        :param mt_provider: Callable invoked when no 100% TM match exists.
+            Signature: ``(text: str, locale: Locale, preserve_placeables: bool) -> str``.
+            Defaults to Google Translate.
+        :param mt_service_name: Identifier recorded in ``self.services`` for each
+            successful MT call. Defaults to ``"gt"``.
+        :param mt_supported: If False, MT is skipped and ``ValueError`` is raised
+            when a leaf can't be served from TM. Defaults to whether the locale
+            has a ``google_translate_code`` (matching the original behavior).
+        """
+        self.entity = entity
         match entity.resource.format:
             case Resource.Format.FLUENT:
                 self.format = Format.fluent
@@ -104,6 +96,57 @@ class Pretranslation:
         self.locale = locale
         self.preserve_placeables = preserve_placeables
         self.services = []
+        self.mt_provider = mt_provider or get_google_translate_data
+        self.mt_service_name = mt_service_name
+        self.mt_supported = (
+            mt_supported
+            if mt_supported is not None
+            else bool(locale.google_translate_code)
+        )
+
+    def walk_entity(self) -> str:
+        """
+        Walk the entity, translating each leaf via TM (then MT fallback), and
+        return the composed translation string.
+
+        For Fluent, each value, attribute, and selector variant is translated
+        independently and recomposed. Accesskey attributes are derived from the
+        translated label after all other leaves are filled. For MF2-handled
+        formats (Android, Gettext, Webext, Xcode, Xliff), variants are walked
+        with plural-category handling. All other formats are treated as a
+        single leaf.
+        """
+        entity = self.entity
+        if entity.resource.format == Resource.Format.FLUENT:
+            entry = fluent_parse_entry(entity.string, with_linepos=False)
+            if entry.value:
+                self.message(entry.value)
+            accesskeys: list[tuple[str, Message]] = []
+            for key, prop in entry.properties.items():
+                if key.endswith("accesskey"):
+                    accesskeys.append((key, prop))
+                else:
+                    self.message(prop)
+            for key, prop in accesskeys:
+                set_accesskey(entry, key, prop)
+            return FluentSerializer().serialize_entry(
+                fluent_astify_entry(entry, escape_syntax=False)
+            )
+
+        if entity.resource.format in {
+            Resource.Format.ANDROID,
+            Resource.Format.GETTEXT,
+            Resource.Format.WEBEXT,
+            Resource.Format.XCODE,
+            Resource.Format.XLIFF,
+        }:
+            format = Format.mf2
+            msg = parse_message(format, entity.string)
+        else:
+            format = None
+            msg = PatternMessage([entity.string])
+        self.message(msg)
+        return serialize_message(format, msg)
 
     def message(self, msg: Message) -> None:
         """Modifies `msg`."""
@@ -195,14 +238,14 @@ class Pretranslation:
         if not has_text:
             return pattern
 
-        if self.locale.google_translate_code:
-            # Try to fetch from Google Translate
-            gt_translation = get_google_translate_data(
+        if self.mt_supported:
+            # Try to fetch from the configured MT provider (Google by default)
+            mt_translation = self.mt_provider(
                 text=gt_source,
                 locale=self.locale,
                 preserve_placeables=self.preserve_placeables,
             )
-            self.services.append("gt")
+            self.services.append(self.mt_service_name)
             return [
                 el
                 if idx % 2 == 0
@@ -211,7 +254,7 @@ class Pretranslation:
                     if int(el) < len(placeholders)
                     else "{$" + el + "}"
                 )
-                for idx, el in enumerate(pt_placeholder.split(gt_translation))
+                for idx, el in enumerate(pt_placeholder.split(mt_translation))
                 if el != ""
             ]
 

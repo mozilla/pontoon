@@ -1,4 +1,6 @@
-import { fetchGPTTransform } from './machinery';
+import type { Locale } from '~/context/Locale';
+
+import { fetchComposedMachinery, fetchGPTTransform } from './machinery';
 import * as base from './utils/base';
 
 vi.mock('./utils/base', () => ({
@@ -54,5 +56,69 @@ describe('fetchGPTTransform', () => {
     POST.mockResolvedValueOnce({});
     const result = await fetchGPTTransform('hello', 'hola', 'informal', 'es');
     expect(result).toEqual([]);
+  });
+});
+
+describe('fetchComposedMachinery', () => {
+  const GET = vi.mocked(base.GET);
+  const locale = { code: 'fr' } as Locale;
+
+  it('sends entity, locale, and service params', async () => {
+    GET.mockResolvedValueOnce({
+      original: 'src',
+      translation: 'composed',
+      sources: ['translation-memory'],
+    });
+
+    await fetchComposedMachinery(42, locale, 'translation-memory');
+
+    const [url, params] = GET.mock.calls[0] as [string, URLSearchParams];
+    expect(url).toBe('/machinery-composed/');
+    expect(params.get('entity')).toBe('42');
+    expect(params.get('locale')).toBe('fr');
+    expect(params.get('service')).toBe('translation-memory');
+  });
+
+  it('returns a MachineryTranslation with the response sources', async () => {
+    GET.mockResolvedValueOnce({
+      original: 'Click Me\n  .title = Tip',
+      translation: 'composed-result',
+      sources: ['translation-memory', 'google-translate'],
+    });
+
+    const result = await fetchComposedMachinery(1, locale, 'google-translate');
+
+    expect(result).toEqual([
+      {
+        sources: ['translation-memory', 'google-translate'],
+        original: 'Click Me\n  .title = Tip',
+        translation: 'composed-result',
+      },
+    ]);
+  });
+
+  it('returns empty array when response is empty', async () => {
+    GET.mockResolvedValueOnce({});
+    const result = await fetchComposedMachinery(
+      1,
+      locale,
+      'translation-memory',
+    );
+    expect(result).toEqual([]);
+  });
+
+  it('falls back to the requested service when sources is missing', async () => {
+    GET.mockResolvedValueOnce({
+      original: 'src',
+      translation: 'composed',
+    });
+
+    const result = await fetchComposedMachinery(
+      1,
+      locale,
+      'microsoft-translator',
+    );
+
+    expect(result[0].sources).toEqual(['microsoft-translator']);
   });
 });

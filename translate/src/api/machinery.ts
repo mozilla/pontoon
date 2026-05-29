@@ -132,6 +132,48 @@ export async function fetchTranslationMemory(
 }
 
 /**
+ * Return a composed multi-value translation for a Fluent / MF2 entity.
+ *
+ * Each translatable leaf (Fluent value/attribute, MF2 variant) is looked up
+ * in Translation Memory, falling back to the requested MT service when no
+ * exact TM match exists. Use `service: 'translation-memory'` to disable the
+ * MT fallback and only emit a result when every leaf has a TM hit.
+ *
+ * Returns an empty array when the entity isn't a composable format or when
+ * no composed translation can be produced (e.g. MT unavailable for locale).
+ */
+export async function fetchComposedMachinery(
+  pk: number,
+  locale: Locale,
+  service: 'translation-memory' | 'google-translate' | 'microsoft-translator',
+): Promise<MachineryTranslation[]> {
+  const url = '/machinery-composed/';
+  const params = {
+    entity: String(pk),
+    locale: locale.code,
+    service,
+  };
+
+  const result = (await GET_(url, params)) as {
+    original?: string;
+    translation?: string;
+    sources?: string[];
+  };
+
+  if (!result || !result.translation || !result.original) {
+    return [];
+  }
+
+  return [
+    {
+      sources: (result.sources ?? [service]) as SourceType[],
+      original: result.original,
+      translation: result.translation,
+    },
+  ];
+}
+
+/**
  * Return translation by Google Translate.
  */
 export async function fetchGoogleTranslation(

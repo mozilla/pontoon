@@ -16,16 +16,49 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.html import strip_tags
 from django.views.decorators.http import require_POST
 
-from pontoon.base.models import Comment, Entity, Locale, Project, Translation
+from pontoon.base.models import Comment, Entity, Locale, Project, Resource, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
+from pontoon.pretranslation.pretranslate import Pretranslation
 from pontoon.terminology.models import Term
 
 from .openai_service import OpenAIService
+
+
+# Map machinery `service` query param to the (mt_provider, locale-support attr) pair
+# used by the composed-translation view. `translation-memory` is special-cased to mean
+# "TM-only, no MT fallback".
+COMPOSED_MT_SERVICES = {
+    "google-translate": (
+        lambda text, locale, preserve_placeables: get_google_translate_data(
+            text=text, locale=locale, preserve_placeables=preserve_placeables
+        ),
+        "google_translate_code",
+    ),
+    "microsoft-translator": (
+        lambda text, locale, preserve_placeables: get_microsoft_translator_data(
+            text, locale.ms_translator_code
+        ),
+        "ms_translator_code",
+    ),
+}
+
+
+# Formats whose entities can have multiple translatable leaves (Fluent attributes,
+# MF2 selector variants). These are the formats Pretranslation handles structurally;
+# other formats fall through to single-leaf behavior and don't need a composed result.
+COMPOSED_FORMATS = {
+    Resource.Format.FLUENT,
+    Resource.Format.ANDROID,
+    Resource.Format.GETTEXT,
+    Resource.Format.WEBEXT,
+    Resource.Format.XCODE,
+    Resource.Format.XLIFF,
+}
 
 
 log = logging.getLogger(__name__)
@@ -61,6 +94,94 @@ def translation_memory(request):
 
     data = get_translation_memory_data(text, locale, pk)
     return JsonResponse(data, safe=False)
+
+
+def machinery_composed(request):
+    """
+    Return a composed multi-value translation for a Fluent / MF2 entity.
+
+    Each translatable leaf (Fluent value/attribute, MF2 variant) is looked up in
+    Translation Memory; leaves without a 100% TM match fall back to the requested
+    MT service. Mirrors the Pretranslation pipeline so the Machinery panel can
+    surface a directly-pasteable composed translation alongside the per-leaf
+    results.
+
+    Query params:
+        entity: Entity pk
+        locale: Locale code
+        service: one of `translation-memory`, `google-translate`,
+            `microsoft-translator`. Defaults to `google-translate`.
+            `translation-memory` disables MT fallback.
+    """
+    try:
+        entity_pk = int(request.GET["entity"])
+        locale = Locale.objects.get(code=request.GET["locale"])
+        service = request.GET.get("service", "google-translate")
+        entity = Entity.objects.select_related("resource").get(pk=entity_pk)
+    except (
+        Entity.DoesNotExist,
+        Locale.DoesNotExist,
+        MultiValueDictKeyError,
+        ValueError,
+    ) as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"}, status=400
+        )
+
+    if entity.resource.format not in COMPOSED_FORMATS:
+        return JsonResponse({})
+
+    if service == "translation-memory":
+        mt_provider = None
+        mt_service_name = "tm"
+        mt_supported = False
+    elif service in COMPOSED_MT_SERVICES:
+        if not request.user.is_authenticated:
+            return JsonResponse(
+                {"status": False, "message": "Authentication required"}, status=403
+            )
+        mt_provider, locale_attr = COMPOSED_MT_SERVICES[service]
+        mt_service_name = service
+        mt_supported = bool(getattr(locale, locale_attr, None))
+    else:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: unknown service `{service}`"},
+            status=400,
+        )
+
+    try:
+        pt = Pretranslation(
+            entity,
+            locale,
+            preserve_placeables=False,
+            mt_provider=mt_provider,
+            mt_service_name=mt_service_name,
+            mt_supported=mt_supported,
+        )
+        translation = pt.walk_entity()
+    except ValueError:
+        # Raised when a leaf has no TM match and MT is unavailable. Compose
+        # endpoint treats this as "nothing to show" rather than an error.
+        return JsonResponse({})
+    except Exception as e:
+        return _machinery_error_response(f"Composed machinery ({service})", e)
+
+    if not pt.services or translation == entity.string:
+        return JsonResponse({})
+
+    # Preserve insertion order while deduplicating. Map the internal `"tm"`
+    # identifier to the SourceType the frontend uses for the badge.
+    sources_used = list(
+        dict.fromkeys("translation-memory" if s == "tm" else s for s in pt.services)
+    )
+
+    return JsonResponse(
+        {
+            "original": entity.string,
+            "translation": translation,
+            "sources": sources_used,
+        }
+    )
 
 
 def concordance_search(request):
