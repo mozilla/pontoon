@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   abortMachineryRequests,
   fetchCaighdeanTranslation,
+  fetchComposedMachinery,
   fetchGoogleTranslation,
   fetchMicrosoftTranslation,
   fetchTranslationMemory,
@@ -36,6 +37,19 @@ const sortByQuality = (
   { quality: b }: MachineryTranslation,
 ) => (!a ? 1 : !b ? -1 : a > b ? -1 : a < b ? 1 : 0);
 
+// Formats whose entities can have multiple translatable leaves (Fluent
+// attributes, MF2 selector variants). For these we request a composed
+// multi-value translation in addition to the per-leaf matches. Mirrors
+// `COMPOSED_FORMATS` in pontoon/machinery/views.py.
+const COMPOSED_FORMATS = new Set([
+  'fluent',
+  'android',
+  'gettext',
+  'webext',
+  'xcode',
+  'xliff',
+]);
+
 export function MachineryProvider({
   children,
 }: {
@@ -44,7 +58,7 @@ export function MachineryProvider({
   const locale = useContext(Locale);
   const { isAuthenticated } = useAppSelector((state) => state[USER]);
   const { entity } = useContext(EntityView);
-  const { pk } = entity;
+  const { pk, format } = entity;
   const entry = useMachineryEntry();
   const { query } = useContext(SearchData);
 
@@ -91,9 +105,22 @@ export function MachineryProvider({
       setFetching(true);
       const promises: Promise<void>[] = [];
 
+      // Composed multi-value translations are emitted only for entity-driven
+      // navigation (not concordance search) and only for formats that can
+      // have multiple translatable leaves.
+      const wantsComposed = !query && COMPOSED_FORMATS.has(format);
+
       if (!query) {
         promises.push(
           fetchTranslationMemory(plain, locale, pk).then(addResults),
+        );
+      }
+
+      if (wantsComposed) {
+        promises.push(
+          fetchComposedMachinery(pk!, locale, 'translation-memory').then(
+            addResults,
+          ),
         );
       }
 
@@ -108,12 +135,26 @@ export function MachineryProvider({
 
         if (isGoogleTranslateSupported && locale.googleTranslateCode) {
           promises.push(fetchGoogleTranslation(plain, locale).then(addResults));
+          if (wantsComposed) {
+            promises.push(
+              fetchComposedMachinery(pk!, locale, 'google-translate').then(
+                addResults,
+              ),
+            );
+          }
         }
 
         if (isMicrosoftTranslatorSupported && locale.msTranslatorCode) {
           promises.push(
             fetchMicrosoftTranslation(plain, locale).then(addResults),
           );
+          if (wantsComposed) {
+            promises.push(
+              fetchComposedMachinery(pk!, locale, 'microsoft-translator').then(
+                addResults,
+              ),
+            );
+          }
         }
       }
 
