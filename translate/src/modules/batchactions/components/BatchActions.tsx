@@ -21,6 +21,7 @@ import { ReplaceAll } from './ReplaceAll';
 import { CopyFromLocale } from './CopyFromLocale';
 import { fetchAllLocales } from '~/api/other-locales';
 import type { LocaleOption } from '~/api/other-locales';
+import LocaleSelector from './LocaleSelector';
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
@@ -244,23 +245,12 @@ export function BatchActions(): React.ReactElement<'div'> {
             <h2>COPY FROM ANOTHER LOCALE</h2>
           </Localized>
           <form id='copy-locale-form' onSubmit={submitCopyFromLocaleForm}>
-            <select
-              className='other-locale'
-              value={otherLocale}
-              onChange={(ev) => setOtherLocale(ev.target.value)}
-              disabled={locales.length === 0}
-            >
-              <option value='' disabled>
-                SOURCE LOCALE
-              </option>
-              {locales
-                .filter((l: LocaleOption) => l.code !== location.locale)
-                .map(({ code, name }: LocaleOption) => (
-                  <option key={code} value={code}>
-                    {name} ({code})
-                  </option>
-                ))}
-            </select>
+            <LocaleSelector
+              locales={locales}
+              currentLocale={location.locale}
+              selected={otherLocale}
+              onSelect={setOtherLocale}
+            />
             <CopyFromLocale
               copyFromLocale={copyFromLocale}
               batchactions={batchactions}

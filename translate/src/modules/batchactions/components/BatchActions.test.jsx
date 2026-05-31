@@ -81,7 +81,6 @@ describe('<BatchActions>', () => {
     getByRole('button', { name: /REPLACE ALL/i });
 
     expect(container.querySelector('.copy-from-locale')).toBeInTheDocument();
-    getByRole('combobox');
     getByRole('button', { name: /COPY AS SUGGESTIONS/i });
   });
 

@@ -1,4 +1,3 @@
-from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
@@ -281,26 +280,29 @@ def replace_translations(form, user, translations, locale):
 
 def copy_translation_from_locale(form, user, translations, locale):
     """
-    Copy translations that are approved in a simlar locale eg [en-GB] and not yet translated in another locale eg [en-ZA]
-    and have them as suggestions. This is useful for translators to easily copy translations
-    from a similar locale and then approve them in the new locale.
+    Copy translations approved in a source locale and add them as suggestions
+    in the target locale. Existing active translations in the target locale
+    are deactivated before the new suggestions are created.
     """
 
-    otherLocale = form.cleaned_data["other_locale"]
+    other_locale = form.cleaned_data["other_locale"]
 
-    # Get translations that are approved in the source locale and not yet translated in the current locale and add those as
-    # suggestions in the current locale
-    approved_in_target = Translation.objects.filter(
-        entity=OuterRef("entity"),
-        locale=locale,
-        approved=True,
+    other_locale_translations = list(
+        Translation.objects.filter(
+            locale__code=other_locale,
+            entity__pk__in=form.cleaned_data["entities"],
+            approved=True,
+        )
     )
 
-    other_locale_translations = Translation.objects.filter(
-        locale__code=otherLocale,
-        entity__pk__in=form.cleaned_data["entities"],
-        approved=True,
-    ).exclude(Exists(approved_in_target))
+    # Deactivate existing translations for the entities in the target locale
+    Translation.objects.filter(
+        entity__in=[t.entity for t in other_locale_translations],
+        locale=locale,
+        active=True,
+    ).update(active=False)
+
+    before_level = user.badges_translation_level
 
     # Translations to create in the current locale
     translations_to_create = []
@@ -347,17 +349,28 @@ def copy_translation_from_locale(form, user, translations, locale):
     ]
     ActionLog.objects.bulk_create(actions_to_log)
 
+    # Send Translation Champion Badge notification information
+    after_level = user.badges_translation_level
+    badge_update = {}
+    if after_level > before_level:
+        badge_update["level"] = after_level
+        badge_update["name"] = "Translation Champion"
+        send_badge_notification(user, badge_update["name"], badge_update["level"])
+
     changed_translation_pks = [t.pk for t in changed_translations]
+
+    latest_translation_pk = None
+    if changed_translation_pks:
+        latest_translation_pk = max(changed_translation_pks)
+
     return {
         "count": count,
         "translated_resources": translated_resources,
         "changed_entities": changed_entities,
-        "latest_translation_pk": max(changed_translation_pks)
-        if changed_translation_pks
-        else None,
+        "latest_translation_pk": latest_translation_pk,
         "changed_translation_pks": changed_translation_pks,
         "invalid_translation_pks": [],
-        "badge_update": {},
+        "badge_update": badge_update,
     }
 
 
