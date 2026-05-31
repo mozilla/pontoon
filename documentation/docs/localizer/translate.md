@@ -81,6 +81,8 @@ Note that `APPROVE ALL` accepts the latest suggestion, but doesn’t reject othe
 
 In the `FIND & REPLACE IN TRANSLATIONS` section, the user can input the text to search for, and the text to replace it with. This is a basic find and replace feature that will work only on the selected strings.
 
+In the `COPY FROM ANOTHER LOCALE` section, the user can select a source locale and click `COPY AS SUGGESTIONS`. Strings approved in the source locale will be added as suggestions in the current locale for all selected strings.
+
 ## Downloading and uploading translations
 
 Pontoon provides the ability to download and upload translations, including [terminology](glossary.md#terminology) and [translation memories](glossary.md#translation-memory). To access these features, click on the profile icon in the top-right corner of any page. Note that the user must be in the translation workspace for the download/upload options to be displayed in the dropdown menu.
