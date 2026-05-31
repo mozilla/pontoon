@@ -56,7 +56,7 @@
   bottom: 0;
 }
 
-.batch-actions .actions-panel div {
+.batch-actions .actions-panel > div {
   margin: 0 auto;
   min-width: 300px;
   padding: 20px;
@@ -118,36 +118,138 @@
 }
 
 /* Copy from Locale */
-.batch-actions #copy-locale-form {
+.batch-actions .copy-from-locale #copy-locale-form {
   display: flex;
   flex-direction: row;
+  box-sizing: border-box;
   gap: 10px;
-  margin-top: 10px;
+  width: 100%;
 }
 
-#copy-locale-form select {
+.batch-actions .copy-from-locale {
+  padding: 0;
+}
+
+.batch-actions .copy-from-locale .copy-from-locale-btn {
+  margin-top: 0;
+}
+
+.batch-actions .copy-from-locale .locale-selector,
+.batch-actions .copy-from-locale .copy-from-locale-btn {
+  flex: 1;
+}
+
+.batch-actions .actions-panel .locale-selector-trigger {
+  margin-top: 0;
+}
+
+#copy-locale-form .locale-selector button {
   text-align: center;
   text-align-last: center;
   border: none;
-  border-radius: 3px;
+  border-radius: 3px 3px 0 0;
   appearance: none;
   -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23ffffff' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 24px center;
-  padding-right: 30px;
+  background-position: right 12px center;
   color: var(--white-1);
   background-color: var(--icon-background-2);
   font-weight: 600;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 16px;
+  gap: 10px;
 }
 
-#copy-locale-form button {
-  margin-top: 0px;
+.locale-selector {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-.copy-from-locale form select,
-.copy-from-locale form button {
-  flex: 1;
+.locale-selector-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: var(--icon-background-2);
+}
+
+.locale-selector-search {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.locale-selector-trigger .locale-name {
+  color: var(--light-grey-7);
+  text-transform: uppercase;
+}
+
+.locale-selector-trigger .locale-code {
+  color: var(--status-translated);
+}
+
+.locale-search-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='6' cy='6' r='4.5' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Cline x1='9.5' y1='9.5' x2='14' y2='14' stroke='%23aaa' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.locale-selector-search input {
+  width: 100%;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
+  color: var(--white-1);
+}
+
+.locale-selector-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.locale-selector-dropdown li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 12px;
+  padding-right: 4px;
+  padding-left: 4px;
+  cursor: pointer;
+}
+
+.locale-selector-dropdown li:hover {
+  background-color: var(--background-hover-1);
+}
+
+.locale-selector-dropdown .locale-name {
+  color: var(--light-grey-7);
+}
+
+.locale-selector-dropdown .locale-code {
+  color: var(--status-translated);
+  font-size: 0.85em;
+}
+
+#copy-locale-form .locale-selector button.has-selection {
+  background-image: none;
 }
 
 /* Remove highlight in Chrome */

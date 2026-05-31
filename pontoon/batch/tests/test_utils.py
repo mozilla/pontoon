@@ -114,3 +114,54 @@ def test_copy_from_similar_locale():
     assert result.count() == 1
     assert not result.first().approved
     assert result.first().string == "key = value"
+
+
+@pytest.mark.django_db
+def test_copy_from_similar_locale_copies_all_strings():
+    """
+    Translations are copied for all selected strings, including those
+    that already have an active translation in the target locale.
+    """
+    project = ProjectFactory(slug="project3", name="Project3")
+    resource = ResourceFactory(project=project, path="resource.ftl", format="fluent")
+    entity1 = EntityFactory(resource=resource, string="key1 = value1")
+    entity2 = EntityFactory(resource=resource, string="key2 = value2")
+    target_locale = Locale.objects.get(code="en-ZA")
+    source_locale = Locale.objects.get(code="en-GB")
+    user = UserFactory()
+
+    # entity1 already has an active translation in the target locale
+    TranslationFactory(
+        entity=entity1,
+        locale=target_locale,
+        string="old value",
+        approved=True,
+        active=True,
+    )
+
+    # Both entities have approved translations in the source locale
+    TranslationFactory(
+        entity=entity1, locale=source_locale, string="key1 = value1", approved=True
+    )
+    TranslationFactory(
+        entity=entity2, locale=source_locale, string="key2 = value2", approved=True
+    )
+
+    form = MagicMock()
+    form.cleaned_data = {
+        "other_locale": "en-GB",
+        "entities": [entity1.pk, entity2.pk],
+    }
+
+    copy_translation_from_locale(form, user, Translation.objects.none(), target_locale)
+
+    # Both entities should have a new suggestion in the target locale
+    assert (
+        Translation.objects.filter(
+            locale=target_locale,
+            entity__in=[entity1, entity2],
+            approved=False,
+            active=True,
+        ).count()
+        == 2
+    )

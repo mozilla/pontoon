@@ -30,7 +30,11 @@ export async function fetchOtherLocales(
 }
 
 export async function fetchAllLocales(): Promise<LocaleOption[]> {
-  const search = new URLSearchParams({ fields: 'code,name', page_size: '200' });
+  const search = new URLSearchParams({
+    fields: 'code,name',
+    page_size: '200',
+    ordering: 'name',
+  });
   const result = await GET('/api/v2/locales/', search);
   return Array.isArray(result?.results) ? result.results : [];
 }
