@@ -1,7 +1,5 @@
 from typing import cast
 
-from notifications.signals import notify
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -25,7 +23,7 @@ from pontoon.base.models import (
 from pontoon.base.services import readonly_exists
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
-from pontoon.messaging.notifications import send_badge_notification
+from pontoon.messaging.notifications import send_badge_notification, send_notification
 
 from .forms import CreateTranslationForm
 from .utils import parse_db_string_to_json
@@ -168,9 +166,9 @@ def create_translation(request):
         )
 
         for manager in locale.managers_group.user_set.filter(
-            profile__new_contributor_notifications=True
+            profile__new_contributor_notifications=True,
         ):
-            notify.send(
+            send_notification(
                 sender=manager,
                 recipient=manager,
                 verb="has reviewed suggestions",  # Triggers render of description only

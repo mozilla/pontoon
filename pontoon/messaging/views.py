@@ -3,7 +3,6 @@ import logging
 import uuid
 
 from guardian.decorators import permission_required_or_403
-from notifications.signals import notify
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -20,6 +19,7 @@ from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.messaging import forms
 from pontoon.messaging.emails import send_manual_emails
 from pontoon.messaging.models import Message
+from pontoon.messaging.notifications import send_notification
 
 
 log = logging.getLogger(__name__)
@@ -323,7 +323,7 @@ def send_message(request):
         identifier = uuid.uuid4().hex
 
         for recipient in recipients:
-            notify.send(
+            send_notification(
                 request.user,
                 recipient=recipient,
                 verb="has sent you a message",

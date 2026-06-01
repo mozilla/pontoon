@@ -1,12 +1,11 @@
 import datetime
 
-from notifications.signals import notify
-
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
 from pontoon.base.models import Project
 from pontoon.base.models.translated_resource import TranslatedResource
+from pontoon.messaging.notifications import send_notification
 
 
 class Command(BaseCommand):
@@ -44,17 +43,15 @@ class Command(BaseCommand):
                 if pl_stats["approved"] < pl_stats["total"]:
                     locales.append(project_locale.locale)
 
-            contributors = (
-                User.objects.filter(
-                    translation__entity__resource__project=project,
-                    translation__locale__in=locales,
-                    profile__project_deadline_notifications=True,
-                ).distinct(),
-            )
+            contributors = User.objects.filter(
+                translation__entity__resource__project=project,
+                translation__locale__in=locales,
+                profile__project_deadline_notifications=True,
+            ).distinct()
 
             for contributor in contributors:
                 if is_project_public or contributor.is_superuser:
-                    notify.send(
+                    send_notification(
                         project,
                         recipient=contributor,
                         verb=verb,

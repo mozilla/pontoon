@@ -6,8 +6,6 @@ from collections import defaultdict
 from datetime import datetime
 from urllib.parse import urlparse
 
-from notifications.signals import notify
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -50,6 +48,7 @@ from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
+from pontoon.messaging.notifications import send_notification
 
 
 log = logging.getLogger(__name__)
@@ -608,7 +607,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         pk__in=recipients,
         profile__comment_notifications=True,
     ).exclude(pk=user.pk):
-        notify.send(
+        send_notification(
             user,
             recipient=recipient,
             verb="has added a comment in",
@@ -643,7 +642,7 @@ def _send_pin_comment_notifications(user, comment):
     ):
         # Send separate notification for each locale (which results in links to corresponding translate views)
         for locale in Locale.objects.filter(pk__in=recipient_data[recipient.pk]):
-            notify.send(
+            send_notification(
                 user,
                 recipient=recipient,
                 verb="has pinned a comment in",
