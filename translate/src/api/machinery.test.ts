@@ -93,8 +93,27 @@ describe('fetchComposedMachinery', () => {
         sources: ['translation-memory', 'google-translate'],
         original: 'Click Me\n  .title = Tip',
         translation: 'composed-result',
+        composed: true,
       },
     ]);
+  });
+
+  it('passes through the quality of a full TM match', async () => {
+    GET.mockResolvedValueOnce({
+      original: 'Click Me\n  .title = Tip',
+      translation: 'composed-result',
+      sources: ['translation-memory'],
+      quality: 100,
+    });
+
+    const result = await fetchComposedMachinery(
+      1,
+      locale,
+      'translation-memory',
+    );
+
+    expect(result[0].quality).toBe(100);
+    expect(result[0].composed).toBe(true);
   });
 
   it('returns empty array when response is empty', async () => {
