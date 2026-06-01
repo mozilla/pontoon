@@ -39,6 +39,17 @@ class UserProfile(models.Model):
         default=Themes.SYSTEM,
     )
 
+    class EditorThemes(models.TextChoices):
+        DARK = "dark", "Dark"
+        LIGHT = "light", "Light"
+        MATCH = "match", "Match main"
+
+    editor_theme = models.CharField(
+        choices=EditorThemes.choices,
+        max_length=20,
+        default=EditorThemes.MATCH,
+    )
+
     # External accounts
     chat = models.CharField("Chat username", max_length=255, blank=True, null=True)
     github = models.CharField("GitHub username", max_length=255, blank=True, null=True)
