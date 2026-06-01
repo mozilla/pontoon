@@ -67,6 +67,7 @@ class Pretranslation:
         mt_provider: MTProvider | None = None,
         mt_service_name: str = "gt",
         mt_supported: bool | None = None,
+        exclude_entity: bool = False,
     ):
         """
         :param mt_provider: Callable invoked when no 100% TM match exists.
@@ -77,6 +78,11 @@ class Pretranslation:
         :param mt_supported: If False, MT is skipped and ``ValueError`` is raised
             when a leaf can't be served from TM. Defaults to whether the locale
             has a ``google_translate_code`` (matching the original behavior).
+        :param exclude_entity: If True, the entity's own TM entries are excluded
+            from per-leaf TM lookups, matching ``get_translation_memory_data``.
+            A leaf that can only be served by the entity's own translation then
+            has no TM match, so a composed result is not reconstructed from the
+            current entity. Defaults to False.
         """
         self.entity = entity
         match entity.resource.format:
@@ -103,6 +109,7 @@ class Pretranslation:
             if mt_supported is not None
             else bool(locale.google_translate_code)
         )
+        self.exclude_entity = exclude_entity
 
     def walk_entity(self) -> str:
         """
@@ -206,11 +213,14 @@ class Pretranslation:
         )
         if not tm_source or tm_source.isspace():
             return pattern
-        tm_q100 = list(
-            TranslationMemoryEntry.objects.filter(
-                locale=self.locale, source=tm_source
-            ).values_list("target", flat=True)
+        tm_entries = TranslationMemoryEntry.objects.filter(
+            locale=self.locale, source=tm_source
         )
+        if self.exclude_entity:
+            # Mirror get_translation_memory_data(): never suggest the entity's
+            # own translation back to itself.
+            tm_entries = tm_entries.exclude(entity=self.entity)
+        tm_q100 = list(tm_entries.values_list("target", flat=True))
         if tm_q100:
             tm_best = max(set(tm_q100), key=tm_q100.count)
             self.services.append("tm")
