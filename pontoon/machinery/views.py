@@ -157,6 +157,7 @@ def machinery_composed(request):
             mt_provider=mt_provider,
             mt_service_name=mt_service_name,
             mt_supported=mt_supported,
+            exclude_entity=True,
         )
         translation = pt.walk_entity()
     except ValueError:

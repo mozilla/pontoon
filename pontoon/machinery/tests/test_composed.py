@@ -164,6 +164,46 @@ def test_composed_tm_only_partial_returns_empty(
     assert json.loads(response.content) == {}
 
 
+@pytest.mark.django_db
+def test_composed_tm_excludes_current_entity(client, fluent_resource, locale_a):
+    """TM matches belonging to the composed entity itself are excluded.
+
+    Once the entity is translated its leaves become TM entries; like regular TM
+    matches, those must not be suggested back, so a TM-only composition that
+    relies solely on them produces no result.
+    """
+    fluent_string = dedent(
+        """
+        button = Click Me
+            .title = Tooltip text
+        """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+
+    # Both leaves only match TM entries that belong to this same entity.
+    TranslationMemoryFactory.create(
+        entity=fluent_entity, source="Click Me", target="TM_value", locale=locale_a
+    )
+    TranslationMemoryFactory.create(
+        entity=fluent_entity,
+        source="Tooltip text",
+        target="TM_tooltip",
+        locale=locale_a,
+    )
+
+    url = reverse("pontoon.machinery_composed")
+    response = client.get(
+        url,
+        {
+            "entity": str(fluent_entity.pk),
+            "locale": locale_a.code,
+            "service": "translation-memory",
+        },
+    )
+    assert response.status_code == 200
+    assert json.loads(response.content) == {}
+
+
 @patch("pontoon.machinery.views.get_google_translate_data")
 @pytest.mark.django_db
 def test_composed_hybrid_tm_and_mt(
