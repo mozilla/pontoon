@@ -14,7 +14,7 @@ from pontoon.messaging.management.commands.send_review_notifications import (
 from pontoon.messaging.management.commands.send_suggestion_notifications import (
     Command as SuggestionCommand,
 )
-from pontoon.messaging.notifications import send_badge_notification
+from pontoon.messaging.notifications import send_badge_notification, send_notification
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
@@ -58,9 +58,19 @@ def test_get_suggestions_excludes_system_projects(
     assert system_translation not in suggestions
 
 
-@patch(
-    "pontoon.messaging.management.commands.send_suggestion_notifications.notify.send"
-)
+@patch("pontoon.messaging.notifications.notify.send")
+@pytest.mark.django_db
+def test_send_notification_skips_system_users(mock_notify, user_a, tm_user):
+    """The helper must short-circuit on system users and pass everyone else through."""
+    send_notification(user_a, recipient=tm_user, verb="x")
+    assert mock_notify.call_count == 0
+
+    send_notification(user_a, recipient=user_a, verb="x")
+    assert mock_notify.call_count == 1
+    assert mock_notify.call_args.kwargs["recipient"] == user_a
+
+
+@patch("pontoon.messaging.notifications.notify.send")
 @pytest.mark.django_db
 def test_send_suggestion_notifications_excludes_system_users(
     mock_notify,
@@ -102,7 +112,7 @@ def test_send_suggestion_notifications_excludes_system_users(
     assert tm_user not in recipients
 
 
-@patch("pontoon.messaging.management.commands.send_review_notifications.notify.send")
+@patch("pontoon.messaging.notifications.notify.send")
 @pytest.mark.django_db
 def test_send_review_notifications_excludes_system_users(
     mock_notify,
@@ -142,7 +152,7 @@ def test_send_review_notifications_excludes_system_users(
     assert tm_user not in recipients
 
 
-@patch("pontoon.messaging.management.commands.send_deadline_notifications.notify.send")
+@patch("pontoon.messaging.notifications.notify.send")
 @pytest.mark.django_db
 def test_send_deadline_notifications_excludes_system_users(
     mock_notify,

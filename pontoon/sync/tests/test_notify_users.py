@@ -10,7 +10,7 @@ from pontoon.base.tests import (
 from pontoon.sync.core import notify_users
 
 
-@patch("pontoon.sync.core.notify.send")
+@patch("pontoon.messaging.notifications.notify.send")
 @pytest.mark.django_db
 def test_notify_users_excludes_system_users(
     mock_notify, locale_a, project_a, project_locale_a, user_a, tm_user

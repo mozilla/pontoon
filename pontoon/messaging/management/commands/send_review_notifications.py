@@ -1,14 +1,13 @@
 from collections import defaultdict
 from datetime import timedelta
 
-from notifications.signals import notify
-
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
 
 from pontoon.base.models import Translation
+from pontoon.messaging.notifications import send_notification
 
 
 class Command(BaseCommand):
@@ -30,7 +29,6 @@ class Command(BaseCommand):
         for suggestion in Translation.objects.filter(
             (Q(approved_date__gt=start) | Q(rejected_date__gt=start))
             & Q(user__profile__review_notifications=True)
-            & Q(user__profile__system_user=False)
             & Q(entity__resource__project__disabled=False)
         ):
             author = suggestion.user
@@ -72,7 +70,7 @@ class Command(BaseCommand):
                 },
             )
 
-            notify.send(
+            send_notification(
                 sender=author,
                 recipient=author,
                 verb="has reviewed suggestions",

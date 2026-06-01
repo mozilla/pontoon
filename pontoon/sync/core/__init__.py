@@ -1,10 +1,9 @@
 import logging
 
-from notifications.signals import notify
-
 from django.utils import timezone
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
+from pontoon.messaging.notifications import send_notification
 from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.core.checkout import checkout_repos
 from pontoon.sync.core.entities import sync_resources_from_repo
@@ -94,12 +93,11 @@ def notify_users(project: Project, count: int) -> None:
     users = User.objects.filter(
         translation__entity__resource__project=project,
         profile__new_string_notifications=True,
-        profile__system_user=False,
     ).distinct()
     new_strings = f"{count} new {'string' if count == 1 else 'strings'}"
     log.info(f"[{project.slug}] Notifying {len(users)} users about {new_strings}")
     for user in users:
-        notify.send(
+        send_notification(
             project,
             recipient=user,
             verb=f"updated with {new_strings}",

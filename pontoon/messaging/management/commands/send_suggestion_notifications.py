@@ -4,8 +4,6 @@ from collections import defaultdict
 from datetime import timedelta
 from functools import cached_property
 
-from notifications.signals import notify
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
@@ -14,6 +12,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 
 from pontoon.base.models import Comment, Locale, ProjectLocale, Translation
+from pontoon.messaging.notifications import send_notification
 
 
 class Command(BaseCommand):
@@ -115,7 +114,6 @@ class Command(BaseCommand):
         recipients = User.objects.filter(
             pk__in=pks,
             profile__unreviewed_suggestion_notifications=True,
-            profile__system_user=False,
         )
 
         for recipient in recipients:
@@ -126,7 +124,7 @@ class Command(BaseCommand):
                 {"project_locales": project_locales},
             )
 
-            notify.send(
+            send_notification(
                 recipient,
                 recipient=recipient,
                 verb="",
