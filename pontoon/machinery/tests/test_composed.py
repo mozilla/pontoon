@@ -129,6 +129,8 @@ def test_composed_tm_only_full_hit(client, fluent_resource, entity_a, locale_a):
     assert "TM_value" in body["translation"]
     assert "TM_tooltip" in body["translation"]
     assert body["sources"] == ["translation-memory"]
+    # Every leaf is a 100% TM match, so the composed result is a full TM match.
+    assert body["quality"] == 100
 
 
 @pytest.mark.django_db
@@ -204,3 +206,5 @@ def test_composed_hybrid_tm_and_mt(
     assert "TM_value" in body["translation"]
     assert "MT_tooltip" in body["translation"]
     assert set(body["sources"]) == {"translation-memory", "google-translate"}
+    # MT-assisted results have no meaningful aggregate quality score.
+    assert "quality" not in body

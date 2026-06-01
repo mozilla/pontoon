@@ -1,3 +1,6 @@
+import React from 'react';
+
+import { EntityView } from '~/context/EntityView';
 import {
   createDefaultUser,
   createReduxStore,
@@ -64,5 +67,38 @@ describe('<MachineryTranslationComponent>', () => {
 
     expect(container.querySelector('.quality')).toBeInTheDocument();
     expect(container.querySelector('.quality')).toHaveTextContent('100%');
+  });
+
+  it('renders a composed multi-field translation as a rich table', () => {
+    const translation = {
+      sources: ['translation-memory'],
+      composed: true,
+      quality: 100,
+      original: 'button = Click Me\n    .title = Tooltip\n',
+      translation: 'button = Cliquez\n    .title = Infobulle\n',
+    };
+    const store = createReduxStore();
+    const Wrapped = (props) =>
+      React.createElement(
+        EntityView.Provider,
+        { value: { entity: { format: 'fluent' } } },
+        React.createElement(MachineryTranslationComponent, props),
+      );
+    const { container } = mountComponentWithStore(Wrapped, store, {
+      translation,
+    });
+    createDefaultUser(store);
+
+    // Each leaf (value + attribute) is shown as a labeled row, on both the
+    // original and the suggestion side.
+    const original = container.querySelector('.fluent-rich-string.original');
+    const suggestion = container.querySelector(
+      '.fluent-rich-string.suggestion',
+    );
+    expect(original).toBeInTheDocument();
+    expect(suggestion).toBeInTheDocument();
+    expect(original.querySelectorAll('tr')).toHaveLength(2);
+    expect(suggestion.textContent).toContain('Cliquez');
+    expect(suggestion.textContent).toContain('Infobulle');
   });
 });

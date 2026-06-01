@@ -175,13 +175,20 @@ def machinery_composed(request):
         dict.fromkeys("translation-memory" if s == "tm" else s for s in pt.services)
     )
 
-    return JsonResponse(
-        {
-            "original": entity.string,
-            "translation": translation,
-            "sources": sources_used,
-        }
-    )
+    response = {
+        "original": entity.string,
+        "translation": translation,
+        "sources": sources_used,
+    }
+
+    # When every leaf came from a 100% TM match (`pattern()` only accepts exact
+    # source matches from TM), the composed string is a complete TM match — give
+    # it the same quality badge regular TM matches get. Hybrid results that fall
+    # back to MT for any leaf have no meaningful aggregate score.
+    if set(pt.services) == {"tm"}:
+        response["quality"] = 100
+
+    return JsonResponse(response)
 
 
 def concordance_search(request):
