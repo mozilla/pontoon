@@ -4,11 +4,17 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import type { MachineryTranslation, SourceType } from '~/api/machinery';
 import { logUXAction } from '~/api/uxaction';
-import { EditorActions } from '~/context/Editor';
+import { EditorActions, EditorField } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
 import { GenericTranslation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import {
+  editMessageEntry,
+  parseEntry,
+  requiresSourceView,
+} from '~/utils/message';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { MachineryTranslationSource } from './MachineryTranslationSource';
@@ -110,9 +116,21 @@ function MachineryTranslationSuggestion({
   translation: MachineryTranslation;
 }) {
   const { code, direction, script } = useContext(Locale);
+  const { entity } = useContext(EntityView);
 
   const getLLMTranslationState = useLLMTranslation();
   const { llmTranslation, loading } = getLLMTranslationState(translation);
+
+  // Composed suggestions carry full entry sources (Fluent attributes, MF2
+  // variants). Render them as labeled fields — the same representation as the
+  // original string panel — instead of a single raw block of syntax.
+  const originalFields = translation.composed
+    ? richFields(entity.format, translation.original)
+    : null;
+  const suggestionFields = translation.composed
+    ? richFields(entity.format, translation.translation)
+    : null;
+  const isRich = originalFields !== null && suggestionFields !== null;
 
   return (
     <>
@@ -123,30 +141,104 @@ function MachineryTranslationSuggestion({
 
         <MachineryTranslationSource translation={translation} />
       </header>
-      <p className='original'>
-        <GenericTranslation
-          content={translation.original}
-          diffTarget={
-            // Caighdean takes `gd` translations as input, so we shouldn't
-            // diff it against the `en-US` source string.
-            translation.sources.includes('caighdean') ? undefined : sourceString
-          }
-        />
-      </p>
-      <p
-        className='suggestion'
-        dir={direction}
-        data-script={script}
-        lang={code}
-      >
-        {loading ? (
-          <i className='fas fa-circle-notch fa-spin' />
-        ) : (
-          <GenericTranslation
-            content={llmTranslation || translation.translation}
+      {isRich ? (
+        <>
+          <RichMessage className='original' fields={originalFields} />
+          <RichMessage
+            className='suggestion'
+            fields={suggestionFields}
+            dir={direction}
+            script={script}
+            lang={code}
           />
-        )}
-      </p>
+        </>
+      ) : (
+        <>
+          <p className='original'>
+            <GenericTranslation
+              content={translation.original}
+              diffTarget={
+                // Caighdean takes `gd` translations as input, so we shouldn't
+                // diff it against the `en-US` source string.
+                translation.sources.includes('caighdean')
+                  ? undefined
+                  : sourceString
+              }
+            />
+          </p>
+          <p
+            className='suggestion'
+            dir={direction}
+            data-script={script}
+            lang={code}
+          >
+            {loading ? (
+              <i className='fas fa-circle-notch fa-spin' />
+            ) : (
+              <GenericTranslation
+                content={llmTranslation || translation.translation}
+              />
+            )}
+          </p>
+        </>
+      )}
     </>
+  );
+}
+
+/**
+ * Parse a composed entry source into its editable fields, or return `null` when
+ * it can't be shown as a rich multi-field view (parse error, source-view-only
+ * entry, or a single field — in which case the plain rendering is used).
+ */
+function richFields(format: string, content: string): EditorField[] | null {
+  const entry = parseEntry(format, content);
+  if (!entry || requiresSourceView(entry)) {
+    return null;
+  }
+  const fields = editMessageEntry(entry);
+  return fields.length > 1 ? fields : null;
+}
+
+/** Render a parsed message as a labeled table, mirroring the original string panel. */
+function RichMessage({
+  className,
+  fields,
+  dir,
+  lang,
+  script,
+}: {
+  className: string;
+  fields: EditorField[];
+  dir?: string;
+  lang?: string;
+  script?: string;
+}): React.ReactElement<'table'> {
+  return (
+    <table
+      className={`fluent-rich-string ${className}`}
+      dir={dir}
+      data-script={script}
+      lang={lang}
+    >
+      <tbody>
+        {fields.map(({ handle, id, labels }) => (
+          <tr key={id}>
+            <td>
+              <label>
+                {labels.map(({ label }) => (
+                  <span key={label}>{label}</span>
+                ))}
+              </label>
+            </td>
+            <td>
+              <span>
+                <GenericTranslation content={handle.current.value} />
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

@@ -22,6 +22,10 @@ export type MachineryTranslation = {
   original: string;
   translation: string;
   quality?: number;
+  // Set for `/machinery-composed/` results, whose `original` and `translation`
+  // are full entry sources (Fluent attributes, MF2 variants) rather than plain
+  // strings — the Machinery panel renders these in a rich, multi-field view.
+  composed?: boolean;
   projects?: {
     name: string;
     slug: string;
@@ -158,6 +162,7 @@ export async function fetchComposedMachinery(
     original?: string;
     translation?: string;
     sources?: string[];
+    quality?: number;
   };
 
   if (!result || !result.translation || !result.original) {
@@ -169,6 +174,8 @@ export async function fetchComposedMachinery(
       sources: (result.sources ?? [service]) as SourceType[],
       original: result.original,
       translation: result.translation,
+      quality: result.quality,
+      composed: true,
     },
   ];
 }

@@ -11,7 +11,7 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage } from '~/utils/message';
+import { editMessageEntry, getPlainMessage, parseEntry } from '~/utils/message';
 
 import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
@@ -49,6 +49,15 @@ const COMPOSED_FORMATS = new Set([
   'xcode',
   'xliff',
 ]);
+
+// A composed translation is only meaningful when the entity has more than one
+// translatable leaf (Fluent attributes, MF2 selector variants). For a simple
+// single-field entity the composed result would just duplicate the per-leaf TM
+// or MT match, so we skip the request entirely.
+function hasMultipleFields(original: string, format: string): boolean {
+  const entry = parseEntry(format, original);
+  return !!entry && editMessageEntry(entry).length > 1;
+}
 
 export function MachineryProvider({
   children,
@@ -108,7 +117,10 @@ export function MachineryProvider({
       // Composed multi-value translations are emitted only for entity-driven
       // navigation (not concordance search) and only for formats that can
       // have multiple translatable leaves.
-      const wantsComposed = !query && COMPOSED_FORMATS.has(entity.format);
+      const wantsComposed =
+        !query &&
+        COMPOSED_FORMATS.has(entity.format) &&
+        hasMultipleFields(entity.original, entity.format);
 
       if (!query) {
         promises.push(
