@@ -112,7 +112,6 @@ class LocaleSerializer(DynamicFieldsModelSerializer):
             "google_translate_code",
             "ms_terminology_code",
             "ms_translator_code",
-            "systran_translate_code",
             "team_description",
         ] + TRANSLATION_STATS_FIELDS
 

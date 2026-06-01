@@ -534,11 +534,6 @@ machinery-GoogleTranslation--option-show-original = VISA ORIGINAL
 machinery-MicrosoftTranslation--translation-source = MICROSOFT TRANSLATOR
 
 
-## Machinery Systran Translate
-## Shows the translation source from Systran Translate.
-machinery-SystranTranslate--translation-source = SYSTRAN TRANSLATE
-
-
 ## Machinery Microsoft Terminology
 ## Shows the translation source from Microsoft Terminology.
 machinery-MicrosoftTerminology--translation-source = MICROSOFT

@@ -453,11 +453,6 @@ machinery-GoogleTranslation--option-show-original = SKEN AƔBALU
 
 machinery-MicrosoftTranslation--translation-source = MICROSOFT TRANSLATOR
 
-## Machinery Systran Translate
-## Shows the translation source from Systran Translate.
-
-machinery-SystranTranslate--translation-source = SYSTRAN TRANSLATE
-
 ## Machinery Microsoft Terminology
 ## Shows the translation source from Microsoft Terminology.
 

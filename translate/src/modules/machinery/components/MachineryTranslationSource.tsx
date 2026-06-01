@@ -4,7 +4,6 @@ import type { MachineryTranslation } from '~/api/machinery';
 
 import { GoogleTranslation } from './source/GoogleTranslation';
 import { MicrosoftTranslation } from './source/MicrosoftTranslation';
-import { SystranTranslation } from './source/SystranTranslation';
 import { MicrosoftTerminology } from './source/MicrosoftTerminology';
 import { CaighdeanTranslation } from './source/CaighdeanTranslation';
 import { TranslationMemory } from './source/TranslationMemory';
@@ -48,9 +47,6 @@ export function MachineryTranslationSource({
         break;
       case 'microsoft-translator':
         sources.push(<MicrosoftTranslation key={source} />);
-        break;
-      case 'systran-translate':
-        sources.push(<SystranTranslation key={source} />);
         break;
       case 'microsoft-terminology':
         sources.push(<MicrosoftTerminology key={source} />);
