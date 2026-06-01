@@ -14,6 +14,7 @@ import {
   buildMessageEntry,
   editMessageEntry,
   editSource,
+  getPlainMessage,
   type MessageEntry,
   parseEntry,
   requiresSourceView,
@@ -94,11 +95,17 @@ export type EditorActions = {
   /** If `format: 'fluent'`, must be called with the source of a full entry */
   setEditorFromHistory(value: string): void;
 
-  /** @param manual Set `true` when value set due to direct user action */
+  /**
+   * @param manual Set `true` when value set due to direct user action
+   * @param entry Set `true` when `value` is the source of a full entry (e.g. a
+   *   composed Machinery suggestion) that should be parsed and distributed
+   *   across all fields rather than inserted into the focused field.
+   */
   setEditorFromHelpers(
     value: string,
     sources: SourceType[],
     manual: boolean,
+    entry?: boolean,
   ): void;
 
   setEditorSelection(content: string): void;
@@ -161,6 +168,39 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       return initEditorActions;
     }
     const buildOpts = { trim: !hasOuterWhitespace(sourceEntry) };
+
+    // Parse a full entry source and distribute its leaves across all editor
+    // fields, falling back to a raw source-view field when it can't be parsed.
+    // Shared by history restores and composed Machinery copies.
+    const distributeEntrySource = (
+      prev: EditorData,
+      str: string,
+    ): EditorData => {
+      const next = { ...prev };
+      if (specialFormats.has(format)) {
+        const entry = parseEntry(format, str);
+        if (entry) {
+          next.base = entry;
+        } else if (format !== 'fluent') {
+          return prev;
+        }
+        if (entry && !requiresSourceView(entry)) {
+          next.fields = prev.sourceView
+            ? editSource(entry)
+            : editMessageEntry(sourceEntry, entry);
+        } else {
+          next.fields = editSource(str);
+          next.sourceView = true;
+        }
+      } else {
+        next.fields = editMessageEntry(sourceEntry, prev.initial);
+        next.fields[0].handle.current.setValue(str);
+      }
+      next.focusField.current = next.fields[0];
+      setResult(buildMessageEntry(next.base, next.fields, buildOpts));
+      return next;
+    };
+
     return {
       clearEditor() {
         setState((state) => {
@@ -175,8 +215,25 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorBusy: (busy) =>
         setState((prev) => (busy === prev.busy ? prev : { ...prev, busy })),
 
-      setEditorFromHelpers: (str, sources, manual) =>
+      setEditorFromHelpers: (str, sources, manual, entry) =>
         setState((prev) => {
+          // Composed suggestions carry a full entry source. Outside source view
+          // we must parse it and distribute the leaves across all fields rather
+          // than dumping the raw syntax into the focused field. Record the plain
+          // message as `machinery.translation` so source attribution still
+          // matches the saved translation (see `useSendTranslation`).
+          if (entry && !prev.sourceView) {
+            const next = distributeEntrySource(prev, str);
+            const parsed = parseEntry(format, str);
+            return {
+              ...next,
+              machinery: {
+                manual,
+                translation: parsed ? getPlainMessage(parsed) : str,
+                sources,
+              },
+            };
+          }
           const { fields, focusField, sourceView } = prev;
           const field = focusField.current ?? fields[0];
           field.handle.current.setValue(str);
@@ -194,32 +251,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         }),
 
       setEditorFromHistory: (str) =>
-        setState((prev) => {
-          const next = { ...prev };
-          if (specialFormats.has(format)) {
-            const entry = parseEntry(format, str);
-            if (entry) {
-              next.base = entry;
-            } else if (format !== 'fluent') {
-              return prev;
-            }
-            if (entry && !requiresSourceView(entry)) {
-              next.fields = prev.sourceView
-                ? editSource(entry)
-                : editMessageEntry(sourceEntry, entry);
-            } else {
-              next.fields = editSource(str);
-              next.sourceView = true;
-            }
-          } else {
-            next.fields = editMessageEntry(sourceEntry, prev.initial);
-            next.fields[0].handle.current.setValue(str);
-          }
-          next.focusField.current = next.fields[0];
-          const result = buildMessageEntry(next.base, next.fields, buildOpts);
-          setResult(result);
-          return next;
-        }),
+        setState((prev) => distributeEntrySource(prev, str)),
 
       setEditorSelection: (content) =>
         setState((state) => {
