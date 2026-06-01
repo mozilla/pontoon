@@ -376,6 +376,27 @@ def toggle_theme(request):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
+def toggle_editor_theme(request):
+    editor_theme = request.POST.get("editor_theme", None)
+
+    try:
+        profile = request.user.profile
+        profile.editor_theme = editor_theme
+        profile.full_clean()
+        profile.save()
+    except ValidationError as e:
+        log.error(f"User profile validation error: {e}")
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: User profile validation failed"},
+            status=400,
+        )
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
 def save_custom_homepage(request):
     """Save custom homepage."""
     form = forms.UserCustomHomepageForm(request.POST, instance=request.user.profile)

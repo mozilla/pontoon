@@ -1055,6 +1055,7 @@ def user_data(request):
             "gravatar_url_big": user.gravatar_url(176),
             "notifications": user.serialized_notifications,
             "theme": user.profile.theme,
+            "editor_theme": user.profile.editor_theme,
         }
     )
 
