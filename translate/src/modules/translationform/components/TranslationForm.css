@@ -38,8 +38,12 @@
 }
 
 .translationform .accesskey-input {
-  border: none;
+  background: var(--editor-background);
+  border: 1px solid var(--main-border-1);
+  border-radius: 3px;
   box-sizing: border-box;
+  caret-color: var(--editor-color);
+  color: var(--editor-color);
   float: left;
   font-size: 14px;
   height: 24px;
@@ -49,6 +53,7 @@
 }
 
 .translationform .accesskey-input:focus {
+  border-color: var(--status-translated);
   outline: none;
 }
 
@@ -96,6 +101,31 @@
   font-family: inherit;
   line-height: 22px;
   padding: 0 8px 0 4px;
+}
+
+.cm-editor .cm-content {
+  caret-color: var(--editor-color);
+}
+
+.cm-editor .cm-cursor,
+.cm-editor .cm-dropCursor {
+  border-left-color: var(--editor-color);
+}
+
+.cm-editor ::selection {
+  background: var(--editor-selection-background);
+}
+
+.cm-editor .cm-selectionBackground,
+.cm-editor.cm-focused
+  > .cm-scroller
+  > .cm-selectionLayer
+  .cm-selectionBackground {
+  background: var(--editor-selection-background);
+}
+
+.cm-editor .cm-placeholder {
+  color: var(--editor-placeholder-color);
 }
 
 .cm-completionIcon {

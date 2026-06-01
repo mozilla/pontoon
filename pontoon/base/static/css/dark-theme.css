@@ -34,7 +34,7 @@
   /* Tooltip */
   --tooltip-background: #000000dd;
   --tooltip-color: #ffffff;
-  --tooltip-color-2: #888888;
+  --tooltip-color-2: #aaaaaa;
   --tooltip-border: #4d5967;
 
   /* Homepage */
@@ -61,29 +61,32 @@
   --translation-secondary-color: #aaaaaa;
   --translation-main-button-color: #272a2f;
   --translation-subtitle-color: #888888;
-  --editor-background: #ffffff;
-  --editor-color: #444444;
+  --editor-background: #1a1d22;
+  --editor-color: #e6e6e6;
   --editor-form-background: #272a2f;
   --editor-menu-background: #272a2f;
   --editor-menu-color: #aaaaaa;
   --editor-menu-action-button-color: #ffffff;
-  --editor-readonly-background: #c7cacf;
+  --editor-readonly-background: #2a2e35;
+  --editor-selection-background: #2c4a66;
+  --editor-placeholder-color: #888c92;
   --time-range-handles: #272a2f;
 
   /* Highlights */
-  --diff-del-background: #674b54;
-  --diff-del-color: #fe8f8f;
-  --diff-ins-background: #4b6259;
+  --diff-del-background: #5e3b46;
+  --diff-del-color: #ff9d9d;
+  --diff-ins-background: #3f5b50;
   --diff-ins-color: #9cd699;
   --search-color: #ffa10f;
-  --search-background: #676054;
-  --tags-brace-color: #872bff;
-  --tags-bracket-color: #3e9682;
-  --tags-keyword-color: #872bff;
-  --tags-literal-color: #3e9682;
-  --tags-name-color: #872bff;
-  --tags-quote-color: #3e9682;
-  --tags-tag-name-color: #3e9682;
+  --search-background: #5a4d33;
+  --tags-brace-color: #c79bff;
+  --tags-bracket-color: #5fc7a8;
+  --tags-keyword-color: #c79bff;
+  --tags-literal-color: #5fc7a8;
+  --tags-name-color: #c79bff;
+  --tags-quote-color: #ffd07a;
+  --tags-tag-name-color: #5fc7a8;
+  --tags-string-color: #e6e6e6;
 
   /* Chart colors */
   --green-blue: #4fc4f666;
@@ -117,14 +120,13 @@
   --purple: #8074a8;
   --green-brown: #7c7270;
 
-  --black-3: #272a2f;
-  --grey-3: #4d5967;
   --white-1: #ffffff;
-
-  --dark-grey-1: #333941;
-  --dark-grey-2: #3f4752;
-  --light-grey-1: #5e6475;
-  --light-grey-2: #888888;
   --light-grey-6: #cccccc;
   --light-grey-7: #aaaaaa;
+  --light-grey-2: #999999;
+  --light-grey-1: #5e6475;
+  --grey-3: #4d5967;
+  --dark-grey-2: #3f4752;
+  --dark-grey-1: #333941;
+  --black-3: #272a2f;
 }
