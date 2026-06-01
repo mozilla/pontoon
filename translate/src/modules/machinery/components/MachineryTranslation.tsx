@@ -57,7 +57,10 @@ export function MachineryTranslationComponent({
       const sources: SourceType[] = llmTranslation
         ? ['gpt-transform']
         : translation.sources;
-      setEditorFromHelpers(content, sources, true);
+      // A composed suggestion is a full entry source (the LLM transform output
+      // is a plain string, so it isn't), to be spread across all fields.
+      const isEntry = !llmTranslation && !!translation.composed;
+      setEditorFromHelpers(content, sources, true, isEntry);
       if (llmTranslation) {
         logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
           action: 'Copy LLM Translation',

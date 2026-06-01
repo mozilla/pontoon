@@ -123,7 +123,15 @@ export function useHandleCtrlShiftArrow(): (
       const llmState = getLLMTranslationState(machineryTranslations[nextIdx]);
       const updatedTranslation =
         llmState.llmTranslation || translationObj.translation;
-      setEditorFromHelpers(updatedTranslation, translationObj.sources, true);
+      // A composed suggestion is a full entry source to spread across all
+      // fields; the LLM transform output is a plain string, so it isn't.
+      const isEntry = !llmState.llmTranslation && !!translationObj.composed;
+      setEditorFromHelpers(
+        updatedTranslation,
+        translationObj.sources,
+        true,
+        isEntry,
+      );
 
       if (llmState.llmTranslation) {
         logUXAction(
