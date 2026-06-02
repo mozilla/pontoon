@@ -68,7 +68,7 @@
     "@typescript-eslint/eslint-plugin": "^8.7.0",
     "@typescript-eslint/parser": "^8.7.0",
     "@vitejs/plugin-react": "^5.1.1",
-    "@vitest/coverage-v8": "^4.0.14",
+    "@vitest/coverage-v8": "^4.1.8",
     "@vitest/eslint-plugin": "^1.6.5",
     "cheerio": "1.0.0-rc.12",
     "concurrently": "^7.0.0",
@@ -86,7 +86,7 @@
     "rollup-plugin-css-only": "^4.3.0",
     "typescript": "^5.8.3",
     "utility-types": "^3.10.0",
-    "vitest": "^4.0.9"
+    "vitest": "^4.1.8"
   },
   "prettier": {
     "endOfLine": "lf",
