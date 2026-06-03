@@ -83,3 +83,20 @@ class LocaleInsightsSnapshot(InsightsSnapshot):
 
 class ProjectLocaleInsightsSnapshot(InsightsSnapshot):
     project_locale = models.ForeignKey("base.ProjectLocale", models.CASCADE)
+
+
+class LocaleChsSnapshot(models.Model):
+    locale = models.ForeignKey("base.Locale", on_delete=models.CASCADE)
+    created_at = models.DateField()
+    completion = models.FloatField(default=0.0)
+    key_projects_enabled = models.PositiveIntegerField(default=0)
+    active_managers = models.PositiveIntegerField(default=0)
+    active_translators = models.PositiveIntegerField(default=0)
+    active_contributors = models.PositiveIntegerField(default=0)
+    active_contributors_200_approved = models.PositiveIntegerField(default=0)
+    new_signups = models.PositiveIntegerField(default=0)
+    chs_score = models.FloatField(default=0.0)
+
+    class Meta:
+        unique_together = [("locale", "created_at")]
+        indexes = [models.Index(fields=["created_at", "locale"])]

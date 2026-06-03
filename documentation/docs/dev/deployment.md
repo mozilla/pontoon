@@ -494,6 +494,18 @@ the day, every day.
 ./manage.py collect_insights
 ```
 
+### Collect CHS Snapshot
+
+Captures per-locale Contributor Health Score metrics - completion, key-project
+enablement, active managers / translators / contributors & new signups into
+`LocaleChsSnapshot` model. Used by the CHS dashboard for month-over-month
+comparisons and by the Insights pages for monthly trend charts. The job is
+designed to run once a month on the first of each month.
+
+``` bash
+./manage.py collect_chs_snapshot
+```
+
 ### Warm up cache
 
 We cache data for some of the views (e.g. Contributors) for a day. Some
