@@ -24,7 +24,7 @@ beforeAll(() => {
     const actual = await importOriginal();
     return {
       ...actual,
-      Localized: ({ children }) => children,
+      useLocalization: () => ({ l10n: { getString: (id) => id } }),
     };
   });
 
