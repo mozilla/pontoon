@@ -197,7 +197,9 @@ def test_android_percent_signs_more():
     original = "Source string 100%"
     translation = "Translation 100%! string 100%"
     entity = mock_entity("android", string=original)
-    assert run_custom_checks(entity, translation) == {}
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ["Placeholder %! not found in reference"]
+    }
 
 
 def test_android_literal_newline():
@@ -246,7 +248,8 @@ def test_android_mistyped_placeholder():
     translation = "Translation %1"
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
-        "pErrors": ["Placeholder %1$s not found in translation"]
+        "pErrors": ["Placeholder %1 not found in reference"],
+        "pndbWarnings": ["Placeholder %1$s not found in translation"],
     }
 
 
