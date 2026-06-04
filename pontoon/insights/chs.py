@@ -14,7 +14,7 @@ from pontoon.insights.models import LocaleChsSnapshot
 KEY_PROJECT_SLUGS = [
     "firefox-for-android",
     "firefox-for-ios",
-    "firefox-monitor-website",
+    "mozilla-monitor-website",
     "firefox-relay-website",
     "firefox",
     "mozilla-accounts",
