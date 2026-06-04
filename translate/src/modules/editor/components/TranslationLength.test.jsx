@@ -24,8 +24,8 @@ describe('<TranslationLength>', () => {
 
   function mountTranslationLength(format, original, value, comment) {
     const context = new Map([
-      [EditorData, { sourceView: false }],
-      [EditorResult, [{ value }]],
+      [EditorData, { sourceView: false, fields: [{}] }],
+      [EditorResult, { value: [value] }],
       [EntityView, { entity: { comment, format, original } }],
     ]);
     vi.mocked(useContext).mockImplementation((key) => context.get(key));

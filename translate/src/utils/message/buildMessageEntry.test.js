@@ -16,7 +16,7 @@ describe('buildMessageEntry', () => {
     expect(placeholders).not.toBeNull();
 
     const result = buildMessageEntry(base, placeholders, [
-      { name: '', keys: [], value: '' },
+      { name: '', keys: [], handle: { current: { value: '' } } },
     ]);
     const empty = getEmptyMessageEntry(base, LOCALE);
 
@@ -31,7 +31,7 @@ describe('buildMessageEntry', () => {
     const placeholders = getPlaceholderMap(base.value);
 
     const result = buildMessageEntry(base, placeholders, [
-      { name: '', keys: [], value: 'Bonjour, %1$s!' },
+      { name: '', keys: [], handle: { current: { value: 'Bonjour, %1$s!' } } },
     ]);
 
     expect(serializeEntry(result)).toEqual(
@@ -44,7 +44,7 @@ describe('buildMessageEntry', () => {
     expect(base).not.toBeNull();
 
     const result = buildMessageEntry(base, null, [
-      { name: '', keys: [], value: '' },
+      { name: '', keys: [], handle: { current: { value: '' } } },
     ]);
     const empty = getEmptyMessageEntry(base, LOCALE);
 
@@ -55,7 +55,7 @@ describe('buildMessageEntry', () => {
     const base = parseEntry('android', 'Hello World');
 
     const result = buildMessageEntry(base, null, [
-      { name: '', keys: [], value: 'Bonjour Monde' },
+      { name: '', keys: [], handle: { current: { value: 'Bonjour Monde' } } },
     ]);
 
     expect(serializeEntry(result)).toEqual('Bonjour Monde');

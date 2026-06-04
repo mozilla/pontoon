@@ -5,7 +5,11 @@ import { render } from '@testing-library/react';
 import { EditorData, EditorResult } from '~/context/Editor';
 import * as Entity from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
-import { editMessageEntry, parseEntry } from '~/utils/message';
+import {
+  buildMessageEntry,
+  editMessageEntry,
+  parseEntry,
+} from '~/utils/message';
 
 import { useExistingTranslationGetter } from './useExistingTranslationGetter';
 
@@ -28,11 +32,7 @@ const HISTORY_FLUENT = {
 };
 
 function mountSpy(format, history, editor) {
-  const result = editor.fields.map(({ handle, keys, name }) => ({
-    name,
-    keys,
-    value: handle.current.value,
-  }));
+  const result = buildMessageEntry(editor.base, null, editor.fields);
 
   let res;
   const Spy = () => {
@@ -86,7 +86,7 @@ describe('useExistingTranslation', () => {
   it('finds identical initial/active translation', () => {
     const entry = mockMessageEntry('something');
     const res = mountSpy('simple', HISTORY_STRING, {
-      entry,
+      base: entry,
       fields: editMessageEntry(entry),
       initial: entry,
     });
@@ -97,7 +97,7 @@ describe('useExistingTranslation', () => {
   it('finds identical Fluent initial/active translation', () => {
     const entry = parseEntry('fluent', 'msg = something');
     const res = mountSpy('fluent', HISTORY_FLUENT, {
-      entry,
+      base: entry,
       fields: editMessageEntry(entry),
       initial: entry,
     });
@@ -108,7 +108,7 @@ describe('useExistingTranslation', () => {
   it('finds empty initial/active translation', () => {
     const entry = mockMessageEntry('');
     const res = mountSpy('simple', HISTORY_STRING, {
-      entry,
+      base: entry,
       fields: editMessageEntry(entry),
       initial: entry,
     });
@@ -120,7 +120,7 @@ describe('useExistingTranslation', () => {
     const entry = mockMessageEntry('');
     const prev0 = HISTORY_STRING.translations[0];
     const res0 = mountSpy('simple', HISTORY_STRING, {
-      entry,
+      base: entry,
       fields: mockEditorMessage(prev0.string),
       initial: entry,
     });
@@ -129,7 +129,7 @@ describe('useExistingTranslation', () => {
 
     const prev1 = HISTORY_STRING.translations[1];
     const res1 = mountSpy('simple', HISTORY_STRING, {
-      entry,
+      base: entry,
       fields: mockEditorMessage(prev1.string),
       initial: entry,
     });
@@ -141,7 +141,7 @@ describe('useExistingTranslation', () => {
     const entry = parseEntry('fluent', 'msg = something');
     const prev0 = HISTORY_FLUENT.translations[0];
     const res0 = mountSpy('fluent', HISTORY_FLUENT, {
-      entry,
+      base: entry,
       fields: editMessageEntry(parseEntry('fluent', prev0.string)),
       initial: entry,
     });
@@ -150,7 +150,7 @@ describe('useExistingTranslation', () => {
 
     const prev1 = HISTORY_FLUENT.translations[1];
     const res1 = mountSpy('fluent', HISTORY_FLUENT, {
-      entry,
+      base: entry,
       fields: editMessageEntry(parseEntry('fluent', prev1.string)),
       initial: entry,
     });
@@ -161,7 +161,7 @@ describe('useExistingTranslation', () => {
   it('finds empty translation in history', () => {
     const entry = mockMessageEntry('x');
     const res = mountSpy('simple', HISTORY_STRING, {
-      entry,
+      base: entry,
       fields: mockEditorMessage(''),
       initial: entry,
     });
@@ -172,7 +172,7 @@ describe('useExistingTranslation', () => {
   it('finds a Fluent translation in history', () => {
     const entry = parseEntry('fluent', 'msg = something');
     const res = mountSpy('fluent', HISTORY_FLUENT, {
-      entry,
+      base: entry,
       fields: mockEditorMessage('Come on Morty!'),
       initial: entry,
     });

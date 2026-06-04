@@ -2,11 +2,7 @@ import NProgress from 'nprogress';
 import { useContext } from 'react';
 
 import { createTranslation } from '~/api/translation';
-import {
-  EditorActions,
-  EditorData,
-  useEditorMessageEntry,
-} from '~/context/Editor';
+import { EditorActions, EditorData, EditorResult } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
@@ -45,7 +41,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const { setFailedChecks } = useContext(FailedChecksData);
   const { setEditorBusy } = useContext(EditorActions);
   const { busy, machinery } = useContext(EditorData);
-  const entry = useEditorMessageEntry();
+  const entry = useContext(EditorResult);
 
   return async (ignoreWarnings = false) => {
     if (busy || entity.pk === 0) {

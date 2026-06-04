@@ -66,7 +66,7 @@ export type EditorData = Readonly<{
   busy: boolean;
 
   /** Used to reconstruct edited messages */
-  entry: MessageEntry;
+  base: MessageEntry;
 
   /** Input fields for the value being edited */
   fields: EditorField[];
@@ -91,20 +91,6 @@ export type EditorData = Readonly<{
   sourceView: boolean;
 }>;
 
-export type EditorResult = Array<{
-  /** Attribute name, or empty for the value */
-  name: string;
-
-  /** Selector keys, or empty array for single-pattern messages */
-  keys: (string | CatchallKey)[];
-
-  /**
-   * A flattened representation of a single message pattern,
-   * which may contain syntactic representations of placeholders.
-   */
-  value: string;
-}>;
-
 export type EditorActions = {
   clearEditor(): void;
 
@@ -122,8 +108,7 @@ export type EditorActions = {
 
   setEditorSelection(content: string): void;
 
-  /** Set the result value of the active input */
-  setResultFromInput(idx: number, value: string): void;
+  setResultFromInput(): void;
 
   toggleSourceView(): void;
 };
@@ -153,7 +138,7 @@ const createSimpleMessageEntry = (
 const initEditorData: EditorData = {
   pk: 0,
   busy: false,
-  entry: { format: 'plain', id: '', value: [] },
+  base: { format: 'plain', id: '', value: [] },
   focusField: { current: null },
   initial: { format: 'plain', id: '', value: [] },
   placeholders: null,
@@ -173,15 +158,8 @@ const initEditorActions: EditorActions = {
 };
 
 export const EditorData = createContext(initEditorData);
-export const EditorResult = createContext<EditorResult>([]);
+export const EditorResult = createContext<MessageEntry | null>(null);
 export const EditorActions = createContext(initEditorActions);
-
-const buildResult = (message: EditorField[]): EditorResult =>
-  message.map(({ handle, keys, name }) => ({
-    name,
-    keys,
-    value: handle.current.value,
-  }));
 
 export function EditorProvider({ children }: { children: React.ReactElement }) {
   const locale = useContext(Locale);
@@ -194,7 +172,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const { resetFailedChecks } = useContext(FailedChecksData);
 
   const [state, setState] = useState(initEditorData);
-  const [result, setResult] = useState<EditorResult>([]);
+  const [result, setResult] = useState<MessageEntry | null>(null);
 
   const actions = useMemo<EditorActions>(() => {
     if (readonly) {
@@ -203,6 +181,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     return {
       clearEditor() {
         setState((state) => {
+          // Inside setState() only to access the current `state` value
           for (const field of state.fields) {
             field.handle.current.setValue('');
           }
@@ -220,10 +199,8 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           field.handle.current.setValue(str);
           let next = fields.slice();
           if (sourceView) {
-            const result = buildResult(next);
-            next = editSource(
-              buildMessageEntry(prev.entry, placeholders, result),
-            );
+            const result = buildMessageEntry(prev.base, placeholders, fields);
+            next = editSource(result);
             focusField.current = next[0];
             setResult(result);
           }
@@ -241,7 +218,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             case 'fluent': {
               const entry = parseEntry(format, str);
               if (entry) {
-                next.entry = entry;
+                next.base = entry;
                 if (!requiresSourceView(entry)) {
                   next.fields = prev.sourceView
                     ? editSource(entry)
@@ -260,7 +237,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             case 'xliff': {
               const entry = parseEntry(format, str);
               if (entry) {
-                next.entry = entry;
+                next.base = entry;
                 next.fields = editMessageEntry(entry);
               } else {
                 next.fields = editSource(str);
@@ -273,50 +250,56 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               next.fields[0].handle.current.setValue(str);
           }
           next.focusField.current = next.fields[0];
-          setResult(buildResult(next.fields));
+          const result = buildMessageEntry(
+            next.base,
+            next.placeholders,
+            next.fields,
+          );
+          setResult(result);
           return next;
         }),
 
       setEditorSelection: (content) =>
         setState((state) => {
+          // Inside setState() only to access the current `state` value
           const { fields, focusField } = state;
           const field = focusField.current ?? fields[0];
           field.handle.current.setSelection(content);
           return state;
         }),
 
-      setResultFromInput: (idx, value) =>
-        setResult((prev) => {
-          if (prev.length > idx) {
-            const res = prev.slice();
-            res[idx] = { ...res[idx], value };
-            return res;
-          } else {
-            return prev;
-          }
+      setResultFromInput: () =>
+        setState((state) => {
+          // Inside setState() only to access the current `state` value
+          const { base, fields, placeholders, sourceView } = state;
+          const result = sourceView
+            ? parseEntryFromFluentSource(base, fields[0].handle.current.value)
+            : buildMessageEntry(base, placeholders, fields);
+          setResult(result);
+          return state;
         }),
 
       toggleSourceView: () =>
         setState((prev) => {
           if (prev.sourceView) {
             const source = prev.fields[0].handle.current.value;
-            const entry = parseEntryFromFluentSource(prev.entry, source);
+            const entry = parseEntryFromFluentSource(prev.base, source);
             if (entry && !requiresSourceView(entry)) {
               const fields = editMessageEntry(entry);
               prev.focusField.current = fields[0];
-              setResult(buildResult(fields));
-              return { ...prev, entry, fields, sourceView: false };
+              setResult(entry);
+              return { ...prev, base: entry, fields, sourceView: false };
             }
           } else if (format === 'fluent') {
             const entry = buildMessageEntry(
-              prev.entry,
+              prev.base,
               prev.placeholders,
-              buildResult(prev.fields),
+              prev.fields,
             );
             const source = serializeEntry(entry);
             const fields = editSource(source);
             prev.focusField.current = fields[0];
-            setResult(buildResult(fields));
+            setResult(entry);
             return { ...prev, fields, sourceView: true };
           }
           return prev;
@@ -325,7 +308,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [format, readonly]);
 
   useEffect(() => {
-    let entry: MessageEntry;
+    let base: MessageEntry;
     let source = activeTranslation?.string || '';
     let sourceView = false;
     let placeholders: Map<string, Expression | Markup> | null = null;
@@ -336,38 +319,38 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     }
     if (!source) {
       orig ??= parseEntry(format, entity.original);
-      entry = orig
+      base = orig
         ? getEmptyMessageEntry(orig, locale)
         : createSimpleMessageEntry(format, entity.key, '');
-      if (requiresSourceView(entry)) {
-        source = serializeEntry(entry);
+      if (requiresSourceView(base)) {
+        source = serializeEntry(base);
         sourceView = true;
       }
     } else {
-      const entry_ = parseEntry(format, source);
-      if (entry_) {
-        entry = entry_;
-        sourceView = requiresSourceView(entry);
+      const base_ = parseEntry(format, source);
+      if (base_) {
+        base = base_;
+        sourceView = requiresSourceView(base);
       } else {
-        entry = createSimpleMessageEntry(format, entity.key, source);
+        base = createSimpleMessageEntry(format, entity.key, source);
         sourceView = format === 'fluent';
       }
     }
 
-    const fields = sourceView ? editSource(source) : editMessageEntry(entry);
+    const fields = sourceView ? editSource(source) : editMessageEntry(base);
 
     setState(() => ({
       pk: entity.pk,
       busy: false,
-      entry,
+      base,
       fields,
       focusField: { current: fields[0] },
-      initial: entry,
+      initial: base,
       placeholders,
       machinery: null,
       sourceView,
     }));
-    setResult(buildResult(fields));
+    setResult(base);
   }, [locale, entity, activeTranslation]);
 
   // For missing entries, fill editor initially with a perfect match from
@@ -397,16 +380,10 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     // but the latter needs to be defined at a higher level to make it
     // available in `EntitiesList`. Therefore, that state is managed here.
     // Let's also avoid the calculation, unless it's actually required.
-    const { entry, initial, placeholders, sourceView } = state;
-    const next = sourceView
-      ? parseEntryFromFluentSource(entry, result[0].value)
-      : buildMessageEntry(entry, placeholders, result);
-    const hasChanges = !pojoEquals(initial, next);
-
+    const hasChanges = !pojoEquals(state.initial, result);
     if (hasChanges) {
       resetFailedChecks();
     }
-
     setUnsavedChanges(() => hasChanges);
   }, [result]);
 
@@ -419,12 +396,4 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       </EditorResult.Provider>
     </EditorData.Provider>
   );
-}
-
-export function useEditorMessageEntry() {
-  const { entry, placeholders, sourceView } = useContext(EditorData);
-  const message = useContext(EditorResult);
-  return sourceView
-    ? parseEntryFromFluentSource(entry, message[0].value)
-    : buildMessageEntry(entry, placeholders, message);
 }

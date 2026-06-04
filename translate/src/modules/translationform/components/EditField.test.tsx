@@ -93,22 +93,22 @@ describe('<EditField>', () => {
   });
 
   it('sets the result on user input', async () => {
-    const spy = vi.fn();
+    const res: string[] = [];
+    const spy = vi.fn(() => {
+      res.push(ref.current!.value);
+    });
+    const ref = React.createRef<EditFieldHandle>();
     const { container } = render(
       <MockEditField
         defaultValue='foo'
         format='fluent'
+        fieldRef={ref}
         setResultFromInput={spy}
       />,
     );
     await userEvent.click(container.querySelector('.cm-line')!);
     await userEvent.keyboard('x{ArrowRight}{ArrowRight}{ArrowRight}  y');
-    expect(spy.mock.calls).toMatchObject([
-      [0, 'xfoo'],
-      [0, 'xfoo '],
-      [0, 'xfoo  '],
-      [0, 'xfoo  y'],
-    ]);
+    expect(res).toEqual(['xfoo', 'xfoo ', 'xfoo  ', 'xfoo  y']);
   });
 
   it('ignores user input when readonly', async () => {
@@ -127,7 +127,10 @@ describe('<EditField>', () => {
   });
 
   it('sets the result via ref', async () => {
-    const spy = vi.fn();
+    const res: string[] = [];
+    const spy = vi.fn(() => {
+      res.push(ref.current!.value);
+    });
     const ref = React.createRef<EditFieldHandle>();
     render(
       <MockEditField
@@ -141,7 +144,7 @@ describe('<EditField>', () => {
       ref.current!.focus();
       ref.current!.setSelection('bar');
     });
-    expect(spy.mock.calls).toMatchObject([[0, 'foobar']]);
+    expect(res).toEqual(['foobar']);
   });
 
   it('does not highlight `% d` as code (#2988)', () => {

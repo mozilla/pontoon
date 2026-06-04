@@ -1,4 +1,4 @@
-import type { EditorResult } from '~/context/Editor';
+import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
 import {
   Expression,
@@ -12,13 +12,13 @@ import {
 export function buildMessageEntry(
   base: MessageEntry,
   placeholders: Map<string, Expression | Markup> | null,
-  next: EditorResult,
+  fields: EditorField[],
 ): MessageEntry {
   const res = structuredClone(base);
-  if (res.value) setMessage(res.value, '', placeholders, next);
+  if (res.value) setMessage(res.value, '', placeholders, fields);
   if (res.attributes) {
     for (const [name, msg] of res.attributes) {
-      setMessage(msg, name, placeholders, next);
+      setMessage(msg, name, placeholders, fields);
     }
   }
   return res;
@@ -29,21 +29,21 @@ function setMessage(
   msg: Message,
   attrName: string,
   placeholders: Map<string, Expression | Markup> | null,
-  next: EditorResult,
+  fields: EditorField[],
 ) {
   if (isSelectMessage(msg)) {
     msg.alt = [];
-    for (const { name, keys, value } of next) {
+    for (const { name, keys, handle } of fields) {
       if (name === attrName) {
-        const pat = buildPattern(value, placeholders);
+        const pat = buildPattern(handle.current.value, placeholders);
         msg.alt.push({ keys, pat });
       }
     }
   } else {
     const body = Array.isArray(msg) ? msg : msg.msg;
-    for (const { name, value } of next) {
+    for (const { name, handle } of fields) {
       if (name === attrName) {
-        const pat = buildPattern(value, placeholders);
+        const pat = buildPattern(handle.current.value, placeholders);
         body.splice(0, body.length, ...pat);
         break;
       }

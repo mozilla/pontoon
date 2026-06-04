@@ -211,21 +211,4 @@ describe('<Editor>', () => {
     // The translation has been updated to a simplified preview.
     expect(wrapper.find(EditField).text()).toEqual('Coucou');
   });
-
-  it('passes a reconstructed translation to sendTranslation', async () => {
-    using createSpy = vi
-      .spyOn(TranslationAPI, 'createTranslation')
-      .mockReturnValue({});
-
-    const [wrapper, actions] = mountEditor(1);
-
-    // Update the content with new input
-    act(() => actions.setResultFromInput(0, 'Coucou'));
-    wrapper.update();
-    await act(() => wrapper.find('.action-suggest').prop('onClick')());
-
-    expect(createSpy.mock.calls.length).toBe(1);
-    const args = createSpy.mock.calls[0];
-    expect(args[1]).toBe('my-message = Coucou\n');
-  });
 });

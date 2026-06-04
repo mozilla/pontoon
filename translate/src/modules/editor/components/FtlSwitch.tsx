@@ -6,7 +6,7 @@ import { EditorActions, EditorData, EditorResult } from '~/context/Editor';
 import { ShowNotification } from '~/context/Notification';
 import { FTL_NOT_SUPPORTED_RICH_EDITOR } from '~/modules/notification/messages';
 import { USER } from '~/modules/user';
-import { requiresSourceView, parseEntry } from '~/utils/message';
+import { requiresSourceView } from '~/utils/message';
 import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
@@ -29,19 +29,16 @@ export function FtlSwitch() {
   );
   const { toggleSourceView } = useContext(EditorActions);
   const { sourceView } = useContext(EditorData);
-  const edit = useContext(EditorResult);
+  const result = useContext(EditorResult);
   const { entity } = useContext(EntityView);
 
   const hasError = useMemo(() => {
     if (sourceView && entity.format === 'fluent') {
-      const source = edit[0].value;
-      if (!source) return true;
-      const entry = parseEntry('fluent', source);
-      return entry && requiresSourceView(entry);
+      return result ? requiresSourceView(result) : true;
     } else {
       return false;
     }
-  }, [sourceView, edit, entity.format]);
+  }, [sourceView, result, entity.format]);
 
   const handleClick = useCallback(() => {
     if (hasError) {
