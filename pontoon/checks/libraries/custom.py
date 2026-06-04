@@ -1,10 +1,9 @@
 from collections.abc import Iterable, Iterator
-from html import escape
-from re import fullmatch
+from re import compile, fullmatch
+from typing import cast
 
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
-from moz.l10n.formats.android import android_parse_message
 from moz.l10n.formats.mf2 import mf2_parse_message
 from moz.l10n.formats.webext import webext_parse_message, webext_serialize_message
 from moz.l10n.model import (
@@ -59,68 +58,34 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
             # Prevent empty translation submissions if not supported
             return {"pErrors": ["Empty translations are not allowed"]}
 
+    format = cast(Resource.Format, entity.resource.format)
     errors: list[str] = []
     warnings: list[str] = []
-    match entity.resource.format:
-        case Resource.Format.ANDROID:
+    match format:
+        case Resource.Format.ANDROID | Resource.Format.XCODE:
             try:
                 msg = mf2_parse_message(string)
-                patterns = get_patterns(msg)
             except ValueError as e:
                 msg = None
-                patterns = ()
                 errors.append(f"Parse error: {e}")
-
-            orig_pct_count = 0
-            orig_ph_strings: set[str] = set()
             try:
                 orig_msg = mf2_parse_message(entity.string)
-                for pattern in get_patterns(orig_msg):
-                    pattern_pct_count = 0
-                    for el in pattern:
-                        if isinstance(el, str):
-                            pattern_pct_count += el.count("%")
-                        elif not (isinstance(el, Expression) and el.arg in ("%", "\n")):
-                            orig_ph_strings.add(preview_placeholder(el))
-                    orig_pct_count = max(orig_pct_count, pattern_pct_count)
-            except ValueError:
+            except ValueError as e:
                 orig_msg = None
+                warnings.append(f"Source parse error: {e}")
 
-            if any(all(el == "" for el in pattern) for pattern in patterns):
-                errors.append("Empty translations are not allowed")
+            if msg:
+                if format == Resource.Format.ANDROID and msg.is_empty():
+                    errors.append("Empty translations are not allowed")
 
-            if isinstance(msg, SelectMessage) and not isinstance(
-                orig_msg, SelectMessage
-            ):
-                errors.append("Plural translation requires plural source")
+                if isinstance(msg, SelectMessage) and not isinstance(
+                    orig_msg, SelectMessage
+                ):
+                    errors.append("Plural translation requires plural source")
 
-            # Inlined Android checks from compare-locales to support <plurals>
-            found_ps: set[str] = set()
-            try:
-                pct_count = 0
-                for pattern in patterns:
-                    android_msg = android_parse_message(
-                        escape(get_simple_preview(Resource.Format.ANDROID, pattern))
-                    )
-                    pattern_pct_count = 0
-                    for el in android_msg.pattern:
-                        if isinstance(el, str):
-                            pattern_pct_count += el.count("%")
-                        elif not (isinstance(el, Expression) and el.arg in ("%", "\n")):
-                            ps = preview_placeholder(el)
-                            if ps in orig_ph_strings:
-                                found_ps.add(ps)
-                            else:
-                                errors.append(
-                                    f"Placeholder {ps} not found in reference"
-                                )
-                    pct_count = max(pct_count, pattern_pct_count)
-                for ps in orig_ph_strings:
-                    if ps not in found_ps:
-                        ew_list = errors if pct_count > orig_pct_count else warnings
-                        ew_list.append(f"Placeholder {ps} not found in translation")
-            except Exception as e:
-                errors.append(f"Parse error: {e}")
+                require_printf_placeholders_match(
+                    format, orig_msg, msg, errors, warnings
+                )
 
         case Resource.Format.GETTEXT:
             try:
@@ -210,6 +175,57 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
     if warnings:
         checks["pndbWarnings"] = warnings
     return checks
+
+
+# Matches all HTML/XML elements and Android & Xcode printf specifiers
+ph_re = compile(
+    r"<[^>]+>|%#@\w+@|%(?:[1-9]\$|<)?[-#+ 0,(]?[0-9.]*(?:hh?|ll?|[qztjLT])?.?"
+)
+
+
+def require_printf_placeholders_match(
+    format: Resource.Format,
+    src: Message | None,
+    tgt: Message,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    src_ph_strings: set[str] = set()
+    if src:
+        for pattern in get_patterns(src):
+            for el in pattern:
+                if isinstance(el, str):
+                    if "%" in el:
+                        # If the bare text includes a %, presumably the message is not going
+                        # to be printf-formatted, and so we can exit early.
+                        return
+                elif not (
+                    isinstance(el, Expression)
+                    and isinstance(el.arg, str)
+                    and el.function is None
+                ):
+                    src_ph_strings.add(preview_placeholder(el))
+
+    found_ph: set[str] = set()
+    for pattern in get_patterns(tgt):
+        pat_src = get_simple_preview(format, pattern)
+
+        for pm in ph_re.finditer(pat_src):
+            rest = pat_src[pm.start() :]
+            for ph in src_ph_strings:
+                if rest.startswith(ph):
+                    found_ph.add(ph)
+                    break
+            else:
+                ph = pm[0]
+                if ph not in {"%%", "%n"}:
+                    kind = "Element" if ph.startswith("<") else "Placeholder"
+                    errors.append(f"{kind} {ph} not found in reference")
+
+    for ph in src_ph_strings:
+        if ph not in found_ph:
+            kind = "Element" if ph.startswith("<") else "Placeholder"
+            warnings.append(f"{kind} {ph} not found in translation")
 
 
 def get_patterns(msg: Message) -> Iterable[Pattern]:
