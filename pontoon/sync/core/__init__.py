@@ -1,5 +1,7 @@
 import logging
 
+from datetime import datetime
+
 from django.utils import timezone
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
@@ -60,7 +62,7 @@ def sync_project(
         or updated_trans_count
     )
     if added_entities_count > 0:
-        notify_users(project, added_entities_count)
+        notify_users(project, added_entities_count, now)
     repo_changed = sync_translations_to_repo(
         project,
         commit,
@@ -89,12 +91,15 @@ def sync_project(
     return db_changed, repo_changed
 
 
-def notify_users(project: Project, count: int) -> None:
+def notify_users(project: Project, count: int, now: datetime) -> None:
     users = User.objects.filter(
         translation__entity__resource__project=project,
         profile__new_string_notifications=True,
     ).distinct()
     new_strings = f"{count} new {'string' if count == 1 else 'strings'}"
+    # Stored on notification.data so both the bell menu and digest can link to
+    # the exact batch via the created_time URL filter on Entity.date_created.
+    created_time = now.strftime("%Y%m%d%H%M")
     log.info(f"[{project.slug}] Notifying {len(users)} users about {new_strings}")
     for user in users:
         send_notification(
@@ -102,4 +107,5 @@ def notify_users(project: Project, count: int) -> None:
             recipient=user,
             verb=f"updated with {new_strings}",
             category="new_string",
+            created_time=created_time,
         )

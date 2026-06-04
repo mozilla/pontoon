@@ -351,6 +351,7 @@ class GetEntitiesForm(forms.Form):
     search_match_whole_word = forms.BooleanField(required=False)
     tag = forms.CharField(required=False)
     time = forms.CharField(required=False)
+    created_time = forms.CharField(required=False)
     author = forms.CharField(required=False)
     review_time = forms.CharField(required=False)
     reviewer = forms.CharField(required=False)

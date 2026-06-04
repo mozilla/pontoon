@@ -60,7 +60,13 @@
           {% if notification.actor.slug %}
             {% set actor_anchor = notification.actor %}
             {% if "new string" in notification.verb %}
-              {% set actor_url = full_url('pontoon.translate.locale.agnostic', notification.actor.slug, "all-resources") + '?status=missing,pretranslated' %}
+              {% set new_strings_base = full_url('pontoon.translate.locale.agnostic', notification.actor.slug, "all-resources") %}
+              {% if notification.data and notification.data.created_time %}
+                {% set created_time = notification.data.created_time %}
+                {% set actor_url = new_strings_base + '?created_time=' + created_time + '-' + created_time %}
+              {% else %}
+                {% set actor_url = new_strings_base + '?status=missing,pretranslated' %}
+              {% endif %}
             {% else %}
               {% set actor_url = full_url('pontoon.projects.project', notification.actor.slug) %}
             {% endif %}

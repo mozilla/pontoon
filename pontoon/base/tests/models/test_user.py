@@ -3,6 +3,7 @@ from collections import defaultdict
 import pytest
 
 from notifications.models import Notification
+from notifications.signals import notify
 
 from django.contrib.auth.models import User
 
@@ -158,3 +159,43 @@ def test_is_subscribed_to_notification_no_category(user_with_subscriptions):
 
     # Call the function and assert the result
     assert user_with_subscriptions.is_subscribed_to_notification(notification) is False
+
+
+@pytest.mark.django_db
+def test_serialized_notifications_new_string_created_time(user_a, project_a):
+    """
+    New string notifications carrying a created_time on their data link to the
+    exact batch of added strings via the created_time URL filter.
+    """
+    notify.send(
+        sender=project_a,
+        recipient=user_a,
+        verb="updated with 3 new strings",
+        category="new_string",
+        created_time="202605240444",
+    )
+
+    notification = user_a.serialized_notifications["notifications"][0]
+    assert notification["actor"]["url"] == (
+        f"/projects/{project_a.slug}/all-resources/"
+        "?created_time=202605240444-202605240444"
+    )
+
+
+@pytest.mark.django_db
+def test_serialized_notifications_new_string_without_created_time(user_a, project_a):
+    """
+    Older new string notifications without a created_time fall back to linking
+    to all missing and pretranslated strings.
+    """
+    notify.send(
+        sender=project_a,
+        recipient=user_a,
+        verb="updated with 3 new strings",
+        category="new_string",
+    )
+
+    notification = user_a.serialized_notifications["notifications"][0]
+    assert notification["actor"]["url"] == (
+        f"/projects/{project_a.slug}/all-resources/?status=missing,pretranslated"
+    )

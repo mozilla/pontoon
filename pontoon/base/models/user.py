@@ -397,16 +397,26 @@ def serialized_notifications(self):
 
         if hasattr(notification.actor, "slug"):
             if "new string" in notification.verb:
+                new_strings_url = reverse(
+                    "pontoon.translate.locale.agnostic",
+                    kwargs={
+                        "slug": notification.actor.slug,
+                        "part": "all-resources",
+                    },
+                )
+                # Link to the exact batch of added strings via the created_time
+                # URL filter on Entity.date_created, falling back to all
+                # missing/pretranslated strings for older notifications.
+                created_time = (
+                    notification.data.get("created_time") if notification.data else None
+                )
+                if created_time:
+                    new_strings_url += f"?created_time={created_time}-{created_time}"
+                else:
+                    new_strings_url += "?status=missing,pretranslated"
                 actor = {
                     "anchor": notification.actor.name,
-                    "url": reverse(
-                        "pontoon.translate.locale.agnostic",
-                        kwargs={
-                            "slug": notification.actor.slug,
-                            "part": "all-resources",
-                        },
-                    )
-                    + "?status=missing,pretranslated",
+                    "url": new_strings_url,
                 }
             else:
                 actor = {

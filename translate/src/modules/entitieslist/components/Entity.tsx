@@ -89,13 +89,15 @@ export function Entity({
   );
 
   const showSiblingEntitiesButton = () => {
-    const { search, status, extra, tag, time, author } = parameters;
+    const { search, status, extra, tag, time, created_time, author } =
+      parameters;
     return (
       search ||
       status != null ||
       extra != null ||
       tag != null ||
       time != null ||
+      created_time != null ||
       author != null
     );
   };
