@@ -19,4 +19,5 @@
 
 django-debug-toolbar==6.3.0
 django-extensions==4.1
-django-stubs[compatible-mypy]==5.2.9
+django-stubs[compatible-mypy]==6.0.5
+mypy==2.1.0
