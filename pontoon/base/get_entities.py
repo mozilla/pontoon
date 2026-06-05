@@ -4,11 +4,10 @@ from typing import Iterator, cast
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import F, Q
+from django.db.models import F, Q, QuerySet
 from django.utils.timezone import make_aware
 
 from pontoon.base.models import Entity, Locale, Project, Resource, Translation, User
-from pontoon.base.models.entity import EntityQuerySet
 from pontoon.base.models.project import ProjectQuerySet
 from pontoon.base.utils import get_search_phrases
 
@@ -33,10 +32,10 @@ def get_entities_for_project_locale(
     review_time: str | None = None,
     reviewer: str | None = None,
     exclude_self_reviewed: bool = False,
-) -> EntityQuerySet:
+) -> QuerySet[Entity]:
     """Get project entities with locale translations."""
 
-    entities = cast(EntityQuerySet, Entity.objects)
+    entities = Entity.objects.all()
 
     pre_filter = Q(
         *_time_and_user_filters(
@@ -154,7 +153,7 @@ def get_entities_for_project_locale(
 
         entity_matches = entities.filter(*entity_filters).values_list("id", flat=True)
 
-        entities = cast(EntityQuerySet, Entity.objects).filter(
+        entities = Entity.objects.filter(
             pk__in=set(list(translation_matches) + list(entity_matches))
         )
 

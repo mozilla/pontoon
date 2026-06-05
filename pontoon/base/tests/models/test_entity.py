@@ -1,6 +1,7 @@
 import pytest
 
 from pontoon.base.get_entities import get_entities_for_project_locale
+from pontoon.base.map_entities import map_entities_to_json
 from pontoon.base.models import ChangedEntityLocale, Entity, Project
 from pontoon.test.factories import (
     EntityFactory,
@@ -273,7 +274,7 @@ def test_entity_project_locale_no_paths(
     entity_a = tr0.entity
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
-    e0, e1 = Entity.map_entities(
+    e0, e1 = map_entities_to_json(
         locale_a,
         preferred_source_locale,
         get_entities_for_project_locale(admin, project_a, locale_a),
@@ -322,7 +323,7 @@ def test_entity_project_locale_paths(admin, entity_test_models):
     preferred_source_locale = ""
     project_a = tr0.entity.resource.project
     paths = ["resourceX.po"]
-    entities = Entity.map_entities(
+    entities = map_entities_to_json(
         locale_a,
         preferred_source_locale,
         get_entities_for_project_locale(
@@ -350,7 +351,7 @@ def test_entity_project_locale_multiple_translations(
     preferred_source_locale = ""
     entity_a = tr0.entity
     project_a = tr0.entity.resource.project
-    entities = Entity.map_entities(
+    entities = map_entities_to_json(
         locale_a,
         preferred_source_locale,
         get_entities_for_project_locale(admin, project_a, locale_a),
@@ -378,7 +379,7 @@ def test_entity_project_locale_order(admin, entity_test_models):
         resource=resource0,
         string="First String",
     )
-    entities = Entity.map_entities(
+    entities = map_entities_to_json(
         locale_a,
         preferred_source_locale,
         get_entities_for_project_locale(admin, project_a, locale_a),
@@ -393,7 +394,7 @@ def test_entity_project_locale_key(admin, entity_test_models):
     locale_a = entity_test_models[0].locale
     preferred_source_locale = ""
     project_a = resource0.project
-    entities = Entity.map_entities(
+    entities = map_entities_to_json(
         locale_a,
         preferred_source_locale,
         get_entities_for_project_locale(admin, project_a, locale_a),
@@ -433,7 +434,7 @@ def test_entity_project_comments(admin, resource_a, locale_a):
 
     assert {
         (e["original"], e["group_comment"], e["resource_comment"])
-        for e in Entity.map_entities(
+        for e in map_entities_to_json(
             locale_a, "", Entity.objects.filter(resource=resource_a)
         )
     } == {

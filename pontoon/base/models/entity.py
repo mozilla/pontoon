@@ -1,67 +1,12 @@
-from collections.abc import Iterable
-
 from dirtyfields import DirtyFieldsMixin
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import Prefetch
 from django.utils import timezone
 
 from pontoon.base.models.locale import Locale
-from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
 from pontoon.base.models.section import Section
-
-
-class EntityQuerySet(models.QuerySet["Entity"]):
-    def prefetch_entities_data(self, locale: Locale, preferred_source_locale: str):
-        # Prefetch active translations for given locale
-        from pontoon.base.models.translation import Translation
-
-        # Prefetch related Translations, Section comments, and ProjectLocales
-        entities = (
-            self.prefetch_related(
-                Prefetch(
-                    "translation_set",
-                    queryset=(
-                        Translation.objects.filter(
-                            locale=locale, active=True
-                        ).prefetch_related("errors", "warnings")
-                    ),
-                    to_attr="active_translations",
-                )
-            )
-            .annotate(
-                section_comment=models.Subquery(
-                    Section.objects.filter(id=models.OuterRef("section_id")).values(
-                        "comment"
-                    )
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "resource__project__project_locale",
-                    queryset=ProjectLocale.objects.filter(locale=locale),
-                    to_attr="projectlocale",
-                )
-            )
-        )
-
-        # Prefetch approved translations for given preferred source locale
-        if preferred_source_locale != "":
-            entities = entities.prefetch_related(
-                Prefetch(
-                    "translation_set",
-                    queryset=(
-                        Translation.objects.filter(
-                            locale__code=preferred_source_locale, approved=True
-                        )
-                    ),
-                    to_attr="alternative_originals",
-                )
-            )
-
-        return entities
 
 
 class Entity(DirtyFieldsMixin, models.Model):
@@ -89,7 +34,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         help_text="List of locales in which translations for this entity have "
         "changed since the last sync.",
     )
-    objects = EntityQuerySet.as_manager()
 
     class Meta:
         indexes = [models.Index(fields=["resource", "obsolete"])]
@@ -153,70 +97,3 @@ class Entity(DirtyFieldsMixin, models.Model):
             term_translation.save(update_fields=["text"])
         except Translation.DoesNotExist:
             term.translations.filter(locale=locale).delete()
-
-    @classmethod
-    def map_entities(
-        cls,
-        locale: Locale,
-        preferred_source_locale,
-        entities: EntityQuerySet,
-        is_sibling: bool = False,
-        requested_entity: int | None = None,
-    ):
-        entities_: Iterable[Entity] = entities.prefetch_entities_data(
-            locale, preferred_source_locale
-        )
-
-        # If requested entity not in the current page
-        if requested_entity and requested_entity not in [e.pk for e in entities_]:
-            entities_ = list(entities_) + list(
-                Entity.objects.filter(pk=requested_entity).prefetch_entities_data(
-                    locale, preferred_source_locale
-                )
-            )
-
-        entities_array = []
-        for entity in entities_:
-            try:
-                readonly = entity.resource.project.projectlocale[0].readonly
-            except IndexError:
-                # Entities explicitly requested using `string` or `list` URL parameters
-                # might not be enabled for localization for the given locale. If the
-                # project is given in the URL, the 404 page shows up, but if the All
-                # Projects view is used, we hit the IndexError here, because the
-                # `projectlocale` list is empty. In this case, we skip the entity.
-                continue
-
-            if preferred_source_locale != "" and entity.alternative_originals:
-                original = entity.alternative_originals[0].string
-            else:
-                original = entity.string
-
-            translation = (
-                entity.active_translations[0].serialize()
-                if entity.active_translations
-                else None
-            )
-
-            entities_array.append(
-                {
-                    "pk": entity.pk,
-                    "original": original,
-                    "machinery_original": entity.string,
-                    "key": entity.key,
-                    "path": entity.resource.path,
-                    "project": entity.resource.project.serialize(),
-                    "format": entity.resource.format,
-                    "comment": entity.comment,
-                    "group_comment": entity.section_comment or "",
-                    "resource_comment": entity.resource.comment or "",
-                    "meta": entity.meta,
-                    "obsolete": entity.obsolete,
-                    "translation": translation,
-                    "readonly": readonly,
-                    "is_sibling": is_sibling,
-                    "date_created": entity.date_created,
-                }
-            )
-
-        return entities_array
