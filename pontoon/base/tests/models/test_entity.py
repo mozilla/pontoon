@@ -1,5 +1,6 @@
 import pytest
 
+from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import ChangedEntityLocale, Entity, Project
 from pontoon.test.factories import (
     EntityFactory,
@@ -250,9 +251,9 @@ def test_entity_project_locale_filter(admin, entity_test_models, locale_b, proje
         resource=resource0,
         string="Obsolete String",
     )
-    assert len(Entity.for_project_locale(admin, project_a, locale_b)) == 0
-    assert len(Entity.for_project_locale(admin, project_b, locale_a)) == 0
-    assert len(Entity.for_project_locale(admin, project_a, locale_a)) == 2
+    assert len(get_entities_for_project_locale(admin, project_a, locale_b)) == 0
+    assert len(get_entities_for_project_locale(admin, project_b, locale_a)) == 0
+    assert len(get_entities_for_project_locale(admin, project_a, locale_a)) == 2
 
 
 @pytest.mark.django_db
@@ -275,7 +276,7 @@ def test_entity_project_locale_no_paths(
     e0, e1 = Entity.map_entities(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(admin, project_a, locale_a),
+        get_entities_for_project_locale(admin, project_a, locale_a),
     )
 
     assert e0 == {
@@ -324,7 +325,7 @@ def test_entity_project_locale_paths(admin, entity_test_models):
     entities = Entity.map_entities(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(
+        get_entities_for_project_locale(
             admin,
             project_a,
             locale_a,
@@ -352,11 +353,7 @@ def test_entity_project_locale_multiple_translations(
     entities = Entity.map_entities(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(
-            admin,
-            project_a,
-            locale_a,
-        ),
+        get_entities_for_project_locale(admin, project_a, locale_a),
     )
     assert entities[0]["original"] == entity_a.string
     assert entities[0]["translation"]["string"] == tr0.string
@@ -384,11 +381,7 @@ def test_entity_project_locale_order(admin, entity_test_models):
     entities = Entity.map_entities(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(
-            admin,
-            project_a,
-            locale_a,
-        ),
+        get_entities_for_project_locale(admin, project_a, locale_a),
     )
     assert entities[1]["original"] == "First String"
     assert entities[2]["original"] == "Second String"
@@ -403,11 +396,7 @@ def test_entity_project_locale_key(admin, entity_test_models):
     entities = Entity.map_entities(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(
-            admin,
-            project_a,
-            locale_a,
-        ),
+        get_entities_for_project_locale(admin, project_a, locale_a),
     )
     assert entities[0]["key"] == ["Entity zero"]
     assert entities[1]["key"] == ["Key", "entity_b"]
@@ -415,26 +404,16 @@ def test_entity_project_locale_key(admin, entity_test_models):
 
 @pytest.mark.django_db
 def test_entity_project_locale_tags(admin, entity_a, locale_a, tag_a):
-    """Test filtering of tags in for_project_locale"""
+    """Test filtering of tags in get_entities_for_project_locale"""
     resource = entity_a.resource
     project = resource.project
-    entities = Entity.for_project_locale(
-        admin,
-        project,
-        locale_a,
-        tag=tag_a.slug,
-    )
+    entities = get_entities_for_project_locale(admin, project, locale_a, tag=tag_a.slug)
     assert entity_a in entities
 
     # remove the resource <> tag association
     resource.tag_set.remove(tag_a)
 
-    entities = Entity.for_project_locale(
-        admin,
-        project,
-        locale_a,
-        tag=tag_a.slug,
-    )
+    entities = get_entities_for_project_locale(admin, project, locale_a, tag=tag_a.slug)
     assert entity_a not in entities
 
 

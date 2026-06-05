@@ -23,7 +23,7 @@ Some examples of search queries and corresponding search matches among the two s
 * Source file -> Select a `file`... & `Source` `file` uploaded
 * "Source file" -> `Source file` uploaded
 
-To help with the implementation, see `Entity.for_project_locale()` in `pontoon.base.models`, which is used for string list search. The important difference is that Concordance Search searches only `source` and `target` fields of the `TranslationMemoryEntry` (instead of several different fields of the Entity and Translation models).
+To help with the implementation, see `get_entities_for_project_locale()` in `pontoon.base.get_entities`, which is used for string list search. The important difference is that Concordance Search searches only `source` and `target` fields of the `TranslationMemoryEntry` (instead of several different fields of the Entity and Translation models).
 
 Two changes are made to the search box. Placeholder text is changed from "Search in Machinery" to "Search Translation Memory" and the magnifier icon is changed from [fa-search](https://fontawesome.com/icons/search) to [fa-times](https://fontawesome.com/icons/times) when results for Concordance search are displayed. Clicking on it reverts to the default Machinery results.
 

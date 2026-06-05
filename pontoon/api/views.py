@@ -19,15 +19,16 @@ from pontoon.api.authentication import (
 )
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.base import forms
+from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
+    Entity,
     Locale,
     Project,
     ProjectLocale,
     Resource,
+    Translation,
     TranslationMemoryEntry,
 )
-from pontoon.base.models.entity import Entity
-from pontoon.base.models.translation import Translation
 from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
 from pontoon.terminology.models import (
@@ -464,7 +465,7 @@ class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
         }
 
         try:
-            qs = Entity.for_project_locale(
+            qs = get_entities_for_project_locale(
                 self.request.user, project, locale, status="translated", **form_data
             ).select_related("resource__project")
 

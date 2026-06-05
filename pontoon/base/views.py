@@ -32,6 +32,7 @@ from django.views.generic.edit import FormView
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
+from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Comment,
     Entity,
@@ -266,8 +267,8 @@ def entities(request):
     if form.cleaned_data["entity_ids"]:
         return _get_entities_list(locale, preferred_source_locale, project, form)
 
-    # `Entity.for_project_locale` only requires a subset of the fields the form contains. We thus
-    # make a new dict with only the keys we want to pass to that function.
+    # `get_entities_for_project_locale` only requires a subset of the fields the form contains.
+    # We thus make a new dict with only the keys we want to pass to that function.
     restrict_to_keys = (
         "paths",
         "status",
@@ -303,7 +304,9 @@ def entities(request):
             form_data[name] = UserProfile._meta.get_field(name).get_default()
 
     try:
-        entities = Entity.for_project_locale(request.user, project, locale, **form_data)
+        entities = get_entities_for_project_locale(
+            request.user, project, locale, **form_data
+        )
     except ValueError as error:
         return JsonResponse({"status": False, "message": f"{error}"}, status=500)
 
