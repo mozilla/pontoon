@@ -5,12 +5,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 
-from pontoon.base.utils import (
-    aware_datetime,
-    get_m2m_changes,
-    get_search_phrases,
-    latest_datetime,
-)
+from pontoon.base.utils import get_m2m_changes, get_search_phrases
 from pontoon.test.factories import (
     LocaleCodeHistoryFactory,
     LocaleFactory,
@@ -572,14 +567,6 @@ def test_get_m2m_mixed(user_a, user_b, user_c):
     assert user_a in changes[0]
     assert user_c in changes[0]
     assert [user_b] == changes[1]
-
-
-def test_util_base_latest_datetime():
-    larger = aware_datetime(2015, 1, 1)
-    smaller = aware_datetime(2014, 1, 1)
-    assert latest_datetime([None, None, None]) is None
-    assert latest_datetime([None, larger]) == larger
-    assert latest_datetime([None, smaller, larger]) == larger
 
 
 @pytest.mark.parametrize(
