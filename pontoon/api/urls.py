@@ -31,6 +31,12 @@ api_v2_patterns = [
         name="project-individual",
     ),
     path(
+        # Project locale translation files
+        "projects/<str:slug>/locales/<str:code>/translations/",
+        views.ProjectLocaleTranslationsView.as_view(),
+        name="project-locale-translations",
+    ),
+    path(
         "entities/",
         views.EntityListView.as_view(),
         name="entity-list",

@@ -66,6 +66,15 @@ class Repository(models.Model):
     """,
     )
 
+    readonly = models.BooleanField(
+        "Read-only",
+        default=False,
+        help_text="""
+        If true, sync pulls from this repo but never commits or pushes
+        to it. Translations live only in Pontoon's database.
+    """,
+    )
+
     def __repr__(self):
         repo_kind = "Repository"
         if self.source_repo:

@@ -1,22 +1,15 @@
 #!/bin/bash
 
-# Prepares then runs the server
-if [ ! -z "$SSH_KEY" ]; then
-    echo ">>> loading ssh key and kown_hosts for default user pontoon..."
-    mkdir /home/pontoon/.ssh
-    chmod 700 /home/pontoon/.ssh
-
-    # To preserve newlines, the env var is base64 encoded. Flip it back.
-    echo -n "$SSH_KEY" > /home/pontoon/.ssh/id_ed25519
-    chmod 400 /home/pontoon/.ssh/id_ed25519
-    # do the same to known_hosts
-    echo -n "$KNOWN_HOSTS" > /home/pontoon/.ssh/known_hosts
-    chmod 400 /home/pontoon/.ssh/known_hosts
-    # do the same to .gitconfig
+# Prepares then runs the server.
+# Git authentication is HTTPS-only: provide a read-only token via a
+# .gitconfig url.<base>.insteadOf rewrite in the GIT_CONFIG env var, e.g.
+#   [url "https://x-access-token:<TOKEN>@github.com/"]
+#       insteadOf = https://github.com/
+if [ ! -z "$GIT_CONFIG" ]; then
+    echo ">>> writing .gitconfig for default user pontoon..."
     echo -n "$GIT_CONFIG" > /home/pontoon/.gitconfig
     chmod 400 /home/pontoon/.gitconfig
-
-    chown -R pontoon:pontoon /home/pontoon/.ssh/
+    chown pontoon:pontoon /home/pontoon/.gitconfig
     echo "...done"
 fi
 

@@ -1,3 +1,7 @@
+from io import BytesIO
+from unittest.mock import patch
+from zipfile import ZipFile
+
 import pytest
 
 from rest_framework.test import APIClient
@@ -13,6 +17,7 @@ from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
+from pontoon.sync.repositories import PullFromRepositoryException
 from pontoon.terminology.models import Term, TermTranslation
 from pontoon.test.factories import (
     EntityFactory,
@@ -1907,3 +1912,103 @@ def test_expired_pat_rejected_on_non_pretranslation_endpoint(member):
     )
 
     assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_translations_download_requires_auth():
+    locale = LocaleFactory(code="fr-DL")
+    ProjectFactory(slug="dl-noauth", locales=[locale])
+    client = APIClient()
+    response = client.get("/api/v2/projects/dl-noauth/locales/fr-DL/translations/")
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_translations_download_project_not_visible(member):
+    locale = LocaleFactory(code="fr-DL")
+    ProjectFactory(slug="dl-private", locales=[locale], visibility="private")
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+    response = client.get("/api/v2/projects/dl-private/locales/fr-DL/translations/")
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_translations_download_locale_not_in_project(member):
+    LocaleFactory(code="fr-DL")
+    ProjectFactory(slug="dl-nolocale", locales=[])
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+    response = client.get("/api/v2/projects/dl-nolocale/locales/fr-DL/translations/")
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translations_download_zip(member):
+    locale = LocaleFactory(code="fr-DL")
+    project = ProjectFactory(slug="dl-zip", locales=[locale])
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+    with patch(
+        "pontoon.api.views.serialize_locale",
+        return_value=[
+            ("fr-DL/a.ftl", "key-0 = Traduction 0\n"),
+            ("fr-DL/b.po", 'msgid "source"\nmsgstr "traduction"\n'),
+        ],
+    ) as mock_serialize:
+        response = client.get("/api/v2/projects/dl-zip/locales/fr-DL/translations/")
+    assert response.status_code == 200
+    assert response["Content-Type"] == "application/zip"
+    assert response["Content-Disposition"] == 'attachment; filename="dl-zip-fr-DL.zip"'
+    with ZipFile(BytesIO(response.content)) as zipfile:
+        assert zipfile.namelist() == ["fr-DL/a.ftl", "fr-DL/b.po"]
+        assert zipfile.read("fr-DL/a.ftl") == b"key-0 = Traduction 0\n"
+    assert mock_serialize.call_args.args == (project, locale, None)
+
+
+@pytest.mark.django_db
+def test_translations_download_single_file(member):
+    locale = LocaleFactory(code="fr-DL")
+    project = ProjectFactory(slug="dl-single", locales=[locale])
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+    with patch(
+        "pontoon.api.views.serialize_locale",
+        return_value=[("fr-DL/a.ftl", "key-0 = Traduction 0\n")],
+    ) as mock_serialize:
+        response = client.get(
+            "/api/v2/projects/dl-single/locales/fr-DL/translations/?resource=a.ftl"
+        )
+    assert response.status_code == 200
+    assert response["Content-Type"] == "text/plain; charset=utf-8"
+    assert response["Content-Disposition"] == 'attachment; filename="a.ftl"'
+    assert response.content == b"key-0 = Traduction 0\n"
+    assert mock_serialize.call_args.args == (project, locale, "a.ftl")
+
+
+@pytest.mark.django_db
+def test_translations_download_unknown_resource(member):
+    locale = LocaleFactory(code="fr-DL")
+    ProjectFactory(slug="dl-404", locales=[locale])
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+    with patch("pontoon.api.views.serialize_locale", return_value=[]):
+        response = client.get(
+            "/api/v2/projects/dl-404/locales/fr-DL/translations/?resource=nope.ftl"
+        )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translations_download_repo_unavailable(member):
+    locale = LocaleFactory(code="fr-DL")
+    ProjectFactory(slug="dl-503", locales=[locale])
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+    with patch(
+        "pontoon.api.views.serialize_locale",
+        side_effect=PullFromRepositoryException("boom"),
+    ):
+        response = client.get("/api/v2/projects/dl-503/locales/fr-DL/translations/")
+    assert response.status_code == 503
+    assert "Source repository unavailable" in response.data["detail"]

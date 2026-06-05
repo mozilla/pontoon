@@ -50,6 +50,10 @@ def sync_project(
         log.error(f"{log_prefix} {e}")
         raise e
 
+    # The readonly flag is keyed off the target repo, i.e. the repo that
+    # two-way sync would push to. For single-repo projects, source == target.
+    readonly = checkouts.target.repo.readonly
+
     locale_map: dict[str, Locale] = {
         lc.code: lc for lc in project.locales.order_by("code")
     }
@@ -61,9 +65,17 @@ def sync_project(
     db_changes = ChangedEntityLocale.objects.filter(
         entity__resource__project=project, when__lte=now
     ).select_related("entity__resource", "locale")
-    del_trans_count, updated_trans_count = sync_translations_from_repo(
-        project, locale_map, checkouts, paths, db_changes, now
-    )
+    if readonly and checkouts.target.prev_commit is not None:
+        # Read-only repos only import translations on their first sync.
+        # After that, the repo's translation files are stale — the database
+        # is the source of truth, and re-importing the files (e.g. during a
+        # forced sync) would revert newer translations.
+        log.info(f"{log_prefix} Skipping translations from read-only repo")
+        del_trans_count, updated_trans_count = 0, 0
+    else:
+        del_trans_count, updated_trans_count = sync_translations_from_repo(
+            project, locale_map, checkouts, paths, db_changes, now
+        )
     db_changed = bool(
         added_entities_count
         or changed_paths
@@ -72,18 +84,22 @@ def sync_project(
         or updated_trans_count
     )
     if added_entities_count > 0:
-        notify_users(project, now)
-    repo_changed = sync_translations_to_repo(
-        project,
-        commit,
-        locale_map,
-        checkouts,
-        paths,
-        db_changes,
-        changed_paths,
-        removed_paths,
-        now,
-    )
+        notify_users(project, added_entities_count)
+    if readonly:
+        log.info(f"{log_prefix} Skipping commit to read-only repo")
+        repo_changed = False
+    else:
+        repo_changed = sync_translations_to_repo(
+            project,
+            commit,
+            locale_map,
+            checkouts,
+            paths,
+            db_changes,
+            changed_paths,
+            removed_paths,
+            now,
+        )
     if commit:
         db_changes.delete()
 

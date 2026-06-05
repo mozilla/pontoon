@@ -7,6 +7,7 @@ import pytest
 from django.core.exceptions import ValidationError
 
 from pontoon.base.models.repository import repository_url_validator
+from pontoon.base.tests import RepositoryFactory
 
 
 @pytest.mark.django_db
@@ -53,3 +54,9 @@ def test_repository_url_validator():
     invalid_url = "--evil=parameter"
     with pytest.raises(ValidationError):
         repository_url_validator(invalid_url)
+
+
+@pytest.mark.django_db
+def test_repository_readonly_defaults_to_false():
+    repo = RepositoryFactory.create()
+    assert repo.readonly is False

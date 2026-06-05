@@ -1,14 +1,20 @@
+import logging
+
 from datetime import datetime, timedelta
+from io import BytesIO
+from os.path import basename
 from types import SimpleNamespace
+from zipfile import ZipFile
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework import generics, status
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.db.models import Prefetch, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
 
@@ -31,6 +37,8 @@ from pontoon.base.models import (
 )
 from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
+from pontoon.sync.repositories import PullFromRepositoryException
+from pontoon.sync.utils import serialize_locale
 from pontoon.terminology.models import (
     Term,
     TermTranslation,
@@ -49,6 +57,9 @@ from .serializers import (
     TermSerializer,
     TranslationMemorySerializer,
 )
+
+
+log = logging.getLogger(__name__)
 
 
 class RequestFieldsMixin:
@@ -140,6 +151,58 @@ class UserActionsView(APIView):
                 },
             }
         )
+
+
+class ProjectLocaleTranslationsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, slug, code):
+        """
+        Download the translated resource files for a project locale,
+        serialized from the database.
+
+        Returns a zip of all resources, or a single file if the
+        `resource` query parameter is given.
+        """
+        project = generics.get_object_or_404(Project, slug=slug)
+        if not Project.objects.filter(pk=project.pk).visible_for(request.user).exists():
+            raise PermissionDenied(
+                "You do not have permission to access data for this project."
+            )
+        locale = generics.get_object_or_404(Locale, code=code)
+        generics.get_object_or_404(ProjectLocale, project=project, locale=locale)
+
+        resource_path = request.query_params.get("resource")
+        try:
+            files = list(serialize_locale(project, locale, resource_path))
+        except PullFromRepositoryException as error:
+            # Git stderr may contain sensitive details (e.g. a token-bearing
+            # URL from .gitconfig); keep it server-side, return a generic body.
+            log.error(f"[{slug}] Source checkout failed: {error}")
+            return Response(
+                {"detail": "Source repository unavailable."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        if resource_path is not None:
+            if not files:
+                raise NotFound("Resource not found.")
+            rel_path, content = files[0]
+            response = HttpResponse(content, content_type="text/plain; charset=utf-8")
+            response["Content-Disposition"] = (
+                f'attachment; filename="{basename(rel_path)}"'
+            )
+            return response
+
+        bytes_io = BytesIO()
+        with ZipFile(bytes_io, "w") as zipfile:
+            for rel_path, content in files:
+                zipfile.writestr(rel_path, content)
+        response = HttpResponse(bytes_io.getvalue(), content_type="application/zip")
+        response["Content-Disposition"] = (
+            f'attachment; filename="{project.slug}-{locale.code}.zip"'
+        )
+        return response
 
 
 class LocaleListView(RequestFieldsMixin, generics.ListAPIView):

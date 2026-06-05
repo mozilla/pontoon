@@ -4,6 +4,7 @@ import re
 
 from collections import defaultdict
 from datetime import datetime
+from os.path import basename
 from typing import Any, cast
 from urllib.parse import urlparse
 
@@ -18,7 +19,6 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseForbidden,
-    HttpResponseRedirect,
     JsonResponse,
     StreamingHttpResponse,
 )
@@ -939,11 +939,11 @@ def perform_checks(request):
         return JsonResponse({"status": True})
 
 
-@transaction.atomic
 def download_translations(request):
-    """Download translated resource from its backing repository."""
+    """Download a translated resource, serialized from the database."""
 
-    from pontoon.sync.utils import translations_target_url
+    from pontoon.sync.repositories import PullFromRepositoryException
+    from pontoon.sync.utils import serialize_locale
 
     try:
         slug = request.GET["slug"]
@@ -954,15 +954,18 @@ def download_translations(request):
 
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
     locale = get_object_or_404(Locale, code=code)
+    get_object_or_404(ProjectLocale, project=project, locale=locale)
 
-    # FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
-    # Once fixed, we should remove SSH credentials from the web pod
-    # https://github.com/mozilla/webservices-infra/pull/9295
-    url = translations_target_url(project, locale, res_path)
-    if url and url.startswith("https://"):
-        return HttpResponseRedirect(url)
-    else:
+    try:
+        files = list(serialize_locale(project, locale, res_path))
+    except PullFromRepositoryException:
+        return HttpResponse("Source repository unavailable.", status=503)
+    if not files:
         raise Http404
+    rel_path, content = files[0]
+    response = HttpResponse(content, content_type="text/plain; charset=utf-8")
+    response["Content-Disposition"] = f'attachment; filename="{basename(rel_path)}"'
+    return response
 
 
 @login_required(redirect_field_name="", login_url="/403")

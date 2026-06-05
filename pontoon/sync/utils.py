@@ -1,83 +1,101 @@
-import re
+import logging
 
-from io import BytesIO
-from os.path import basename, exists, join, relpath
+from collections import defaultdict
+from collections.abc import Iterator
+from os.path import basename, commonpath, exists, join, normpath, relpath
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile
+
+from moz.l10n.resource import parse_resource, serialize_resource
 
 from django.core.files import File
+from django.db.models import Q
 from django.utils import timezone
 
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
-from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
-from pontoon.base.models.repository import Repository
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    Locale,
+    Project,
+    Resource,
+    Translation,
+    User,
+)
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.sync.core.checkout import checkout_repos
 from pontoon.sync.core.paths import UploadPaths, find_paths
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import find_db_updates, write_db_updates
-from pontoon.sync.core.translations_to_repo import update_changed_resources
+from pontoon.sync.core.translations_to_repo import set_translations
 
 
-# FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
-# Once fixed, we should remove SSH credentials from the web pod
-# https://github.com/mozilla/webservices-infra/pull/9295
-def translations_target_url(
-    project: Project, locale: Locale, resource_path: str
-) -> str | None:
-    """The target repository URL for a resource, for direct download."""
-
-    if project.repositories.count() > 1:
-        # HACK: Let's assume that no config is used, and the target repo root is the right base.
-        target_repo: Repository = project.repositories.get(source_repo=False)
-        rel_path = f"{locale.code}/{resource_path}"
-    else:
-        checkouts = checkout_repos(project, shallow=True)
-        target_repo = checkouts.target.repo
-        paths = find_paths(project, checkouts)
-        target, _ = paths.target(resource_path)
-        if not target:
-            return None
-        abs_path = paths.format_target_path(target, locale.code)
-        rel_path = relpath(abs_path, checkouts.target.path).replace("\\", "/")
-
-    github = re.search(r"\bgithub\.com[:/]([^/]+)/([^/]+)\.git$", target_repo.url)
-    if github:
-        org, repo = github.groups()
-        ref = f"refs/heads/{target_repo.branch}" if target_repo.branch else "HEAD"
-        return f"https://raw.githubusercontent.com/{org}/{repo}/{ref}/{rel_path}"
-
-    gitlab = re.search(r"gitlab\.com[:/]([^/]+)/([^/]+)\.git$", target_repo.url)
-    if gitlab:
-        org, repo = gitlab.groups()
-        ref = target_repo.branch or "HEAD"
-        return f"https://gitlab.com/{org}/{repo}/-/raw/{ref}/{rel_path}?inline=false"
-
-    # Default to bare repo link
-    return re.sub(r"^.*?(://|@)", "https://", target_repo.url, count=1)
+log = logging.getLogger(__name__)
 
 
-# FIXME Currently not in use, to be refactored for proper download support
-def download_translations_zip(
-    project: Project, locale: Locale
-) -> tuple[bytes, str] | tuple[None, None]:
+def serialize_locale(
+    project: Project, locale: Locale, resource_path: str | None = None
+) -> Iterator[tuple[str, str]]:
+    """
+    Serialize `project` resources translated into `locale` from the database.
+
+    Yields `(path, content)` tuples, where `path` is relative to the target
+    repository root, matching the layout produced by two-way sync.
+    """
     checkouts = checkout_repos(project, shallow=True)
     paths = find_paths(project, checkouts)
-    db_changes = ChangedEntityLocale.objects.filter(
-        entity__resource__project=project, locale=locale
-    ).select_related("entity__resource", "locale")
-    update_changed_resources(project, paths, {}, [], db_changes, set(), timezone.now())
+    # Narrowing the paths to a single locale is intentional; per-path locale
+    # restrictions from an L10nConfigPaths config are still honored via the
+    # locale_codes check below.
+    paths.locales = [locale.code]
+    ref_root = normpath(paths.ref_root)
 
-    bytes_io = BytesIO()
-    zipfile = ZipFile(bytes_io, "w")
-    for _, tgt_path in paths.all():
-        filename = paths.format_target_path(tgt_path, locale.code)
-        if exists(filename):
-            arcname = relpath(filename, checkouts.target.path)
-            zipfile.write(filename, arcname)
-    zipfile.close()
+    resource_qs = Resource.objects.filter(project=project)
+    if resource_path is not None:
+        resource_qs = resource_qs.filter(path=resource_path)
+    resources = list(resource_qs)
 
-    return bytes_io.getvalue(), f"{project.slug}.zip"
+    # Fetch all relevant translations in a single query and group them by
+    # resource, rather than querying once per resource (N+1).
+    translations_by_resource: dict[int, list[Translation]] = defaultdict(list)
+    for tx in (
+        Translation.objects.filter(
+            entity__obsolete=False,
+            entity__resource__in=resources,
+            locale=locale,
+            active=True,
+        )
+        .filter(
+            Q(approved=True)
+            | Q(pretranslated=True, warnings__isnull=True)
+            | Q(fuzzy=True)
+        )
+        .select_related("entity")
+    ):
+        translations_by_resource[tx.entity.resource_id].append(tx)
+
+    for resource in resources:
+        target, locale_codes = paths.target(resource.path)
+        if target is None or locale.code not in locale_codes:
+            continue
+        ref_path = normpath(join(ref_root, resource.path))
+        if ref_path.endswith(".po"):
+            ref_path += "t"
+        # `resource.path` is unrestricted, so a leading "/" or ".." segments
+        # could escape the reference root and read arbitrary files; reject it.
+        if commonpath((ref_root, ref_path)) != ref_root:
+            log.error(f"[{project.slug}:{resource.path}] Invalid resource path")
+            continue
+        if not exists(ref_path):
+            log.error(f"[{project.slug}:{resource.path}] Missing source file")
+            continue
+        translations = translations_by_resource.get(resource.id, [])
+        res = parse_resource(ref_path)
+        set_translations(locale, translations, res)
+        content = "".join(
+            serialize_resource(res, gettext_plurals=locale.cldr_plurals_list())
+        )
+        target_path = paths.format_target_path(target, locale.code)
+        rel_path = relpath(target_path, checkouts.target.path).replace("\\", "/")
+        yield rel_path, content
 
 
 def import_uploaded_file(

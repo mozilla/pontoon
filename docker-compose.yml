@@ -8,8 +8,6 @@ services:
       dockerfile: ./docker/Dockerfile
       target: server
     image: 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${VERSION}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     env_file:
       - .env
     depends_on:

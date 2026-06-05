@@ -156,11 +156,13 @@
           </section>
           <div class="repository-toolbar clearfix">
             <section class="checkbox source-wrapper">
-              <label
-                for="id_repositories-0-source_repo"
-                title="{{ repo_form.source_repo.help_text|trim }}"
-              >
+              <label title="{{ repo_form.source_repo.help_text|trim }}">
                 {{ repo_form.source_repo }}{{ repo_form.source_repo.label }}
+              </label>
+            </section>
+            <section class="checkbox readonly-wrapper">
+              <label title="{{ repo_form.readonly.help_text|trim }}">
+                {{ repo_form.readonly }}{{ repo_form.readonly.label }}
               </label>
             </section>
             <section class="delete-wrapper">

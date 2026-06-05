@@ -848,3 +848,113 @@ def test_add_project_locale():
             tr.locale.code: tr.total_strings
             for tr in TranslatedResource.objects.filter(resource__project=project)
         } == {"fr-Test": 1, "de-Test": 1}
+
+
+@pytest.mark.django_db
+def test_readonly_first_sync_imports_translations():
+    mock_vcs = MockVersionControl()
+    with mock_setup(mock_vcs) as (repo, locale):
+        # Database setup
+        repo.readonly = True
+        repo.save()
+        project = ProjectFactory.create(
+            name="ro-first-sync", locales=[locale], repositories=[repo]
+        )
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"file.ftl": "key = Message\n"},
+                "de-Test": {"file.ftl": "key = Vorhanden\n"},
+            },
+        )
+
+        # Test
+        sync_project_task(project.pk)
+
+        # On the very first sync, existing repo translations are imported
+        translation = Translation.objects.get(
+            entity__resource__project=project, locale=locale, active=True
+        )
+        assert translation.string == "key = Vorhanden\n"
+        assert translation.approved
+        # But nothing is ever committed or pushed
+        assert all(call[0] != "commit" for call in mock_vcs._calls)
+
+
+@pytest.mark.django_db
+def test_readonly_later_sync_skips_stale_translations():
+    mock_vcs = MockVersionControl()
+    with mock_setup(mock_vcs) as (repo, locale):
+        # Database setup: this repo has synced before
+        repo.readonly = True
+        repo.last_synced_revisions = {"single_locale": "def456"}
+        repo.save()
+        project = ProjectFactory.create(
+            name="ro-later-sync", locales=[locale], repositories=[repo]
+        )
+        res = ResourceFactory.create(project=project, path="file.ftl", format="fluent")
+        TranslatedResourceFactory.create(locale=locale, resource=res)
+
+        # Entity 1: translated in Pontoon long ago; its pending change was
+        # already consumed by an earlier sync.
+        entity_old = EntityFactory.create(
+            resource=res, key=["key"], string="key = Message\n"
+        )
+        TranslationFactory.create(
+            entity=entity_old,
+            locale=locale,
+            string="key = Neu\n",
+            active=True,
+            approved=True,
+        )
+        ChangedEntityLocale.objects.filter(entity=entity_old).delete()
+
+        # Entity 2: translated in Pontoon just now; pending change exists.
+        entity_new = EntityFactory.create(
+            resource=res, key=["key2"], string="key2 = Message 2\n"
+        )
+        TranslationFactory.create(
+            entity=entity_new,
+            locale=locale,
+            string="key2 = Neu 2\n",
+            active=True,
+            approved=True,
+        )
+        assert ChangedEntityLocale.objects.filter(entity__resource=res).count() == 1
+
+        # Filesystem setup: the repo's translation file is stale — it predates
+        # both DB translations. changed_files() returns None, so sync takes the
+        # "consider all files changed" path, as a force sync would.
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"file.ftl": "key = Message\nkey2 = Message 2\n"},
+                "de-Test": {"file.ftl": "key = Alt\n"},
+            },
+        )
+
+        # Test
+        sync_project_task(project.pk)
+
+        # The stale repo translation is NOT imported over the newer DB one
+        translation = Translation.objects.get(
+            entity=entity_old, locale=locale, active=True
+        )
+        assert translation.string == "key = Neu\n"
+        assert translation.approved
+        # The fresh DB translation survives too, and its pending change is cleared
+        assert (
+            Translation.objects.get(
+                entity=entity_new, locale=locale, active=True
+            ).string
+            == "key2 = Neu 2\n"
+        )
+        assert ChangedEntityLocale.objects.filter(entity__resource=res).count() == 0
+        # Nothing is written to the checkout, committed, or pushed
+        with open(join(repo.checkout_path, "de-Test", "file.ftl")) as file:
+            assert file.read() == "key = Alt\n"
+        assert all(call[0] != "commit" for call in mock_vcs._calls)
