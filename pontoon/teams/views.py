@@ -19,7 +19,6 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, F, Prefetch, Q, TextField
 from django.db.models.functions import Cast
-from django.db.models.manager import BaseManager
 from django.http import (
     Http404,
     HttpResponse,
@@ -51,6 +50,8 @@ from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm
+
+from ..base.models.project import ProjectQuerySet
 
 
 log = logging.getLogger(__name__)
@@ -109,10 +110,12 @@ def ajax_projects(request, locale):
     """Team Projects tab."""
     locale = get_object_or_404(Locale, code=locale)
 
-    projects = cast(
-        BaseManager[Project],
-        Project.objects.visible().visible_for(request.user),
-    ).order_by("name")
+    projects = (
+        cast(ProjectQuerySet, Project.objects)
+        .visible()
+        .visible_for(request.user)
+        .order_by("name")
+    )
 
     enabled_projects = list(projects.filter(locales=locale))
 

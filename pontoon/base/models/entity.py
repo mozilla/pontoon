@@ -2,8 +2,9 @@ from collections.abc import Iterable
 from functools import reduce
 from operator import ior
 from re import escape, match
+from typing import TYPE_CHECKING, Any
 
-from dirtyfields import DirtyFieldsMixin
+from dirtyfields import DirtyFieldsMixin  # type: ignore[import-untyped]
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -16,6 +17,12 @@ from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
 from pontoon.base.models.section import Section
+
+
+if TYPE_CHECKING:
+    from pontoon.base.models.comment import Comment
+    from pontoon.base.models.translation import Translation, TranslationQuerySet
+    from pontoon.terminology.models import Term
 
 
 def combine_entity_filters(entities, filter_choices, filters, *args):
@@ -259,7 +266,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     resource: models.ForeignKey["Resource"] = models.ForeignKey(
         Resource, models.CASCADE, related_name="entities"
     )
-    section = models.ForeignKey(
+    section: models.ForeignKey[Section | None] = models.ForeignKey(
         Section, models.SET_NULL, related_name="entities", null=True, blank=True
     )
     string = models.TextField()
@@ -274,7 +281,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     date_created = models.DateTimeField(default=timezone.now)
     date_obsoleted = models.DateTimeField(null=True, blank=True)
 
-    changed_locales = models.ManyToManyField(
+    changed_locales: "models.ManyToManyField[Locale, Any]" = models.ManyToManyField(
         Locale,
         through="ChangedEntityLocale",
         help_text="List of locales in which translations for this entity have "
@@ -282,20 +289,26 @@ class Entity(DirtyFieldsMixin, models.Model):
     )
     objects = EntityQuerySet.as_manager()
 
+    comments: models.QuerySet["Comment"]
+    """Actually a RelatedManager"""
+    term: "Term"
+    translation_set: "TranslationQuerySet"
+    """Actually a RelatedManager"""
+
     class Meta:
         indexes = [models.Index(fields=["resource", "obsolete"])]
 
     def __str__(self):
         return self.string
 
-    def has_changed(self, locale):
+    def has_changed(self, locale: Locale) -> bool:
         """
         Check if translations in the given locale have changed since the
         last sync.
         """
         return locale in self.changed_locales.all()
 
-    def reset_active_translation(self, locale: Locale):
+    def reset_active_translation(self, locale: Locale) -> "Translation":
         """
         Reset active translation for given entity and locale.
         Return active translation if exists or empty Translation instance.

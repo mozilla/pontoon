@@ -3,17 +3,17 @@ import logging
 from django.db import models
 from django.db.models import F, Sum
 
-from .locale import Locale
-from .project import Project
-from .resource import Resource
-from .translation import Translation
-from .user import User
+from pontoon.base.models.locale import Locale
+from pontoon.base.models.project import Project
+from pontoon.base.models.resource import Resource
+from pontoon.base.models.translation import Translation
+from pontoon.base.models.user import User
 
 
 log = logging.getLogger(__name__)
 
 
-class TranslatedResourceQuerySet(models.QuerySet):
+class TranslatedResourceQuerySet(models.QuerySet["TranslatedResource"]):
     def string_stats(
         self,
         user: User | None = None,
@@ -91,7 +91,7 @@ class TranslatedResource(models.Model):
 
     #: Most recent translation approved or created for this translated
     #: resource.
-    latest_translation = models.ForeignKey(
+    latest_translation: models.ForeignKey["Translation | None"] = models.ForeignKey(
         "Translation",
         models.SET_NULL,
         blank=True,
