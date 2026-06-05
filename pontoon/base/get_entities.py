@@ -1,14 +1,16 @@
-from functools import reduce
-from operator import ior
+from datetime import datetime, timedelta, timezone
 from re import escape, match
-from typing import cast
+from typing import Iterator, cast
 
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db.models import F, Q
+from django.utils.timezone import make_aware
 
-from pontoon.base.models import Entity, Locale, Project, Resource, User
+from pontoon.base.models import Entity, Locale, Project, Resource, Translation, User
 from pontoon.base.models.entity import EntityQuerySet
 from pontoon.base.models.project import ProjectQuerySet
-from pontoon.base.utils import get_search_phrases, parse_time_interval
+from pontoon.base.utils import get_search_phrases
 
 
 def get_entities_for_project_locale(
@@ -34,48 +36,24 @@ def get_entities_for_project_locale(
 ) -> EntityQuerySet:
     """Get project entities with locale translations."""
 
-    # Time & author filters have to be applied before the aggregation
-    # (with_status_counts) and the status & extra filters to avoid
-    # unnecessary joins causing performance and logic issues.
-    pre_filters = []
-    post_filters = []
+    entities = cast(EntityQuerySet, Entity.objects)
 
-    entity_objects = cast(EntityQuerySet, Entity.objects)
-    if time:
-        if match("^[0-9]{12}-[0-9]{12}$", time):
-            start, end = parse_time_interval(time)
-            pre_filters.append(entity_objects.between_time_interval(locale, start, end))
-
-    if created_time:
-        if match("^[0-9]{12}-[0-9]{12}$", created_time):
-            start, end = parse_time_interval(created_time)
-            pre_filters.append(entity_objects.between_created_time_interval(start, end))
-
-    if review_time:
-        if match("^[0-9]{12}-[0-9]{12}$", review_time):
-            start, end = parse_time_interval(review_time)
-            pre_filters.append(
-                entity_objects.between_review_time_interval(locale, start, end)
-            )
-
-    if author:
-        pre_filters.append(entity_objects.authored_by(locale, author.split(",")))
-
-    if reviewer:
-        pre_filters.append(entity_objects.reviewed_by(locale, reviewer.split(",")))
-
-    if exclude_self_reviewed:
-        pre_filters.append(
-            ~Q(
-                Q(translation__approved_user=F("translation__user"))
-                | Q(translation__rejected_user=F("translation__user"))
-            )
+    pre_filter = Q(
+        *_time_and_user_filters(
+            locale,
+            time,
+            created_time,
+            review_time,
+            author,
+            reviewer,
+            exclude_self_reviewed,
         )
-
-    if pre_filters:
-        entities = entity_objects.filter(pk__in=Entity.objects.filter(Q(*pre_filters)))
-    else:
-        entities = entity_objects.all()
+    )
+    if pre_filter:
+        # Time & user filters have to be applied before the aggregation
+        # (with_status_counts) and the status & extra filters to avoid
+        # unnecessary joins causing performance and logic issues.
+        entities = entities.filter(pk__in=Entity.objects.filter(pre_filter))
 
     entities = entities.filter(
         resource__translatedresources__locale=locale,
@@ -92,46 +70,22 @@ def get_entities_for_project_locale(
     else:
         entities = entities.filter(resource__project=project)
 
-    # Filter by path
     if paths:
         entities = entities.filter(resource__path__in=paths)
 
-    if status:
-        # Apply a combination of filters based on the list of statuses the user sent.
-        status_filter_choices = (
-            "missing",
-            "warnings",
-            "errors",
-            "pretranslated",
-            "translated",
-            "unreviewed",
-        )
-        post_filters.append(
-            combine_entity_filters(
-                entities, status_filter_choices, status.split(","), locale, project
-            )
-        )
+    post_filter = Q()
 
-    if extra:
-        # Apply a combination of filters based on the list of extras the user sent.
-        extra_filter_choices = (
-            "rejected",
-            "unchanged",
-            "empty",
-            "fuzzy",
-            "missing-without-unreviewed",
-        )
-        post_filters.append(
-            combine_entity_filters(
-                entities, extra_filter_choices, extra.split(","), locale
-            )
-        )
+    if status and (status_query := _status_filter(project, locale, status)):
+        post_filter &= status_query
+
+    if extra and (extra_query := _extra_filter(locale, extra)):
+        post_filter &= extra_query
 
     if tag:
-        post_filters.append(Q(resource__tag__slug__in=tag.split(",")))
+        post_filter &= Q(resource__tag__slug__in=tag.split(","))
 
-    if post_filters:
-        entities = entities.filter(Q(*post_filters))
+    if post_filter:
+        entities = entities.filter(post_filter)
         if tag:
             # only tag needs `distinct` as it traverses m2m fields
             entities = entities.distinct()
@@ -200,7 +154,7 @@ def get_entities_for_project_locale(
 
         entity_matches = entities.filter(*entity_filters).values_list("id", flat=True)
 
-        entities = Entity.objects.filter(
+        entities = cast(EntityQuerySet, Entity.objects).filter(
             pk__in=set(list(translation_matches) + list(entity_matches))
         )
 
@@ -211,29 +165,133 @@ def get_entities_for_project_locale(
     return entities.order_by(*order_fields)
 
 
-def combine_entity_filters(entities, filter_choices, filters, *args):
-    """Return a combination of filters to apply to an Entity object.
+def _time_and_user_filters(
+    locale: Locale,
+    time: str | None,
+    created_time: str | None,
+    review_time: str | None,
+    author: str | None,
+    reviewer: str | None,
+    exclude_self_reviewed: bool,
+) -> Iterator[Q]:
+    if time and match("^[0-9]{12}-[0-9]{12}$", time):
+        range = _parse_time_interval(time)
+        yield Q(translation__locale=locale, translation__date__range=range)
 
-    The content for each filter is defined in the EntityQuerySet helper class, using methods
-    that have the same name as the filter. Each subset of filters is combined with the others
-    with the OR operator.
+    if created_time and match("^[0-9]{12}-[0-9]{12}$", created_time):
+        range = _parse_time_interval(created_time)
+        yield Q(date_created__range=range)
 
-    :arg EntityQuerySet entities: an Entity query set object with predefined filters
-    :arg list filter_choices: list of valid choices, used to sanitize the content of `filters`
-    :arg list filters: the filters to get and combine
-    :arg *args: arguments that will be passed to the filter methods of the EntityQuerySet class
+    if review_time and match("^[0-9]{12}-[0-9]{12}$", review_time):
+        range = _parse_time_interval(review_time)
+        yield Q(translation__locale=locale) & (
+            Q(translation__approved_date__range=range)
+            | Q(translation__rejected_date__range=range)
+        )
 
-    :returns: a combination of django ORM Q() objects containing all the required filters
+    if author:
+        emails = author.split(",")
+        query = Q(translation__user__isnull=True) if "imported" in emails else Q()
 
+        emails = [e for e in emails if _is_email(e)]
+        if emails:
+            query |= Q(translation__user__email__in=emails)
+        if query:
+            yield query & Q(translation__locale=locale)
+
+    if reviewer:
+        emails = [e for e in reviewer.split(",") if _is_email(e)]
+        if emails:
+            yield Q(translation__locale=locale) & (
+                Q(translation__approved_user__email__in=emails)
+                | Q(translation__rejected_user__email__in=emails)
+            )
+
+    if exclude_self_reviewed:
+        yield ~Q(
+            Q(translation__approved_user=F("translation__user"))
+            | Q(translation__rejected_user=F("translation__user"))
+        )
+
+
+def _parse_time_interval(interval: str) -> tuple[datetime, datetime]:
     """
-    # We first sanitize the list sent by the user and restrict it to only values we accept.
-    sanitized_filters = filter(lambda s: s in filter_choices, filters)
+    Return start and end time objects from time interval string in the format
+    %d%m%Y%H%M-%d%m%Y%H%M. Also, increase interval by one minute due to
+    truncation to a minute in Translation.counts_per_minute QuerySet.
+    """
 
-    filters = [Q()]
-    for filter_name in sanitized_filters:
-        filters.append(getattr(entities, filter_name.replace("-", "_"))(*args))
+    start, end = interval.split("-")
 
-    # Combine all generated filters with an OR operator.
-    # `operator.ior` is the pipe (|) Python operator, which turns into a logical OR
-    # when used between django ORM query objects.
-    return reduce(ior, filters)
+    return _parse_timestamp(start), _parse_timestamp(end) + timedelta(minutes=1)
+
+
+def _parse_timestamp(timestamp: str) -> datetime:
+    return make_aware(datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=timezone.utc)
+
+
+def _is_email(email: str) -> bool:
+    try:
+        validate_email(email)
+        return True
+    except ValidationError:
+        return False
+
+
+def _status_filter(project: Project, locale: Locale, status: str) -> Q:
+    """Apply a combination of filters based on the list of statuses the user sent."""
+    query = Q()
+    for s in status.split(","):
+        match s:
+            case "warnings":
+                q = (Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True)) & Q(
+                    warnings__isnull=False
+                )
+            case "errors":
+                q = (Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True)) & Q(
+                    errors__isnull=False
+                )
+            case "pretranslated":
+                q = Q(pretranslated=True, warnings__isnull=True, errors__isnull=True)
+            case "translated":
+                q = Q(approved=True, warnings__isnull=True, errors__isnull=True)
+            case "unreviewed":
+                q = Q(approved=False, rejected=False, pretranslated=False, fuzzy=False)
+            case "missing":
+                q = Q(approved=True) | Q(pretranslated=True)
+                query |= ~_query(project, locale, q)
+                continue
+            case _:
+                continue
+        query |= _query(project, locale, q)
+    return query
+
+
+def _extra_filter(locale: Locale, extra: str) -> Q:
+    """Apply a combination of filters based on the list of extras the user sent."""
+    query = Q()
+    for e in extra.split(","):
+        match e:
+            case "rejected":
+                q = Q(rejected=True)
+            case "unchanged":
+                q = Q(active=True, string=F("entity__string"))
+            case "empty":
+                q = Q(string="")
+            case "fuzzy":
+                q = Q(fuzzy=True, warnings__isnull=True, errors__isnull=True)
+            case "missing-without-unreviewed":
+                q = Q(approved=True) | Q(pretranslated=True) | Q(rejected=False)
+                query |= ~_query(None, locale, q)
+                continue
+            case _:
+                continue
+        query |= _query(None, locale, q)
+    return query
+
+
+def _query(project: Project | None, locale: Locale, query: Q) -> Q:
+    translations = Translation.objects.filter(locale=locale).filter(query)
+    if project and project.slug != "all-projects":
+        translations = translations.filter(entity__resource__project=project)
+    return Q(pk__in=translations.values("entity"))
