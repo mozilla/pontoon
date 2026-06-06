@@ -19,9 +19,9 @@ export function useTranslationStatus({
         status === 'pretranslated' ||
         status === 'fuzzy'
       ) {
-        if (translation.errors.length) {
+        if (translation.errors?.length) {
           return 'errors';
-        } else if (translation.warnings.length) {
+        } else if (translation.warnings?.length) {
           return 'warnings';
         } else if (status === 'approved') {
           return 'approved';

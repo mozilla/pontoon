@@ -26,24 +26,24 @@ export interface EntityTranslation {
     | 'rejected'
     | 'unreviewed';
   readonly string: string | null | undefined;
-  readonly errors: string[];
-  readonly warnings: string[];
+  readonly errors?: string[];
+  readonly warnings?: string[];
 }
 
 export interface HistoryTranslation extends EntityTranslation {
   readonly string: string;
-  readonly approvedUser: string;
-  readonly approvedDate: string | null;
   readonly date: string;
-  readonly rejectedDate: string | null;
   readonly uid: number | null | undefined;
-  readonly rejectedUser: string;
-  readonly machinerySources: string;
   readonly user: string;
   readonly username: string;
   readonly userGravatarUrlSmall: string;
-  readonly userBanner: string[];
-  readonly comments: Array<TranslationComment>;
+  readonly userBanner?: [string, string];
+  readonly approvedUser?: string;
+  readonly approvedDate?: string;
+  readonly rejectedDate?: string;
+  readonly rejectedUser?: string;
+  readonly machinerySources?: string;
+  readonly comments?: TranslationComment[];
 }
 
 export type APIStats = {

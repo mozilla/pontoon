@@ -71,12 +71,17 @@ export function FailedChecksProvider({
     if (translation) {
       const { status, errors, warnings } = translation;
       if (
-        (errors.length || warnings.length) &&
+        (errors?.length || warnings?.length) &&
         (status === 'approved' ||
           status === 'pretranslated' ||
           status === 'fuzzy')
       ) {
-        setState((prev) => ({ ...prev, errors, warnings, source: 'stored' }));
+        setState((prev) => ({
+          ...prev,
+          errors: errors ?? [],
+          warnings: warnings ?? [],
+          source: 'stored',
+        }));
         return;
       }
     }

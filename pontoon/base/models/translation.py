@@ -478,17 +478,13 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.save()
 
     def serialize(self):
-        return {
-            "pk": self.pk,
-            "status": self.status,
-            "string": self.string,
-            "errors": (
-                [error.message for error in self.errors.all()] if self.pk else []
-            ),
-            "warnings": (
-                [warning.message for warning in self.warnings.all()] if self.pk else []
-            ),
-        }
+        dict = {"pk": self.pk, "status": self.status, "string": self.string}
+        if self.pk:
+            if errors := [error.message for error in self.errors.all()]:
+                dict["errors"] = errors
+            if warnings := [warning.message for warning in self.warnings.all()]:
+                dict["warnings"] = warnings
+        return dict
 
     def mark_changed(self):
         """

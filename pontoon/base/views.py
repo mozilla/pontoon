@@ -519,28 +519,33 @@ def get_translation_history(request):
 
     for t in translations:
         u = t.user or User(username="Imported", first_name="Imported", email="imported")
-        translation_dict = t.serialize()
-        translation_dict.update(
+        td = t.serialize()
+        td.update(
             {
-                "user": u.name_or_email,
+                "date": t.date,
                 "uid": u.pk,
+                "user": u.name_or_email,
                 "username": u.username,
                 "user_gravatar_url_small": gravatar_url(u),
-                "user_banner": user_banner(u, locale, project_contact),
-                "date": t.date,
-                "approved_user": t.approved_user.name_or_email
-                if t.approved_user
-                else "",
-                "approved_date": t.approved_date,
-                "rejected_user": t.rejected_user.name_or_email
-                if t.rejected_user
-                else "",
-                "rejected_date": t.rejected_date,
-                "comments": [c.serialize(project_contact) for c in t.comments.all()],
-                "machinery_sources": t.machinery_sources_values,
             }
         )
-        payload.append(translation_dict)
+        banner = user_banner(u, locale, project_contact)
+        if banner != ("", ""):
+            td["user_banner"] = banner
+        if t.approved_user:
+            td["approved_user"] = t.approved_user.name_or_email
+        if t.approved_date:
+            td["approved_date"] = t.approved_date
+        if t.rejected_user:
+            td["rejected_user"] = t.rejected_user.name_or_email
+        if t.rejected_date:
+            td["rejected_date"] = t.rejected_date
+        if comments := [c.serialize(project_contact) for c in t.comments.all()]:
+            td["comments"] = comments
+        if t.machinery_sources_values:
+            td["machinery_sources"] = t.machinery_sources_values
+
+        payload.append(td)
 
     return JsonResponse(payload, safe=False)
 
