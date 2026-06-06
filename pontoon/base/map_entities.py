@@ -63,10 +63,11 @@ def map_entities_to_json(
             # `projectlocale` list is empty. In this case, we skip the entity.
             continue
 
-        if preferred_source_locale and entity.alternative_originals:
-            original = entity.alternative_originals[0].string
-        else:
-            original = entity.string
+        source_entity = (
+            entity.alternative_originals[0]
+            if preferred_source_locale and entity.alternative_originals
+            else entity
+        )
 
         ed = {
             "pk": entity.pk,
@@ -76,8 +77,12 @@ def map_entities_to_json(
             "path": entity.resource.path,
             "project": entity.resource.project.serialize(),
             "comment": entity.comment,
-            "original": original,
+            "original": source_entity.string,
+            "value": source_entity.value,
         }
+
+        if source_entity.properties:
+            ed["properties"] = source_entity.properties
         if entity.section_comment:
             ed["group_comment"] = entity.section_comment
         if entity.resource.comment:
@@ -88,8 +93,11 @@ def map_entities_to_json(
             ed["readonly"] = True
         if is_sibling:
             ed["is_sibling"] = True
-        if original != entity.string:
+        if source_entity != entity:
             ed["machinery_original"] = entity.string
+            ed["machinery_value"] = entity.value
+            if entity.properties:
+                ed["machinery_properties"] = entity.properties
         if entity.active_translations:
             ed["translation"] = entity.active_translations[0].serialize()
 

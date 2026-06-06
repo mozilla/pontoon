@@ -478,7 +478,14 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.save()
 
     def serialize(self):
-        dict = {"pk": self.pk, "status": self.status, "string": self.string}
+        dict = {
+            "pk": self.pk,
+            "status": self.status,
+            "string": self.string,
+            "value": self.value,
+        }
+        if self.properties:
+            dict["properties"] = self.properties
         if self.pk:
             if errors := [error.message for error in self.errors.all()]:
                 dict["errors"] = errors

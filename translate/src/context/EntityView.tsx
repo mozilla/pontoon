@@ -18,6 +18,7 @@ const emptyEntity: Entity = {
   key: [],
   format: '',
   original: '',
+  value: [],
   comment: '',
   date_created: '',
   path: '',

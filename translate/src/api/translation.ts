@@ -3,6 +3,7 @@ import { getCSRFToken } from './utils/csrfToken';
 import type { MessageEntry } from '~/utils/message';
 import type { TranslationComment } from './comment';
 import type { SourceType } from './machinery';
+import { Message } from '@mozilla/l10n';
 
 export type ChangeOperation = 'approve' | 'unapprove' | 'reject' | 'unreject';
 
@@ -26,6 +27,8 @@ export interface EntityTranslation {
     | 'rejected'
     | 'unreviewed';
   readonly string: string | null | undefined;
+  readonly value: Message;
+  readonly properties?: Record<string, Message>;
   readonly errors?: string[];
   readonly warnings?: string[];
 }

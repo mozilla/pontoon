@@ -10,6 +10,7 @@ import type {
   HistoryTranslation,
 } from './translation';
 import type { BatchBadgeUpdate } from '../modules/batchactions/actions';
+import { Message } from '@mozilla/l10n';
 
 /**
  * String that needs to be translated, along with its current metadata,
@@ -24,12 +25,16 @@ export type Entity = {
   readonly project: Record<string, any>;
   readonly comment: string;
   readonly original: string;
+  readonly value: Message;
+  readonly properties?: Record<string, Message>;
   readonly group_comment?: string;
   readonly resource_comment?: string;
   readonly meta?: Array<[key: string, value: string]>;
   readonly readonly?: boolean;
   readonly isSibling?: boolean;
   readonly machinery_original?: string;
+  readonly machinery_value?: Message;
+  readonly machinery_properties?: Record<string, Message>;
   readonly translation?: EntityTranslation;
 };
 
