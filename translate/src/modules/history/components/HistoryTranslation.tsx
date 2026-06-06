@@ -14,6 +14,7 @@ import { withActionsDisabled } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import './HistoryTranslation.css';
+import { messageEntryFromTranslation } from '~/utils/message/fromTranslation';
 
 type Props = {
   entity: Entity;
@@ -439,11 +440,10 @@ export function HistoryTranslationBase({
               data-script={script}
             >
               <Translation
-                content={translation.string}
+                content={messageEntryFromTranslation(translation, entity)}
                 diffTarget={
                   isDiffVisible ? activeTranslation.string : undefined
                 }
-                format={entity.format}
               />
             </p>
           </div>

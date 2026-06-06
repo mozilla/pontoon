@@ -23,12 +23,15 @@ afterAll(() => {
 });
 
 describe('<HistoryTranslationComponent>', () => {
+  const string = 'The storm approaches. We speak no more.';
   const DEFAULT_TRANSLATION = {
     status: 'unreviewed',
     approvedUser: '',
     date: '',
     pk: 1,
-    string: 'The storm approaches. We speak no more.',
+    key: ['key'],
+    string,
+    value: [string],
     uid: 0,
     rejectedUser: '',
     user: '',
@@ -43,6 +46,8 @@ describe('<HistoryTranslationComponent>', () => {
 
   const DEFAULT_ENTITY = {
     format: 'gettext',
+    key: ['key'],
+    value: [],
   };
   const WrapHistoryTranslationBase = (props) => {
     return (
