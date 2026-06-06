@@ -4,6 +4,7 @@ import re
 
 from collections import defaultdict
 from datetime import datetime
+from typing import Any, cast
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -14,6 +15,7 @@ from django.db import transaction
 from django.db.models import Count, F, Prefetch, Q, QuerySet
 from django.http import (
     Http404,
+    HttpRequest,
     HttpResponse,
     HttpResponseForbidden,
     HttpResponseRedirect,
@@ -46,6 +48,7 @@ from pontoon.base.models import (
     User,
     UserProfile,
 )
+from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.base.notification_utils import serialized_notifications
 from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
@@ -62,6 +65,7 @@ from pontoon.base.user_utils import (
 )
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
+from pontoon.contributors.utils import users_with_translations_counts
 from pontoon.messaging.notifications import send_notification
 
 
@@ -176,29 +180,53 @@ def authors_and_time_range(request, locale, slug, part):
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )
-    paths = [part] if part != "all-resources" else None
 
-    translations = Translation.for_locale_project_paths(locale, project, paths)
+    translations = cast(TranslationQuerySet, Translation.objects).filter(
+        entity__obsolete=False, entity__resource__project=project, locale=locale
+    )
+    if part != "all-resources":
+        translations = translations.filter(entity__resource__path__in=[part])
+
+    authors = [
+        {
+            "email": user.email,
+            "display_name": user.name_or_email,
+            "id": user.id,
+            "gravatar_url": gravatar_url(user),
+            "translation_count": user.translations_count,
+            "role": user.user_role,
+        }
+        for user in users_with_translations_counts(None, Q(id__in=translations))
+    ]
+
+    counts_per_minute = [
+        (utils.convert_to_unix_time(period["minute"]), period["count"])
+        for period in translations.extra({"minute": "date_trunc('minute', date)"})
+        .order_by("minute")
+        .values("minute")
+        .annotate(count=Count("id"))
+    ]
 
     return JsonResponse(
-        {
-            "authors": translations.authors(),
-            "counts_per_minute": translations.counts_per_minute(),
-        },
+        {"authors": authors, "counts_per_minute": counts_per_minute},
         safe=False,
     )
 
 
-def _get_entities_list(locale, preferred_source_locale, project, form):
+def _get_entities_list(
+    locale: Locale,
+    preferred_source_locale: str | None,
+    project: Project,
+    cleaned_data: dict[str, Any],
+):
     """Return entities from a specified list, optionally filtered by search term.
 
     Used for batch editing and list-based entity filtering (e.g. from notifications).
     """
-    entity_ids = form.cleaned_data["entity_ids"]
+    entity_ids = cleaned_data["entity_ids"]
     entities = Entity.objects.filter(pk__in=entity_ids)
 
-    if form.cleaned_data.get("search"):
-        search_term = form.cleaned_data["search"]
+    if search_term := cleaned_data.get("search"):
         entities = entities.filter(string__icontains=search_term)
 
     entities = entities.distinct().order_by("order")
@@ -207,7 +235,7 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
         {
             "entities": map_entities_to_json(locale, preferred_source_locale, entities),
             "stats": TranslatedResource.objects.query_stats(
-                project, form.cleaned_data["paths"], locale
+                project, cleaned_data["paths"], locale
             ),
         },
         safe=False,
@@ -215,36 +243,39 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
 
 
 def _get_paginated_entities(
-    locale, preferred_source_locale, project, form, entities: QuerySet[Entity]
+    locale: Locale,
+    preferred_source_locale: str | None,
+    project: Project,
+    cleaned_data: dict[str, Any],
+    entities: QuerySet[Entity],
 ):
     """Return a paginated list of entities.
 
     This is used by the regular mode of the Translate page.
     """
-    paginator = Paginator(entities, form.cleaned_data["limit"])
-    page = form.cleaned_data["page"]
+    paginator = Paginator(entities, cleaned_data["limit"])
+    page_idx = cleaned_data["page"]
 
     try:
-        entities_page = paginator.page(page)
+        entities_page = paginator.page(page_idx)
     except EmptyPage:
         return JsonResponse({"has_next": False, "stats": {}})
 
-    entities_to_map = entities_page.object_list
-    requested_entity = form.cleaned_data["entity"] if page == 1 else None
-
+    requested_entity = cleaned_data["entity"] if page_idx == 1 else None
     if requested_entity and not entities.filter(pk=requested_entity).exists():
         requested_entity = None
+
     return JsonResponse(
         {
             "entities": map_entities_to_json(
                 locale,
                 preferred_source_locale,
-                entities_to_map,
+                cast(QuerySet[Entity], entities_page.object_list),
                 requested_entity=requested_entity,
             ),
             "has_next": entities_page.has_next(),
             "stats": TranslatedResource.objects.query_stats(
-                project, form.cleaned_data["paths"], locale
+                project, cleaned_data["paths"], locale
             ),
         },
         safe=False,
@@ -254,7 +285,7 @@ def _get_paginated_entities(
 @csrf_exempt
 @require_POST
 @utils.require_AJAX
-def entities(request):
+def entities(request: HttpRequest):
     """Get entities for the specified project, locale and paths."""
     form = forms.GetEntitiesForm(request.POST)
     if not form.is_valid():
@@ -265,22 +296,26 @@ def entities(request):
             },
             status=400,
         )
+    cleaned_data = form.cleaned_data
 
-    locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
+    user = cast(User, request.user)
+    locale = get_object_or_404(Locale, code=cleaned_data["locale"])
 
-    preferred_source_locale = ""
-    if request.user.is_authenticated:
-        preferred_source_locale = request.user.profile.preferred_source_locale
+    preferred_source_locale: str | None = None
+    if user.is_authenticated:
+        preferred_source_locale = user.profile.preferred_source_locale
 
-    project_slug = form.cleaned_data["project"]
+    project_slug = cleaned_data["project"]
     if project_slug == "all-projects":
         project = Project(slug=project_slug)
     else:
         project = get_object_or_404(Project, slug=project_slug)
 
     # Only return entities with provided IDs (batch editing)
-    if form.cleaned_data["entity_ids"]:
-        return _get_entities_list(locale, preferred_source_locale, project, form)
+    if cleaned_data["entity_ids"]:
+        return _get_entities_list(
+            locale, preferred_source_locale, project, cleaned_data
+        )
 
     # `get_entities_for_project_locale` only requires a subset of the fields the form contains.
     # We thus make a new dict with only the keys we want to pass to that function.
@@ -319,9 +354,7 @@ def entities(request):
             form_data[name] = UserProfile._meta.get_field(name).get_default()
 
     try:
-        entities = get_entities_for_project_locale(
-            request.user, project, locale, **form_data
-        )
+        entities = get_entities_for_project_locale(user, project, locale, **form_data)
     except ValueError as error:
         return JsonResponse({"status": False, "message": f"{error}"}, status=500)
 
@@ -331,7 +364,7 @@ def entities(request):
 
     # Out-of-context view: paginate entities
     return _get_paginated_entities(
-        locale, preferred_source_locale, project, form, entities
+        locale, preferred_source_locale, project, form.cleaned_data, entities
     )
 
 
