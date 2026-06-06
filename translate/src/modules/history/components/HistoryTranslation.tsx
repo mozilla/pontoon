@@ -199,26 +199,29 @@ export function HistoryTranslationBase({
     vars: { user: '', reviewedDate: new Date() },
     attrs: { title: true },
   };
-  if (translation.approved) {
-    if (translation.approvedDate) {
-      review.vars.reviewedDate = new Date(translation.approvedDate);
-    }
-    if (translation.approvedUser) {
-      review.vars.user = translation.approvedUser;
-      review.id = 'history-translation--approved';
-    } else {
-      review.id = 'history-translation--approved-anonymous';
-    }
-  } else if (translation.rejected) {
-    if (translation.rejectedDate) {
-      review.vars.reviewedDate = new Date(translation.rejectedDate);
-    }
-    if (translation.rejectedUser) {
-      review.vars.user = translation.rejectedUser;
-      review.id = 'history-translation--rejected';
-    } else {
-      review.id = 'history-translation--rejected-anonymous';
-    }
+  const { status } = translation;
+  switch (status) {
+    case 'approved':
+      if (translation.approvedDate) {
+        review.vars.reviewedDate = new Date(translation.approvedDate);
+      }
+      if (translation.approvedUser) {
+        review.vars.user = translation.approvedUser;
+        review.id = 'history-translation--approved';
+      } else {
+        review.id = 'history-translation--approved-anonymous';
+      }
+      break;
+    case 'rejected':
+      if (translation.rejectedDate) {
+        review.vars.reviewedDate = new Date(translation.rejectedDate);
+      }
+      if (translation.rejectedUser) {
+        review.vars.user = translation.rejectedUser;
+        review.id = 'history-translation--rejected';
+      } else {
+        review.id = 'history-translation--rejected-anonymous';
+      }
   }
 
   const commentCount = translation.comments?.length ?? 0;
@@ -229,7 +232,7 @@ export function HistoryTranslationBase({
 
   let canDelete = (isTranslator || ownTranslation) && !isReadOnlyEditor;
   let canReject =
-    (isTranslator || (ownTranslation && !translation.approved)) &&
+    (isTranslator || (ownTranslation && status !== 'approved')) &&
     !isReadOnlyEditor;
   let canComment = user.isAuthenticated;
 
@@ -242,15 +245,7 @@ export function HistoryTranslationBase({
 
   const className = classNames(
     'translation',
-    translation.approved
-      ? 'approved'
-      : translation.pretranslated
-        ? 'pretranslated'
-        : translation.fuzzy
-          ? 'fuzzy'
-          : translation.rejected
-            ? 'rejected'
-            : 'unreviewed',
+    status,
     isReadOnlyEditor
       ? 'cannot-copy'
       : { 'can-approve': isTranslator, 'can-reject': canReject },
@@ -315,7 +310,7 @@ export function HistoryTranslationBase({
                   />
                 ) : null}
 
-                {translation.rejected && canDelete ? (
+                {status === 'rejected' && canDelete ? (
                   // Delete Button
                   <Localized
                     id='history-Translation--button-delete'
@@ -329,7 +324,7 @@ export function HistoryTranslationBase({
                     />
                   </Localized>
                 ) : null}
-                {translation.approved ? (
+                {status === 'approved' ? (
                   // Unapprove Button
                   isTranslator && !isReadOnlyEditor ? (
                     <Localized
@@ -382,7 +377,7 @@ export function HistoryTranslationBase({
                     />
                   </Localized>
                 )}
-                {translation.rejected ? (
+                {status === 'rejected' ? (
                   // Unreject Button
                   canReject ? (
                     <Localized

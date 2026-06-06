@@ -17,8 +17,8 @@ describe('<Entity>', () => {
   const ENTITY_A = {
     original: 'string a',
     translation: {
+      status: 'approved',
       string: 'chaine a',
-      approved: true,
       errors: [],
       warnings: [],
     },
@@ -27,8 +27,8 @@ describe('<Entity>', () => {
   const ENTITY_B = {
     original: 'string b',
     translation: {
+      status: 'pretranslated',
       string: 'chaine b',
-      pretranslated: true,
       errors: [],
       warnings: [],
     },
@@ -37,6 +37,7 @@ describe('<Entity>', () => {
   const ENTITY_C = {
     original: 'string c',
     translation: {
+      status: 'unreviewed',
       string: 'chaine c',
       errors: [],
       warnings: [],
@@ -46,8 +47,8 @@ describe('<Entity>', () => {
   const ENTITY_D = {
     original: 'string d',
     translation: {
+      status: 'approved',
       string: 'chaine d',
-      approved: true,
       errors: ['error'],
       warnings: [],
     },
@@ -56,8 +57,8 @@ describe('<Entity>', () => {
   const ENTITY_E = {
     original: 'string e',
     translation: {
+      status: 'pretranslated',
       string: 'chaine e',
-      pretranslated: true,
       errors: [],
       warnings: ['warning'],
     },

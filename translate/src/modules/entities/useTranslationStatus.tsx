@@ -12,18 +12,22 @@ export function useTranslationStatus({
   translation,
 }: Entity): TranslationStatus {
   return useMemo(() => {
-    if (
-      translation &&
-      (translation.approved || translation.pretranslated || translation.fuzzy)
-    ) {
-      if (translation.errors.length) {
-        return 'errors';
-      } else if (translation.warnings.length) {
-        return 'warnings';
-      } else if (translation.approved) {
-        return 'approved';
-      } else if (translation.pretranslated) {
-        return 'pretranslated';
+    if (translation) {
+      const { status } = translation;
+      if (
+        status === 'approved' ||
+        status === 'pretranslated' ||
+        status === 'fuzzy'
+      ) {
+        if (translation.errors.length) {
+          return 'errors';
+        } else if (translation.warnings.length) {
+          return 'warnings';
+        } else if (status === 'approved') {
+          return 'approved';
+        } else if (status === 'pretranslated') {
+          return 'pretranslated';
+        }
       }
     }
     return 'missing';

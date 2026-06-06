@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from dirtyfields import DirtyFieldsMixin
 
@@ -260,6 +260,20 @@ class Translation(DirtyFieldsMixin, models.Model):
     def tm_target(self):
         return get_simple_preview(self.entity.resource.format, self.string)
 
+    @property
+    def status(
+        self,
+    ) -> Literal["approved", "fuzzy", "pretranslated", "rejected", "unreviewed"]:
+        if self.approved:
+            return "approved"
+        if self.rejected:
+            return "rejected"
+        if self.pretranslated:
+            return "pretranslated"
+        if self.fuzzy:
+            return "fuzzy"
+        return "unreviewed"
+
     def __str__(self):
         return self.string
 
@@ -466,11 +480,8 @@ class Translation(DirtyFieldsMixin, models.Model):
     def serialize(self):
         return {
             "pk": self.pk,
+            "status": self.status,
             "string": self.string,
-            "approved": self.approved,
-            "rejected": self.rejected,
-            "pretranslated": self.pretranslated,
-            "fuzzy": self.fuzzy,
             "errors": (
                 [error.message for error in self.errors.all()] if self.pk else []
             ),

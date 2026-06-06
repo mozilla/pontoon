@@ -68,6 +68,6 @@ export function useActiveTranslation(): EntityTranslation | null {
   const { entity } = useContext(EntityView);
   return useMemo(() => {
     const tx = entity.translation;
-    return tx && !tx.rejected ? tx : null;
+    return tx && tx.status !== 'rejected' ? tx : null;
   }, [entity]);
 }
