@@ -1,5 +1,6 @@
-from django.contrib.auth.models import User
 from django.db import models
+
+from pontoon.base.models.user import User
 
 
 class UserBanLog(models.Model):

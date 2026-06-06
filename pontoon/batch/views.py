@@ -15,6 +15,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
 )
 from pontoon.base.services import readonly_exists
+from pontoon.base.user_utils import can_translate
 from pontoon.base.utils import require_AJAX
 from pontoon.batch import forms
 from pontoon.batch.actions import ACTIONS_FN_MAP
@@ -79,9 +80,9 @@ def batch_edit_translations(request):
     projects = Project.objects.filter(pk__in=projects_pk.distinct())
 
     for project in projects:
-        if not request.user.can_translate(
-            project=project, locale=locale
-        ) or readonly_exists(projects, locale):
+        if not can_translate(request.user, project, locale) or readonly_exists(
+            projects, locale
+        ):
             return JsonResponse(
                 {
                     "status": False,

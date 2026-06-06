@@ -1,9 +1,11 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+
+from pontoon.base.models.user import User
+from pontoon.base.user_utils import gravatar_url, user_banner
 
 
 if TYPE_CHECKING:
@@ -35,12 +37,15 @@ class Comment(models.Model):
         return self.content
 
     def serialize(self, project_contact):
-        locale = self.locale or self.translation.locale
+        locale = self.locale or cast("Translation", self.translation).locale
+        author = self.author
         return {
-            "author": self.author.name_or_email,
-            "username": self.author.username,
-            "user_banner": self.author.banner(locale, project_contact),
-            "user_gravatar_url_small": self.author.gravatar_url(88),
+            "author": author.name_or_email if author else "",
+            "username": author.username if author else "",
+            "user_banner": user_banner(author, locale, project_contact)
+            if author
+            else "",
+            "user_gravatar_url_small": gravatar_url(author) if author else "",
             "created_at": self.timestamp.strftime("%b %d, %Y %H:%M"),
             "date_iso": self.timestamp.isoformat(),
             "content": self.content,

@@ -8,6 +8,7 @@ from zipfile import ZipFile
 from django.core.files import File
 from django.utils import timezone
 
+from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
 from pontoon.base.models.repository import Repository
 from pontoon.messaging.notifications import send_badge_notification
@@ -95,8 +96,8 @@ def import_uploaded_file(
         )
     if updates:
         now = timezone.now()
-        translation_before_level = user.badges_translation_level
-        review_before_level = user.badges_review_level
+        translation_before_level = badges_translation_level(user)
+        review_before_level = badges_review_level(user)
         write_db_updates(project, updates, user, now)
         update_stats(project)
         ChangedEntityLocale.objects.bulk_create(
@@ -109,13 +110,13 @@ def import_uploaded_file(
 
         badge_name = ""
         badge_level = 0
-        if user.badges_translation_level > translation_before_level:
+        if badges_translation_level(user) > translation_before_level:
             badge_name = "Translation Champion"
-            badge_level = user.badges_translation_level
+            badge_level = badges_translation_level(user)
             send_badge_notification(user, badge_name, badge_level)
-        if user.badges_review_level > review_before_level:
+        if badges_review_level(user) > review_before_level:
             badge_name = "Review Master"
-            badge_level = user.badges_review_level
+            badge_level = badges_review_level(user)
             send_badge_notification(user, badge_name, badge_level)
         return badge_name, badge_level
     else:

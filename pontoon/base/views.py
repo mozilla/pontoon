@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
 from django.db.models import Count, F, Prefetch, Q, QuerySet
@@ -44,10 +43,23 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
+    User,
     UserProfile,
 )
+from pontoon.base.notification_utils import serialized_notifications
 from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
+from pontoon.base.user_utils import (
+    can_manage_locales,
+    can_translate,
+    can_translate_locales,
+    gravatar_url,
+    manager_for_locales,
+    profile_url,
+    translated_projects,
+    translator_for_locales,
+    user_banner,
+)
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
 from pontoon.messaging.notifications import send_notification
@@ -478,14 +490,18 @@ def get_translation_history(request):
         translation_dict.update(
             {
                 "user": u.name_or_email,
-                "uid": u.id,
+                "uid": u.pk,
                 "username": u.username,
-                "user_gravatar_url_small": u.gravatar_url(88),
-                "user_banner": u.banner(locale, project_contact),
+                "user_gravatar_url_small": gravatar_url(u),
+                "user_banner": user_banner(u, locale, project_contact),
                 "date": t.date,
-                "approved_user": User.display_name_or_blank(t.approved_user),
+                "approved_user": t.approved_user.name_or_email
+                if t.approved_user
+                else "",
                 "approved_date": t.approved_date,
-                "rejected_user": User.display_name_or_blank(t.rejected_user),
+                "rejected_user": t.rejected_user.name_or_email
+                if t.rejected_user
+                else "",
                 "rejected_date": t.rejected_date,
                 "comments": [c.serialize(project_contact) for c in t.comments.all()],
                 "machinery_sources": t.machinery_sources_values,
@@ -840,9 +856,9 @@ def get_users(request):
     for u in users:
         payload.append(
             {
-                "gravatar": u.gravatar_url(44),
+                "gravatar": gravatar_url(u, 44),
                 "name": u.name_or_email,
-                "url": u.profile_url,
+                "url": profile_url(u),
                 "username": u.profile.username,
             }
         )
@@ -925,9 +941,9 @@ def upload(request):
 
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
-    if not request.user.can_translate(
-        project=project, locale=locale
-    ) or readonly_exists(project, locale):
+    if not can_translate(request.user, project, locale) or readonly_exists(
+        project, locale
+    ):
         return HttpResponseForbidden("You don't have permission to upload files.")
     get_object_or_404(Resource, project=project, path=res_path)
 
@@ -1035,16 +1051,14 @@ def user_data(request):
             "contributor_for_locales": list(
                 user.translation_set.values_list("locale__code", flat=True).distinct()
             ),
-            "can_manage_locales": list(
-                user.can_manage_locales.values_list("code", flat=True)
-            ),
-            "can_translate_locales": list(
-                user.can_translate_locales.values_list("code", flat=True)
-            ),
-            "manager_for_locales": [loc.code for loc in user.manager_for_locales],
-            "translator_for_locales": [loc.code for loc in user.translator_for_locales],
+            "can_manage_locales": list(can_manage_locales(user)),
+            "can_translate_locales": list(can_translate_locales(user)),
+            "manager_for_locales": [loc.code for loc in manager_for_locales(user)],
+            "translator_for_locales": [
+                loc.code for loc in translator_for_locales(user)
+            ],
             "pm_for_projects": list(user.contact_for.values_list("slug", flat=True)),
-            "translator_for_projects": user.translated_projects,
+            "translator_for_projects": translated_projects(user),
             "settings": {
                 "quality_checks": user.profile.quality_checks,
                 "force_suggestions": user.profile.force_suggestions,
@@ -1057,9 +1071,9 @@ def user_data(request):
             "tour_status": user.profile.tour_status,
             "has_dismissed_addon_promotion": user.profile.has_dismissed_addon_promotion,
             "logout_url": logout_url,
-            "gravatar_url_small": user.gravatar_url(88),
-            "gravatar_url_big": user.gravatar_url(176),
-            "notifications": user.serialized_notifications,
+            "gravatar_url_small": gravatar_url(user, 88),
+            "gravatar_url_big": gravatar_url(user, 176),
+            "notifications": serialized_notifications(user),
             "theme": user.profile.theme,
         }
     )
