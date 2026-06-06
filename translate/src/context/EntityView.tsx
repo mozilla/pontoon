@@ -16,19 +16,13 @@ import { Location } from './Location';
 const emptyEntity: Entity = {
   pk: 0,
   key: [],
-  original: '',
-  machinery_original: '',
-  comment: '',
-  group_comment: '',
-  resource_comment: '',
-  meta: [],
   format: '',
+  original: '',
+  comment: '',
+  date_created: '',
   path: '',
   project: {},
-  translation: undefined,
   readonly: true,
-  isSibling: false,
-  date_created: '',
 };
 
 export type EntityView = { entity: Entity };

@@ -18,19 +18,19 @@ import type { BatchBadgeUpdate } from '../modules/batchactions/actions';
 export type Entity = {
   readonly pk: number;
   readonly key: string[];
-  readonly original: string;
-  readonly machinery_original: string;
-  readonly comment: string;
-  readonly group_comment: string;
-  readonly resource_comment: string;
-  readonly meta: Array<[key: string, value: string]>;
   readonly format: string;
+  readonly date_created: string;
   readonly path: string;
   readonly project: Record<string, any>;
-  readonly translation: EntityTranslation | undefined;
-  readonly readonly: boolean;
-  readonly isSibling: boolean;
-  readonly date_created: string;
+  readonly comment: string;
+  readonly original: string;
+  readonly group_comment?: string;
+  readonly resource_comment?: string;
+  readonly meta?: Array<[key: string, value: string]>;
+  readonly readonly?: boolean;
+  readonly isSibling?: boolean;
+  readonly machinery_original?: string;
+  readonly translation?: EntityTranslation;
 };
 
 /**

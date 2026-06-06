@@ -68,32 +68,32 @@ def map_entities_to_json(
         else:
             original = entity.string
 
-        translation = (
-            entity.active_translations[0].serialize()
-            if entity.active_translations
-            else None
-        )
+        ed = {
+            "pk": entity.pk,
+            "key": entity.key,
+            "format": entity.resource.format,
+            "date_created": entity.date_created,
+            "path": entity.resource.path,
+            "project": entity.resource.project.serialize(),
+            "comment": entity.comment,
+            "original": original,
+        }
+        if entity.section_comment:
+            ed["group_comment"] = entity.section_comment
+        if entity.resource.comment:
+            ed["resource_comment"] = entity.resource.comment
+        if entity.meta:
+            ed["meta"] = entity.meta
+        if readonly:
+            ed["readonly"] = True
+        if is_sibling:
+            ed["is_sibling"] = True
+        if original != entity.string:
+            ed["machinery_original"] = entity.string
+        if entity.active_translations:
+            ed["translation"] = entity.active_translations[0].serialize()
 
-        entities_array.append(
-            {
-                "pk": entity.pk,
-                "original": original,
-                "machinery_original": entity.string,
-                "key": entity.key,
-                "path": entity.resource.path,
-                "project": entity.resource.project.serialize(),
-                "format": entity.resource.format,
-                "comment": entity.comment,
-                "group_comment": entity.section_comment or "",
-                "resource_comment": entity.resource.comment or "",
-                "meta": entity.meta,
-                "obsolete": entity.obsolete,
-                "translation": translation,
-                "readonly": readonly,
-                "is_sibling": is_sibling,
-                "date_created": entity.date_created,
-            }
-        )
+        entities_array.append(ed)
 
     return entities_array
 
