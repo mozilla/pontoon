@@ -5,6 +5,13 @@ from django.db import models
 from pontoon.base.models import Entity, Resource, TranslatedResource
 
 
+def upper_first_letter(text):
+    """
+    Uppercase the first letter of a string, leaving the rest unchanged.
+    """
+    return text[:1].upper() + text[1:]
+
+
 def update_terminology_project_stats():
     resource = Resource.objects.current().get(project__slug="terminology")
     resource.total_strings = Entity.objects.filter(
@@ -110,11 +117,11 @@ class Term(models.Model):
         """
         comment = "{}. {}.".format(
             self.part_of_speech.capitalize(),
-            self.definition.capitalize().rstrip("."),
+            upper_first_letter(self.definition).rstrip("."),
         )
 
         if self.usage:
-            comment += " E.g. {}.".format(self.usage.capitalize().rstrip("."))
+            comment += " E.g. {}.".format(upper_first_letter(self.usage).rstrip("."))
 
         return comment
 

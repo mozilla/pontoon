@@ -126,6 +126,18 @@ def test_term_entity_comment(_):
     )
     assert term_b.entity_comment() == "Noun. Definition. E.g. Usage."
 
+    # Capitalization within definition and usage is preserved (e.g. acronyms)
+    term_c = TermFactory.create(
+        text="term",
+        part_of_speech=Term.PartOfSpeech.NOUN,
+        definition="describes Firefox URL handling",
+        usage="open a URL in Firefox",
+    )
+    assert (
+        term_c.entity_comment()
+        == "Noun. Describes Firefox URL handling. E.g. Open a URL in Firefox."
+    )
+
 
 @pytest.mark.django_db
 @patch("pontoon.terminology.models.Term.handle_term_create")
