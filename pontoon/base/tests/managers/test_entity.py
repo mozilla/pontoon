@@ -1,5 +1,6 @@
 import pytest
 
+from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Entity,
     TranslatedResource,
@@ -19,7 +20,7 @@ def entity_test_search(admin, resource_a, locale_a):
     """This fixture provides:
 
     - 7 translated entities
-    - A lambda for searching for entities using Entity.for_project_locale
+    - A lambda for searching for entities using get_entities_for_project_locale
     """
     TranslatedResourceFactory.create(
         locale=locale_a,
@@ -85,7 +86,7 @@ def entity_test_search(admin, resource_a, locale_a):
     return (
         entities,
         lambda q: list(
-            Entity.for_project_locale(
+            get_entities_for_project_locale(
                 admin,
                 resource_a.project,
                 locale_a,
@@ -96,7 +97,7 @@ def entity_test_search(admin, resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_translated(resource_a, locale_a):
+def test_mgr_entity_filter_translated(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(resource=resource_a, string="testentity%s" % i)
         for i in range(0, 3)
@@ -117,12 +118,17 @@ def test_mgr_entity_filter_translated(resource_a, locale_a):
         approved=True,
     )
     assert set(
-        Entity.objects.filter(Entity.objects.translated(locale_a, resource_a.project))
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            status="translated",
+        )
     ) == {entities[0], entities[2]}
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_errors(resource_a, locale_a):
+def test_mgr_entity_filter_errors(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(resource=resource_a, string="testentity%s" % i)
         for i in range(0, 3)
@@ -140,14 +146,21 @@ def test_mgr_entity_filter_errors(resource_a, locale_a):
     ErrorFactory.create(translation=translations[0])
     ErrorFactory.create(translation=translations[2])
 
-    assert set(Entity.objects.filter(Entity.objects.errors(locale_a))) == {
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            status="errors",
+        )
+    ) == {
         entities[0],
         entities[2],
     }
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_warnings(resource_a, locale_a):
+def test_mgr_entity_filter_warnings(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(resource=resource_a, string="testentity%s" % i)
         for i in range(0, 3)
@@ -172,13 +185,18 @@ def test_mgr_entity_filter_warnings(resource_a, locale_a):
     translations[2].fuzzy = False
     translations[2].save()
 
-    assert set(Entity.objects.filter(Entity.objects.warnings(locale_a))) == {
-        entities[1]
-    }
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            status="warnings",
+        )
+    ) == {entities[1]}
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_fuzzy(resource_a, locale_a):
+def test_mgr_entity_filter_fuzzy(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
@@ -201,14 +219,21 @@ def test_mgr_entity_filter_fuzzy(resource_a, locale_a):
         entity=entities[2],
         fuzzy=True,
     )
-    assert set(Entity.objects.filter(Entity.objects.fuzzy(locale_a))) == {
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            extra="fuzzy",
+        )
+    ) == {
         entities[0],
         entities[2],
     }
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_pretranslated(resource_a, locale_a):
+def test_mgr_entity_filter_pretranslated(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
@@ -231,14 +256,21 @@ def test_mgr_entity_filter_pretranslated(resource_a, locale_a):
         entity=entities[2],
         pretranslated=True,
     )
-    assert set(Entity.objects.filter(Entity.objects.pretranslated(locale_a))) == {
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            status="pretranslated",
+        )
+    ) == {
         entities[0],
         entities[2],
     }
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_missing(resource_a, locale_a):
+def test_mgr_entity_filter_missing(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
@@ -261,13 +293,18 @@ def test_mgr_entity_filter_missing(resource_a, locale_a):
         locale=locale_a,
         entity=entities[2],
     )
-    assert set(resource_a.entities.filter(Entity.objects.missing(locale_a))) == {
-        entities[1]
-    }
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            status="missing",
+        )
+    ) == {entities[1]}
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_unreviewed(resource_a, locale_a):
+def test_mgr_entity_filter_unreviewed(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
@@ -300,14 +337,21 @@ def test_mgr_entity_filter_unreviewed(resource_a, locale_a):
         entity=entities[2],
         string="translation for 2",
     )
-    assert set(Entity.objects.filter(Entity.objects.unreviewed(locale_a))) == {
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            status="unreviewed",
+        )
+    ) == {
         entities[1],
         entities[2],
     }
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_unchanged(resource_a, locale_a):
+def test_mgr_entity_filter_unchanged(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
@@ -343,7 +387,14 @@ def test_mgr_entity_filter_unchanged(resource_a, locale_a):
         pretranslated=True,
         string="Unchanged string",
     )
-    assert set(Entity.objects.filter(Entity.objects.unchanged(locale_a))) == {
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            extra="unchanged",
+        )
+    ) == {
         entities[0],
         entities[2],
         entities[3],
@@ -351,7 +402,7 @@ def test_mgr_entity_filter_unchanged(resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_rejected(resource_a, locale_a):
+def test_mgr_entity_filter_rejected(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
@@ -395,14 +446,21 @@ def test_mgr_entity_filter_rejected(resource_a, locale_a):
         fuzzy=False,
         rejected=False,
     )
-    assert set(Entity.objects.filter(Entity.objects.rejected(locale_a))) == {
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            extra="rejected",
+        )
+    ) == {
         entities[0],
         entities[1],
     }
 
 
 @pytest.mark.django_db
-def test_mgr_entity_filter_missing_without_unreviewed(resource_a, locale_a):
+def test_mgr_entity_filter_missing_without_unreviewed(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
@@ -455,7 +513,12 @@ def test_mgr_entity_filter_missing_without_unreviewed(resource_a, locale_a):
     )
 
     assert set(
-        resource_a.entities.filter(Entity.objects.missing_without_unreviewed(locale_a))
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            extra="missing-without-unreviewed",
+        )
     ) == {entities[0], entities[4]}
 
 
@@ -487,7 +550,7 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
     )
     assert (
         list(
-            Entity.for_project_locale(
+            get_entities_for_project_locale(
                 admin,
                 resource_a.project,
                 locale_a,
@@ -499,7 +562,7 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
     )
     assert (
         list(
-            Entity.for_project_locale(
+            get_entities_for_project_locale(
                 admin,
                 resource_a.project,
                 locale_a,
@@ -539,24 +602,13 @@ def test_mgr_entity_option_match_case(admin, resource_a, locale_a, user_a):
     kwargs = {"search": "testentity", "author": user_a.email}
 
     # Base case
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
     # Test search_match_case
     kwargs["search_match_case"] = True
-    assert (
-        list(
-            Entity.for_project_locale(
-                *args,
-                **kwargs,
-            )
-        )
-        == []
-    )
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == []
 
 
 @pytest.mark.django_db
@@ -586,18 +638,15 @@ def test_mgr_entity_option_match_whole_word(admin, resource_a, locale_a, user_a)
     kwargs = {"search": "TestEntity", "author": user_a.email}
 
     # Base case
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
     kwargs["search_match_whole_word"] = True
     # Test search_match_whole_word
     assert (
         list(
-            Entity.for_project_locale(
+            get_entities_for_project_locale(
                 admin,
                 resource_a.project,
                 locale_a,
@@ -638,24 +687,13 @@ def test_mgr_entity_option_identifiers(admin, resource_a, locale_a, user_a):
     kwargs = {"search": "key", "author": user_a.email}
 
     # Base case
-    assert (
-        list(
-            Entity.for_project_locale(
-                *args,
-                **kwargs,
-            )
-        )
-        == []
-    )
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == []
 
     kwargs["search_identifiers"] = True
     # Test search_identifiers
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
 
 @pytest.mark.django_db
@@ -687,21 +725,13 @@ def test_mgr_entity_option_rejected_translations(admin, resource_a, locale_a, us
     kwargs = {"search": "TestString", "author": user_a.email}
 
     # Base case
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[1]]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [entities[1]]
 
     kwargs["search_rejected_translations"] = True
     # Test search_rejected_translations
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
 
 @pytest.mark.django_db
@@ -731,24 +761,13 @@ def test_mgr_entity_option_exclude_source_strings(admin, resource_a, locale_a, u
     kwargs = {"search": "TestEntity", "author": user_a.email}
 
     # Base case
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
     kwargs["search_exclude_source_strings"] = True
     # Test search_exclude_source_strings
-    assert (
-        list(
-            Entity.for_project_locale(
-                *args,
-                **kwargs,
-            )
-        )
-        == []
-    )
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == []
 
 
 @pytest.mark.django_db
@@ -789,12 +808,9 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
         "search": "",
         "author": user_a.email,
     }
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
     # Test exclude_source_strings with identifiers
     kwargs = {
@@ -803,12 +819,9 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
         "search_identifiers": True,
         "author": user_a.email,
     }
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
     # Test identifiers with match_whole_word
     kwargs = {
@@ -817,12 +830,9 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
         "search_identifiers": True,
         "author": user_a.email,
     }
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
     # Test match_case with match_whole_word
     kwargs = {
@@ -831,15 +841,7 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
         "search_match_whole_word": True,
         "author": user_a.email,
     }
-    assert (
-        list(
-            Entity.for_project_locale(
-                *args,
-                **kwargs,
-            )
-        )
-        == []
-    )
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == []
 
     # Test all options at once
     kwargs = {
@@ -851,12 +853,9 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
         "search_exclude_source_strings": True,
         "author": user_a.email,
     }
-    assert list(
-        Entity.for_project_locale(
-            *args,
-            **kwargs,
-        )
-    ) == [entities[i] for i in range(0, 2)]
+    assert list(get_entities_for_project_locale(*args, **kwargs)) == [
+        entities[i] for i in range(0, 2)
+    ]
 
 
 @pytest.mark.django_db
@@ -995,7 +994,7 @@ def test_lookup_collation(resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_created_time(admin, resource_a, locale_a):
     """
-    created_time filters Entity.for_project_locale by Entity.date_created,
+    created_time filters get_entities_for_project_locale by Entity.date_created,
     which is how the new-string notification link points to the exact
     batch of strings added in a single sync.
     """
@@ -1017,7 +1016,7 @@ def test_mgr_entity_filter_created_time(admin, resource_a, locale_a):
 
     # created_time=202605221248-202605221248 matches the 12:48 batch only.
     assert set(
-        Entity.for_project_locale(
+        get_entities_for_project_locale(
             admin,
             resource_a.project,
             locale_a,
@@ -1027,7 +1026,7 @@ def test_mgr_entity_filter_created_time(admin, resource_a, locale_a):
 
     # created_time=202605220520-202605220520 matches the 05:20 batch only.
     assert list(
-        Entity.for_project_locale(
+        get_entities_for_project_locale(
             admin,
             resource_a.project,
             locale_a,
@@ -1037,7 +1036,7 @@ def test_mgr_entity_filter_created_time(admin, resource_a, locale_a):
 
     # A malformed value is ignored (mirrors the existing `time` filter pattern).
     assert set(
-        Entity.for_project_locale(
+        get_entities_for_project_locale(
             admin,
             resource_a.project,
             locale_a,

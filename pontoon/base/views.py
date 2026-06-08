@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q, QuerySet
 from django.http import (
     Http404,
     HttpResponse,
@@ -32,6 +32,8 @@ from django.views.generic.edit import FormView
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
+from pontoon.base.get_entities import get_entities_for_project_locale
+from pontoon.base.map_entities import map_entities_to_json
 from pontoon.base.models import (
     Comment,
     Entity,
@@ -191,7 +193,7 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
 
     return JsonResponse(
         {
-            "entities": Entity.map_entities(locale, preferred_source_locale, entities),
+            "entities": map_entities_to_json(locale, preferred_source_locale, entities),
             "stats": TranslatedResource.objects.query_stats(
                 project, form.cleaned_data["paths"], locale
             ),
@@ -200,7 +202,9 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     )
 
 
-def _get_paginated_entities(locale, preferred_source_locale, project, form, entities):
+def _get_paginated_entities(
+    locale, preferred_source_locale, project, form, entities: QuerySet[Entity]
+):
     """Return a paginated list of entities.
 
     This is used by the regular mode of the Translate page.
@@ -220,7 +224,7 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
         requested_entity = None
     return JsonResponse(
         {
-            "entities": Entity.map_entities(
+            "entities": map_entities_to_json(
                 locale,
                 preferred_source_locale,
                 entities_to_map,
@@ -266,8 +270,8 @@ def entities(request):
     if form.cleaned_data["entity_ids"]:
         return _get_entities_list(locale, preferred_source_locale, project, form)
 
-    # `Entity.for_project_locale` only requires a subset of the fields the form contains. We thus
-    # make a new dict with only the keys we want to pass to that function.
+    # `get_entities_for_project_locale` only requires a subset of the fields the form contains.
+    # We thus make a new dict with only the keys we want to pass to that function.
     restrict_to_keys = (
         "paths",
         "status",
@@ -303,7 +307,9 @@ def entities(request):
             form_data[name] = UserProfile._meta.get_field(name).get_default()
 
     try:
-        entities = Entity.for_project_locale(request.user, project, locale, **form_data)
+        entities = get_entities_for_project_locale(
+            request.user, project, locale, **form_data
+        )
     except ValueError as error:
         return JsonResponse({"status": False, "message": f"{error}"}, status=500)
 
@@ -409,13 +415,13 @@ def get_sibling_entities(request):
 
     return JsonResponse(
         {
-            "succeeding": Entity.map_entities(
+            "succeeding": map_entities_to_json(
                 locale,
                 preferred_source_locale,
                 succeeding_entities,
                 is_sibling=True,
             ),
-            "preceding": Entity.map_entities(
+            "preceding": map_entities_to_json(
                 locale,
                 preferred_source_locale,
                 preceding_entities,

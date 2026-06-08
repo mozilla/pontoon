@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from pontoon.administration.forms import ProjectForm
 from pontoon.administration.views import _create_or_update_translated_resources
+from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Entity,
     Project,
@@ -87,7 +88,7 @@ def test_manage_project_strings_new(admin, client_superuser, locale_a):
     assert resources[0].path == "database"
 
     # Verify all strings have been created as entities.
-    entities = Entity.for_project_locale(admin, project, locale_a)
+    entities = get_entities_for_project_locale(admin, project, locale_a)
     assert len(entities) == 4
 
     expected_strings = [
