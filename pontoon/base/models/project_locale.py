@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from django.contrib.auth.models import Group
 from django.db import models
 from django.db.models import BooleanField, Case, F, Sum, Value, When
@@ -7,7 +9,11 @@ from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 
 
-class ProjectLocaleQuerySet(models.QuerySet):
+if TYPE_CHECKING:
+    from pontoon.base.models.translation import Translation
+
+
+class ProjectLocaleQuerySet(models.QuerySet["ProjectLocale"]):
     def visible_for(self, user):
         """
         Filter project locales by the visibility of their projects.
@@ -45,6 +51,8 @@ class ProjectLocaleQuerySet(models.QuerySet):
                 project__resources__obsolete=False,
             ).prefetch_related("project")
             tr = "project__resources__translatedresources"
+        else:
+            raise ValueError("Either project or locale is required")
         return query.annotate(
             total=Sum(f"{tr}__total_strings", default=0),
             approved=Sum(f"{tr}__approved_strings", default=0),
@@ -81,14 +89,18 @@ class ProjectLocale(models.Model, AggregatedStats):
             locale=self.locale, resource__project=self.project
         )
 
-    project = models.ForeignKey(Project, models.CASCADE, related_name="project_locale")
-    locale = models.ForeignKey(Locale, models.CASCADE, related_name="project_locale")
+    project: models.ForeignKey[Project] = models.ForeignKey(
+        Project, models.CASCADE, related_name="project_locale"
+    )
+    locale: models.ForeignKey[Locale] = models.ForeignKey(
+        Locale, models.CASCADE, related_name="project_locale"
+    )
     readonly = models.BooleanField(default=False)
     pretranslation_enabled = models.BooleanField(default=False)
 
     #: Most recent translation approved or created for this project in
     #: this locale.
-    latest_translation = models.ForeignKey(
+    latest_translation: models.ForeignKey["Translation | None"] = models.ForeignKey(
         "Translation",
         models.SET_NULL,
         blank=True,
@@ -98,7 +110,7 @@ class ProjectLocale(models.Model, AggregatedStats):
 
     # ProjectLocale contains references to user groups that translate them.
     # Groups store respective permissions for users.
-    translators_group = models.ForeignKey(
+    translators_group: models.ForeignKey[Group | None] = models.ForeignKey(
         Group, models.SET_NULL, related_name="projectlocales", null=True
     )
 

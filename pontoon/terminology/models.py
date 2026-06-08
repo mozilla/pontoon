@@ -21,7 +21,7 @@ def update_terminology_project_stats():
     TranslatedResource.objects.filter(resource=resource).calculate_stats()
 
 
-class TermQuerySet(models.QuerySet):
+class TermQuerySet(models.QuerySet["Term"]):
     def for_string(self, string):
         terms = []
         available_terms = self.exclude(definition="").exclude(forbidden=True)
@@ -82,6 +82,8 @@ class Term(models.Model):
     )
 
     objects = TermQuerySet.as_manager()
+
+    translations: models.QuerySet["TermTranslation"]
 
     def translation(self, locale):
         """

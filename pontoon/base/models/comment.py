@@ -1,23 +1,31 @@
+from typing import TYPE_CHECKING
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
 
+if TYPE_CHECKING:
+    from pontoon.base.models import Entity, Locale, Translation
+
+
 class Comment(models.Model):
-    author = models.ForeignKey(User, models.SET_NULL, null=True)
+    author: models.ForeignKey[User | None] = models.ForeignKey(
+        User, models.SET_NULL, null=True
+    )
     timestamp = models.DateTimeField(default=timezone.now)
-    translation = models.ForeignKey(
+    translation: models.ForeignKey["Translation | None"] = models.ForeignKey(
         "Translation",
         models.CASCADE,
         related_name="comments",
         blank=True,
         null=True,
     )
-    locale = models.ForeignKey(
+    locale: models.ForeignKey["Locale | None"] = models.ForeignKey(
         "Locale", models.CASCADE, related_name="comments", blank=True, null=True
     )
-    entity = models.ForeignKey(
+    entity: models.ForeignKey["Entity | None"] = models.ForeignKey(
         "Entity", models.CASCADE, related_name="comments", blank=True, null=True
     )
     content = models.TextField()
@@ -37,7 +45,7 @@ class Comment(models.Model):
             "date_iso": self.timestamp.isoformat(),
             "content": self.content,
             "pinned": self.pinned,
-            "id": self.id,
+            "id": self.pk,
         }
 
     def save(self, *args, **kwargs):
