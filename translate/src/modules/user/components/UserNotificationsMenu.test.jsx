@@ -25,7 +25,9 @@ describe('<UserNotificationsMenuDialog>', () => {
       <WrapUserNotificationsMenuDialog notifications={notifications} />,
     );
 
-    expect(container.querySelector('.notification-list .user-notification')).toBeNull();
+    expect(
+      container.querySelector('.notification-list .user-notification'),
+    ).toBeNull();
     getByText(NoNotificationText);
   });
 
@@ -55,7 +57,9 @@ describe('<UserNotificationsMenuDialog>', () => {
     );
 
     expect(queryByText(NoNotificationText)).toBeNull();
-    expect(container.querySelectorAll('.notification-list .user-notification')).toHaveLength(1);
+    expect(
+      container.querySelectorAll('.notification-list .user-notification'),
+    ).toHaveLength(1);
   });
 });
 

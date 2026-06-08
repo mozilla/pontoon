@@ -5,6 +5,7 @@ import { act } from 'react-dom/test-utils';
 import { expect, vi } from 'vitest';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 import { SearchBox, SearchBoxBase } from './SearchBox';
@@ -18,6 +19,14 @@ const SEARCH_AND_FILTERS = {
   authors: [],
   countsPerMinute: [],
 };
+
+function WrapSearchBoxBase(props) {
+  return (
+    <MockLocalizationProvider>
+      <SearchBoxBase {...props} />
+    </MockLocalizationProvider>
+  );
+}
 
 describe('<SearchBoxBase>', () => {
   it('shows a search input', () => {
@@ -38,7 +47,7 @@ describe('<SearchBoxBase>', () => {
   it('has the correct placeholder based on parameters', () => {
     for (const { name, slug } of FILTERS_STATUS) {
       const wrapper = mount(
-        <SearchBoxBase
+        <WrapSearchBoxBase
           parameters={{ status: slug }}
           project={PROJECT}
           searchAndFilters={SEARCH_AND_FILTERS}
@@ -49,7 +58,7 @@ describe('<SearchBoxBase>', () => {
 
     for (const { name, slug } of FILTERS_EXTRA) {
       const wrapper = mount(
-        <SearchBoxBase
+        <WrapSearchBoxBase
           parameters={{ extra: slug }}
           project={PROJECT}
           searchAndFilters={SEARCH_AND_FILTERS}
@@ -61,7 +70,7 @@ describe('<SearchBoxBase>', () => {
 
   it('empties the search field after navigation parameter "search" gets removed', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{ search: 'search' }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -78,7 +87,7 @@ describe('<SearchBoxBase>', () => {
 
   it('toggles a filter', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{}}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -99,7 +108,7 @@ describe('<SearchBoxBase>', () => {
 
   it('sets a single filter', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         dispatch={() => {}}
         parameters={{ push() {} }}
         project={PROJECT}
@@ -124,7 +133,7 @@ describe('<SearchBoxBase>', () => {
 
   it('sets multiple & resets to initial statuses', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{}}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -163,7 +172,7 @@ describe('<SearchBoxBase>', () => {
   it('sets status to null when "all" is selected', () => {
     const push = vi.fn();
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         dispatch={(a) => (typeof a === 'function' ? a() : {})}
         parameters={{ push }}
         project={PROJECT}
@@ -194,7 +203,7 @@ describe('<SearchBoxBase>', () => {
   it('sets correct status', () => {
     const push = vi.fn();
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         dispatch={(a) => (typeof a === 'function' ? a() : {})}
         parameters={{ push }}
         project={PROJECT}
@@ -238,7 +247,7 @@ describe('<SearchBoxBase>', () => {
 
   it('applies profile default for search_identifiers when URL param is not provided', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{}}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -254,7 +263,7 @@ describe('<SearchBoxBase>', () => {
 
   it('URL param takes precedence over profile default for search_identifiers', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{ search_identifiers: false }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -270,7 +279,7 @@ describe('<SearchBoxBase>', () => {
 
   it('falls back to global defaults when both URL params and profile settings are not provided', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{}}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -289,7 +298,7 @@ describe('<SearchBoxBase>', () => {
 
   it('applies profile defaults for all search options when URL params are not provided', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{}}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -317,7 +326,7 @@ describe('<SearchBoxBase>', () => {
     // search_identifiers as false in the UI, matching what the backend uses,
     // even if the profile default is true.
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{ search: 'foo' }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -334,7 +343,7 @@ describe('<SearchBoxBase>', () => {
   it('encodes search options that differ from the global default, omits those matching it', () => {
     const push = vi.fn();
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         dispatch={(a) => (typeof a === 'function' ? a() : {})}
         parameters={{ push, search: '' }}
         project={PROJECT}
@@ -369,7 +378,7 @@ describe('<SearchBoxBase>', () => {
   it('omits a search option from URL when user unchecks a profile-default-true option', () => {
     const push = vi.fn();
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         dispatch={(a) => (typeof a === 'function' ? a() : {})}
         parameters={{ push, search: '', search_identifiers: true }}
         project={PROJECT}
@@ -444,7 +453,7 @@ describe('<SearchBox>', () => {
 
   it('puts focus on the search input on Ctrl + Shift + F', () => {
     const wrapper = mount(
-      <SearchBoxBase
+      <WrapSearchBoxBase
         parameters={{ search: '' }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}

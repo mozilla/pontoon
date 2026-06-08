@@ -230,11 +230,13 @@ describe('<FiltersPanel>', () => {
         undefined,
         [
           `search-FiltersPanel--toggle-filters-panel =
-            .aria-label = ${toggleAriaLabel}`
+            .aria-label = ${toggleAriaLabel}`,
         ],
       );
 
-      const button = within(container).getByRole('button', { name: toggleAriaLabel });
+      const button = within(container).getByRole('button', {
+        name: toggleAriaLabel,
+      });
       expect(button).toHaveClass('visibility-switch');
       expect(button).toHaveClass(slug);
     }
@@ -254,11 +256,13 @@ describe('<FiltersPanel>', () => {
         undefined,
         [
           `search-FiltersPanel--toggle-filters-panel =
-            .aria-label = ${toggleAriaLabel}`
+            .aria-label = ${toggleAriaLabel}`,
         ],
       );
- 
-      const button = within(container).getByRole('button', { name: toggleAriaLabel });
+
+      const button = within(container).getByRole('button', {
+        name: toggleAriaLabel,
+      });
       expect(button).toHaveClass('visibility-switch');
       expect(button).toHaveClass(slug);
     }

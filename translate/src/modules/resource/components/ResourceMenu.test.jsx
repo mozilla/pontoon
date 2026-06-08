@@ -80,7 +80,9 @@ describe('<ResourceMenu>', () => {
     expect(getByRole('searchbox')).toHaveValue(SEARCH);
     getByRole('link', { name: new RegExp(resources[0].path) });
     getByRole('link', { name: new RegExp(resources[1].path) });
-    expect(queryByRole('link', { name: new RegExp(resources[2].path) })).toBeNull();
+    expect(
+      queryByRole('link', { name: new RegExp(resources[2].path) }),
+    ).toBeNull();
   });
 
   it('hides resource selector for all-projects', () => {

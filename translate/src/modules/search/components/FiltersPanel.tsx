@@ -439,7 +439,10 @@ export function FiltersPanel({
 
   return (
     <div className='filters-panel'>
-      <Localized id='search-FiltersPanel--toggle-filters-panel' attrs={{ 'aria-label': true }}>
+      <Localized
+        id='search-FiltersPanel--toggle-filters-panel'
+        attrs={{ 'aria-label': true }}
+      >
         <div
           className={`visibility-switch ${filterIcon}`}
           role='button'
