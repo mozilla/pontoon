@@ -118,4 +118,28 @@ describe('buildMessageEntry', () => {
     ]);
     expect(result).toBeNull();
   });
+
+  it('returns null on Android parse error', () => {
+    const base = parseEntry('android', 'Hello {$arg1 :string @source=|%1$s|}!');
+    const result = buildMessageEntry(base, [
+      { name: '', keys: [], handle: { current: { value: 'Hello <a>' } } },
+    ]);
+    expect(result).toBeNull();
+  });
+
+  it('returns null on webext parse error', () => {
+    const base = parseEntry('webext', 'Hello');
+    const result = buildMessageEntry(base, [
+      { name: '', keys: [], handle: { current: { value: 'Hello $x$' } } },
+    ]);
+    expect(result).toBeNull();
+  });
+
+  it('returns null on Xcode parse error', () => {
+    const base = parseEntry('xcode', 'Hello {$arg :string @source=|%@|}!');
+    const result = buildMessageEntry(base, [
+      { name: '', keys: [], handle: { current: { value: 'Hello <' } } },
+    ]);
+    expect(result).toBeNull();
+  });
 });
