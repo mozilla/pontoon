@@ -218,7 +218,6 @@ describe('<EditorProvider>', () => {
     expect(editor).toMatchObject({
       sourceView: false,
       initial: { id: '', value: [] },
-      placeholders: new Map([['%1$s', arg1]]),
       fields: [
         {
           id: '',
@@ -229,7 +228,6 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(editor.placeholders).toBeInstanceOf(Map);
     expect(result).toEqual({ format: 'android', id: '', value: [] });
   });
 
@@ -250,7 +248,6 @@ describe('<EditorProvider>', () => {
     expect(editor).toMatchObject({
       sourceView: false,
       initial: { id: '', value: ['Hei, ', arg1, '!'] },
-      placeholders: new Map([['%1$s', arg1]]),
       fields: [
         {
           id: '',
@@ -261,7 +258,6 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(editor.placeholders).toBeInstanceOf(Map);
     expect(result).toEqual({
       format: 'android',
       id: '',
@@ -302,7 +298,6 @@ describe('<EditorProvider>', () => {
     expect(editor).toMatchObject({
       sourceView: false,
       initial: entry,
-      placeholders: null,
       fields,
     });
     expect(result).toEqual({
@@ -547,7 +542,7 @@ describe('<EditorProvider>', () => {
     });
   });
 
-  it('reports no pending changes for empty android entry with placeholders', () => {
+  it('reports no pending changes for empty android entry', () => {
     let unsaved;
     const Spy = () => {
       unsaved = useContext(UnsavedChanges);

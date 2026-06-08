@@ -1,12 +1,7 @@
-import {
-  fluentSerializePattern,
-  Pattern,
-  serializePattern,
-  type Message,
-} from '@mozilla/l10n';
+import type { Message, Pattern } from '@mozilla/l10n';
 import type { MessageEntry } from '.';
+import { editablePattern } from './editablePattern';
 import { parseEntry } from './parseEntry';
-import { editablePattern } from './placeholders';
 
 /**
  * Return a plain string representation of a given message.
@@ -60,10 +55,5 @@ function previewMessage(format: string, message: Message): string {
     pattern = catchall.pat;
   }
 
-  return format === 'fluent'
-    ? fluentSerializePattern(pattern, {
-        escapeSyntax: false,
-        onError: () => {},
-      })
-    : editablePattern(pattern);
+  return editablePattern(format, pattern);
 }

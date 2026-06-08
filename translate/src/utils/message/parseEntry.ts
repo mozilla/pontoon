@@ -1,17 +1,14 @@
 import {
   fluentParseEntry,
   mf2ParseMessage,
-  serializePattern,
-  type FormatKey,
+  normalizeMessage,
   type Message,
-  type Pattern,
 } from '@mozilla/l10n';
 import type { MessageEntry } from '.';
+import { specialFormats } from './specialFormats';
 
 /**
- * Parse a
- * `'fluent'`, `'android'`, `'gettext'`, `'webext'`, `'xcode'`, or `'xliff'`
- * message source as a {@link MessageEntry}.
+ * Parse a non-plain message source as a {@link MessageEntry}.
  *
  * @returns `null` on parse error or unsupported format
  */
@@ -20,46 +17,27 @@ export function parseEntry(
   source: string,
 ): MessageEntry | null {
   try {
-    switch (format) {
-      case 'fluent': {
-        const [id, entry] = fluentParseEntry(source);
-        const value = entry['='] ? flatMessage('fluent', entry['=']) : null;
-        if (entry['+']) {
-          const attributes = new Map<string, Message>();
-          for (const [name, value] of Object.entries(entry['+'])) {
-            attributes.set(name, flatMessage('fluent', value));
-          }
-          return { format, id, value, attributes };
+    if (format === 'fluent') {
+      const [id, entry] = fluentParseEntry(source);
+      const value = entry['='] ? normalizeMessage(entry['=']) : null;
+      if (entry['+']) {
+        const attributes = new Map<string, Message>();
+        for (const [name, value] of Object.entries(entry['+'])) {
+          attributes.set(name, normalizeMessage(value));
         }
-        return value ? { format, id, value } : null;
+        return { format, id, value, attributes };
       }
-
-      case 'android':
-      case 'gettext':
-      case 'webext':
-      case 'xcode':
-      case 'xliff':
-        return { format, id: '', value: mf2ParseMessage(source) };
+      return value ? { format, id, value } : null;
+    } else if (specialFormats.has(format)) {
+      return {
+        format: format as MessageEntry['format'],
+        id: '',
+        value: mf2ParseMessage(source),
+      };
     }
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.warn(`Parse error: ${msg}, with entry source:\n${source}`);
   }
   return null;
-}
-
-/**
- * Empty Fluent string literals `{ "" }` are dropped.
- */
-function flatMessage(format: FormatKey, msg: Message): Message {
-  const flatPattern = (pat: Pattern) => [
-    serializePattern(format, pat).replace(/{ "" }/g, ''),
-  ];
-  if (Array.isArray(msg)) return flatPattern(msg);
-  if (msg.msg) return { decl: msg.decl, msg: flatPattern(msg.msg) };
-  const flatAlt = msg.alt.map((v) => ({
-    keys: v.keys,
-    pat: flatPattern(v.pat),
-  }));
-  return { decl: msg.decl, sel: msg.sel, alt: flatAlt };
 }
