@@ -110,4 +110,12 @@ describe('buildMessageEntry', () => {
       attributes: new Map([['attr', ['trans ATTR']]]),
     });
   });
+
+  it('returns null on Fluent parse error', () => {
+    const base = parseEntry('fluent', 'msg = Hello { -world }\n');
+    const result = buildMessageEntry(base, [
+      { name: '', keys: [], handle: { current: { value: 'Hello {' } } },
+    ]);
+    expect(result).toBeNull();
+  });
 });
