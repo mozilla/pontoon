@@ -9,6 +9,20 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Locale, TranslatedResource, Translation
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.insights.models import LocaleChsSnapshot
+from pontoon.settings.base import (
+    ACTIVE_CONTRIBUTOR_POINTS,
+    ACTIVE_CONTRIBUTOR_STRING_THRESHOLD,
+    ALL_CONTRIBUTOR_POINTS,
+    ALL_CONTRIBUTOR_STRING_THRESHOLD,
+    COMPLETION_POINTS,
+    ENABLED_PROJECT_POINTS,
+    MANAGER_POINTS,
+    MANAGER_STRING_THRESHOLD,
+    NEW_SIGNUP_POINTS,
+    NEW_SIGNUP_STRING_THRESHOLD,
+    TRANSLATOR_POINTS,
+    TRANSLATOR_STRING_THRESHOLD,
+)
 
 
 KEY_PROJECT_SLUGS = [
@@ -20,28 +34,6 @@ KEY_PROJECT_SLUGS = [
     "mozilla-accounts",
     "mozilla-vpn-client",
 ]
-
-# Contribution Data
-MANAGER_STRING_THRESHOLD = 500
-TRANSLATOR_STRING_THRESHOLD = 400
-CONTRIBUTOR_SUBMITTED_THRESHOLD = 200
-CONTRIBUTOR_APPROVED_THRESHOLD = 200
-NEW_SIGNUP_SUBMITTED_THRESHOLD = 100
-
-# CHS score calculation
-MANAGER_PEOPLE_THRESHOLD = 1
-TRANSLATOR_PEOPLE_THRESHOLD = 2
-CONTRIBUTOR_PEOPLE_THRESHOLD = 2
-CONTRIBUTOR_200_APPROVED_PEOPLE_THRESHOLD = 2
-NEW_SIGNUP_PEOPLE_THRESHOLD = 2
-
-MANAGER_POINTS = 20.0
-TRANSLATOR_POINTS = 15.0
-CONTRIBUTOR_POINTS = 4.0
-CONTRIBUTOR_200_APPROVED_POINTS = 6.0
-NEW_SIGNUP_POINTS = 5.0
-ENABLED_PROJECT_POINTS = 4.0
-COMPLETION_POINTS = 46.0
 
 
 def get_completion_by_locale(locales) -> dict[int, float]:
@@ -189,11 +181,11 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
         else:
             if is_superuser:
                 continue
-            if total > CONTRIBUTOR_THRESHOLD:
+            if total > ALL_CONTRIBUTOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_contributors"] += 1
-            if approved > CONTRIBUTOR_APPROVED_THRESHOLD:
+            if approved > ACTIVE_CONTRIBUTOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_contributors_200_approved"] += 1
-            if approved > NEW_SIGNUP_SUBMISSION_THRESHOLD and joined >= start_date:
+            if approved > NEW_SIGNUP_STRING_THRESHOLD and joined >= start_date:
                 locale_contributors[locale_id]["new_signups"] += 1
 
     return locale_contributors
@@ -218,16 +210,16 @@ def compute_chs(args: dict) -> float:
         total_translator_points = 0
 
     if active_contributors >= 2:
-        total_contributor_points = CONTRIBUTOR_POINTS
+        total_contributor_points = ALL_CONTRIBUTOR_POINTS
     elif active_contributors >= 1:
-        total_contributor_points = CONTRIBUTOR_POINTS / 2
+        total_contributor_points = ALL_CONTRIBUTOR_POINTS / 2
     else:
         total_contributor_points = 0
 
     if active_contributors_200_approved >= 2:
-        total_contributor_200_approved_points = CONTRIBUTOR_200_APPROVED_POINTS
+        total_contributor_200_approved_points = ACTIVE_CONTRIBUTOR_POINTS
     elif active_contributors_200_approved >= 1:
-        total_contributor_200_approved_points = CONTRIBUTOR_200_APPROVED_POINTS / 2
+        total_contributor_200_approved_points = ACTIVE_CONTRIBUTOR_POINTS / 2
     else:
         total_contributor_200_approved_points = 0
 
