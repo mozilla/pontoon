@@ -120,6 +120,15 @@ export const SAME_TRANSLATION: NotificationMessage = {
   type: 'error',
 };
 
+export const SYNTAX_ERROR: NotificationMessage = {
+  content: (
+    <Localized id='notification--syntax-error'>
+      Translation with syntax error cannot be saved
+    </Localized>
+  ),
+  type: 'error',
+};
+
 export const CHECKS_ENABLED: NotificationMessage = {
   content: (
     <Localized id='notification--tt-checks-enabled'>
