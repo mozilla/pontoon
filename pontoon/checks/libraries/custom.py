@@ -83,9 +83,7 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                 ):
                     errors.append("Plural translation requires plural source")
 
-                require_printf_placeholders_match(
-                    format, orig_msg, msg, errors, warnings
-                )
+                require_placeholders_match(format, orig_msg, msg, errors, warnings)
 
         case Resource.Format.GETTEXT:
             try:
@@ -183,7 +181,7 @@ ph_re = compile(
 )
 
 
-def require_printf_placeholders_match(
+def require_placeholders_match(
     format: Resource.Format,
     src: Message | None,
     tgt: Message,
