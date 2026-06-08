@@ -55,7 +55,7 @@ export function EditorMainAction(): React.ReactElement<React.ElementType> {
 
   const className = classNames(`action-${action}`, error && 'has-error');
 
-  if (busy) {
+  if (busy && !error) {
     if (action === 'approve') {
       action = 'approving';
     } else if (action === 'save') {
@@ -75,7 +75,7 @@ export function EditorMainAction(): React.ReactElement<React.ElementType> {
     ' ',
   );
 
-  if (busy) {
+  if (busy && !error) {
     const glyph = <i className='fas fa-circle-notch fa-spin' />;
     return (
       <button className={className} disabled title={title}>
