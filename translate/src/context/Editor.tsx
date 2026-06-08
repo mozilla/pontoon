@@ -213,11 +213,13 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             const entry = parseEntry(format, str);
             if (entry) {
               next.base = entry;
-              if (!requiresSourceView(entry)) {
-                next.fields = prev.sourceView
-                  ? editSource(entry)
-                  : editMessageEntry(entry);
-              }
+            } else if (format !== 'fluent') {
+              return prev;
+            }
+            if (entry && !requiresSourceView(entry)) {
+              next.fields = prev.sourceView
+                ? editSource(entry)
+                : editMessageEntry(entry);
             } else {
               next.fields = editSource(str);
               next.sourceView = true;
