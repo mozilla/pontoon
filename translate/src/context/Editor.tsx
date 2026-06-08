@@ -1,4 +1,4 @@
-import { CatchallKey, Expression, Markup } from '@mozilla/l10n';
+import { CatchallKey } from '@mozilla/l10n';
 import React, {
   createContext,
   useContext,
@@ -20,6 +20,7 @@ import {
   parseEntry,
   serializeEntry,
 } from '~/utils/message';
+import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 
 import { EntityView, useActiveTranslation } from './EntityView';
@@ -28,10 +29,6 @@ import { Locale } from './Locale';
 import { MachineryTranslations } from './MachineryTranslations';
 import { UnsavedActions } from './UnsavedChanges';
 import { getMessageEntryFormat } from '../utils/message/getMessageEntryFormat';
-import {
-  getPlaceholderMap,
-  placeholderFormats,
-} from '../utils/message/placeholders';
 
 export type EditFieldHandle = {
   get value(): string;
@@ -80,8 +77,6 @@ export type EditorData = Readonly<{
   /** Used for detecting unsaved changes */
   initial: MessageEntry;
 
-  placeholders: Map<string, Expression | Markup> | null;
-
   machinery: {
     manual: boolean;
     sources: SourceType[];
@@ -113,7 +108,8 @@ export type EditorActions = {
   toggleSourceView(): void;
 };
 
-function parseEntryFromFluentSource(base: MessageEntry, source: string) {
+function parseEntryFromFluentSource(base: MessageEntry, fields: EditorField[]) {
+  const source = fields[0].handle.current.value;
   const entry = parseEntry('fluent', source);
   if (entry) {
     entry.id = base.id;
@@ -141,7 +137,6 @@ const initEditorData: EditorData = {
   base: { format: 'plain', id: '', value: [] },
   focusField: { current: null },
   initial: { format: 'plain', id: '', value: [] },
-  placeholders: null,
   machinery: null,
   fields: [],
   sourceView: false,
@@ -194,13 +189,13 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromHelpers: (str, sources, manual) =>
         setState((prev) => {
-          const { fields, focusField, placeholders, sourceView } = prev;
+          const { fields, focusField, sourceView } = prev;
           const field = focusField.current ?? fields[0];
           field.handle.current.setValue(str);
           let next = fields.slice();
           if (sourceView) {
-            const result = buildMessageEntry(prev.base, placeholders, fields);
-            next = editSource(result);
+            const result = buildMessageEntry(prev.base, fields);
+            next = editSource(result ?? str);
             focusField.current = next[0];
             setResult(result);
           }
@@ -214,47 +209,27 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorFromHistory: (str) =>
         setState((prev) => {
           const next = { ...prev };
-          switch (format) {
-            case 'fluent': {
-              const entry = parseEntry(format, str);
-              if (entry) {
-                next.base = entry;
-                if (!requiresSourceView(entry)) {
-                  next.fields = prev.sourceView
-                    ? editSource(entry)
-                    : editMessageEntry(entry);
-                }
-              } else {
-                next.fields = editSource(str);
-                next.sourceView = true;
-              }
-              break;
+          if (specialFormats.has(format)) {
+            const entry = parseEntry(format, str);
+            if (entry) {
+              next.base = entry;
+            } else if (format !== 'fluent') {
+              return prev;
             }
-            case 'android':
-            case 'gettext':
-            case 'webext':
-            case 'xcode':
-            case 'xliff': {
-              const entry = parseEntry(format, str);
-              if (entry) {
-                next.base = entry;
-                next.fields = editMessageEntry(entry);
-              } else {
-                next.fields = editSource(str);
-                next.sourceView = true;
-              }
-              break;
+            if (entry && !requiresSourceView(entry)) {
+              next.fields = prev.sourceView
+                ? editSource(entry)
+                : editMessageEntry(entry);
+            } else {
+              next.fields = editSource(str);
+              next.sourceView = true;
             }
-            default:
-              next.fields = editMessageEntry(prev.initial);
-              next.fields[0].handle.current.setValue(str);
+          } else {
+            next.fields = editMessageEntry(prev.initial);
+            next.fields[0].handle.current.setValue(str);
           }
           next.focusField.current = next.fields[0];
-          const result = buildMessageEntry(
-            next.base,
-            next.placeholders,
-            next.fields,
-          );
+          const result = buildMessageEntry(next.base, next.fields);
           setResult(result);
           return next;
         }),
@@ -271,38 +246,36 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setResultFromInput: () =>
         setState((state) => {
           // Inside setState() only to access the current `state` value
-          const { base, fields, placeholders, sourceView } = state;
+          const { base, fields, sourceView } = state;
           const result = sourceView
-            ? parseEntryFromFluentSource(base, fields[0].handle.current.value)
-            : buildMessageEntry(base, placeholders, fields);
+            ? parseEntryFromFluentSource(base, fields)
+            : buildMessageEntry(base, fields);
           setResult(result);
           return state;
         }),
 
       toggleSourceView: () =>
-        setState((prev) => {
-          if (prev.sourceView) {
-            const source = prev.fields[0].handle.current.value;
-            const entry = parseEntryFromFluentSource(prev.base, source);
+        setState((state) => {
+          const { base, fields, sourceView } = state;
+          if (sourceView) {
+            const entry = parseEntryFromFluentSource(base, fields);
             if (entry && !requiresSourceView(entry)) {
               const fields = editMessageEntry(entry);
-              prev.focusField.current = fields[0];
+              state.focusField.current = fields[0];
               setResult(entry);
-              return { ...prev, base: entry, fields, sourceView: false };
+              return { ...state, base: entry, fields, sourceView: false };
             }
           } else if (format === 'fluent') {
-            const entry = buildMessageEntry(
-              prev.base,
-              prev.placeholders,
-              prev.fields,
-            );
-            const source = serializeEntry(entry);
-            const fields = editSource(source);
-            prev.focusField.current = fields[0];
-            setResult(entry);
-            return { ...prev, fields, sourceView: true };
+            const entry = buildMessageEntry(base, fields);
+            if (entry) {
+              const source = serializeEntry(entry);
+              const fields = editSource(source);
+              state.focusField.current = fields[0];
+              setResult(entry);
+              return { ...state, fields, sourceView: true };
+            }
           }
-          return prev;
+          return state;
         }),
     };
   }, [format, readonly]);
@@ -311,12 +284,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     let base: MessageEntry;
     let source = activeTranslation?.string || '';
     let sourceView = false;
-    let placeholders: Map<string, Expression | Markup> | null = null;
     let orig: MessageEntry | null = null;
-    if (placeholderFormats.has(format)) {
-      orig = parseEntry(format, entity.original);
-      if (orig?.value) placeholders = getPlaceholderMap(orig.value);
-    }
     if (!source) {
       orig ??= parseEntry(format, entity.original);
       base = orig
@@ -346,7 +314,6 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       fields,
       focusField: { current: fields[0] },
       initial: base,
-      placeholders,
       machinery: null,
       sourceView,
     }));

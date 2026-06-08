@@ -13,6 +13,7 @@ import { updateEntityTranslation } from '~/modules/entities/actions';
 import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
   SAME_TRANSLATION,
+  SYNTAX_ERROR,
   TRANSLATION_SAVED,
   UNABLE_TO_SAVE_TRANSLATION,
 } from '~/modules/notification/messages';
@@ -45,6 +46,11 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
 
   return async (ignoreWarnings = false) => {
     if (busy || entity.pk === 0) {
+      return;
+    }
+
+    if (!entry) {
+      showNotification(SYNTAX_ERROR);
       return;
     }
 

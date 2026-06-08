@@ -1,41 +1,57 @@
+import {
+  isSelectMessage,
+  parsePattern,
+  type FormatKey,
+  type Message,
+} from '@mozilla/l10n';
 import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
-import {
-  Expression,
-  isSelectMessage,
-  Markup,
-  type Message,
-  type Pattern,
-} from '@mozilla/l10n';
 
-/** Get a `MessageEntry` corresponding to `edit`, based on `base`. */
+/**
+ * Get a `MessageEntry` corresponding to `fields`, based on `base`.
+ * Returns `null` on parse error.
+ */
 export function buildMessageEntry(
   base: MessageEntry,
-  placeholders: Map<string, Expression | Markup> | null,
   fields: EditorField[],
-): MessageEntry {
+): MessageEntry | null {
   const res = structuredClone(base);
-  if (res.value) setMessage(res.value, '', placeholders, fields);
-  if (res.attributes) {
-    for (const [name, msg] of res.attributes) {
-      setMessage(msg, name, placeholders, fields);
-    }
+  let format: FormatKey;
+  switch (res.format) {
+    case 'gettext':
+      format = 'plain';
+      break;
+    case 'xcode':
+      format = 'xliff';
+      break;
+    default:
+      format = res.format ?? 'plain';
   }
-  return res;
+  try {
+    if (res.value) setMessage(format, res.value, '', fields);
+    if (res.attributes) {
+      for (const [name, msg] of res.attributes) {
+        setMessage(format, msg, name, fields);
+      }
+    }
+    return res;
+  } catch {
+    return null;
+  }
 }
 
-/** Modifies `msg` according to `edit` entries which match `name`.  */
+/** Modifies `msg` according to `fields` entries which match `name`.  */
 function setMessage(
+  format: FormatKey,
   msg: Message,
   attrName: string,
-  placeholders: Map<string, Expression | Markup> | null,
   fields: EditorField[],
 ) {
   if (isSelectMessage(msg)) {
     msg.alt = [];
     for (const { name, keys, handle } of fields) {
       if (name === attrName) {
-        const pat = buildPattern(handle.current.value, placeholders);
+        const pat = parsePattern(format, handle.current.value, msg);
         msg.alt.push({ keys, pat });
       }
     }
@@ -43,41 +59,10 @@ function setMessage(
     const body = Array.isArray(msg) ? msg : msg.msg;
     for (const { name, handle } of fields) {
       if (name === attrName) {
-        const pat = buildPattern(handle.current.value, placeholders);
+        const pat = parsePattern(format, handle.current.value, msg);
         body.splice(0, body.length, ...pat);
         break;
       }
     }
   }
-}
-
-function buildPattern(
-  str: string,
-  placeholders: Map<string, Expression | Markup> | null,
-): Pattern {
-  if (!placeholders?.size) return str ? [str] : [];
-  const replacements: {
-    start: number;
-    end: number;
-    part: Expression | Markup;
-  }[] = [];
-  for (const [ph, part] of placeholders) {
-    let i = str.indexOf(ph);
-    while (i !== -1) {
-      const end = i + ph.length;
-      replacements.push({ start: i, end, part });
-      i = str.indexOf(ph, end);
-    }
-  }
-  replacements.sort((a, b) => a.start - b.start);
-  const pattern: Pattern = [];
-  let pos = 0;
-  for (const { start, end, part } of replacements) {
-    if (start < pos) continue;
-    if (start > pos) pattern.push(str.substring(pos, start));
-    pattern.push(part);
-    pos = end;
-  }
-  if (pos < str.length) pattern.push(str.substring(pos));
-  return pattern;
 }

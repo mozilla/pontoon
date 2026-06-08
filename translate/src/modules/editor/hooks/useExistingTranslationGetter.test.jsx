@@ -32,7 +32,7 @@ const HISTORY_FLUENT = {
 };
 
 function mountSpy(format, history, editor) {
-  const result = buildMessageEntry(editor.base, null, editor.fields);
+  const result = buildMessageEntry(editor.base, editor.fields);
 
   let res;
   const Spy = () => {

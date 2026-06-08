@@ -1,7 +1,8 @@
-import { Localized } from '@fluent/react';
+import { useLocalization } from '@fluent/react';
+import classNames from 'classnames';
 import React, { useContext } from 'react';
-import { EditorData } from '~/context/Editor';
 
+import { EditorData, EditorResult } from '~/context/Editor';
 import { useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
@@ -24,11 +25,13 @@ export function EditorMainAction(): React.ReactElement<React.ElementType> {
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
+  const { l10n } = useLocalization();
   const isTranslator = useTranslator();
   const existingTranslation = useExistingTranslationGetter()();
   const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
   const { busy } = useContext(EditorData);
+  const entry = useContext(EditorResult);
 
   let action:
     | 'approve'
@@ -38,29 +41,21 @@ export function EditorMainAction(): React.ReactElement<React.ElementType> {
     | 'save'
     | 'saving';
   let onClick: (event: React.SyntheticEvent) => void;
-  let title: string;
+  let error = entry ? null : 'syntax-error';
 
   if (isTranslator && existingTranslation && !existingTranslation.approved) {
-    // Button to approve the translation
     action = 'approve';
     onClick = () =>
       updateTranslationStatus(existingTranslation.pk, 'approve', false);
-    title = 'Approve Translation (Enter)';
-  } else if (forceSuggestions || !isTranslator) {
-    // Button to send an unreviewed translation
-    action = 'suggest';
-    onClick = () => sendTranslation();
-    title = 'Suggest Translation (Enter)';
   } else {
-    // Button to send an approved translation
-    action = 'save';
+    action = forceSuggestions || !isTranslator ? 'suggest' : 'save';
     onClick = () => sendTranslation();
-    title = 'Save Translation (Enter)';
+    error ??= existingTranslation ? 'same-translation' : null;
   }
 
-  const className = `action-${action}`;
+  const className = classNames(`action-${action}`, error && 'has-error');
 
-  if (busy) {
+  if (busy && !error) {
     if (action === 'approve') {
       action = 'approving';
     } else if (action === 'save') {
@@ -69,26 +64,30 @@ export function EditorMainAction(): React.ReactElement<React.ElementType> {
       action = 'suggesting';
     }
   }
-  const id = `editor-EditorMenu--button-${action}`;
-  const label = action.toUpperCase();
+  const label = l10n.getString(
+    `editor-EditorMenu--button-${action}`,
+    null,
+    action.toUpperCase(),
+  );
+  const title = l10n.getString(
+    `editor-EditorMenu--title-${error ?? action}`,
+    null,
+    ' ',
+  );
 
-  if (busy) {
+  if (busy && !error) {
     const glyph = <i className='fas fa-circle-notch fa-spin' />;
     return (
-      <Localized id={id} attrs={{ title: true }} elems={{ glyph }}>
-        <button className={className} disabled title={title}>
-          {glyph}
-          {label}
-        </button>
-      </Localized>
+      <button className={className} disabled title={title}>
+        {glyph}
+        {label}
+      </button>
     );
   } else {
     return (
-      <Localized id={id} attrs={{ title: true }}>
-        <button className={className} onClick={onClick} title={title}>
-          {label}
-        </button>
-      </Localized>
+      <button className={className} onClick={onClick} title={title}>
+        {label}
+      </button>
     );
   }
 }

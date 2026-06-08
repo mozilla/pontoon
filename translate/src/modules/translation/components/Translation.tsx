@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { getPlainMessage } from '~/utils/message';
+import { specialFormats } from '~/utils/message/specialFormats';
 
 import { GenericTranslation } from './GenericTranslation';
-import { placeholderFormats } from '~/utils/message/placeholders';
 
 type Props = {
   content: string;
@@ -22,11 +22,7 @@ export function Translation({
     return null;
   }
 
-  if (
-    format === 'fluent' ||
-    format === 'gettext' ||
-    placeholderFormats.has(format)
-  ) {
+  if (specialFormats.has(format)) {
     content = getPlainMessage(content, format);
     diffTarget &&= getPlainMessage(diffTarget, format);
   }

@@ -102,18 +102,21 @@ editor-EditorMenu--button-copy = NƔEL
     .title = Nɣel seg uɣbalu (Ctrl + Shift + C)
 editor-EditorMenu--button-clear = SFEḌ
     .title = Sfeḍ tasuqilt (Ctrl + Shift + Backspace)
+
 editor-EditorMenu--button-approve = APPROVE
-    .title = Approve Translation (Enter)
-editor-EditorMenu--button-approving = <glyph></glyph>APPROVING
-    .title = Approving Translation…
+editor-EditorMenu--button-approving = APPROVING
 editor-EditorMenu--button-save = SEKLES
-    .title = Sekles tasuqilt (Kcem)
-editor-EditorMenu--button-saving = <glyph></glyph>ASEKLES
-    .title = Asekles n tsuqilt…
+editor-EditorMenu--button-saving = ASEKLES
 editor-EditorMenu--button-suggest = SUMER
-    .title = Sumer tasuqilt (Kcem)
-editor-EditorMenu--button-suggesting = <glyph></glyph>ASUMER
-    .title = Asumer n tsuqilt…
+editor-EditorMenu--button-suggesting = ASUMER
+
+editor-EditorMenu--title-approve = Approve Translation (Enter)
+editor-EditorMenu--title-approving = Approving Translation…
+editor-EditorMenu--title-save = Sekles tasuqilt (Kcem)
+editor-EditorMenu--title-saving = Asekles n tsuqilt…
+editor-EditorMenu--title-suggest = Sumer tasuqilt (Kcem)
+editor-EditorMenu--title-suggesting = Asumer n tsuqilt…
+editor-EditorMenu--title-same-translation = Tella yakan yiwet n tsuqilt am ta
 
 ## Editor Settings
 ## Shows options to update user settings regarding the editor.

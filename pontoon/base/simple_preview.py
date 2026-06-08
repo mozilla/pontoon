@@ -15,7 +15,7 @@ from moz.l10n.model import (
 from pontoon.base.models import Resource
 
 
-def get_simple_preview(format: str, msg: str | Message | Pattern) -> str:
+def get_simple_preview(format: Resource.Format, msg: str | Message | Pattern) -> str:
     """
     Flatten a message entry as a simple string.
 

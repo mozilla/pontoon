@@ -2,7 +2,7 @@ import { isSelectMessage, type CatchallKey, type Message } from '@mozilla/l10n';
 import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
-import { editablePattern } from './placeholders';
+import { editablePattern } from './editablePattern';
 import { serializeEntry } from './serializeEntry';
 
 const emptyHandleRef = (value: string) => ({
@@ -69,10 +69,10 @@ function* genPatterns(
         label: (typeof key === 'string' ? key : key['*']) || 'other',
         plural: plurals.has(i),
       }));
-      yield [keys, labels, editablePattern(pat)];
+      yield [keys, labels, editablePattern(format, pat)];
     }
   } else {
-    yield [[], [], editablePattern(Array.isArray(msg) ? msg : msg.msg)];
+    yield [[], [], editablePattern(format, Array.isArray(msg) ? msg : msg.msg)];
   }
 }
 

@@ -114,18 +114,22 @@ editor-EditorMenu--button-copy = COPY
     .title = Copy From Source (Ctrl + Shift + C)
 editor-EditorMenu--button-clear = CLEAR
     .title = Clear Translation (Ctrl + Shift + Backspace)
+
 editor-EditorMenu--button-approve = APPROVE
-    .title = Approve Translation (Enter)
-editor-EditorMenu--button-approving = <glyph></glyph>APPROVING
-    .title = Approving Translation…
+editor-EditorMenu--button-approving = APPROVING
 editor-EditorMenu--button-save = SAVE
-    .title = Save Translation (Enter)
-editor-EditorMenu--button-saving = <glyph></glyph>SAVING
-    .title = Saving Translation…
+editor-EditorMenu--button-saving = SAVING
 editor-EditorMenu--button-suggest = SUGGEST
-    .title = Suggest Translation (Enter)
-editor-EditorMenu--button-suggesting = <glyph></glyph>SUGGESTING
-    .title = Suggesting Translation…
+editor-EditorMenu--button-suggesting = SUGGESTING
+
+editor-EditorMenu--title-approve = Approve Translation (Enter)
+editor-EditorMenu--title-approving = Approving Translation…
+editor-EditorMenu--title-save = Save Translation (Enter)
+editor-EditorMenu--title-saving = Saving Translation…
+editor-EditorMenu--title-suggest = Suggest Translation (Enter)
+editor-EditorMenu--title-suggesting = Suggesting Translation…
+editor-EditorMenu--title-same-translation = Same translation already exists
+editor-EditorMenu--title-syntax-error = Translation with syntax error cannot be saved
 
 
 ## Editor Settings
@@ -573,6 +577,7 @@ notification--unable-to-reject-translation = Unable to reject translation
 notification--unable-to-unreject-translation = Unable to unreject translation
 notification--unable-to-delete-translation = Unable to delete translation
 notification--same-translation = Same translation already exists
+notification--syntax-error = Translation with syntax error cannot be saved
 notification--tt-checks-enabled = Translate Toolkit Checks enabled
 notification--tt-checks-disabled = Translate Toolkit Checks disabled
 notification--make-suggestions-enabled = Make Suggestions enabled
