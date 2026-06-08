@@ -1,13 +1,13 @@
 import React from 'react';
-import { mount } from 'enzyme';
 
 import { UserAutoUpdater } from './UserAutoUpdater';
 import { vi } from 'vitest';
+import { render } from '@testing-library/react';
 
 describe('<UserAutoUpdater>', () => {
   it('fetches user data on mount', () => {
     const getUserData = vi.fn();
-    mount(<UserAutoUpdater getUserData={getUserData} />);
+    render(<UserAutoUpdater getUserData={getUserData} />);
 
     expect(getUserData).toHaveBeenCalledOnce();
   });
@@ -16,7 +16,7 @@ describe('<UserAutoUpdater>', () => {
     vi.useFakeTimers();
 
     const getUserData = vi.fn();
-    mount(<UserAutoUpdater getUserData={getUserData} />);
+    render(<UserAutoUpdater getUserData={getUserData} />);
 
     vi.advanceTimersByTime(2 * 60 * 1000);
     expect(getUserData).toHaveBeenCalledTimes(2);

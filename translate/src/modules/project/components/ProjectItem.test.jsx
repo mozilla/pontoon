@@ -1,10 +1,10 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 
 import { ProjectItem } from './ProjectItem';
+import { render } from '@testing-library/react';
 
-function createShallowProjectItem({ slug = 'slug' } = {}) {
-  return shallow(
+function renderProjectItem({ slug = 'slug' } = {}) {
+  return render(
     <ProjectItem
       location={{
         locale: 'locale',
@@ -23,28 +23,28 @@ function createShallowProjectItem({ slug = 'slug' } = {}) {
 
 describe('<ProjectItem>', () => {
   it('renders correctly', () => {
-    const wrapper = createShallowProjectItem();
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('a')).toHaveLength(1);
-    expect(wrapper.find('span.project')).toHaveLength(1);
-    expect(wrapper.find('span.percent')).toHaveLength(1);
-    expect(wrapper.find('a').prop('href')).toEqual(
+    const { getByRole, container } = renderProjectItem();
+    getByRole('listitem');
+    expect(container.querySelector('span.project')).toBeInTheDocument();
+    expect(container.querySelector('span.percent')).toBeInTheDocument();
+    expect(getByRole('link')).toHaveAttribute(
+      'href',
       '/locale/slug/all-resources/',
     );
   });
 
   it('sets the className for the current project', () => {
-    const wrapper = createShallowProjectItem({ slug: 'project' });
-    expect(wrapper.find('li.current')).toHaveLength(1);
+    const { getByRole } = renderProjectItem({ slug: 'project' });
+    expect(getByRole('listitem')).toHaveClass('current');
   });
 
   it('sets the className for another project', () => {
-    const wrapper = createShallowProjectItem();
-    expect(wrapper.find('li.current')).toHaveLength(0);
+    const { getByRole } = renderProjectItem();
+    expect(getByRole('listitem')).not.toHaveClass('current');
   });
 
   it('renders completion percentage correctly', () => {
-    const wrapper = createShallowProjectItem();
-    expect(wrapper.find('.percent').text()).toEqual('50%');
+    const { getByText } = renderProjectItem();
+    getByText('50%');
   });
 });
