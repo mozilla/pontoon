@@ -20,7 +20,7 @@ import {
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import { serializeEntry, getPlainMessage } from '~/utils/message';
+import { getPlainMessage } from '~/utils/message';
 import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 
 /**

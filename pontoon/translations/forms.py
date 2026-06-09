@@ -6,9 +6,7 @@ from moz.l10n.model import Message
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 
-from pontoon.base.models import Entity, Locale
-
-from ..base.models.resource import Resource
+from pontoon.base.models import Entity, Locale, Resource
 from .utils import JsonMessage, serialize_for_db
 
 
