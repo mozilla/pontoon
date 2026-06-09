@@ -3,20 +3,21 @@ import datetime
 import logging
 
 from collections import defaultdict
+from typing import Literal
 
 from celery import shared_task
 from dateutil.relativedelta import relativedelta
 from notifications.models import Notification
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Count, F, Min, Prefetch, Q, Sum
 from django.template.loader import get_template
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Locale, UserProfile
+from pontoon.base.models import Locale, User, UserProfile
+from pontoon.base.notification_utils import is_subscribed_to_notification
 from pontoon.base.templatetags.helpers import full_url
 from pontoon.insights.models import LocaleInsightsSnapshot
 from pontoon.messaging.models import EmailContent
@@ -137,8 +138,10 @@ def _get_monthly_locale_contributors(locales, months_ago):
 
     # Group contributors by locale and user role
     results = {}
-    all_locale_pks = [entry["translation__locale"] for entry in monthly_contributors]
-    locales_dict = {locale.pk: locale for locale in locales}
+    all_locale_pks: list[int] = [
+        entry["translation__locale"] for entry in monthly_contributors
+    ]
+    locales_dict: dict[int, Locale] = {locale.pk: locale for locale in locales}
 
     all_user_pks = [entry["performed_by"] for entry in monthly_contributors]
     users = User.objects.filter(pk__in=all_user_pks)
@@ -152,14 +155,16 @@ def _get_monthly_locale_contributors(locales, months_ago):
         ]
         locale = locales_dict.get(locale_pk)
 
-        new_contributors = []
-        active_managers = []
-        active_translators = []
-        active_contributors = []
+        new_contributors: list[User] = []
+        active_managers: list[User] = []
+        active_translators: list[User] = []
+        active_contributors: list[User] = []
 
         for entry in locale_entries:
             user_pk = entry["performed_by"]
             user = users_dict.get(user_pk)
+            if user is None:
+                continue
 
             if (locale_pk, user_pk) in new_locale_contributors:
                 # Exclude staff users from new contributors
@@ -266,7 +271,7 @@ def send_monthly_activity_summary():
     log.info(f"Monthly activity summary emails sent to {recipient_count} users.")
 
 
-def send_notification_digest(frequency="Daily"):
+def send_notification_digest(frequency: Literal["Daily", "Weekly"] = "Daily"):
     """
     Sends notification email digests to users based on the specified frequency (Daily or Weekly).
     """
@@ -303,7 +308,7 @@ def send_notification_digest(frequency="Daily"):
         recipient = notification.recipient
 
         # Only include notifications the user chose to receive via email
-        if recipient.is_subscribed_to_notification(notification):
+        if is_subscribed_to_notification(recipient, notification):
             notifications_map[recipient].append(notification)
 
     subject = f"{frequency} notifications summary"

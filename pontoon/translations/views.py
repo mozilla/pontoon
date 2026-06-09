@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
+from pontoon.base.badge_utils import badges_review_count, badges_translation_count
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -25,6 +26,7 @@ from pontoon.base.models import (
     Translation,
 )
 from pontoon.base.services import readonly_exists
+from pontoon.base.user_utils import can_translate
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
 from pontoon.messaging.notifications import send_badge_notification, send_notification
@@ -125,7 +127,7 @@ def create_translation(request):
             return JsonResponse({"status": False, "failedChecks": failed_checks})
 
     now = timezone.now()
-    approved = user.can_translate(project=project, locale=locale) and (
+    approved = can_translate(user, project, locale) and (
         not req_data["force_suggestions"] or req_data["approve"]
     )
 
@@ -155,7 +157,12 @@ def create_translation(request):
     first_contribution = (
         not project.system_project
         and user != project.contact
-        and user.has_one_contribution(locale)
+        and (
+            Translation.objects.filter(user=user, locale=locale)
+            .exclude(entity__resource__project__system_project=True)
+            .count()
+            == 1
+        )
     )
     if first_contribution:
         description = render_to_string(
@@ -183,7 +190,7 @@ def create_translation(request):
     _add_stats(response_data, resource, locale, req_data["stats"])
 
     # Send Translation Champion Badge notification information
-    translation_count = user.badges_translation_count
+    translation_count = badges_translation_count(user)
     if translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
         badge_name = "Translation Champion"
         badge_level = (
@@ -224,7 +231,7 @@ def delete_translation(request):
 
     # Only privileged users or authors can delete translations
     if not translation.rejected or not (
-        request.user.can_translate(locale, project) or request.user == translation.user
+        can_translate(request.user, project, locale) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -288,7 +295,7 @@ def approve_translation(request):
         )
 
     # Only privileged users can approve translations
-    if not user.can_translate(locale, project):
+    if not can_translate(user, project, locale):
         return JsonResponse(
             {
                 "status": False,
@@ -324,7 +331,7 @@ def approve_translation(request):
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
-    review_count = user.badges_review_count
+    review_count = badges_review_count(user)
     if review_count in settings.BADGES_REVIEW_THRESHOLDS:
         badge_name = "Review Master"
         badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
@@ -365,7 +372,7 @@ def unapprove_translation(request):
 
     # Only privileged users or authors can un-approve translations
     if not translation.approved or not (
-        request.user.can_translate(locale, project) or request.user == translation.user
+        can_translate(request.user, project, locale) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -421,7 +428,7 @@ def reject_translation(request):
         )
 
     # Non-privileged users can only reject own unapproved translations
-    if not request.user.can_translate(locale, project):
+    if not can_translate(request.user, project, locale):
         if translation.user == request.user:
             if translation.approved is True:
                 return JsonResponse(
@@ -452,7 +459,7 @@ def reject_translation(request):
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
-    review_count = request.user.badges_review_count
+    review_count = badges_review_count(request.user)
     if review_count in settings.BADGES_REVIEW_THRESHOLDS:
         badge_name = "Review Master"
         badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
@@ -493,7 +500,7 @@ def unreject_translation(request):
 
     # Only privileged users or authors can un-reject translations
     if not translation.rejected or not (
-        request.user.can_translate(locale, project) or request.user == translation.user
+        can_translate(request.user, project, locale) or request.user == translation.user
     ):
         return JsonResponse(
             {

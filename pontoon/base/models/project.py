@@ -2,20 +2,20 @@ from os.path import join
 from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import BooleanField, Case, F, QuerySet, Sum, Value, When
 from django.utils import timezone
 
 from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
+from pontoon.base.models.user import User
+from pontoon.base.user_utils import user_serialize
 
 
 if TYPE_CHECKING:
+    from pontoon.base.models import Repository, Translation
     from pontoon.base.models.project_locale import ProjectLocaleQuerySet
-    from pontoon.base.models.repository import Repository
     from pontoon.base.models.resource import ResourceQuerySet
-    from pontoon.base.models.translation import Translation
     from pontoon.tags.models import TagQuerySet
 
 
@@ -261,7 +261,7 @@ class Project(models.Model, AggregatedStats):
             "name": self.name,
             "slug": self.slug,
             "info": self.info,
-            "contact": self.contact.serialize() if self.contact else None,
+            "contact": user_serialize(self.contact) if self.contact else None,
         }
 
     def save(self, *args, **kwargs):

@@ -100,7 +100,7 @@
                 {% if user.is_authenticated %}
                   <img
                     class="rounded"
-                    src="{{ request.user.gravatar_url_small }}"
+                    src="{{ request.user.gravatar_url() }}"
                     width="44"
                     height="44"
                   />
