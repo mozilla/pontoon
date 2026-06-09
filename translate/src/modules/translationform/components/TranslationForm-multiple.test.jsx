@@ -1,6 +1,8 @@
 import ftl from '@fluent/dedent';
-import React, { useContext } from 'react';
+import { fireEvent } from '@testing-library/react';
+import { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { EditorActions, EditorProvider, EditorResult } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
@@ -14,7 +16,6 @@ import {
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { TranslationForm } from './TranslationForm';
-import { expect } from 'vitest';
 
 const DEFAULT_LOCALE = {
   direction: 'ltr',
@@ -56,6 +57,8 @@ function mountForm(string) {
     ),
     store,
   );
+  vi.runAllTimers();
+
   // TODO:Replace the querySelector with testing-library-ish approaches
   const form = wrapper.container.querySelector('.translationform');
   const views = Array.from(form.querySelectorAll('.cm-content')).map(
@@ -66,6 +69,10 @@ function mountForm(string) {
 }
 
 describe('<TranslationForm> with multiple fields', () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
   it('renders textarea for a value and each attribute', () => {
     const { views } = mountForm(ftl`
       message = Value
@@ -200,6 +207,7 @@ describe('<TranslationForm> with multiple fields', () => {
 
   it('renders access keys properly', () => {
     const {
+      getResult,
       views,
       wrapper: { container },
     } = mountForm(ftl`
@@ -224,11 +232,19 @@ describe('<TranslationForm> with multiple fields', () => {
     expect(input[0]).toHaveAttribute('maxLength', '1');
 
     expect(container.querySelectorAll('.accesskeys')).toHaveLength(1);
-    const buttonTexts = Array.from(
-      container.querySelectorAll('.accesskeys button'),
-      (button) => button.textContent,
-    );
+    const buttons = container.querySelectorAll('.accesskeys button');
+    const buttonTexts = Array.from(buttons, (button) => button.textContent);
     expect(buttonTexts).toMatchObject(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
+
+    fireEvent.click(buttons[1]);
+    vi.runAllTimers();
+
+    expect(getResult().attributes).toEqual(
+      new Map([
+        ['label', ['Candidates']],
+        ['accesskey', ['a']],
+      ]),
+    );
   });
 
   it('does not render accesskey buttons if no candidates can be generated', () => {

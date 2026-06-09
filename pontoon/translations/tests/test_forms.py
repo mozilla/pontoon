@@ -1,5 +1,8 @@
 import pytest
 
+from moz.l10n.model import PatternMessage
+
+from pontoon.test.factories import EntityFactory, ResourceFactory
 from pontoon.translations.forms import CreateTranslationForm
 
 
@@ -24,7 +27,7 @@ def test_create_translation_form_clean_entity(entity_a, locale_a):
     form = CreateTranslationForm(
         {
             "entity": entity_a.pk,
-            "translation": "salut",
+            "value": ["salut"],
             "locale": locale_a.code,
         }
     )
@@ -37,7 +40,7 @@ def test_create_translation_form_clean_entity_invalid(locale_a):
     form = CreateTranslationForm(
         {
             "entity": 42,
-            "translation": "salut",
+            "value": ["salut"],
             "locale": locale_a.code,
         }
     )
@@ -50,7 +53,7 @@ def test_create_translation_form_clean_locale_invalid(entity_a):
     form = CreateTranslationForm(
         {
             "entity": entity_a.pk,
-            "translation": "salut",
+            "value": ["salut"],
             "locale": "invalid",
         }
     )
@@ -63,7 +66,7 @@ def test_create_translation_form_clean_locale(entity_a, locale_a):
     form = CreateTranslationForm(
         {
             "entity": entity_a.pk,
-            "translation": "salut",
+            "value": ["salut"],
             "locale": locale_a.code,
         }
     )
@@ -75,7 +78,7 @@ def test_create_translation_form_clean_locale(entity_a, locale_a):
 def test_create_translation_form_clean_stats(entity_a, locale_a):
     data = {
         "entity": entity_a.pk,
-        "translation": "salut",
+        "value": ["salut"],
         "locale": locale_a.code,
     }
     form = CreateTranslationForm(data)
@@ -97,14 +100,70 @@ def test_create_translation_form_clean_stats(entity_a, locale_a):
     assert not form.is_valid()
 
 
+@pytest.fixture
+def ftl_entity(project_a):
+    resource = ResourceFactory.create(
+        project=project_a, path="file.ftl", format="fluent"
+    )
+    return EntityFactory(
+        resource=resource, key=["key"], value=["value"], string="key = value\n"
+    )
+
+
 @pytest.mark.django_db
-def test_create_translation_form_clean_translation(entity_a, locale_a):
+def test_create_translation_form_clean_value_and_properties(ftl_entity, locale_a):
     form = CreateTranslationForm(
         {
-            "entity": entity_a.pk,
-            "translation": " salut ",
+            "entity": ftl_entity.pk,
+            "value": [" salut "],
+            "properties": {"key": ["prop"]},
             "locale": locale_a.code,
         }
     )
     assert form.is_valid()
-    assert form.cleaned_data["translation"] == " salut "
+    assert form.cleaned_data["value"] == PatternMessage([" salut "])
+    assert form.cleaned_data["properties"] == {"key": PatternMessage(["prop"])}
+    assert form.cleaned_data["string"] == 'key = { " " }salut{ " " }\n    .key = prop\n'
+
+
+@pytest.mark.django_db
+def test_create_translation_form_invalid_value(ftl_entity, locale_a):
+    form = CreateTranslationForm(
+        {
+            "entity": ftl_entity.pk,
+            "value": ["value ", {"elem": "foo"}],
+            "locale": locale_a.code,
+        }
+    )
+    assert not form.is_valid()
+    assert form.errors == {"__all__": ["Value is not serializable as fluent"]}
+
+
+@pytest.mark.django_db
+def test_create_translation_form_invalid_value_and_properties(ftl_entity, locale_a):
+    form = CreateTranslationForm(
+        {
+            "entity": ftl_entity.pk,
+            "value": ["value"],
+            "properties": {"key": [{"elem": "foo"}]},
+            "locale": locale_a.code,
+        }
+    )
+    assert not form.is_valid()
+    assert form.errors == {
+        "__all__": ["Value and properties are not serializable as fluent"]
+    }
+
+
+@pytest.mark.django_db
+def test_create_translation_form_invalid_properties(entity_a, locale_a):
+    form = CreateTranslationForm(
+        {
+            "entity": entity_a.pk,
+            "value": ["value"],
+            "properties": {"key": ["prop"]},
+            "locale": locale_a.code,
+        }
+    )
+    assert not form.is_valid()
+    assert form.errors == {"__all__": ["Properties are not supported for gettext"]}

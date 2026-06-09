@@ -1,8 +1,12 @@
 from typing import cast
 
+from moz.l10n.message import message_to_json
+from moz.l10n.model import Message
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -28,7 +32,6 @@ from pontoon.checks.utils import are_blocking_checks
 from pontoon.messaging.notifications import send_badge_notification, send_notification
 
 from .forms import CreateTranslationForm
-from .utils import parse_db_string_to_json
 
 
 def _add_stats(response_data, resource: Resource, locale: Locale, stats):
@@ -60,22 +63,22 @@ def create_translation(request):
     Create a new translation.
     """
     form = CreateTranslationForm(request.POST)
-
     if not form.is_valid():
-        problems = []
-        for field, errors in form.errors.items():
-            problems.append(f'Error validating field `{field}`: "{" ".join(errors)}"')
+        problems = [
+            f'Error validating field `{field}`: "{error}"'
+            for field, errors in form.errors.items()
+            for error in errors
+        ]
         return JsonResponse(
             {"status": False, "message": "\n".join(problems)}, status=400
         )
+    req_data = form.cleaned_data
 
-    entity = cast(Entity, form.cleaned_data["entity"])
-    string = form.cleaned_data["translation"]
-    locale = cast(Locale, form.cleaned_data["locale"])
-    ignore_warnings = form.cleaned_data["ignore_warnings"]
-    approve = form.cleaned_data["approve"]
-    force_suggestions = form.cleaned_data["force_suggestions"]
-    stats = form.cleaned_data["stats"]
+    entity = cast(Entity, req_data["entity"])
+    locale = cast(Locale, req_data["locale"])
+    value = cast(Message, req_data["value"])
+    properties = cast(dict[str, Message], req_data["properties"])
+    string = cast(str, req_data["string"])
 
     resource = entity.resource
     project = resource.project
@@ -96,12 +99,15 @@ def create_translation(request):
             status=403,
         )
 
-    translations = Translation.objects.filter(entity=entity, locale=locale)
-
-    same_translations = translations.filter(string=string)
+    json_value = message_to_json(value)
+    json_properties = {k: message_to_json(v) for k, v in properties.items()} or None
 
     # If same translation exists in the DB, don't save it again.
-    if same_translations:
+    if (
+        Translation.objects.filter(entity=entity, locale=locale)
+        .filter(Q(value=json_value, properties=json_properties) | Q(string=string))
+        .exists()
+    ):
         return JsonResponse({"status": False, "same": True})
 
     # Look for failed checks.
@@ -117,26 +123,24 @@ def create_translation(request):
             string,
             user.profile.quality_checks,
         )
-        if are_blocking_checks(failed_checks, ignore_warnings):
+        if are_blocking_checks(failed_checks, req_data["ignore_warnings"]):
             return JsonResponse({"status": False, "failedChecks": failed_checks})
-
-    value, properties = parse_db_string_to_json(resource.format, string)
 
     now = timezone.now()
     approved = can_translate(user, project, locale) and (
-        not force_suggestions or approve
+        not req_data["force_suggestions"] or req_data["approve"]
     )
 
     translation = Translation(
         entity=entity,
         locale=locale,
         string=string,
-        value=value,
-        properties=properties,
+        value=json_value,
+        properties=json_properties,
         user=user,
         date=now,
         approved=approved,
-        machinery_sources=form.cleaned_data["machinery_sources"],
+        machinery_sources=req_data["machinery_sources"],
     )
 
     if approved:
@@ -147,8 +151,7 @@ def create_translation(request):
 
     log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
-    if translations:
-        translation = entity.reset_active_translation(locale=locale)
+    translation = entity.reset_active_translation(locale=locale)
 
     # When user makes their first contribution to the team, notify team managers
     first_contribution = (
@@ -184,7 +187,7 @@ def create_translation(request):
             )
 
     response_data = {"status": True, "translation": translation.serialize()}
-    _add_stats(response_data, resource, locale, stats)
+    _add_stats(response_data, resource, locale, req_data["stats"])
 
     # Send Translation Champion Badge notification information
     translation_count = badges_translation_count(user)
