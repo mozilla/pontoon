@@ -163,24 +163,20 @@ var Pontoon = (function (my) {
         const year = graph.data('year');
 
         const startDate = new Date();
-        let endDate = new Date();
+        const endDate = new Date();
 
         if (year) {
-          // Set range to the selected calendar year, up to now for the
-          // current year
+          // Show the entire selected calendar year, including the still-empty
+          // days of an unfinished current year
           startDate.setFullYear(year, 0, 1);
-          startDate.setUTCHours(0, 0, 0, 0);
-          if (Number(year) !== endDate.getFullYear()) {
-            endDate = new Date();
-            endDate.setFullYear(year, 11, 31);
-            endDate.setUTCHours(23, 59, 59, 999);
-          }
+          endDate.setFullYear(year, 11, 31);
+          endDate.setUTCHours(23, 59, 59, 999);
         } else {
           // Set start date to 365 days before now
           startDate.setMonth(startDate.getMonth() - 12);
           startDate.setUTCDate(startDate.getUTCDate() + 1);
-          startDate.setUTCHours(0, 0, 0, 0);
         }
+        startDate.setUTCHours(0, 0, 0, 0);
 
         let graphHTML = '';
         const step = 13;

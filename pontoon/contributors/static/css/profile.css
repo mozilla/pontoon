@@ -377,7 +377,7 @@ h4.superuser {
 #contributions .year-selector {
   flex: 0 0 auto;
   list-style: none;
-  margin: 20px 0 0;
+  margin: 18px 0 0;
   padding: 0;
   width: 65px;
 }
@@ -392,18 +392,14 @@ h4.superuser {
   font-size: 12px;
   margin-bottom: 2px;
   padding: 4px 8px;
-  text-align: left;
+  text-align: right;
   white-space: nowrap;
   width: 100%;
 }
 
-#contributions .year-selector .year:hover {
-  background: var(--dark-grey-1);
-  color: var(--white-1);
-}
-
+#contributions .year-selector .year:hover,
 #contributions .year-selector .year.active {
-  background: var(--status-translated);
+  background: var(--background-hover-2);
   color: var(--white-1);
 }
 
