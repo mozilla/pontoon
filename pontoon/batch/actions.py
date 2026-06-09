@@ -1,10 +1,9 @@
+from django.db.models import QuerySet
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import (
-    Translation,
-    TranslationMemoryEntry,
-)
+from pontoon.base.models import Entity, Locale, TranslationMemoryEntry
+from pontoon.base.models.translation import Translation, TranslationQuerySet
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
 
@@ -42,7 +41,7 @@ def batch_action_template(form, user, translations, locale):
     }
 
 
-def approve_translations(form, user, translations, locale):
+def approve_translations(user, locale: Locale, translations: TranslationQuerySet):
     """Approve a series of translations.
 
     For documentation, refer to the `batch_action_template` function.
@@ -114,7 +113,7 @@ def approve_translations(form, user, translations, locale):
     }
 
 
-def reject_translations(form, user, translations, locale):
+def reject_translations(user, locale: Locale, entities: QuerySet[Entity]):
     """Reject a series of translations.
 
     Note that this function doesn't use the `translations` parameter, as it
@@ -126,7 +125,7 @@ def reject_translations(form, user, translations, locale):
     """
     suggestions = Translation.objects.filter(
         locale=locale,
-        entity__pk__in=form.cleaned_data["entities"],
+        entity__in=entities,
         approved=False,
         rejected=False,
     )
@@ -145,7 +144,7 @@ def reject_translations(form, user, translations, locale):
             performed_by=user,
             translation=t,
         )
-        for t in translations
+        for t in suggestions
     ]
     ActionLog.objects.bulk_create(actions_to_log)
 
@@ -181,7 +180,9 @@ def reject_translations(form, user, translations, locale):
     }
 
 
-def replace_translations(form, user, translations, locale):
+def replace_translations(
+    user, locale: Locale, translations: TranslationQuerySet, find: str, replace: str
+):
     """Replace characters in a series of translations.
 
     Replaces all occurences of the content of the `find` parameter with the
@@ -190,9 +191,6 @@ def replace_translations(form, user, translations, locale):
     For documentation, refer to the `batch_action_template` function.
 
     """
-    find = form.cleaned_data["find"]
-    replace = form.cleaned_data["replace"]
-    latest_translation_pk = None
 
     (
         old_translations,
@@ -262,8 +260,9 @@ def replace_translations(form, user, translations, locale):
 
     changed_translation_pks = [c.pk for c in changed_translations]
 
-    if changed_translation_pks:
-        latest_translation_pk = max(changed_translation_pks)
+    latest_translation_pk = (
+        max(changed_translation_pks) if changed_translation_pks else None
+    )
 
     return {
         "count": count,
@@ -274,17 +273,3 @@ def replace_translations(form, user, translations, locale):
         "invalid_translation_pks": invalid_translation_pks,
         "badge_update": badge_update,
     }
-
-
-"""A map of action names to functions.
-
-The keys define the available batch actions in the `batch_edit_translations`
-view. All functions must accept the same parameters and return the same dict.
-See above for those functions.
-
-"""
-ACTIONS_FN_MAP = {
-    "approve": approve_translations,
-    "reject": reject_translations,
-    "replace": replace_translations,
-}
