@@ -254,6 +254,10 @@ form a:visited {
   margin-right: -1px;
 }
 
+#main .appearance .toggle-button button:last-child {
+  border-left: 1px solid var(--main-border-1);
+}
+
 #main .appearance .toggle-button button .icon {
   margin-right: 10px;
 }

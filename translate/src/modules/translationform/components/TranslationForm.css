@@ -82,6 +82,11 @@
   border-color: var(--status-translated);
 }
 
+.translationform .accesskeys .key.active {
+  background: var(--status-translated);
+  color: var(--translation-main-button-color);
+}
+
 .translationform .accesskeys .key:disabled {
   cursor: default;
 }
