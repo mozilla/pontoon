@@ -127,6 +127,7 @@ def contributor(request, user):
         "contribution_graph": {
             "contributions": json.dumps(graph_data),
             "title": graph_title,
+            "years": utils.get_contribution_years(user),
         },
         "contribution_timeline": {
             "contributions": timeline_data,
@@ -151,14 +152,16 @@ def update_contribution_graph(request):
     try:
         user = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
-    except User.DoesNotExist as e:
+        year = request.GET.get("year", None)
+        year = int(year) if year else None
+    except (User.DoesNotExist, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
     contributions, title = utils.get_contribution_graph_data(
-        user, request.user, contribution_type
+        user, request.user, contribution_type, year
     )
     return JsonResponse({"contributions": contributions, "title": title})
 
@@ -172,6 +175,8 @@ def update_contribution_timeline(request):
         full_year = request.GET.get("full_year", False) == "true"
         day = request.GET.get("day", None)
         day = int(day) / 1000 if day else None
+        year = request.GET.get("year", None)
+        year = int(year) if year else None
     except (User.DoesNotExist, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
@@ -179,7 +184,7 @@ def update_contribution_timeline(request):
         )
 
     contributions = utils.get_contribution_timeline_data(
-        contributor, request.user, full_year, contribution_type, day
+        contributor, request.user, full_year, contribution_type, day, year
     )
 
     return render(

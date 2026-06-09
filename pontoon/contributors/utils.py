@@ -326,11 +326,25 @@ def get_contributions_map(contributor, viewer, contribution_period=None):
     }
 
 
-def get_contribution_graph_data(contributor, viewer, contribution_type=None):
+def get_contribution_graph_data(contributor, viewer, contribution_type=None, year=None):
     """
-    Get data required to render the Contribution graph on the Profile page
+    Get data required to render the Contribution graph on the Profile page.
+
+    Returned data covers the requested `year`, or the last 12 months if
+    `year` is None.
     """
-    contribution_period = Q(created_at__gte=timezone.now() - relativedelta(days=365))
+
+    if year is None:
+        contribution_period = Q(
+            created_at__gte=timezone.now() - relativedelta(days=365)
+        )
+        period_label = "in the last year"
+    else:
+        start = timezone.make_aware(timezone.datetime(year, 1, 1))
+        end = start + relativedelta(years=1)
+        contribution_period = Q(created_at__gte=start, created_at__lt=end)
+        period_label = f"in {year}"
+
     contributions_map = get_contributions_map(contributor, viewer, contribution_period)
 
     if contribution_type not in contributions_map.keys():
@@ -351,8 +365,18 @@ def get_contribution_graph_data(contributor, viewer, contribution_type=None):
 
     return (
         contributions_data,
-        f"{intcomma(total)} contribution{pluralize(total)} in the last year",
+        f"{intcomma(total)} contribution{pluralize(total)} {period_label}",
     )
+
+
+def get_contribution_years(contributor):
+    """
+    Return the list of calendar years to offer in the contribution graph,
+    from the current year back to the year the contributor joined.
+    """
+    current_year = timezone.now().year
+    first_year = contributor.date_joined.year
+    return list(range(current_year, first_year - 1, -1))
 
 
 def get_project_locale_contribution_counts(contributions_qs):
@@ -414,14 +438,24 @@ def get_project_locale_contribution_counts(contributions_qs):
 
 
 def get_contribution_timeline_data(
-    contributor, viewer, full_year=False, contribution_type=None, day=None
+    contributor, viewer, full_year=False, contribution_type=None, day=None, year=None
 ):
     """
     Get data required to render the Contribution timeline on the Profile page
     """
     end = timezone.now()
 
-    if full_year:
+    if year is not None:
+        # Limit data to the selected calendar year, up to now for the current year
+        year_start = timezone.make_aware(timezone.datetime(year, 1, 1))
+        end = min(end, year_start + relativedelta(years=1))
+        if full_year:
+            # Get data for the whole year
+            start = year_start
+        else:
+            # Get data for the most recent month within the year
+            start = (end - relativedelta(seconds=1)).replace(day=1)
+    elif full_year:
         # Get data from the 1st day of the current month, one year ago, to now
         start = end - relativedelta(years=1, day=1)
     else:

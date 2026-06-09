@@ -343,7 +343,7 @@ h4.superuser {
   width: 100%;
 }
 
-#contributions h3 {
+#contributions .header h3 {
   float: left;
   line-height: 32px;
 }
@@ -363,9 +363,56 @@ h4.superuser {
   stroke: var(--white-1);
 }
 
+#contributions .graph-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+#contributions .graph-main {
+  flex: 1;
+  min-width: 0;
+}
+
+#contributions .year-selector {
+  flex: 0 0 auto;
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  width: 65px;
+}
+
+#contributions .year-selector .year {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--light-grey-7);
+  cursor: pointer;
+  display: block;
+  font-size: 12px;
+  margin-bottom: 2px;
+  padding: 4px 8px;
+  text-align: left;
+  white-space: nowrap;
+  width: 100%;
+}
+
+#contributions .year-selector .year:hover {
+  background: var(--dark-grey-1);
+  color: var(--white-1);
+}
+
+#contributions .year-selector .year.active {
+  background: var(--status-translated);
+  color: var(--white-1);
+}
+
 svg.js-calendar-graph-svg {
   fill: var(--light-grey-7);
   font-weight: 100;
+  width: 100%;
+  height: auto;
+  max-width: 702px;
 }
 
 .svg-tip {
