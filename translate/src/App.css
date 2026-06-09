@@ -202,7 +202,7 @@
 
   #app > .main-content .third-column .react-tabs span.count:has(.preferred),
   #app > .main-content .third-column .react-tabs span.count:has(.pinned) {
-    background: var(--status-translated-alt);
-    color: var(--status-translated-alt); /* used as box-shadow color */
+    background: var(--status-translated);
+    color: var(--status-translated); /* used as box-shadow color */
   }
 }

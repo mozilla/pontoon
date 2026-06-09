@@ -180,6 +180,7 @@
 
           .button.edit:hover {
             background: var(--status-translated);
+            color: var(--translation-main-button-color);
           }
 
           .button.save {
@@ -188,6 +189,7 @@
 
           .button.save:hover {
             background: var(--status-translated);
+            color: var(--translation-main-button-color);
           }
 
           .button.delete {
@@ -196,6 +198,7 @@
 
           .button.delete:hover {
             background: var(--status-error);
+            color: var(--translation-main-button-color);
           }
 
           .button.are-you-sure {

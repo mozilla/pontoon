@@ -63,7 +63,7 @@ h2 {
 }
 
 .username {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
   line-height: 1.4em;
   font-size: 20px;
   font-weight: 300;
@@ -106,7 +106,7 @@ h2 {
 }
 
 .item-with-icon .stress {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 .account-status-heading {
@@ -212,7 +212,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li .icon {
-  background-color: var(--black-3);
+  background-color: var(--chart-neutral);
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
@@ -221,7 +221,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li .label {
-  color: var(--grey-3);
+  color: var(--chart-label-muted);
   cursor: pointer;
   font-weight: bold;
   vertical-align: text-top;
@@ -271,7 +271,7 @@ h4.superuser {
 }
 
 #stats > div.translated span {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 #stats > div.unreviewed span {
@@ -537,7 +537,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li a .stress {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 #timeline .localizations li a .contribution-count {

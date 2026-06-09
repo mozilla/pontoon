@@ -15,6 +15,7 @@
 .addon-promotion .container {
   align-items: center;
   background: var(--status-error);
+  color: var(--on-status-error-color);
   display: flex;
   height: 100%;
   padding: 0 10px;
@@ -23,7 +24,7 @@
 .addon-promotion .dismiss {
   background: transparent;
   border: none;
-  color: var(--white-1);
+  color: var(--on-status-error-color);
   font-size: 28px;
   padding: 0;
 }

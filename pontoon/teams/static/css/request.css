@@ -89,6 +89,7 @@
   background: var(--status-translated);
   border: none;
   border-radius: 3px;
+  color: var(--translation-main-button-color);
   margin-top: 15px;
   padding: 10px;
   text-transform: uppercase;

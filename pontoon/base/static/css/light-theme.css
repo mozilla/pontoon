@@ -1,15 +1,18 @@
 /* Light Theme Variables */
 .light-theme {
   /* Main */
-  --main-border-1: #d8d8d8;
+  --main-border-1: #c4c4c4;
+  /* Form controls */
+  --control-border: #8c8c8c;
+  --focus-ring: #1f86b8;
   --moz-logo: url(../img/moz-logo.svg);
 
   /* User banner and details */
-  --user-admin: #ff3366;
-  --user-pm: #ffa10f;
-  --user-manager: #4fc4f6;
-  --user-translator: #7bc876;
-  --user-new: #fed271;
+  --user-admin: var(--status-error);
+  --user-pm: var(--status-warning);
+  --user-manager: var(--status-unreviewed);
+  --user-translator: var(--status-translated);
+  --user-new: var(--status-fuzzy);
 
   /* Primary (darker) background */
   --background-1: #f6f6f6;
@@ -19,8 +22,8 @@
   --input-background-1: #ffffff;
   --input-color-1: #2a2a2a;
   --input-color-2: #000000;
-  --toggle-color-1: #999999;
-  --toggle-color-2: #d0d0d0;
+  --toggle-color-1: #6a6a6a;
+  --toggle-color-2: #bcbcbc;
   --icon-background-1: #d0d0d0;
   --icon-border-1: #bbbbbb;
 
@@ -35,31 +38,34 @@
   --tooltip-background: #000000dd;
   --tooltip-color: #ffffff;
   --tooltip-color-2: #aaaaaa;
-  --tooltip-border: #4d5967;
+  --tooltip-surface-background: #d8dbdf;
+  --tooltip-surface-color: #2b2b2b;
+  --tooltip-surface-color-2: #565656;
+  --tooltip-border: #bbc1c8;
 
   /* Homepage */
   --homepage-background-image: url(../img/background-light.svg);
   --homepage-tour-button-background: #ffffff;
   --homepage-tour-button-color: #000000;
 
-  /* Translation status */
-  --status-translated: #7bc876;
-  --status-translated-alt: #49a643;
-  --status-pretranslated: #c0ff00;
-  --status-pretranslated-alt: #80a900;
-  --status-warning: #ffa10f;
-  --status-error: #ff3366;
-  --status-missing: #bec7d1;
-  --status-missing-alt: #5f7285;
-  --status-unreviewed: #4fc4f6;
-  --status-fuzzy: #fed271;
+  /* Translation status colors shared by fills, text, and icons */
+  --status-translated: #2f7a3b;
+  --status-pretranslated: #5b7a00;
+  --status-warning: #995f08;
+  --status-error: #d8143a;
+  --status-missing: #5f7285;
+  --status-unreviewed: #14749b;
+  --status-fuzzy: #846619;
 
   /* Translation workspace */
   --translation-background: #f6f6f6;
   --translation-border: #bbbbbb;
   --translation-color: #2a2a2a;
-  --translation-secondary-color: #707070;
-  --translation-main-button-color: #2a2a2a;
+  --translation-secondary-color: #686868;
+  /* Main action buttons use status colors as backgrounds */
+  --translation-main-button-color: #ffffff;
+  /* Text on error-colored banners and badges */
+  --on-status-error-color: #ffffff;
   --translation-subtitle-color: #555555;
   --editor-background: #ffffff;
   --editor-color: #2a2a2a;
@@ -77,14 +83,14 @@
   --diff-del-color: #c61b3e;
   --diff-ins-background: #e5feeb;
   --diff-ins-color: #2c7022;
-  --search-color: #c98712;
+  --search-color: #8a5a00;
   --search-background: #fff4e2;
   --tags-brace-color: #6a1bcc;
   --tags-bracket-color: #2c7560;
   --tags-keyword-color: #6a1bcc;
   --tags-literal-color: #2c7560;
   --tags-name-color: #6a1bcc;
-  --tags-quote-color: #b66800;
+  --tags-quote-color: #9c5700;
   --tags-tag-name-color: #2c7560;
   --tags-string-color: #2a2a2a;
 
@@ -108,6 +114,10 @@
   --lilac: #c6c1f0;
   --grey-5: #385465;
 
+  /* Insights and profile charts */
+  --chart-neutral: #5f6772;
+  --chart-label-muted: #767676;
+
   /* Contribution graph (empty → most active) */
   --contribution-graph-0: #ebedf0;
   --contribution-graph-1: #aadfa3;
@@ -127,13 +137,30 @@
   --purple: #8074a8;
   --green-brown: #7c7270;
 
-  --white-1: #2a2a2a;
+  --white-1: #3a3a3a;
   --light-grey-6: #555555;
-  --light-grey-7: #707070;
-  --light-grey-2: #777777;
+  --light-grey-7: #5c5c5c;
+  --light-grey-2: #6e6e6e;
   --light-grey-1: #bbbbbb;
   --grey-3: #e8e8e8;
   --dark-grey-2: #e8e8e8;
   --dark-grey-1: #ffffff;
   --black-3: #f6f6f6;
+}
+
+/* Separate light tooltips from the page */
+.light-theme .table .latest-activity .tooltip {
+  border: 1px solid var(--tooltip-border);
+  box-shadow: 0 4px 12px -4px #00000040;
+}
+
+/* Show a high-contrast outline for keyboard-style focus in both themes.
+   Lives here because the translate bundle only loads the theme stylesheets. */
+:is(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+.light-theme .failed-checks .warning:before {
+  color: var(--status-warning);
 }

@@ -164,6 +164,7 @@
 
 #permissions-form h3 .remove-project:hover {
   background: var(--status-error);
+  color: var(--translation-main-button-color);
 }
 
 #permissions-form h3 .remove-project .fas {

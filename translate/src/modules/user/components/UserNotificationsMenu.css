@@ -88,6 +88,7 @@
 }
 
 .user-notifications-menu .menu .see-all {
+  background: var(--tooltip-surface-background);
   border-top: 1px solid var(--main-border-1);
 }
 
