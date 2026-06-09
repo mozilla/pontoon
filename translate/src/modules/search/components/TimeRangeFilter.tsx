@@ -8,7 +8,7 @@ import highchartsStock from 'highcharts/modules/stock';
 import HighchartsReact from 'highcharts-react-official';
 
 import type { TimeRangeType } from '..';
-import { CHART_OPTIONS } from './chart-options';
+import { getChartOptions } from './chart-options';
 
 import './TimeRangeFilter.css';
 import classNames from 'classnames';
@@ -59,7 +59,7 @@ export function TimeRangeFilter({
         setExtremes: ((arg0: { min: number; max: number }) => void) | null;
       };
     }[];
-  }>(CHART_OPTIONS);
+  }>(getChartOptions);
   const [inputFrom, setInputFrom] = useState('');
   const [inputTo, setInputTo] = useState('');
   const [visible, setVisible] = useState(false);
@@ -82,6 +82,23 @@ export function TimeRangeFilter({
       setInputFrom(getTimeForInput(chartFrom));
       setInputTo(getTimeForInput(chartTo));
     };
+  }, []);
+
+  useEffect(() => {
+    // The chart embeds theme CSS variables into its canvas, so rebuild the
+    // options (re-reading the current theme's colors) whenever the theme
+    // changes, preserving the loaded data and the setExtremes handler.
+    function updateChartTheme() {
+      setChartOptions((prev) => {
+        const next = getChartOptions();
+        next.series[0].data = prev.series[0]?.data ?? [];
+        next.xAxis[0].events.setExtremes = prev.xAxis[0].events.setExtremes;
+        return next;
+      });
+    }
+
+    document.addEventListener('themechange', updateChartTheme);
+    return () => document.removeEventListener('themechange', updateChartTheme);
   }, []);
 
   useEffect(() => {

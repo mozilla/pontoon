@@ -1,7 +1,10 @@
 /* Light Theme Variables */
 .light-theme {
   /* Main */
-  --main-border-1: #d8d8d8;
+  --main-border-1: #c4c4c4;
+  /* Form-control border & keyboard focus ring (a11y: >=3:1) */
+  --control-border: #8c8c8c;
+  --focus-ring: #1f86b8;
   --moz-logo: url(../img/moz-logo.svg);
 
   /* User banner and details */
@@ -19,8 +22,8 @@
   --input-background-1: #ffffff;
   --input-color-1: #2a2a2a;
   --input-color-2: #000000;
-  --toggle-color-1: #999999;
-  --toggle-color-2: #d0d0d0;
+  --toggle-color-1: #757575;
+  --toggle-color-2: #bcbcbc;
   --icon-background-1: #d0d0d0;
   --icon-border-1: #bbbbbb;
 
@@ -35,24 +38,32 @@
   --tooltip-background: #000000dd;
   --tooltip-color: #ffffff;
   --tooltip-color-2: #aaaaaa;
-  --tooltip-border: #4d5967;
+  --tooltip-surface-background: #d8dbdf;
+  --tooltip-surface-color: #2b2b2b;
+  --tooltip-surface-color-2: #565656;
+  --tooltip-border: #bbc1c8;
 
   /* Homepage */
   --homepage-background-image: url(../img/background-light.svg);
   --homepage-tour-button-background: #ffffff;
   --homepage-tour-button-color: #000000;
 
-  /* Translation status */
+  /* Translation status. The bright values fill progress bars/buttons/charts;
+     the darker -alt values are used for text and small icons (a11y: >=3:1). */
   --status-translated: #7bc876;
-  --status-translated-alt: #49a643;
+  --status-translated-alt: #2f7a3b;
   --status-pretranslated: #c0ff00;
-  --status-pretranslated-alt: #80a900;
+  --status-pretranslated-alt: #5f7d00;
   --status-warning: #ffa10f;
+  --status-warning-alt: #b3700a;
   --status-error: #ff3366;
+  --status-error-alt: #d8143a;
   --status-missing: #bec7d1;
   --status-missing-alt: #5f7285;
   --status-unreviewed: #4fc4f6;
+  --status-unreviewed-alt: #2487b3;
   --status-fuzzy: #fed271;
+  --status-fuzzy-alt: #9c7a1f;
 
   /* Translation workspace */
   --translation-background: #f6f6f6;
@@ -108,6 +119,10 @@
   --lilac: #c6c1f0;
   --grey-5: #385465;
 
+  /* Insights & profile charts: neutral "new items" series + muted labels */
+  --chart-neutral: #5f6772;
+  --chart-label-muted: #767676;
+
   /* Contribution graph (empty → most active) */
   --contribution-graph-0: #ebedf0;
   --contribution-graph-1: #aadfa3;
@@ -136,4 +151,22 @@
   --dark-grey-2: #e8e8e8;
   --dark-grey-1: #ffffff;
   --black-3: #f6f6f6;
+}
+
+/* Light theme uses a light-gray tooltip, so add separation from the page */
+.light-theme .table .latest-activity .tooltip {
+  border: 1px solid var(--tooltip-border);
+  box-shadow: 0 4px 12px -4px #00000040;
+}
+
+/* Light theme: visible keyboard-focus ring on interactive controls
+   (WCAG 2.4.7 focus visible, 1.4.11 >=3:1). Only on :focus-visible, so it
+   appears for keyboard navigation and not on mouse clicks. */
+.light-theme :is(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+.light-theme .failed-checks .warning:before {
+  color: var(--status-warning-alt);
 }

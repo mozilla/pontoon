@@ -212,7 +212,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li .icon {
-  background-color: var(--black-3);
+  background-color: var(--chart-neutral);
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
@@ -221,7 +221,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li .label {
-  color: var(--grey-3);
+  color: var(--chart-label-muted);
   cursor: pointer;
   font-weight: bold;
   vertical-align: text-top;

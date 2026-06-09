@@ -30,7 +30,7 @@
 }
 
 .failed-checks .title {
-  color: var(--status-error);
+  color: var(--status-error-alt);
   font-size: 14px;
   font-weight: 300;
   padding-bottom: 5px;

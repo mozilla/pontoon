@@ -128,7 +128,7 @@ table.table.project-list.hidden {
 }
 
 .table a:hover {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 /* Selector must also match heading-info */
@@ -182,10 +182,10 @@ table.table.project-list.hidden {
 
 .table .latest-activity .tooltip {
   display: block;
-  background: var(--tooltip-background);
+  background: var(--tooltip-surface-background);
   border-radius: 10px;
   bottom: 30px;
-  color: var(--tooltip-color);
+  color: var(--tooltip-surface-color);
   left: -100px;
   padding: 10px;
   position: absolute;
@@ -198,7 +198,8 @@ table.table.project-list.hidden {
   content: '';
   position: absolute;
   border: 10px solid;
-  border-color: var(--tooltip-background) transparent transparent transparent;
+  border-color: var(--tooltip-surface-background) transparent transparent
+    transparent;
   bottom: -20px;
   left: 160px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
   clip: rect(0 20px 10px 0);
@@ -207,7 +208,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip .quote {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   font-size: 30px;
 }
 
@@ -218,7 +219,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer {
-  color: var(--tooltip-color-2);
+  color: var(--tooltip-surface-color-2);
   font-style: italic;
   height: 48px;
   margin-top: 10px;
@@ -245,7 +246,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer .translation-action a {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .table .latest-activity .tooltip footer img {

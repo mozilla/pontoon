@@ -28,5 +28,11 @@ export function useTheme() {
     }
     document.body.classList.remove('dark-theme', 'light-theme', 'system-theme');
     document.body.classList.add(`${newTheme}-theme`);
+
+    // Notify theme-dependent UI (e.g. the time-range chart, which embeds CSS
+    // variables into a canvas) to re-read colors without a page reload.
+    document.dispatchEvent(
+      new CustomEvent('themechange', { detail: { theme: newTheme } }),
+    );
   };
 }
