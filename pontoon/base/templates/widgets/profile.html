@@ -3,7 +3,7 @@
     {% if user.is_authenticated %}
       <img
         class="rounded"
-        src="{{ user.gravatar_url(88) }}"
+        src="{{ user.avatar_url(88) }}"
         width="44"
         height="44"
       />
@@ -21,7 +21,7 @@
       >
         <img
           class="rounded"
-          src="{{ user.gravatar_url(176) }}"
+          src="{{ user.avatar_url(176) }}"
           width="88"
           height="88"
         />

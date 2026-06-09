@@ -22,7 +22,7 @@ def user_profile_url(self):
     )
 
 
-def user_gravatar_url(self, size):
+def user_avatar_url(self, size):
     fxa_account = self.socialaccount_set.filter(provider="fxa").first()
     if fxa_account:
         fxa_avatar = fxa_account.extra_data.get("avatar")
@@ -46,8 +46,8 @@ def user_gravatar_url(self, size):
 
 
 @property
-def user_gravatar_url_small(self):
-    return user_gravatar_url(self, 88)
+def user_avatar_url_small(self):
+    return user_avatar_url(self, 88)
 
 
 @property
@@ -518,7 +518,7 @@ def user_serialize(self):
     """Serialize Project contact"""
 
     return {
-        "avatar": self.gravatar_url_small,
+        "avatar": self.avatar_url_small,
         "name": self.name_or_email,
         "url": self.profile_url,
     }
@@ -539,8 +539,8 @@ def latest_action(self):
 
 
 User.add_to_class("profile_url", user_profile_url)
-User.add_to_class("gravatar_url", user_gravatar_url)
-User.add_to_class("gravatar_url_small", user_gravatar_url_small)
+User.add_to_class("avatar_url", user_avatar_url)
+User.add_to_class("avatar_url_small", user_avatar_url_small)
 User.add_to_class("name_or_email", user_name_or_email)
 User.add_to_class("contact_email", user_contact_email)
 User.add_to_class("display_name", user_display_name)

@@ -90,7 +90,7 @@ class TranslationQuerySet(models.QuerySet["Translation"]):
                 "email": user.email,
                 "display_name": user.name_or_email,
                 "id": user.id,
-                "gravatar_url": user.gravatar_url(88),
+                "gravatar_url": user.avatar_url(88),
                 "translation_count": user.translations_count,
                 "role": user.user_role,
             }

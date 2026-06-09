@@ -474,7 +474,7 @@ def get_translation_history(request):
                 "user": u.name_or_email,
                 "uid": u.id,
                 "username": u.username,
-                "user_gravatar_url_small": u.gravatar_url(88),
+                "user_gravatar_url_small": u.avatar_url(88),
                 "user_banner": u.banner(locale, project_contact),
                 "date": t.date,
                 "approved_user": User.display_name_or_blank(t.approved_user),
@@ -834,7 +834,7 @@ def get_users(request):
     for u in users:
         payload.append(
             {
-                "gravatar": u.gravatar_url(44),
+                "gravatar": u.avatar_url(44),
                 "name": u.name_or_email,
                 "url": u.profile_url,
                 "username": u.profile.username,
@@ -1051,8 +1051,8 @@ def user_data(request):
             "tour_status": user.profile.tour_status,
             "has_dismissed_addon_promotion": user.profile.has_dismissed_addon_promotion,
             "logout_url": logout_url,
-            "gravatar_url_small": user.gravatar_url(88),
-            "gravatar_url_big": user.gravatar_url(176),
+            "gravatar_url_small": user.avatar_url(88),
+            "gravatar_url_big": user.avatar_url(176),
             "notifications": user.serialized_notifications,
             "theme": user.profile.theme,
         }

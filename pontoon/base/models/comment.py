@@ -32,7 +32,7 @@ class Comment(models.Model):
             "author": self.author.name_or_email,
             "username": self.author.username,
             "user_banner": self.author.banner(locale, project_contact),
-            "user_gravatar_url_small": self.author.gravatar_url(88),
+            "user_gravatar_url_small": self.author.avatar_url(88),
             "created_at": self.timestamp.strftime("%b %d, %Y %H:%M"),
             "date_iso": self.timestamp.isoformat(),
             "content": self.content,
