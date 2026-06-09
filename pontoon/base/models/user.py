@@ -27,7 +27,16 @@ if TYPE_CHECKING:
     from pontoon.base.models.user_banlog import UserBanLog
 
     class User(AuthUser):
-        """A Pontoon user"""
+        """
+        A Pontoon user.
+
+        We attach some properties and methods on the base User model, using `Model.addtoClass()`.
+        This monkeypatching is partly due to historical reasons,
+        and partly to ensure that the values are available during template formatting.
+
+        You probably should not add more monkeypatching here,
+        unless you can come up with a really good excuse.
+        """
 
         name_or_email: str
         contact_email: str
