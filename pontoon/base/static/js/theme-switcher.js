@@ -18,6 +18,11 @@ $(function () {
     $('body')
       .removeClass('dark-theme light-theme system-theme')
       .addClass(`${newTheme}-theme`);
+
+    // Let theme-dependent UI (e.g. contribution chart) update
+    document.dispatchEvent(
+      new CustomEvent('themechange', { detail: { theme: newTheme } }),
+    );
   }
 
   /*

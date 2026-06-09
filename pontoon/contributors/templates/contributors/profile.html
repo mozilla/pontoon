@@ -442,15 +442,31 @@
               </div>
             </div>
           </div>
-          <div
-            id="contribution-graph"
-            data-contributions="{{ contribution_graph.contributions }}"
-          ></div>
-          <div class="svg-tip"></div>
+          <div class="graph-wrapper">
+            <div class="graph-main">
+              <div
+                id="contribution-graph"
+                data-contributions="{{ contribution_graph.contributions }}"
+                data-year=""
+              ></div>
+              <div class="svg-tip"></div>
+              <section id="timeline">{{ Timeline }}</section>
+              <button id="show-more" class="button">Show more activity</button>
+            </div>
+            <ul class="year-selector">
+              <li>
+                <button class="year active" data-year="">Last year</button>
+              </li>
+              {% for year in contribution_graph.years %}
+                <li>
+                  <button class="year" data-year="{{ year }}">
+                    {{ year }}
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
         </section>
-
-        <section id="timeline">{{ Timeline }}</section>
-        <button id="show-more" class="button">Show more activity</button>
       </div>
     </div>
   </section>

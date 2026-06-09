@@ -105,6 +105,13 @@
   --lilac: #c6c1f0;
   --grey-5: #385465;
 
+  /* Contribution graph (empty → most active) */
+  --contribution-graph-0: #ebedf0;
+  --contribution-graph-1: #aadfa3;
+  --contribution-graph-2: #6fc36b;
+  --contribution-graph-3: #429e48;
+  --contribution-graph-4: #216e39;
+
   /* Insights Pretranslation Quality Chart */
   --brown-grey: #9c9290;
   --brown-grey-2: #c5bfbe;
