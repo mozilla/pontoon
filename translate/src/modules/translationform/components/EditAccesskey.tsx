@@ -71,7 +71,7 @@ export const EditAccesskey = memo(
       const setValue = useCallback(
         (value: string) => {
           setValue_(value);
-          setResultFromInput();
+          setTimeout(setResultFromInput);
         },
         [index],
       );
@@ -99,7 +99,7 @@ export const EditAccesskey = memo(
           },
           setValue,
         }),
-        [setValue],
+        [setValue, value],
       );
 
       const handleUpdate = (value: string) => {
