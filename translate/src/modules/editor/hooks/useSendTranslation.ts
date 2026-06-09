@@ -20,7 +20,7 @@ import {
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import { serializeEntry, getPlainMessage } from '~/utils/message';
+import { getPlainMessage } from '~/utils/message';
 import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 
 /**
@@ -57,18 +57,17 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
     NProgress.start();
     setEditorBusy(true);
 
-    const translation = serializeEntry(entry);
-    const normalizedTranslation = getPlainMessage(translation, entity.format);
+    const allResources = location.resource == 'all-resources';
     const sources =
-      machinery && machinery.translation === normalizedTranslation
+      machinery?.translation === getPlainMessage(entry, entity.format)
         ? machinery.sources
         : [];
     const content = await createTranslation(
       entity.pk,
-      translation,
+      entry,
       locale.code,
       forceSuggestions,
-      location.resource,
+      allResources,
       ignoreWarnings,
       sources,
     );
