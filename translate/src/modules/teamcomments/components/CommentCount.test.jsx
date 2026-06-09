@@ -1,7 +1,7 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 
 import { CommentCount } from './CommentCount';
+import { render } from '@testing-library/react';
 
 describe('<CommentCount>', () => {
   it('shows the correct number of pinned comments', () => {
@@ -15,31 +15,31 @@ describe('<CommentCount>', () => {
         },
       ],
     };
-    const wrapper = shallow(<CommentCount teamComments={teamComments} />);
+    const { container } = render(<CommentCount teamComments={teamComments} />);
 
     // There are only pinned results.
-    expect(wrapper.find('.count > span')).toHaveLength(1);
+    expect(container.querySelectorAll('.count > span')).toHaveLength(1);
 
     // And there are two of them.
-    expect(wrapper.find('.pinned').text()).toContain('2');
+    expect(container.querySelector('.pinned')).toHaveTextContent('2');
 
-    expect(wrapper.text()).not.toContain('+');
+    expect(container).not.toHaveTextContent('+');
   });
 
   it('shows the correct number of remaining comments', () => {
     const teamComments = {
       comments: [{}, {}, {}],
     };
-    const wrapper = shallow(<CommentCount teamComments={teamComments} />);
+    const { container } = render(<CommentCount teamComments={teamComments} />);
 
     // There are only remaining results.
-    expect(wrapper.find('.count > span')).toHaveLength(1);
-    expect(wrapper.find('.pinned')).toHaveLength(0);
+    expect(container.querySelectorAll('.count > span')).toHaveLength(1);
+    expect(container.querySelector('.pinned')).toBeNull();
 
     // And there are three of them.
-    expect(wrapper.find('.count > span').text()).toContain('3');
+    expect(container.querySelector('.count > span')).toHaveTextContent('3');
 
-    expect(wrapper.text()).not.toContain('+');
+    expect(container).not.toHaveTextContent('+');
   });
 
   it('shows the correct numbers of pinned and remaining comments', () => {
@@ -56,16 +56,17 @@ describe('<CommentCount>', () => {
         {},
       ],
     };
-    const wrapper = shallow(<CommentCount teamComments={teamComments} />);
+    const { container } = render(<CommentCount teamComments={teamComments} />);
 
+    const spans = container.querySelectorAll('.count > span');
     // There are both pinned and remaining, and the '+' sign.
-    expect(wrapper.find('.count > span')).toHaveLength(3);
+    expect(spans).toHaveLength(3);
 
     // And each count is correct.
-    expect(wrapper.find('.pinned').text()).toContain('2');
-    expect(wrapper.find('.count > span').last().text()).toContain('3');
+    expect(container.querySelector('.pinned')).toHaveTextContent('2');
+    expect(spans[spans.length - 1]).toHaveTextContent('3');
 
     // And the final display is correct as well.
-    expect(wrapper.text()).toEqual('2+3');
+    expect(container).toHaveTextContent('2+3');
   });
 });

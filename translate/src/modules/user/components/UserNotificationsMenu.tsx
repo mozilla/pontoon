@@ -98,7 +98,7 @@ export function UserNotificationsMenu({
 
   return user?.isAuthenticated ? (
     <div className='user-notifications-menu'>
-      <div className='selector' onClick={handleClick}>
+      <div className='selector' role='button' onClick={handleClick}>
         <i className='icon far fa-bell fa-fw'></i>
         {unread && <i className='badge'>{user.notifications.unread_count}</i>}
       </div>

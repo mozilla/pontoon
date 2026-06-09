@@ -439,12 +439,18 @@ export function FiltersPanel({
 
   return (
     <div className='filters-panel'>
-      <div
-        className={`visibility-switch ${filterIcon}`}
-        onClick={toggleVisible}
+      <Localized
+        id='search-FiltersPanel--toggle-filters-panel'
+        attrs={{ 'aria-label': true }}
       >
-        <span className='status fas'></span>
-      </div>
+        <div
+          className={`visibility-switch ${filterIcon}`}
+          role='button'
+          onClick={toggleVisible}
+        >
+          <span className='status fas'></span>
+        </div>
+      </Localized>
       {visible ? (
         <FiltersPanelDialog
           authorsData={authorsData}
