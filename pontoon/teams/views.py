@@ -46,6 +46,12 @@ from pontoon.base.models import (
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.translation import Translation
 from pontoon.base.services import get_locale_or_redirect
+from pontoon.base.user_utils import (
+    can_translate_locales,
+    profile_url,
+    user_locale_role,
+    user_role,
+)
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
@@ -168,10 +174,9 @@ def ajax_projects(request, locale):
             .order_by()
             .values_list("project_id", flat=True)
         )
-        pretranslation_request_enabled = (
-            len(pretranslated_project_ids) < len(enabled_projects)
-            and request.user.can_translate_locales.filter(id=locale.id).exists()
-        )
+        pretranslation_request_enabled = len(pretranslated_project_ids) < len(
+            enabled_projects
+        ) and locale.code in can_translate_locales(request.user)
     else:
         pretranslated_project_ids = set()
         pretranslation_request_enabled = False
@@ -628,8 +633,8 @@ def request_item(request, locale=None):
             "code": locale.code,
             "projects": projects,
             "user": user.display_name_and_email,
-            "user_role": user.locale_role(locale),
-            "user_url": request.build_absolute_uri(user.profile_url),
+            "user_role": user_locale_role(user, locale),
+            "user_url": request.build_absolute_uri(profile_url(user)),
         }
 
     # Request new teams to be enabled
@@ -651,8 +656,8 @@ def request_item(request, locale=None):
             "locale": name,
             "code": code,
             "user": user.display_name_and_email,
-            "user_role": user.role(),
-            "user_url": request.build_absolute_uri(user.profile_url),
+            "user_role": user_role(user),
+            "user_url": request.build_absolute_uri(profile_url(user)),
         }
 
     if settings.PROJECT_MANAGERS[0] != "":
@@ -715,8 +720,8 @@ def request_pretranslation(request, locale):
         "locale": locale,
         "projects": projects,
         "user": user.display_name_and_email,
-        "user_role": user.locale_role(locale),
-        "user_url": request.build_absolute_uri(user.profile_url),
+        "user_role": user_locale_role(user, locale),
+        "user_url": request.build_absolute_uri(profile_url(user)),
     }
 
     if settings.PROJECT_MANAGERS[0] != "":

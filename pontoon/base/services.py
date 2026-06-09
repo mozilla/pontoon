@@ -84,7 +84,7 @@ def get_locale_or_redirect(code, redirect_view_name=None, url_arg_name=None, **k
     raise Http404
 
 
-def anonymize_user(user):
+def anonymize_user(user: User):
     random_hash = uuid.uuid4().hex
     new_user = User.objects.create_user(
         username="deleted-user-" + random_hash,

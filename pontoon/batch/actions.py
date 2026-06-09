@@ -1,6 +1,7 @@
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.models import (
     Translation,
     TranslationMemoryEntry,
@@ -70,7 +71,7 @@ def approve_translations(form, user, translations, locale):
         locale,
     )
 
-    before_level = user.badges_review_level
+    before_level = badges_review_level(user)
 
     # Log approving actions
     actions_to_log = [
@@ -84,7 +85,7 @@ def approve_translations(form, user, translations, locale):
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Send Review Master Badge notification information
-    after_level = user.badges_review_level
+    after_level = badges_review_level(user)
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
@@ -136,7 +137,7 @@ def reject_translations(form, user, translations, locale):
     )
     TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
 
-    before_level = user.badges_review_level
+    before_level = badges_review_level(user)
 
     # Log rejecting actions
     actions_to_log = [
@@ -150,7 +151,7 @@ def reject_translations(form, user, translations, locale):
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Send Review Master Badge notification information
-    after_level = user.badges_review_level
+    after_level = badges_review_level(user)
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
@@ -239,7 +240,7 @@ def replace_translations(form, user, translations, locale):
         translations_to_create,
     )
 
-    before_level = user.badges_translation_level
+    before_level = badges_translation_level(user)
 
     # Log creating actions
     actions_to_log = [
@@ -253,7 +254,7 @@ def replace_translations(form, user, translations, locale):
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Send Translation Champion Badge notification information
-    after_level = user.badges_translation_level
+    after_level = badges_translation_level(user)
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level

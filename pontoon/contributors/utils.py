@@ -1,6 +1,7 @@
 import datetime
 
 from collections import defaultdict
+from typing import Literal, cast
 from urllib.parse import urlencode
 
 import jwt
@@ -8,7 +9,6 @@ import jwt
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db.models import (
     Count,
     F,
@@ -20,13 +20,15 @@ from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
 
-from pontoon.actionlog.models import ActionLog
+from pontoon.actionlog.models import ActionLog, ActionLogQuerySet
 from pontoon.base.models import (
     Locale,
     Translation,
+    User,
     UserBanLog,
 )
 from pontoon.base.templatetags.helpers import intcomma
+from pontoon.base.user_utils import user_locale_role, user_role
 from pontoon.base.utils import convert_to_unix_time
 
 
@@ -101,14 +103,10 @@ def users_with_translations_counts(
         for user in loc.translators_group.fetched_translators:
             translators[user].add(loc.code)
 
-    # Assign properties to user objects.
-    contributors = User.objects.filter(pk__in=user_stats.keys())
-
-    # Exclude deleted users.
-    contributors = contributors.filter(is_active=True)
-
-    # Prefetch user profile.
-    contributors = contributors.prefetch_related("profile")
+    contributors = User.objects.filter(
+        pk__in=user_stats.keys(),
+        is_active=True,
+    ).prefetch_related("profile")
 
     if None in user_stats.keys():
         contributors = list(contributors)
@@ -116,6 +114,7 @@ def users_with_translations_counts(
             User(username="Imported", first_name="Imported", email="imported")
         )
 
+    # Assign properties to user objects.
     for contributor in contributors:
         user = user_stats[contributor.pk]
         contributor.translations_count = user["total"]
@@ -123,10 +122,10 @@ def users_with_translations_counts(
         contributor.translations_rejected_count = user["rejected"]
         contributor.translations_unapproved_count = user["unreviewed"]
 
-        contributor.user_role = contributor.role(managers, translators)
+        contributor.user_role = user_role(contributor, managers, translators)
 
         if locale:
-            contributor.user_locale_role = contributor.locale_role(locale)
+            contributor.user_locale_role = user_locale_role(contributor, locale)
 
     contributors_list = sorted(contributors, key=lambda x: -x.translations_count)
     if limit:
@@ -280,14 +279,17 @@ def get_approvals_charts_data(user):
     }
 
 
-def get_contributions_map(contributor, viewer, contribution_period=None):
+def get_contributions_map(
+    contributor: User, viewer: User, contribution_period: Q | None = None
+):
     """
     Return a map of contribution types and corresponding QuerySets of contributions.
 
     :param django.db.models.Q contribution_period: ActionLog time interval.
     """
 
-    actions = ActionLog.objects.visible_for(viewer)
+    actions_base = cast(ActionLogQuerySet, ActionLog.objects)
+    actions = actions_base.visible_for(viewer)
 
     if contribution_period is not None:
         actions = actions.filter(contribution_period, is_implicit_action=False)
@@ -310,7 +312,7 @@ def get_contributions_map(contributor, viewer, contribution_period=None):
     all_user_contributions = user_translations | user_reviews
 
     # Using the union of all_user_contributions and peer_reviews QuerySets results in poorer performance
-    all_contributions = ActionLog.objects.filter(
+    all_contributions = actions_base.filter(
         pk__in=(
             list(all_user_contributions.values_list("pk", flat=True))
             + list(peer_reviews.values_list("pk", flat=True))
@@ -326,7 +328,12 @@ def get_contributions_map(contributor, viewer, contribution_period=None):
     }
 
 
-def get_contribution_graph_data(contributor, viewer, contribution_type=None, year=None):
+def get_contribution_graph_data(
+    contributor: User,
+    viewer: User,
+    contribution_type: str | None = None,
+    year: int | None = None,
+):
     """
     Get data required to render the Contribution graph on the Profile page.
 
@@ -347,11 +354,11 @@ def get_contribution_graph_data(contributor, viewer, contribution_type=None, yea
 
     contributions_map = get_contributions_map(contributor, viewer, contribution_period)
 
-    if contribution_type not in contributions_map.keys():
+    if contribution_type is None or contribution_type not in contributions_map.keys():
         contribution_type = "all_user_contributions"
 
     contributions_qs = contributions_map[contribution_type]
-    contributions_data = {
+    contributions_data: dict[int, int] = {
         convert_to_unix_time(item["timestamp"]): item["count"]
         for item in (
             contributions_qs.annotate(timestamp=TruncDay("created_at"))
@@ -369,7 +376,7 @@ def get_contribution_graph_data(contributor, viewer, contribution_type=None, yea
     )
 
 
-def get_contribution_years(contributor):
+def get_contribution_years(contributor: User):
     """
     Return the list of calendar years to offer in the contribution graph,
     from the current year back to the year the contributor joined.
@@ -379,7 +386,7 @@ def get_contribution_years(contributor):
     return list(range(current_year, first_year - 1, -1))
 
 
-def get_project_locale_contribution_counts(contributions_qs):
+def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
     counts = {}
 
     for item in (
@@ -406,12 +413,13 @@ def get_project_locale_contribution_counts(contributions_qs):
         key = (item["project_slug"], item["locale_code"])
         count = item["count"]
 
-        if item["action_type"] == "translation:created":
-            action = f"{intcomma(count)} translation{pluralize(count)}"
-        elif item["action_type"] == "translation:approved":
-            action = f"{intcomma(count)} approved"
-        elif item["action_type"] == "translation:rejected":
-            action = f"{intcomma(count)} rejected"
+        match item["action_type"]:
+            case "translation:created":
+                action = f"{intcomma(count)} translation{pluralize(count)}"
+            case "translation:approved":
+                action = f"{intcomma(count)} approved"
+            case "translation:rejected" | _:
+                action = f"{intcomma(count)} rejected"
 
         if month not in counts:
             counts[month] = {}
@@ -473,33 +481,20 @@ def get_contribution_timeline_data(
     contributions_map = get_contributions_map(contributor, viewer, contribution_period)
 
     # Get a list of explicit contribution types
-    default_contribution_types = ["user_translations", "user_reviews"]
-    if contribution_type not in contributions_map.keys():
-        contribution_types = default_contribution_types
-    elif contribution_type == "all_user_contributions":
-        contribution_types = default_contribution_types
-    elif contribution_type == "all_contributions":
-        contribution_types = default_contribution_types + ["peer_reviews"]
-    else:
-        contribution_types = [contribution_type]
+    contribution_types: list[
+        Literal["user_translations", "user_reviews", "peer_reviews"]
+    ]
+    match contribution_type:
+        case "user_translations" | "user_reviews" | "peer_reviews":
+            contribution_types = [contribution_type]
+        case "all_contributions":
+            contribution_types = ["user_translations", "user_reviews", "peer_reviews"]
+        case "all_user_contributions" | _:
+            contribution_types = ["user_translations", "user_reviews"]
 
     start_ = start.strftime("%Y%m%d%H%M")
     end_ = end.strftime("%Y%m%d%H%M")
-    params_map = {
-        "user_translations": {
-            "author": contributor.email,
-            "time": f"{start_}-{end_}",
-        },
-        "user_reviews": {
-            "reviewer": contributor.email,
-            "review_time": f"{start_}-{end_}",
-        },
-        "peer_reviews": {
-            "author": contributor.email,
-            "review_time": f"{start_}-{end_}",
-            "exclude_self_reviewed": "",
-        },
-    }
+    time_str = f"{start_}-{end_}"
 
     contributions = {}
     for contribution_type in contribution_types:
@@ -511,15 +506,29 @@ def get_contribution_timeline_data(
             p_count = len(data)
 
             # Generate title for the localizations belonging to the same contribution type
-            if contribution_type == "user_translations":
-                title = f"Submitted {intcomma(total_count)} translation{pluralize(total_count)} in {intcomma(p_count)} project{pluralize(p_count)}"
-            elif contribution_type == "user_reviews":
-                title = f"Reviewed {intcomma(total_count)} suggestion{pluralize(total_count)} in {intcomma(p_count)} project{pluralize(p_count)}"
-            elif contribution_type == "peer_reviews":
-                title = f"Received review for {intcomma(total_count)} suggestion{pluralize(total_count)} in {intcomma(p_count)} project{pluralize(p_count)}"
+            match contribution_type:
+                case "user_translations":
+                    title = f"Submitted {intcomma(total_count)} translation{pluralize(total_count)}"
+                    url_params = {
+                        "author": contributor.email,
+                        "time": time_str,
+                    }
+                case "user_reviews":
+                    title = f"Reviewed {intcomma(total_count)} suggestion{pluralize(total_count)}"
+                    url_params = {
+                        "reviewer": contributor.email,
+                        "review_time": time_str,
+                    }
+                case "peer_reviews":
+                    title = f"Received review for {intcomma(total_count)} suggestion{pluralize(total_count)}"
+                    url_params = {
+                        "author": contributor.email,
+                        "review_time": time_str,
+                        "exclude_self_reviewed": "",
+                    }
+            title += f" in {intcomma(p_count)} project{pluralize(p_count)}"
 
             # Generate localization URL and add it to the data dict
-            params = params_map[contribution_type]
             for _, val in data.items():
                 url = reverse(
                     "pontoon.translate",
@@ -529,7 +538,7 @@ def get_contribution_timeline_data(
                         "all-resources",
                     ],
                 )
-                val["url"] = f"{url}?{urlencode(params)}"
+                val["url"] = f"{url}?{urlencode(url_params)}"
 
                 if month not in contributions:
                     contributions[month] = {}
