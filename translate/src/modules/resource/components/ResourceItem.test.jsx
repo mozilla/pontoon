@@ -2,8 +2,9 @@ import React from 'react';
 
 import { ResourceItem } from './ResourceItem';
 import { render } from '@testing-library/react';
+import { expect } from 'vitest';
 
-function renderResourceItem({ path = 'path' } = {}) {
+function renderResourceItem({ path = 'path', ...otherResourceProps } = {}) {
   return render(
     <ResourceItem
       location={{
@@ -13,6 +14,7 @@ function renderResourceItem({ path = 'path' } = {}) {
       }}
       resource={{
         path: path,
+        ...otherResourceProps,
       }}
     />,
   );
@@ -20,11 +22,20 @@ function renderResourceItem({ path = 'path' } = {}) {
 
 describe('<ResourceItem>', () => {
   it('renders correctly', () => {
-    const { getByRole, container } = renderResourceItem();
+    const path = 'test-path';
+    const { getByRole, getByText } = renderResourceItem({
+      path,
+      approvedStrings: 2,
+      stringsWithWarnings: 2,
+      totalStrings: 10,
+    });
     getByRole('listitem');
-    expect(getByRole('link')).toHaveAttribute('href', '/locale/project/path/');
-    expect(container.querySelector('span.path')).toBeInTheDocument();
-    expect(container.querySelector('span.percent')).toBeInTheDocument();
+    expect(getByRole('link')).toHaveAttribute(
+      'href',
+      `/locale/project/${path}/`,
+    );
+    expect(getByText(path)).toHaveClass('path');
+    expect(getByText('40%')).toHaveClass('percent');
   });
 
   it('sets the className correctly', () => {

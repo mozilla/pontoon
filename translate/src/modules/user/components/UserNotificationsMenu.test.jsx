@@ -16,7 +16,7 @@ const WrapUserNotificationsMenuDialog = (props) => {
     </MockLocalizationProvider>
   );
 };
-const NoNotificationText = 'No new notifications.';
+const noNotificationText = 'No new notifications.';
 
 describe('<UserNotificationsMenuDialog>', () => {
   it('shows empty notifications menu if user has no notifications', () => {
@@ -28,7 +28,7 @@ describe('<UserNotificationsMenuDialog>', () => {
     expect(
       container.querySelector('.notification-list .user-notification'),
     ).toBeNull();
-    getByText(NoNotificationText);
+    getByText(noNotificationText);
   });
 
   it('shows a notification in the notifications menu', () => {
@@ -56,7 +56,7 @@ describe('<UserNotificationsMenuDialog>', () => {
       <WrapUserNotificationsMenuDialog notifications={notifications} />,
     );
 
-    expect(queryByText(NoNotificationText)).toBeNull();
+    expect(queryByText(noNotificationText)).toBeNull();
     expect(
       container.querySelectorAll('.notification-list .user-notification'),
     ).toHaveLength(1);

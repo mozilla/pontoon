@@ -27,13 +27,13 @@ describe('<UserNotification>', () => {
       ...notificationBase,
       description: { content: 'Unreviewed suggestions: <b id="foo">foo</b>' },
     };
-    const { container } = render(
+    const { getByText } = render(
       <UserNotification notification={notification} />,
     );
 
-    expect(
-      container.querySelector('span.description b#foo'),
-    ).toBeInTheDocument();
+    const element = getByText('foo');
+    expect(element).toHaveAttribute('id', 'foo');
+    expect(element.closest('span.description')).toBeInTheDocument();
   });
 
   it('shows a "has reviewed suggestions" notification', () => {
@@ -42,13 +42,13 @@ describe('<UserNotification>', () => {
       description: { content: 'Reviewed: <b id="bar">bar</b>' },
       verb: 'has reviewed suggestions',
     };
-    const { container } = render(
+    const { getByText } = render(
       <UserNotification notification={notification} />,
     );
 
-    expect(
-      container.querySelector('span.description b#bar'),
-    ).toBeInTheDocument();
+    const element = getByText('bar');
+    expect(element).toHaveAttribute('id', 'bar');
+    expect(element.closest('span.description')).toBeInTheDocument();
   });
 
   it('shows a comment notification', () => {
@@ -59,11 +59,13 @@ describe('<UserNotification>', () => {
         is_comment: true,
       },
     };
-    const { container } = render(
+    const { getByText } = render(
       <UserNotification notification={notification} />,
     );
 
-    expect(container.querySelector('.message.trim b#baz')).toBeInTheDocument();
+    const element = getByText('baz');
+    expect(element).toHaveAttribute('id', 'baz');
+    expect(element.closest('.message.trim')).toBeInTheDocument();
   });
 
   it('shows other notification with description', () => {
@@ -71,11 +73,13 @@ describe('<UserNotification>', () => {
       ...notificationBase,
       description: { content: 'Other: <b id="fuzz">fuzz</b>' },
     };
-    const { container } = render(
+    const { getByText } = render(
       <UserNotification notification={notification} />,
     );
 
-    expect(container.querySelector('.message b#fuzz')).toBeInTheDocument();
+    const element = getByText('fuzz');
+    expect(element).toHaveAttribute('id', 'fuzz');
+    expect(element.closest('.message')).toBeInTheDocument();
   });
 
   it('shows other notification without description', () => {
