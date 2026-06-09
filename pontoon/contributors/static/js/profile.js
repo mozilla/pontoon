@@ -207,24 +207,25 @@ var Pontoon = (function (my) {
 
           const count = contributions[currentDate.getTime()] || 0;
 
-          // Pick color based on count range
-          let color;
+          // Pick color based on count range (empty → most active)
+          let level;
           switch (true) {
             case count === 0:
-              color = style.getPropertyValue('--dark-grey-1');
+              level = 0;
               break;
             case count < 10:
-              color = style.getPropertyValue('--forest-green-1');
+              level = 1;
               break;
             case count < 25:
-              color = style.getPropertyValue('--green');
+              level = 2;
               break;
             case count < 50:
-              color = style.getPropertyValue('--green-2');
+              level = 3;
               break;
             default:
-              color = style.getPropertyValue('--status-translated');
+              level = 4;
           }
+          const color = style.getPropertyValue(`--contribution-graph-${level}`);
 
           const y = currentDate.getDay() * step;
           const date = currentDate.getTime();
@@ -467,6 +468,11 @@ Pontoon.profile.handleContributionTypeSelector();
 Pontoon.profile.handleContributionYearSelector();
 Pontoon.profile.handleContributionGraphClick();
 Pontoon.profile.handleShowMoreClick();
+
+// The graph embeds theme colors into the SVG, so re-render it on theme change
+document.addEventListener('themechange', function () {
+  Pontoon.profile.renderContributionGraph();
+});
 
 // Set up chart group navigation
 $('body').on('click', '#insights .chart-group-navigation li', function () {
