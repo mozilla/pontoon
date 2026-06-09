@@ -23,6 +23,12 @@ def user_profile_url(self):
 
 
 def user_gravatar_url(self, size):
+    fxa_account = self.socialaccount_set.filter(provider="fxa").first()
+    if fxa_account:
+        fxa_avatar = fxa_account.extra_data.get("avatar")
+        if fxa_avatar:
+            return fxa_avatar
+
     email = md5(self.email.lower().encode("utf-8")).hexdigest()
     data = {
         "s": str(size),

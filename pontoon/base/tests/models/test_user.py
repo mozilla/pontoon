@@ -2,6 +2,7 @@ from collections import defaultdict
 
 import pytest
 
+from allauth.socialaccount.models import SocialAccount
 from notifications.models import Notification
 from notifications.signals import notify
 
@@ -199,3 +200,34 @@ def test_serialized_notifications_new_string_without_created_time(user_a, projec
     assert notification["actor"]["url"] == (
         f"/projects/{project_a.slug}/all-resources/?status=missing,pretranslated"
     )
+
+
+@pytest.mark.django_db
+def test_gravatar_url_returns_fxa_avatar_when_linked(user_a):
+    SocialAccount.objects.create(
+        user=user_a,
+        provider="fxa",
+        uid="1234",
+        extra_data={"avatar": "https://profile.accounts.firefox.com/v1/avatar/abc"},
+    )
+    assert (
+        user_a.gravatar_url(88) == "https://profile.accounts.firefox.com/v1/avatar/abc"
+    )
+
+
+@pytest.mark.django_db
+def test_gravatar_url_falls_back_to_gravatar_when_no_fxa(user_a):
+    url = user_a.gravatar_url(88)
+    assert "gravatar.com/avatar/" in url
+
+
+@pytest.mark.django_db
+def test_gravatar_url_falls_back_to_gravatar_when_fxa_has_no_avatar(user_a):
+    SocialAccount.objects.create(
+        user=user_a,
+        provider="fxa",
+        uid="1234",
+        extra_data={},
+    )
+    url = user_a.gravatar_url(88)
+    assert "gravatar.com/avatar/" in url

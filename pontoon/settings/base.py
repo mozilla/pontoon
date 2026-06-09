@@ -1112,7 +1112,7 @@ FXA_CLIENT_ID = os.environ.get("FXA_CLIENT_ID")
 FXA_SECRET_KEY = os.environ.get("FXA_SECRET_KEY")
 FXA_OAUTH_ENDPOINT = os.environ.get("FXA_OAUTH_ENDPOINT", "")
 FXA_PROFILE_ENDPOINT = os.environ.get("FXA_PROFILE_ENDPOINT", "")
-FXA_SCOPE = ["profile:uid", "profile:display_name", "profile:email"]
+FXA_SCOPE = ["profile:uid", "profile:display_name", "profile:email", "profile:avatar"]
 
 # Github
 GITHUB_CLIENT_ID = os.environ.get("GITHUB_CLIENT_ID")
