@@ -38,11 +38,14 @@
 }
 
 .translationform .accesskey-input {
+  background: var(--editor-background);
   border: none;
   box-sizing: border-box;
+  caret-color: var(--editor-color);
+  color: var(--editor-color);
   float: left;
   font-size: 14px;
-  height: 24px;
+  height: 26px;
   margin: 2px 3px 2px 0;
   text-align: center;
   width: 24px;
@@ -64,17 +67,22 @@
   color: var(--white-1);
   cursor: pointer;
   display: inline-block;
-  line-height: 22px;
+  line-height: 24px;
   margin-right: 3px;
   padding: 0;
   text-align: center;
   vertical-align: top;
-  width: 24px;
+  width: 26px;
 }
 
 .translationform .accesskeys .key.active,
 .translationform .accesskeys .key:hover:not(:disabled) {
   border-color: var(--status-translated);
+}
+
+.translationform .accesskeys .key.active {
+  background: var(--status-translated);
+  color: var(--translation-main-button-color);
 }
 
 .translationform .accesskeys .key:disabled {
@@ -96,6 +104,31 @@
   font-family: inherit;
   line-height: 22px;
   padding: 0 8px 0 4px;
+}
+
+.cm-editor .cm-content {
+  caret-color: var(--editor-color);
+}
+
+.cm-editor .cm-cursor,
+.cm-editor .cm-dropCursor {
+  border-left-color: var(--editor-color);
+}
+
+.cm-editor ::selection {
+  background: var(--editor-selection-background);
+}
+
+.cm-editor .cm-selectionBackground,
+.cm-editor.cm-focused
+  > .cm-scroller
+  > .cm-selectionLayer
+  .cm-selectionBackground {
+  background: var(--editor-selection-background);
+}
+
+.cm-editor .cm-placeholder {
+  color: var(--editor-placeholder-color);
 }
 
 .cm-completionIcon {

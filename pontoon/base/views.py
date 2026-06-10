@@ -1075,6 +1075,7 @@ def user_data(request):
             "gravatar_url_big": gravatar_url(user, 176),
             "notifications": serialized_notifications(user),
             "theme": user.profile.theme,
+            "editor_theme": user.profile.editor_theme,
         }
     )
 

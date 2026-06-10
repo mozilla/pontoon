@@ -28,3 +28,11 @@ def theme_class(request):
         theme = request.COOKIES.get("system_theme", "system")
 
     return f"{theme}-theme"
+
+
+@register.filter
+def user_editor_theme(user):
+    """Get user's editor theme or return 'match' if user is not authenticated."""
+    if user.is_authenticated:
+        return user.profile.editor_theme
+    return "match"

@@ -68,6 +68,11 @@ urlpatterns = [
         name="pontoon.contributors.toggle_theme",
     ),
     path(
+        "user/editor-theme/",
+        views.toggle_editor_theme,
+        name="pontoon.contributors.toggle_editor_theme",
+    ),
+    path(
         "user/attributes/field/",
         views.edit_user_profile_fields,
         name="pontoon.contributors.edit_field",

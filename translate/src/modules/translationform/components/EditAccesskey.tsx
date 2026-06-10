@@ -11,6 +11,7 @@ import React, {
 
 import { EditFieldHandle, EditorActions, EditorData } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
+import { ThemeContext } from '~/context/Theme';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { extractAccessKeyCandidates } from '~/utils/message';
@@ -64,8 +65,13 @@ export const EditAccesskey = memo(
       const locale = useContext(Locale);
       const { setResultFromInput } = useContext(EditorActions);
       const { fields } = useContext(EditorData);
+      const { editorTheme } = useContext(ThemeContext);
       const domRef = useRef<HTMLInputElement>(null);
       const readOnly = useReadonlyEditor();
+      const editorThemeClass =
+        editorTheme === 'dark' || editorTheme === 'light'
+          ? `${editorTheme}-theme`
+          : '';
 
       const [value, setValue_] = useState(defaultValue);
       const setValue = useCallback(
@@ -113,7 +119,7 @@ export const EditAccesskey = memo(
         <>
           <input
             ref={domRef}
-            className='accesskey-input'
+            className={`accesskey-input ${editorThemeClass}`.trim()}
             dir={locale.direction}
             lang={locale.code}
             maxLength={1}
