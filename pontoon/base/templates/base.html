@@ -38,6 +38,7 @@
     class="{% block class %}{% endblock %} {{ theme_class(request) }}"
     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
     data-theme="{{ user_theme(request.user) }}"
+    data-editor-theme="{{ user_editor_theme(request.user) }}"
   >
     {% block content %}
       {% include "addon_promotion.html" %}

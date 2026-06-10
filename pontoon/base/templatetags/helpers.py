@@ -77,6 +77,14 @@ def theme_class(request):
 
 
 @library.global_function
+def user_editor_theme(user):
+    """Get user's editor theme or return 'match' if user is not authenticated."""
+    if user.is_authenticated:
+        return user.profile.editor_theme
+    return "match"
+
+
+@library.global_function
 def static(path):
     return staticfiles_storage.url(path)
 

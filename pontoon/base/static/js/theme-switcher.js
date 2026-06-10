@@ -52,16 +52,24 @@ $(function () {
   }
 
   $('.appearance .toggle-button button').click(function (e) {
+    const self = $(this);
+
+    if (self.closest('.editor-theme-field').length) {
+      return;
+    }
+
     e.preventDefault();
     e.stopPropagation();
-
-    const self = $(this);
 
     if (self.is('.active')) {
       return;
     }
 
     const theme = self.val();
+    const mainSelector = self
+      .closest('.appearance')
+      .find('.toggle-button button')
+      .not('.editor-theme-field .toggle-button button');
 
     $.ajax({
       url: '/user/theme/',
@@ -71,10 +79,8 @@ $(function () {
         theme: theme,
       },
       success: function () {
-        $('.appearance .toggle-button button').removeClass('active');
-        $(`.appearance .toggle-button button[value=${theme}]`).addClass(
-          'active',
-        );
+        mainSelector.removeClass('active');
+        mainSelector.filter(`[value=${theme}]`).addClass('active');
         applyTheme(theme);
 
         // Set the data-theme attribute after successfully changing the theme
@@ -85,4 +91,38 @@ $(function () {
       },
     });
   });
+
+  $('.appearance .editor-theme-field .toggle-button button').click(
+    function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const self = $(this);
+
+      if (self.is('.active')) {
+        return;
+      }
+
+      const editorTheme = self.val();
+      const editorSelector =
+        '.appearance .editor-theme-field .toggle-button button';
+
+      $.ajax({
+        url: '/user/editor-theme/',
+        type: 'POST',
+        data: {
+          csrfmiddlewaretoken: $('body').data('csrf'),
+          editor_theme: editorTheme,
+        },
+        success: function () {
+          $(editorSelector).removeClass('active');
+          $(`${editorSelector}[value=${editorTheme}]`).addClass('active');
+          $('body').attr('data-editor-theme', editorTheme);
+        },
+        error: function () {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
+        },
+      });
+    },
+  );
 });

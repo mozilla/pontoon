@@ -1,32 +1,46 @@
-{% macro button(user, long_name=True) %}
-  {% set theme = user.profile.theme %}
+{% macro button(user, editor=False, long_name=True) %}
+  {% set current = user.profile.editor_theme if editor else user.profile.theme %}
   {% set dark = "Dark theme" if long_name else "Dark" %}
   {% set light = "Light theme" if long_name else "Light" %}
-  {% set system = "Match system" if long_name else "System" %}
+  {% if editor %}
+    {% set third_value = "match" %}
+    {% set third_label = "Match main interface" if long_name else "Match" %}
+    {% set third_icon = "fas fa-link" %}
+    {% set third_title = "Use the same theme as the main appearance" %}
+    {% set dark_title = "Use a dark editor" %}
+    {% set light_title = "Use a light editor" %}
+  {% else %}
+    {% set third_value = "system" %}
+    {% set third_label = "Match system" if long_name else "System" %}
+    {% set third_icon = "fas fa-laptop" %}
+    {% set third_title = "Use a theme that matches your system settings" %}
+    {% set dark_title = "Use a dark theme" %}
+    {% set light_title = "Use a light theme" %}
+  {% endif %}
   <span class="toggle-button">
     <button
       type="button"
       value="dark"
-      class="dark {% if user.profile.theme == 'dark' %}active{% endif %}"
-      title="Use a dark theme"
+      class="dark {% if current == 'dark' %}active{% endif %}"
+      title="{{ dark_title }}"
     >
       <i class="icon far fa-moon"></i>{{ dark }}
     </button>
     <button
       type="button"
       value="light"
-      class="light {% if user.profile.theme == 'light' %}active{% endif %}"
-      title="Use a light theme"
+      class="light {% if current == 'light' %}active{% endif %}"
+      title="{{ light_title }}"
     >
       <i class="icon fas fa-sun"></i>{{ light }}
     </button>
     <button
       type="button"
-      value="system"
-      class="system {% if user.profile.theme == 'system' %}active{% endif %}"
-      title="Use a theme that matches your system settings"
+      value="{{ third_value }}"
+      class="{{ third_value }} {% if current == third_value %}active{% endif %}"
+      title="{{ third_title }}"
     >
-      <i class="icon fas fa-laptop"></i>{{ system }}
+      <i class="icon {{ third_icon }}"></i>{{ third_label }}
     </button>
   </span>
 {% endmacro %}

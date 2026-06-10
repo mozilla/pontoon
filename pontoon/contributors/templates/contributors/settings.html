@@ -330,7 +330,14 @@
             settings
           </p>
         </div>
-        {{ ThemeToggle.button(user) }}
+        <div class="field theme-field">
+          <p class="theme-label">Main interface</p>
+          {{ ThemeToggle.button(user) }}
+        </div>
+        <div class="field theme-field editor-theme-field">
+          <p class="theme-label">Editor</p>
+          {{ ThemeToggle.button(user, editor=True) }}
+        </div>
       </section>
 
       <section>
