@@ -498,7 +498,7 @@ the day, every day.
 
 Captures per-locale Contributor Health Score metrics - completion, key-project
 enablement, active managers / translators / contributors & new signups into
-`LocaleChsSnapshot` model. Used by the CHS dashboard for month-over-month
+`LocaleHealthSnapshot` model. Used by the CHS dashboard for month-over-month
 comparisons and by the Insights pages for monthly trend charts. The job is
 designed to run once a month on the first of each month.
 

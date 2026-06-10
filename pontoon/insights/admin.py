@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from pontoon.insights.models import (
-    LocaleChsSnapshot,
+    LocaleHealthSnapshot,
     LocaleInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
 )
@@ -40,7 +40,7 @@ class ProjectLocaleInsightsSnapshotAdmin(admin.ModelAdmin):
     readonly_fields = ("project_locale",)
 
 
-class LocaleChsSnapshotAdmin(admin.ModelAdmin):
+class LocaleHealthSnapshotAdmin(admin.ModelAdmin):
     search_fields = [
         "pk",
         "locale__code",
@@ -55,13 +55,20 @@ class LocaleChsSnapshotAdmin(admin.ModelAdmin):
         "active_managers",
         "active_translators",
         "active_contributors",
-        "active_contributors_200_approved",
+        "all_contributors",
         "new_signups",
-        "chs_score",
+        "completion_score",
+        "key_projects_enabled_score",
+        "active_managers_score",
+        "active_translators_score",
+        "active_contributors_score",
+        "all_contributors_score",
+        "new_signups_score",
+        "chs",
     )
     list_filter = ("created_at",)
 
 
 admin.site.register(LocaleInsightsSnapshot, LocaleInsightsSnapshotAdmin)
 admin.site.register(ProjectLocaleInsightsSnapshot, ProjectLocaleInsightsSnapshotAdmin)
-admin.site.register(LocaleChsSnapshot, LocaleChsSnapshotAdmin)
+admin.site.register(LocaleHealthSnapshot, LocaleHealthSnapshotAdmin)

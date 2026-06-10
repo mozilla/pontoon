@@ -20,7 +20,7 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity, Locale, TranslatedResource, Translation
 from pontoon.insights.chs import build_chs_snapshots
 from pontoon.insights.models import (
-    LocaleChsSnapshot,
+    LocaleHealthSnapshot,
     LocaleInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
 )
@@ -641,7 +641,7 @@ def collect_chs_snapshot(end_date: datetime | None = None):
     # print("chs", compute_chs(args))
 
     snapshots = build_chs_snapshots(end_date)
-    LocaleChsSnapshot.objects.bulk_create(snapshots, ignore_conflicts=True)
+    LocaleHealthSnapshot.objects.bulk_create(snapshots, ignore_conflicts=True)
     log.info(
         f"Collected CHS snapshot for {end_date.date()}: {len(snapshots)} snapshots queued."
     )
