@@ -64,13 +64,21 @@ These are the available data fields:
 
 ### Appearance
 
-The user can chose between a light and dark combination of colors for Pontoon. There are three theme options available:
+The user can choose between a light and dark combination of colors for Pontoon. The appearance can be set separately for the main interface and the editor.
+
+**Main interface** controls the overall appearance of Pontoon. Three options are available:
 
 * Light.
 * Dark.
 * Match system (aligns with the theme used by the operating system).
 
-To change the theme, select the button corresponding to your preferred theme. The change will take effect immediately.
+**Editor** controls the appearance of the translation editor. Three options are available:
+
+* Light.
+* Dark.
+* Match main interface (aligns with the main interface theme).
+
+To change a theme, select the button corresponding to your preferred option. The change will take effect immediately.
 
 ### Editor
 
