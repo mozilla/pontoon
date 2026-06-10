@@ -59,6 +59,9 @@ def is_subscribed_to_notification(user: "User", notification: Notification) -> b
 
 def serialized_notifications(user: "User"):
     """Serialized list of notifications to display in the notifications menu."""
+    # Local import to avoid a circular import (helpers -> simple_preview -> base.models).
+    from pontoon.base.templatetags.helpers import format_datetime
+
     unread_count: int = user_notifications(user).unread().count()
     count: int = settings.NOTIFICATIONS_MAX_COUNT
     notifications = []
@@ -144,7 +147,7 @@ def serialized_notifications(user: "User"):
                     "is_comment": is_comment,
                 },
                 "verb": notification.verb,
-                "date": notification.timestamp.strftime("%b %d, %Y %H:%M"),
+                "date": format_datetime(notification.timestamp, "full"),
                 "date_iso": notification.timestamp.isoformat(),
                 "actor": actor,
                 "target": target,
