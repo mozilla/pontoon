@@ -218,7 +218,27 @@ form a:visited {
 }
 
 #main .appearance .field .help {
-  margin: 0 0 -12px;
+  margin: 0 0 20px;
+}
+
+#main .appearance .theme-field {
+  margin-bottom: 18px;
+}
+
+#main .appearance .theme-field:last-child {
+  margin-bottom: 0;
+}
+
+#main .appearance .theme-field .theme-label {
+  color: var(--light-grey-2);
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 400;
+  margin: 0 0 8px;
+}
+
+#main .appearance .toggle-button {
+  display: inline-flex;
 }
 
 #main .appearance .toggle-button button {
@@ -231,6 +251,11 @@ form a:visited {
 
 #main .appearance .toggle-button button:nth-child(2) {
   border-radius: 0;
+  margin-right: -1px;
+}
+
+#main .appearance .toggle-button button:last-child {
+  border-left: 1px solid var(--main-border-1);
 }
 
 #main .appearance .toggle-button button .icon {

@@ -3,11 +3,15 @@ import { useTheme } from '~/hooks/useTheme';
 
 export const ThemeContext = createContext({
   theme: 'dark',
+  editorTheme: 'match',
 });
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
   const [theme] = useState(
     () => document.body.getAttribute('data-theme') || 'system',
+  );
+  const [editorTheme] = useState(
+    () => document.body.getAttribute('data-editor-theme') || 'match',
   );
 
   const applyTheme = useTheme();
@@ -35,6 +39,8 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
   }, [theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={{ theme, editorTheme }}>
+      {children}
+    </ThemeContext.Provider>
   );
 }

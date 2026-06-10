@@ -34,6 +34,7 @@
 <body
   class="{% block class %}{% endblock %} {{ theme_class(request) }}"
   data-theme="{{ user_theme(request.user) }}"
+  data-editor-theme="{{ user_editor_theme(request.user) }}"
 >
   <noscript> You need to enable JavaScript to run this app. </noscript>
   <div
