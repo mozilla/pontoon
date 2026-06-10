@@ -7,8 +7,9 @@ from django.db.models import Count, F, Q, Sum
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Locale, TranslatedResource, Translation
+from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
-from pontoon.insights.models import LocaleChsSnapshot
+from pontoon.insights.models import LocaleHealthSnapshot
 from pontoon.settings.base import (
     ACTIVE_CONTRIBUTOR_POINTS,
     ACTIVE_CONTRIBUTOR_STRING_THRESHOLD,
@@ -39,9 +40,12 @@ KEY_PROJECT_SLUGS = [
 def get_completion_by_locale(locales) -> dict[int, float]:
     """Locale-level completion %: (approved + warnings) / total * 100."""
 
+    projects = Project.objects.filter(slug__in=KEY_PROJECT_SLUGS)
+
     locale_groupings = (
         TranslatedResource.objects.filter(
             locale__in=locales,
+            resource__project__in=projects,
             resource__project__disabled=False,
             resource__project__system_project=False,
             resource__project__visibility="public",
@@ -148,7 +152,7 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
             "active_managers": 0,
             "active_translators": 0,
             "active_contributors": 0,
-            "active_contributors_200_approved": 0,
+            "all_contributors": 0,
             "new_signups": 0,
         }
         for locale in locales
@@ -181,10 +185,10 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
         else:
             if is_superuser:
                 continue
-            if total > ALL_CONTRIBUTOR_STRING_THRESHOLD:
-                locale_contributors[locale_id]["active_contributors"] += 1
             if approved > ACTIVE_CONTRIBUTOR_STRING_THRESHOLD:
-                locale_contributors[locale_id]["active_contributors_200_approved"] += 1
+                locale_contributors[locale_id]["active_contributors"] += 1
+            if total > ALL_CONTRIBUTOR_STRING_THRESHOLD:
+                locale_contributors[locale_id]["all_contributors"] += 1
             if approved > NEW_SIGNUP_STRING_THRESHOLD and joined >= start_date:
                 locale_contributors[locale_id]["new_signups"] += 1
 
@@ -195,7 +199,7 @@ def compute_chs(args: dict) -> float:
     active_managers = args.get("active_managers", 0)
     active_translators = args.get("active_translators", 0)
     active_contributors = args.get("active_contributors", 0)
-    active_contributors_200_approved = args.get("active_contributors_200_approved", 0)
+    all_contributors = args.get("all_contributors", 0)
     new_signups = args.get("new_signups", 0)
     key_projects_enabled = args.get("key_projects_enabled", 0)
     completion = args.get("completion", 0.0)
@@ -210,18 +214,18 @@ def compute_chs(args: dict) -> float:
         total_translator_points = 0
 
     if active_contributors >= 2:
-        total_contributor_points = ALL_CONTRIBUTOR_POINTS
+        total_active_contributor_points = ACTIVE_CONTRIBUTOR_POINTS
     elif active_contributors >= 1:
-        total_contributor_points = ALL_CONTRIBUTOR_POINTS / 2
+        total_active_contributor_points = ACTIVE_CONTRIBUTOR_POINTS / 2
     else:
-        total_contributor_points = 0
+        total_active_contributor_points = 0
 
-    if active_contributors_200_approved >= 2:
-        total_contributor_200_approved_points = ACTIVE_CONTRIBUTOR_POINTS
-    elif active_contributors_200_approved >= 1:
-        total_contributor_200_approved_points = ACTIVE_CONTRIBUTOR_POINTS / 2
+    if all_contributors >= 2:
+        total_all_contributor_points = ALL_CONTRIBUTOR_POINTS
+    elif all_contributors >= 1:
+        total_all_contributor_points = ALL_CONTRIBUTOR_POINTS / 2
     else:
-        total_contributor_200_approved_points = 0
+        total_all_contributor_points = 0
 
     if new_signups >= 2:
         total_new_signup_points = NEW_SIGNUP_POINTS
@@ -235,21 +239,42 @@ def compute_chs(args: dict) -> float:
     ) * ENABLED_PROJECT_POINTS
     total_completion_points = round((completion / 100) * COMPLETION_POINTS, 1)
 
-    chs_score = (
+    chs = round(
         total_manager_points
         + total_translator_points
-        + total_contributor_points
-        + total_contributor_200_approved_points
+        + total_active_contributor_points
+        + total_all_contributor_points
         + total_new_signup_points
         + total_enabled_project_points
-        + total_completion_points
+        + total_completion_points,
+        2,
     )
 
-    return round(chs_score, 2)
+    print("total manager points:", total_manager_points)
+    print("total translator points:", total_translator_points)
+    print("total active contributor points:", total_active_contributor_points)
+    print("total all contributor points:", total_all_contributor_points)
+    print("total new signup points:", total_new_signup_points)
+    print("total enabled project points:", total_enabled_project_points)
+    print("total completion points:", total_completion_points)
+    print("CHS score:", chs)
+
+    chs_fields = {
+        "completion_score": total_completion_points,
+        "key_projects_enabled_score": total_enabled_project_points,
+        "active_managers_score": total_manager_points,
+        "active_translators_score": total_translator_points,
+        "active_contributors_score": total_active_contributor_points,
+        "all_contributors_score": total_all_contributor_points,
+        "new_signups_score": total_new_signup_points,
+        "chs": chs,
+    }
+
+    return chs_fields
 
 
-def build_chs_snapshots(end_date: datetime) -> list[LocaleChsSnapshot]:
-    """Assemble one LocaleChsSnapshot per available locale for dt_max."""
+def build_chs_snapshots(end_date: datetime) -> list[LocaleHealthSnapshot]:
+    """Assemble one LocaleHealthSnapshot per available locale for dt_max."""
     locales = Locale.objects.visible()
 
     completion = get_completion_by_locale(locales)
@@ -265,19 +290,14 @@ def build_chs_snapshots(end_date: datetime) -> list[LocaleChsSnapshot]:
             "active_managers": c.get("active_managers", 0),
             "active_translators": c.get("active_translators", 0),
             "active_contributors": c.get("active_contributors", 0),
-            "active_contributors_200_approved": c.get(
-                "active_contributors_200_approved", 0
-            ),
+            "all_contributors": c.get("all_contributors", 0),
             "new_signups": c.get("new_signups", 0),
         }
-        chs_score = compute_chs(args)
+        chs_fields = compute_chs(args)
 
         snapshots.append(
-            LocaleChsSnapshot(
-                locale=locale,
-                created_at=end_date,
-                **args,
-                chs_score=chs_score,
+            LocaleHealthSnapshot(
+                locale=locale, created_at=end_date, **args, **chs_fields
             )
         )
 
