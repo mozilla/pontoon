@@ -39,21 +39,19 @@
 
 .translationform .accesskey-input {
   background: var(--editor-background);
-  border: 1px solid var(--main-border-1);
-  border-radius: 3px;
+  border: none;
   box-sizing: border-box;
   caret-color: var(--editor-color);
   color: var(--editor-color);
   float: left;
   font-size: 14px;
-  height: 24px;
+  height: 26px;
   margin: 2px 3px 2px 0;
   text-align: center;
   width: 24px;
 }
 
 .translationform .accesskey-input:focus {
-  border-color: var(--status-translated);
   outline: none;
 }
 
@@ -69,12 +67,12 @@
   color: var(--white-1);
   cursor: pointer;
   display: inline-block;
-  line-height: 22px;
+  line-height: 24px;
   margin-right: 3px;
   padding: 0;
   text-align: center;
   vertical-align: top;
-  width: 24px;
+  width: 26px;
 }
 
 .translationform .accesskeys .key.active,
