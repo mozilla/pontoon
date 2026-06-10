@@ -32,12 +32,20 @@
 
 {% macro notification_time(notification) %}
 
+  {% set exact_time = notification.timestamp|format_datetime("full") %}
   {% if notification|is_old_notification %}
-    <time class="old-notification" datetime="{{ notification.timestamp }}">
+    <time
+      class="old-notification"
+      datetime="{{ notification.timestamp }}"
+      title="{{ exact_time }}"
+    >
       {{ notification.timestamp|format_datetime("date") }}
     </time>
   {% else %}
-    <time class="timeago" datetime="{{ notification.timestamp }}"
+    <time
+      class="timeago"
+      datetime="{{ notification.timestamp }}"
+      title="{{ exact_time }}"
       >{{ notification.timesince() }}</time
     >
   {% endif %}
