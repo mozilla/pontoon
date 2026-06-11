@@ -72,6 +72,17 @@ export default function LocaleSelector({
             />
           </div>
           <ul>
+            <li
+              key='source'
+              className={selected === '' ? 'selected' : ''}
+              onClick={() => {
+                onSelect('');
+                setIsOpen(false);
+                setSearch('');
+              }}
+            >
+              <span className='locale-name'>Source Locale</span>
+            </li>
             {filtered.map(({ code, name }) => (
               <li
                 key={code}
