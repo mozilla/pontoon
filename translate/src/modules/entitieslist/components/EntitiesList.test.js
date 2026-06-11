@@ -17,8 +17,8 @@ import { fireEvent } from '@testing-library/react';
 
 // Entities shared between tests
 const ENTITIES = [
-  { pk: 1, translation: { string: '', errors: [], warnings: [] } },
-  { pk: 2, translation: { string: '', errors: [], warnings: [] } },
+  { pk: 1, key: ['k1'], translation: { string: '', value: [] } },
+  { pk: 2, key: ['k2'], translation: { string: '', value: [] } },
 ];
 
 describe('<EntitiesList>', () => {

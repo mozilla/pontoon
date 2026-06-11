@@ -282,29 +282,19 @@ def test_entity_project_locale_no_paths(
 
     assert e0 == {
         "comment": "",
-        "group_comment": "",
-        "resource_comment": "",
         "format": "gettext",
-        "obsolete": False,
         "key": ["Entity zero"],
         "path": resource0.path,
         "project": project_a.serialize(),
         "translation": {
             "pk": tr0.pk,
-            "pretranslated": False,
-            "fuzzy": False,
+            "status": "unreviewed",
             "string": tr0.string,
-            "approved": False,
-            "rejected": False,
-            "warnings": [],
-            "errors": [],
+            "value": tr0.value,
         },
-        "meta": [],
         "pk": entity_a.pk,
         "original": entity_a.string,
-        "machinery_original": str(entity_a.string),
-        "readonly": False,
-        "is_sibling": False,
+        "value": [],
         "date_created": entity_a.date_created,
     }
     assert e1["path"] == trX.entity.resource.path
@@ -433,7 +423,7 @@ def test_entity_project_comments(admin, resource_a, locale_a):
     EntityFactory(resource=resource_a, section=None, string="e4")
 
     assert {
-        (e["original"], e["group_comment"], e["resource_comment"])
+        (e["original"], e.get("group_comment"), e.get("resource_comment"))
         for e in map_entities_to_json(
             locale_a, "", Entity.objects.filter(resource=resource_a)
         )
@@ -441,8 +431,8 @@ def test_entity_project_comments(admin, resource_a, locale_a):
         ("e0", "s0 comment", "rc"),
         ("e1", "s0 comment", "rc"),
         ("e2", "s1 comment", "rc"),
-        ("e3", "", "rc"),
-        ("e4", "", "rc"),
+        ("e3", None, "rc"),
+        ("e4", None, "rc"),
     }
 
 
