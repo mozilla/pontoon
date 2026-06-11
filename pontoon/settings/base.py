@@ -236,6 +236,7 @@ INSTALLED_APPS = (
     "pontoon.base",
     "pontoon.contributors",
     "pontoon.checks",
+    "pontoon.dashboard",
     "pontoon.insights",
     "pontoon.localizations",
     "pontoon.machinery",
@@ -508,6 +509,15 @@ PIPELINE_CSS = {
         ),
         "output_filename": "css/teams.min.css",
     },
+    "dashboard": {
+        "source_filenames": (
+            "css/heading_info.css",
+            "css/table.css",
+            "css/request.css",
+            "css/dashboard.css",
+        ),
+        "output_filename": "css/dashboard.min.css",
+    },
     "sync_log": {
         "source_filenames": (
             "css/table.css",
@@ -685,6 +695,15 @@ PIPELINE_JS = {
             "js/request.js",
         ),
         "output_filename": "js/teams.min.js",
+    },
+    "dashboard": {
+        "source_filenames": (
+            "js/table.js",
+            "js/progress-chart.js",
+            "js/request.js",
+            "js/dashboard.js",
+        ),
+        "output_filename": "js/dashboard.min.js",
     },
     "sync_log": {
         "source_filenames": (

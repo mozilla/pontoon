@@ -1,0 +1,63 @@
+{% macro header(request=False) %}
+  <table class="table table-sort locale-list item-list">
+    <thead>
+      <tr>
+        <th class="code">Locale<i class="fas"></i></th>
+        <th class="managers">M<i class="fas"></i></th>
+        <th class="translators">T<i class="fas"></i></th>
+        <th class="active-contributors">C1<i class="fas"></i></th>
+        <th class="all-contributors">C2<i class="fas"></i></th>
+        <th class="new-signups">N1<i class="fas"></i></th>
+        <th class="enabled-projects">EP<i class="fas"></i></th>
+        <th class="completion">PC<i class="fas"></i></th>
+        <th class="chs">CHS<i class="fas"></i></th>
+      </tr>
+    </thead>
+    <!-- prettier-ignore-start -->
+    <tbody>
+{% endmacro %}
+
+{% macro value_cell(curr_value, delta=None, threshold=None, percent=False) %}
+  <td class="cell">
+    <div class="cell-inner">
+      {% if delta is not none %}
+        <span class="prev {% if delta > 0 %}up{% elif delta < 0 %}down{% else %}equal{% endif %}">
+          <i class="fas {% if delta > 0 %}fa-caret-up{% elif delta < 0 %}fa-caret-down{% else %}fa-minus{% endif %}"></i>
+          {% if delta != 0 %}
+          <span class="prev-string">{{ '+' if delta > 0 }}{{ delta }}{{ '%' if percent }}</span>
+          {% endif %}
+        </span>
+      {% endif %}
+
+      <span class="chs-fraction {% if threshold and curr_value >= threshold %}met{% endif %}">
+        {{ curr_value|round(2) }}{{ '%' if percent }}
+      </span>
+    </div>
+  </td>
+{% endmacro %}
+
+{% macro item(locale, main_link, curr_snapshot=None, deltas=None, columns=None, class='limited') %}
+  <tr class="{{ class }}">
+    <td class="code">
+      <div>
+        <a href="{{ main_link }}">{{ locale.code }}</a>
+      </div>
+    </td>
+    {% if curr_snapshot %}
+      {% for field, column in columns.items() %}
+        {{ value_cell(curr_snapshot[field], deltas[field] if deltas else None, column.threshold, column.percent) }}
+      {% endfor %}
+    {% else %}
+      <td class="no-snapshot" colspan="8">
+        <span>No snapshot this month</span>
+      </td>
+    {% endif %}
+  </tr>
+{% endmacro %}
+
+{% macro footer(request=False, form=None) %}
+  <!-- prettier-ignore-start -->
+    </tbody>
+  <!-- prettier-ignore-end -->
+  </table>
+{% endmacro %}
