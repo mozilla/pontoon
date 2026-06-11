@@ -3,6 +3,7 @@ import { getCSRFToken } from './utils/csrfToken';
 import type { MessageEntry } from '~/utils/message';
 import type { TranslationComment } from './comment';
 import type { SourceType } from './machinery';
+import { Message } from '@mozilla/l10n';
 
 export type ChangeOperation = 'approve' | 'unapprove' | 'reject' | 'unreject';
 
@@ -17,37 +18,36 @@ export type ApiFailedChecks = {
 /**
  * Accepted Translation of an Entity, cannot exist outside of the Entity type.
  */
-export type EntityTranslation = {
+export interface EntityTranslation {
   readonly pk: number;
+  readonly status:
+    | 'approved'
+    | 'fuzzy'
+    | 'pretranslated'
+    | 'rejected'
+    | 'unreviewed';
   readonly string: string | null | undefined;
-  readonly approved: boolean;
-  readonly pretranslated: boolean;
-  readonly fuzzy: boolean;
-  readonly rejected: boolean;
-  readonly errors: string[];
-  readonly warnings: string[];
-};
+  readonly value: Message;
+  readonly properties?: Record<string, Message>;
+  readonly errors?: string[];
+  readonly warnings?: string[];
+}
 
-export type HistoryTranslation = {
-  readonly approved: boolean;
-  readonly approvedUser: string;
-  readonly approvedDate: string | null;
-  readonly pretranslated: boolean;
-  readonly date: string;
-  readonly fuzzy: boolean;
-  readonly pk: number;
-  readonly rejected: boolean;
-  readonly rejectedDate: string | null;
+export interface HistoryTranslation extends EntityTranslation {
   readonly string: string;
+  readonly date: string;
   readonly uid: number | null | undefined;
-  readonly rejectedUser: string;
-  readonly machinerySources: string;
   readonly user: string;
   readonly username: string;
   readonly userGravatarUrlSmall: string;
-  readonly userBanner: string[];
-  readonly comments: Array<TranslationComment>;
-};
+  readonly userBanner?: [string, string];
+  readonly approvedUser?: string;
+  readonly approvedDate?: string;
+  readonly rejectedDate?: string;
+  readonly rejectedUser?: string;
+  readonly machinerySources?: string;
+  readonly comments?: TranslationComment[];
+}
 
 export type APIStats = {
   approved: number;

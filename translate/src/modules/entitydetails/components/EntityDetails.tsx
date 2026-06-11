@@ -63,8 +63,8 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const { entity, locale: lc, project } = location;
 
   useEffect(() => {
-    const { format, machinery_original, pk } = selectedEntity;
-    const source = getPlainMessage(machinery_original, format);
+    const { format, machinery_original, original, pk } = selectedEntity;
+    const source = getPlainMessage(machinery_original ?? original, format);
 
     if (source !== terms.sourceString && project !== 'terminology') {
       dispatch(getTerms(source, lc));
