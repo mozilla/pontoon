@@ -171,6 +171,7 @@ def translation_a(locale_a, project_locale_a, entity_a, user_a):
         locale=locale_a,
         user=user_a,
         string="Translation for entity_a",
+        value=["Translation for entity_a"],
     )
     translation_a.locale.refresh_from_db()
     translation_a.entity.resource.project.refresh_from_db()

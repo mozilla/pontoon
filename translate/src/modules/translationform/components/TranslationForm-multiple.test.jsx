@@ -1,4 +1,5 @@
 import ftl from '@fluent/dedent';
+import { fluentParseEntry } from '@mozilla/l10n';
 import { fireEvent } from '@testing-library/react';
 import { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
@@ -28,11 +29,14 @@ function mountForm(string) {
   const store = createReduxStore();
   createDefaultUser(store);
 
+  const [id, entry] = fluentParseEntry(string);
   const entity = {
     pk: 0,
     format: 'fluent',
-    original: 'my-message = Hello',
-    translation: { string },
+    key: [id],
+    original: 'my-message = Hello\n',
+    value: ['Hello'],
+    translation: { string, value: entry['='] ?? [], properties: entry['+'] },
   };
 
   let actions, result;

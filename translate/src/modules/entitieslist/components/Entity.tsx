@@ -9,6 +9,10 @@ import type { Location } from '~/context/Location';
 import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
 import { Translation } from '~/modules/translation';
 import { useTranslator } from '~/hooks/useTranslator';
+import {
+  messageEntryFromEntity,
+  messageEntryFromEntityTranslation,
+} from '~/utils/message/fromEntity';
 
 import './Entity.css';
 
@@ -143,8 +147,7 @@ export function Entity({
         <div>
           <p className='source-string'>
             <Translation
-              content={entity.original}
-              format={entity.format}
+              content={messageEntryFromEntity(entity)}
               search={
                 parameters.search_exclude_source_strings
                   ? null
@@ -159,8 +162,7 @@ export function Entity({
             data-script={script}
           >
             <Translation
-              content={entity.translation?.string ?? ''}
-              format={entity.format}
+              content={messageEntryFromEntityTranslation(entity)}
               search={parameters.search}
             />
           </p>

@@ -43,7 +43,11 @@ export function EditorMainAction(): React.ReactElement<React.ElementType> {
   let onClick: (event: React.SyntheticEvent) => void;
   let error = entry ? null : 'syntax-error';
 
-  if (isTranslator && existingTranslation && !existingTranslation.approved) {
+  if (
+    isTranslator &&
+    existingTranslation &&
+    existingTranslation.status !== 'approved'
+  ) {
     action = 'approve';
     onClick = () =>
       updateTranslationStatus(existingTranslation.pk, 'approve', false);

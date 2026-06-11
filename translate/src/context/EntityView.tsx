@@ -16,19 +16,14 @@ import { Location } from './Location';
 const emptyEntity: Entity = {
   pk: 0,
   key: [],
-  original: '',
-  machinery_original: '',
-  comment: '',
-  group_comment: '',
-  resource_comment: '',
-  meta: [],
   format: '',
+  original: '',
+  value: [],
+  comment: '',
+  date_created: '',
   path: '',
   project: {},
-  translation: undefined,
   readonly: true,
-  isSibling: false,
-  date_created: '',
 };
 
 export type EntityView = { entity: Entity };
@@ -68,6 +63,6 @@ export function useActiveTranslation(): EntityTranslation | null {
   const { entity } = useContext(EntityView);
   return useMemo(() => {
     const tx = entity.translation;
-    return tx && !tx.rejected ? tx : null;
+    return tx && tx.status !== 'rejected' ? tx : null;
   }, [entity]);
 }
