@@ -53,10 +53,10 @@ from pontoon.base.notification_utils import serialized_notifications
 from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.base.user_utils import (
+    avatar_url,
     can_manage_locales,
     can_translate,
     can_translate_locales,
-    gravatar_url,
     manager_for_locales,
     profile_url,
     translated_projects,
@@ -192,7 +192,7 @@ def authors_and_time_range(request, locale, slug, part):
             "email": user.email,
             "display_name": user.name_or_email,
             "id": user.id,
-            "gravatar_url": gravatar_url(user),
+            "gravatar_url": avatar_url(user),
             "translation_count": user.translations_count,
             "role": user.user_role,
         }
@@ -526,7 +526,7 @@ def get_translation_history(request):
                 "uid": u.pk,
                 "user": u.name_or_email,
                 "username": u.username,
-                "user_gravatar_url_small": gravatar_url(u),
+                "user_gravatar_url_small": avatar_url(u),
             }
         )
         banner = user_banner(u, locale, project_contact)
@@ -894,7 +894,7 @@ def get_users(request):
     for u in users:
         payload.append(
             {
-                "gravatar": gravatar_url(u, 44),
+                "gravatar": avatar_url(u, 44),
                 "name": u.name_or_email,
                 "url": profile_url(u),
                 "username": u.profile.username,
@@ -1109,8 +1109,8 @@ def user_data(request):
             "tour_status": user.profile.tour_status,
             "has_dismissed_addon_promotion": user.profile.has_dismissed_addon_promotion,
             "logout_url": logout_url,
-            "gravatar_url_small": gravatar_url(user, 88),
-            "gravatar_url_big": gravatar_url(user, 176),
+            "gravatar_url_small": avatar_url(user, 88),
+            "gravatar_url_big": avatar_url(user, 176),
             "notifications": serialized_notifications(user),
             "theme": user.profile.theme,
             "editor_theme": user.profile.editor_theme,
