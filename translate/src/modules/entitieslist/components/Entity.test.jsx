@@ -15,50 +15,58 @@ afterAll(() => hookModule.useTranslator.mockRestore());
 
 describe('<Entity>', () => {
   const ENTITY_A = {
+    key: ['A'],
     original: 'string a',
+    value: ['string a'],
     translation: {
+      status: 'approved',
       string: 'chaine a',
-      approved: true,
-      errors: [],
-      warnings: [],
+      value: ['chaine a'],
     },
   };
 
   const ENTITY_B = {
+    key: ['B'],
     original: 'string b',
+    value: ['string b'],
     translation: {
+      status: 'pretranslated',
       string: 'chaine b',
-      pretranslated: true,
-      errors: [],
-      warnings: [],
+      value: ['chaine b'],
     },
   };
 
   const ENTITY_C = {
+    key: ['C'],
     original: 'string c',
+    value: ['string c'],
     translation: {
+      status: 'unreviewed',
       string: 'chaine c',
-      errors: [],
-      warnings: [],
+      value: ['chaine c'],
     },
   };
 
   const ENTITY_D = {
+    key: ['D'],
     original: 'string d',
+    value: ['string d'],
     translation: {
+      status: 'approved',
       string: 'chaine d',
-      approved: true,
+      value: ['chaine d'],
       errors: ['error'],
-      warnings: [],
     },
   };
 
   const ENTITY_E = {
+    key: ['E'],
     original: 'string e',
+    value: ['string e'],
     translation: {
+      status: 'pretranslated',
       string: 'chaine e',
-      pretranslated: true,
-      errors: [],
+      value: ['chaine e'],
       warnings: ['warning'],
     },
   };

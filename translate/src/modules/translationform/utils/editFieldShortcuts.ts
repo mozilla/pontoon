@@ -42,7 +42,7 @@ export function useHandleEnter(): () => true {
       updateTranslationStatus(source, 'approve', ignoreWarnings);
     } else {
       const existingTranslation = getExistingTranslation();
-      if (existingTranslation && !existingTranslation.approved) {
+      if (existingTranslation && existingTranslation.status !== 'approved') {
         updateTranslationStatus(
           existingTranslation.pk,
           'approve',

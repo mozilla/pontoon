@@ -14,13 +14,13 @@ import {
   buildMessageEntry,
   editMessageEntry,
   editSource,
-  requiresSourceView,
-  getEmptyMessageEntry,
   getPlainMessage,
   MessageEntry,
   parseEntry,
+  requiresSourceView,
   serializeEntry,
 } from '~/utils/message';
+import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 
@@ -29,7 +29,6 @@ import { FailedChecksData } from './FailedChecksData';
 import { Locale } from './Locale';
 import { MachineryTranslations } from './MachineryTranslations';
 import { UnsavedActions } from './UnsavedChanges';
-import { getMessageEntryFormat } from '../utils/message/getMessageEntryFormat';
 
 export type EditFieldHandle = {
   get value(): string;
@@ -123,20 +122,6 @@ function parseEntryFromFluentSource(base: MessageEntry, fields: EditorField[]) {
   }
   return entry;
 }
-
-/**
- * Create a new MessageEntry with a simple string pattern `value`,
- * using `id` as its identifier.
- */
-const createSimpleMessageEntry = (
-  format: string,
-  key: string[],
-  value: string,
-): MessageEntry => ({
-  format: getMessageEntryFormat(format),
-  id: key[0] ?? '',
-  value: value ? [value] : [],
-});
 
 const initEditorData: EditorData = {
   pk: 0,
@@ -312,32 +297,11 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [format, readonly]);
 
   useEffect(() => {
-    let base: MessageEntry;
-    let source = activeTranslation?.string || '';
-    let sourceView = false;
-    let orig: MessageEntry | null = null;
-    if (!source) {
-      orig ??= parseEntry(format, entity.original);
-      base = orig
-        ? getEmptyMessageEntry(orig, locale)
-        : createSimpleMessageEntry(format, entity.key, '');
-      if (requiresSourceView(base)) {
-        source = serializeEntry(base);
-        sourceView = true;
-      }
-    } else {
-      const base_ = parseEntry(format, source);
-      if (base_) {
-        base = base_;
-        sourceView = requiresSourceView(base);
-      } else {
-        base = createSimpleMessageEntry(format, entity.key, source);
-        sourceView = format === 'fluent';
-      }
-    }
-
-    const fields = sourceView ? editSource(source) : editMessageEntry(base);
-
+    const base = messageEntryFromEntityTranslation(entity, locale);
+    const sourceView = requiresSourceView(base);
+    const fields = sourceView
+      ? editSource(serializeEntry(base))
+      : editMessageEntry(base);
     setState(() => ({
       pk: entity.pk,
       busy: false,

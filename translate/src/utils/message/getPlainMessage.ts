@@ -12,7 +12,7 @@ import { parseEntry } from './parseEntry';
  */
 export function getPlainMessage(
   message: string | MessageEntry,
-  format: string,
+  format: string | undefined,
 ): string {
   if (!message) {
     return '';
@@ -20,7 +20,7 @@ export function getPlainMessage(
 
   let entry: MessageEntry | null;
   if (typeof message === 'string') {
-    entry = parseEntry(format, message);
+    entry = parseEntry(format!, message);
     if (!entry) {
       return message;
     }
@@ -29,12 +29,15 @@ export function getPlainMessage(
   }
 
   if (entry.value) {
-    return previewMessage(format, entry.value);
+    const preview = previewMessage(entry.format, entry.value);
+    if (preview) {
+      return preview;
+    }
   }
 
   if (entry.attributes) {
     for (const attr of entry.attributes.values()) {
-      const preview = previewMessage(format, attr);
+      const preview = previewMessage(entry.format, attr);
       if (preview) {
         return preview;
       }

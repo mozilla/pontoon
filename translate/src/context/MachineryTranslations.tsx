@@ -77,7 +77,7 @@ export function MachineryProvider({
     pk = null;
     format = '';
   } else {
-    source = entity.machinery_original;
+    source = entity.machinery_original ?? entity.original;
     pk = entity.pk;
     format = entity.format;
   }

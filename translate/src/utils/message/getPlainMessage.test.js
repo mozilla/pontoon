@@ -176,6 +176,15 @@ describe('getPlainMessage', () => {
       const res = getPlainMessage(message, 'fluent');
       expect(res).toEqual('{ 22 }');
     });
+
+    it('work with a message entry value', () => {
+      const entry = {
+        format: 'fluent',
+        value: ['a = ', { $: 'b' }],
+      };
+      const res = getPlainMessage(entry);
+      expect(res).toEqual('a = { $b }');
+    });
   });
 
   describe('Unicode MessageFormat', () => {
@@ -202,6 +211,15 @@ describe('getPlainMessage', () => {
         '{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings';
       const res = getPlainMessage(message, 'android');
       expect(res).toEqual('%1$s additional settings');
+    });
+
+    it('work with a message entry value', () => {
+      const entry = {
+        format: 'android',
+        value: ['a = ', { $: 'b' }],
+      };
+      const res = getPlainMessage(entry);
+      expect(res).toEqual('a = {$b}');
     });
   });
 });

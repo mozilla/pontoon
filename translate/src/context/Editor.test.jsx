@@ -17,11 +17,47 @@ import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
 import { UnsavedChanges, UnsavedChangesProvider } from './UnsavedChanges';
+import { fluentParseEntry, mf2ParseMessage } from '@mozilla/l10n';
 
-function mountSpy(Spy, format, translation, original) {
+function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
   });
+
+  let key = ['key'];
+  let value;
+  let translation = undefined;
+  switch (format) {
+    case 'fluent': {
+      const [id, entry] = fluentParseEntry(formatSource);
+      key = [id];
+      value = entry['='];
+      if (formatTranslation) {
+        const [, entry] = fluentParseEntry(formatTranslation);
+        translation = { string: formatTranslation, value: entry['='] };
+      }
+      break;
+    }
+    case 'android':
+      value = mf2ParseMessage(formatSource);
+      if (formatTranslation) {
+        translation = {
+          string: formatTranslation,
+          value: mf2ParseMessage(formatTranslation),
+        };
+      }
+      break;
+    default:
+      value = [formatSource];
+      if (formatTranslation) {
+        translation = { string: formatTranslation, value: [formatTranslation] };
+      }
+  }
+
+  const gettextSource =
+    '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}';
+  const gettextTranslation =
+    '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}';
 
   const initialState = {
     entities: {
@@ -29,28 +65,23 @@ function mountSpy(Spy, format, translation, original) {
         {
           pk: 42,
           format,
-          key: ['key'],
-          original: original ?? 'key = test',
-          translation: translation
-            ? { string: translation, errors: [], warnings: [] }
-            : undefined,
+          key,
+          original: formatSource,
+          value,
+          translation,
           project: { contact: '' },
-          comment: '',
         },
         {
           pk: 13,
           format: 'gettext',
           key: ['plural'],
-          original:
-            '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}',
+          original: gettextSource,
+          value: mf2ParseMessage(gettextSource),
           translation: {
-            string:
-              '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}',
-            errors: [],
-            warnings: [],
+            string: gettextTranslation,
+            value: mf2ParseMessage(gettextTranslation),
           },
           project: { contact: '' },
-          comment: '',
         },
       ],
     },
@@ -170,22 +201,41 @@ describe('<EditorProvider>', () => {
   });
 
   it('provides a forced source Fluent value', () => {
-    using warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     let editor, result;
     const Spy = () => {
       editor = useContext(EditorData);
       result = useContext(EditorResult);
       return null;
     };
-    const source = '## comment\n';
-    mountSpy(Spy, 'fluent', source);
+    const source = ftl`
+      key =
+          { $var ->
+              [a] A
+              [b] B
+              [c] C
+              [d] D
+              [e] E
+              [f] F
+              [g] G
+              [h] H
+              [i] I
+              [j] J
+              [k] K
+              [l] L
+              [m] M
+              [n] N
+              [o] O
+              [p] P
+             *[q] Q
+          }
+      `;
+    mountSpy(Spy, 'fluent', source, source);
 
     expect(editor).toMatchObject({
       sourceView: true,
-      initial: { id: 'key', value: ['## comment\n'] },
       fields: [
         {
-          handle: { current: { value: '## comment' } },
+          handle: { current: { value: source } },
           id: '',
           keys: [],
           labels: [],
@@ -196,9 +246,8 @@ describe('<EditorProvider>', () => {
     expect(result).toEqual({
       format: 'fluent',
       id: 'key',
-      value: ['## comment\n'],
+      value: fluentParseEntry(source)[1]['='],
     });
-    expect(warn).toHaveBeenCalledTimes(1);
   });
 
   it('provides a simple Android value with no translation', () => {
@@ -217,7 +266,7 @@ describe('<EditorProvider>', () => {
     const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: { id: '', value: [] },
+      initial: { id: 'key', value: [] },
       fields: [
         {
           id: '',
@@ -228,7 +277,7 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toEqual({ format: 'android', id: '', value: [] });
+    expect(result).toEqual({ format: 'android', id: 'key', value: [] });
   });
 
   it('provides a simple Android value', () => {
@@ -247,7 +296,7 @@ describe('<EditorProvider>', () => {
     const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: { id: '', value: ['Hei, ', arg1, '!'] },
+      initial: { id: 'key', value: ['Hei, ', arg1, '!'] },
       fields: [
         {
           id: '',
@@ -260,7 +309,7 @@ describe('<EditorProvider>', () => {
     });
     expect(result).toEqual({
       format: 'android',
-      id: '',
+      id: 'key',
       value: [
         'Hei, ',
         { $: 'arg1', fn: 'string', opt: undefined, attr: { source: '%1$s' } },
@@ -297,12 +346,12 @@ describe('<EditorProvider>', () => {
     }));
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: entry,
+      initial: { ...entry, id: 'key' },
       fields,
     });
     expect(result).toEqual({
       format: 'android',
-      id: '',
+      id: 'key',
       value: {
         decl: {
           quantity: {
@@ -330,12 +379,15 @@ describe('<EditorProvider>', () => {
       entity = useContext(EntityView).entity;
       return null;
     };
-    mountSpy(Spy, 'simple', 'translated');
+    mountSpy(Spy, 'plain', 'translated');
 
     act(() => location.push({ entity: 13 }));
 
     expect(editor).toMatchObject({
-      initial: parseEntry('gettext', entity.translation.string),
+      initial: {
+        ...parseEntry('gettext', entity.translation.string),
+        id: 'plural',
+      },
       fields: [
         { handle: { current: { value: 'trans one' } } },
         { handle: { current: { value: 'trans other' } } },
@@ -343,7 +395,7 @@ describe('<EditorProvider>', () => {
     });
     expect(result).toEqual({
       format: 'gettext',
-      id: '',
+      id: 'plural',
       value: {
         decl: { n: { $: 'n', attr: undefined, fn: 'number', opt: undefined } },
         sel: ['n'],

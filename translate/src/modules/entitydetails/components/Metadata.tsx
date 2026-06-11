@@ -70,8 +70,8 @@ function EntityComment({ comment }: { comment: string }) {
   );
 }
 
-function GroupComment({ comment }: { comment: string }) {
-  return (
+function GroupComment({ comment }: { comment: string | undefined }) {
+  return !comment ? null : (
     <Datum id='group-comment' title='GROUP COMMENT'>
       {comment}
     </Datum>
@@ -108,7 +108,7 @@ function EntityCreatedDate({ dateCreated }: { dateCreated: string }) {
   );
 }
 
-function ResourceComment({ comment }: { comment: string }) {
+function ResourceComment({ comment }: { comment: string | undefined }) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = React.useState(false);
   const [expand, setExpand] = React.useState(false);
@@ -139,6 +139,7 @@ function ResourceComment({ comment }: { comment: string }) {
 }
 
 function SourceReferences({ meta }: { meta: Entity['meta'] }) {
+  if (!meta) return null;
   const refs = [];
   for (let [key, value] of meta) {
     if (key === 'reference') {
