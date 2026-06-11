@@ -73,9 +73,8 @@ export async function batchEditEntities(
   if (replace) {
     payload.append('replace', replace);
   }
-  if (otherLocale) {
-    payload.append('other_locale', otherLocale);
-  }
+
+  payload.append('other_locale', otherLocale ?? '');
 
   return await POST('/batch-edit-translations/', payload);
 }

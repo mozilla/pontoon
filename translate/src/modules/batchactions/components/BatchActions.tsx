@@ -111,7 +111,7 @@ export function BatchActions(): React.ReactElement<'div'> {
   }, [location, batchactions]);
 
   const copyFromLocale = useCallback(() => {
-    if (!batchactions.requestInProgress && otherLocale) {
+    if (!batchactions.requestInProgress) {
       dispatch(
         performAction(
           location,

@@ -3,6 +3,7 @@ from django.utils import timezone
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.models import (
+    Entity,
     Translation,
     TranslationMemoryEntry,
 )
@@ -295,33 +296,59 @@ def copy_translation_from_locale(form, user, translations, locale):
         )
     )
 
-    # Deactivate existing translations for the entities in the target locale
-    Translation.objects.filter(
-        entity__in=[t.entity for t in other_locale_translations],
-        locale=locale,
-        active=True,
-    ).update(active=False)
-
     before_level = user.badges_translation_level
+
+    already_active_entity_pks = set(
+        Translation.objects.filter(
+            locale=locale,
+            entity__pk__in=form.cleaned_data["entities"],
+            active=True,
+        ).values_list("entity__pk", flat=True)
+    )
 
     # Translations to create in the current locale
     translations_to_create = []
-    for t in other_locale_translations:
-        value, properties = parse_db_string_to_json(t.entity.resource.format, t.string)
-        translations_to_create.append(
-            Translation(
-                locale=locale,
-                entity=t.entity,
-                string=t.string,
-                approved=False,
-                rejected=False,
-                fuzzy=False,
-                active=True,
-                user=user,
-                value=value,
-                properties=properties,
+
+    if not other_locale:
+        # Copy from other locale (entity.string directly)
+        entities = Entity.objects.filter(pk__in=form.cleaned_data["entities"])
+        for entity in entities:
+            value, properties = parse_db_string_to_json(
+                entity.resource.format, entity.string
             )
-        )
+            translations_to_create.append(
+                Translation(
+                    locale=locale,
+                    entity=entity,
+                    string=entity.string,
+                    approved=False,
+                    rejected=False,
+                    fuzzy=False,
+                    active=entity.pk not in already_active_entity_pks,
+                    user=user,
+                    value=value,
+                    properties=properties,
+                )
+            )
+    else:
+        for t in other_locale_translations:
+            value, properties = parse_db_string_to_json(
+                t.entity.resource.format, t.string
+            )
+            translations_to_create.append(
+                Translation(
+                    locale=locale,
+                    entity=t.entity,
+                    string=t.string,
+                    approved=False,
+                    rejected=False,
+                    fuzzy=False,
+                    active=t.entity.pk not in already_active_entity_pks,
+                    user=user,
+                    value=value,
+                    properties=properties,
+                )
+            )
 
     # Create new translations
     changed_translations = Translation.objects.bulk_create(

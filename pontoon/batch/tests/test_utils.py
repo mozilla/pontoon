@@ -130,7 +130,6 @@ def test_copy_from_similar_locale_copies_all_strings():
     source_locale = Locale.objects.get(code="en-GB")
     user = UserFactory()
 
-    # entity1 already has an active translation in the target locale
     TranslationFactory(
         entity=entity1,
         locale=target_locale,
@@ -155,13 +154,36 @@ def test_copy_from_similar_locale_copies_all_strings():
 
     copy_translation_from_locale(form, user, Translation.objects.none(), target_locale)
 
-    # Both entities should have a new suggestion in the target locale
+    # entity1 already has an active translation - new suggestion should be active=False
     assert (
         Translation.objects.filter(
             locale=target_locale,
-            entity__in=[entity1, entity2],
+            entity=entity1,
+            string="key1 = value1",
+            approved=False,
+            active=False,
+        ).count()
+        == 1
+    )
+    # entity2 has no existing translation - new suggestion should be active=True
+    assert (
+        Translation.objects.filter(
+            locale=target_locale,
+            entity=entity2,
             approved=False,
             active=True,
         ).count()
-        == 2
+        == 1
+    )
+
+    #  The old approved translation for entity1 should remain unchanged
+    assert (
+        Translation.objects.filter(
+            locale=target_locale,
+            string="old value",
+            entity=entity1,
+            approved=True,
+            active=True,
+        ).count()
+        == 1
     )
