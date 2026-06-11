@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   abortMachineryRequests,
   fetchCaighdeanTranslation,
+  fetchComposedMachinery,
   fetchGoogleTranslation,
   fetchMicrosoftTranslation,
   fetchTranslationMemory,
@@ -10,7 +11,7 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage } from '~/utils/message';
+import { editMessageEntry, getPlainMessage, parseEntry } from '~/utils/message';
 
 import { EntityView } from './EntityView';
 import { Locale } from './Locale';
@@ -35,6 +36,28 @@ const sortByQuality = (
   { quality: a }: MachineryTranslation,
   { quality: b }: MachineryTranslation,
 ) => (!a ? 1 : !b ? -1 : a > b ? -1 : a < b ? 1 : 0);
+
+// Formats whose entities can have multiple translatable leaves (Fluent
+// attributes, MF2 selector variants). For these we request a composed
+// multi-value translation in addition to the per-leaf matches. Mirrors
+// `COMPOSED_FORMATS` in pontoon/machinery/views.py.
+const COMPOSED_FORMATS = new Set([
+  'fluent',
+  'android',
+  'gettext',
+  'webext',
+  'xcode',
+  'xliff',
+]);
+
+// A composed translation is only meaningful when the entity has more than one
+// translatable leaf (Fluent attributes, MF2 selector variants). For a simple
+// single-field entity the composed result would just duplicate the per-leaf TM
+// or MT match, so we skip the request entirely.
+function hasMultipleFields(original: string, format: string): boolean {
+  const entry = parseEntry(format, original);
+  return !!entry && editMessageEntry(entry).length > 1;
+}
 
 export function MachineryProvider({
   children,
@@ -102,9 +125,25 @@ export function MachineryProvider({
       setFetching(true);
       const promises: Promise<void>[] = [];
 
+      // Composed multi-value translations are emitted only for entity-driven
+      // navigation (not concordance search) and only for formats that can
+      // have multiple translatable leaves.
+      const wantsComposed =
+        !!pk &&
+        COMPOSED_FORMATS.has(format) &&
+        hasMultipleFields(entity.original, format);
+
       if (pk) {
         promises.push(
           fetchTranslationMemory(plain, locale, pk).then(addResults),
+        );
+      }
+
+      if (wantsComposed) {
+        promises.push(
+          fetchComposedMachinery(pk!, locale, 'translation-memory').then(
+            addResults,
+          ),
         );
       }
 
@@ -119,12 +158,26 @@ export function MachineryProvider({
 
         if (isGoogleTranslateSupported && locale.googleTranslateCode) {
           promises.push(fetchGoogleTranslation(plain, locale).then(addResults));
+          if (wantsComposed) {
+            promises.push(
+              fetchComposedMachinery(pk!, locale, 'google-translate').then(
+                addResults,
+              ),
+            );
+          }
         }
 
         if (isMicrosoftTranslatorSupported && locale.msTranslatorCode) {
           promises.push(
             fetchMicrosoftTranslation(plain, locale).then(addResults),
           );
+          if (wantsComposed) {
+            promises.push(
+              fetchComposedMachinery(pk!, locale, 'microsoft-translator').then(
+                addResults,
+              ),
+            );
+          }
         }
       }
 

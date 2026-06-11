@@ -22,6 +22,10 @@ export type MachineryTranslation = {
   original: string;
   translation: string;
   quality?: number;
+  // Set for `/machinery-composed/` results, whose `original` and `translation`
+  // are full entry sources (Fluent attributes, MF2 variants) rather than plain
+  // strings — the Machinery panel renders these in a rich, multi-field view.
+  composed?: boolean;
   projects?: {
     name: string;
     slug: string;
@@ -129,6 +133,51 @@ export async function fetchTranslationMemory(
         quality: Math.floor(item.quality),
       }))
     : [];
+}
+
+/**
+ * Return a composed multi-value translation for a Fluent / MF2 entity.
+ *
+ * Each translatable leaf (Fluent value/attribute, MF2 variant) is looked up
+ * in Translation Memory, falling back to the requested MT service when no
+ * exact TM match exists. Use `service: 'translation-memory'` to disable the
+ * MT fallback and only emit a result when every leaf has a TM hit.
+ *
+ * Returns an empty array when the entity isn't a composable format or when
+ * no composed translation can be produced (e.g. MT unavailable for locale).
+ */
+export async function fetchComposedMachinery(
+  pk: number,
+  locale: Locale,
+  service: 'translation-memory' | 'google-translate' | 'microsoft-translator',
+): Promise<MachineryTranslation[]> {
+  const url = '/machinery-composed/';
+  const params = {
+    entity: String(pk),
+    locale: locale.code,
+    service,
+  };
+
+  const result = (await GET_(url, params)) as {
+    original?: string;
+    translation?: string;
+    sources?: string[];
+    quality?: number;
+  };
+
+  if (!result || !result.translation || !result.original) {
+    return [];
+  }
+
+  return [
+    {
+      sources: (result.sources ?? [service]) as SourceType[],
+      original: result.original,
+      translation: result.translation,
+      quality: result.quality,
+      composed: true,
+    },
+  ];
 }
 
 /**

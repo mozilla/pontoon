@@ -147,3 +147,26 @@
 .machinery .translation p.suggestion .fa-spin {
   color: var(--translation-secondary-color);
 }
+
+/* Composed multi-value suggestions: rendered as labeled fields, mirroring the
+   original string panel (.fluent-rich-string base styles are shared). */
+.machinery .translation table.fluent-rich-string {
+  padding: 0;
+  margin: 0;
+  color: var(--translation-color);
+}
+
+.machinery .translation table.fluent-rich-string.original {
+  color: var(--translation-secondary-color);
+  margin-bottom: 4px;
+}
+
+.machinery .translation table.fluent-rich-string td {
+  vertical-align: top;
+}
+
+.machinery .translation table.fluent-rich-string td > span {
+  display: block;
+  line-height: 22px;
+  white-space: pre-wrap;
+}
