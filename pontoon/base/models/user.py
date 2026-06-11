@@ -9,8 +9,8 @@ from pontoon.base.notification_utils import (
     unread_notifications_display,
 )
 from pontoon.base.user_utils import (
+    avatar_url,
     can_translate_locales,
-    gravatar_url,
     manager_for_locales,
     translator_for_locales,
 )
@@ -92,7 +92,7 @@ AuthUser.add_to_class("display_name", display_name)
 AuthUser.add_to_class("display_name_and_email", display_name_and_email)
 AuthUser.add_to_class("latest_action", latest_action)
 
-AuthUser.add_to_class("gravatar_url", gravatar_url)
+AuthUser.add_to_class("avatar_url", avatar_url)
 AuthUser.add_to_class("translator_for_locales", translator_for_locales)
 AuthUser.add_to_class("manager_for_locales", manager_for_locales)
 AuthUser.add_to_class("can_translate_locales", can_translate_locales)

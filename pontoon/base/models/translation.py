@@ -16,6 +16,7 @@ from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.user import User
 from pontoon.base.simple_preview import get_simple_preview
+from pontoon.base.user_utils import avatar_url
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 
