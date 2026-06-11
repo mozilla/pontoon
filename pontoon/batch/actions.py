@@ -296,7 +296,7 @@ def copy_translation_from_locale(form, user, translations, locale):
         )
     )
 
-    before_level = user.badges_translation_level
+    before_level = badges_translation_level(user)
 
     already_active_entity_pks = set(
         Translation.objects.filter(
@@ -377,7 +377,7 @@ def copy_translation_from_locale(form, user, translations, locale):
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Send Translation Champion Badge notification information
-    after_level = user.badges_translation_level
+    after_level = badges_translation_level(user)
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
