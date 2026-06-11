@@ -10,12 +10,9 @@ import { fireEvent } from '@testing-library/react';
 
 const ENTITY = {
   format: 'fluent',
-  original: ftl`
-    header =
-        .page-title = Hello
-        Simple
-        String
-    `,
+  key: ['header'],
+  value: [],
+  properties: { 'page-title': ['Hello\nSimple\nString'] },
 };
 
 function mountOriginalString(spy) {
@@ -36,8 +33,8 @@ describe('<OriginalString>', () => {
   it('renders original input as simple string', () => {
     const { container } = mountOriginalString();
 
-    expect(container.querySelector('.original').textContent).toMatch(
-      /^Hello\W*\nSimple\W*\nString$/,
+    expect(container.querySelector('.original').textContent).toBe(
+      'Hello¶\nSimple¶\nString',
     );
   });
 
