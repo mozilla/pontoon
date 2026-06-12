@@ -6,6 +6,8 @@ from django.conf import settings
 from django.db.models import QuerySet
 from django.urls import reverse
 
+from pontoon.base.utils import format_datetime
+
 
 if TYPE_CHECKING:
     from pontoon.base.models import Entity, Project, User
@@ -59,9 +61,6 @@ def is_subscribed_to_notification(user: "User", notification: Notification) -> b
 
 def serialized_notifications(user: "User"):
     """Serialized list of notifications to display in the notifications menu."""
-    # Local import to avoid a circular import (helpers -> simple_preview -> base.models).
-    from pontoon.base.templatetags.helpers import format_datetime
-
     unread_count: int = user_notifications(user).unread().count()
     count: int = settings.NOTIFICATIONS_MAX_COUNT
     notifications = []

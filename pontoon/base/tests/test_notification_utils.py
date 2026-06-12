@@ -115,10 +115,10 @@ def test_serialized_notifications_new_string_without_created_time(user_a, projec
 def test_serialized_notifications_date_format(user_a, project_a):
     """
     The serialized "date" carries the exact date and time shown in the
-    timestamp tooltip, matching format_datetime("full") used by the Django
+    timestamp tooltip, matching format_datetime() used by the Django
     notifications menu.
     """
-    from pontoon.base.templatetags.helpers import format_datetime
+    from pontoon.base.utils import format_datetime
 
     notify.send(
         sender=project_a,
