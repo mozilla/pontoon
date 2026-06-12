@@ -119,6 +119,13 @@ class UserProfile(models.Model):
     search_match_whole_word = models.BooleanField(default=False)
     search_rejected_translations = models.BooleanField(default=False)
 
+    # Dashboard configurations
+    dashboard_locales = ArrayField(
+        models.PositiveIntegerField(),
+        default=list,
+        blank=True,
+    )
+
     # Used to redirect a user to a custom team page.
     custom_homepage = models.CharField(max_length=20, blank=True, null=True)
 

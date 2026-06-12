@@ -236,6 +236,7 @@ INSTALLED_APPS = (
     "pontoon.base",
     "pontoon.contributors",
     "pontoon.checks",
+    "pontoon.dashboard",
     "pontoon.insights",
     "pontoon.localizations",
     "pontoon.machinery",
@@ -508,6 +509,17 @@ PIPELINE_CSS = {
         ),
         "output_filename": "css/teams.min.css",
     },
+    "dashboard": {
+        "source_filenames": (
+            "css/heading_info.css",
+            "css/table.css",
+            "css/request.css",
+            "css/multiple_item_selector.css",
+            "css/dashboard.css",
+            "css/config.css",
+        ),
+        "output_filename": "css/dashboard.min.css",
+    },
     "sync_log": {
         "source_filenames": (
             "css/table.css",
@@ -685,6 +697,17 @@ PIPELINE_JS = {
             "js/request.js",
         ),
         "output_filename": "js/teams.min.js",
+    },
+    "dashboard": {
+        "source_filenames": (
+            "js/table.js",
+            "js/progress-chart.js",
+            "js/request.js",
+            "js/multiple_item_selector.js",
+            "js/dashboard.js",
+            "js/config.js",
+        ),
+        "output_filename": "js/dashboard.min.js",
     },
     "sync_log": {
         "source_filenames": (
@@ -1254,6 +1277,35 @@ BADGES_REVIEW_THRESHOLDS = list(
 BADGES_PROMOTION_THRESHOLDS = list(
     map(int, os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","))
 )
+
+# Used for Community Health Score calculations
+MANAGER_STRING_THRESHOLD = int(os.environ.get("MANAGER_STRING_THRESHOLD", 500))
+TRANSLATOR_STRING_THRESHOLD = int(os.environ.get("TRANSLATOR_STRING_THRESHOLD", 400))
+ACTIVE_CONTRIBUTOR_STRING_THRESHOLD = int(
+    os.environ.get("ACTIVE_CONTRIBUTOR_STRING_THRESHOLD", 200)
+)
+ALL_CONTRIBUTOR_STRING_THRESHOLD = int(
+    os.environ.get("ALL_CONTRIBUTOR_STRING_THRESHOLD", 200)
+)
+NEW_SIGNUP_STRING_THRESHOLD = int(os.environ.get("NEW_SIGNUP_STRING_THRESHOLD", 100))
+
+MANAGER_PEOPLE_THRESHOLD = int(os.environ.get("MANAGER_PEOPLE_THRESHOLD", 1))
+TRANSLATOR_PEOPLE_THRESHOLD = int(os.environ.get("TRANSLATOR_PEOPLE_THRESHOLD", 2))
+ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD = int(
+    os.environ.get("ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD", 2)
+)
+ALL_CONTRIBUTOR_PEOPLE_THRESHOLD = int(
+    os.environ.get("ALL_CONTRIBUTOR_PEOPLE_THRESHOLD", 2)
+)
+NEW_SIGNUP_PEOPLE_THRESHOLD = int(os.environ.get("NEW_SIGNUP_PEOPLE_THRESHOLD", 2))
+
+MANAGER_POINTS = float(os.environ.get("MANAGER_POINTS", 20.0))
+TRANSLATOR_POINTS = float(os.environ.get("TRANSLATOR_POINTS", 15.0))
+ACTIVE_CONTRIBUTOR_POINTS = float(os.environ.get("ACTIVE_CONTRIBUTOR_POINTS", 6.0))
+ALL_CONTRIBUTOR_POINTS = float(os.environ.get("ALL_CONTRIBUTOR_POINTS", 4.0))
+NEW_SIGNUP_POINTS = float(os.environ.get("NEW_SIGNUP_POINTS", 5.0))
+ENABLED_PROJECT_POINTS = float(os.environ.get("ENABLED_PROJECT_POINTS", 4.0))
+COMPLETION_POINTS = float(os.environ.get("COMPLETION_POINTS", 46.0))
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
