@@ -14,6 +14,7 @@ class BatchActionsForm(forms.Form):
     entities = forms.CharField(required=False)
     find = forms.CharField(required=False)
     replace = forms.CharField(required=False)
+    other_locale = forms.CharField(required=False)
 
     def clean_entities(self):
         return utils.split_ints(self.cleaned_data["entities"])
@@ -32,3 +33,6 @@ class BatchActionsForm(forms.Form):
 
     def clean_replace(self):
         return self.decode_field("replace")
+
+    def clean_other_locale(self):
+        return self.decode_field("other_locale")

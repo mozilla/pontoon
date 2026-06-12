@@ -3,11 +3,13 @@ from django.utils import timezone
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.models import (
+    Entity,
     Translation,
     TranslationMemoryEntry,
 )
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
+from pontoon.translations.utils import parse_db_string_to_json
 
 
 def batch_action_template(form, user, translations, locale):
@@ -277,6 +279,128 @@ def replace_translations(form, user, translations, locale):
     }
 
 
+def copy_translation_from_locale(form, user, translations, locale):
+    """
+    Copy translations approved in a source locale and add them as suggestions
+    in the target locale. Existing active translations in the target locale
+    are deactivated before the new suggestions are created.
+    """
+
+    other_locale = form.cleaned_data["other_locale"]
+
+    other_locale_translations = list(
+        Translation.objects.filter(
+            locale__code=other_locale,
+            entity__pk__in=form.cleaned_data["entities"],
+            approved=True,
+        )
+    )
+
+    before_level = badges_translation_level(user)
+
+    already_active_entity_pks = set(
+        Translation.objects.filter(
+            locale=locale,
+            entity__pk__in=form.cleaned_data["entities"],
+            active=True,
+        ).values_list("entity__pk", flat=True)
+    )
+
+    # Translations to create in the current locale
+    translations_to_create = []
+
+    if not other_locale:
+        # Copy from other locale (entity.string directly)
+        entities = Entity.objects.filter(pk__in=form.cleaned_data["entities"])
+        for entity in entities:
+            value, properties = parse_db_string_to_json(
+                entity.resource.format, entity.string
+            )
+            translations_to_create.append(
+                Translation(
+                    locale=locale,
+                    entity=entity,
+                    string=entity.string,
+                    approved=False,
+                    rejected=False,
+                    fuzzy=False,
+                    active=entity.pk not in already_active_entity_pks,
+                    user=user,
+                    value=value,
+                    properties=properties,
+                )
+            )
+    else:
+        for t in other_locale_translations:
+            value, properties = parse_db_string_to_json(
+                t.entity.resource.format, t.string
+            )
+            translations_to_create.append(
+                Translation(
+                    locale=locale,
+                    entity=t.entity,
+                    string=t.string,
+                    approved=False,
+                    rejected=False,
+                    fuzzy=False,
+                    active=t.entity.pk not in already_active_entity_pks,
+                    user=user,
+                    value=value,
+                    properties=properties,
+                )
+            )
+
+    # Create new translations
+    changed_translations = Translation.objects.bulk_create(
+        translations_to_create,
+    )
+
+    # Requery translation to get PKs
+    changed_translations_qs = Translation.objects.filter(
+        pk__in=[t.pk for t in changed_translations]
+    )
+
+    count, translated_resources, changed_entities = utils.get_translations_info(
+        changed_translations_qs,
+        locale,
+    )
+
+    # Log creating actions
+    actions_to_log = [
+        ActionLog(
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            performed_by=user,
+            translation=t,
+        )
+        for t in changed_translations
+    ]
+    ActionLog.objects.bulk_create(actions_to_log)
+
+    # Send Translation Champion Badge notification information
+    after_level = badges_translation_level(user)
+    badge_update = {}
+    if after_level > before_level:
+        badge_update["level"] = after_level
+        badge_update["name"] = "Translation Champion"
+        send_badge_notification(user, badge_update["name"], badge_update["level"])
+
+    changed_translation_pks = [t.pk for t in changed_translations]
+
+    latest_translation_pk = None
+    if changed_translation_pks:
+        latest_translation_pk = max(changed_translation_pks)
+
+    return {
+        "count": count,
+        "translated_resources": translated_resources,
+        "changed_entities": changed_entities,
+        "latest_translation_pk": latest_translation_pk,
+        "changed_translation_pks": changed_translation_pks,
+        "invalid_translation_pks": [],
+        "badge_update": badge_update,
+    }
+
+
 """A map of action names to functions.
 
 The keys define the available batch actions in the `batch_edit_translations`
@@ -288,4 +412,5 @@ ACTIONS_FN_MAP = {
     "approve": approve_translations,
     "reject": reject_translations,
     "replace": replace_translations,
+    "copy_from_locale": copy_translation_from_locale,
 }

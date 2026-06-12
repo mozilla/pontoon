@@ -46,6 +46,8 @@ batchactions-BatchActions--replace-with =
     .placeholder = Replace with
 
 
+batchactions-BatchActions--copy-from-locale-heading = COPY FROM ANOTHER LOCALE
+
 ## RejectAll
 ## Renders Reject All batch action button.
 
@@ -72,6 +74,19 @@ batchactions-ReplaceAll--success =
 batchactions-ReplaceAll--invalid = { $invalidCount } FAILED
 batchactions-ReplaceAll--error = OOPS, SOMETHING WENT WRONG
 
+
+## CopyFromLocale
+## Renders Copy From a Similar Locale button.
+batchactions-CopyFromLocale--default = COPY AS SUGGESTIONS
+batchactions-CopyFromLocale--success =
+    {
+        $changedCount ->
+            [one] {$changedCount} STRING COPIED
+            *[other] {$changedCount} STRINGS COPIED
+    }
+
+batchactions-CopyFromLocale--invalid = {$invalidCount} FAILED
+batchactions-CopyFromLocale--error = OOPS, SOMETHING WENT WRONG
 
 ## ResourceProgress
 ##  Show a panel with progress chart and stats for the current resource.

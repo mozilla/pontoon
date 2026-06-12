@@ -1,5 +1,11 @@
 import { Localized } from '@fluent/react';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { Location } from '~/context/Location';
 import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
@@ -12,7 +18,10 @@ import { ApproveAll } from './ApproveAll';
 import './BatchActions.css';
 import { RejectAll } from './RejectAll';
 import { ReplaceAll } from './ReplaceAll';
-
+import { CopyFromLocale } from './CopyFromLocale';
+import { fetchAllLocales } from '~/api/other-locales';
+import type { LocaleOption } from '~/api/other-locales';
+import LocaleSelector from './LocaleSelector';
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
@@ -25,6 +34,9 @@ export function BatchActions(): React.ReactElement<'div'> {
   const find = useRef<HTMLInputElement>(null);
   const replace = useRef<HTMLInputElement>(null);
 
+  const [otherLocale, setOtherLocale] = useState('');
+  const [locales, setLocales] = useState<LocaleOption[]>([]);
+
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
   useEffect(() => {
@@ -36,6 +48,12 @@ export function BatchActions(): React.ReactElement<'div'> {
 
     document.addEventListener('keydown', handleShortcuts);
     return () => document.removeEventListener('keydown', handleShortcuts);
+  }, []);
+
+  useEffect(() => {
+    fetchAllLocales().then((all) => {
+      setLocales(all);
+    });
   }, []);
 
   const selectAllEntities = useCallback(
@@ -92,12 +110,37 @@ export function BatchActions(): React.ReactElement<'div'> {
     }
   }, [location, batchactions]);
 
+  const copyFromLocale = useCallback(() => {
+    if (!batchactions.requestInProgress) {
+      dispatch(
+        performAction(
+          location,
+          'copy_from_locale',
+          batchactions.entities,
+          showBadgeTooltip,
+          undefined,
+          undefined,
+          otherLocale,
+        ),
+      );
+      setOtherLocale('');
+    }
+  }, [location, batchactions, showBadgeTooltip, otherLocale]);
+
   const submitReplaceForm = useCallback(
     (ev: React.SyntheticEvent<HTMLFormElement>) => {
       ev.preventDefault();
       replaceAll();
     },
     [replaceAll],
+  );
+
+  const submitCopyFromLocaleForm = useCallback(
+    (ev: React.SyntheticEvent<HTMLFormElement>) => {
+      ev.preventDefault();
+      copyFromLocale();
+    },
+    [copyFromLocale],
   );
 
   return (
@@ -195,6 +238,23 @@ export function BatchActions(): React.ReactElement<'div'> {
             </Localized>
 
             <ReplaceAll replaceAll={replaceAll} batchactions={batchactions} />
+          </form>
+        </div>
+        <div className='copy-from-locale'>
+          <Localized id='batchactions-BatchActions--copy-from-locale-heading'>
+            <h2>COPY FROM ANOTHER LOCALE</h2>
+          </Localized>
+          <form id='copy-locale-form' onSubmit={submitCopyFromLocaleForm}>
+            <LocaleSelector
+              locales={locales}
+              currentLocale={location.locale}
+              selected={otherLocale}
+              onSelect={setOtherLocale}
+            />
+            <CopyFromLocale
+              copyFromLocale={copyFromLocale}
+              batchactions={batchactions}
+            />
           </form>
         </div>
       </div>
