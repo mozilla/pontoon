@@ -128,5 +128,5 @@ def test_serialized_notifications_date_format(user_a, project_a):
 
     notification_obj = Notification.objects.get(recipient=user_a)
     serialized = serialized_notifications(user_a)["notifications"][0]
-    assert serialized["date"] == format_datetime(notification_obj.timestamp, "full")
+    assert serialized["date"] == format_datetime(notification_obj.timestamp)
     assert serialized["date_iso"] == notification_obj.timestamp.isoformat()

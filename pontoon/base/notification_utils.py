@@ -146,7 +146,7 @@ def serialized_notifications(user: "User"):
                     "is_comment": is_comment,
                 },
                 "verb": notification.verb,
-                "date": format_datetime(notification.timestamp, "full"),
+                "date": format_datetime(notification.timestamp),
                 "date_iso": notification.timestamp.isoformat(),
                 "actor": actor,
                 "target": target,

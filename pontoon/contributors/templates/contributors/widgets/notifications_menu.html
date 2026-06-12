@@ -32,7 +32,7 @@
 
 {% macro notification_time(notification) %}
 
-  {% set exact_time = notification.timestamp|format_datetime("full") %}
+  {% set exact_time = notification.timestamp|format_datetime() %}
   {% if notification|is_old_notification %}
     <time
       class="old-notification"
