@@ -13,6 +13,11 @@ import {
 
 import { useExistingTranslationGetter } from './useExistingTranslationGetter';
 
+vi.mock('~/context/EntityView', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useActiveTranslation: vi.fn() };
+});
+
 const ACTIVE_TRANSLATION = { pk: 1 };
 
 const HISTORY_STRING = {
@@ -65,16 +70,6 @@ const mockEditorMessage = (value) => [
 ];
 
 describe('useExistingTranslation', () => {
-  beforeAll(() => {
-    vi.mock('~/context/EntityView', async (importOriginal) => {
-      const actual = await importOriginal();
-      return {
-        ...actual,
-        useActiveTranslation: vi.fn(),
-      };
-    });
-  });
-
   beforeEach(() => {
     Entity.useActiveTranslation.mockReturnValue(ACTIVE_TRANSLATION);
   });

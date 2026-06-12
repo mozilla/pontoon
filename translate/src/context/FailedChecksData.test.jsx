@@ -5,11 +5,9 @@ import { FailedChecksData, FailedChecksProvider } from './FailedChecksData';
 import { vi } from 'vitest';
 import { act, render } from '@testing-library/react';
 
-describe('FailedChecksProvider', () => {
-  beforeAll(() => {
-    vi.mock('./EntityView', () => ({ useActiveTranslation: vi.fn() }));
-  });
+vi.mock('./EntityView', () => ({ useActiveTranslation: vi.fn() }));
 
+describe('FailedChecksProvider', () => {
   afterAll(() => {
     EntityView.useActiveTranslation.mockRestore();
   });

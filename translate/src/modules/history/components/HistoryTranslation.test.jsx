@@ -6,17 +6,10 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
-beforeAll(() => {
-  vitest.mock('~/hooks/useTranslator', () => ({
-    useTranslator: vi.fn(() => false),
-  }));
-
-  vi.mock('react-time-ago', () => {
-    return {
-      default: () => null,
-    };
-  });
+vi.mock('react-time-ago', () => {
+  return { default: () => null };
 });
+vi.mock('~/hooks/useTranslator', () => ({ useTranslator: vi.fn(() => false) }));
 
 afterAll(() => {
   hookModule.useTranslator.mockRestore();

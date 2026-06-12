@@ -12,10 +12,9 @@ import { SignInOutForm } from './SignInOutForm';
 import { UserMenu, UserMenuDialog } from './UserMenu';
 import { vi } from 'vitest';
 
+vi.mock('~/hooks/useTranslator', () => ({ useTranslator: vi.fn() }));
+
 describe('<UserMenuDialog>', () => {
-  beforeAll(() => {
-    vi.mock('~/hooks/useTranslator', () => ({ useTranslator: vi.fn() }));
-  });
   afterAll(() => {
     Translator.useTranslator.mockRestore();
   });
