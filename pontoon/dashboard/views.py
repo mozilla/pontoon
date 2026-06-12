@@ -1,9 +1,13 @@
 from dateutil.relativedelta import relativedelta
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.utils import timezone
 
 from pontoon.base.aggregated_stats import get_top_instances
+from pontoon.base.forms import UserCommunityHealthDashboardConfigForm
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.translated_resource import TranslatedResource
 from pontoon.insights.chs import KEY_PROJECT_SLUGS
@@ -97,6 +101,42 @@ def get_monthly_snapshot_deltas(current_snapshots, previous_snapshots):
     return deltas
 
 
+@login_required(redirect_field_name="", login_url="/403")
+def dashboard_config(request):
+    """Configure which locales appear on the CHS dashboard."""
+    user = request.user
+    profile = user.profile
+
+    if not user.is_staff:
+        raise PermissionDenied
+
+    if request.method == "POST":
+        dashboard_locales_form = UserCommunityHealthDashboardConfigForm(
+            request.POST, instance=profile
+        )
+
+        if dashboard_locales_form.is_valid():
+            dashboard_locales_form.save()
+            messages.success(request, "Configuration saved.")
+
+    dashboard_locales = profile.dashboard_locales
+
+    locales = Locale.objects.visible()
+    selected_locales = locales.filter(pk__in=dashboard_locales)
+    available_locales = locales.exclude(pk__in=dashboard_locales)
+    print(selected_locales)
+    print(available_locales)
+    return render(
+        request,
+        "dashboard/config.html",
+        {
+            "available_locales": available_locales,
+            "selected_locales": selected_locales,
+        },
+    )
+
+
+@login_required(redirect_field_name="", login_url="/403")
 def dashboard(request):
     """List all localization team CHS scores."""
 
@@ -106,20 +146,18 @@ def dashboard(request):
     #     "latest_translation__user",
     #     "latest_translation__approved_user",
     # )
+    user = request.user
+    profile = user.profile
+
+    if not user.is_staff:
+        raise PermissionDenied
 
     # TODO Welcome Bryan, or welcome Peiying
 
     # TODO Include "Last Updated -> Next scheduled update timer" so PMs don't get confused
     # TODO Maybe also include a "Run failed" warning or the option to manually run CHS calculation
-    locales = (
-        Locale.objects.filter(code__in=LOCALES)
-        .prefetch_related(
-            "latest_translation__entity__resource",
-            "latest_translation__user",
-            "latest_translation__approved_user",
-        )
-        .order_by("name")
-    )
+    dashboard_locales = profile.dashboard_locales
+    locales = Locale.objects.visible().filter(pk__in=dashboard_locales)
 
     # TEMP: the most recent snapshot is from May, so shift the window back one
     # month — render the previous month as "current" and the month before as
@@ -135,9 +173,6 @@ def dashboard(request):
     print("previous snapshots: ", previous_snapshots)
 
     form = LocaleRequestForm()
-
-    if not locales:
-        return render(request, "no_projects.html", {"title": "CHS Dashboard"})
 
     locale_stats = locales.stats_data_as_dict()
     return render(

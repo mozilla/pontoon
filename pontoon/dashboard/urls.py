@@ -1,6 +1,6 @@
 from django.urls import path
 
-from pontoon.dashboard.views import dashboard
+from pontoon.dashboard.views import dashboard, dashboard_config
 
 
 urlpatterns = [
@@ -8,5 +8,10 @@ urlpatterns = [
         "dashboard/",
         dashboard,
         name="pontoon.dashboard",
-    )
+    ),
+    path(
+        "dashboard/config",
+        dashboard_config,
+        name="pontoon.dashboard.config",
+    ),
 ]

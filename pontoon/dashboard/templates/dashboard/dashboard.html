@@ -77,12 +77,12 @@
             data-filter="td:nth-child(1)"
           />
         </div>
-
-        {% if user.is_authenticated %}
-          <button class="request-toggle request-team button small">
-            <span class="fas fa-chevron-right"></span>
-          </button>
-        {% endif %}
+        <a
+          class="add button small"
+          id="edit-config"
+          href="{{ url('pontoon.dashboard.config') }}"
+          >Edit Configuration</a
+        >
       </menu>
 
       {{ LocaleList.header() }}
