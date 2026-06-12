@@ -19,6 +19,21 @@ def split_ints(s):
     return [int(part) for part in (s or "").split(",") if part]
 
 
+def format_datetime(value, format="full", default="---"):
+    if value is not None:
+        if format == "full":
+            format = "%A, %B %d, %Y at %H:%M %Z"
+        elif format == "date":
+            format = "%B %-d, %Y"
+        elif format == "short_date":
+            format = "%b %-d, %Y"
+        elif format == "time":
+            format = "%H:%M %Z"
+        return value.strftime(format)
+    else:
+        return default
+
+
 def get_ip(request):
     try:
         ip = request.META["HTTP_X_FORWARDED_FOR"]

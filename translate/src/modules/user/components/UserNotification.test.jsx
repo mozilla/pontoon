@@ -3,9 +3,11 @@ import { UserNotification } from './UserNotification';
 import { vi } from 'vitest';
 import { render } from '@testing-library/react';
 
+const { timeAgoSpy } = vi.hoisted(() => ({ timeAgoSpy: vi.fn(() => null) }));
+
 vi.mock('react-time-ago', () => {
   return {
-    default: () => null,
+    default: timeAgoSpy,
   };
 });
 
@@ -15,7 +17,7 @@ const notificationBase = {
   unread: false,
   description: null,
   verb: 'verb',
-  date: 'Jan 31, 2000 10:20',
+  date: 'Thursday, January 31, 2019 at 10:20 UTC',
   date_iso: '2019-01-31T10:20:00+00:00',
   actor: { anchor: 'actor_anchor', url: 'actor_url' },
   target: { anchor: 'target_anchor', url: 'target_url' },
@@ -94,6 +96,34 @@ describe('<UserNotification>', () => {
 
     expect(container.querySelector('.message')).toBeNull();
     expect(container.querySelector('.verb')).toHaveTextContent('is Other');
+  });
+
+  it('shows the exact date and time in the timestamp tooltip', () => {
+    const notification = {
+      ...notificationBase,
+      description: { content: 'Unreviewed suggestions' },
+    };
+    const { container } = render(
+      <UserNotification notification={notification} />,
+    );
+
+    const time = container.querySelector('time');
+    expect(time).toHaveAttribute('title', notificationBase.date);
+    expect(time).toHaveAttribute('datetime', notificationBase.date_iso);
+    expect(time).toHaveTextContent('January 31, 2019');
+  });
+
+  it('shows the exact date and time in a recent notification tooltip', () => {
+    timeAgoSpy.mockClear();
+    const notification = {
+      ...notificationBase,
+      description: { content: 'Unreviewed suggestions' },
+      date_iso: new Date(Date.now() - 60 * 1000).toISOString(),
+    };
+    render(<UserNotification notification={notification} />);
+
+    const props = timeAgoSpy.mock.calls[0][0];
+    expect(props.formatVerboseDate()).toBe(notificationBase.date);
   });
 
   it('shows comment notification with deleted actor', () => {

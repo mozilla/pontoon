@@ -109,3 +109,24 @@ def test_serialized_notifications_new_string_without_created_time(user_a, projec
     assert notification["actor"]["url"] == (
         f"/projects/{project_a.slug}/all-resources/?status=missing,pretranslated"
     )
+
+
+@pytest.mark.django_db
+def test_serialized_notifications_date_format(user_a, project_a):
+    """
+    The serialized "date" carries the exact date and time shown in the
+    timestamp tooltip, matching format_datetime() used by the Django
+    notifications menu.
+    """
+    from pontoon.base.utils import format_datetime
+
+    notify.send(
+        sender=project_a,
+        recipient=user_a,
+        verb="has reviewed suggestions",
+    )
+
+    notification_obj = Notification.objects.get(recipient=user_a)
+    serialized = serialized_notifications(user_a)["notifications"][0]
+    assert serialized["date"] == format_datetime(notification_obj.timestamp)
+    assert serialized["date_iso"] == notification_obj.timestamp.isoformat()
