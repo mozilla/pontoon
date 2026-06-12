@@ -2,7 +2,7 @@
 {% import 'widgets/heading_info.html' as HeadingInfo %}
 {% import 'dashboard/widgets/locale_list.html' as LocaleList %}
 
-{% block title %}Teams{% endblock %}
+{% block title %}Community Health Dashboard{% endblock %}
 
 {% block class %}teams{% endblock %}
 
@@ -12,7 +12,7 @@
       <h1>
         {{
           HeadingInfo.heading_item(
-          title='Community Health Dashboard',
+          title='Hey, ' ~ user.name_or_email ~ '!',
           link=url('pontoon.dashboard'))
         }}
       </h1>
@@ -77,12 +77,15 @@
             data-filter="td:nth-child(1)"
           />
         </div>
-        <a
-          class="add button small"
-          id="edit-config"
-          href="{{ url('pontoon.dashboard.config') }}"
-          >Edit Configuration</a
-        >
+        <div class="button-container">
+          <a
+            class="button"
+            id="edit-config"
+            href="{{ url('pontoon.dashboard.config') }}"
+            >Edit Configuration
+          </a>
+          <button class="button" id="view-toggle">Show scores</button>
+        </div>
       </menu>
 
       {{ LocaleList.header() }}
@@ -90,6 +93,7 @@
       {% for locale in locales %}
         {% set main_link = url('pontoon.teams.team', locale.code) %}
 
+        {{ LocaleList.item(locale, main_link, curr_snapshot=current_snapshots.get(locale.id), base_deltas=snapshot_base_deltas.get(locale.id), score_deltas=snapshot_score_deltas.get(locale.id), columns=columns) }}
       {% endfor %}
 
       {{ LocaleList.footer(request=True, form=form) }}
