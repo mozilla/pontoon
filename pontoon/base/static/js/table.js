@@ -190,7 +190,11 @@ var Pontoon = (function (my) {
           }
 
           function getSort(el) {
-            return parseInt($(el).find('[data-sort]').data('sort'), 10) || 0;
+            const cell = $(el).find('td').eq(index);
+            const holder = cell.is('[data-sort]')
+              ? cell
+              : cell.find('[data-sort]').first();
+            return parseFloat(holder.attr('data-sort')) || 0;
           }
 
           function getString(el) {
