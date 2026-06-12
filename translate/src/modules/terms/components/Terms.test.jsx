@@ -9,6 +9,11 @@ import { createReduxStore, MockStore } from '~/test/store';
 import { Terms } from './Terms';
 import { vi } from 'vitest';
 
+vi.mock('@fluent/react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, Localized: ({ children }) => children };
+});
+
 const Wrap = ({ children }) => (
   <MockStore store={createReduxStore({ user: { isAuthenticated: true } })}>
     <Locale.Provider value={{ code: 'kg' }}>
@@ -27,13 +32,6 @@ describe('<Terms>', () => {
   beforeAll(() => {
     getSelectionBackup = window.getSelection;
     window.getSelection = () => null;
-    vi.mock('@fluent/react', async (importOriginal) => {
-      const actual = await importOriginal();
-      return {
-        ...actual,
-        Localized: ({ children }) => children,
-      };
-    });
   });
 
   afterAll(() => {

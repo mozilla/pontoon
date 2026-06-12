@@ -119,7 +119,7 @@ types:
 	npm run types -w translate
 
 eslint:
-	npm run eslint
+	npm run lint
 
 prettier:
 	npm run prettier
