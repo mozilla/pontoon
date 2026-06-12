@@ -90,7 +90,6 @@
       {% for locale in locales %}
         {% set main_link = url('pontoon.teams.team', locale.code) %}
 
-        {{ LocaleList.item(locale, main_link, curr_snapshot=current_snapshots.get(locale.id), deltas=snapshot_deltas.get(locale.id), columns=columns) }}
       {% endfor %}
 
       {{ LocaleList.footer(request=True, form=form) }}

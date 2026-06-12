@@ -1,3 +1,25 @@
+menu {
+  display: flex;
+  .button-container {
+    display: flex;
+    margin-left: auto;
+    align-items: flex-end;
+    gap: 8px;
+
+    #edit-config {
+      width: 160px;
+      margin-right: auto;
+      user-select: none;
+    }
+
+    #view-toggle {
+      width: 120px;
+      margin-left: auto;
+      user-select: none;
+    }
+  }
+}
+
 .locale-list {
   table-layout: fixed;
   width: 100%;
@@ -11,17 +33,30 @@
     }
   }
 
-  .cell-inner {
+  &.show-score-view {
+    .info-container.base-view {
+      display: none;
+    }
+    .info-container.score-view {
+      display: flex;
+    }
+  }
+
+  .info-container {
     display: flex;
     flex-direction: column;
 
-    .chs-fraction {
+    .info {
       align-self: center;
 
       &.met {
         color: var(--status-translated);
         font-weight: bold;
       }
+    }
+
+    &.score-view {
+      display: none;
     }
 
     .prev {

@@ -202,7 +202,7 @@ def compute_chs(args: dict) -> float:
     all_contributors = args.get("all_contributors", 0)
     new_signups = args.get("new_signups", 0)
     key_projects_enabled = args.get("key_projects_enabled", 0)
-    completion = args.get("completion", 0.0)
+    completion = args.get("completion", 0.00)
 
     total_manager_points = MANAGER_POINTS if active_managers >= 1 else 0
 
@@ -234,10 +234,10 @@ def compute_chs(args: dict) -> float:
     else:
         total_new_signup_points = 0
 
-    total_enabled_project_points = (
-        key_projects_enabled / len(KEY_PROJECT_SLUGS)
-    ) * ENABLED_PROJECT_POINTS
-    total_completion_points = round((completion / 100) * COMPLETION_POINTS, 1)
+    total_enabled_project_points = round(
+        (key_projects_enabled / len(KEY_PROJECT_SLUGS)) * ENABLED_PROJECT_POINTS, 2
+    )
+    total_completion_points = round((completion / 100) * COMPLETION_POINTS, 2)
 
     chs = round(
         total_manager_points
