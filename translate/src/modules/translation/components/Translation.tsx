@@ -1,29 +1,35 @@
 import React from 'react';
 
-import { getPlainMessage, MessageEntry } from '~/utils/message';
-import { specialFormats } from '~/utils/message/specialFormats';
+import {
+  getPlainMessage,
+  parseEntry,
+  type MessageEntry,
+} from '~/utils/message';
 
 import { GenericTranslation } from './GenericTranslation';
 
 type Props = {
-  content: string | MessageEntry | null;
-  format?: string;
+  entry: MessageEntry | null;
   diffTarget?: string;
   search?: string | null;
 };
 
 export function Translation({
-  content,
+  entry,
   diffTarget,
-  format,
   search,
 }: Props): null | React.ReactElement<React.ElementType> {
-  if (!content) {
+  if (!entry) {
     return null;
   }
 
-  const plain = getPlainMessage(content, format);
-  diffTarget &&= getPlainMessage(diffTarget, format);
+  const plain = getPlainMessage(entry);
+  if (diffTarget) {
+    const diffEntry = parseEntry(entry.format, diffTarget);
+    if (diffEntry) {
+      diffTarget = getPlainMessage(diffEntry);
+    }
+  }
 
   return (
     <GenericTranslation

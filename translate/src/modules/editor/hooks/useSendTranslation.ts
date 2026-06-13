@@ -59,7 +59,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
 
     const allResources = location.resource == 'all-resources';
     const sources =
-      machinery?.translation === getPlainMessage(entry, entity.format)
+      machinery?.translation === getPlainMessage(entry)
         ? machinery.sources
         : [];
     const content = await createTranslation(

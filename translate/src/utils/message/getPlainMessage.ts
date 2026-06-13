@@ -1,33 +1,9 @@
 import type { Message, Pattern } from '@mozilla/l10n';
 import type { MessageEntry } from '.';
 import { editablePattern } from './editablePattern';
-import { parseEntry } from './parseEntry';
 
-/**
- * Return a plain string representation of a given message.
- *
- * @param format The format of the file of the concerned entity.
- * @returns If the format is `'fluent'`, `'android'`, or `'gettext'`, return a simplified
- *   version of the translation. Otherwise, return the original translation.
- */
-export function getPlainMessage(
-  message: string | MessageEntry,
-  format: string | undefined,
-): string {
-  if (!message) {
-    return '';
-  }
-
-  let entry: MessageEntry | null;
-  if (typeof message === 'string') {
-    entry = parseEntry(format!, message);
-    if (!entry) {
-      return message;
-    }
-  } else {
-    entry = message;
-  }
-
+/** A plain string representation of a message entry.  */
+export function getPlainMessage(entry: MessageEntry): string {
   if (entry.value) {
     const preview = previewMessage(entry.format, entry.value);
     if (preview) {

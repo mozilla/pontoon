@@ -12,7 +12,7 @@ import { EntityDetails } from './EntityDetails';
 const ENTITY = (pk) => ({
   pk,
   key: [],
-  original: 'le test',
+  value: ['le test'],
   translation: { string: 'test', errors: [], warnings: [] },
   project: { contact: '' },
   comment: '',

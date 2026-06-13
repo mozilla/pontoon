@@ -147,7 +147,7 @@ export function Entity({
         <div>
           <p className='source-string'>
             <Translation
-              content={messageEntryFromEntity(entity)}
+              entry={messageEntryFromEntity(entity)}
               search={
                 parameters.search_exclude_source_strings
                   ? null
@@ -162,7 +162,7 @@ export function Entity({
             data-script={script}
           >
             <Translation
-              content={messageEntryFromEntityTranslation(entity)}
+              entry={messageEntryFromEntityTranslation(entity)}
               search={parameters.search}
             />
           </p>
