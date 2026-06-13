@@ -39,6 +39,7 @@ function MockEditField({
             value={
               {
                 entity: {
+                  key: ['key'],
                   format,
                   original: `key = ${defaultValue}`,
                   translation: {},

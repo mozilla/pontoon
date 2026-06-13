@@ -80,8 +80,7 @@ const style = HighlightStyle.define([
 ]);
 
 export const getExtensions = (
-  format: string,
-  orig: string,
+  entry: MessageEntry,
   ref: ReturnType<typeof useKeyHandlers>,
 ): Extension[] => [
   history(),
@@ -90,12 +89,12 @@ export const getExtensions = (
   // horizontal scrolling if it overflows the right edge of .main-column.
   // We avoid this by placing tooltips in its parent container.
   tooltips({ parent: document.querySelector('.panel-content') as HTMLElement }),
-  autocompletePlaceholders(format, orig) ?? closeBrackets(),
+  autocompletePlaceholders(entry) ?? closeBrackets(),
   EditorView.lineWrapping,
   StreamLanguage.define<any>(
-    format === 'fluent'
+    entry.format === 'fluent'
       ? fluentMode
-      : format === 'webext'
+      : entry.format === 'webext'
         ? webextMode
         : commonMode,
   ),
@@ -146,9 +145,9 @@ export const getExtensions = (
  *
  * If no autocompletions are found, bracket auto-closing is enabled.
  */
-function autocompletePlaceholders(format: string, source: string) {
+function autocompletePlaceholders(entry: MessageEntry) {
   const override: CompletionSource[] = [];
-  for (const pattern of entryPatterns(format, source)) {
+  for (const pattern of entryPatterns(entry)) {
     const highlights: [start: number, ends: number[]][] = [];
     for (const match of pattern.matchAll(placeholder)) {
       const label = match[0].trimEnd();
@@ -168,14 +167,11 @@ function autocompletePlaceholders(format: string, source: string) {
   return override.length ? autocompletion({ override }) : null;
 }
 
-function* entryPatterns(format: string, source: string) {
-  const entry = parseEntry(format, source);
-  if (entry) {
-    if (entry.value) yield* msgPatterns(entry.format, entry.value);
-    if (entry.attributes) {
-      for (const msg of entry.attributes.values()) {
-        yield* msgPatterns(entry.format, msg);
-      }
+function* entryPatterns(entry: MessageEntry) {
+  if (entry.value) yield* msgPatterns(entry.format, entry.value);
+  if (entry.attributes) {
+    for (const msg of entry.attributes.values()) {
+      yield* msgPatterns(entry.format, msg);
     }
   }
 }

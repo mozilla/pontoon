@@ -8,9 +8,9 @@ import type { MessageEntry } from '.';
 import { specialFormats } from './specialFormats';
 
 /**
- * Parse a non-plain message source as a {@link MessageEntry}.
+ * Parse a message source as a {@link MessageEntry}.
  *
- * @returns `null` on parse error or unsupported format
+ * @returns `null` on parse error
  */
 export function parseEntry(
   format: string,
@@ -34,6 +34,8 @@ export function parseEntry(
         id: '',
         value: mf2ParseMessage(source),
       };
+    } else {
+      return { format: 'plain', id: '', value: source ? [source] : [] };
     }
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);

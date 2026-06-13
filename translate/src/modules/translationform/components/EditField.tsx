@@ -18,6 +18,7 @@ import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { getExtensions, useKeyHandlers } from '../utils/editFieldExtensions';
 import { EntityView } from '~/context/EntityView';
+import { messageEntryFromEntity } from '~/utils/message/fromEntity';
 
 export type EditFieldProps = {
   index: number;
@@ -48,8 +49,7 @@ export const EditField = memo(
         (parent: HTMLDivElement | null) => {
           if (parent) {
             const extensions = getExtensions(
-              entity.format,
-              entity.original,
+              messageEntryFromEntity(entity),
               keyHandlers,
             );
             if (readOnly) {
