@@ -10,9 +10,9 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage } from '~/utils/message';
+import { getPlainMessage, serializeEntry } from '~/utils/message';
 
-import { EntityView } from './EntityView';
+import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
 import { SearchData } from './SearchData';
 
@@ -44,6 +44,7 @@ export function MachineryProvider({
   const locale = useContext(Locale);
   const { isAuthenticated } = useAppSelector((state) => state[USER]);
   const { entity } = useContext(EntityView);
+  const entry = useMachineryEntry();
   const { query } = useContext(SearchData);
 
   let source: string;
@@ -54,7 +55,7 @@ export function MachineryProvider({
     pk = null;
     format = '';
   } else {
-    source = entity.machinery_original ?? entity.original;
+    source = serializeEntry(entry);
     pk = entity.pk;
     format = entity.format;
   }
