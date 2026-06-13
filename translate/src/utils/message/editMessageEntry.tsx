@@ -23,27 +23,54 @@ export function editSource(source: string | MessageEntry): EditorField[] {
   return [{ id: '', name: '', keys: [], labels: [], handle }];
 }
 
-/** Get an `EditorField[]` corresponding to `entry`. */
-export function editMessageEntry(entry: MessageEntry): EditorField[] {
+/**
+ * Get an `EditorField[]` corresponding to the `source` and `target` entries.
+ *
+ * The presence of a value is determined solely by `source`,
+ * while the set of attributes may also be extended by `target`.
+ * The message values are determined by the `target` entry.
+ * If `target` is not set, `source` message values are used.
+ */
+export function editMessageEntry(
+  source: MessageEntry,
+  target?: MessageEntry,
+): EditorField[] {
+  const { format } = source;
+
+  let value, attributes;
+  if (target) {
+    value = target.value;
+    attributes = source.attributes
+      ? new Map(
+          Array.from(source.attributes.keys(), (key) => [key, [] as Message]),
+        )
+      : null;
+    if (target.attributes) {
+      attributes = attributes
+        ? new Map([...attributes, ...target.attributes])
+        : target.attributes;
+    }
+  } else {
+    value = source.value;
+    attributes = source.attributes;
+  }
+
   const res: EditorField[] = [];
-  if (entry.value) {
-    const hasAttributes = !!entry.attributes?.size;
-    for (const [keys, labels, value] of genPatterns(
-      entry.format,
-      entry.value,
-    )) {
+  if (source.value) {
+    const hasAttributes = !!attributes?.size;
+    for (const [keys, labels, editable] of genPatterns(format, value ?? [])) {
       if (hasAttributes) {
         labels.unshift({ label: 'Value', plural: false });
       }
-      const handle = emptyHandleRef(value);
+      const handle = emptyHandleRef(editable);
       const id = getId('', keys);
       res.push({ handle, id, name: '', keys, labels });
     }
   }
-  if (entry.attributes) {
-    const hasMultiple = entry.attributes.size > 1 || !!entry.value;
-    for (const [name, msg] of entry.attributes) {
-      for (const [keys, labels, value] of genPatterns(entry.format, msg)) {
+  if (attributes) {
+    const hasMultiple = attributes.size > 1 || !!source.value;
+    for (const [name, msg] of attributes) {
+      for (const [keys, labels, value] of genPatterns(format, msg)) {
         if (hasMultiple) {
           labels.unshift({ label: name, plural: false });
         }

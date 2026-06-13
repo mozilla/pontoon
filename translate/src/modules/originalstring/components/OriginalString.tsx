@@ -12,13 +12,19 @@ import { EntityView } from '~/context/EntityView';
 import { Highlight } from '~/modules/placeable/components/Highlight';
 import type { TermState } from '~/modules/terms';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { parseEntry, requiresSourceView } from '~/utils/message';
+import {
+  parseEntry,
+  requiresSourceView,
+  serializeEntry,
+} from '~/utils/message';
 import { editMessageEntry } from '~/utils/message/editMessageEntry';
 
 import { RichString } from './RichString';
 import { TermsPopup } from './TermsPopup';
 
 import './OriginalString.css';
+import { messageEntryFromEntity } from '~/utils/message/fromEntity';
+import { Entity } from '~/api/entity';
 
 type Props = {
   navigateToPath: (path: string) => void;
@@ -77,7 +83,11 @@ export function OriginalString({
 
   return (
     <>
-      <InnerOriginalString onClick={handleClickOnPlaceable} terms={terms} />
+      <InnerOriginalString
+        entity={entity}
+        onClick={handleClickOnPlaceable}
+        terms={terms}
+      />
       {popupTerms.length > 0 && (
         <TermsPopup
           navigateToPath={navigateToPath}
@@ -90,28 +100,32 @@ export function OriginalString({
 }
 
 function InnerOriginalString({
+  entity,
   onClick,
   terms,
 }: {
+  entity: Entity;
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   terms: TermState;
 }): React.ReactElement {
-  const { format, original } = useContext(EntityView).entity;
+  const entry = messageEntryFromEntity(entity);
 
-  let source = original;
-  const entry = parseEntry(format, source);
-  if (entry && !requiresSourceView(entry)) {
-    const msg = editMessageEntry(entry);
-    if (msg.length === 1) {
-      source = msg[0].handle.current.value;
-    } else {
-      return <RichString message={msg} onClick={onClick} terms={terms} />;
-    }
+  if (requiresSourceView(entry)) {
+    return (
+      <p className='original' onClick={onClick}>
+        <Highlight terms={terms}>{serializeEntry(entry)}</Highlight>
+      </p>
+    );
   }
 
-  return (
-    <p className='original' onClick={onClick}>
-      <Highlight terms={terms}>{source}</Highlight>
-    </p>
-  );
+  const msg = editMessageEntry(entry);
+  if (msg.length === 1) {
+    return (
+      <p className='original' onClick={onClick}>
+        <Highlight terms={terms}>{msg[0].handle.current.value}</Highlight>
+      </p>
+    );
+  }
+
+  return <RichString message={msg} onClick={onClick} terms={terms} />;
 }

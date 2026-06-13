@@ -8,7 +8,7 @@ import { useAppSelector } from '~/hooks';
 /**
  * Return the user's status banner within the given locale, to display on the user banner
  */
-export function useUserBanner(): Array<string> {
+export function useUserBanner(): [string, string] {
   const { code } = useContext(Locale);
   const { project } = useContext(Location);
   const {

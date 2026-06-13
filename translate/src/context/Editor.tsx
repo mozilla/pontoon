@@ -14,21 +14,20 @@ import {
   buildMessageEntry,
   editMessageEntry,
   editSource,
-  requiresSourceView,
-  getEmptyMessageEntry,
   MessageEntry,
   parseEntry,
+  requiresSourceView,
   serializeEntry,
 } from '~/utils/message';
+import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 
-import { EntityView, useActiveTranslation } from './EntityView';
+import { EntityView, useActiveTranslation, useEntityEntry } from './EntityView';
 import { FailedChecksData } from './FailedChecksData';
 import { Locale } from './Locale';
 import { MachineryTranslations } from './MachineryTranslations';
 import { UnsavedActions } from './UnsavedChanges';
-import { getMessageEntryFormat } from '../utils/message/getMessageEntryFormat';
 
 export type EditFieldHandle = {
   get value(): string;
@@ -117,20 +116,6 @@ function parseEntryFromFluentSource(base: MessageEntry, fields: EditorField[]) {
   return entry;
 }
 
-/**
- * Create a new MessageEntry with a simple string pattern `value`,
- * using `id` as its identifier.
- */
-const createSimpleMessageEntry = (
-  format: string,
-  key: string[],
-  value: string,
-): MessageEntry => ({
-  format: getMessageEntryFormat(format),
-  id: key[0] ?? '',
-  value: value ? [value] : [],
-});
-
 const initEditorData: EditorData = {
   pk: 0,
   busy: false,
@@ -160,6 +145,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const locale = useContext(Locale);
   const { entity } = useContext(EntityView);
   const { format } = entity;
+  const sourceEntry = useEntityEntry();
   const activeTranslation = useActiveTranslation();
   const readonly = useReadonlyEditor();
   const machinery = useContext(MachineryTranslations);
@@ -192,18 +178,17 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           const { fields, focusField, sourceView } = prev;
           const field = focusField.current ?? fields[0];
           field.handle.current.setValue(str);
-          let next = fields.slice();
-          if (sourceView) {
-            const result = buildMessageEntry(prev.base, fields);
-            next = editSource(result ?? str);
-            focusField.current = next[0];
-            setResult(result);
-          }
-          return {
+          const next = {
             ...prev,
             machinery: { manual, translation: str, sources },
-            fields: next,
-          };
+          } satisfies EditorData;
+          if (sourceView) {
+            const result = buildMessageEntry(prev.base, prev.fields);
+            next.fields = editSource(result ?? str);
+            focusField.current = next.fields[0];
+            setResult(result);
+          }
+          return next;
         }),
 
       setEditorFromHistory: (str) =>
@@ -219,13 +204,13 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             if (entry && !requiresSourceView(entry)) {
               next.fields = prev.sourceView
                 ? editSource(entry)
-                : editMessageEntry(entry);
+                : editMessageEntry(sourceEntry, entry);
             } else {
               next.fields = editSource(str);
               next.sourceView = true;
             }
           } else {
-            next.fields = editMessageEntry(prev.initial);
+            next.fields = editMessageEntry(sourceEntry, prev.initial);
             next.fields[0].handle.current.setValue(str);
           }
           next.focusField.current = next.fields[0];
@@ -260,7 +245,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (sourceView) {
             const entry = parseEntryFromFluentSource(base, fields);
             if (entry && !requiresSourceView(entry)) {
-              const fields = editMessageEntry(entry);
+              const fields = editMessageEntry(sourceEntry, entry);
               state.focusField.current = fields[0];
               setResult(entry);
               return { ...state, base: entry, fields, sourceView: false };
@@ -281,32 +266,11 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [format, readonly]);
 
   useEffect(() => {
-    let base: MessageEntry;
-    let source = activeTranslation?.string || '';
-    let sourceView = false;
-    let orig: MessageEntry | null = null;
-    if (!source) {
-      orig ??= parseEntry(format, entity.original);
-      base = orig
-        ? getEmptyMessageEntry(orig, locale)
-        : createSimpleMessageEntry(format, entity.key, '');
-      if (requiresSourceView(base)) {
-        source = serializeEntry(base);
-        sourceView = true;
-      }
-    } else {
-      const base_ = parseEntry(format, source);
-      if (base_) {
-        base = base_;
-        sourceView = requiresSourceView(base);
-      } else {
-        base = createSimpleMessageEntry(format, entity.key, source);
-        sourceView = format === 'fluent';
-      }
-    }
-
-    const fields = sourceView ? editSource(source) : editMessageEntry(base);
-
+    const base = messageEntryFromEntityTranslation(entity, locale);
+    const sourceView = requiresSourceView(base);
+    const fields = sourceView
+      ? editSource(serializeEntry(base))
+      : editMessageEntry(sourceEntry, base);
     setState(() => ({
       pk: entity.pk,
       busy: false,
