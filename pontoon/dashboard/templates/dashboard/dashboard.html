@@ -97,6 +97,12 @@
       {% endfor %}
 
       {{ LocaleList.footer(request=True, form=form) }}
+
+      {% if not locales %}
+        <div class="no-locales">
+          <p>No locales selected.</p>
+        </div>
+      {% endif %}
     </div>
   </section>
 {% endblock %}

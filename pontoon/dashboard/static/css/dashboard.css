@@ -95,3 +95,9 @@ menu {
     font-style: italic;
   }
 }
+
+.no-locales {
+  color: var(--light-grey-7);
+  font-style: italic;
+  padding: 10px 16px;
+}

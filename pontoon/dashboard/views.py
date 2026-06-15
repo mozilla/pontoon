@@ -198,7 +198,7 @@ def dashboard(request):
     # TODO Include "Last Updated -> Next scheduled update timer" so PMs don't get confused
     # TODO Maybe also include a "Run failed" warning or the option to manually run CHS calculation
     dashboard_locales = profile.dashboard_locales
-    locales = Locale.objects.visible().filter(pk__in=dashboard_locales)
+    locales = Locale.objects.visible().filter(pk__in=dashboard_locales).order_by("code")
 
     # TEMP: the most recent snapshot is from May, so shift the window back one
     # month — render the previous month as "current" and the month before as
