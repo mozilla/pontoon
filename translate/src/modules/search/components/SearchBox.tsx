@@ -303,6 +303,8 @@ export function SearchBoxBase({
           // Clear URL-only filters that have no representation in the panel, so
           // applying a filter from the UI doesn't silently keep them active
           // (e.g. the created_time filter from new-string notification links).
+          //
+          // TODO: Remove once search/filter state is redesigned (#3511).
           created_time: null,
           reviewer: null,
           review_time: null,
