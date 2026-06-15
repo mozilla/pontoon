@@ -94,7 +94,7 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
     Per-locale active-contributor counts over the 12-month window ending at end_dt.
     """
     start_date = end_date - relativedelta(months=13)
-    (print("start date", start_date),)
+    print("start date", start_date)
     print("end date", end_date)
 
     managers = defaultdict(set)
@@ -131,6 +131,7 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
         Translation.objects.filter(
             locale__in=locales,
             user__isnull=False,
+            user__is_active=True,
             user__profile__system_user=False,
             date__gte=start_date,
             date__lte=end_date,
@@ -167,11 +168,6 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
         approved = row["approved_count"]
 
         action_count = action_counts.get((user_id, locale_id), 0)
-
-        if locale_id == 185:
-            print("user_id", user_id)
-            print("total", total)
-            print("approved", approved)
 
         if not total:
             continue
@@ -249,15 +245,6 @@ def compute_chs(args: dict) -> float:
         + total_completion_points,
         2,
     )
-
-    print("total manager points:", total_manager_points)
-    print("total translator points:", total_translator_points)
-    print("total active contributor points:", total_active_contributor_points)
-    print("total all contributor points:", total_all_contributor_points)
-    print("total new signup points:", total_new_signup_points)
-    print("total enabled project points:", total_enabled_project_points)
-    print("total completion points:", total_completion_points)
-    print("CHS score:", chs)
 
     chs_fields = {
         "completion_score": total_completion_points,
