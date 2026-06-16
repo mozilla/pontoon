@@ -5,20 +5,23 @@ import secrets
 import string
 
 from datetime import time, timedelta
+from typing import Any
 
 from dateutil.relativedelta import relativedelta
+from notifications.models import Notification
 
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.http import (
     Http404,
+    HttpRequest,
     HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
@@ -32,7 +35,13 @@ from django.views.generic import TemplateView
 
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base import forms
+from pontoon.base.badge_utils import (
+    badges_promotion_count,
+    badges_review_count,
+    badges_translation_count,
+)
 from pontoon.base.models import Locale, Project, UserBanLog, UserProfile
+from pontoon.base.models.user import User
 from pontoon.base.services import anonymize_user, get_locale_or_redirect
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors import utils
@@ -82,7 +91,7 @@ def contributor_username(request, username):
     return contributor(request, user)
 
 
-def contributor(request, user):
+def contributor(request, user: User):
     """Contributor profile."""
     is_own_profile = request.user.is_authenticated and request.user == user
     default_contribution_type = (
@@ -103,30 +112,31 @@ def contributor(request, user):
         "badges": {
             "translation_champion_badge": {
                 "level": get_badge_level(
-                    BADGES_TRANSLATION_THRESHOLDS, user.badges_translation_count
+                    BADGES_TRANSLATION_THRESHOLDS, badges_translation_count(user)
                 ),
                 "name": "Translation Champion",
             },
             "review_master_badge": {
                 "level": get_badge_level(
-                    BADGES_REVIEW_THRESHOLDS, user.badges_review_count
+                    BADGES_REVIEW_THRESHOLDS, badges_review_count(user)
                 ),
                 "name": "Review Master",
             },
             "community_builder_badge": {
                 "level": get_badge_level(
-                    BADGES_PROMOTION_THRESHOLDS, user.badges_promotion_count
+                    BADGES_PROMOTION_THRESHOLDS, badges_promotion_count(user)
                 ),
                 "name": "Community Builder",
             },
         },
         "all_time_stats": {
-            "translations": user.contributed_translations,
+            "translations": user.translation_set.all(),
         },
         "approvals_charts": utils.get_approvals_charts_data(user),
         "contribution_graph": {
             "contributions": json.dumps(graph_data),
             "title": graph_title,
+            "years": utils.get_contribution_years(user),
         },
         "contribution_timeline": {
             "contributions": timeline_data,
@@ -151,14 +161,16 @@ def update_contribution_graph(request):
     try:
         user = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
-    except User.DoesNotExist as e:
+        year = request.GET.get("year", None)
+        year = int(year) if year else None
+    except (User.DoesNotExist, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
     contributions, title = utils.get_contribution_graph_data(
-        user, request.user, contribution_type
+        user, request.user, contribution_type, year
     )
     return JsonResponse({"contributions": contributions, "title": title})
 
@@ -172,6 +184,8 @@ def update_contribution_timeline(request):
         full_year = request.GET.get("full_year", False) == "true"
         day = request.GET.get("day", None)
         day = int(day) / 1000 if day else None
+        year = request.GET.get("year", None)
+        year = int(year) if year else None
     except (User.DoesNotExist, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
@@ -179,7 +193,7 @@ def update_contribution_timeline(request):
         )
 
     contributions = utils.get_contribution_timeline_data(
-        contributor, request.user, full_year, contribution_type, day
+        contributor, request.user, full_year, contribution_type, day, year
     )
 
     return render(
@@ -663,15 +677,15 @@ def verify_email_address(request, token):
 
 
 @login_required(redirect_field_name="", login_url="/403")
-def notifications(request):
+def notifications(request: HttpRequest):
     """View user notifications.
 
     Only first 100 notifications are displayed for performance reasons. The rest are
     loaded via AJAX.
     """
-    notifications = request.user.notification_list
+    notifications = notification_list(request.user)
 
-    projects = {}
+    projects: dict[str, dict[str, Any]] = {}
 
     for notification in notifications:
         project = None
@@ -682,11 +696,11 @@ def notifications(request):
 
         if project:
             if project.slug in projects:
-                projects[project.slug]["notifications"].append(notification.id)
+                projects[project.slug]["notifications"].append(notification.pk)
             else:
                 projects[project.slug] = {
                     "name": project.name,
-                    "notifications": [notification.id],
+                    "notifications": [notification.pk],
                 }
 
     # Sort projects by the number of notifications
@@ -716,13 +730,13 @@ def notifications(request):
 
 @login_required(redirect_field_name="", login_url="/403")
 @require_AJAX
-def ajax_notifications(request):
+def ajax_notifications(request: HttpRequest):
     """View (remaining) user notifications.
 
     The first 100 notifictions are displayed on the page load. The rest are loaded via
     this AJAX view.
     """
-    notifications = request.user.notification_list
+    notifications = notification_list(request.user)
 
     return render(
         request,
@@ -819,3 +833,25 @@ class ContributorsView(ContributorsMixin, TemplateView):
     """
 
     template_name = "contributors/contributors.html"
+
+
+def notification_list(user: User) -> list[Notification]:
+    """A list of notifications to display in the notifications menu."""
+    notifications = user.notifications.prefetch_related(
+        "actor", "target", "action_object"
+    )
+
+    # In order to prefetch Resource and Project data for Entities,
+    # we need to split the QuerySet into two parts:
+    # one for comment notifications,
+    # which store Entity objects into the Notification.target field,
+    # and one for other notifications.
+    content_type = ContentType.objects.get(app_label="base", model="entity")
+    comment_notifications = notifications.filter(
+        target_content_type=content_type
+    ).prefetch_related("target__resource__project")
+    other_notifications = notifications.exclude(target_content_type=content_type)
+
+    notification_list = list(comment_notifications) + list(other_notifications)
+    notification_list.sort(key=lambda x: x.timestamp, reverse=True)
+    return notification_list

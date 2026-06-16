@@ -2,11 +2,7 @@ import NProgress from 'nprogress';
 import { useContext } from 'react';
 
 import { createTranslation } from '~/api/translation';
-import {
-  EditorActions,
-  EditorData,
-  useEditorMessageEntry,
-} from '~/context/Editor';
+import { EditorActions, EditorData, EditorResult } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
@@ -17,13 +13,14 @@ import { updateEntityTranslation } from '~/modules/entities/actions';
 import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
   SAME_TRANSLATION,
+  SYNTAX_ERROR,
   TRANSLATION_SAVED,
   UNABLE_TO_SAVE_TRANSLATION,
 } from '~/modules/notification/messages';
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import { serializeEntry, getPlainMessage } from '~/utils/message';
+import { getPlainMessage } from '~/utils/message';
 import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 
 /**
@@ -45,28 +42,32 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const { setFailedChecks } = useContext(FailedChecksData);
   const { setEditorBusy } = useContext(EditorActions);
   const { busy, machinery } = useContext(EditorData);
-  const entry = useEditorMessageEntry();
+  const entry = useContext(EditorResult);
 
   return async (ignoreWarnings = false) => {
     if (busy || entity.pk === 0) {
       return;
     }
 
+    if (!entry) {
+      showNotification(SYNTAX_ERROR);
+      return;
+    }
+
     NProgress.start();
     setEditorBusy(true);
 
-    const translation = serializeEntry(entry);
-    const normalizedTranslation = getPlainMessage(translation, entity.format);
+    const allResources = location.resource == 'all-resources';
     const sources =
-      machinery && machinery.translation === normalizedTranslation
+      machinery?.translation === getPlainMessage(entry, entity.format)
         ? machinery.sources
         : [];
     const content = await createTranslation(
       entity.pk,
-      translation,
+      entry,
       locale.code,
       forceSuggestions,
-      location.resource,
+      allResources,
       ignoreWarnings,
       sources,
     );

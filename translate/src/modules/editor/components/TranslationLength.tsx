@@ -8,14 +8,15 @@ import './TranslationLength.css';
 /** Shows translation length vs. original string length.  */
 export function TranslationLength(): React.ReactElement<'div'> | null {
   const { entity } = useContext(EntityView);
-  const { sourceView } = useContext(EditorData);
-  const edit = useContext(EditorResult);
+  const { fields, sourceView } = useContext(EditorData);
+  // Included to re-render on input changes
+  const result = useContext(EditorResult);
 
-  if (sourceView || edit.length !== 1) {
+  if (sourceView || fields.length !== 1) {
     return null;
   }
 
-  const text = edit[0].value;
+  const text = result ? getPlainMessage(result, entity.format) : '';
   const srcText = getPlainMessage(entity.original, entity.format);
 
   return (

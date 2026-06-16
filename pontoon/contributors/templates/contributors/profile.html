@@ -18,9 +18,9 @@
         {% set is_my_profile = (user.is_authenticated and user.email == contributor.email) %}
         {% set profile = contributor.profile %}
         {% set has_badges = badges.review_master_badge.level or badges.translation_champion_badge.level or badges.community_builder_badge.level %}
-        {% set translator_for_locales = contributor.translator_for_locales %}
-        {% set manager_for_locales = contributor.manager_for_locales %}
-        {% set user_is_translator = user.can_translate_locales %}
+        {% set translator_for_locales = contributor.translator_for_locales() %}
+        {% set manager_for_locales = contributor.manager_for_locales() %}
+        {% set user_is_translator = user.can_translate_locales() %}
         {% set profile_is_disabled = contributor.is_active == False %}
         {% if ban_activity %}
           {%
@@ -184,7 +184,7 @@
             <h4 class="subtitle">Latest activity</h4>
             <div class="item-with-icon">
               <span class="icon fas fa-calendar-alt"></span>
-              {% set action = contributor.latest_action %}
+              {% set action = contributor.latest_action() %}
               {% if action and action.translation %}
                 {% set resource = action.translation.entity.resource %}
                 {% set string = action.translation.entity.pk %}
@@ -286,7 +286,7 @@
 
       <div class="right-column">
         {% set approval_rate_visibile = profile.visibility_approval == "Public" or user_is_translator %}
-        {% set contributor_is_translator = contributor.can_translate_locales %}
+        {% set contributor_is_translator = contributor.can_translate_locales() %}
         {% set self_approval_rate_visibile = contributor_is_translator and (profile.visibility_self_approval == "Public" or user_is_translator) %}
 
         <div class="clearfix">
@@ -442,15 +442,31 @@
               </div>
             </div>
           </div>
-          <div
-            id="contribution-graph"
-            data-contributions="{{ contribution_graph.contributions }}"
-          ></div>
-          <div class="svg-tip"></div>
+          <div class="graph-wrapper">
+            <div class="graph-main">
+              <div
+                id="contribution-graph"
+                data-contributions="{{ contribution_graph.contributions }}"
+                data-year=""
+              ></div>
+              <div class="svg-tip"></div>
+              <section id="timeline">{{ Timeline }}</section>
+              <button id="show-more" class="button">Show more activity</button>
+            </div>
+            <ul class="year-selector">
+              <li>
+                <button class="year active" data-year="">Last year</button>
+              </li>
+              {% for year in contribution_graph.years %}
+                <li>
+                  <button class="year" data-year="{{ year }}">
+                    {{ year }}
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
         </section>
-
-        <section id="timeline">{{ Timeline }}</section>
-        <button id="show-more" class="button">Show more activity</button>
       </div>
     </div>
   </section>

@@ -4,38 +4,21 @@ import {
   mf2SerializePattern,
   Markup,
   Pattern,
-  Message,
+  fluentSerializePattern,
 } from '@mozilla/l10n';
 
-export const placeholderFormats = new Set([
-  'android',
-  'webext',
-  'xcode',
-  'xliff',
-]);
-
-export function getPlaceholderMap(
-  msg: Message,
-): Map<string, Expression | Markup> | null {
-  const placeholders = new Map<string, Expression | Markup>();
-  if (Array.isArray(msg)) addPlaceholders(msg, placeholders);
-  else if (msg.msg) addPlaceholders(msg.msg, placeholders);
-  else for (const v of msg.alt) addPlaceholders(v.pat, placeholders);
-  return placeholders.size ? placeholders : null;
-}
-
-function addPlaceholders(
-  pattern: Pattern,
-  placeholders: Map<string, Expression | Markup>,
-): void {
-  for (const part of pattern) {
-    if (typeof part !== 'string') {
-      placeholders.set(editablePlaceholder(part), part);
-    }
+/**
+ * @param format - Either a `MessageEntry['format']` or an `Entity.format`;
+ *   only the `'fluent'` value gets special consideration.
+ */
+export function editablePattern(format: string, pattern: Pattern): string {
+  if (format === 'fluent') {
+    return fluentSerializePattern(pattern, {
+      escapeSyntax: false,
+      onError: () => {},
+    });
   }
-}
 
-export function editablePattern(pattern: Pattern): string {
   let str = '';
   for (const part of pattern) {
     str += typeof part === 'string' ? part : editablePlaceholder(part);

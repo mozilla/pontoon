@@ -1,7 +1,7 @@
-import { mount } from 'enzyme';
 import React from 'react';
 import { UserNotification } from './UserNotification';
 import { vi } from 'vitest';
+import { render } from '@testing-library/react';
 
 vi.mock('react-time-ago', () => {
   return {
@@ -27,11 +27,13 @@ describe('<UserNotification>', () => {
       ...notificationBase,
       description: { content: 'Unreviewed suggestions: <b id="foo">foo</b>' },
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
+    const { getByText } = render(
+      <UserNotification notification={notification} />,
+    );
 
-    // https://github.com/enzymejs/enzyme/issues/419
-    const desc = wrapper.find('span.description').render();
-    expect(desc.find('b#foo')).toHaveLength(1);
+    const element = getByText('foo');
+    expect(element).toHaveAttribute('id', 'foo');
+    expect(element.closest('span.description')).toBeInTheDocument();
   });
 
   it('shows a "has reviewed suggestions" notification', () => {
@@ -40,11 +42,13 @@ describe('<UserNotification>', () => {
       description: { content: 'Reviewed: <b id="bar">bar</b>' },
       verb: 'has reviewed suggestions',
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
+    const { getByText } = render(
+      <UserNotification notification={notification} />,
+    );
 
-    // https://github.com/enzymejs/enzyme/issues/419
-    const desc = wrapper.find('span.description').render();
-    expect(desc.find('b#bar')).toHaveLength(1);
+    const element = getByText('bar');
+    expect(element).toHaveAttribute('id', 'bar');
+    expect(element.closest('span.description')).toBeInTheDocument();
   });
 
   it('shows a comment notification', () => {
@@ -55,9 +59,13 @@ describe('<UserNotification>', () => {
         is_comment: true,
       },
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
+    const { getByText } = render(
+      <UserNotification notification={notification} />,
+    );
 
-    expect(wrapper.find('.message.trim b#baz')).toHaveLength(1);
+    const element = getByText('baz');
+    expect(element).toHaveAttribute('id', 'baz');
+    expect(element.closest('.message.trim')).toBeInTheDocument();
   });
 
   it('shows other notification with description', () => {
@@ -65,11 +73,13 @@ describe('<UserNotification>', () => {
       ...notificationBase,
       description: { content: 'Other: <b id="fuzz">fuzz</b>' },
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
+    const { getByText } = render(
+      <UserNotification notification={notification} />,
+    );
 
-    // https://github.com/enzymejs/enzyme/issues/419
-    const desc = wrapper.find('.message').render();
-    expect(desc.find('b#fuzz')).toHaveLength(1);
+    const element = getByText('fuzz');
+    expect(element).toHaveAttribute('id', 'fuzz');
+    expect(element.closest('.message')).toBeInTheDocument();
   });
 
   it('shows other notification without description', () => {
@@ -78,10 +88,12 @@ describe('<UserNotification>', () => {
       description: { content: null },
       verb: 'is Other',
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
+    const { container } = render(
+      <UserNotification notification={notification} />,
+    );
 
-    expect(wrapper.find('.message')).toHaveLength(0);
-    expect(wrapper.find('.verb').text()).toBe('is Other');
+    expect(container.querySelector('.message')).toBeNull();
+    expect(container.querySelector('.verb')).toHaveTextContent('is Other');
   });
 
   it('shows comment notification with deleted actor', () => {
@@ -93,9 +105,11 @@ describe('<UserNotification>', () => {
         is_comment: true,
       },
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
+    const { container } = render(
+      <UserNotification notification={notification} />,
+    );
 
-    expect(wrapper.find('.actor').text()).toBe('Deleted User');
+    expect(container.querySelector('.actor')).toHaveTextContent('Deleted User');
   });
 
   it('shows other notification with deleted actor', () => {
@@ -104,9 +118,11 @@ describe('<UserNotification>', () => {
       actor: null,
       description: { content: 'Other content' },
     };
-    const wrapper = mount(<UserNotification notification={notification} />);
+    const { container } = render(
+      <UserNotification notification={notification} />,
+    );
 
-    expect(wrapper.find('.actor').text()).toBe('Deleted User');
-    expect(wrapper.find('.actor a')).toHaveLength(0);
+    expect(container.querySelector('.actor')).toHaveTextContent('Deleted User');
+    expect(container.querySelector('.actor a')).toBeNull();
   });
 });

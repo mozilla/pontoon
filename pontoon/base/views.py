@@ -6,15 +6,12 @@ from collections import defaultdict
 from datetime import datetime
 from urllib.parse import urlparse
 
-from notifications.signals import notify
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q, QuerySet
 from django.http import (
     Http404,
     HttpResponse,
@@ -34,6 +31,8 @@ from django.views.generic.edit import FormView
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
+from pontoon.base.get_entities import get_entities_for_project_locale
+from pontoon.base.map_entities import map_entities_to_json
 from pontoon.base.models import (
     Comment,
     Entity,
@@ -44,12 +43,26 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
+    User,
     UserProfile,
 )
+from pontoon.base.notification_utils import serialized_notifications
 from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
+from pontoon.base.user_utils import (
+    can_manage_locales,
+    can_translate,
+    can_translate_locales,
+    gravatar_url,
+    manager_for_locales,
+    profile_url,
+    translated_projects,
+    translator_for_locales,
+    user_banner,
+)
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
+from pontoon.messaging.notifications import send_notification
 
 
 log = logging.getLogger(__name__)
@@ -192,7 +205,7 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
 
     return JsonResponse(
         {
-            "entities": Entity.map_entities(locale, preferred_source_locale, entities),
+            "entities": map_entities_to_json(locale, preferred_source_locale, entities),
             "stats": TranslatedResource.objects.query_stats(
                 project, form.cleaned_data["paths"], locale
             ),
@@ -201,7 +214,9 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     )
 
 
-def _get_paginated_entities(locale, preferred_source_locale, project, form, entities):
+def _get_paginated_entities(
+    locale, preferred_source_locale, project, form, entities: QuerySet[Entity]
+):
     """Return a paginated list of entities.
 
     This is used by the regular mode of the Translate page.
@@ -221,7 +236,7 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
         requested_entity = None
     return JsonResponse(
         {
-            "entities": Entity.map_entities(
+            "entities": map_entities_to_json(
                 locale,
                 preferred_source_locale,
                 entities_to_map,
@@ -267,8 +282,8 @@ def entities(request):
     if form.cleaned_data["entity_ids"]:
         return _get_entities_list(locale, preferred_source_locale, project, form)
 
-    # `Entity.for_project_locale` only requires a subset of the fields the form contains. We thus
-    # make a new dict with only the keys we want to pass to that function.
+    # `get_entities_for_project_locale` only requires a subset of the fields the form contains.
+    # We thus make a new dict with only the keys we want to pass to that function.
     restrict_to_keys = (
         "paths",
         "status",
@@ -280,6 +295,7 @@ def entities(request):
         "search_match_case",
         "search_match_whole_word",
         "time",
+        "created_time",
         "author",
         "review_time",
         "reviewer",
@@ -303,7 +319,9 @@ def entities(request):
             form_data[name] = UserProfile._meta.get_field(name).get_default()
 
     try:
-        entities = Entity.for_project_locale(request.user, project, locale, **form_data)
+        entities = get_entities_for_project_locale(
+            request.user, project, locale, **form_data
+        )
     except ValueError as error:
         return JsonResponse({"status": False, "message": f"{error}"}, status=500)
 
@@ -409,13 +427,13 @@ def get_sibling_entities(request):
 
     return JsonResponse(
         {
-            "succeeding": Entity.map_entities(
+            "succeeding": map_entities_to_json(
                 locale,
                 preferred_source_locale,
                 succeeding_entities,
                 is_sibling=True,
             ),
-            "preceding": Entity.map_entities(
+            "preceding": map_entities_to_json(
                 locale,
                 preferred_source_locale,
                 preceding_entities,
@@ -472,14 +490,18 @@ def get_translation_history(request):
         translation_dict.update(
             {
                 "user": u.name_or_email,
-                "uid": u.id,
+                "uid": u.pk,
                 "username": u.username,
-                "user_gravatar_url_small": u.gravatar_url(88),
-                "user_banner": u.banner(locale, project_contact),
+                "user_gravatar_url_small": gravatar_url(u),
+                "user_banner": user_banner(u, locale, project_contact),
                 "date": t.date,
-                "approved_user": User.display_name_or_blank(t.approved_user),
+                "approved_user": t.approved_user.name_or_email
+                if t.approved_user
+                else "",
                 "approved_date": t.approved_date,
-                "rejected_user": User.display_name_or_blank(t.rejected_user),
+                "rejected_user": t.rejected_user.name_or_email
+                if t.rejected_user
+                else "",
                 "rejected_date": t.rejected_date,
                 "comments": [c.serialize(project_contact) for c in t.comments.all()],
                 "machinery_sources": t.machinery_sources_values,
@@ -608,7 +630,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         pk__in=recipients,
         profile__comment_notifications=True,
     ).exclude(pk=user.pk):
-        notify.send(
+        send_notification(
             user,
             recipient=recipient,
             verb="has added a comment in",
@@ -643,7 +665,7 @@ def _send_pin_comment_notifications(user, comment):
     ):
         # Send separate notification for each locale (which results in links to corresponding translate views)
         for locale in Locale.objects.filter(pk__in=recipient_data[recipient.pk]):
-            notify.send(
+            send_notification(
                 user,
                 recipient=recipient,
                 verb="has pinned a comment in",
@@ -834,9 +856,9 @@ def get_users(request):
     for u in users:
         payload.append(
             {
-                "gravatar": u.gravatar_url(44),
+                "gravatar": gravatar_url(u, 44),
                 "name": u.name_or_email,
-                "url": u.profile_url,
+                "url": profile_url(u),
                 "username": u.profile.username,
             }
         )
@@ -919,9 +941,9 @@ def upload(request):
 
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
-    if not request.user.can_translate(
-        project=project, locale=locale
-    ) or readonly_exists(project, locale):
+    if not can_translate(request.user, project, locale) or readonly_exists(
+        project, locale
+    ):
         return HttpResponseForbidden("You don't have permission to upload files.")
     get_object_or_404(Resource, project=project, path=res_path)
 
@@ -1029,16 +1051,14 @@ def user_data(request):
             "contributor_for_locales": list(
                 user.translation_set.values_list("locale__code", flat=True).distinct()
             ),
-            "can_manage_locales": list(
-                user.can_manage_locales.values_list("code", flat=True)
-            ),
-            "can_translate_locales": list(
-                user.can_translate_locales.values_list("code", flat=True)
-            ),
-            "manager_for_locales": [loc.code for loc in user.manager_for_locales],
-            "translator_for_locales": [loc.code for loc in user.translator_for_locales],
+            "can_manage_locales": list(can_manage_locales(user)),
+            "can_translate_locales": list(can_translate_locales(user)),
+            "manager_for_locales": [loc.code for loc in manager_for_locales(user)],
+            "translator_for_locales": [
+                loc.code for loc in translator_for_locales(user)
+            ],
             "pm_for_projects": list(user.contact_for.values_list("slug", flat=True)),
-            "translator_for_projects": user.translated_projects,
+            "translator_for_projects": translated_projects(user),
             "settings": {
                 "quality_checks": user.profile.quality_checks,
                 "force_suggestions": user.profile.force_suggestions,
@@ -1051,9 +1071,9 @@ def user_data(request):
             "tour_status": user.profile.tour_status,
             "has_dismissed_addon_promotion": user.profile.has_dismissed_addon_promotion,
             "logout_url": logout_url,
-            "gravatar_url_small": user.gravatar_url(88),
-            "gravatar_url_big": user.gravatar_url(176),
-            "notifications": user.serialized_notifications,
+            "gravatar_url_small": gravatar_url(user, 88),
+            "gravatar_url_big": gravatar_url(user, 176),
+            "notifications": serialized_notifications(user),
             "theme": user.profile.theme,
             "editor_theme": user.profile.editor_theme,
         }

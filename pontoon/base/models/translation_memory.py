@@ -115,10 +115,8 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
         ).annotate(
             quality=Case(
                 *quality_sql_map,
-                **dict(
-                    default=Value(0),
-                    output_field=models.DecimalField(),
-                ),
+                default=Value(0),
+                output_field=models.DecimalField(),
             )
         )
         return entries
@@ -149,14 +147,14 @@ class TranslationMemoryEntry(models.Model):
     source = models.TextField()
     target = models.TextField()
 
-    entity = models.ForeignKey(
+    entity: models.ForeignKey[Entity | None] = models.ForeignKey(
         Entity, models.SET_NULL, null=True, related_name="memory_entries"
     )
-    translation = models.ForeignKey(
+    translation: models.ForeignKey[Translation | None] = models.ForeignKey(
         Translation, models.SET_NULL, null=True, related_name="memory_entries"
     )
-    locale = models.ForeignKey(Locale, models.CASCADE)
-    project = models.ForeignKey(
+    locale: models.ForeignKey[Locale] = models.ForeignKey(Locale, models.CASCADE)
+    project: models.ForeignKey[Project | None] = models.ForeignKey(
         Project, models.SET_NULL, null=True, related_name="memory_entries"
     )
 

@@ -4,13 +4,14 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
-from django.db.models.manager import BaseManager
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
 from pontoon.base.aggregated_stats import get_top_instances
 from pontoon.base.models import Locale, Project, TranslatedResource, Translation
+from pontoon.base.models.locale import LocaleQuerySet
+from pontoon.base.models.project import ProjectQuerySet
 from pontoon.base.services import get_project_or_redirect
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
@@ -85,13 +86,11 @@ def project(request, slug):
 def ajax_teams(request, slug):
     """Project Teams tab."""
     project = get_object_or_404(
-        cast(
-            BaseManager[Project], Project.objects.visible_for(request.user).available()
-        ),
+        cast(ProjectQuerySet, Project.objects).visible_for(request.user).available(),
         slug=slug,
     )
 
-    locales = cast(BaseManager[Locale], Locale.objects.available()).order_by("name")
+    locales = cast(LocaleQuerySet, Locale.objects).available().order_by("name")
 
     # Only include filtered teams if provided
     teams = request.GET.get("teams", "").split(",")

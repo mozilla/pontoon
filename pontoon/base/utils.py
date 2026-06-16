@@ -2,13 +2,9 @@ import functools
 import re
 import time
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from xml.sax.saxutils import escape, quoteattr
 
-from guardian.decorators import permission_required as guardian_permission_required
-
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
 from django.http import HttpResponseBadRequest
 from django.utils.text import slugify
 from django.utils.timezone import make_aware
@@ -69,64 +65,9 @@ def require_AJAX(f):
     return wrap
 
 
-def permission_required(perm, *args, **kwargs):
-    """Wrapper for guardian permission_required decorator.
-
-    If the request is not permitted and user is anon then it returns 404
-    otherwise 403.
-    """
-
-    def wrapper(f):
-        @functools.wraps(f)
-        def wrap(request, *_args, **_kwargs):
-            perm_kwargs = (
-                dict(return_404=True)
-                if request.user.is_anonymous
-                else dict(return_403=True)
-            )
-            perm_kwargs.update(kwargs)
-            protected = guardian_permission_required(perm, *args, **perm_kwargs)
-            return protected(f)(request, *_args, **_kwargs)
-
-        return wrap
-
-    return wrapper
-
-
 def aware_datetime(*args, **kwargs):
     """Return an aware datetime using Django's configured timezone."""
     return make_aware(datetime(*args, **kwargs))
-
-
-def latest_datetime(datetimes):
-    """
-    Return the latest datetime in the given list of datetimes,
-    gracefully handling `None` values in the list. Returns `None` if all
-    values in the list are `None`.
-    """
-    if all(map(lambda d: d is None, datetimes)):
-        return None
-
-    min_datetime = make_aware(datetime.min)
-    datetimes = map(lambda d: d or min_datetime, datetimes)
-    return max(datetimes)
-
-
-def parse_time_interval(interval):
-    """
-    Return start and end time objects from time interval string in the format
-    %d%m%Y%H%M-%d%m%Y%H%M. Also, increase interval by one minute due to
-    truncation to a minute in Translation.counts_per_minute QuerySet.
-    """
-
-    def parse_timestamp(timestamp):
-        return make_aware(
-            datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=timezone.utc
-        )
-
-    start, end = interval.split("-")
-
-    return parse_timestamp(start), parse_timestamp(end) + timedelta(minutes=1)
 
 
 def convert_to_unix_time(my_datetime):
@@ -250,14 +191,6 @@ def get_search_phrases(search):
         search_list = ['"']
 
     return search_list
-
-
-def is_email(email):
-    try:
-        validate_email(email)
-        return True
-    except ValidationError:
-        return False
 
 
 def parse_bool(value) -> bool:

@@ -19,7 +19,6 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, F, Prefetch, Q, TextField
 from django.db.models.functions import Cast
-from django.db.models.manager import BaseManager
 from django.http import (
     Http404,
     HttpResponse,
@@ -47,10 +46,18 @@ from pontoon.base.models import (
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.translation import Translation
 from pontoon.base.services import get_locale_or_redirect
+from pontoon.base.user_utils import (
+    can_translate_locales,
+    profile_url,
+    user_locale_role,
+    user_role,
+)
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm
+
+from ..base.models.project import ProjectQuerySet
 
 
 log = logging.getLogger(__name__)
@@ -109,10 +116,12 @@ def ajax_projects(request, locale):
     """Team Projects tab."""
     locale = get_object_or_404(Locale, code=locale)
 
-    projects = cast(
-        BaseManager[Project],
-        Project.objects.visible().visible_for(request.user),
-    ).order_by("name")
+    projects = (
+        cast(ProjectQuerySet, Project.objects)
+        .visible()
+        .visible_for(request.user)
+        .order_by("name")
+    )
 
     enabled_projects = list(projects.filter(locales=locale))
 
@@ -165,10 +174,9 @@ def ajax_projects(request, locale):
             .order_by()
             .values_list("project_id", flat=True)
         )
-        pretranslation_request_enabled = (
-            len(pretranslated_project_ids) < len(enabled_projects)
-            and request.user.can_translate_locales.filter(id=locale.id).exists()
-        )
+        pretranslation_request_enabled = len(pretranslated_project_ids) < len(
+            enabled_projects
+        ) and locale.code in can_translate_locales(request.user)
     else:
         pretranslated_project_ids = set()
         pretranslation_request_enabled = False
@@ -625,8 +633,8 @@ def request_item(request, locale=None):
             "code": locale.code,
             "projects": projects,
             "user": user.display_name_and_email,
-            "user_role": user.locale_role(locale),
-            "user_url": request.build_absolute_uri(user.profile_url),
+            "user_role": user_locale_role(user, locale),
+            "user_url": request.build_absolute_uri(profile_url(user)),
         }
 
     # Request new teams to be enabled
@@ -648,8 +656,8 @@ def request_item(request, locale=None):
             "locale": name,
             "code": code,
             "user": user.display_name_and_email,
-            "user_role": user.role(),
-            "user_url": request.build_absolute_uri(user.profile_url),
+            "user_role": user_role(user),
+            "user_url": request.build_absolute_uri(profile_url(user)),
         }
 
     if settings.PROJECT_MANAGERS[0] != "":
@@ -712,8 +720,8 @@ def request_pretranslation(request, locale):
         "locale": locale,
         "projects": projects,
         "user": user.display_name_and_email,
-        "user_role": user.locale_role(locale),
-        "user_url": request.build_absolute_uri(user.profile_url),
+        "user_role": user_locale_role(user, locale),
+        "user_url": request.build_absolute_uri(profile_url(user)),
     }
 
     if settings.PROJECT_MANAGERS[0] != "":

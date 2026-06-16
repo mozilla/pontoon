@@ -5,6 +5,13 @@ from django.db import models
 from pontoon.base.models import Entity, Resource, TranslatedResource
 
 
+def upper_first_letter(text):
+    """
+    Uppercase the first letter of a string, leaving the rest unchanged.
+    """
+    return text[:1].upper() + text[1:]
+
+
 def update_terminology_project_stats():
     resource = Resource.objects.current().get(project__slug="terminology")
     resource.total_strings = Entity.objects.filter(
@@ -14,7 +21,7 @@ def update_terminology_project_stats():
     TranslatedResource.objects.filter(resource=resource).calculate_stats()
 
 
-class TermQuerySet(models.QuerySet):
+class TermQuerySet(models.QuerySet["Term"]):
     def for_string(self, string):
         terms = []
         available_terms = self.exclude(definition="").exclude(forbidden=True)
@@ -76,6 +83,8 @@ class Term(models.Model):
 
     objects = TermQuerySet.as_manager()
 
+    translations: models.QuerySet["TermTranslation"]
+
     def translation(self, locale):
         """
         Get locale translation of the term.
@@ -110,11 +119,11 @@ class Term(models.Model):
         """
         comment = "{}. {}.".format(
             self.part_of_speech.capitalize(),
-            self.definition.capitalize().rstrip("."),
+            upper_first_letter(self.definition).rstrip("."),
         )
 
         if self.usage:
-            comment += " E.g. {}.".format(self.usage.capitalize().rstrip("."))
+            comment += " E.g. {}.".format(upper_first_letter(self.usage).rstrip("."))
 
         return comment
 

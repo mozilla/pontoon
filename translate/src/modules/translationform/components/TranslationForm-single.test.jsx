@@ -73,14 +73,22 @@ describe('<TranslationForm> with one field', () => {
         changes: { from: 0, to: view.state.doc.length, insert: 'good bye' },
       }),
     );
-    expect(getResult()[0].value).toBe('good bye');
+    expect(getResult()).toEqual({
+      format: 'plain',
+      id: 'key',
+      value: ['good bye'],
+    });
   });
 
   it('updates the translation when setEditorSelection is passed without focus', async () => {
     const { actions, getResult } = mountForm('Foo');
     act(() => actions.setEditorSelection(', Bar'));
 
-    expect(getResult()[0].value).toBe('Foo, Bar');
+    expect(getResult()).toEqual({
+      format: 'plain',
+      id: 'key',
+      value: ['Foo, Bar'],
+    });
   });
 
   it('updates the translation when setEditorSelection is passed with focus', async () => {
@@ -91,6 +99,10 @@ describe('<TranslationForm> with one field', () => {
       actions.setEditorSelection(', World');
     });
 
-    expect(getResult()[0].value).toBe('Hello, World');
+    expect(getResult()).toEqual({
+      format: 'plain',
+      id: 'key',
+      value: ['Hello, World'],
+    });
   });
 });

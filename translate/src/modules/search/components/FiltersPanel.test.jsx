@@ -1,12 +1,11 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import { expect } from 'vitest';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
-
+import { MockLocalizationProvider } from '~/test/utils';
 import { FiltersPanel, FiltersPanelDialog } from './FiltersPanel';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, render, within } from '@testing-library/react';
 
 describe('<FiltersPanelDialog>', () => {
   it('correctly sets filter as selected', () => {
@@ -192,53 +191,80 @@ describe('<FiltersPanelDialog>', () => {
 });
 
 describe('<FiltersPanel>', () => {
+  const FilterPanelDialogTitle = 'TRANSLATION STATUS';
   it('shows a panel with filters on click', () => {
-    const wrapper = shallow(
-      <FiltersPanel
-        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
-        authorsData={[]}
-        tagsData={[]}
-        timeRangeData={[]}
-        parameters={{}}
-        getAuthorsAndTimeRangeData={vi.fn()}
-        updateFiltersFromURL={vi.fn()}
-      />,
+    const store = createReduxStore();
+    const { getByText, queryByText, getByRole } = mountComponentWithStore(
+      FiltersPanel,
+      store,
+      {
+        filters: { authors: [], extras: [], statuses: [], tags: [] },
+        authorsData: [],
+        tagsData: [],
+        timeRangeData: [],
+        parameters: {},
+        getAuthorsAndTimeRangeData: vi.fn(),
+        updateFiltersFromURL: vi.fn(),
+      },
     );
 
-    expect(wrapper.find('FiltersPanelDialog')).toHaveLength(0);
-    wrapper.find('.visibility-switch').simulate('click');
-    expect(wrapper.find('FiltersPanelDialog')).toHaveLength(1);
+    expect(queryByText(FilterPanelDialogTitle)).toBeNull();
+    fireEvent.click(getByRole('button'));
+    getByText(FilterPanelDialogTitle);
   });
 
   it('has the correct icon based on parameters', () => {
+    const toggleAriaLabel = 'Toggle';
     for (const { slug } of FILTERS_STATUS) {
-      const wrapper = shallow(
-        <FiltersPanel
-          filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
-          authorsData={[]}
-          tagsData={[]}
-          timeRangeData={[]}
-          parameters={{}}
-          getAuthorsAndTimeRangeData={vi.fn()}
-        />,
+      const { container } = mountComponentWithStore(
+        FiltersPanel,
+        createReduxStore(),
+        {
+          filters: { authors: [], extras: [], statuses: [slug], tags: [] },
+          authorsData: [],
+          tagsData: [],
+          timeRangeData: [],
+          parameters: {},
+          getAuthorsAndTimeRangeData: vi.fn(),
+        },
+        undefined,
+        [
+          `search-FiltersPanel--toggle-filters-panel =
+            .aria-label = ${toggleAriaLabel}`,
+        ],
       );
 
-      expect(wrapper.find('.visibility-switch').hasClass(slug)).toBeTruthy();
+      const button = within(container).getByRole('button', {
+        name: toggleAriaLabel,
+      });
+      expect(button).toHaveClass('visibility-switch');
+      expect(button).toHaveClass(slug);
     }
 
     for (const { slug } of FILTERS_EXTRA) {
-      const wrapper = shallow(
-        <FiltersPanel
-          filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
-          authorsData={[]}
-          tagsData={[]}
-          timeRangeData={[]}
-          parameters={{}}
-          getAuthorsAndTimeRangeData={vi.fn()}
-        />,
+      const { container } = mountComponentWithStore(
+        FiltersPanel,
+        createReduxStore(),
+        {
+          filters: { authors: [], extras: [slug], statuses: [], tags: [] },
+          authorsData: [],
+          tagsData: [],
+          timeRangeData: [],
+          parameters: {},
+          getAuthorsAndTimeRangeData: vi.fn(),
+        },
+        undefined,
+        [
+          `search-FiltersPanel--toggle-filters-panel =
+            .aria-label = ${toggleAriaLabel}`,
+        ],
       );
 
-      expect(wrapper.find('.visibility-switch').hasClass(slug)).toBeTruthy();
+      const button = within(container).getByRole('button', {
+        name: toggleAriaLabel,
+      });
+      expect(button).toHaveClass('visibility-switch');
+      expect(button).toHaveClass(slug);
     }
   });
 });

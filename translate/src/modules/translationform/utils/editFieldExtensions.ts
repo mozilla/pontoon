@@ -25,7 +25,7 @@ import { EditorActions } from '~/context/Editor';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
 import { MessageEntry, parseEntry } from '~/utils/message';
-import { editablePattern } from '~/utils/message/placeholders';
+import { editablePattern } from '~/utils/message/editablePattern';
 import { decoratorPlugin } from './decoratorPlugin';
 import {
   useHandleCtrlShiftArrow,
@@ -181,9 +181,9 @@ function* entryPatterns(format: string, source: string) {
 }
 
 function* msgPatterns(format: MessageEntry['format'], msg: Message) {
-  if (Array.isArray(msg)) yield editablePattern(msg);
-  else if (msg.msg) yield editablePattern(msg.msg);
-  else for (const v of msg.alt) yield editablePattern(v.pat);
+  if (Array.isArray(msg)) yield editablePattern(format, msg);
+  else if (msg.msg) yield editablePattern(format, msg.msg);
+  else for (const v of msg.alt) yield editablePattern(format, v.pat);
 }
 
 function completePlaceholder(

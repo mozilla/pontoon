@@ -101,7 +101,7 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'message' }]);
+    expect(result).toEqual({ format: 'plain', id: 'key', value: ['message'] });
   });
 
   it('provides a simple Fluent value', () => {
@@ -125,7 +125,11 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'message' }]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: ['message'],
+    });
   });
 
   it('provides a rich Fluent value', () => {
@@ -151,10 +155,18 @@ describe('<EditorProvider>', () => {
       handle: { current: { value: field.handle.current.value } },
     }));
     expect(editor).toMatchObject({ sourceView: false, initial: entry, fields });
-    expect(result).toMatchObject([
-      { name: '', keys: ['one'], value: 'ONE' },
-      { name: '', keys: [{ '*': 'other' }], value: 'OTHER' },
-    ]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { var: { $: 'var', fn: 'number' } },
+        sel: ['var'],
+        alt: [
+          { keys: ['one'], pat: ['ONE'] },
+          { keys: [{ '*': 'other' }], pat: ['OTHER'] },
+        ],
+      },
+    });
   });
 
   it('provides a forced source Fluent value', () => {
@@ -181,8 +193,12 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
-    expect(warn).toHaveBeenCalledTimes(2);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: ['## comment\n'],
+    });
+    expect(warn).toHaveBeenCalledTimes(1);
   });
 
   it('provides a simple Android value with no translation', () => {
@@ -202,7 +218,6 @@ describe('<EditorProvider>', () => {
     expect(editor).toMatchObject({
       sourceView: false,
       initial: { id: '', value: [] },
-      placeholders: new Map([['%1$s', arg1]]),
       fields: [
         {
           id: '',
@@ -213,8 +228,7 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(editor.placeholders).toBeInstanceOf(Map);
-    expect(result).toMatchObject([{ name: '', keys: [], value: '' }]);
+    expect(result).toEqual({ format: 'android', id: '', value: [] });
   });
 
   it('provides a simple Android value', () => {
@@ -234,7 +248,6 @@ describe('<EditorProvider>', () => {
     expect(editor).toMatchObject({
       sourceView: false,
       initial: { id: '', value: ['Hei, ', arg1, '!'] },
-      placeholders: new Map([['%1$s', arg1]]),
       fields: [
         {
           id: '',
@@ -245,8 +258,15 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(editor.placeholders).toBeInstanceOf(Map);
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'Hei, %1$s!' }]);
+    expect(result).toEqual({
+      format: 'android',
+      id: '',
+      value: [
+        'Hei, ',
+        { $: 'arg1', fn: 'string', opt: undefined, attr: { source: '%1$s' } },
+        '!',
+      ],
+    });
   });
 
   it('provides a rich Android value', () => {
@@ -278,13 +298,27 @@ describe('<EditorProvider>', () => {
     expect(editor).toMatchObject({
       sourceView: false,
       initial: entry,
-      placeholders: null,
       fields,
     });
-    expect(result).toMatchObject([
-      { name: '', keys: ['one'], value: 'trans:ONE' },
-      { name: '', keys: [{ '*': '' }], value: 'trans:OTHER' },
-    ]);
+    expect(result).toEqual({
+      format: 'android',
+      id: '',
+      value: {
+        decl: {
+          quantity: {
+            $: 'quantity',
+            fn: 'number',
+            opt: undefined,
+            attr: undefined,
+          },
+        },
+        sel: ['quantity'],
+        alt: [
+          { keys: ['one'], pat: ['trans:ONE'] },
+          { keys: [{ '*': '' }], pat: ['trans:OTHER'] },
+        ],
+      },
+    });
   });
 
   it('updates state on entity change', () => {
@@ -307,10 +341,18 @@ describe('<EditorProvider>', () => {
         { handle: { current: { value: 'trans other' } } },
       ],
     });
-    expect(result).toMatchObject([
-      { value: 'trans one' },
-      { value: 'trans other' },
-    ]);
+    expect(result).toEqual({
+      format: 'gettext',
+      id: '',
+      value: {
+        decl: { n: { $: 'n', attr: undefined, fn: 'number', opt: undefined } },
+        sel: ['n'],
+        alt: [
+          { keys: ['one'], pat: ['trans one'] },
+          { keys: [{ '*': '' }], pat: ['trans other'] },
+        ],
+      },
+    });
   });
 
   it('clears a rich Fluent value', () => {
@@ -426,10 +468,18 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([
-      { keys: ['one'], name: '', value: 'ONE' },
-      { keys: [{ '*': 'other' }], name: '', value: 'OTHER' },
-    ]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { var: { $: 'var', fn: 'number' } },
+        sel: ['var'],
+        alt: [
+          { keys: ['one'], pat: ['ONE'] },
+          { keys: [{ '*': 'other' }], pat: ['OTHER'] },
+        ],
+      },
+    });
   });
 
   it('toggles Fluent source view', () => {
@@ -462,18 +512,37 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ keys: [], name: '', value: source }]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { var: { $: 'var', fn: 'number' } },
+        sel: ['var'],
+        alt: [
+          { keys: ['one'], pat: ['ONE'] },
+          { keys: [{ '*': 'other' }], pat: ['OTHER'] },
+        ],
+      },
+    });
 
     act(() => actions.toggleSourceView());
 
     expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
-    expect(result).toMatchObject([
-      { keys: ['one'], name: '', value: 'ONE' },
-      { keys: [{ '*': 'other' }], name: '', value: 'OTHER' },
-    ]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { var: { $: 'var', fn: 'number' } },
+        sel: ['var'],
+        alt: [
+          { keys: ['one'], pat: ['ONE'] },
+          { keys: [{ '*': 'other' }], pat: ['OTHER'] },
+        ],
+      },
+    });
   });
 
-  it('reports no pending changes for empty android entry with placeholders', () => {
+  it('reports no pending changes for empty android entry', () => {
     let unsaved;
     const Spy = () => {
       unsaved = useContext(UnsavedChanges);

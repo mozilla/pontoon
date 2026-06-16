@@ -1,12 +1,21 @@
 import logging
 
+from typing import TYPE_CHECKING
+
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import BooleanField, Case, F, Sum, Value, When
+from django.db.models import BooleanField, Case, F, QuerySet, Sum, Value, When
 
 from pontoon.base.aggregated_stats import AggregatedStats
 
+
+if TYPE_CHECKING:
+    from pontoon.base.models.comment import Comment
+    from pontoon.base.models.project import ProjectQuerySet
+    from pontoon.base.models.project_locale import ProjectLocaleQuerySet
+    from pontoon.base.models.translated_resource import TranslatedResourceQuerySet
+    from pontoon.base.models.translation import Translation, TranslationQuerySet
 
 log = logging.getLogger(__name__)
 
@@ -24,12 +33,14 @@ def validate_cldr(value):
 
 
 class LocaleCodeHistory(models.Model):
-    locale = models.ForeignKey("Locale", on_delete=models.CASCADE)
+    locale: models.ForeignKey["Locale"] = models.ForeignKey(
+        "Locale", on_delete=models.CASCADE
+    )
     old_code = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class LocaleQuerySet(models.QuerySet):
+class LocaleQuerySet(models.QuerySet["Locale"]):
     def unsynced(self):
         """
         Filter unsynchronized locales.
@@ -208,10 +219,10 @@ class Locale(models.Model, AggregatedStats):
 
     # Locale contains references to user groups that translate or manage them.
     # Groups store respective permissions for users.
-    translators_group = models.ForeignKey(
+    translators_group: models.ForeignKey[Group | None] = models.ForeignKey(
         Group, models.SET_NULL, related_name="translated_locales", null=True
     )
-    managers_group = models.ForeignKey(
+    managers_group: models.ForeignKey[Group | None] = models.ForeignKey(
         Group, models.SET_NULL, related_name="managed_locales", null=True
     )
 
@@ -271,7 +282,7 @@ class Locale(models.Model, AggregatedStats):
     team_description = models.TextField(blank=True)
 
     #: Most recent translation approved or created for this locale.
-    latest_translation = models.ForeignKey(
+    latest_translation: models.ForeignKey["Translation | None"] = models.ForeignKey(
         "Translation",
         models.SET_NULL,
         blank=True,
@@ -289,6 +300,17 @@ class Locale(models.Model, AggregatedStats):
     )
 
     objects = LocaleQuerySet.as_manager()
+
+    comments: QuerySet["Comment"]
+    """Actually a RelatedManager"""
+    project_locale: "ProjectLocaleQuerySet"
+    """Actually a RelatedManager"""
+    project_set: "ProjectQuerySet"
+    """Actually a RelatedManager"""
+    translatedresources: "TranslatedResourceQuerySet"
+    """Actually a RelatedManager"""
+    translation_set: "TranslationQuerySet"
+    """Actually a RelatedManager"""
 
     class Meta:
         ordering = ["name", "code"]

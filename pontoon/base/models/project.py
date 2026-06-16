@@ -1,19 +1,22 @@
 from os.path import join
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import BooleanField, Case, F, Sum, Value, When
-from django.db.models.manager import BaseManager
+from django.db.models import BooleanField, Case, F, QuerySet, Sum, Value, When
 from django.utils import timezone
 
 from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
+from pontoon.base.models.user import User
+from pontoon.base.user_utils import user_serialize
 
 
 if TYPE_CHECKING:
-    from pontoon.base.models import ProjectLocale, Resource
+    from pontoon.base.models import Repository, Translation
+    from pontoon.base.models.project_locale import ProjectLocaleQuerySet
+    from pontoon.base.models.resource import ResourceQuerySet
+    from pontoon.tags.models import TagQuerySet
 
 
 class Priority(models.IntegerChoices):
@@ -25,12 +28,14 @@ class Priority(models.IntegerChoices):
 
 
 class ProjectSlugHistory(models.Model):
-    project = models.ForeignKey("Project", on_delete=models.CASCADE)
+    project: models.ForeignKey["Project"] = models.ForeignKey(
+        "Project", on_delete=models.CASCADE
+    )
     old_slug = models.SlugField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class ProjectQuerySet(models.QuerySet):
+class ProjectQuerySet(models.QuerySet["Project"]):
     def visible_for(self, user):
         """
         The visiblity of projects is determined by the role of the user:
@@ -124,10 +129,9 @@ class Project(models.Model, AggregatedStats):
 
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
-    locales = models.ManyToManyField(Locale, through="ProjectLocale")
-
-    project_locale: BaseManager["ProjectLocale"]
-    resources: BaseManager["Resource"]
+    locales: "models.ManyToManyField[Locale, Any]" = models.ManyToManyField(
+        Locale, through="ProjectLocale"
+    )
 
     class DataSource(models.TextChoices):
         REPOSITORY = "repository", "Repository"
@@ -197,7 +201,7 @@ class Project(models.Model, AggregatedStats):
     info = models.TextField("Project info", blank=True)
     deadline = models.DateField(blank=True, null=True)
     priority = models.IntegerField(choices=Priority.choices, default=Priority.LOWEST)
-    contact = models.ForeignKey(
+    contact: models.ForeignKey[User | None] = models.ForeignKey(
         User,
         models.SET_NULL,
         null=True,
@@ -215,7 +219,7 @@ class Project(models.Model, AggregatedStats):
     )
 
     # Most recent translation approved or created for this project.
-    latest_translation = models.ForeignKey(
+    latest_translation: models.ForeignKey["Translation | None"] = models.ForeignKey(
         "Translation",
         models.SET_NULL,
         blank=True,
@@ -235,6 +239,15 @@ class Project(models.Model, AggregatedStats):
 
     objects = ProjectQuerySet.as_manager()
 
+    project_locale: "ProjectLocaleQuerySet"
+    """Actually a RelatedManager"""
+    repositories: QuerySet["Repository"]
+    """Actually a RelatedManager"""
+    resources: "ResourceQuerySet"
+    """Actually a RelatedManager"""
+    tags: "TagQuerySet"
+    """Actually a RelatedManager"""
+
     class Meta:
         permissions = (("can_manage_project", "Can manage project"),)
         ordering = ("pk",)
@@ -248,7 +261,7 @@ class Project(models.Model, AggregatedStats):
             "name": self.name,
             "slug": self.slug,
             "info": self.info,
-            "contact": self.contact.serialize() if self.contact else None,
+            "contact": user_serialize(self.contact) if self.contact else None,
         }
 
     def save(self, *args, **kwargs):
@@ -292,7 +305,7 @@ class Project(models.Model, AggregatedStats):
 
         return resource_priority
 
-    def available_locales_list(self):
+    def available_locales_list(self) -> list[str]:
         """Get a list of available locale codes."""
         return list(self.locales.all().values_list("code", flat=True))
 

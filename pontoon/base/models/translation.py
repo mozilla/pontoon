@@ -1,8 +1,10 @@
+from typing import TYPE_CHECKING
+
 from dirtyfields import DirtyFieldsMixin
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import IntegrityError, models, transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Q, QuerySet
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
@@ -15,8 +17,15 @@ from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.user import User
 from pontoon.base.simple_preview import get_simple_preview
+from pontoon.base.user_utils import gravatar_url
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
+
+
+if TYPE_CHECKING:
+    from pontoon.base.models import Comment
+    from pontoon.base.models.translation_memory import TranslationMemoryEntryQuerySet
+    from pontoon.checks.models import Error, Warning
 
 
 class TranslationQuerySet(models.QuerySet["Translation"]):
@@ -90,7 +99,7 @@ class TranslationQuerySet(models.QuerySet["Translation"]):
                 "email": user.email,
                 "display_name": user.name_or_email,
                 "id": user.id,
-                "gravatar_url": user.gravatar_url(88),
+                "gravatar_url": gravatar_url(user),
                 "translation_count": user.translations_count,
                 "role": user.user_role,
             }
@@ -150,9 +159,11 @@ class TranslationQuerySet(models.QuerySet["Translation"]):
 
 
 class Translation(DirtyFieldsMixin, models.Model):
-    entity = models.ForeignKey(Entity, models.CASCADE)
-    locale = models.ForeignKey(Locale, models.CASCADE)
-    user = models.ForeignKey(User, models.SET_NULL, null=True, blank=True)
+    entity: models.ForeignKey[Entity] = models.ForeignKey(Entity, models.CASCADE)
+    locale: models.ForeignKey[Locale] = models.ForeignKey(Locale, models.CASCADE)
+    user: models.ForeignKey[User | None] = models.ForeignKey(
+        User, models.SET_NULL, null=True, blank=True
+    )
     string = models.TextField()
     value = models.JSONField()
     properties = models.JSONField(null=True, blank=True)
@@ -222,6 +233,15 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     objects = TranslationQuerySet.as_manager()
 
+    comments: QuerySet["Comment"]
+    """Actually a RelatedManager"""
+    errors: QuerySet["Error"]
+    """Actually a RelatedManager"""
+    memory_entries: "TranslationMemoryEntryQuerySet"
+    """Actually a RelatedManager"""
+    warnings: QuerySet["Warning"]
+    """Actually a RelatedManager"""
+
     class Meta:
         indexes = [
             models.Index(fields=["entity", "user", "approved", "pretranslated"]),
@@ -241,7 +261,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         ]
 
     @classmethod
-    def for_locale_project_paths(self, locale, project, paths):
+    def for_locale_project_paths(cls, locale, project, paths):
         """
         Return Translation QuerySet for given locale, project and paths.
         """
@@ -281,7 +301,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         Returns the corresponding comma-separated machinery_sources values
         """
         result = [
-            self.MachinerySource(source).label for source in self.machinery_sources
+            str(self.MachinerySource(source).label) for source in self.machinery_sources
         ]
         return ", ".join(result)
 

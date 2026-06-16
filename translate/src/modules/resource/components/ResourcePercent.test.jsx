@@ -1,7 +1,6 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-
 import { ResourcePercent } from './ResourcePercent';
+import { render } from '@testing-library/react';
 
 describe('<ResourcePercent>', () => {
   const RESOURCE = {
@@ -12,7 +11,7 @@ describe('<ResourcePercent>', () => {
   };
 
   it('renders correctly', () => {
-    const wrapper = shallow(<ResourcePercent resource={RESOURCE} />);
-    expect(wrapper.find('.percent').text()).toEqual('40%');
+    const { getByText } = render(<ResourcePercent resource={RESOURCE} />);
+    getByText('40%');
   });
 });

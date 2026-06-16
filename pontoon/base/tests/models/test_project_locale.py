@@ -1,10 +1,12 @@
 import pytest
 
+from pontoon.base.models.user import User
+from pontoon.base.user_utils import can_translate
 from pontoon.test.factories import ProjectLocaleFactory
 
 
 @pytest.mark.django_db
-def test_projectlocale_translators_group(project_a, locale_a, user_a):
+def test_projectlocale_translators_group(project_a, locale_a, user_a: User):
     """
     Tests if user has permission to translate project at specific
     locale after assigment.
@@ -15,11 +17,11 @@ def test_projectlocale_translators_group(project_a, locale_a, user_a):
         has_custom_translators=True,
     )
 
-    assert user_a.can_translate(locale=locale_a, project=project_a) is False
+    assert can_translate(user_a, project_a, locale_a) is False
 
     user_a.groups.add(project_locale.translators_group)
-    assert user_a.can_translate(locale=locale_a, project=project_a) is True
+    assert can_translate(user_a, project_a, locale_a) is True
 
     project_locale.has_custom_translators = False
     project_locale.save()
-    assert user_a.can_translate(locale=locale_a, project=project_a) is False
+    assert can_translate(user_a, project_a, locale_a) is False

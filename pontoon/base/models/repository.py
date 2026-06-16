@@ -2,6 +2,7 @@ import logging
 import re
 
 from os.path import join, normpath
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.core.exceptions import ValidationError
@@ -9,6 +10,9 @@ from django.core.validators import URLValidator
 from django.db import models
 from django.utils.functional import cached_property
 
+
+if TYPE_CHECKING:
+    from pontoon.base.models.project import Project
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +40,9 @@ class Repository(models.Model):
         GIT = "git", "Git"
         HG = "hg", "HG"
 
-    project = models.ForeignKey("Project", models.CASCADE, related_name="repositories")
+    project: models.ForeignKey["Project"] = models.ForeignKey(
+        "Project", models.CASCADE, related_name="repositories"
+    )
     type = models.CharField(max_length=255, default=Type.GIT, choices=Type.choices)
     url = models.CharField(
         "URL", max_length=2000, validators=[repository_url_validator]
