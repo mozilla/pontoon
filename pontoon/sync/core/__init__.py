@@ -122,16 +122,19 @@ def notify_users(project: Project, now: datetime) -> None:
 
     # Map each translator who chose to receive notifications to the affected
     # locales they contribute to.
+    translations = Translation.objects.filter(
+        entity__resource__project=project,
+        locale_id__in=locale_counts.keys(),
+        user__profile__new_string_notifications=True,
+    )
+    # Private projects are only visible to superusers, so don't leak their
+    # activity to other past contributors.
+    if project.visibility != Project.Visibility.PUBLIC:
+        translations = translations.filter(user__is_superuser=True)
     user_locales: dict[int, set[int]] = defaultdict(set)
-    for user_id, locale_id in (
-        Translation.objects.filter(
-            entity__resource__project=project,
-            locale_id__in=locale_counts.keys(),
-            user__profile__new_string_notifications=True,
-        )
-        .values_list("user_id", "locale_id")
-        .distinct()
-    ):
+    for user_id, locale_id in translations.values_list(
+        "user_id", "locale_id"
+    ).distinct():
         user_locales[user_id].add(locale_id)
     if not user_locales:
         return
@@ -148,13 +151,8 @@ def notify_users(project: Project, now: datetime) -> None:
     # the user's homepage locale: report that locale's count when the user
     # contributes to it, otherwise fall back to the largest count among the
     # locales they contributed to.
-    # Private projects are only visible to superusers, so don't leak their
-    # activity to other past contributors.
-    is_public = project.visibility == Project.Visibility.PUBLIC
     users = User.objects.filter(id__in=user_locales.keys()).select_related("profile")
     for user in users:
-        if not is_public and not user.is_superuser:
-            continue
         locale_ids = user_locales[user.id]
         homepage_id = locale_id_by_code.get(user.profile.custom_homepage)
         if homepage_id in locale_ids:
