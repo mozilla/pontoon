@@ -265,10 +265,7 @@ form a:visited {
   margin-top: 20px;
 }
 
-/* hide personal access token implementation temporarily */
 #pat-settings {
-  display: none;
-
   .pat-list {
     list-style: none;
     margin: 0;
