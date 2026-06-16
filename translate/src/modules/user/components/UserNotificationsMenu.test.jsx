@@ -39,7 +39,7 @@ describe('<UserNotificationsMenuDialog>', () => {
         unread: false,
         description: 'description',
         verb: 'verb',
-        date: 'Jan 31, 2000 10:20',
+        date: 'Thursday, January 31, 2019 at 10:20 UTC',
         date_iso: '2019-01-31T10:20:00+00:00',
         actor: {
           anchor: 'actor_anchor',
