@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 
 import jwt
 
+from allauth.socialaccount.models import SocialAccount
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
@@ -103,10 +104,20 @@ def users_with_translations_counts(
         for user in loc.translators_group.fetched_translators:
             translators[user].add(loc.code)
 
-    contributors = User.objects.filter(
-        pk__in=user_stats.keys(),
-        is_active=True,
-    ).prefetch_related("profile")
+    contributors = (
+        User.objects.filter(
+            pk__in=user_stats.keys(),
+            is_active=True,
+        )
+        .prefetch_related("profile")
+        .prefetch_related(
+            Prefetch(
+                "socialaccount_set",
+                queryset=SocialAccount.objects.filter(provider="fxa"),
+                to_attr="_prefetched_fxa_accounts",
+            )
+        )
+    )
 
     if None in user_stats.keys():
         contributors = list(contributors)

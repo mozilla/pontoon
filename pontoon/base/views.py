@@ -7,6 +7,8 @@ from datetime import datetime
 from typing import Any, cast
 from urllib.parse import urlparse
 
+from allauth.socialaccount.models import SocialAccount
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -505,7 +507,16 @@ def get_translation_history(request):
                     "timestamp"
                 ),
             ),
-            "user",
+            Prefetch(
+                "user",
+                queryset=User.objects.prefetch_related(
+                    Prefetch(
+                        "socialaccount_set",
+                        queryset=SocialAccount.objects.filter(provider="fxa"),
+                        to_attr="_prefetched_fxa_accounts",
+                    )
+                ),
+            ),
             "approved_user",
             "rejected_user",
             "errors",
@@ -572,6 +583,13 @@ def get_team_comments(request):
     comments = (
         Comment.objects.filter(entity=entity)
         .filter(Q(locale=locale) | Q(pinned=True))
+        .prefetch_related(
+            Prefetch(
+                "author__socialaccount_set",
+                queryset=SocialAccount.objects.filter(provider="fxa"),
+                to_attr="_prefetched_fxa_accounts",
+            )
+        )
         .order_by("timestamp")
     )
 
@@ -878,6 +896,13 @@ def get_users(request):
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
         # Prefetch profile for retrieving username
         .prefetch_related("profile")
+        .prefetch_related(
+            Prefetch(
+                "socialaccount_set",
+                queryset=SocialAccount.objects.filter(provider="fxa"),
+                to_attr="_prefetched_fxa_accounts",
+            )
+        )
         .annotate(
             in_locale=Count(
                 "translation", filter=Q(translation__locale__code=locale_code)

@@ -2,7 +2,6 @@ from hashlib import md5
 from typing import TYPE_CHECKING, Any, Collection
 from urllib.parse import quote, urlencode
 
-from allauth.socialaccount.models import SocialAccount
 from dateutil.relativedelta import relativedelta
 from guardian.shortcuts import get_objects_for_user
 
@@ -22,14 +21,11 @@ def is_system_user(user: User) -> bool:
 
 
 def avatar_url(user: User, size: int = 88) -> str:
-    fxa_account = SocialAccount.objects.filter(user=user, provider="fxa").first()
-    if fxa_account:
-        fxa_avatar = fxa_account.extra_data.get("avatar")
-        if fxa_avatar:
-            return fxa_avatar
+
+    if fxa_avatar := user.fxa_avatar():
+        return fxa_avatar
 
     email = md5(user.email.lower().encode("utf-8")).hexdigest()
-
     name = quote(user.display_name)
     background = "333941"
     color = "FFFFFF"
