@@ -18,6 +18,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    env:
+      DEPLOY: ${{ github.repository == 'mozilla/pontoon' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -41,7 +43,7 @@ jobs:
 
       - name: Tag image for GAR
         id: tag
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+        if: env.DEPLOY == 'true'
         run: |
           # Get the short commit SHA from GitHub context
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
@@ -60,7 +62,7 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
       - name: Push Docker image to GAR
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+        if: env.DEPLOY == 'true'
         uses: mozilla-it/deploy-actions/docker-push@c7df50778d33cc361deb9ec0e09f6dda16cf00a9 # v6.3.0
         with:
           image_tags: ${{ steps.tag.outputs.image_tags }}
