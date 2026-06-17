@@ -567,10 +567,14 @@ describe('<EditorProvider>', () => {
       ],
       machinery: { manual: true, sources: ['translation-memory'] },
     });
-    expect(result).toMatchObject([
-      { name: '', value: 'COMPOSED' },
-      { name: 'title', value: 'COMPOSED_TITLE' },
-    ]);
+    // The editor result is the rebuilt entry, with the composed value and
+    // attribute distributed into their respective patterns.
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: ['COMPOSED'],
+      attributes: new Map([['title', ['COMPOSED_TITLE']]]),
+    });
   });
 
   it('toggles Fluent source view', () => {
