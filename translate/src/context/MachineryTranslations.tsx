@@ -32,10 +32,16 @@ const initTranslations: MachineryTranslations = {
 export const MachineryTranslations =
   createContext<MachineryTranslations>(initTranslations);
 
-const sortByQuality = (
-  { quality: a }: MachineryTranslation,
-  { quality: b }: MachineryTranslation,
-) => (!a ? 1 : !b ? -1 : a > b ? -1 : a < b ? 1 : 0);
+// Composed multi-value suggestions always sort to the top, ahead of the
+// per-leaf matches; within each group we sort by descending quality.
+const sortByQuality = (a: MachineryTranslation, b: MachineryTranslation) => {
+  if (a.composed !== b.composed) {
+    return a.composed ? -1 : 1;
+  }
+  const { quality: qa } = a;
+  const { quality: qb } = b;
+  return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
+};
 
 // Formats whose entities can have multiple translatable leaves (Fluent
 // attributes, MF2 selector variants). For these we request a composed
