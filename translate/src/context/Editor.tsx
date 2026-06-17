@@ -196,6 +196,17 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         next.fields = editMessageEntry(sourceEntry, prev.initial);
         next.fields[0].handle.current.setValue(str);
       }
+      // `next.fields` carry placeholder handles, but the on-screen editors stay
+      // bound (via their React key) to `prev.fields`' live handles. EditField
+      // only re-syncs when its `defaultValue` string changes, so re-applying a
+      // value that equals a stale `defaultValue` — e.g. restoring a composed
+      // suggestion after editing one field — would otherwise leave that field
+      // untouched until a second click. Push the values into the live handles
+      // directly, matching by field id, like `clearEditor` does.
+      for (const field of next.fields) {
+        const live = prev.fields.find((f) => f.id === field.id);
+        live?.handle.current.setValue(field.handle.current.value);
+      }
       next.focusField.current = next.fields[0];
       setResult(buildMessageEntry(next.base, next.fields, buildOpts));
       return next;
