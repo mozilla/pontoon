@@ -44,6 +44,15 @@
   padding-right: 3px;
 }
 
+.machinery
+  .translation
+  > header
+  .sources:not(.projects)
+  > li:not(:first-child)::before {
+  content: '•';
+  padding-right: 3px;
+}
+
 .machinery .translation > header div {
   cursor: default;
 }
