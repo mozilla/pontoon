@@ -1,18 +1,26 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
+import { updateUserEditorTheme } from '~/api/user';
 import { useTheme } from '~/hooks/useTheme';
 
 export const ThemeContext = createContext({
   theme: 'dark',
   editorTheme: 'match',
+  setEditorTheme: (_editorTheme: string) => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
   const [theme] = useState(
     () => document.body.getAttribute('data-theme') || 'system',
   );
-  const [editorTheme] = useState(
-    () => document.body.getAttribute('data-editor-theme') || 'match',
+  const [editorTheme, setEditorThemeState] = useState(
+    () => document.body.getAttribute('data-editor-theme') || 'light',
   );
+
+  const setEditorTheme = useCallback((newEditorTheme: string) => {
+    setEditorThemeState(newEditorTheme);
+    document.body.setAttribute('data-editor-theme', newEditorTheme);
+    updateUserEditorTheme(newEditorTheme);
+  }, []);
 
   const applyTheme = useTheme();
 
@@ -39,7 +47,7 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
   }, [theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, editorTheme }}>
+    <ThemeContext.Provider value={{ theme, editorTheme, setEditorTheme }}>
       {children}
     </ThemeContext.Provider>
   );
