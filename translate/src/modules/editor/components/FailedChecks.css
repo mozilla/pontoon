@@ -62,7 +62,7 @@
 }
 
 .failed-checks .warning:before {
-  color: var(--status-warning);
+  color: var(--grey-3);
 }
 
 .failed-checks .anyway {

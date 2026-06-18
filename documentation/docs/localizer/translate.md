@@ -60,7 +60,7 @@ Examples include exceeding the maximum string length, incorrect syntax, etc. Err
 
 Warnings are displayed when potential issues are detected in the string, but it’s not certain that they will create problems in products (unlike errors). For that reason, warnings can be bypassed by localizers, allowing them to save a translation anyway.
 
-Examples include missing punctuation, differences in number of sentences and capitalization, etc. Warnings are denoted with a circled X with orange background.
+Examples include missing punctuation, differences in number of sentences and capitalization, etc. Warnings are denoted with a circled X with gray background.
 
 ![Internal check: warning](../assets/localizer/translate/check_warning.png "Example of warning")
 
