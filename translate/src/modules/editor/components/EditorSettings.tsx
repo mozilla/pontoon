@@ -44,8 +44,9 @@ const EDITOR_THEME_OPTIONS = [
     value: 'match',
     id: 'editor-EditorSettings--theme-match',
     icon: 'fas fa-link',
-    label: 'Match main interface',
-    title: 'Use the same theme as the main appearance',
+    label: 'Main',
+    title:
+      'Use a theme that matches the main interface, used everywhere outside the editor',
   },
 ] as const;
 
