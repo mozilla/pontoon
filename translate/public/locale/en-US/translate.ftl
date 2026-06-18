@@ -150,7 +150,7 @@ editor-EditorSettings--theme-light = <glyph></glyph> Light
     .title = Use a light editor
 
 editor-EditorSettings--theme-match = <glyph></glyph> Main
-    .title = Use a theme that matches the main interface, used everywhere outside the editor
+    .title = Use a theme that matches the main interface
 
 editor-EditorSettings--change-all = Change all settings
 
