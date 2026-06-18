@@ -78,10 +78,16 @@ def theme_class(request):
 
 @library.global_function
 def user_editor_theme(user):
-    """Get user's editor theme or return 'match' if user is not authenticated."""
-    if user.is_authenticated:
+    """Resolve the editor theme to apply.
+
+    Falls back to the default theme when the user is anonymous or has not yet
+    made an explicit choice (``editor_theme`` is NULL).
+    """
+    from pontoon.base.models import UserProfile
+
+    if user.is_authenticated and user.profile.editor_theme:
         return user.profile.editor_theme
-    return "match"
+    return UserProfile.DEFAULT_EDITOR_THEME
 
 
 @library.global_function

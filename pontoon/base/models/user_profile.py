@@ -44,10 +44,14 @@ class UserProfile(models.Model):
         LIGHT = "light", "Light"
         MATCH = "match", "Match main"
 
+    DEFAULT_EDITOR_THEME = EditorThemes.LIGHT
+
     editor_theme = models.CharField(
         choices=EditorThemes.choices,
         max_length=20,
-        default=EditorThemes.MATCH,
+        null=True,
+        blank=True,
+        default=None,
     )
 
     # External accounts

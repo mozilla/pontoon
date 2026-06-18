@@ -393,6 +393,12 @@ def toggle_theme(request):
 def toggle_editor_theme(request):
     editor_theme = request.POST.get("editor_theme", None)
 
+    if not editor_theme:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: editor_theme is required"},
+            status=400,
+        )
+
     try:
         profile = request.user.profile
         profile.editor_theme = editor_theme

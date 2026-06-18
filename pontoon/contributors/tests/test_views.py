@@ -208,7 +208,7 @@ def test_toggle_editor_theme(member):
     """toggle_editor_theme accepts valid choices and rejects invalid ones."""
     url = "/user/editor-theme/"
 
-    assert member.user.profile.editor_theme == "match"
+    assert member.user.profile.editor_theme is None
 
     for value in ("dark", "light", "match"):
         response = member.client.post(url, {"editor_theme": value})

@@ -1,5 +1,5 @@
 {% macro button(user, editor=False, long_name=True) %}
-  {% set current = user.profile.editor_theme if editor else user.profile.theme %}
+  {% set current = user_editor_theme(user) if editor else user.profile.theme %}
   {% set dark = "Dark theme" if long_name else "Dark" %}
   {% set light = "Light theme" if long_name else "Light" %}
   {% if editor %}
