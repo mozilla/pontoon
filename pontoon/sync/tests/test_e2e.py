@@ -304,6 +304,86 @@ def test_add_resources():
 
 
 @pytest.mark.django_db
+def test_xliff_target_language():
+    """The iOS locale remapping (e.g. sv-SE -> sv) must only be applied to
+    Xcode XLIFF projects, not to other XLIFF projects like the Mozilla VPN
+    client. See https://github.com/mozilla/pontoon/issues/4237.
+    """
+    with mock_setup() as (repo, _):
+        # Database setup: a locale that is part of `ios_locale_map`.
+        locale, _ = Locale.objects.get_or_create(
+            code="sv-SE", defaults={"name": "Swedish"}
+        )
+        project = ProjectFactory.create(
+            name="xliff-target-language", locales=[locale], repositories=[repo]
+        )
+
+        # Filesystem setup: a plain XLIFF file and an Xcode-generated one.
+        makedirs(repo.checkout_path)
+        plain_xliff = dedent("""\
+            <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+              <file original="file.txt" source-language="en" target-language="en" datatype="plaintext">
+                <body>
+                  <trans-unit id="key">
+                    <source>source</source>
+                    <target>source</target>
+                  </trans-unit>
+                </body>
+              </file>
+            </xliff>
+        """)
+        xcode_xliff = dedent("""\
+            <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+              <file original="file.txt" source-language="en" target-language="en" datatype="plaintext">
+                <header>
+                  <tool tool-id="com.apple.dt.xcode" tool-name="Xcode"/>
+                </header>
+                <body>
+                  <trans-unit id="key">
+                    <source>source</source>
+                    <target>source</target>
+                  </trans-unit>
+                </body>
+              </file>
+            </xliff>
+        """)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {
+                    "plain.xliff": plain_xliff,
+                    "xcode.xliff": xcode_xliff,
+                },
+                "sv-SE": {},
+            },
+        )
+
+        # Sync to generate entities.
+        sync_project_task(project.pk)
+
+        # Add a translation for each resource.
+        for path in ("plain.xliff", "xcode.xliff"):
+            TranslationFactory.create(
+                entity=Entity.objects.get(
+                    resource__project=project, resource__path=path
+                ),
+                locale=locale,
+                string="translation",
+                active=True,
+                approved=True,
+            )
+        sync_project_task(project.pk)
+
+        # The plain XLIFF keeps the locale code as-is.
+        with open(join(repo.checkout_path, "sv-SE", "plain.xliff")) as file:
+            assert 'target-language="sv-SE"' in file.read()
+
+        # The Xcode XLIFF gets the iOS remapping (sv-SE -> sv).
+        with open(join(repo.checkout_path, "sv-SE", "xcode.xliff")) as file:
+            assert 'target-language="sv"' in file.read()
+
+
+@pytest.mark.django_db
 def test_translation_before_source():
     mock_vcs = MockVersionControl(changed=[join("de-Test", "a.ftl")])
     with mock_setup(mock_vcs) as (repo, locale):
