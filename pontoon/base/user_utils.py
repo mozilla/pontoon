@@ -20,9 +20,26 @@ def is_system_user(user: User) -> bool:
     return user.pk is None or user.profile.system_user
 
 
+def fxa_avatar_url(user: User) -> str | None:
+    if user.pk is None:
+        return None
+
+    if hasattr(user, "_prefetched_fxa_accounts") and isinstance(
+        user._prefetched_fxa_accounts, list
+    ):
+        return (
+            user._prefetched_fxa_accounts[0].extra_data.get("avatar")
+            if user._prefetched_fxa_accounts
+            else None
+        )
+
+    fxa = user.socialaccount_set.filter(provider="fxa").first()
+    return fxa.extra_data.get("avatar") if fxa else None
+
+
 def avatar_url(user: User, size: int = 88) -> str:
 
-    if fxa_avatar := user.fxa_avatar():
+    if fxa_avatar := fxa_avatar_url(user):
         return fxa_avatar
 
     email = md5(user.email.lower().encode("utf-8")).hexdigest()

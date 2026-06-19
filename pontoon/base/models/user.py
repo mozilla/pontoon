@@ -73,23 +73,6 @@ def display_name_and_email(user: User) -> str:
     return f"{name} <{user.email}>"
 
 
-def fxa_avatar(user: User) -> str | None:
-    if user.pk is None:
-        return
-
-    if hasattr(user, "_prefetched_fxa_accounts") and isinstance(
-        user._prefetched_fxa_accounts, list
-    ):
-        return (
-            user._prefetched_fxa_accounts[0].extra_data.get("avatar")
-            if user._prefetched_fxa_accounts
-            else None
-        )
-
-    fxa = user.socialaccount_set.filter(provider="fxa").first()
-    return fxa.extra_data.get("avatar") if fxa else None
-
-
 def latest_action(user: User) -> ActionLog | None:
     """
     Return the date of the latest user activity (translation submission or review).
@@ -110,7 +93,6 @@ AuthUser.add_to_class("display_name_and_email", display_name_and_email)
 AuthUser.add_to_class("latest_action", latest_action)
 
 AuthUser.add_to_class("avatar_url", avatar_url)
-AuthUser.add_to_class("fxa_avatar", fxa_avatar)
 AuthUser.add_to_class("translator_for_locales", translator_for_locales)
 AuthUser.add_to_class("manager_for_locales", manager_for_locales)
 AuthUser.add_to_class("can_translate_locales", can_translate_locales)
