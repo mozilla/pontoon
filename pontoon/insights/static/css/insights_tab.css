@@ -93,6 +93,10 @@
   color: var(--status-unreviewed);
 }
 
+#insights .community-health-activity h3 .tooltip li.current-month::marker {
+  color: var(--status-translated);
+}
+
 #insights h3 .tooltip li.twelve-month-average::marker {
   color: var(--grey-5);
 }

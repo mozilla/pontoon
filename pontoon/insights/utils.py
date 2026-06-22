@@ -1,5 +1,3 @@
-import json
-
 from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
@@ -12,6 +10,7 @@ from django.utils import timezone
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
+    LocaleHealthSnapshot,
     LocaleInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
     active_users_default,
@@ -90,7 +89,7 @@ def get_time_to_review_12_month_avg(category, query_filters=None):
             value = None
         times_to_review_12_month_avg.insert(0, value)
 
-    return json.dumps(times_to_review_12_month_avg)
+    return times_to_review_12_month_avg
 
 
 def get_approval_rate(insight):
@@ -113,6 +112,51 @@ def get_chrf_score(insight):
         return None
 
     return round(score, 2)
+
+
+def get_locale_health_data(locales):
+    """
+    Get locale health data required by Locale Insights and Global Insights tabs.
+
+    Note: The community health score is computed for a whole month, so the current
+    month's score will not be complete. Therefore, the most recent score available
+    will always be of the previous month. Subsequently, the 12 month window of
+    scores will be displayed starting from the previous month based on the user's
+    date.
+    """
+    end_month = timezone.now().date().replace(day=1) - relativedelta(months=1)
+    months = [end_month - relativedelta(months=11 - i) for i in range(12)]
+    indices = {month: i for i, month in enumerate(months)}
+
+    health_snapshots = (
+        LocaleHealthSnapshot.objects.filter(
+            created_at__gte=months[0], locale__in=locales
+        )
+        .annotate(month=TruncMonth("created_at"))
+        .order_by("created_at")
+        .values("month", "locale__code", "locale__name", "chs")
+    )
+
+    data = {}
+
+    for snapshot in health_snapshots:
+        month = snapshot["month"]
+        if month not in indices:
+            continue
+
+        locale_code = snapshot["locale__code"]
+        item = data.setdefault(
+            locale_code,
+            {
+                "name": f"{snapshot['locale__name']} · {locale_code}",
+                "chs": [None] * 12,
+            },
+        )
+        item["chs"][indices[month]] = float(snapshot["chs"])
+
+    dates = [convert_to_unix_time(month) for month in months]
+
+    return dates, data
 
 
 def get_locale_insights(query_filters=None):
@@ -223,21 +267,17 @@ def get_locale_insights(query_filters=None):
             "unreviewed_lifespans": [
                 x["unreviewed_lifespan_avg"].days for x in insights
             ],
-            "time_to_review_suggestions": json.dumps(
-                [
-                    get_time_to_review(x["time_to_review_suggestions_avg"])
-                    for x in insights
-                ]
-            ),
+            "time_to_review_suggestions": [
+                get_time_to_review(x["time_to_review_suggestions_avg"])
+                for x in insights
+            ],
             "time_to_review_suggestions_12_month_avg": get_time_to_review_12_month_avg(
                 "suggestions", query_filters
             ),
-            "time_to_review_pretranslations": json.dumps(
-                [
-                    get_time_to_review(x["time_to_review_pretranslations_avg"])
-                    for x in insights
-                ]
-            ),
+            "time_to_review_pretranslations": [
+                get_time_to_review(x["time_to_review_pretranslations_avg"])
+                for x in insights
+            ],
             "time_to_review_pretranslations_12_month_avg": get_time_to_review_12_month_avg(
                 "pretranslations", query_filters
             ),
@@ -255,8 +295,8 @@ def get_locale_insights(query_filters=None):
                 "new_suggestions": [x["new_suggestions_sum"] for x in insights],
             },
             "pretranslation_quality": {
-                "approval_rate": json.dumps([get_approval_rate(x) for x in insights]),
-                "chrf_score": json.dumps([get_chrf_score(x) for x in insights]),
+                "approval_rate": [get_approval_rate(x) for x in insights],
+                "chrf_score": [get_chrf_score(x) for x in insights],
                 "approved": [x["pretranslations_approved_sum"] for x in insights],
                 "rejected": [x["pretranslations_rejected_sum"] for x in insights],
                 "new": [x["pretranslations_new_sum"] for x in insights],
@@ -265,6 +305,20 @@ def get_locale_insights(query_filters=None):
     )
 
     return output
+
+
+def get_locale_health_insights(locale):
+    """Get locale health data required by Locale Insights tab."""
+    dates, data = get_locale_health_data([locale])
+
+    locale_health = data.get(locale.code)
+
+    return {
+        "community_health_dates": dates,
+        "community_health_scores": locale_health["chs"]
+        if locale_health
+        else [None] * 12,
+    }
 
 
 def get_insights(locale=None, project=None):
@@ -361,8 +415,8 @@ def get_insights(locale=None, project=None):
             "new_suggestions": [x["new_suggestions_sum"] for x in insights],
         },
         "pretranslation_quality": {
-            "approval_rate": json.dumps([get_approval_rate(x) for x in insights]),
-            "chrf_score": json.dumps([get_chrf_score(x) for x in insights]),
+            "approval_rate": [get_approval_rate(x) for x in insights],
+            "chrf_score": [get_chrf_score(x) for x in insights],
             "approved": [x["pretranslations_approved_sum"] for x in insights],
             "rejected": [x["pretranslations_rejected_sum"] for x in insights],
             "new": [x["pretranslations_new_sum"] for x in insights],
@@ -462,5 +516,15 @@ def get_global_pretranslation_quality(category, id):
 
     return {
         "dates": sorted(list({convert_to_unix_time(x["month"]) for x in actions})),
-        "dataset": json.dumps([v for _, v in data.items()]),
+        "dataset": [v for _, v in data.items()],
+    }
+
+
+def get_global_locale_health_insights(locales):
+    """Get locale health data required by Global Insights tab."""
+    dates, data = get_locale_health_data(locales)
+
+    return {
+        "dates": dates,
+        "dataset": list(data.values()),
     }

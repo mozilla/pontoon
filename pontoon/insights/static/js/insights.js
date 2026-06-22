@@ -14,14 +14,20 @@ var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
-        Pontoon.insights.renderPretranslationQualityChart(
-          $('#team-pretranslation-quality-chart'),
+        Pontoon.insights.renderGlobalChart(
+          $('#team-community-health-chart'),
+          'chs',
         );
-        Pontoon.insights.renderPretranslationQualityChart(
+        Pontoon.insights.renderGlobalChart(
+          $('#team-pretranslation-quality-chart'),
+          'approval_rate',
+        );
+        Pontoon.insights.renderGlobalChart(
           $('#project-pretranslation-quality-chart'),
+          'approval_rate',
         );
       },
-      renderPretranslationQualityChart: function (chart) {
+      renderGlobalChart: function (chart, key) {
         if (chart.length === 0) {
           return;
         }
@@ -47,7 +53,7 @@ var Pontoon = (function (my) {
           return {
             type: 'line',
             label: item.name,
-            data: item.approval_rate,
+            data: item[key],
             borderColor: [color],
             borderWidth: item.name === 'All' ? 3 : 1,
             pointBackgroundColor: color,
@@ -60,6 +66,7 @@ var Pontoon = (function (my) {
             fill: true,
             tension: 0.4,
             order: color.length - index,
+            hidden: true,
           };
         });
 

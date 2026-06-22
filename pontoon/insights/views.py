@@ -8,7 +8,11 @@ from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import render
 from django.utils import timezone
 
-from pontoon.insights.utils import get_global_pretranslation_quality
+from pontoon.base.models.locale import Locale
+from pontoon.insights.utils import (
+    get_global_locale_health_insights,
+    get_global_pretranslation_quality,
+)
 
 
 log = logging.getLogger(__name__)
@@ -41,6 +45,13 @@ def insights(request):
             project_pt_key, project_pretranslation_quality, settings.VIEW_CACHE_TIMEOUT
         )
 
+    global_locale_health_insights = []
+    user = request.user
+    if user.is_staff:
+        locale_ids = user.profile.dashboard_locales
+        locales = Locale.objects.filter(pk__in=locale_ids)
+        global_locale_health_insights = get_global_locale_health_insights(locales)
+
     return render(
         request,
         "insights/insights.html",
@@ -49,5 +60,6 @@ def insights(request):
             "end_date": timezone.now(),
             "team_pretranslation_quality": team_pretranslation_quality,
             "project_pretranslation_quality": project_pretranslation_quality,
+            "global_locale_health_insights": global_locale_health_insights,
         },
     )

@@ -17,6 +17,7 @@ var Pontoon = (function (my) {
         Pontoon.insights.renderTranslationActivity();
         Pontoon.insights.renderReviewActivity();
         Pontoon.insights.renderPretranslationQuality();
+        Pontoon.insights.renderCommunityHealthScore();
       },
       renderActiveUsers: function () {
         $('#insights canvas.chart').each(function () {
@@ -1000,6 +1001,98 @@ var Pontoon = (function (my) {
             },
           },
           plugins: [Pontoon.insights.htmlLegendPlugin()],
+        });
+      },
+      renderCommunityHealthScore: function () {
+        const chart = $('#community-health-chart');
+        if (chart.length === 0) {
+          return;
+        }
+        const ctx = chart[0].getContext('2d');
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        const green = style.getPropertyValue('--status-translated');
+        gradient.addColorStop(0, green);
+        gradient.addColorStop(1, 'transparent');
+
+        new Chart(chart, {
+          type: 'line',
+          data: {
+            labels: $('#community-health-chart').data('community-health-dates'),
+            datasets: [
+              {
+                label: 'Community Health Score',
+                data: chart.data('community-health-scores'),
+                backgroundColor: gradient,
+                borderColor: [style.getPropertyValue('--status-translated')],
+                borderWidth: 2,
+                pointBackgroundColor: style.getPropertyValue(
+                  '--status-translated',
+                ),
+                pointHitRadius: 10,
+                pointRadius: 3.25,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: style.getPropertyValue(
+                  '--status-translated',
+                ),
+                pointHoverBorderColor: style.getPropertyValue('--white-1'),
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              tooltip: {
+                borderColor: style.getPropertyValue('--status-translated'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                displayColors: false,
+                callbacks: {
+                  label: (context) => nf.format(context.parsed.y),
+                },
+              },
+            },
+            scales: {
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: {
+                    month: 'MMM',
+                  },
+                  tooltipFormat: 'MMMM yyyy',
+                },
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'CHS',
+                  color: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                beginAtZero: true,
+                grid: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                },
+              },
+            },
+          },
         });
       },
       getPercent: function (value, total) {

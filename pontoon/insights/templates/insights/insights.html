@@ -14,6 +14,29 @@
   <section id="main">
     <div class="container">
       <div id="insights">
+        {% if global_locale_health_insights %}
+          <section class="team-community-health-activity">
+            <figure class="block">
+              <h3 class="controls">
+                Team community health activity
+                {{ Tooltip.display(intro='Community health score for each team.') }}
+              </h3>
+              <div class="chart-wrapper">
+                <canvas
+                  id="team-community-health-chart"
+                  data-dataset="{{ global_locale_health_insights.dataset|to_json() }}"
+                  data-dates="{{ global_locale_health_insights.dates|to_json() }}"
+                >
+                </canvas>
+              </div>
+              <div
+                id="team-community-health-chart-legend"
+                class="legend"
+                width="240"
+              ></div>
+            </figure>
+          </section>
+        {% endif %}
         <section class="team-pretranslation-quality">
           <figure class="block">
             <h3 class="controls">
@@ -23,8 +46,8 @@
             <div class="chart-wrapper">
               <canvas
                 id="team-pretranslation-quality-chart"
-                data-dataset="{{ team_pretranslation_quality.dataset }}"
-                data-dates="{{ team_pretranslation_quality.dates }}"
+                data-dataset="{{ team_pretranslation_quality.dataset|to_json() }}"
+                data-dates="{{ team_pretranslation_quality.dates|to_json() }}"
               >
               </canvas>
             </div>
@@ -44,8 +67,8 @@
             <div class="chart-wrapper">
               <canvas
                 id="project-pretranslation-quality-chart"
-                data-dataset="{{ project_pretranslation_quality.dataset }}"
-                data-dates="{{ project_pretranslation_quality.dates }}"
+                data-dataset="{{ project_pretranslation_quality.dataset|to_json() }}"
+                data-dates="{{ project_pretranslation_quality.dates|to_json() }}"
               >
               </canvas>
             </div>
