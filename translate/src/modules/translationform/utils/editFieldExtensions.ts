@@ -24,8 +24,9 @@ import { useContext, useEffect, useRef } from 'react';
 import { EditorActions } from '~/context/Editor';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
-import { MessageEntry, parseEntry } from '~/utils/message';
+import type { MessageEntry } from '~/utils/message';
 import { editablePattern } from '~/utils/message/editablePattern';
+import { entryPatterns } from '~/utils/message/entryPatterns';
 import { decoratorPlugin } from './decoratorPlugin';
 import {
   useHandleCtrlShiftArrow,
@@ -33,7 +34,6 @@ import {
   useHandleEscape,
 } from './editFieldShortcuts';
 import { fluentMode, commonMode, webextMode } from './editFieldModes';
-import { Message } from '@mozilla/l10n';
 import './editFieldExtensions.css';
 
 /**
@@ -148,8 +148,9 @@ export const getExtensions = (
 function autocompletePlaceholders(entry: MessageEntry) {
   const override: CompletionSource[] = [];
   for (const pattern of entryPatterns(entry)) {
+    const edit = editablePattern(entry.format, pattern);
     const highlights: [start: number, ends: number[]][] = [];
-    for (const match of pattern.matchAll(placeholder)) {
+    for (const match of edit.matchAll(placeholder)) {
       const label = match[0].trimEnd();
       if (label.length > 1) {
         const start = match.index;
@@ -161,25 +162,10 @@ function autocompletePlaceholders(entry: MessageEntry) {
       }
     }
     for (const hl of highlights) {
-      override.push(completePlaceholder(pattern, ...hl));
+      override.push(completePlaceholder(edit, ...hl));
     }
   }
   return override.length ? autocompletion({ override }) : null;
-}
-
-function* entryPatterns(entry: MessageEntry) {
-  if (entry.value) yield* msgPatterns(entry.format, entry.value);
-  if (entry.attributes) {
-    for (const msg of entry.attributes.values()) {
-      yield* msgPatterns(entry.format, msg);
-    }
-  }
-}
-
-function* msgPatterns(format: MessageEntry['format'], msg: Message) {
-  if (Array.isArray(msg)) yield editablePattern(format, msg);
-  else if (msg.msg) yield editablePattern(format, msg.msg);
-  else for (const v of msg.alt) yield editablePattern(format, v.pat);
 }
 
 function completePlaceholder(
