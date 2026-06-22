@@ -14,12 +14,13 @@ import {
   buildMessageEntry,
   editMessageEntry,
   editSource,
-  MessageEntry,
+  type MessageEntry,
   parseEntry,
   requiresSourceView,
   serializeEntry,
 } from '~/utils/message';
 import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
+import { hasOuterWhitespace } from '~/utils/message/hasOuterWhitespace';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 
@@ -159,6 +160,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     if (readonly) {
       return initEditorActions;
     }
+    const buildOpts = { trim: !hasOuterWhitespace(sourceEntry) };
     return {
       clearEditor() {
         setState((state) => {
@@ -183,7 +185,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             machinery: { manual, translation: str, sources },
           } satisfies EditorData;
           if (sourceView) {
-            const result = buildMessageEntry(prev.base, prev.fields);
+            const result = buildMessageEntry(prev.base, prev.fields, buildOpts);
             next.fields = editSource(result ?? str);
             focusField.current = next.fields[0];
             setResult(result);
@@ -214,7 +216,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             next.fields[0].handle.current.setValue(str);
           }
           next.focusField.current = next.fields[0];
-          const result = buildMessageEntry(next.base, next.fields);
+          const result = buildMessageEntry(next.base, next.fields, buildOpts);
           setResult(result);
           return next;
         }),
@@ -234,7 +236,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           const { base, fields, sourceView } = state;
           const result = sourceView
             ? parseEntryFromFluentSource(base, fields)
-            : buildMessageEntry(base, fields);
+            : buildMessageEntry(base, fields, buildOpts);
           setResult(result);
           return state;
         }),
@@ -251,7 +253,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               return { ...state, base: entry, fields, sourceView: false };
             }
           } else if (format === 'fluent') {
-            const entry = buildMessageEntry(base, fields);
+            const entry = buildMessageEntry(base, fields, buildOpts);
             if (entry) {
               const source = serializeEntry(entry);
               const fields = editSource(source);
@@ -263,7 +265,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           return state;
         }),
     };
-  }, [format, readonly]);
+  }, [format, readonly, sourceEntry]);
 
   useEffect(() => {
     const base = messageEntryFromEntityTranslation(entity, locale);

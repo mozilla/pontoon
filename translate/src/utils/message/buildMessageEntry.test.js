@@ -142,4 +142,40 @@ describe('buildMessageEntry', () => {
     ]);
     expect(result).toBeNull();
   });
+
+  it('keeps surrounding spaces by default', () => {
+    const base = parseEntry('gettext', 'Hello World');
+    const result = buildMessageEntry(base, [
+      {
+        name: '',
+        keys: [],
+        handle: { current: { value: ' Bonjour Monde\t ' } },
+      },
+    ]);
+    expect(result).toEqual({
+      format: 'gettext',
+      id: '',
+      value: [' Bonjour Monde\t '],
+    });
+  });
+
+  it('trims surrounding spaces with options.trim', () => {
+    const base = parseEntry('gettext', 'Hello World');
+    const result = buildMessageEntry(
+      base,
+      [
+        {
+          name: '',
+          keys: [],
+          handle: { current: { value: ' Bonjour Monde\t ' } },
+        },
+      ],
+      { trim: true },
+    );
+    expect(result).toEqual({
+      format: 'gettext',
+      id: '',
+      value: ['Bonjour Monde'],
+    });
+  });
 });
