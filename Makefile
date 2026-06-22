@@ -109,7 +109,7 @@ vitest:
 
 test-server: pytest
 pytest:
-	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
+	"${DC}" run ${run_opts} --rm server pytest $(opts)
 
 format: prettier ruff
 
