@@ -1235,6 +1235,11 @@ NOTIFICATION_DIGEST_DAY = os.environ.get("NOTIFICATION_DIGEST_DAY", 4)
 # email will be sent.
 MONTHLY_ACTIVITY_SUMMARY_DAY = os.environ.get("MONTHLY_ACTIVITY_SUMMARY_DAY", 1)
 
+# Integer representing a day of the month on which the Community Health Score
+# snapshots are collected via collect_chs_snapshots().
+MONTHLY_CHS_SNAPSHOTS_DAY = os.environ.get("MONTHLY_CHS_SNAPSHOTS_DAY", 1)
+
+
 # Number of days after user registration to send the 2nd onboarding email
 ONBOARDING_EMAIL_2_DELAY = os.environ.get("ONBOARDING_EMAIL_2_DELAY", 2)
 

@@ -620,28 +620,12 @@ def get_active_users(
 
 
 @shared_task
-def collect_chs_snapshot(end_date: datetime | None = None):
-    """Collect a monthly CHS snapshot, one row per available locale."""
+def collect_chs_snapshots():
+    """Collect monthly LocaleHealthSnapshots (CHS), one per available locale."""
 
-    if end_date is None:
-        end_date = timezone.now().replace(
-            day=1, hour=0, minute=0, second=0, microsecond=0
-        )
+    log.info("Start collecting CHS snapshots...")
 
-    # args = {
-    #     "completion": 98.11,
-    #     "key_projects_enabled": 6,
-    #     "active_managers": 1,
-    #     "active_translators": 0,
-    #     "active_contributors": 1,
-    #     "active_contributors_200_approved": 0,
-    #     "new_signups": 2,
-    # }
-
-    # print("chs", compute_chs(args))
-
-    snapshots = build_chs_snapshots(end_date)
+    now = timezone.now()
+    snapshots = build_chs_snapshots()
     LocaleHealthSnapshot.objects.bulk_create(snapshots, ignore_conflicts=True)
-    log.info(
-        f"Collected CHS snapshot for {end_date.date()}: {len(snapshots)} snapshots queued."
-    )
+    log.info(f"Collected CHS snapshots for {now}: {len(snapshots)} snapshots created.")

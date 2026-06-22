@@ -503,7 +503,7 @@ comparisons and by the Insights pages for monthly trend charts. The job is
 designed to run once a month on the first of each month.
 
 ``` bash
-./manage.py collect_chs_snapshot
+./manage.py collect_chs_snapshots
 ```
 
 ### Warm up cache

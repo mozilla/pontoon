@@ -4,6 +4,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django.db.models import Count, F, Q, Sum
+from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Locale, TranslatedResource, Translation
@@ -260,13 +261,15 @@ def compute_chs(args: dict) -> float:
     return chs_fields
 
 
-def build_chs_snapshots(end_date: datetime) -> list[LocaleHealthSnapshot]:
-    """Assemble one LocaleHealthSnapshot per available locale for dt_max."""
+def build_chs_snapshots() -> list[LocaleHealthSnapshot]:
+    """Assemble one LocaleHealthSnapshot per visible locale for today."""
+
+    now = timezone.now()
     locales = Locale.objects.visible()
 
     completion = get_completion_by_locale(locales)
     enabled = get_key_projects_enabled_by_locale(locales, KEY_PROJECT_SLUGS)
-    contributors = get_contributor_metrics_by_locale(locales, end_date)
+    contributors = get_contributor_metrics_by_locale(locales, now)
 
     snapshots = []
     for locale in locales:
@@ -283,9 +286,7 @@ def build_chs_snapshots(end_date: datetime) -> list[LocaleHealthSnapshot]:
         chs_fields = compute_chs(args)
 
         snapshots.append(
-            LocaleHealthSnapshot(
-                locale=locale, created_at=end_date, **args, **chs_fields
-            )
+            LocaleHealthSnapshot(locale=locale, created_at=now, **args, **chs_fields)
         )
 
     return snapshots
