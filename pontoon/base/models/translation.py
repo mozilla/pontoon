@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from dirtyfields import DirtyFieldsMixin
 
@@ -9,7 +9,6 @@ from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
-from pontoon.base import utils
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
@@ -17,7 +16,6 @@ from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.user import User
 from pontoon.base.simple_preview import get_simple_preview
-from pontoon.base.user_utils import gravatar_url
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 
@@ -84,43 +82,6 @@ class TranslationQuerySet(models.QuerySet["Translation"]):
         return TranslatedResource.objects.filter(
             resource__entities__translation__in=self, locale=locale
         ).distinct()
-
-    def authors(self):
-        """
-        Return a list of translation authors.
-        """
-        # *Important*
-        # pontoon.contributors.utils depends on a few models from pontoon.base.models and causes a
-        # circular dependency.
-        from pontoon.contributors.utils import users_with_translations_counts
-
-        return [
-            {
-                "email": user.email,
-                "display_name": user.name_or_email,
-                "id": user.id,
-                "gravatar_url": gravatar_url(user),
-                "translation_count": user.translations_count,
-                "role": user.user_role,
-            }
-            for user in users_with_translations_counts(None, Q(id__in=self))
-        ]
-
-    def counts_per_minute(self):
-        """
-        Return a dictionary of translation counts per minute.
-        """
-        translations = (
-            self.extra({"minute": "date_trunc('minute', date)"})
-            .order_by("minute")
-            .values("minute")
-            .annotate(count=Count("id"))
-        )
-
-        data = []
-        for period in translations:
-            data.append([utils.convert_to_unix_time(period["minute"]), period["count"]])
-        return data
 
     def for_checks(self, only_db_formats=True):
         """
@@ -260,20 +221,6 @@ class Translation(DirtyFieldsMixin, models.Model):
             ),
         ]
 
-    @classmethod
-    def for_locale_project_paths(cls, locale, project, paths):
-        """
-        Return Translation QuerySet for given locale, project and paths.
-        """
-        translations = Translation.objects.filter(
-            entity__obsolete=False, entity__resource__project=project, locale=locale
-        )
-
-        if paths:
-            translations = translations.filter(entity__resource__path__in=paths)
-
-        return translations
-
     @property
     def latest_activity(self):
         """
@@ -312,6 +259,20 @@ class Translation(DirtyFieldsMixin, models.Model):
     @property
     def tm_target(self):
         return get_simple_preview(self.entity.resource.format, self.string)
+
+    @property
+    def status(
+        self,
+    ) -> Literal["approved", "fuzzy", "pretranslated", "rejected", "unreviewed"]:
+        if self.approved:
+            return "approved"
+        if self.rejected:
+            return "rejected"
+        if self.pretranslated:
+            return "pretranslated"
+        if self.fuzzy:
+            return "fuzzy"
+        return "unreviewed"
 
     def __str__(self):
         return self.string
@@ -517,20 +478,20 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.save()
 
     def serialize(self):
-        return {
+        data = {
             "pk": self.pk,
+            "status": self.status,
             "string": self.string,
-            "approved": self.approved,
-            "rejected": self.rejected,
-            "pretranslated": self.pretranslated,
-            "fuzzy": self.fuzzy,
-            "errors": (
-                [error.message for error in self.errors.all()] if self.pk else []
-            ),
-            "warnings": (
-                [warning.message for warning in self.warnings.all()] if self.pk else []
-            ),
+            "value": self.value,
         }
+        if self.properties:
+            data["properties"] = self.properties
+        if self.pk:
+            if errors := [error.message for error in self.errors.all()]:
+                data["errors"] = errors
+            if warnings := [warning.message for warning in self.warnings.all()]:
+                data["warnings"] = warnings
+        return data
 
     def mark_changed(self):
         """

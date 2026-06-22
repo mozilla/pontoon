@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { getPlainMessage } from '~/utils/message';
+import { getPlainMessage, MessageEntry } from '~/utils/message';
 import { specialFormats } from '~/utils/message/specialFormats';
 
 import { GenericTranslation } from './GenericTranslation';
 
 type Props = {
-  content: string;
-  format: string;
+  content: string | MessageEntry | null;
+  format?: string;
   diffTarget?: string;
   search?: string | null;
 };
@@ -22,14 +22,12 @@ export function Translation({
     return null;
   }
 
-  if (specialFormats.has(format)) {
-    content = getPlainMessage(content, format);
-    diffTarget &&= getPlainMessage(diffTarget, format);
-  }
+  const plain = getPlainMessage(content, format);
+  diffTarget &&= getPlainMessage(diffTarget, format);
 
   return (
     <GenericTranslation
-      content={content}
+      content={plain}
       diffTarget={diffTarget}
       search={search}
     />

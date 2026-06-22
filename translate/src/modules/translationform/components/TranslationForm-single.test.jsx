@@ -29,7 +29,8 @@ function mountForm(string) {
     pk: 0,
     key: ['key'],
     original: 'Hello',
-    translation: { string },
+    value: ['Hello'],
+    translation: { string, value: [string] },
   };
 
   let actions, result;
