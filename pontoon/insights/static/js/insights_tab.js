@@ -1075,12 +1075,6 @@ var Pontoon = (function (my) {
                 },
               },
               y: {
-                title: {
-                  display: true,
-                  text: 'CHS',
-                  color: style.getPropertyValue('--white-1'),
-                  fontStyle: 100,
-                },
                 beginAtZero: true,
                 grid: {
                   display: false,
