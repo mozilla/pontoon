@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        Collects per-locale Community Health Score (CHS) m etrics, saved as
+        Collects per-locale Community Health Score (CHS) metrics, saved as
         LocaleHealthSnapshots.
 
         The metrics involve:
