@@ -5,12 +5,14 @@ on:
     branches:
       - main
     paths:
+      - package*
       - translate/**
       - .github/workflows/frontend.yml
   pull_request:
     branches:
       - main
     paths:
+      - package*
       - translate/**
       - .github/workflows/frontend.yml
   workflow_dispatch:

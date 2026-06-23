@@ -1,17 +1,16 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 
-import * as api from '~/api/l10n';
-
 import { AppLocalizationProvider } from './AppLocalizationProvider';
 import { vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { Localized } from '@fluent/react';
 
+vi.mock('~/api/l10n', () => ({ fetchL10n: vi.fn() }));
+
+import * as api from '~/api/l10n';
+
 describe('<AppLocalizationProvider>', () => {
-  beforeAll(() => {
-    vi.mock('~/api/l10n', () => ({ fetchL10n: vi.fn() }));
-  });
   afterEach(() => api.fetchL10n.mockClear());
   afterAll(() => api.fetchL10n.mockRestore());
 

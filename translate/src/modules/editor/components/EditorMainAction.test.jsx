@@ -12,23 +12,20 @@ import { EditorMainAction } from './EditorMainAction';
 import { vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useContext: vi.fn() };
+});
+
+vi.mock('@fluent/react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useLocalization: () => ({ l10n: { getString: (id) => id } }),
+  };
+});
+
 beforeAll(() => {
-  vi.mock('react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useContext: vi.fn(),
-    };
-  });
-
-  vi.mock('@fluent/react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useLocalization: () => ({ l10n: { getString: (id) => id } }),
-    };
-  });
-
   vi.spyOn(Hooks, 'useAppSelector').mockImplementation(() => ({}));
   vi.spyOn(Translator, 'useTranslator').mockReturnValue({});
   vi.spyOn(ExistingTranslation, 'useExistingTranslationGetter').mockReturnValue(

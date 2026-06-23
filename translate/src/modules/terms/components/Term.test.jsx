@@ -10,6 +10,11 @@ import { createReduxStore, MockStore } from '~/test/store';
 import { Term } from './Term';
 import { vi } from 'vitest';
 
+vi.mock('@fluent/react', async () => {
+  const actual = await vi.importActual('@fluent/react');
+  return { ...actual, Localized: ({ children }) => children };
+});
+
 const TERM = {
   text: 'text',
   partOfSpeech: 'partOfSpeech',
@@ -39,13 +44,6 @@ describe('<Term>', () => {
   beforeAll(() => {
     getSelectionBackup = window.getSelection;
     window.getSelection = () => null;
-    vi.mock('@fluent/react', async () => {
-      const actual = await vi.importActual('@fluent/react');
-      return {
-        ...actual,
-        Localized: ({ children }) => children,
-      };
-    });
   });
 
   afterAll(() => {

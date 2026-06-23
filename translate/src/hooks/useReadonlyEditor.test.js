@@ -3,16 +3,11 @@ import * as Hooks from '~/hooks';
 import { useReadonlyEditor } from './useReadonlyEditor';
 import { useContext } from 'react';
 
-beforeAll(() => {
-  vi.mock('react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useContext: vi.fn(),
-    };
-  });
-  vi.spyOn(Hooks, 'useAppSelector');
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useContext: vi.fn() };
 });
+vi.spyOn(Hooks, 'useAppSelector');
 
 afterAll(() => {
   vi.restoreAllMocks();
