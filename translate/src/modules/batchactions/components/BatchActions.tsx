@@ -123,7 +123,6 @@ export function BatchActions(): React.ReactElement<'div'> {
           otherLocale,
         ),
       );
-      setOtherLocale('');
     }
   }, [location, batchactions, showBadgeTooltip, otherLocale]);
 
