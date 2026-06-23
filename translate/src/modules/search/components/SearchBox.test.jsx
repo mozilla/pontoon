@@ -196,8 +196,46 @@ describe('<SearchBoxBase>', () => {
       status: null,
       tag: '',
       time: null,
+      created_time: null,
+      reviewer: null,
+      review_time: null,
+      exclude_self_reviewed: false,
       entity: 0,
     });
+  });
+
+  it('clears URL-only filters (e.g. created_time) when a filter is applied', () => {
+    const push = vi.fn();
+    const wrapper = mount(
+      <WrapSearchBoxBase
+        dispatch={(a) => (typeof a === 'function' ? a() : {})}
+        parameters={{
+          push,
+          // URL-only filters with no representation in the panel, e.g. coming
+          // from a new-string notification link.
+          created_time: '202606120818-202606120818',
+          reviewer: 'user@example.com',
+          review_time: '202606120818-202606120818',
+          exclude_self_reviewed: true,
+        }}
+        project={PROJECT}
+        searchAndFilters={SEARCH_AND_FILTERS}
+        store={{ getState: () => ({ unsavedchanges: {} }) }}
+      />,
+    );
+
+    act(() => {
+      const apply = wrapper.find('FiltersPanel').prop('applySingleFilter');
+      apply('all', 'statuses');
+    });
+    wrapper.update();
+
+    expect(push).toHaveBeenCalledTimes(1);
+    const pushed = push.mock.calls[0][0];
+    expect(pushed.created_time).toBeNull();
+    expect(pushed.reviewer).toBeNull();
+    expect(pushed.review_time).toBeNull();
+    expect(pushed.exclude_self_reviewed).toBe(false);
   });
 
   it('sets correct status', () => {
@@ -240,6 +278,10 @@ describe('<SearchBoxBase>', () => {
       status: 'missing,warnings',
       tag: 'browser',
       time: '111111111111-111111111111',
+      created_time: null,
+      reviewer: null,
+      review_time: null,
+      exclude_self_reviewed: false,
       entity: 0,
       list: null,
     });

@@ -215,6 +215,10 @@ coverage[toml]==7.6.1 \
     # via
     #   -r test.in
     #   pytest-cov
+execnet==2.1.2 \
+    --hash=sha256:63d83bfdd9a23e35b9c6a3261412324f964c2ec8dcd8d3c6916ee9373e0befcd \
+    --hash=sha256:67fba928dd5a544b783f6056f449e5e3931a5c378b128bc18501f7ea79e296ec
+    # via pytest-xdist
 factory-boy==3.3.1 \
     --hash=sha256:7b1113c49736e1e9995bc2a18f4dbf2c52cf0f841103517010b1d825712ce3ca \
     --hash=sha256:8317aa5289cdfc45f9cae570feb07a6177316c82e34d14df3c2e1f22f26abef0
@@ -256,6 +260,7 @@ pytest==9.0.3 \
     #   -r test.in
     #   pytest-cov
     #   pytest-django
+    #   pytest-xdist
 pytest-cov==5.0.0 \
     --hash=sha256:4f0764a1219df53214206bf1feea4633c3b558a2925c8b59f144f682861ce652 \
     --hash=sha256:5837b58e9f6ebd335b0f8060eecce69b662415b16dc503883a02f45dfeb14857
@@ -263,6 +268,10 @@ pytest-cov==5.0.0 \
 pytest-django==4.9.0 \
     --hash=sha256:1d83692cb39188682dbb419ff0393867e9904094a549a7d38a3154d5731b2b99 \
     --hash=sha256:8bf7bc358c9ae6f6fc51b6cebb190fe20212196e6807121f11bd6a3b03428314
+    # via -r test.in
+pytest-xdist==3.8.0 \
+    --hash=sha256:202ca578cfeb7370784a8c33d6d05bc6e13b4f25b5053c30a152269fd10f0b88 \
+    --hash=sha256:7e578125ec9bc6050861aa93f2d59f1d8d085595d6551c2c90b6f4fad8d3a9f1
     # via -r test.in
 python-dateutil==2.9.0 \
     --hash=sha256:78e73e19c63f5b20ffa567001531680d939dc042bf7850431877645523c66709 \

@@ -6,6 +6,8 @@ from django.conf import settings
 from django.db.models import QuerySet
 from django.urls import reverse
 
+from pontoon.base.utils import format_datetime
+
 
 if TYPE_CHECKING:
     from pontoon.base.models import Entity, Project, User
@@ -144,7 +146,7 @@ def serialized_notifications(user: "User"):
                     "is_comment": is_comment,
                 },
                 "verb": notification.verb,
-                "date": notification.timestamp.strftime("%b %d, %Y %H:%M"),
+                "date": format_datetime(notification.timestamp),
                 "date_iso": notification.timestamp.isoformat(),
                 "actor": actor,
                 "target": target,

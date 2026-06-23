@@ -22,7 +22,7 @@ describe('useActiveTranslation', () => {
 
   it('does not return rejected translations', () => {
     vi.mocked(useContext).mockReturnValue({
-      entity: { translation: { string: 'world', rejected: true } },
+      entity: { translation: { string: 'world', status: 'rejected' } },
     });
     const res = useActiveTranslation();
     expect(res).toBeNull();

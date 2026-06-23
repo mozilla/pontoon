@@ -38,7 +38,7 @@ describe('FailedChecksProvider', () => {
     EntityView.useActiveTranslation.mockReturnValue({
       errors: ['Error1'],
       warnings: ['Warning1'],
-      approved: true,
+      status: 'approved',
     });
 
     rerender(

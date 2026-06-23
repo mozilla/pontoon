@@ -26,6 +26,7 @@ from django.utils.safestring import mark_safe
 
 from pontoon.base.placeables import get_placeables
 from pontoon.base.simple_preview import get_simple_preview
+from pontoon.base.utils import format_datetime
 
 
 register = template.Library()
@@ -180,20 +181,7 @@ def date_status(value, complete):
     return "normal"
 
 
-@library.filter
-def format_datetime(value, format="full", default="---"):
-    if value is not None:
-        if format == "full":
-            format = "%A, %B %d, %Y at %H:%M %Z"
-        elif format == "date":
-            format = "%B %-d, %Y"
-        elif format == "short_date":
-            format = "%b %-d, %Y"
-        elif format == "time":
-            format = "%H:%M %Z"
-        return value.strftime(format)
-    else:
-        return default
+library.filter(format_datetime)
 
 
 @library.filter

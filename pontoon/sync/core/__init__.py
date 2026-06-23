@@ -1,10 +1,20 @@
 import logging
 
+from collections import defaultdict
 from datetime import datetime
 
+from django.db.models import Count
 from django.utils import timezone
 
-from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    Entity,
+    Locale,
+    Project,
+    TranslatedResource,
+    Translation,
+    User,
+)
 from pontoon.messaging.notifications import send_notification
 from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.core.checkout import checkout_repos
@@ -62,7 +72,7 @@ def sync_project(
         or updated_trans_count
     )
     if added_entities_count > 0:
-        notify_users(project, added_entities_count, now)
+        notify_users(project, now)
     repo_changed = sync_translations_to_repo(
         project,
         commit,
@@ -91,17 +101,65 @@ def sync_project(
     return db_changed, repo_changed
 
 
-def notify_users(project: Project, count: int, now: datetime) -> None:
-    users = User.objects.filter(
-        translation__entity__resource__project=project,
-        profile__new_string_notifications=True,
-    ).distinct()
-    new_strings = f"{count} new {'string' if count == 1 else 'strings'}"
+def notify_users(project: Project, now: datetime) -> None:
+    # Strings added during the same sync operation have date_created == now.
+    new_by_resource = dict(
+        Entity.objects.filter(
+            resource__project=project, date_created=now, obsolete=False
+        )
+        .values_list("resource_id")
+        .annotate(count=Count("id"))
+    )
+    if not new_by_resource:
+        return
+
+    # Get accurate per-locale totals.
+    locale_counts: dict[int, int] = defaultdict(int)
+    for locale_id, resource_id in TranslatedResource.objects.filter(
+        resource_id__in=new_by_resource.keys()
+    ).values_list("locale_id", "resource_id"):
+        locale_counts[locale_id] += new_by_resource[resource_id]
+
+    # Map each translator who chose to receive notifications to the affected
+    # locales they contribute to.
+    translations = Translation.objects.filter(
+        entity__resource__project=project,
+        locale_id__in=locale_counts.keys(),
+        user__profile__new_string_notifications=True,
+    )
+    # Private projects are only visible to superusers, so don't leak their
+    # activity to other past contributors.
+    if project.visibility != Project.Visibility.PUBLIC:
+        translations = translations.filter(user__is_superuser=True)
+    user_locales: dict[int, set[int]] = defaultdict(set)
+    for user_id, locale_id in translations.values_list(
+        "user_id", "locale_id"
+    ).distinct():
+        user_locales[user_id].add(locale_id)
+    if not user_locales:
+        return
+
+    # Map locale code to internal ID. This is used to match a user's custom
+    # homepage locale.
+    locale_id_by_code = dict(
+        Locale.objects.filter(id__in=locale_counts.keys()).values_list("code", "id")
+    )
     # Stored on notification.data so both the bell menu and digest can link to
     # the exact batch via the created_time URL filter on Entity.date_created.
     created_time = now.strftime("%Y%m%d%H%M")
-    log.info(f"[{project.slug}] Notifying {len(users)} users about {new_strings}")
+    # One notification per user. The link is locale-agnostic, so it resolves to
+    # the user's homepage locale: report that locale's count when the user
+    # contributes to it, otherwise fall back to the largest count among the
+    # locales they contributed to.
+    users = User.objects.filter(id__in=user_locales.keys()).select_related("profile")
     for user in users:
+        locale_ids = user_locales[user.id]
+        homepage_id = locale_id_by_code.get(user.profile.custom_homepage)
+        if homepage_id in locale_ids:
+            count = locale_counts[homepage_id]
+        else:
+            count = max(locale_counts[locale_id] for locale_id in locale_ids)
+        new_strings = f"{count} new {'string' if count == 1 else 'strings'}"
         send_notification(
             project,
             recipient=user,
@@ -109,3 +167,4 @@ def notify_users(project: Project, count: int, now: datetime) -> None:
             category="new_string",
             created_time=created_time,
         )
+    log.info(f"[{project.slug}] Notifying {len(user_locales)} users about new strings")

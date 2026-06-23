@@ -16,15 +16,15 @@ afterAll(() => {
 });
 
 describe('<HistoryTranslationComponent>', () => {
+  const string = 'The storm approaches. We speak no more.';
   const DEFAULT_TRANSLATION = {
-    approved: false,
+    status: 'unreviewed',
     approvedUser: '',
-    pretranslated: false,
     date: '',
-    fuzzy: false,
     pk: 1,
-    rejected: false,
-    string: 'The storm approaches. We speak no more.',
+    key: ['key'],
+    string,
+    value: [string],
     uid: 0,
     rejectedUser: '',
     user: '',
@@ -39,6 +39,8 @@ describe('<HistoryTranslationComponent>', () => {
 
   const DEFAULT_ENTITY = {
     format: 'gettext',
+    key: ['key'],
+    value: [],
   };
   const WrapHistoryTranslationBase = (props) => {
     return (
@@ -50,10 +52,7 @@ describe('<HistoryTranslationComponent>', () => {
 
   describe('getStatus', () => {
     it('returns the correct status for approved translations', () => {
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ approved: true },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'approved' };
       const { container } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -66,10 +65,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('returns the correct status for rejected translations', () => {
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ rejected: true },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'rejected' };
       const { container } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -82,10 +78,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('returns the correct status for pretranslated translations', () => {
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ pretranslated: true },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'pretranslated' };
       const { container } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -98,10 +91,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('returns the correct status for fuzzy translations', () => {
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ fuzzy: true },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'fuzzy' };
       const { container } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -131,7 +121,8 @@ describe('<HistoryTranslationComponent>', () => {
       const approvedTitle = 'test-approved';
       const translation = {
         ...DEFAULT_TRANSLATION,
-        ...{ approved: true, approvedUser: 'Cespenar' },
+        status: 'approved',
+        approvedUser: 'Cespenar',
       };
 
       const { getAllByTitle } = render(
@@ -154,10 +145,7 @@ describe('<HistoryTranslationComponent>', () => {
 
     it('returns the correct review title when approved and approved user is not available', () => {
       const approvedAnonymousTitle = 'test-approved-anonymous';
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ approved: true },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'approved' };
       const { getAllByTitle } = render(
         <MockLocalizationProvider
           resources={[
@@ -180,7 +168,8 @@ describe('<HistoryTranslationComponent>', () => {
       const rejectedTitle = 'test-rejected';
       const translation = {
         ...DEFAULT_TRANSLATION,
-        ...{ rejected: true, rejectedUser: 'Bhaal' },
+        status: 'rejected',
+        rejectedUser: 'Bhaal',
       };
       const { getAllByTitle } = render(
         <MockLocalizationProvider
@@ -202,10 +191,7 @@ describe('<HistoryTranslationComponent>', () => {
 
     it('returns the correct review title when rejected and rejected user is not available', () => {
       const rejectedAnonymousTitle = 'test-rejected-anonymous';
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ rejected: true },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'rejected' };
       const { getAllByTitle } = render(
         <MockLocalizationProvider
           resources={[
@@ -248,7 +234,9 @@ describe('<HistoryTranslationComponent>', () => {
     it('returns a link when the author is known', () => {
       const translation = {
         ...DEFAULT_TRANSLATION,
-        ...{ uid: 1, username: 'id_Sarevok', user: 'Sarevok' },
+        uid: 1,
+        username: 'id_Sarevok',
+        user: 'Sarevok',
       };
       const { getByRole } = render(
         <WrapHistoryTranslationBase
@@ -266,10 +254,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('returns no link when the author is not known', () => {
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ user: 'Sarevok' },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, user: 'Sarevok' };
       const { queryByRole, getByText } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -293,10 +278,7 @@ describe('<HistoryTranslationComponent>', () => {
     const notRejected = 'Not rejected';
 
     it('shows the correct buttons for approved translations', () => {
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ approved: true },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'approved' };
       const { getByRole, queryByRole } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -312,10 +294,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('shows the correct buttons for rejected translations', () => {
-      const translation = {
-        ...DEFAULT_TRANSLATION,
-        ...{ rejected: true },
-      };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'rejected' };
       const { getByRole, queryByRole } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -364,7 +343,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('forbids the user to reject their own approved translation', () => {
-      const translation = { ...DEFAULT_TRANSLATION, approved: true };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'approved' };
       const { queryByRole } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -393,7 +372,7 @@ describe('<HistoryTranslationComponent>', () => {
 
     it('allows translators to delete the rejected translation', () => {
       hookModule.useTranslator.mockReturnValue(true);
-      const translation = { ...DEFAULT_TRANSLATION, rejected: true };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'rejected' };
       const { getByRole } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -407,10 +386,9 @@ describe('<HistoryTranslationComponent>', () => {
 
     it('forbids translators to delete non-rejected translation', () => {
       hookModule.useTranslator.mockReturnValue(true);
-      const translation = { ...DEFAULT_TRANSLATION, rejected: false };
       const { queryByRole } = render(
         <WrapHistoryTranslationBase
-          translation={translation}
+          translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
         />,
@@ -420,7 +398,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('allows the user to delete their own rejected translation', () => {
-      const translation = { ...DEFAULT_TRANSLATION, rejected: true };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'rejected' };
       const { getByRole } = render(
         <WrapHistoryTranslationBase
           translation={translation}
@@ -433,7 +411,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
 
     it('forbids the user to delete rejected translation of another user', () => {
-      const translation = { ...DEFAULT_TRANSLATION, rejected: true };
+      const translation = { ...DEFAULT_TRANSLATION, status: 'rejected' };
       const { queryByRole } = render(
         <WrapHistoryTranslationBase
           translation={translation}
