@@ -2,10 +2,16 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 import { updateUserEditorTheme } from '~/api/user';
 import { useTheme } from '~/hooks/useTheme';
 
-export const ThemeContext = createContext({
+type ThemeContextType = {
+  theme: string;
+  editorTheme: string;
+  setEditorTheme: (editorTheme: string) => void;
+};
+
+export const ThemeContext = createContext<ThemeContextType>({
   theme: 'dark',
   editorTheme: 'match',
-  setEditorTheme: (_editorTheme: string) => {},
+  setEditorTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
