@@ -29,13 +29,17 @@ vi.mock('../actions', () => ({
   selectAll: vi.fn(() => ({ type: 'whatever' })),
 }));
 
+vi.mock('~/api/other-locales', () => ({
+  fetchAllLocales: vi.fn(() => Promise.resolve([])),
+}));
+
 describe('<BatchActions>', () => {
   afterAll(() => {
     Hooks.useAppDispatch.mockRestore();
     Hooks.useAppSelector.mockRestore();
     Actions.resetSelection.mockRestore();
     Actions.selectAll.mockRestore();
-    OtherLocales.fetchAllLocales.mockRestore();
+    OtherLocales.fetchAllLocales.mockClear();
   });
 
   const WrapBatchAction = () => {

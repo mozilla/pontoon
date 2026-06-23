@@ -18,6 +18,9 @@ export function CopyFromLocale({
   return (
     <button className='copy-from-locale-btn' onClick={copyFromLocale}>
       <Title {...response} />
+      {requestInProgress === 'copy_from_locale' ? (
+        <i className='fas fa-2x fa-circle-notch fa-spin'></i>
+      ) : null}
     </button>
   );
 }
