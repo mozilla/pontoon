@@ -108,8 +108,10 @@ vitest:
 	npm test -w translate
 
 test-server: pytest
+# Parallelize across CPUs by default; override with e.g. `num_procs=0` for targeted runs.
+num_procs ?= auto
 pytest:
-	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
+	"${DC}" run ${run_opts} --rm server pytest -n $(num_procs) $(opts)
 
 format: prettier ruff
 
@@ -119,7 +121,7 @@ types:
 	npm run types -w translate
 
 eslint:
-	npm run eslint
+	npm run lint
 
 prettier:
 	npm run prettier

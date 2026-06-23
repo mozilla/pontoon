@@ -22,7 +22,7 @@
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
     "prettier": "prettier --write .",
     "check-prettier": "prettier --check .",
-    "eslint": "eslint ."
+    "lint": "eslint ."
   },
   "workspaces": [
     "translate",
@@ -67,7 +67,7 @@
     "@types/styled-components": "^5.1.9",
     "@typescript-eslint/eslint-plugin": "^8.7.0",
     "@typescript-eslint/parser": "^8.7.0",
-    "@vitejs/plugin-react": "^5.1.1",
+    "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.8",
     "@vitest/eslint-plugin": "^1.6.5",
     "cheerio": "1.0.0-rc.12",

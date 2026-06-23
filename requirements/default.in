@@ -15,7 +15,7 @@
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
 beautifulsoup4==4.12.3
-bleach==6.1.0
+bleach==6.4.0
 celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==3.1.2
@@ -38,9 +38,9 @@ gunicorn==23.0.0
 markupsafe==2.0.1
 moz.l10n[xml]==0.11.3
 newrelic==9.6.0
-openai==2.30.0
+openai==2.43.0
 psycopg2==2.9.12
-PyJWT==2.12.0
+PyJWT==2.13.0
 python-dateutil==2.9.0
 python-dotenv==1.2.2
 rapidfuzz==3.9.7

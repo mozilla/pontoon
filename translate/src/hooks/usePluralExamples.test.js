@@ -1,17 +1,12 @@
 import { usePluralExamples } from './usePluralExamples';
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
+
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useMemo: (cb) => cb() };
+});
 
 describe('usePluralExamples', () => {
-  beforeAll(() => {
-    vi.mock('react', async (importOriginal) => {
-      const actual = await importOriginal();
-      return {
-        ...actual,
-        useMemo: (cb) => cb(),
-      };
-    });
-  });
-
   afterAll(() => {
     vi.restoreAllMocks();
   });

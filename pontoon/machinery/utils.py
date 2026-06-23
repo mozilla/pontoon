@@ -90,7 +90,7 @@ def get_google_generic_translation(text, locale_code, format="text"):
 
 
 def get_google_automl_translation(
-    text, locale, format="text", preserve_placeables=False
+    text, locale, format="text", preserve_placeables=False, use_cache=True
 ):
     cache_key = get_machinery_service_cache_key(
         "google_automl",
@@ -99,9 +99,10 @@ def get_google_automl_translation(
         format,
         preserve_placeables,
     )
-    cached = cache.get(cache_key)
-    if cached is not None:
-        return cached
+    if use_cache:
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
 
     try:
         client = translate.TranslationServiceClient()
@@ -145,7 +146,8 @@ def get_google_automl_translation(
         raise ValueError("No translations found.")
 
     translation = translations[0].translated_text
-    set_machinery_service_cache_key(cache_key, translation)
+    if use_cache:
+        set_machinery_service_cache_key(cache_key, translation)
     return translation
 
 

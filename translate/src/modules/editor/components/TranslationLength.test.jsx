@@ -7,17 +7,12 @@ import { TranslationLength } from './TranslationLength';
 import { vi } from 'vitest';
 import { render } from '@testing-library/react';
 
-describe('<TranslationLength>', () => {
-  beforeAll(() => {
-    vi.mock('react', async (importOriginal) => {
-      const actual = await importOriginal();
-      return {
-        ...actual,
-        useContext: vi.fn(),
-      };
-    });
-  });
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useContext: vi.fn() };
+});
 
+describe('<TranslationLength>', () => {
   afterAll(() => {
     vi.restoreAllMocks();
   });

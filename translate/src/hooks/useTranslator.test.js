@@ -5,15 +5,10 @@ import * as Hooks from '~/hooks';
 import { useTranslator } from './useTranslator';
 import { vi } from 'vitest';
 
-beforeAll(() => {
-  vi.spyOn(Hooks, 'useAppSelector');
-  vi.mock('react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useContext: () => ({ code: 'mylocale' }),
-    };
-  });
+vi.spyOn(Hooks, 'useAppSelector');
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useContext: () => ({ code: 'mylocale' }) };
 });
 
 afterAll(() => {

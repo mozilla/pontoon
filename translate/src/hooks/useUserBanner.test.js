@@ -4,16 +4,14 @@ import * as Hooks from '~/hooks';
 import { useUserBanner } from './useUserBanner';
 import { vi } from 'vitest';
 
-beforeAll(() => {
-  vi.mock('react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useContext: () => ({ code: 'mylocale', project: 'myproject' }),
-    };
-  });
-  vi.spyOn(Hooks, 'useAppSelector');
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useContext: () => ({ code: 'mylocale', project: 'myproject' }),
+  };
 });
+vi.spyOn(Hooks, 'useAppSelector');
 
 afterAll(() => {
   vi.restoreAllMocks();
