@@ -1,11 +1,9 @@
-import React from 'react';
 import { expect } from 'vitest';
 
+import { fireEvent, within } from '@testing-library/react';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
-import { MockLocalizationProvider } from '~/test/utils';
+import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 import { FiltersPanel, FiltersPanelDialog } from './FiltersPanel';
-import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
-import { fireEvent, render, within } from '@testing-library/react';
 
 describe('<FiltersPanelDialog>', () => {
   it('correctly sets filter as selected', () => {

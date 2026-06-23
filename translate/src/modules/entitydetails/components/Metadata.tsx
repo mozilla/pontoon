@@ -139,24 +139,25 @@ function ResourceComment({ comment }: { comment: string | undefined }) {
 }
 
 function SourceReferences({ meta }: { meta: Entity['meta'] }) {
-  if (!meta) return null;
-  const refs = [];
-  for (let [key, value] of meta) {
-    if (key === 'reference') {
-      refs.push(
-        <li key={value}>
-          <span className='title'>#:</span>
-          {value}
-        </li>,
-      );
-    }
+  if (!meta) {
+    return null;
   }
+  const refs = meta
+    .filter((m) => m[0] === 'reference')
+    .map((m) => (
+      <li key={m[1]}>
+        <span className='title'>#:</span>
+        {m[1]}
+      </li>
+    ));
   return refs.length > 0 ? <ul>{refs}</ul> : null;
 }
 
 function SourceExamples({ entry }: { readonly entry: MessageEntry | null }) {
   const msg = entry?.value;
-  if (!msg || Array.isArray(msg)) return null;
+  if (!msg || Array.isArray(msg)) {
+    return null;
+  }
 
   const sources = new Map<string, string>();
   const add = (pattern: Pattern): void => {
@@ -170,9 +171,16 @@ function SourceExamples({ entry }: { readonly entry: MessageEntry | null }) {
     }
   };
 
-  if (msg.msg) add(msg.msg);
-  else for (const v of msg.alt) add(v.pat);
-  if (!sources.size) return null;
+  if (msg.msg) {
+    add(msg.msg);
+  } else {
+    for (const v of msg.alt) {
+      add(v.pat);
+    }
+  }
+  if (!sources.size) {
+    return null;
+  }
 
   const examples: string[] = [];
   for (const [name, exp] of Object.entries(msg.decl)) {

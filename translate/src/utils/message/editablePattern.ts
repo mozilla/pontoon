@@ -27,10 +27,16 @@ export function editablePattern(format: string, pattern: Pattern): string {
 }
 
 function editablePlaceholder(part: Expression | Markup): string {
-  if (typeof part.attr?.source === 'string') return part.attr.source;
+  if (typeof part.attr?.source === 'string') {
+    return part.attr.source;
+  }
   if (isExpression(part)) {
-    if (part.fn === 'html' && part._) return part._; // android-only
-    if (part.fn === 'entity' && part.$) return `&${part.$};`; // android-only
+    if (part.fn === 'html' && part._) {
+      return part._;
+    } // android-only
+    if (part.fn === 'entity' && part.$) {
+      return `&${part.$};`;
+    } // android-only
   } else if (part.open || part.elem) {
     let str = `<${part.open ?? part.elem}`;
     if (part.opt) {
@@ -41,8 +47,9 @@ function editablePlaceholder(part: Expression | Markup): string {
     }
     return str + (part.open ? '>' : ' />');
   } else if (part.close) {
-    if (!part.opt || Object.keys(part.opt).length === 0)
+    if (!part.opt || Object.keys(part.opt).length === 0) {
       return `</${part.close}>`;
+    }
   }
   // Fallback; this is an error
   return mf2SerializePattern([part], false);

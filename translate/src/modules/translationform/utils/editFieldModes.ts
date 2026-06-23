@@ -146,7 +146,7 @@ export const webextMode: StreamParser<[]> = {
   name: 'webext',
   languageData: { closeBrackets: { brackets: ['<'] } },
   startState: () => [],
-  token(stream, state) {
+  token(stream) {
     if (stream.match(/\$[a-zA-Z0-9_@]+\$|\$[1-9]|\$+/)) {
       return 'keyword';
     } else {

@@ -1,4 +1,3 @@
-import ftl from '@fluent/dedent';
 import React from 'react';
 
 import { EditorActions } from '~/context/Editor';

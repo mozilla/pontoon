@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import * as Fluent from '@fluent/react';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -53,7 +51,6 @@ function MockEditField({
               <EditField
                 ref={fieldRef}
                 defaultValue={defaultValue}
-                index={0}
                 singleField={singleField}
               />
             </EditorActions.Provider>

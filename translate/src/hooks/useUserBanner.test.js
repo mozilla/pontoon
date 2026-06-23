@@ -24,10 +24,10 @@ const fakeSelector = (user) => (sel) =>
 
 describe('useUserBanner', () => {
   it('returns empty parameters for non-authenticated users', () => {
-    (Hooks.useAppSelector.mockImplementation(
+    Hooks.useAppSelector.mockImplementation(
       fakeSelector({ isAuthenticated: false }),
-    ),
-      expect(useUserBanner()).toStrictEqual(['', '']));
+    );
+    expect(useUserBanner()).toStrictEqual(['', '']);
   });
 
   it('returns [ADMIN, Admin] if user has admin permissions', () => {

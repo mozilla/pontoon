@@ -2,7 +2,7 @@ import ftl from '@fluent/dedent';
 import { createMemoryHistory } from 'history';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { editMessageEntry, parseEntry } from '~/utils/message';
@@ -263,7 +263,6 @@ describe('<EditorProvider>', () => {
       undefined,
       'Hello, {$arg1 :string @source=|%1$s|}!',
     );
-    const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
     expect(editor).toMatchObject({
       sourceView: false,
       initial: { id: 'key', value: [] },

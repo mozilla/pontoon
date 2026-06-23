@@ -78,7 +78,7 @@ export async function batchEditEntities(
 
 type EntitiesResponse =
   | { entities: Entity[]; has_next?: boolean; stats: APIStats }
-  | { entities?: never; has_next: false; stats: {} };
+  | { entities?: never; has_next: false; stats: object };
 
 /**
  * Return a list of entities for a project and locale.

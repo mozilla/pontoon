@@ -33,22 +33,6 @@ vi.mock('~/hooks/useTranslator', () => ({
   useTranslator: () => isTranslator,
 }));
 
-function createEditorSettingsDialogForNonTranslator() {
-  const toggleSettingMock = vi.fn();
-  const wrapper = render(
-    <MockLocalizationProvider>
-      <EditorSettingsDialog
-        settings={{
-          runQualityChecks: false,
-          forceSuggestions: false,
-        }}
-        toggleSetting={toggleSettingMock}
-      />
-    </MockLocalizationProvider>,
-  );
-  return [wrapper, toggleSettingMock];
-}
-
 function createEditorSettingsDialog() {
   const toggleSettingMock = vi.fn();
   const wrapper = render(

@@ -22,7 +22,9 @@ export function BadgeTooltip(): React.ReactElement<'div'> | null {
 
   useOnDiscard(ref, hide);
 
-  if (!tooltip) return null;
+  if (!tooltip) {
+    return null;
+  }
 
   const { badgeName, badgeLevel } = tooltip;
   const className = classNames('badge-tooltip', tooltip && 'showing');

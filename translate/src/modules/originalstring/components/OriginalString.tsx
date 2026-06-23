@@ -12,11 +12,7 @@ import { EntityView } from '~/context/EntityView';
 import { Highlight } from '~/modules/placeable/components/Highlight';
 import type { TermState } from '~/modules/terms';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import {
-  parseEntry,
-  requiresSourceView,
-  serializeEntry,
-} from '~/utils/message';
+import { requiresSourceView, serializeEntry } from '~/utils/message';
 import { editMessageEntry } from '~/utils/message/editMessageEntry';
 
 import { RichString } from './RichString';

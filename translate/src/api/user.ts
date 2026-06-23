@@ -83,8 +83,12 @@ export const fetchUsersList = (
   projectId: number,
 ): Promise<MentionUser[]> => {
   const params = new URLSearchParams();
-  if (locale) params.append('locale', locale);
-  if (projectId) params.append('project', String(projectId));
+  if (locale) {
+    params.append('locale', locale);
+  }
+  if (projectId) {
+    params.append('project', String(projectId));
+  }
 
   return GET(`/get-users/?${params}`);
 };

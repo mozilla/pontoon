@@ -10,7 +10,7 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage, serializeEntry } from '~/utils/message';
+import { getPlainMessage } from '~/utils/message';
 
 import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';

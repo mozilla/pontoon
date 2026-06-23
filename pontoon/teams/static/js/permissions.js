@@ -1,3 +1,5 @@
+/* global confetti */
+
 $(function () {
   const container = $('#main .container');
   const style = getComputedStyle(document.body);

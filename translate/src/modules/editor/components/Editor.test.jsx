@@ -1,11 +1,12 @@
 import ftl from '@fluent/dedent';
+import { fluentParseEntry } from '@mozilla/l10n';
 import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
+import { describe, expect, it } from 'vitest';
 
-import * as TranslationAPI from '~/api/translation';
 import { EditorActions, EditorProvider } from '~/context/Editor';
 import { EntityViewProvider } from '~/context/EntityView';
 import { LocationProvider } from '~/context/Location';
@@ -16,8 +17,6 @@ import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { Editor } from './Editor';
-import { vi } from 'vitest';
-import { fluentParseEntry } from '@mozilla/l10n';
 
 const NESTED_SELECTORS_STRING = ftl`
   my-message =

@@ -32,7 +32,9 @@ export function messageEntryFromEntityTranslation(
   const { translation } = entity;
 
   if (!translation || translation.status === 'rejected') {
-    if (!locale) return null;
+    if (!locale) {
+      return null;
+    }
     const orig = messageEntryFromEntity(entity);
     return getEmptyMessageEntry(orig, locale);
   }
