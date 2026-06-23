@@ -94,7 +94,6 @@ def map_entities_to_json(
         if is_sibling:
             ed["is_sibling"] = True
         if source_entity != entity:
-            ed["machinery_original"] = entity.string
             ed["machinery_value"] = entity.value
             if entity.properties:
                 ed["machinery_properties"] = entity.properties

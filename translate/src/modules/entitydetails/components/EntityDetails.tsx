@@ -6,7 +6,11 @@ import React, {
   useState,
 } from 'react';
 
-import { EntityView, useActiveTranslation } from '~/context/EntityView';
+import {
+  EntityView,
+  useActiveTranslation,
+  useMachineryEntry,
+} from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
@@ -51,6 +55,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
 
   const activeTranslation = useActiveTranslation();
   const { entity: selectedEntity } = useContext(EntityView);
+  const machineryEntry = useMachineryEntry();
 
   const commentTabRef = useRef<{ _reactInternalFiber: { index: number } }>(
     null,
@@ -63,8 +68,8 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const { entity, locale: lc, project } = location;
 
   useEffect(() => {
-    const { format, machinery_original, original, pk } = selectedEntity;
-    const source = getPlainMessage(machinery_original ?? original, format);
+    const { pk } = selectedEntity;
+    const source = getPlainMessage(machineryEntry);
 
     if (source !== terms.sourceString && project !== 'terminology') {
       dispatch(getTerms(source, lc));

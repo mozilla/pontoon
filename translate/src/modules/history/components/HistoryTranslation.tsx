@@ -440,7 +440,7 @@ export function HistoryTranslationBase({
               data-script={script}
             >
               <Translation
-                content={messageEntryFromTranslation(translation, entity)}
+                entry={messageEntryFromTranslation(translation, entity)}
                 diffTarget={
                   isDiffVisible ? activeTranslation.string : undefined
                 }

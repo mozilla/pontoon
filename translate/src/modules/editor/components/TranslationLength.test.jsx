@@ -17,11 +17,11 @@ describe('<TranslationLength>', () => {
     vi.restoreAllMocks();
   });
 
-  function mountTranslationLength(format, original, value, comment) {
+  function mountTranslationLength(format, source, value, comment) {
     const context = new Map([
       [EditorData, { sourceView: false, fields: [{}] }],
       [EditorResult, { value: [value] }],
-      [EntityView, { entity: { comment, format, original } }],
+      [EntityView, { entity: { key: ['id'], comment, format, value: source } }],
     ]);
     vi.mocked(useContext).mockImplementation((key) => context.get(key));
 
@@ -29,7 +29,7 @@ describe('<TranslationLength>', () => {
   }
 
   it('shows translation length and original string length', () => {
-    const { container } = mountTranslationLength('', '12345', '1234567', '');
+    const { container } = mountTranslationLength('', ['12345'], '1234567', '');
 
     const div = container.querySelector('.translation-vs-original');
     expect(div.childNodes[0].textContent).toEqual('7');
@@ -38,7 +38,7 @@ describe('<TranslationLength>', () => {
   });
 
   it('shows translation length and plural original string length', () => {
-    const { container } = mountTranslationLength('', '123456', '1234567', '');
+    const { container } = mountTranslationLength('', ['123456'], '1234567', '');
 
     const div = container.querySelector('.translation-vs-original');
     expect(div.childNodes[2].textContent).toEqual('6');
@@ -47,7 +47,7 @@ describe('<TranslationLength>', () => {
   it('shows translation length and FTL original string length', () => {
     const { container } = mountTranslationLength(
       'fluent',
-      'key = 123456',
+      ['123456'],
       '1234567',
       '',
     );
@@ -60,7 +60,7 @@ describe('<TranslationLength>', () => {
   it('does not strip html from translation when calculating length', () => {
     const { container } = mountTranslationLength(
       '',
-      '12345',
+      ['12345'],
       '12<span>34</span>56',
       '',
     );

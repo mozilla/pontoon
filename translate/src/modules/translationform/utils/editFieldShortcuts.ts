@@ -10,7 +10,7 @@ import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 import { useLLMTranslation } from '~/context/TranslationContext';
 import { Locale } from '~/context/Locale';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage } from '~/utils/message';
+import { getPlainMessage, parseEntry } from '~/utils/message';
 import { logUXAction } from '~/api/uxaction';
 
 import { useExistingTranslationGetter } from '../../editor/hooks/useExistingTranslationGetter';
@@ -137,8 +137,9 @@ export function useHandleCtrlShiftArrow(): (
       }
     } else {
       const { translation } = otherLocaleTranslations[nextIdx];
+      const entry = parseEntry(entity.format, translation);
       setEditorFromHelpers(
-        getPlainMessage(translation, entity.format),
+        entry ? getPlainMessage(entry) : translation,
         [],
         true,
       );

@@ -10,9 +10,9 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage } from '~/utils/message';
+import { getPlainMessage, serializeEntry } from '~/utils/message';
 
-import { EntityView } from './EntityView';
+import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
 import { SearchData } from './SearchData';
 
@@ -44,20 +44,9 @@ export function MachineryProvider({
   const locale = useContext(Locale);
   const { isAuthenticated } = useAppSelector((state) => state[USER]);
   const { entity } = useContext(EntityView);
+  const { pk } = entity;
+  const entry = useMachineryEntry();
   const { query } = useContext(SearchData);
-
-  let source: string;
-  let pk: number | null;
-  let format: string;
-  if (query) {
-    source = query;
-    pk = null;
-    format = '';
-  } else {
-    source = entity.machinery_original ?? entity.original;
-    pk = entity.pk;
-    format = entity.format;
-  }
 
   const [fetching, setFetching] = useState(false);
   const [translations, setTranslations] = useState({
@@ -93,7 +82,7 @@ export function MachineryProvider({
       }
     };
 
-    const plain = getPlainMessage(source, format);
+    const plain = query || getPlainMessage(entry);
 
     abortMachineryRequests();
     setTranslations({ source: plain, translations: [] });
@@ -102,7 +91,7 @@ export function MachineryProvider({
       setFetching(true);
       const promises: Promise<void>[] = [];
 
-      if (pk) {
+      if (!query) {
         promises.push(
           fetchTranslationMemory(plain, locale, pk).then(addResults),
         );
@@ -128,7 +117,7 @@ export function MachineryProvider({
         }
       }
 
-      if (locale.code === 'ga-IE' && pk) {
+      if (locale.code === 'ga-IE' && !query) {
         promises.push(fetchCaighdeanTranslation(pk).then(addResults));
       }
 
@@ -142,7 +131,7 @@ export function MachineryProvider({
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, locale, source, pk, format]);
+  }, [isAuthenticated, locale, pk, query || entry]);
 
   return (
     <MachineryTranslations.Provider value={{ ...translations, fetching }}>

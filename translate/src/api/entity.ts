@@ -32,7 +32,6 @@ export type Entity = {
   readonly meta?: Array<[key: string, value: string]>;
   readonly readonly?: boolean;
   readonly isSibling?: boolean;
-  readonly machinery_original?: string;
   readonly machinery_value?: Message;
   readonly machinery_properties?: Record<string, Message>;
   readonly translation?: EntityTranslation;
