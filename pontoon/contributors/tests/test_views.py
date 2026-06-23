@@ -203,6 +203,40 @@ def test_toggle_user_profile_attribute(member):
     assert response.status_code == 200
 
 
+@pytest.mark.django_db
+def test_toggle_editor_theme(member):
+    """toggle_editor_theme accepts valid choices and rejects invalid ones."""
+    url = "/user/editor-theme/"
+
+    assert member.user.profile.editor_theme is None
+
+    for value in ("dark", "light", "match"):
+        response = member.client.post(url, {"editor_theme": value})
+        assert response.status_code == 200
+        assert response.json() == {"status": True}
+        member.user.profile.refresh_from_db()
+        assert member.user.profile.editor_theme == value
+
+    # reject invalid choice and unchange stored value
+    response = member.client.post(url, {"editor_theme": "neon"})
+    assert response.status_code == 400
+    assert response.json()["status"] is False
+    member.user.profile.refresh_from_db()
+    assert member.user.profile.editor_theme == "match"
+
+    # reject missing value
+    response = member.client.post(url, {})
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_toggle_editor_theme_requires_login(client):
+    """Unauthenticated requests are redirected to /403."""
+    response = client.post("/user/editor-theme/", {"editor_theme": "dark"})
+    assert response.status_code == 302
+    assert response.url == "/403"
+
+
 @pytest.fixture
 def mock_contributors_render():
     with patch.object(

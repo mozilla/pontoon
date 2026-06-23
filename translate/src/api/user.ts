@@ -135,6 +135,16 @@ export function updateUserTheme(
   return POST('/user/theme/', payload, { headers });
 }
 
+export function updateUserEditorTheme(editorTheme: string): Promise<void> {
+  const csrfToken = getCSRFToken();
+  const payload = new URLSearchParams({
+    editor_theme: editorTheme,
+    csrfmiddlewaretoken: csrfToken,
+  });
+  const headers = new Headers({ 'X-CSRFToken': csrfToken });
+  return POST('/user/editor-theme/', payload, { headers });
+}
+
 /** Update Interactive Tour status to a given step. */
 export function updateTourStatus(step: number): Promise<void> {
   const csrfToken = getCSRFToken();

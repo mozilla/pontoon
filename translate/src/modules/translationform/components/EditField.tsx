@@ -14,6 +14,7 @@ import React, {
 
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
+import { ThemeContext } from '~/context/Theme';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { getExtensions, useKeyHandlers } from '../utils/editFieldExtensions';
@@ -38,6 +39,7 @@ export const EditField = memo(
     ({ defaultValue, onFocus, singleField }, ref) => {
       const { l10n } = useLocalization();
       const locale = useContext(Locale);
+      const { editorTheme } = useContext(ThemeContext);
       const readOnly = useReadonlyEditor();
       const { entity } = useContext(EntityView);
       const { setResultFromInput } = useContext(EditorActions);
@@ -125,9 +127,18 @@ export const EditField = memo(
         [view],
       );
 
+      const editorThemeClass =
+        editorTheme === 'dark' || editorTheme === 'light'
+          ? `${editorTheme}-theme`
+          : '';
+
       return (
         <div
-          className={readOnly ? 'readonly' : undefined}
+          className={
+            [readOnly && 'readonly', editorThemeClass]
+              .filter(Boolean)
+              .join(' ') || undefined
+          }
           ref={initView}
           data-script={locale.script}
           dir={locale.direction}

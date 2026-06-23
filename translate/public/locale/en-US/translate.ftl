@@ -141,6 +141,17 @@ editor-EditorSettings--toolkit-checks = <glyph></glyph>Translate Toolkit checks
 editor-EditorSettings--force-suggestions = <glyph></glyph>Make suggestions
     .title = Save suggestions instead of translations
 
+editor-EditorSettings--theme-title = Editor theme
+
+editor-EditorSettings--theme-dark = <glyph></glyph> Dark
+    .title = Use a dark editor
+
+editor-EditorSettings--theme-light = <glyph></glyph> Light
+    .title = Use a light editor
+
+editor-EditorSettings--theme-match = <glyph></glyph> Main
+    .title = Use a theme that matches the main interface
+
 editor-EditorSettings--change-all = Change all settings
 
 

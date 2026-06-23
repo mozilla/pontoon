@@ -1,6 +1,13 @@
 import { Localized } from '@fluent/react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
+import { ThemeContext } from '~/context/Theme';
 import type { Settings } from '~/modules/user';
 import { useOnDiscard } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
@@ -18,6 +25,30 @@ type EditorSettingsProps = {
   onDiscard: () => void;
 };
 
+const EDITOR_THEME_OPTIONS = [
+  {
+    value: 'dark',
+    id: 'editor-EditorSettings--theme-dark',
+    icon: 'far fa-moon',
+    label: 'Dark',
+    title: 'Use a dark editor',
+  },
+  {
+    value: 'light',
+    id: 'editor-EditorSettings--theme-light',
+    icon: 'fas fa-sun',
+    label: 'Light',
+    title: 'Use a light editor',
+  },
+  {
+    value: 'match',
+    id: 'editor-EditorSettings--theme-match',
+    icon: 'fas fa-link',
+    label: 'Main',
+    title: 'Use a theme that matches the main interface',
+  },
+] as const;
+
 export function EditorSettingsDialog({
   settings,
   toggleSetting,
@@ -25,6 +56,7 @@ export function EditorSettingsDialog({
 }: EditorSettingsProps): React.ReactElement<'ul'> {
   const ref = useRef<HTMLUListElement>(null);
   const isTranslator = useTranslator();
+  const { editorTheme, setEditorTheme } = useContext(ThemeContext);
   useOnDiscard(ref, onDiscard);
 
   useEffect(() => {
@@ -70,6 +102,33 @@ export function EditorSettingsDialog({
           </li>
         </Localized>
       ) : null}
+
+      <li className='horizontal-separator'></li>
+      <div className='appearance'>
+        <Localized id='editor-EditorSettings--theme-title'>
+          <p className='help'>{'Editor theme'}</p>
+        </Localized>
+        <span className='toggle-button'>
+          {EDITOR_THEME_OPTIONS.map(({ value, id, icon, label, title }) => (
+            <Localized
+              key={value}
+              id={id}
+              attrs={{ title: true }}
+              elems={{ glyph: <i className={`icon ${icon}`} /> }}
+            >
+              <button
+                type='button'
+                value={value}
+                className={`${value} ${editorTheme === value ? 'active' : ''}`}
+                title={title}
+                onClick={() => setEditorTheme(value)}
+              >
+                {`<glyph></glyph> ${label}`}
+              </button>
+            </Localized>
+          ))}
+        </span>
+      </div>
 
       <li className='horizontal-separator'></li>
       <li>

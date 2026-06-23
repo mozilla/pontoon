@@ -140,7 +140,7 @@ Note: translation time, translation authors, and tags are not available when `Al
 
 The main editing space in the middle column is where translation takes place.
 
-![Editing space](../assets/localizer/translation-workspace/editing_space_standard.png "Screenshot of the standard editor in the editing space")
+![Editing space](../assets/localizer/translation-workspace/editing_space_standard.png "Screenshot of the editing space")
 
 ### String navigation
 
@@ -161,11 +161,13 @@ Sometimes you may want to investigate more context about a particular string thr
 
 The editor is located in the middle section of the column, and it’s where users can input or edit their translations.
 
+![Editing space editor](../assets/localizer/translation-workspace/editing_space_editor.png "Screenshot of the editor in the editing space")
+
 In the lower-right side of the editing space, it’s possible to `COPY` the source string to the editor, `CLEAR` the area where translations are typed, and `SUGGEST` or `SAVE` the translation by clicking the corresponding button. This area is also used to [display warnings and errors](translate.md#quality-checks) when submitting a translation.
 
 In the lower-left side:
 
-* Clicking the gear icon allows users to toggle `Translation Toolkit checks` or `Make suggestions`, and navigate to the user settings. Note that access to some settings is restricted by [user permissions](users.md#user-roles).
+* Clicking the gear icon allows users to toggle `Translation Toolkit checks` and `Make suggestions`, select their editor theme, and navigate to the user settings. Note that access to some settings is restricted by [user permissions](users.md#user-roles).
 * Clicking the keyboard icon displays a list of available shortcuts.
 * The numbers displayed to the right of the keyboard icon (e.g. `50|59`) are the number of characters in the target and source string.
 
@@ -174,6 +176,12 @@ In the lower-left side:
 A project could be enabled in *read-only mode* for some locales: their translations will be available to other languages in the `LOCALES` tab, but it won’t be possible to change or submit translations directly in Pontoon. In this case, a note is displayed in the bar below the editor, and all other controls are hidden.
 
 ![Translation editor in read-only project](../assets/localizer/translation-workspace/translation_readonly.png "Screenshot of translation editor in read-only project")
+
+#### Editor theme
+
+The editor theme can be set independently from the main interface, using the toggle in the gear menu (or in the [settings page](users.md#appearance)). Three options are available: *Light*, *Dark*, and *Main* (which matches the main interface theme). The selected theme only affects the appearance of the editor.
+
+![Editing theme](../assets/localizer/translation-workspace/editing_space_theme.png "Screenshot of the theme selector in the editor")
 
 ### Translation list
 
