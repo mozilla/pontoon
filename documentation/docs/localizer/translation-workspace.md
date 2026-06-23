@@ -161,7 +161,7 @@ Sometimes you may want to investigate more context about a particular string thr
 
 The editor is located in the middle section of the column, and it’s where users can input or edit their translations.
 
-![Editing space](../assets/localizer/translation-workspace/editing_space_editor.png "Screenshot of the editor in the editing space")
+![Editing space editor](../assets/localizer/translation-workspace/editing_space_editor.png "Screenshot of the editor in the editing space")
 
 In the lower-right side of the editing space, it’s possible to `COPY` the source string to the editor, `CLEAR` the area where translations are typed, and `SUGGEST` or `SAVE` the translation by clicking the corresponding button. This area is also used to [display warnings and errors](translate.md#quality-checks) when submitting a translation.
 
