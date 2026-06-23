@@ -23,7 +23,7 @@ import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 
-import { EntityView, useActiveTranslation } from './EntityView';
+import { EntityView, useActiveTranslation, useEntityEntry } from './EntityView';
 import { FailedChecksData } from './FailedChecksData';
 import { Locale } from './Locale';
 import { MachineryTranslations } from './MachineryTranslations';
@@ -145,6 +145,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const locale = useContext(Locale);
   const { entity } = useContext(EntityView);
   const { format } = entity;
+  const sourceEntry = useEntityEntry();
   const activeTranslation = useActiveTranslation();
   const readonly = useReadonlyEditor();
   const machinery = useContext(MachineryTranslations);
@@ -177,18 +178,17 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           const { fields, focusField, sourceView } = prev;
           const field = focusField.current ?? fields[0];
           field.handle.current.setValue(str);
-          let next = fields.slice();
-          if (sourceView) {
-            const result = buildMessageEntry(prev.base, fields);
-            next = editSource(result ?? str);
-            focusField.current = next[0];
-            setResult(result);
-          }
-          return {
+          const next = {
             ...prev,
             machinery: { manual, translation: str, sources },
-            fields: next,
-          };
+          } satisfies EditorData;
+          if (sourceView) {
+            const result = buildMessageEntry(prev.base, prev.fields);
+            next.fields = editSource(result ?? str);
+            focusField.current = next.fields[0];
+            setResult(result);
+          }
+          return next;
         }),
 
       setEditorFromHistory: (str) =>
@@ -204,13 +204,13 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             if (entry && !requiresSourceView(entry)) {
               next.fields = prev.sourceView
                 ? editSource(entry)
-                : editMessageEntry(entry);
+                : editMessageEntry(sourceEntry, entry);
             } else {
               next.fields = editSource(str);
               next.sourceView = true;
             }
           } else {
-            next.fields = editMessageEntry(prev.initial);
+            next.fields = editMessageEntry(sourceEntry, prev.initial);
             next.fields[0].handle.current.setValue(str);
           }
           next.focusField.current = next.fields[0];
@@ -245,7 +245,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (sourceView) {
             const entry = parseEntryFromFluentSource(base, fields);
             if (entry && !requiresSourceView(entry)) {
-              const fields = editMessageEntry(entry);
+              const fields = editMessageEntry(sourceEntry, entry);
               state.focusField.current = fields[0];
               setResult(entry);
               return { ...state, base: entry, fields, sourceView: false };
@@ -270,7 +270,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     const sourceView = requiresSourceView(base);
     const fields = sourceView
       ? editSource(serializeEntry(base))
-      : editMessageEntry(base);
+      : editMessageEntry(sourceEntry, base);
     setState(() => ({
       pk: entity.pk,
       busy: false,

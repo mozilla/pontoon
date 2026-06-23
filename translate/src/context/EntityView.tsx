@@ -12,6 +12,8 @@ import { ENTITIES } from '~/modules/entities/reducer';
 import { useAppSelector } from '~/hooks';
 
 import { Location } from './Location';
+import { MessageEntry } from '~/utils/message';
+import { messageEntryFromEntity } from '~/utils/message/fromEntity';
 
 const emptyEntity: Entity = {
   pk: 0,
@@ -65,4 +67,9 @@ export function useActiveTranslation(): EntityTranslation | null {
     const tx = entity.translation;
     return tx && tx.status !== 'rejected' ? tx : null;
   }, [entity]);
+}
+
+export function useEntityEntry(): MessageEntry {
+  const { entity } = useContext(EntityView);
+  return useMemo(() => messageEntryFromEntity(entity), [entity]);
 }

@@ -25,18 +25,25 @@ const DEFAULT_LOCALE = {
   cldrPlurals: [1, 5],
 };
 
-function mountForm(string) {
+function mountForm(source, target = null) {
+  target ??= source;
   const store = createReduxStore();
   createDefaultUser(store);
 
-  const [id, entry] = fluentParseEntry(string);
+  const [id, sourceEntry] = fluentParseEntry(source);
+  const [, targetEntry] = fluentParseEntry(target);
   const entity = {
-    pk: 0,
+    pk: 1,
     format: 'fluent',
     key: [id],
-    original: 'my-message = Hello\n',
-    value: ['Hello'],
-    translation: { string, value: entry['='] ?? [], properties: entry['+'] },
+    original: source,
+    value: sourceEntry['='] ?? [],
+    properties: sourceEntry['+'],
+    translation: {
+      string: target,
+      value: targetEntry['='] ?? [],
+      properties: targetEntry['+'],
+    },
   };
 
   let actions, result;
@@ -136,22 +143,17 @@ describe('<TranslationForm> with multiple fields', () => {
     ]);
     expect(container.querySelectorAll('input')).toHaveLength(2);
 
-    const l0 = container.querySelectorAll('label')[0];
-    expect(l0.querySelectorAll('span')[0]).toHaveTextContent('label');
-    expect(l0.querySelectorAll('span')[1]).toHaveTextContent('macosx');
+    const labels = Array.from(container.querySelectorAll('label'), (l) =>
+      Array.from(l.querySelectorAll('span'), (span) => span.textContent),
+    );
+    expect(labels).toEqual([
+      ['label', 'macosx'],
+      ['label', 'other'],
+      ['accesskey', 'macosx'],
+      ['accesskey', 'other'],
+    ]);
 
-    const l1 = container.querySelectorAll('label')[1];
-    expect(l1.querySelectorAll('span')[0]).toHaveTextContent('label');
-    expect(l1.querySelectorAll('span')[1]).toHaveTextContent('other');
-
-    const l2 = container.querySelectorAll('label')[2];
-    expect(l2.querySelectorAll('span')[0]).toHaveTextContent('accesskey');
-    expect(l2.querySelectorAll('span')[1]).toHaveTextContent('macosx');
     expect(container.querySelectorAll('input')[0]).toHaveValue('e');
-
-    const l3 = container.querySelectorAll('label')[3];
-    expect(l3.querySelectorAll('span')[0]).toHaveTextContent('accesskey');
-    expect(l3.querySelectorAll('span')[1]).toHaveTextContent('other');
     expect(container.querySelectorAll('input')[1]).toHaveValue('s');
   });
 
@@ -171,12 +173,13 @@ describe('<TranslationForm> with multiple fields', () => {
       'World!',
     ]);
 
-    const labels = container.querySelectorAll('label');
-    expect(labels[0].querySelectorAll('span')[0]).toHaveTextContent('one');
-    expect(labels[0].querySelectorAll('span')[1]).toHaveTextContent('1');
-
-    expect(labels[1].querySelectorAll('span')[0]).toHaveTextContent('other');
-    expect(labels[1].querySelectorAll('span')[1]).toHaveTextContent('2');
+    const labels = Array.from(container.querySelectorAll('label'), (l) =>
+      Array.from(l.querySelectorAll('span'), (span) => span.textContent),
+    );
+    expect(labels).toEqual([
+      [expect.stringMatching(/^one/), '1'],
+      [expect.stringMatching(/^other/), '2'],
+    ]);
   });
 
   it('renders plural string in attributes properly', () => {
@@ -199,14 +202,96 @@ describe('<TranslationForm> with multiple fields', () => {
       'Foo',
     ]);
 
-    const labels = container.querySelectorAll('label');
-    expect(labels[0].querySelectorAll('span')[0]).toHaveTextContent('label');
-    expect(labels[0].querySelectorAll('span')[1]).toHaveTextContent('one');
-    expect(labels[0].querySelectorAll('span')[2]).toHaveTextContent('1');
+    const labels = Array.from(container.querySelectorAll('label'), (l) =>
+      Array.from(l.querySelectorAll('span'), (span) => span.textContent),
+    );
+    expect(labels).toEqual([
+      ['label', expect.stringMatching(/^one/), '1'],
+      ['label', expect.stringMatching(/^other/), '2'],
+      ['attr'],
+    ]);
+  });
 
-    expect(labels[1].querySelectorAll('span')[0]).toHaveTextContent('label');
-    expect(labels[1].querySelectorAll('span')[1]).toHaveTextContent('other');
-    expect(labels[1].querySelectorAll('span')[2]).toHaveTextContent('2');
+  it('renders translation-only attributes in proper order', () => {
+    const {
+      views,
+      wrapper: { container },
+    } = mountForm(
+      ftl`
+      key =
+        .a = Foo
+        .b = Bar
+      `,
+      ftl`
+      key =
+        .c = Baz
+        .a = Foo
+      `,
+    );
+
+    expect(views.map((view) => view.state.doc.toString())).toMatchObject([
+      'Foo',
+      '',
+      'Baz',
+    ]);
+
+    const labels = Array.from(container.querySelectorAll('label'), (l) =>
+      Array.from(l.querySelectorAll('span'), (span) => span.textContent),
+    );
+    expect(labels).toEqual([['a'], ['b'], ['c']]);
+  });
+
+  it('renders empty value even if missing from translation', () => {
+    const {
+      views,
+      wrapper: { container },
+    } = mountForm(
+      ftl`
+      key = Val
+        .a = Foo
+      `,
+      ftl`
+      key =
+        .a = Bar
+      `,
+    );
+
+    expect(views.map((view) => view.state.doc.toString())).toMatchObject([
+      '',
+      'Bar',
+    ]);
+
+    const labels = Array.from(container.querySelectorAll('label'), (l) =>
+      Array.from(l.querySelectorAll('span'), (span) => span.textContent),
+    );
+    expect(labels).toEqual([['Value'], ['a']]);
+  });
+
+  it('leaves out value if missing from source', () => {
+    const {
+      views,
+      wrapper: { container },
+    } = mountForm(
+      ftl`
+      key =
+        .a = Foo
+      `,
+      ftl`
+      key = Val
+        .a = Bar
+        .b = Baz
+      `,
+    );
+
+    expect(views.map((view) => view.state.doc.toString())).toMatchObject([
+      'Bar',
+      'Baz',
+    ]);
+
+    const labels = Array.from(container.querySelectorAll('label'), (l) =>
+      Array.from(l.querySelectorAll('span'), (span) => span.textContent),
+    );
+    expect(labels).toEqual([['a'], ['b']]);
   });
 
   it('renders access keys properly', () => {
