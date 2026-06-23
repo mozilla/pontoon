@@ -92,11 +92,9 @@ def get_key_projects_enabled_by_locale(
 
 def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, dict]:
     """
-    Per-locale active-contributor counts over the 12-month window ending at end_dt.
+    Per-locale active-contributor counts over the 12-month window ending at end_date.
     """
     start_date = end_date - relativedelta(months=13)
-    print("start date", start_date)
-    print("end date", end_date)
 
     managers = defaultdict(set)
     translators = defaultdict(set)
@@ -261,11 +259,12 @@ def compute_chs(args: dict) -> float:
     return chs_fields
 
 
-def build_chs_snapshots() -> list[LocaleHealthSnapshot]:
+def build_chs_snapshots(locales=None) -> list[LocaleHealthSnapshot]:
     """Assemble one LocaleHealthSnapshot per visible locale for today."""
 
     now = timezone.now()
-    locales = Locale.objects.visible()
+    if locales is None:
+        locales = Locale.objects.visible()
 
     completion = get_completion_by_locale(locales)
     enabled = get_key_projects_enabled_by_locale(locales, KEY_PROJECT_SLUGS)
