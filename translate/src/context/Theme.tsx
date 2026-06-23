@@ -16,7 +16,7 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     function handleThemeChange() {
-      let userThemeSetting = document.body.getAttribute('data-theme');
+      const userThemeSetting = document.body.getAttribute('data-theme');
 
       if (userThemeSetting === 'system') {
         applyTheme(userThemeSetting);

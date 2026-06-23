@@ -42,7 +42,7 @@ export function useUserBanner(): [string, string] {
   }
 
   const dateJoinedObj = new Date(dateJoined);
-  let threeMonthsAgo = new Date();
+  const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
   if (dateJoinedObj > threeMonthsAgo) {
     return ['NEW', 'New User'];

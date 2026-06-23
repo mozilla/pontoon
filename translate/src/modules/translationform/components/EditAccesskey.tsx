@@ -60,7 +60,7 @@ function useHandleShortcuts(): (event: React.KeyboardEvent) => void {
 
 export const EditAccesskey = memo(
   forwardRef<EditFieldHandle, EditFieldProps & { name: string }>(
-    ({ defaultValue, index, name, onFocus }, ref) => {
+    ({ defaultValue, name, onFocus }, ref) => {
       const locale = useContext(Locale);
       const { setResultFromInput } = useContext(EditorActions);
       const { fields } = useContext(EditorData);
@@ -68,13 +68,10 @@ export const EditAccesskey = memo(
       const readOnly = useReadonlyEditor();
 
       const [value, setValue_] = useState(defaultValue);
-      const setValue = useCallback(
-        (value: string) => {
-          setValue_(value);
-          setTimeout(setResultFromInput);
-        },
-        [index],
-      );
+      const setValue = useCallback((value: string) => {
+        setValue_(value);
+        setTimeout(setResultFromInput);
+      }, []);
 
       useEffect(() => setValue(defaultValue), [defaultValue]);
 

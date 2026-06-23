@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import * as EntityView from './EntityView';
 import { FailedChecksData, FailedChecksProvider } from './FailedChecksData';
 import { vi } from 'vitest';
-import { act, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 vi.mock('./EntityView', () => ({ useActiveTranslation: vi.fn() }));
 

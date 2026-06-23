@@ -126,8 +126,12 @@ describe('<EditorMainAction>', () => {
     SendTranslation.useSendTranslation.mockReturnValue(spy);
     Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
     vi.mocked(useContext).mockImplementation((context) => {
-      if (context === EditorData) return { busy: true };
-      if (context === EditorResult) return null;
+      if (context === EditorData) {
+        return { busy: true };
+      }
+      if (context === EditorResult) {
+        return null;
+      }
       return {};
     });
 

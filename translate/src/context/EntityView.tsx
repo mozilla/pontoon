@@ -78,7 +78,9 @@ export function useMachineryEntry(): MessageEntry {
   const { entity } = useContext(EntityView);
   return useMemo(() => {
     const entry = messageEntryFromEntity(entity);
-    if (entity.machinery_value) entry.value = entity.machinery_value;
+    if (entity.machinery_value) {
+      entry.value = entity.machinery_value;
+    }
     if (entity.machinery_properties) {
       entry.attributes = new Map(Object.entries(entity.machinery_properties));
     }

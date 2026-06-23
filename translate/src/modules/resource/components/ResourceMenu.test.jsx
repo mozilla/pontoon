@@ -1,6 +1,5 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
 import { LocationProvider } from '~/context/Location';
@@ -8,7 +7,6 @@ import { LocationProvider } from '~/context/Location';
 import { createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import { ResourceItem } from './ResourceItem';
 import { ResourceMenu } from './ResourceMenu';
 import { fireEvent, render } from '@testing-library/react';
 import { expect } from 'vitest';

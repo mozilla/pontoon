@@ -1,9 +1,11 @@
-import react from 'eslint-plugin-react';
-import globals from 'globals';
-import eslint from '@eslint/js';
+import eslintReact from '@eslint-react/eslint-plugin';
+import js from '@eslint/js';
 import vitest from '@vitest/eslint-plugin';
+import { defineConfig } from 'eslint/config';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
-export default [
+export default defineConfig(
   {
     ignores: [
       '**/.vscode/',
@@ -18,9 +20,11 @@ export default [
       '**/venv/',
       'translate/dist/',
       'documentation/site/',
+
       // Jinja templates
       'translate/public/translate.html',
       '**/templates/**/*.html',
+
       // Vendored code
       'pontoon/base/static/css/boilerplate.css',
       'pontoon/base/static/css/fontawesome-all.css',
@@ -28,76 +32,24 @@ export default [
       'pontoon/base/static/js/lib/',
     ],
   },
-  eslint.configs.recommended,
-  react.configs.flat.recommended,
+
   {
-    plugins: {
-      react,
-    },
+    files: ['pontoon/**/*.js'],
+
+    extends: [js.configs.recommended],
 
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...vitest.environments.env.globals,
-        gettext: 'readonly',
-        ngettext: 'readonly',
-        interpolate: 'readonly',
-        l: 'readonly',
-        expect: 'readonly',
-        test: 'readonly',
-        browser: 'readonly',
-        Promise: 'readonly',
-        Set: 'readonly',
-        URLSearchParameters: 'readonly',
-        FormData: 'readonly',
-        require: 'readonly',
-        shortcut: 'readonly',
-        sorttable: 'readonly',
         $: 'readonly',
-        Pontoon: 'readonly',
-        jQuery: 'readonly',
-        Clipboard: 'readonly',
         Chart: 'readonly',
-        confetti: 'readonly',
-        NProgress: 'readonly',
-        diff_match_patch: 'readonly',
-        Highcharts: 'readonly',
-        Sideshow: 'readonly',
-        editor: 'readonly',
-        DIFF_INSERT: 'readonly',
-        DIFF_EQUAL: 'readonly',
-        DIFF_DELETE: 'readonly',
-        ga: 'readonly',
-        process: 'readonly',
-        generalShortcutsHandler: 'writable',
-        traversalShortcutsHandler: 'writable',
-        editorShortcutsHandler: 'writable',
-        showdown: 'writable',
-      },
-
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
-
-    settings: {
-      react: {
-        version: 'detect',
+        Pontoon: 'readonly',
       },
     },
 
     rules: {
       curly: 'error',
-      'react/display-name': 0,
-      'react/prefer-es6-class': 1,
-      'react/prefer-stateless-function': 0,
-      'react/prop-types': 0,
-      'react/jsx-key': 0,
-      'react/jsx-uses-react': 1,
-      'react/jsx-uses-vars': 1,
-
+      'no-console': 1,
       'no-unused-vars': [
         'error',
         {
@@ -106,10 +58,7 @@ export default [
           ignoreRestSiblings: true,
         },
       ],
-
-      'no-console': 1,
       'no-var': 'error',
-
       'prefer-const': [
         'error',
         {
@@ -119,4 +68,59 @@ export default [
       ],
     },
   },
-];
+
+  {
+    files: ['translate/*.mjs'],
+
+    languageOptions: { globals: { ...globals.node } },
+  },
+
+  {
+    files: ['**/*.{ts,tsx}', 'translate/**/*.{js,jsx}'],
+
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      eslintReact.configs['recommended-typescript'],
+    ],
+
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...vitest.environments.env.globals,
+      },
+    },
+
+    rules: {
+      curly: 'error',
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-restricted-exports': [
+        'error',
+        { restrictedNamedExports: ['default'] },
+      ],
+
+      // TODO: Review these eslint-react errors
+      '@eslint-react/static-components': 0,
+      '@eslint-react/no-nested-component-definitions': 0,
+      '@eslint-react/rules-of-hooks': 0,
+
+      // TODO: Review these eslint-react warnings
+      '@eslint-react/exhaustive-deps': 0,
+      '@eslint-react/naming-convention-ref-name': 0,
+      '@eslint-react/no-array-index-key': 0,
+      '@eslint-react/use-state': 0,
+      '@eslint-react/dom-no-dangerously-set-innerhtml': 0,
+      '@eslint-react/purity': 0,
+      '@eslint-react/set-state-in-effect': 0,
+      '@eslint-react/naming-convention-context-name': 0,
+      '@eslint-react/no-unnecessary-use-prefix': 0,
+
+      '@typescript-eslint/ban-ts-comment': 0,
+      '@typescript-eslint/no-explicit-any': 0,
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { varsIgnorePattern: '^_' },
+      ],
+    },
+  },
+);

@@ -156,7 +156,9 @@ function autocompletePlaceholders(entry: MessageEntry) {
         const start = match.index;
         const end = start + label.length;
         for (const hl of highlights) {
-          if (hl[1].includes(start)) hl[1].push(end);
+          if (hl[1].includes(start)) {
+            hl[1].push(end);
+          }
         }
         highlights.push([start, [end]]);
       }
@@ -185,7 +187,10 @@ function completePlaceholder(
   }));
   return (context) => {
     const token = context.matchBefore(match);
-    if (token) return { from: token.from, options };
-    else return context.explicit ? { from: context.pos, options } : null;
+    if (token) {
+      return { from: token.from, options };
+    } else {
+      return context.explicit ? { from: context.pos, options } : null;
+    }
   };
 }

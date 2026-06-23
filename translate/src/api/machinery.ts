@@ -104,7 +104,7 @@ export async function fetchTranslationMemory(
   pk: number | null | undefined,
 ): Promise<MachineryTranslation[]> {
   const url = '/translation-memory/';
-  let params: Record<string, string> = {
+  const params: Record<string, string> = {
     text: source,
     locale: locale.code,
   };

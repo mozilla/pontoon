@@ -25,9 +25,11 @@ export function getPlainMessage(entry: MessageEntry): string {
 
 function previewMessage(format: string, message: Message): string {
   let pattern: Pattern;
-  if (Array.isArray(message)) pattern = message;
-  else if (message.msg) pattern = message.msg;
-  else {
+  if (Array.isArray(message)) {
+    pattern = message;
+  } else if (message.msg) {
+    pattern = message.msg;
+  } else {
     const catchall =
       message.alt.find((v) => v.keys.every((key) => typeof key !== 'string')) ??
       message.alt.at(-1)!;

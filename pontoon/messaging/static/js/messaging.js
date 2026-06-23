@@ -1,3 +1,5 @@
+/* global showdown */
+
 $(function () {
   const container = $('#main .container');
   const converter = new showdown.Converter({

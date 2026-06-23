@@ -21,7 +21,6 @@ import { EntityView } from '~/context/EntityView';
 import { messageEntryFromEntity } from '~/utils/message/fromEntity';
 
 export type EditFieldProps = {
-  index: number;
   onFocus?: () => void;
   singleField?: boolean;
   defaultValue: string;
@@ -36,7 +35,7 @@ export type EditFieldProps = {
  */
 export const EditField = memo(
   forwardRef<EditFieldHandle, EditFieldProps>(
-    ({ defaultValue, index, onFocus, singleField }, ref) => {
+    ({ defaultValue, onFocus, singleField }, ref) => {
       const { l10n } = useLocalization();
       const locale = useContext(Locale);
       const readOnly = useReadonlyEditor();

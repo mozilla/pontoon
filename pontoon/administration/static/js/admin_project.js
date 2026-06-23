@@ -186,8 +186,7 @@ $(function () {
 
   // Copy locales from another project
   $('#copy-locales option').on('click', function () {
-    let projectLocales = [];
-
+    let projectLocales;
     try {
       projectLocales = JSON.parse($(this).val());
     } catch {

@@ -1,8 +1,8 @@
 import { fetchOtherLocales, OtherLocaleTranslation } from '~/api/other-locales';
 import type { AppDispatch } from '~/store';
 
-export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
-export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
+export const RECEIVE = 'otherlocales/RECEIVE';
+export const REQUEST = 'otherlocales/REQUEST';
 
 export type Action = ReceiveAction | RequestAction;
 

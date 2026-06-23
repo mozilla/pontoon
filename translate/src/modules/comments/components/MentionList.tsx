@@ -31,7 +31,7 @@ export function MentionList({
         const range = ReactEditor.toDOMRange(editor, target);
         setMentionListStyle(ref.current, range);
       }
-    } catch (error) {
+    } catch {
       // https://github.com/mozilla/pontoon/issues/2298
       // toDOMRange may fail on e.g. paste events, as the onChange may be
       // triggered before the DOM is updated. In that case, ignore the error

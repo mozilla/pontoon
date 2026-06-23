@@ -30,7 +30,9 @@ export function buildMessageEntry(
   }
   const trim = options?.trim ?? false;
   try {
-    if (res.value) setMessage(format, res.value, '', fields, trim);
+    if (res.value) {
+      setMessage(format, res.value, '', fields, trim);
+    }
     if (res.attributes) {
       for (const [name, msg] of res.attributes) {
         setMessage(format, msg, name, fields, trim);

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Comment } from './Comment';
 import { expect, vi } from 'vitest';
-import { getByTitle, queryByTitle, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { MockLocalizationProvider } from '~/test/utils';
 
 vi.mock('react-time-ago', () => {
@@ -105,8 +105,8 @@ describe('<Comment>', () => {
       </MockLocalizationProvider>,
     );
 
-    expect(queryByTitle('Edit comment')).toBeNull;
-    expect(queryByTitle('Delete comment')).toBeNull;
+    expect(queryByTitle('Edit comment')).toBeNull();
+    expect(queryByTitle('Delete comment')).toBeNull();
   });
 
   it('calls onDeleteComment when delete button is clicked', () => {

@@ -231,11 +231,11 @@ export function HistoryTranslationBase({
   const ownTranslation =
     user.username && user.username === translation.username;
 
-  let canDelete = (isTranslator || ownTranslation) && !isReadOnlyEditor;
-  let canReject =
+  const canDelete = (isTranslator || ownTranslation) && !isReadOnlyEditor;
+  const canReject =
     (isTranslator || (ownTranslation && status !== 'approved')) &&
     !isReadOnlyEditor;
-  let canComment = user.isAuthenticated;
+  const canComment = user.isAuthenticated;
 
   const customDateFormat = (date: Date) => {
     return new Intl.DateTimeFormat('en', {
