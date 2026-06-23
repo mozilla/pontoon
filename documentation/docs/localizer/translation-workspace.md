@@ -181,7 +181,7 @@ A project could be enabled in *read-only mode* for some locales: their translati
 
 The editor theme can be set independently from the main interface, using the toggle in the gear menu (or in the [settings page](users.md#appearance)). Three options are available: *Light*, *Dark*, and *Main* (which matches the main interface theme). The selected theme only affects the appearance of the editor.
 
-![Editing theme](../assets/localizer/translation-workspace/editing_space_theme.png "Screenshot of the theme in the editor")
+![Editing theme](../assets/localizer/translation-workspace/editing_space_theme.png "Screenshot of the theme selector in the editor")
 
 ### Translation list
 
