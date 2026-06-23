@@ -1,5 +1,3 @@
-import json
-
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from http import HTTPStatus
@@ -56,7 +54,7 @@ def test_default_empty(client, clear_cache, locale_a, project_a, user_a):
     end_date = response_context["end_date"]
     assert start_date < end_date <= datetime.now(timezone.utc)
     team_pretranslation_quality = response_context["team_pretranslation_quality"]
-    assert json.loads(team_pretranslation_quality["dataset"]) == [
+    assert team_pretranslation_quality["dataset"] == [
         {
             "name": "All",
             "approval_rate": [
@@ -76,7 +74,7 @@ def test_default_empty(client, clear_cache, locale_a, project_a, user_a):
         }
     ]
     project_pretranslation_quality = response_context["project_pretranslation_quality"]
-    assert json.loads(project_pretranslation_quality["dataset"]) == [
+    assert project_pretranslation_quality["dataset"] == [
         {
             "name": "All",
             "approval_rate": [
@@ -143,7 +141,7 @@ def test_default_with_data(client, clear_cache, tm_user, locale_a, project_a, us
     end_date = response_context["end_date"]
     assert start_date < end_date <= datetime.now(timezone.utc)
     team_pretranslation_quality = response_context["team_pretranslation_quality"]
-    assert json.loads(team_pretranslation_quality["dataset"]) == [
+    assert team_pretranslation_quality["dataset"] == [
         {
             "name": "All",
             "approval_rate": [
@@ -180,7 +178,7 @@ def test_default_with_data(client, clear_cache, tm_user, locale_a, project_a, us
         },
     ]
     project_pretranslation_quality = response_context["project_pretranslation_quality"]
-    assert json.loads(project_pretranslation_quality["dataset"]) == [
+    assert project_pretranslation_quality["dataset"] == [
         {
             "name": "All",
             "approval_rate": [
