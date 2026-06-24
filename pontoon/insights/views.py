@@ -129,7 +129,7 @@ def get_monthly_snapshot_deltas(current_snapshots, previous_snapshots, metrics):
 
 @login_required(redirect_field_name="", login_url="/403")
 def insights_config(request):
-    """Configure which locales appear on the CHS dashboard."""
+    """Configure which locales appear on the Insights dashboard."""
     if not settings.ENABLE_INSIGHTS:
         raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 

@@ -335,7 +335,7 @@ class UserLocalesOrderForm(forms.ModelForm):
 
 class UserInsightsDashboardConfigForm(forms.ModelForm):
     """
-    Form is responsible for saving custom configurations of the Community Health Dashboard.
+    Form is responsible for saving custom configurations of the Insights Dashboard.
     """
 
     class Meta:
