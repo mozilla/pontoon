@@ -236,7 +236,6 @@ INSTALLED_APPS = (
     "pontoon.base",
     "pontoon.contributors",
     "pontoon.checks",
-    "pontoon.dashboard",
     "pontoon.insights",
     "pontoon.localizations",
     "pontoon.machinery",
@@ -461,8 +460,13 @@ PIPELINE_CSS = {
     },
     "insights": {
         "source_filenames": (
+            "css/heading_info.css",
+            "css/table.css",
+            "css/request.css",
+            "css/multiple_item_selector.css",
             "css/insights_charts.css",
             "css/insights.css",
+            "css/config.css",
         ),
         "output_filename": "css/insights.min.css",
     },
@@ -508,17 +512,6 @@ PIPELINE_CSS = {
             "css/request.css",
         ),
         "output_filename": "css/teams.min.css",
-    },
-    "dashboard": {
-        "source_filenames": (
-            "css/heading_info.css",
-            "css/table.css",
-            "css/request.css",
-            "css/multiple_item_selector.css",
-            "css/dashboard.css",
-            "css/config.css",
-        ),
-        "output_filename": "css/dashboard.min.css",
     },
     "sync_log": {
         "source_filenames": (
@@ -631,6 +624,8 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/chart.umd.min.js",
             "js/lib/chartjs-adapter-date-fns.bundle.min.js",
+            "js/table.js",
+            "js/multiple_item_selector.js",
             "js/insights_charts.js",
             "js/insights.js",
         ),
@@ -697,17 +692,6 @@ PIPELINE_JS = {
             "js/request.js",
         ),
         "output_filename": "js/teams.min.js",
-    },
-    "dashboard": {
-        "source_filenames": (
-            "js/table.js",
-            "js/progress-chart.js",
-            "js/request.js",
-            "js/multiple_item_selector.js",
-            "js/dashboard.js",
-            "js/config.js",
-        ),
-        "output_filename": "js/dashboard.min.js",
     },
     "sync_log": {
         "source_filenames": (

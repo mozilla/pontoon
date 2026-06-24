@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import 'heading.html' as Heading %}
 {% import "insights/widgets/tooltip.html" as Tooltip %}
+{% import 'insights/widgets/locale_list.html' as LocaleList %}
 
 {% block title %}Insights{% endblock %}
 
@@ -14,6 +15,47 @@
   <section id="main">
     <div class="container">
       <div id="insights">
+        <menu class="controls clearfix">
+          <div class="search-wrapper small clearfix">
+            <div class="icon fas fa-search"></div>
+            <input
+              class="table-filter"
+              type="search"
+              autocomplete="off"
+              autofocus
+              placeholder="Filter teams"
+              data-filter="td:nth-child(1)"
+            />
+          </div>
+          <div class="button-container">
+            <a
+              class="button"
+              id="edit-config"
+              href="{{ url('pontoon.insights.config') }}"
+              >Edit Configuration
+            </a>
+            <button class="button" id="view-toggle">Show scores</button>
+          </div>
+        </menu>
+
+        <div class="dashboard-container">
+          {{ LocaleList.header() }}
+
+          {% for locale in locales %}
+            {% set main_link = url('pontoon.teams.team', locale.code) %}
+
+            {{ LocaleList.item(locale, main_link, curr_snapshot=current_snapshots.get(locale.id), base_deltas=snapshot_base_deltas.get(locale.id), score_deltas=snapshot_score_deltas.get(locale.id), columns=columns) }}
+          {% endfor %}
+
+          {{ LocaleList.footer() }}
+
+          {% if not locales %}
+            <div class="no-locales">
+              <p>No locales selected.</p>
+            </div>
+          {% endif %}
+        </div>
+
         {% if global_locale_health_insights %}
           <section class="team-community-health-activity">
             <figure class="block">

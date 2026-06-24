@@ -33,15 +33,15 @@
 
     <div class="controls clearfix">
       <button class="button active save">Save Configuration</button>
-      <a href="{{ url('pontoon.dashboard') }}" class="cancel">Cancel</a>
+      <a href="{{ url('pontoon.insights') }}" class="cancel">Cancel</a>
     </div>
   </form>
 {% endblock %}
 
 {% block extend_css %}
-  {% stylesheet 'dashboard' %}
+  {% stylesheet 'insights' %}
 {% endblock %}
 
 {% block extend_js %}
-  {% javascript 'dashboard' %}
+  {% javascript 'insights' %}
 {% endblock %}

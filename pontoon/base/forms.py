@@ -333,7 +333,7 @@ class UserLocalesOrderForm(forms.ModelForm):
         fields = ("locales_order",)
 
 
-class UserCommunityHealthDashboardConfigForm(forms.ModelForm):
+class UserInsightsDashboardConfigForm(forms.ModelForm):
     """
     Form is responsible for saving custom configurations of the Community Health Dashboard.
     """

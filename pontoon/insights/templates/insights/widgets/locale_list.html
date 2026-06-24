@@ -1,14 +1,20 @@
-{% macro header(request=False) %}
+{% macro header() %}
   <table class="table table-sort locale-list item-list">
     <thead>
       <tr>
         <th class="code">Locale<i class="fas"></i></th>
         <th class="managers" data-sort="">Managers<i class="fas"></i></th>
         <th class="translators" data-sort="">Translators<i class="fas"></i></th>
-        <th class="active-contributors" data-sort="">Contr. 1<i class="fas"></i></th>
-        <th class="all-contributors" data-sort="">Contr. 2<i class="fas"></i></th>
+        <th class="active-contributors" data-sort="">
+          Contr. 1<i class="fas"></i>
+        </th>
+        <th class="all-contributors" data-sort="">
+          Contr. 2<i class="fas"></i>
+        </th>
         <th class="new-signups" data-sort="">New<i class="fas"></i></th>
-        <th class="enabled-projects" data-sort="">Projects<i class="fas"></i></th>
+        <th class="enabled-projects" data-sort="">
+          Projects<i class="fas"></i>
+        </th>
         <th class="completion" data-sort="">Completion<i class="fas"></i></th>
         <th class="chs" data-sort="">Score<i class="fas"></i></th>
       </tr>
@@ -91,7 +97,7 @@
   </tr>
 {% endmacro %}
 
-{% macro footer(request=False, form=None) %}
+{% macro footer() %}
   <!-- prettier-ignore-start -->
     </tbody>
   <!-- prettier-ignore-end -->

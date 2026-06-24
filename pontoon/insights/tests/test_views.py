@@ -43,10 +43,10 @@ class MonthlyQualityEntry:
 
 
 @pytest.mark.django_db
-def test_default_empty(client, clear_cache, locale_a, project_a, user_a):
+def test_default_empty(client_superuser, clear_cache, locale_a, project_a, user_a):
     url = reverse("pontoon.insights")
     with patch.object(views, "render", wraps=render) as mock_render:
-        response = client.get(url)
+        response = client_superuser.get(url)
     assert response.status_code == HTTPStatus.OK
 
     response_context = mock_render.call_args[0][2]
@@ -96,7 +96,9 @@ def test_default_empty(client, clear_cache, locale_a, project_a, user_a):
 
 
 @pytest.mark.django_db
-def test_default_with_data(client, clear_cache, tm_user, locale_a, project_a, user_a):
+def test_default_with_data(
+    client_superuser, clear_cache, tm_user, locale_a, project_a, user_a
+):
     entries = [
         MonthlyQualityEntry(months_ago=0, approved=1, rejected=0),
         MonthlyQualityEntry(months_ago=1, approved=0, rejected=1),
@@ -133,7 +135,7 @@ def test_default_with_data(client, clear_cache, tm_user, locale_a, project_a, us
 
     url = reverse("pontoon.insights")
     with patch.object(views, "render", wraps=render) as mock_render:
-        response = client.get(url)
+        response = client_superuser.get(url)
     assert response.status_code == HTTPStatus.OK
 
     response_context = mock_render.call_args[0][2]

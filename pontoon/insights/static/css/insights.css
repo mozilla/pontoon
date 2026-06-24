@@ -1,28 +1,138 @@
-#insights .block {
-  margin-bottom: 40px;
-}
+#insights {
+  menu {
+    display: flex;
+    .button-container {
+      display: flex;
+      margin-left: auto;
+      align-items: flex-end;
+      gap: 8px;
 
-#insights .block .chart-wrapper {
-  float: right;
-  width: 680px;
-}
+      #edit-config {
+        width: 160px;
+        margin-right: auto;
+        user-select: none;
+      }
 
-/* Custom chart legend */
+      #view-toggle {
+        width: 120px;
+        margin-left: auto;
+        user-select: none;
+      }
+    }
+  }
 
-#insights .legend {
-  float: left;
-  text-align: left;
-  width: 240px;
-}
+  .dashboard-container {
+    min-height: 600px;
+    margin-bottom: 40px;
+  }
 
-#insights .legend ul {
-  height: 330px;
-  margin: 0;
-  overflow-y: auto;
-}
+  .locale-list {
+    table-layout: fixed;
+    width: 100%;
 
-#insights .legend li {
-  display: block;
-  margin: 0;
-  margin-bottom: 5px;
+    &.item-list {
+      tbody tr:nth-child(odd) {
+        background: transparent;
+      }
+      tbody tr:nth-child(even) {
+        background: var(--dark-grey-1);
+      }
+    }
+
+    &.show-score-view {
+      .info-container.base-view {
+        display: none;
+      }
+      .info-container.score-view {
+        display: flex;
+      }
+    }
+
+    .info-container {
+      display: flex;
+      flex-direction: column;
+
+      .info {
+        align-self: center;
+
+        &.met {
+          color: var(--status-translated);
+          font-weight: bold;
+        }
+      }
+
+      &.score-view {
+        display: none;
+      }
+
+      .prev {
+        align-self: flex-end;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        user-select: none;
+        justify-content: center;
+        min-width: 36px;
+        height: 20px;
+
+        &.up {
+          color: var(--status-translated);
+        }
+
+        &.down {
+          color: var(--status-error);
+        }
+
+        &.equal {
+          color: var(--grey-1);
+          justify-content: center;
+        }
+
+        .fa-caret-up,
+        .fa-caret-down {
+          font-size: 1.4em;
+        }
+      }
+    }
+
+    .no-snapshot {
+      color: var(--translation-secondary-color);
+      font-style: italic;
+    }
+  }
+
+  .no-locales {
+    color: var(--light-grey-7);
+    font-style: italic;
+    padding: 10px 16px;
+  }
+
+  .block {
+    margin-bottom: 40px;
+
+    .chart-wrapper {
+      float: right;
+      width: 680px;
+    }
+  }
+
+  /* Custom chart legend */
+  .legend {
+    float: left;
+    text-align: left;
+    width: 240px;
+
+    ul {
+      height: 330px;
+      margin: 0;
+      overflow-y: auto;
+    }
+
+    li {
+      display: block;
+      margin: 0;
+      margin-bottom: 5px;
+    }
+  }
 }
