@@ -2,6 +2,7 @@ import React from 'react';
 
 import * as Hooks from '~/hooks';
 import * as Actions from '../actions';
+import * as OtherLocales from '~/api/other-locales';
 import { BATCHACTIONS } from '../reducer';
 
 import { BatchActions } from './BatchActions';
@@ -28,12 +29,17 @@ vi.mock('../actions', () => ({
   selectAll: vi.fn(() => ({ type: 'whatever' })),
 }));
 
+vi.mock('~/api/other-locales', () => ({
+  fetchAllLocales: vi.fn(() => Promise.resolve([])),
+}));
+
 describe('<BatchActions>', () => {
   afterAll(() => {
     Hooks.useAppDispatch.mockRestore();
     Hooks.useAppSelector.mockRestore();
     Actions.resetSelection.mockRestore();
     Actions.selectAll.mockRestore();
+    OtherLocales.fetchAllLocales.mockClear();
   });
 
   const WrapBatchAction = () => {
@@ -71,6 +77,9 @@ describe('<BatchActions>', () => {
     getByPlaceholderText(/FIND/i);
     getByPlaceholderText(/REPLACE WITH/i);
     getByRole('button', { name: /REPLACE ALL/i });
+
+    expect(container.querySelector('.copy-from-locale')).toBeInTheDocument();
+    getByRole('button', { name: /COPY AS SUGGESTIONS/i });
   });
 
   it('closes batch actions panel when the Close button with selected count is clicked', () => {
