@@ -111,6 +111,19 @@ It’s possible to set the default homepage displayed when visiting Pontoon as a
 
 ![LOCALES tab in translation tools](../assets/localizer/users/translation_locales.png "LOCALES tab in translation tools")
 
+### Personal Access Tokens
+Users can create Personal Access Tokens (PAT) which are required for accessing all endpoints of the  Pontoon [REST API](https://github.com/mozilla/pontoon/blob/main/pontoon/api/README.md).
+
+To create a PAT, the user must enter a suitable token name no longer than 32 characters. The generated token is used with the REST API as follows:
+
+```bash
+curl \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  https://example.com/api/v2/resource/
+```
+
+PATs can be manually deleted at any time and automatically expire after one year.
+
 ### Account removal
 
 Users can delete their account by scrolling to the `Account Management` section, where a button reading `Delete Account` is located. Once clicked, the user will need to
