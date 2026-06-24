@@ -335,7 +335,7 @@
             font-size: 14px;
 
             .sender {
-              color: var(--status-translated-alt);
+              color: var(--status-translated);
               width: 50%;
             }
 

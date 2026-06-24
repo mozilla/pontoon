@@ -276,7 +276,7 @@
 
         .translation-locale-code {
           font-style: italic;
-          color: var(--status-translated-alt);
+          color: var(--status-translated);
           vertical-align: sub;
         }
       }

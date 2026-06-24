@@ -63,15 +63,15 @@
 }
 
 .search-box .translated .status:before {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 .search-box .pretranslated .status:before {
-  color: var(--status-pretranslated-alt);
+  color: var(--status-pretranslated);
 }
 
 .search-box .warnings .status:before {
-  color: var(--status-warning-alt);
+  color: var(--status-warning);
 }
 
 .search-box .errors .status:before {
@@ -79,11 +79,11 @@
 }
 
 .search-box .missing .status:before {
-  color: var(--status-missing-alt);
+  color: var(--status-missing);
 }
 
 .search-box .unreviewed .status:before {
-  color: var(--status-unreviewed-alt);
+  color: var(--status-unreviewed);
   content: '';
   font-size: 18px;
 }

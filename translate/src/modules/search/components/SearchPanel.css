@@ -43,7 +43,7 @@
     }
 
     & .title {
-      color: var(--status-translated-alt);
+      color: var(--status-translated);
       cursor: default;
       font-size: 13px;
       font-weight: 300;

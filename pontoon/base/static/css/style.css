@@ -17,20 +17,20 @@
 }
 
 .status.fas:before {
-  color: var(--status-missing-alt);
+  color: var(--status-missing);
   content: '';
 }
 
 .translated .status.fas:before {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 .pretranslated .status.fas:before {
-  color: var(--status-pretranslated-alt);
+  color: var(--status-pretranslated);
 }
 
 .warnings .status.fas:before {
-  color: var(--status-warning-alt);
+  color: var(--status-warning);
 }
 
 .errors .status.fas:before {
@@ -38,7 +38,7 @@
 }
 
 .unreviewed .status.fas:before {
-  color: var(--status-unreviewed-alt);
+  color: var(--status-unreviewed);
   content: '';
 }
 
@@ -125,13 +125,13 @@ a:visited {
 
 a:hover,
 a:active {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
   text-decoration: none;
 }
 
 sup a:link,
 sup a:visited {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 input[type='text'],
@@ -523,7 +523,7 @@ time {
 }
 
 .locale .code {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
   text-align: left;
 }
 
@@ -774,7 +774,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item a {
-  color: var(--status-error-alt);
+  color: var(--status-error);
   display: inline;
 }
 
@@ -998,7 +998,7 @@ header .right .select .menu {
 }
 
 #profile .menu li.appearance button:last-child {
-  border-left: 1px solid var(--main-border-1);
+  border-left: 1px solid var(--control-border);
 }
 
 #profile .menu li.appearance button .icon {
@@ -1338,7 +1338,7 @@ body > form,
 }
 
 .container .info a {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 .toggle-button {

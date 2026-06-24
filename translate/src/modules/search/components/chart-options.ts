@@ -107,7 +107,7 @@ export function getChartOptions() {
           select: {
             fill: 'none',
             style: {
-              color: style.getPropertyValue('--status-translated-alt'),
+              color: style.getPropertyValue('--status-translated'),
               fontWeight: 300,
             },
           },

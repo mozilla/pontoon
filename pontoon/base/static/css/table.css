@@ -128,7 +128,7 @@ table.table.project-list.hidden {
 }
 
 .table a:hover {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 /* Selector must also match heading-info */
@@ -149,7 +149,7 @@ table.table.project-list.hidden {
 }
 
 .table td.code a {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
   line-height: 47px;
   padding: 15px 5px 14px;
 }
@@ -208,7 +208,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip .quote {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
   font-size: 30px;
 }
 
@@ -246,7 +246,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer .translation-action a {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 .table .latest-activity .tooltip footer img {
@@ -366,7 +366,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.pretranslated .title {
-  color: var(--status-pretranslated-alt);
+  color: var(--status-pretranslated);
 }
 
 .table .progress .legend li.warnings .title {
@@ -378,7 +378,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.missing .title {
-  color: var(--status-missing-alt);
+  color: var(--status-missing);
 }
 
 .table .progress .legend li.unreviewed .title {

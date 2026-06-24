@@ -8,7 +8,7 @@ form.user-locales-settings div {
 
 form a:link,
 form a:visited {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
   float: right;
   text-transform: uppercase;
 }

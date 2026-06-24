@@ -48,29 +48,24 @@
   --homepage-tour-button-background: #ffffff;
   --homepage-tour-button-color: #000000;
 
-  /* Translation status. The bright values fill progress bars/buttons/charts;
-     the darker -alt values are used for text and small icons (a11y: >=3:1). */
-  --status-translated: #7bc876;
-  --status-translated-alt: #2f7a3b;
-  --status-pretranslated: #c0ff00;
-  --status-pretranslated-alt: #5f7d00;
-  --status-warning: #ffa10f;
-  --status-warning-alt: #b3700a;
-  --status-error: #ff3366;
-  --status-error-alt: #d8143a;
-  --status-missing: #bec7d1;
-  --status-missing-alt: #5f7285;
-  --status-unreviewed: #4fc4f6;
-  --status-unreviewed-alt: #2487b3;
-  --status-fuzzy: #fed271;
-  --status-fuzzy-alt: #9c7a1f;
+  /* Translation status. Darkened for the light theme so the same color works
+     for both fills (progress bars/buttons/charts) and text/icons (a11y: >=3:1). */
+  --status-translated: #2f7a3b;
+  --status-pretranslated: #5f7d00;
+  --status-warning: #b3700a;
+  --status-error: #d8143a;
+  --status-missing: #5f7285;
+  --status-unreviewed: #2487b3;
+  --status-fuzzy: #9c7a1f;
 
   /* Translation workspace */
   --translation-background: #f6f6f6;
   --translation-border: #bbbbbb;
   --translation-color: #2a2a2a;
   --translation-secondary-color: #707070;
-  --translation-main-button-color: #2a2a2a;
+  /* Light text: the main action buttons (save/suggest/approve, AI) sit on the
+     darkened status-color backgrounds, so they need a light label. */
+  --translation-main-button-color: #ffffff;
   --translation-subtitle-color: #555555;
   --editor-background: #ffffff;
   --editor-color: #2a2a2a;
@@ -168,5 +163,5 @@
 }
 
 .light-theme .failed-checks .warning:before {
-  color: var(--status-warning-alt);
+  color: var(--status-warning);
 }
