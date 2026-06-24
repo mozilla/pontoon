@@ -44,7 +44,7 @@ export default function LocaleSelector({
     <div className='locale-selector' ref={ref}>
       <button
         type='button'
-        className={`locale-selector-trigger ${selectedLocale ? 'has-selection' : ''}`}
+        className={`locale-selector-trigger ${selectedLocale ? 'has-selection' : ''} ${isOpen ? 'is-open' : ''}`}
         onClick={() => setIsOpen((o) => !o)}
         disabled={locales.length === 0}
       >
@@ -71,33 +71,35 @@ export default function LocaleSelector({
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <ul>
-            <li
-              key='source'
-              className={selected === '' ? 'selected' : ''}
-              onClick={() => {
-                onSelect('');
-                setIsOpen(false);
-                setSearch('');
-              }}
-            >
-              <span className='locale-name'>Source Locale</span>
-            </li>
-            {filtered.map(({ code, name }) => (
+          <div className='locale-selector-list'>
+            <ul>
               <li
-                key={code}
-                className={code === selected ? 'selected' : ''}
+                key='source'
+                className={selected === '' ? 'selected' : ''}
                 onClick={() => {
-                  onSelect(code);
+                  onSelect('');
                   setIsOpen(false);
                   setSearch('');
                 }}
               >
-                <span className='locale-name'>{name}</span>
-                <span className='locale-code'>{code}</span>
+                <span className='locale-name'>Source Locale</span>
               </li>
-            ))}
-          </ul>
+              {filtered.map(({ code, name }) => (
+                <li
+                  key={code}
+                  className={code === selected ? 'selected' : ''}
+                  onClick={() => {
+                    onSelect(code);
+                    setIsOpen(false);
+                    setSearch('');
+                  }}
+                >
+                  <span className='locale-name'>{name}</span>
+                  <span className='locale-code'>{code}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </div>

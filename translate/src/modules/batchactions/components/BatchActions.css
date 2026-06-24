@@ -136,7 +136,8 @@
 
 .batch-actions .copy-from-locale .locale-selector,
 .batch-actions .copy-from-locale .copy-from-locale-btn {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .batch-actions .actions-panel .locale-selector-trigger {
@@ -147,24 +148,29 @@
   text-align: center;
   text-align-last: center;
   border: none;
-  border-radius: 3px 3px 0 0;
+  border-radius: 3px;
   appearance: none;
   -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23ffffff' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   color: var(--white-1);
-  background-color: var(--icon-background-2);
+  background-color: var(--dark-grey-1);
   font-weight: 600;
   margin: 0;
+  min-width: 0;
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
-  padding: 0 16px;
+  padding: 0 12px;
   gap: 10px;
+}
+
+#copy-locale-form .locale-selector button.is-open {
+  border-radius: 3px 3px 0 0;
 }
 
 .locale-selector {
@@ -180,24 +186,33 @@
   left: 0;
   width: 100%;
   z-index: 100;
-  max-height: 200px;
-  overflow-y: auto;
-  background-color: var(--icon-background-2);
+  background-color: var(--dark-grey-1);
+  padding: 0 12px 12px;
+  box-sizing: border-box;
 }
 
 .locale-selector-search {
   display: flex;
   align-items: center;
-  padding: 0 12px;
+}
+
+.locale-selector-list {
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .locale-selector-trigger .locale-name {
   color: var(--light-grey-7);
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .locale-selector-trigger .locale-code {
   color: var(--status-translated);
+  flex-shrink: 0;
 }
 
 .locale-search-icon {
@@ -227,25 +242,28 @@
 
 .locale-selector-dropdown li {
   display: flex;
+  font-size: 14px;
+  font-weight: 300;
   justify-content: space-between;
   align-items: center;
-  margin-left: 12px;
-  padding-right: 4px;
-  padding-left: 4px;
   cursor: pointer;
+  padding: 2px 4px;
+  line-height: 18px;
 }
 
 .locale-selector-dropdown li:hover {
-  background-color: var(--background-hover-1);
+  background-color: var(--dark-grey-2);
 }
 
 .locale-selector-dropdown .locale-name {
   color: var(--light-grey-7);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .locale-selector-dropdown .locale-code {
   color: var(--status-translated);
-  font-size: 0.85em;
 }
 
 #copy-locale-form .locale-selector button.has-selection {
