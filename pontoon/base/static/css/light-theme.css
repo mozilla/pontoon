@@ -51,7 +51,7 @@
   /* Translation status. Darkened for the light theme so the same color works
      for both fills (progress bars/buttons/charts) and text/icons (a11y: >=3:1). */
   --status-translated: #2f7a3b;
-  --status-pretranslated: #5f7d00;
+  --status-pretranslated: #6f9400;
   --status-warning: #b3700a;
   --status-error: #d8143a;
   --status-missing: #5f7285;
