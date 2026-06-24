@@ -38,9 +38,10 @@ class ProjectForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        set_locales_from_repo = cleaned_data.get("set_locales_from_repo")
         locales_readonly = cleaned_data.get("locales_readonly")
         locales = cleaned_data.get("locales")
-        if not (locales or locales_readonly):
+        if not (set_locales_from_repo or locales or locales_readonly):
             raise ValidationError("At least one locale must be selected.")
 
     class Meta:
@@ -61,6 +62,8 @@ class ProjectForm(forms.ModelForm):
             "sync_disabled",
             "tags_enabled",
             "pretranslation_enabled",
+            "set_locales_from_repo",
+            "set_translated_resources_from_repo",
             "visibility",
         )
 

@@ -184,6 +184,10 @@ form a:visited {
   text-transform: uppercase;
 }
 
+.locales {
+  margin-top: 40px;
+}
+
 .double-list-selector .locale.select .menu {
   background: transparent;
   border-bottom: 1px solid var(--main-border-1);

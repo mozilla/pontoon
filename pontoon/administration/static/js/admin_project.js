@@ -76,8 +76,9 @@ $(function () {
 
     button.addClass('in-progress').html('Syncing...');
 
+    const slug = $('#id_slug').val();
     $.ajax({
-      url: '/admin/projects/' + $('#id_slug').val() + '/sync/',
+      url: `/admin/projects/${slug}/sync/`,
       success: function () {
         button.html('Started');
       },
@@ -105,8 +106,9 @@ $(function () {
 
     button.addClass('in-progress').html('Pretranslating...');
 
+    const slug = $('#id_slug').val();
     $.ajax({
-      url: '/admin/projects/' + $('#id_slug').val() + '/pretranslate/',
+      url: `/admin/projects/${slug}/pretranslate/`,
       success: function () {
         button.html('Started');
       },
@@ -165,6 +167,51 @@ $(function () {
       },
     });
   });
+
+  const setLocalesCheckbox = $('#id_set_locales_from_repo');
+  const configFileInput = $('#id_configuration_file');
+  function setLocalesUpdate() {
+    const configFile = configFileInput.val();
+    let reqSync = configFile !== configFileInput.data('init');
+
+    const controls = $('.repo-locale-control');
+    if ($('#id_data_source').val() === 'repository') {
+      controls.show();
+    } else {
+      controls.hide();
+      setLocalesCheckbox.prop('checked', false);
+      reqSync = false;
+    }
+
+    const label = $('#id_set_locales_from_repo + span');
+    const hint = $('#hint_set_locales_from_repo');
+    if (configFile) {
+      label.text('Read locales from configuration file');
+      hint.hide();
+    } else {
+      label.text('Set locales from repository');
+      hint.show();
+    }
+
+    const setLocalesFromRepo = setLocalesCheckbox.prop('checked');
+    const trDiv = $('#translated_resources_from_repo');
+    const locales = $('.locales, .locales-toolbar');
+    if (setLocalesFromRepo) {
+      trDiv.toggle(!configFile);
+      locales.hide();
+      reqSync ||= setLocalesFromRepo !== setLocalesCheckbox.data('init');
+    } else {
+      trDiv.hide();
+      locales.show();
+    }
+
+    $('button.save').text(reqSync ? 'Save & sync project' : 'Save project');
+  }
+  setLocalesCheckbox.data('init', setLocalesCheckbox.prop('checked'));
+  setLocalesCheckbox.on('change', setLocalesUpdate);
+  configFileInput.data('init', configFileInput.val());
+  configFileInput.on('change', setLocalesUpdate);
+  setLocalesUpdate();
 
   self.NProgressUnbind();
 
