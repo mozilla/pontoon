@@ -140,6 +140,23 @@ def test_term_entity_comment(_):
 
 
 @pytest.mark.django_db
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+def test_create_entity_sets_value(_):
+    """
+    create_entity() populates the message data model `value` from `string`.
+    """
+    term = TermFactory.create(text="My term")
+    assert term.entity.string == "My term"
+    assert term.entity.value == ["My term"]
+
+    term.text = "My updated term"
+    term.save()
+    term.refresh_from_db()
+    assert term.entity.string == "My updated term"
+    assert term.entity.value == ["My updated term"]
+
+
+@pytest.mark.django_db
 @patch("pontoon.terminology.models.Term.handle_term_create")
 @patch("pontoon.terminology.models.Term.handle_term_update")
 def test_term_save(handle_term_update_mock, handle_term_create_mock):

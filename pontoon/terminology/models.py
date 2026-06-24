@@ -139,6 +139,7 @@ class Term(models.Model):
 
         entity, created = Entity.objects.get_or_create(
             string=self.text,
+            value=[self.text],
             comment=self.entity_comment(),
             resource=resource,
         )
