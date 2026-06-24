@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('base', '0118_fix_terminology_entity_value'),
-        ('base', '0118_merge_20260624_0350'),
+        ("base", "0118_fix_terminology_entity_value"),
+        ("base", "0118_merge_20260624_0350"),
     ]
 
-    operations = [
-    ]
+    operations = []
