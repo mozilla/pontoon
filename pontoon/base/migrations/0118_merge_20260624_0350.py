@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('base', '0117_userprofile_dashboard_locales'),
-        ('base', '0117_userprofile_editor_theme'),
+        ("base", "0117_userprofile_dashboard_locales"),
+        ("base", "0117_userprofile_editor_theme"),
     ]
 
-    operations = [
-    ]
+    operations = []
