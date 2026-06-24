@@ -61,7 +61,7 @@ function Title({
       {success}
       {' · '}
       <Localized
-        id='batchactions-CopyFromLocale--invalid-count'
+        id='batchactions-CopyFromLocale--invalid'
         vars={{ invalidCount: invalidCount ?? -1 }}
       >
         {'{ $invalidCount } STRINGS SKIPPED'}
