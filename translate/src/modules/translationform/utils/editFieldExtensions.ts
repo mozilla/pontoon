@@ -22,6 +22,7 @@ import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
+import { editorThemeClass } from '~/context/Theme';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
 import type { MessageEntry } from '~/utils/message';
@@ -167,7 +168,13 @@ function autocompletePlaceholders(entry: MessageEntry) {
       override.push(completePlaceholder(edit, ...hl));
     }
   }
-  return override.length ? autocompletion({ override }) : null;
+  return override.length
+    ? autocompletion({
+        override,
+        tooltipClass: () =>
+          editorThemeClass(document.body.getAttribute('data-editor-theme')),
+      })
+    : null;
 }
 
 function completePlaceholder(
