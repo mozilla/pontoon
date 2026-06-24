@@ -7,6 +7,7 @@ import pytest
 from django.core.paginator import UnorderedObjectListWarning
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.test import Client
 
 from pontoon.base.models import TranslationMemoryEntry
 from pontoon.test.factories import (
@@ -302,3 +303,262 @@ def test_ajax_translation_memory_entries_are_ordered(member, locale_a):
     assert not any(
         issubclass(warning.category, UnorderedObjectListWarning) for warning in caught
     )
+
+
+@pytest.mark.django_db
+def test_ajax_translation_memory_requires_ajax(member, locale_a):
+    response = member.client.get(f"/{locale_a.code}/ajax/translation-memory/")
+
+    assert response.status_code == 400
+    assert response.content == b"Bad Request: Request must be AJAX"
+
+
+@pytest.mark.django_db
+@patch("pontoon.teams.views.render", wraps=render)
+def test_ajax_translation_memory_grouping_and_count(render_mock, member, locale_a):
+    locale_a.translators_group.user_set.add(member.user)
+
+    TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Shared source",
+        target="Shared target",
+    )
+    TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Shared source",
+        target="Shared target",
+    )
+
+    response = member.client.get(
+        f"/{locale_a.code}/ajax/translation-memory/",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    response_context = render_mock.call_args[0][2]
+    tm_entries = response_context["tm_entries"]
+
+    assert response.status_code == 200
+    assert len(tm_entries) == 1
+    assert tm_entries[0]["source"] == "Shared source"
+    assert tm_entries[0]["target"] == "Shared target"
+    assert tm_entries[0]["count"] == 2
+    assert response.content.count(b"Shared source") == 1
+    assert b"Delete 2 TM" in response.content
+
+
+@pytest.mark.django_db
+@patch("pontoon.teams.views.render", wraps=render)
+def test_ajax_translation_memory_search_filters_source_and_target(
+    render_mock,
+    member,
+    locale_a,
+):
+    locale_a.translators_group.user_set.add(member.user)
+
+    source_match = TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Source search needle",
+        target="First translation",
+    )
+    target_match = TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Second entry",
+        target="Target search needle",
+    )
+    TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Unrelated entry",
+        target="Other translation",
+    )
+
+    response = member.client.get(
+        f"/{locale_a.code}/ajax/translation-memory/",
+        {"search": "source search"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    response_context = render_mock.call_args[0][2]
+
+    assert response.status_code == 200
+    assert list(response_context["tm_entries"]) == [
+        {
+            "source": source_match.source,
+            "target": source_match.target,
+            "count": 1,
+            "ids": [source_match.id],
+            "entity_ids": None,
+        }
+    ]
+
+    render_mock.reset_mock()
+    response = member.client.get(
+        f"/{locale_a.code}/ajax/translation-memory/",
+        {"search": "target search"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    response_context = render_mock.call_args[0][2]
+
+    assert response.status_code == 200
+    assert list(response_context["tm_entries"]) == [
+        {
+            "source": target_match.source,
+            "target": target_match.target,
+            "count": 1,
+            "ids": [target_match.id],
+            "entity_ids": None,
+        }
+    ]
+
+
+@pytest.mark.django_db
+def test_ajax_translation_memory_invalid_page_params_return_400(member, locale_a):
+    locale_a.translators_group.user_set.add(member.user)
+
+    response = member.client.get(
+        f"/{locale_a.code}/ajax/translation-memory/",
+        {"page": "abc"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 400
+    assert response.json()["message"].startswith("Bad Request:")
+
+    response = member.client.get(
+        f"/{locale_a.code}/ajax/translation-memory/",
+        {"pages": "abc"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 400
+    assert response.json()["message"].startswith("Bad Request:")
+
+
+@pytest.mark.django_db
+@patch("pontoon.teams.views.render", wraps=render)
+def test_ajax_translation_memory_locale_isolation(
+    render_mock,
+    member,
+    locale_a,
+    locale_b,
+):
+    locale_a.translators_group.user_set.add(member.user)
+
+    TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Locale A source",
+        target="Locale A target",
+    )
+    TranslationMemoryEntry.objects.create(
+        locale=locale_b,
+        source="Locale B source",
+        target="Locale B target",
+    )
+
+    response = member.client.get(
+        f"/{locale_a.code}/ajax/translation-memory/",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    response_context = render_mock.call_args[0][2]
+
+    assert response.status_code == 200
+    assert [entry["source"] for entry in response_context["tm_entries"]] == [
+        "Locale A source"
+    ]
+    assert b"Locale A source" in response.content
+    assert b"Locale B source" not in response.content
+
+
+@pytest.mark.django_db
+def test_ajax_translation_memory_edit_requires_permission(member, locale_a):
+    url = f"/{locale_a.code}/ajax/translation-memory/edit/"
+    tm_entry = TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Source",
+        target="Target",
+    )
+    data = {"ids[]": [tm_entry.id], "target": "Edited target"}
+
+    response = Client().post(
+        url,
+        data,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 403
+
+    response = member.client.post(
+        url,
+        data,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 403
+
+    locale_a.translators_group.user_set.add(member.user)
+    response = member.client.post(
+        url,
+        {"ids[]": [tm_entry.id]},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 400
+    assert response.json()["message"] == "Bad Request: 'target'"
+
+
+@pytest.mark.django_db
+def test_ajax_translation_memory_edit_scoped_to_locale(member, locale_a, locale_b):
+    locale_a.translators_group.user_set.add(member.user)
+    locale_b_entry = TranslationMemoryEntry.objects.create(
+        locale=locale_b,
+        source="Locale B source",
+        target="Locale B target",
+    )
+
+    response = member.client.post(
+        f"/{locale_a.code}/ajax/translation-memory/edit/",
+        {"ids[]": [locale_b_entry.id], "target": "Edited target"},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 200
+    locale_b_entry.refresh_from_db()
+    assert locale_b_entry.target == "Locale B target"
+
+
+@pytest.mark.django_db
+def test_ajax_translation_memory_delete_requires_permission(member, locale_a):
+    url = f"/{locale_a.code}/ajax/translation-memory/delete/"
+    tm_entry = TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Source",
+        target="Target",
+    )
+    data = {"ids[]": [tm_entry.id]}
+
+    response = Client().post(
+        url,
+        data,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 403
+
+    response = member.client.post(
+        url,
+        data,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_ajax_translation_memory_delete_scoped_to_locale(member, locale_a, locale_b):
+    locale_a.translators_group.user_set.add(member.user)
+    locale_b_entry = TranslationMemoryEntry.objects.create(
+        locale=locale_b,
+        source="Locale B source",
+        target="Locale B target",
+    )
+
+    response = member.client.post(
+        f"/{locale_a.code}/ajax/translation-memory/delete/",
+        {"ids[]": [locale_b_entry.id]},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 200
+    assert TranslationMemoryEntry.objects.filter(pk=locale_b_entry.pk).count() == 1
