@@ -2,7 +2,21 @@
 
 Pontoon provides a set of [RESTful](https://developer.mozilla.org/en-US/docs/Glossary/REST) endpoints via the [Django REST Framework](https://www.django-rest-framework.org/), accessible under `/api/v2/`.
 
-> 🔐 Added on September 2, 2025 at 12:37 UTC: The REST API is in beta. While stable for general use, its structure may change as we continue development.
+## Authentication
+
+Most endpoints are publicly accessible and require no authentication. A few endpoints require an authenticated user.
+
+Requests can be authenticated either with a session cookie or with a Personal Access Token (PAT). You can create a PAT from your [user settings](https://pontoon.mozilla.org/settings/) page (see the [User Accounts & Settings](https://github.com/mozilla/pontoon/blob/main/documentation/docs/localizer/users.md#personal-access-tokens) documentation for details).
+
+Send the token in the `Authorization` header using the `Bearer` scheme:
+
+```bash
+$ curl \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  "https://example.com/api/v2/pretranslate/"
+```
+
+A PAT automatically expires one year after it is created, and can be deleted manually at any time. Requests made with an invalid or expired token are rejected.
 
 ## JSON Mode
 
