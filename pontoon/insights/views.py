@@ -93,8 +93,8 @@ CHS_COLUMNS = {
 }
 
 
-def get_monthly_snapshots(locales, month):
-    month_start = month.replace(day=1)
+def get_monthly_snapshots(locales, date):
+    month_start = date.replace(day=1)
     next_month_start = month_start + relativedelta(months=1)
 
     snapshots = LocaleHealthSnapshot.objects.filter(
@@ -180,11 +180,7 @@ def insights(request):
     dashboard_locales = profile.dashboard_locales
     locales = Locale.objects.filter(pk__in=dashboard_locales).order_by("code")
 
-    # TEMP: the most recent snapshot is from May, so shift the window back one
-    # month — render the previous month as "current" and the month before as
-    # "previous". Revert `current_anchor` to `timezone.now().date()` once the
-    # current month has snapshots.
-    current_anchor = timezone.now().date().replace(day=1) - relativedelta(days=1)
+    current_anchor = timezone.now().date()
     previous_anchor = current_anchor.replace(day=1) - relativedelta(days=1)
     current_snapshots = get_monthly_snapshots(locales, current_anchor)
     previous_snapshots = get_monthly_snapshots(locales, previous_anchor)
