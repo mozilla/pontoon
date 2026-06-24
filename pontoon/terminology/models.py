@@ -146,6 +146,7 @@ class Term(models.Model):
         # Using update() to avoid circular Term.save() call
         Term.objects.filter(pk=self.pk).update(entity_id=entity.id)
         entity.term = self
+        entity.value = [self.text]
 
         if not created:
             entity.obsolete = False
