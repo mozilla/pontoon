@@ -12,7 +12,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--force",
             action="store_true",
-            help="Force sending regardless of the current date.",
+            help="Force collection regardless of the current date.",
         )
 
     def handle(self, *args, **options):
