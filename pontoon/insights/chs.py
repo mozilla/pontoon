@@ -190,6 +190,15 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
     return locale_contributors
 
 
+def scaled_points(count, points) -> float:
+    """Award full points for 2+ people, half for exactly 1, none otherwise."""
+    if count >= 2:
+        return points
+    if count >= 1:
+        return points / 2
+    return 0
+
+
 def compute_chs(args: dict) -> float:
     active_managers = args.get("active_managers", 0)
     active_translators = args.get("active_translators", 0)
@@ -201,33 +210,14 @@ def compute_chs(args: dict) -> float:
 
     total_manager_points = MANAGER_POINTS if active_managers >= 1 else 0
 
-    if active_translators >= 2:
-        total_translator_points = TRANSLATOR_POINTS
-    elif active_translators >= 1:
-        total_translator_points = TRANSLATOR_POINTS / 2
-    else:
-        total_translator_points = 0
-
-    if active_contributors >= 2:
-        total_active_contributor_points = ACTIVE_CONTRIBUTOR_POINTS
-    elif active_contributors >= 1:
-        total_active_contributor_points = ACTIVE_CONTRIBUTOR_POINTS / 2
-    else:
-        total_active_contributor_points = 0
-
-    if all_contributors >= 2:
-        total_all_contributor_points = ALL_CONTRIBUTOR_POINTS
-    elif all_contributors >= 1:
-        total_all_contributor_points = ALL_CONTRIBUTOR_POINTS / 2
-    else:
-        total_all_contributor_points = 0
-
-    if new_signups >= 2:
-        total_new_signup_points = NEW_SIGNUP_POINTS
-    elif new_signups >= 1:
-        total_new_signup_points = NEW_SIGNUP_POINTS / 2
-    else:
-        total_new_signup_points = 0
+    total_translator_points = scaled_points(active_translators, TRANSLATOR_POINTS)
+    total_active_contributor_points = scaled_points(
+        active_contributors, ACTIVE_CONTRIBUTOR_POINTS
+    )
+    total_all_contributor_points = scaled_points(
+        all_contributors, ALL_CONTRIBUTOR_POINTS
+    )
+    total_new_signup_points = scaled_points(new_signups, NEW_SIGNUP_POINTS)
 
     total_enabled_project_points = round(
         (key_projects_enabled / len(KEY_PROJECT_SLUGS)) * ENABLED_PROJECT_POINTS, 2
