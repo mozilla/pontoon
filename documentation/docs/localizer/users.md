@@ -115,7 +115,7 @@ It’s possible to set the default homepage displayed when visiting Pontoon as a
 
 Users can create Personal Access Tokens (PAT) which are required for accessing all endpoints of the Pontoon [REST API](https://github.com/mozilla/pontoon/blob/main/pontoon/api/README.md).
 
-To create a PAT, the user must enter a suitable token name no longer than 32 characters. The generated token is used with the REST API as follows:
+To create a PAT, the user must enter a suitable token name no longer than 32 characters. The generated token can be used with the REST API as follows:
 
 ```bash
 curl \
