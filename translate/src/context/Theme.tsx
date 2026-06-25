@@ -8,6 +8,12 @@ type ThemeContextType = {
   setEditorTheme: (editorTheme: string) => void;
 };
 
+export function editorThemeClass(editorTheme: string | null): string {
+  return editorTheme === 'dark' || editorTheme === 'light'
+    ? `${editorTheme}-theme`
+    : '';
+}
+
 export const ThemeContext = createContext<ThemeContextType>({
   theme: 'dark',
   editorTheme: 'match',
