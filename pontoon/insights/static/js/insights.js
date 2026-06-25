@@ -88,7 +88,7 @@ var Pontoon = (function (my) {
             fill: true,
             tension: 0.4,
             order: color.length - index,
-            hidden: true,
+            hidden: item.name === 'All' ? false : true,
           };
         });
 

@@ -30,6 +30,10 @@
     table-layout: fixed;
     width: 100%;
 
+    th:first-child {
+      text-align: center;
+    }
+
     &.item-list {
       tbody tr:nth-child(odd) {
         background: transparent;
