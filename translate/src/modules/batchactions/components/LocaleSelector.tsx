@@ -62,7 +62,7 @@ export default function LocaleSelector({
       {isOpen && (
         <div className='locale-selector-dropdown'>
           <div className='locale-selector-search'>
-            <span className='locale-search-icon' />
+            <i className='icon fas fa-search'></i>
             <input
               type='search'
               autoFocus
