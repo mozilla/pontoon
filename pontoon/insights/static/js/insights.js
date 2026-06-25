@@ -55,7 +55,6 @@ var Pontoon = (function (my) {
         }
 
         const colors = [
-          style.getPropertyValue('--white-1'),
           style.getPropertyValue('--purple'),
           style.getPropertyValue('--lilac'),
           style.getPropertyValue('--pink-2'),
@@ -71,7 +70,10 @@ var Pontoon = (function (my) {
         ];
 
         const datasets = chart.data('dataset').map(function (item, index) {
-          const color = colors[index % colors.length];
+          const color =
+            item.name === 'All'
+              ? style.getPropertyValue('--white-1')
+              : colors[index % colors.length];
           return {
             type: 'line',
             label: item.name,

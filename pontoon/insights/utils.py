@@ -469,12 +469,7 @@ def get_global_pretranslation_quality(category, id):
         .order_by("month")
     )
 
-    data = {
-        "all": {
-            "name": "All",
-            "approval_rate": [None] * 12,
-        }
-    }
+    data = {}
 
     approved = "pretranslations_approved_sum"
     rejected = "pretranslations_rejected_sum"
@@ -506,6 +501,14 @@ def get_global_pretranslation_quality(category, id):
         totals[month_index][approved] += action[approved]
         totals[month_index][rejected] += action[rejected]
 
+    data.update(
+        {
+            "all": {
+                "name": "All",
+                "approval_rate": [None] * 12,
+            }
+        }
+    )
     # Monthly totals across the entire category
     total_approval_rates = data["all"]["approval_rate"]
     for idx, _ in enumerate(total_approval_rates):
@@ -516,7 +519,7 @@ def get_global_pretranslation_quality(category, id):
 
     return {
         "dates": sorted(list({convert_to_unix_time(x["month"]) for x in actions})),
-        "dataset": [v for _, v in data.items()],
+        "dataset": list(data.values()),
     }
 
 

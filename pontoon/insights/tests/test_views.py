@@ -145,7 +145,7 @@ def test_default_with_data(
     team_pretranslation_quality = response_context["team_pretranslation_quality"]
     assert team_pretranslation_quality["dataset"] == [
         {
-            "name": "All",
+            "name": f"{locale_a.name} · {locale_a.code}",
             "approval_rate": [
                 None,
                 None,
@@ -162,7 +162,7 @@ def test_default_with_data(
             ],
         },
         {
-            "name": f"{locale_a.name} · {locale_a.code}",
+            "name": "All",
             "approval_rate": [
                 None,
                 None,
@@ -182,7 +182,7 @@ def test_default_with_data(
     project_pretranslation_quality = response_context["project_pretranslation_quality"]
     assert project_pretranslation_quality["dataset"] == [
         {
-            "name": "All",
+            "name": project_a.name,
             "approval_rate": [
                 None,
                 None,
@@ -199,7 +199,7 @@ def test_default_with_data(
             ],
         },
         {
-            "name": project_a.name,
+            "name": "All",
             "approval_rate": [
                 None,
                 None,
