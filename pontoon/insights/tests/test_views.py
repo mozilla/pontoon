@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from http import HTTPStatus
 from unittest.mock import patch
 
@@ -12,8 +12,15 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights import views
+from pontoon.insights.models import LocaleHealthSnapshot
+from pontoon.insights.utils import (
+    get_global_locale_health_insights,
+    get_locale_health_data,
+)
 from pontoon.test.factories import (
+    LocaleFactory,
     ResourceFactory,
     TranslationFactory,
 )
@@ -216,3 +223,60 @@ def test_default_with_data(
             ],
         },
     ]
+
+
+@pytest.mark.django_db
+def test_get_locale_health_data_date_alignment():
+    """Dates are the snapshot months shifted back one (noon-anchored), and each
+    locale's scores align by index with None padding for missing months."""
+    locale_a = LocaleFactory.create()
+    locale_b = LocaleFactory.create()
+
+    # locale_a missing 2024-04-01 snapshot
+    LocaleHealthSnapshot.objects.create(
+        locale=locale_a, created_at=date(2024, 2, 1), chs=10
+    )
+    LocaleHealthSnapshot.objects.create(
+        locale=locale_a, created_at=date(2024, 3, 1), chs=20
+    )
+    LocaleHealthSnapshot.objects.create(
+        locale=locale_a, created_at=date(2024, 5, 1), chs=30
+    )
+    # locale_b missing 2024-03-01 snapshot
+    LocaleHealthSnapshot.objects.create(
+        locale=locale_b, created_at=date(2024, 3, 1), chs=40
+    )
+    LocaleHealthSnapshot.objects.create(
+        locale=locale_b, created_at=date(2024, 5, 1), chs=50
+    )
+
+    dates, data = get_locale_health_data([locale_a, locale_b])
+
+    # Distinct snapshot months (Feb, Mar, May) shifted back one month
+    assert dates == [
+        convert_to_unix_time(date(2024, 1, 1), anchor_noon=True),
+        convert_to_unix_time(date(2024, 2, 1), anchor_noon=True),
+        convert_to_unix_time(date(2024, 4, 1), anchor_noon=True),
+    ]
+
+    assert data[locale_a.code]["chs"][:3] == [10.0, 20.0, 30.0]
+    assert data[locale_b.code]["chs"][:3] == [None, 40.0, 50.0]
+
+
+@pytest.mark.django_db
+def test_get_global_locale_health_insights_shape():
+    locale_a = LocaleFactory.create()
+    locale_b = LocaleFactory.create()
+    LocaleHealthSnapshot.objects.create(
+        locale=locale_a, created_at=date(2024, 3, 1), chs=10
+    )
+    LocaleHealthSnapshot.objects.create(
+        locale=locale_b, created_at=date(2024, 3, 1), chs=20
+    )
+
+    insights = get_global_locale_health_insights([locale_a, locale_b])
+
+    assert insights["dates"] == [
+        convert_to_unix_time(date(2024, 2, 1), anchor_noon=True)
+    ]
+    assert len(insights["dataset"]) == 2

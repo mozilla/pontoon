@@ -118,43 +118,50 @@ def get_locale_health_data(locales):
     """
     Get locale health data required by Locale Insights and Global Insights tabs.
 
-    Note: The community health score is computed for a whole month, so the current
-    month's score will not be complete. Therefore, the most recent score available
-    will always be of the previous month. Subsequently, the 12 month window of
-    scores will be displayed starting from the previous month based on the user's
-    date.
+    Derives the 12 most recent distinct snapshot months across the given locales.
+    The community health score is computed for a whole month, and the snapshot
+    is taken on the 1st of the following month. The displayed month is the
+    snapshot month shifted back by one.
     """
-    end_month = timezone.now().date().replace(day=1) - relativedelta(months=1)
-    months = [end_month - relativedelta(months=11 - i) for i in range(12)]
-    indices = {month: i for i, month in enumerate(months)}
-
-    health_snapshots = (
-        LocaleHealthSnapshot.objects.filter(
-            created_at__gte=months[0], locale__in=locales
-        )
+    recent_months = list(
+        LocaleHealthSnapshot.objects.filter(locale__in=locales)
         .annotate(month=TruncMonth("created_at"))
-        .order_by("created_at")
-        .values("month", "locale__code", "locale__name", "chs")
+        .values_list("month", flat=True)
+        .distinct()
+        .order_by("-month")[:12]
     )
+    recent_months.sort()
+    indices = {month: i for i, month in enumerate(recent_months)}
 
     data = {}
 
-    for snapshot in health_snapshots:
-        month = snapshot["month"]
-        if month not in indices:
-            continue
-
-        locale_code = snapshot["locale__code"]
-        item = data.setdefault(
-            locale_code,
-            {
-                "name": f"{snapshot['locale__name']} · {locale_code}",
-                "chs": [None] * 12,
-            },
+    if recent_months:
+        health_snapshots = (
+            LocaleHealthSnapshot.objects.filter(
+                created_at__gte=recent_months[0], locale__in=locales
+            )
+            .annotate(month=TruncMonth("created_at"))
+            .order_by("created_at")
+            .values("month", "locale__code", "locale__name", "chs")
         )
-        item["chs"][indices[month]] = float(snapshot["chs"])
 
-    dates = [convert_to_unix_time(month) for month in months]
+        for snapshot in health_snapshots:
+            month = snapshot["month"]
+            locale_code = snapshot["locale__code"]
+
+            item = data.setdefault(
+                locale_code,
+                {
+                    "name": f"{snapshot['locale__name']} · {locale_code}",
+                    "chs": [None] * 12,
+                },
+            )
+            item["chs"][indices[month]] = float(snapshot["chs"])
+
+    dates = [
+        convert_to_unix_time(month - relativedelta(months=1), anchor_noon=True)
+        for month in recent_months
+    ]
 
     return dates, data
 
