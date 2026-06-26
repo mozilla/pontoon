@@ -496,7 +496,7 @@ the day, every day.
 
 ### Collect CHS Snapshot
 
-Captures per-locale Contributor Health Score metrics - completion, key-project
+Captures per-locale Community Health Score metrics - completion, key-project
 enablement, active managers / translators / contributors & new signups into
 `LocaleHealthSnapshot` model. Used via the Insights dashboard and pages for
 month-over-month CHS comparisons and monthly trend charts. The job is designed
