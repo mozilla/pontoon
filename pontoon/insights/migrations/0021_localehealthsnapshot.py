@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0118_merge_20260624_0350"),
         ("insights", "0020_fix_pretranslations_chrf_score"),
     ]
 
