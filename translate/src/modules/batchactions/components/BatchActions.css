@@ -196,7 +196,9 @@
   flex-direction: row;
   align-items: center;
   gap: 2px;
-  border-bottom: 1px solid var(--main-border-1);
+  border: 1px solid var(--main-border-1);
+  background-color: var(--dark-grey-2);
+  border-radius: 3px;
   margin-bottom: 10px;
   padding-bottom: 0;
 }
@@ -206,18 +208,21 @@
   font-size: 1.2em;
   box-sizing: border-box;
   flex-shrink: 0;
+  padding-left: 3px !important;
 }
 
-.locale-selector-search input {
+.batch-actions .actions-panel .locale-selector-search input {
   background: transparent;
   border: none;
   border-bottom: none !important;
-  padding: 0 !important;
+  padding: 3px 0 !important;
+  margin-bottom: 0 !important;
   float: none;
   font-weight: 300;
-  padding: 0;
+  margin: 0;
   width: 100%;
   outline: none;
+  color: var(--input-color-1) !important;
 }
 
 .locale-selector-list {
