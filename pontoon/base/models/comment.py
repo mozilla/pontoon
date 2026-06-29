@@ -5,7 +5,7 @@ from django.db import models
 from django.utils import timezone
 
 from pontoon.base.models.user import User
-from pontoon.base.user_utils import gravatar_url, user_banner
+from pontoon.base.user_utils import avatar_url, user_banner
 
 
 if TYPE_CHECKING:
@@ -45,7 +45,7 @@ class Comment(models.Model):
             "user_banner": user_banner(author, locale, project_contact)
             if author
             else "",
-            "user_gravatar_url_small": gravatar_url(author) if author else "",
+            "user_gravatar_url_small": avatar_url(author) if author else "",
             "created_at": self.timestamp.strftime("%b %d, %Y %H:%M"),
             "date_iso": self.timestamp.isoformat(),
             "content": self.content,

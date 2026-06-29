@@ -7,6 +7,8 @@ from datetime import datetime
 from typing import Any, cast
 from urllib.parse import urlparse
 
+from allauth.socialaccount.models import SocialAccount
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -53,10 +55,10 @@ from pontoon.base.notification_utils import serialized_notifications
 from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.base.user_utils import (
+    avatar_url,
     can_manage_locales,
     can_translate,
     can_translate_locales,
-    gravatar_url,
     manager_for_locales,
     profile_url,
     translated_projects,
@@ -192,7 +194,7 @@ def authors_and_time_range(request, locale, slug, part):
             "email": user.email,
             "display_name": user.name_or_email,
             "id": user.id,
-            "gravatar_url": gravatar_url(user),
+            "gravatar_url": avatar_url(user),
             "translation_count": user.translations_count,
             "role": user.user_role,
         }
@@ -505,7 +507,16 @@ def get_translation_history(request):
                     "timestamp"
                 ),
             ),
-            "user",
+            Prefetch(
+                "user",
+                queryset=User.objects.prefetch_related(
+                    Prefetch(
+                        "socialaccount_set",
+                        queryset=SocialAccount.objects.filter(provider="fxa"),
+                        to_attr="_prefetched_fxa_accounts",
+                    )
+                ),
+            ),
             "approved_user",
             "rejected_user",
             "errors",
@@ -526,7 +537,7 @@ def get_translation_history(request):
                 "uid": u.pk,
                 "user": u.name_or_email,
                 "username": u.username,
-                "user_gravatar_url_small": gravatar_url(u),
+                "user_gravatar_url_small": avatar_url(u),
             }
         )
         banner = user_banner(u, locale, project_contact)
@@ -572,6 +583,13 @@ def get_team_comments(request):
     comments = (
         Comment.objects.filter(entity=entity)
         .filter(Q(locale=locale) | Q(pinned=True))
+        .prefetch_related(
+            Prefetch(
+                "author__socialaccount_set",
+                queryset=SocialAccount.objects.filter(provider="fxa"),
+                to_attr="_prefetched_fxa_accounts",
+            )
+        )
         .order_by("timestamp")
     )
 
@@ -878,6 +896,13 @@ def get_users(request):
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
         # Prefetch profile for retrieving username
         .prefetch_related("profile")
+        .prefetch_related(
+            Prefetch(
+                "socialaccount_set",
+                queryset=SocialAccount.objects.filter(provider="fxa"),
+                to_attr="_prefetched_fxa_accounts",
+            )
+        )
         .annotate(
             in_locale=Count(
                 "translation", filter=Q(translation__locale__code=locale_code)
@@ -894,7 +919,7 @@ def get_users(request):
     for u in users:
         payload.append(
             {
-                "gravatar": gravatar_url(u, 44),
+                "gravatar": avatar_url(u, 44),
                 "name": u.name_or_email,
                 "url": profile_url(u),
                 "username": u.profile.username,
@@ -1109,8 +1134,8 @@ def user_data(request):
             "tour_status": user.profile.tour_status,
             "has_dismissed_addon_promotion": user.profile.has_dismissed_addon_promotion,
             "logout_url": logout_url,
-            "gravatar_url_small": gravatar_url(user, 88),
-            "gravatar_url_big": gravatar_url(user, 176),
+            "gravatar_url_small": avatar_url(user, 88),
+            "gravatar_url_big": avatar_url(user, 176),
             "notifications": serialized_notifications(user),
             "theme": user.profile.theme,
             "editor_theme": user.profile.editor_theme,
