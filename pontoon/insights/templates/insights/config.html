@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% import 'heading.html' as Heading %}
 {% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 
-{% block title %}{{ '%(subtitle)s' | format(subtitle=subtitle) }}{% endblock %}
+{% block heading %}
+  {{ Heading.heading(title='Insights', subtitle='Configuration') }}
+{% endblock %}
 
 {% block class %}admin-project{% endblock %}
 
@@ -12,8 +15,6 @@
     action="{{ request.path }}"
     class="{% if pk %}edit{% else %}add{% endif %}"
   >
-    <h1>Insights Dashboard Configuration</h1>
-
     {% csrf_token %}
 
     <section class="controls clearfix">

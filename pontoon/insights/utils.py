@@ -135,6 +135,9 @@ def get_locale_health_data(locales):
 
     data = {}
 
+    total_scores = [0 for _ in range(0, 12)]
+    total_reported_locales = [0 for _ in range(0, 12)]
+
     if recent_months:
         health_snapshots = (
             LocaleHealthSnapshot.objects.filter(
@@ -157,6 +160,22 @@ def get_locale_health_data(locales):
                 },
             )
             item["chs"][indices[month]] = float(snapshot["chs"])
+            total_scores[indices[month]] += float(snapshot["chs"])
+            total_reported_locales[indices[month]] += 1
+
+    data.update(
+        {
+            "all": {
+                "name": "All",
+                "chs": [None] * 12,
+            }
+        }
+    )
+    # Monthly average CHS across locales that reported each month
+    total_chs = data["all"]["chs"]
+    for idx, _ in enumerate(total_chs):
+        if total_reported_locales[idx]:
+            total_chs[idx] = total_scores[idx] / total_reported_locales[idx]
 
     dates = [
         convert_to_unix_time(month - relativedelta(months=1), anchor_noon=True)
@@ -520,9 +539,6 @@ def get_global_pretranslation_quality(category, id):
     total_approval_rates = data["all"]["approval_rate"]
     for idx, _ in enumerate(total_approval_rates):
         total_approval_rates[idx] = get_approval_rate(totals[idx])
-    total_approval_rates = [
-        get_approval_rate(totals[idx]) for idx, _ in enumerate(total_approval_rates)
-    ]
 
     return {
         "dates": sorted(list({convert_to_unix_time(x["month"]) for x in actions})),

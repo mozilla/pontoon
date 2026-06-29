@@ -11,7 +11,6 @@
     color: var(--white-1);
     font-size: 48px;
     letter-spacing: -1px;
-    margin-bottom: 40px;
     position: relative;
   }
 
@@ -56,6 +55,7 @@
         color: var(--status-translated-alt);
         float: right;
         margin: 5px 9px;
+        text-transform: uppercase;
       }
     }
   }

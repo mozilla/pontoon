@@ -1,22 +1,33 @@
 #insights {
   menu {
     display: flex;
+
+    .search-wrapper {
+      background-color: var(--black-3);
+    }
     .button-container {
       display: flex;
       margin-left: auto;
       align-items: flex-end;
       gap: 8px;
 
+      .config-button {
+        user-select: none;
+        background-color: var(--button-background-2);
+
+        &:hover {
+          background-color: var(--status-translated);
+        }
+      }
+
       #edit-config {
         width: 160px;
         margin-right: auto;
-        user-select: none;
       }
 
       #view-toggle {
         width: 120px;
         margin-left: auto;
-        user-select: none;
       }
     }
   }
@@ -33,13 +44,8 @@
       text-align: center;
     }
 
-    &.item-list {
-      tbody tr:nth-child(odd) {
-        background: transparent;
-      }
-      tbody tr:nth-child(even) {
-        background: var(--dark-grey-1);
-      }
+    tbody tr:hover {
+      background: var(--black-3);
     }
 
     &.show-score-view {

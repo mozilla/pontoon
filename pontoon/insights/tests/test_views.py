@@ -279,4 +279,57 @@ def test_get_global_locale_health_insights_shape():
     assert insights["dates"] == [
         convert_to_unix_time(date(2024, 2, 1), anchor_noon=True)
     ]
-    assert len(insights["dataset"]) == 2
+    assert len(insights["dataset"]) == 3
+    assert insights["dataset"] == [
+        {
+            "name": f"{locale_a.name} · {locale_a.code}",
+            "chs": [
+                10.0,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+            ],
+        },
+        {
+            "name": f"{locale_b.name} · {locale_b.code}",
+            "chs": [
+                20.0,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+            ],
+        },
+        {
+            "name": "All",
+            "chs": [
+                15.0,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+            ],
+        },
+    ]
