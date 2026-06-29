@@ -67,7 +67,7 @@
   color: var(--light-grey-6);
   font-size: 14px;
   font-weight: 300;
-  padding-bottom: 2px;
+  padding-bottom: 10px;
 }
 
 .batch-actions .actions-panel .intro p {
@@ -91,9 +91,12 @@
   border-radius: 3px;
   color: var(--translation-main-button-color);
   font-weight: 600;
-  margin-top: 10px;
   padding: 15px 5px;
   position: relative;
+}
+
+.batch-actions .actions-panel button.approve-all {
+  margin-bottom: 10px;
 }
 
 .batch-actions .actions-panel button .fas {
@@ -117,7 +120,6 @@
   padding: 15px 0 5px;
 }
 
-/* Copy from Locale */
 .batch-actions .copy-from-locale #copy-locale-form {
   display: flex;
   flex-direction: row;
@@ -208,21 +210,16 @@
   font-size: 1.2em;
   box-sizing: border-box;
   flex-shrink: 0;
-  padding-left: 3px !important;
+  padding-left: 6px;
 }
 
 .batch-actions .actions-panel .locale-selector-search input {
-  background: transparent;
-  border: none;
-  border-bottom: none !important;
-  padding: 3px 0 !important;
-  margin-bottom: 0 !important;
-  float: none;
-  font-weight: 300;
+  border-bottom: none;
+  padding: 4px 3px 3px;
   margin: 0;
+  font-weight: 300;
   width: 100%;
-  outline: none;
-  color: var(--input-color-1) !important;
+  color: var(--input-color-1);
 }
 
 .locale-selector-list {
