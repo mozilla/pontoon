@@ -76,7 +76,7 @@ batchactions-ReplaceAll--error = OOPS, SOMETHING WENT WRONG
 
 
 ## CopyFromLocale
-## Renders Copy From a Similar Locale button.
+## Renders Copy From another Locale button.
 batchactions-CopyFromLocale--default = COPY AS SUGGESTIONS
 batchactions-CopyFromLocale--success =
     {

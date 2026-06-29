@@ -78,9 +78,9 @@ def test_ftl_find_and_replace_non_text_value(locale_a, user_a):
 
 
 @pytest.mark.django_db
-def test_copy_from_similar_locale():
+def test_copy_from_another_locale():
     """
-    Translations that are approved in a similar locale can be copied to the current locale as suggestions.
+    Translations that are approved in another locale can be copied to the current locale as suggestions.
     """
 
     project = ProjectFactory(slug="project", name="Project")
@@ -117,7 +117,7 @@ def test_copy_from_similar_locale():
 
 
 @pytest.mark.django_db
-def test_copy_from_similar_locale_copies_all_strings():
+def test_copy_from_another_locale_copies_all_strings():
     """
     Translations are copied for all selected strings, including those
     that already have an active translation in the target locale.

@@ -9,7 +9,7 @@ type Props = {
 };
 
 /**
- * Renders Copy From a Similar Locale batch action button
+ * Renders Copy From another Locale batch action button
  */
 export function CopyFromLocale({
   copyFromLocale,
