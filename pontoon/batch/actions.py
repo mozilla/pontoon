@@ -1,12 +1,15 @@
+from django.db.models import QuerySet
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.models import (
     Entity,
+    Locale,
     Translation,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.translations.utils import parse_db_string_to_json
@@ -45,7 +48,7 @@ def batch_action_template(form, user, translations, locale):
     }
 
 
-def approve_translations(form, user, translations, locale):
+def approve_translations(user, locale: Locale, translations: TranslationQuerySet):
     """Approve a series of translations.
 
     For documentation, refer to the `batch_action_template` function.
@@ -117,7 +120,7 @@ def approve_translations(form, user, translations, locale):
     }
 
 
-def reject_translations(form, user, translations, locale):
+def reject_translations(user, locale: Locale, entities: QuerySet[Entity]):
     """Reject a series of translations.
 
     Note that this function doesn't use the `translations` parameter, as it
@@ -129,7 +132,7 @@ def reject_translations(form, user, translations, locale):
     """
     suggestions = Translation.objects.filter(
         locale=locale,
-        entity__pk__in=form.cleaned_data["entities"],
+        entity__in=entities,
         approved=False,
         rejected=False,
     )
@@ -148,7 +151,7 @@ def reject_translations(form, user, translations, locale):
             performed_by=user,
             translation=t,
         )
-        for t in translations
+        for t in suggestions
     ]
     ActionLog.objects.bulk_create(actions_to_log)
 
@@ -184,7 +187,9 @@ def reject_translations(form, user, translations, locale):
     }
 
 
-def replace_translations(form, user, translations, locale):
+def replace_translations(
+    user, locale: Locale, translations: TranslationQuerySet, find: str, replace: str
+):
     """Replace characters in a series of translations.
 
     Replaces all occurences of the content of the `find` parameter with the
@@ -193,9 +198,6 @@ def replace_translations(form, user, translations, locale):
     For documentation, refer to the `batch_action_template` function.
 
     """
-    find = form.cleaned_data["find"]
-    replace = form.cleaned_data["replace"]
-    latest_translation_pk = None
 
     (
         old_translations,
@@ -265,8 +267,9 @@ def replace_translations(form, user, translations, locale):
 
     changed_translation_pks = [c.pk for c in changed_translations]
 
-    if changed_translation_pks:
-        latest_translation_pk = max(changed_translation_pks)
+    latest_translation_pk = (
+        max(changed_translation_pks) if changed_translation_pks else None
+    )
 
     return {
         "count": count,
@@ -279,19 +282,19 @@ def replace_translations(form, user, translations, locale):
     }
 
 
-def copy_translation_from_locale(form, user, translations, locale):
+def copy_translation_from_locale(
+    user, locale: Locale, entities: QuerySet[Entity], other_locale: str
+):
     """
     Copy translations approved in a source locale and add them as suggestions
     in the target locale. Existing active translations in the target locale
     are deactivated before the new suggestions are created.
     """
 
-    other_locale = form.cleaned_data["other_locale"]
-
     other_locale_translations = list(
         Translation.objects.filter(
             locale__code=other_locale,
-            entity__pk__in=form.cleaned_data["entities"],
+            entity__in=entities,
             approved=True,
         )
     )
@@ -301,7 +304,7 @@ def copy_translation_from_locale(form, user, translations, locale):
     already_active_entity_pks = set(
         Translation.objects.filter(
             locale=locale,
-            entity__pk__in=form.cleaned_data["entities"],
+            entity__in=entities,
             active=True,
         ).values_list("entity__pk", flat=True)
     )
@@ -311,7 +314,6 @@ def copy_translation_from_locale(form, user, translations, locale):
 
     if not other_locale:
         # Copy from other locale (entity.string directly)
-        entities = Entity.objects.filter(pk__in=form.cleaned_data["entities"])
         for entity in entities:
             value, properties = parse_db_string_to_json(
                 entity.resource.format, entity.string
