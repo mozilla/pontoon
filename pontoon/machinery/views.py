@@ -29,7 +29,7 @@ from pontoon.terminology.models import Term
 from .openai_service import OpenAIService
 
 
-# Map machinery `service` query param to the (mt_provider, locale-support attr) pair
+# Map machinery `service` query param to the (mt_service, locale-support attr) pair
 # used by the composed-translation view. `translation-memory` is special-cased to mean
 # "TM-only, no MT fallback".
 COMPOSED_MT_SERVICES = {
@@ -132,7 +132,8 @@ def machinery_composed(request):
         return JsonResponse({})
 
     if service == "translation-memory":
-        mt_provider = None
+        # TM-only: no MT service is called (mt_supported=False).
+        mt_service = None
         mt_service_name = "tm"
         mt_supported = False
     elif service in COMPOSED_MT_SERVICES:
@@ -140,7 +141,7 @@ def machinery_composed(request):
             return JsonResponse(
                 {"status": False, "message": "Authentication required"}, status=403
             )
-        mt_provider, locale_attr = COMPOSED_MT_SERVICES[service]
+        mt_service, locale_attr = COMPOSED_MT_SERVICES[service]
         mt_service_name = service
         mt_supported = bool(getattr(locale, locale_attr, None))
     else:
@@ -154,7 +155,7 @@ def machinery_composed(request):
             entity,
             locale,
             preserve_placeables=False,
-            mt_provider=mt_provider,
+            mt_service=mt_service,
             mt_service_name=mt_service_name,
             mt_supported=mt_supported,
             exclude_entity=True,

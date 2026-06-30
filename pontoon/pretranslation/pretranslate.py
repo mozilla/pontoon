@@ -28,7 +28,7 @@ from pontoon.machinery.utils import get_google_translate_data
 pt_placeholder = compile(r"{ *\$(\d+) *}")
 
 
-MTProvider = Callable[..., str]
+MTService = Callable[..., str]
 
 
 def get_pretranslation(
@@ -64,17 +64,18 @@ class Pretranslation:
         locale: Locale,
         preserve_placeables: bool,
         *,
-        mt_provider: MTProvider | None = None,
+        mt_service: MTService | None = None,
         mt_service_name: str = "gt",
         mt_supported: bool | None = None,
         exclude_entity: bool = False,
     ):
         """
-        :param mt_provider: Callable invoked when no 100% TM match exists.
+        :param mt_service: Callable invoked when no 100% TM match exists.
             Signature: ``(text: str, locale: Locale, preserve_placeables: bool) -> str``.
             Defaults to Google Translate.
         :param mt_service_name: Identifier recorded in ``self.services`` for each
-            successful MT call. Defaults to ``"gt"``.
+            successful MT call. Must match ``mt_service``; defaults to ``"gt"``
+            (the identifier for the default Google Translate service).
         :param mt_supported: If False, MT is skipped and ``ValueError`` is raised
             when a leaf can't be served from TM. Defaults to whether the locale
             has a ``google_translate_code`` (matching the original behavior).
@@ -102,7 +103,9 @@ class Pretranslation:
         self.locale = locale
         self.preserve_placeables = preserve_placeables
         self.services = []
-        self.mt_provider = mt_provider or get_google_translate_data
+        # Resolve the default at call time (not as a parameter default) so tests
+        # can patch the module-level `get_google_translate_data`.
+        self.mt_service = mt_service or get_google_translate_data
         self.mt_service_name = mt_service_name
         self.mt_supported = (
             mt_supported
@@ -249,8 +252,8 @@ class Pretranslation:
             return pattern
 
         if self.mt_supported:
-            # Try to fetch from the configured MT provider (Google by default)
-            mt_translation = self.mt_provider(
+            # Try to fetch from the configured MT service (Google by default)
+            mt_translation = self.mt_service(
                 text=gt_source,
                 locale=self.locale,
                 preserve_placeables=self.preserve_placeables,
