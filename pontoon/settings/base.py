@@ -462,7 +462,6 @@ PIPELINE_CSS = {
         "source_filenames": (
             "css/heading_info.css",
             "css/table.css",
-            "css/request.css",
             "css/multiple_item_selector.css",
             "css/insights_charts.css",
             "css/insights.css",
