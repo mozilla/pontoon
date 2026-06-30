@@ -494,7 +494,7 @@ the day, every day.
 ./manage.py collect_insights
 ```
 
-### Collect CHS Snapshot
+### Collect Community Health Score Snapshots
 
 Captures per-locale Community Health Score metrics - completion, key-project
 enablement, active managers / translators / contributors & new signups into
