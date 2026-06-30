@@ -10,9 +10,9 @@ from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from pontoon.base.forms import CommunityHealthLocalesForm
 from pontoon.base.models.locale import Locale
 from pontoon.insights.chs import KEY_PROJECT_SLUGS
+from pontoon.insights.forms import CommunityHealthLocalesForm
 from pontoon.insights.models import LocaleHealthSnapshot
 from pontoon.insights.utils import (
     get_global_locale_health_insights,

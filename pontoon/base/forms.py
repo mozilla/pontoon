@@ -333,16 +333,6 @@ class UserLocalesOrderForm(forms.ModelForm):
         fields = ("locales_order",)
 
 
-class CommunityHealthLocalesForm(forms.ModelForm):
-    """
-    Form is responsible for saving custom configurations of the Insights Dashboard.
-    """
-
-    class Meta:
-        model = UserProfile
-        fields = ("community_health_locales",)
-
-
 class GetEntitiesForm(forms.Form):
     """
     Form for parameters to the `entities` view.
