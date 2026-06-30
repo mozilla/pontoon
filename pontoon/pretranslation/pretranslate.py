@@ -2,15 +2,14 @@ from copy import deepcopy
 from re import compile
 from typing import Callable, Literal
 
-from fluent.syntax import FluentSerializer, ast as FTL
+from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
 from moz.l10n.formats import Format
 from moz.l10n.formats.fluent import (
-    fluent_astify_entry,
     fluent_astify_message,
     fluent_parse_entry,
 )
-from moz.l10n.message import parse_message, serialize_message
+from moz.l10n.message import message_from_json
 from moz.l10n.model import (
     CatchallKey,
     Entry,
@@ -23,6 +22,7 @@ from moz.l10n.model import (
 
 from pontoon.base.models import Entity, Locale, Resource, TranslationMemoryEntry
 from pontoon.machinery.utils import get_google_translate_data
+from pontoon.sync.formats import as_string
 
 
 pt_placeholder = compile(r"{ *\$(\d+) *}")
@@ -46,7 +46,8 @@ def get_pretranslation(
         - a pretranslation service identifier, either "gt" or "tm"
     """
     pt = Pretranslation(entity, locale, preserve_placeables)
-    pt_res = pt.walk_entity()
+    value, properties = pt.walk_entity()
+    pt_res = pt.serialize(value, properties)
     pt_service = max(set(pt.services), key=pt.services.count) if pt.services else "tm"
     return (pt_res, pt_service)
 
@@ -114,10 +115,11 @@ class Pretranslation:
         )
         self.exclude_entity = exclude_entity
 
-    def walk_entity(self) -> str:
+    def walk_entity(self) -> tuple[Message, dict[str, Message]]:
         """
         Walk the entity, translating each leaf via TM (then MT fallback), and
-        return the composed translation string.
+        return the translated `(value, properties)`. Serialization to a source
+        string is left to the caller (see `serialize`).
 
         For Fluent, each value, attribute, and selector variant is translated
         independently and recomposed. Accesskey attributes are derived from the
@@ -127,36 +129,37 @@ class Pretranslation:
         single leaf.
         """
         entity = self.entity
-        if entity.resource.format == Resource.Format.FLUENT:
-            entry = fluent_parse_entry(entity.string, with_linepos=False)
-            if entry.value:
-                self.message(entry.value)
-            accesskeys: list[tuple[str, Message]] = []
-            for key, prop in entry.properties.items():
-                if key.endswith("accesskey"):
-                    accesskeys.append((key, prop))
-                else:
-                    self.message(prop)
-            for key, prop in accesskeys:
-                set_accesskey(entry, key, prop)
-            return FluentSerializer().serialize_entry(
-                fluent_astify_entry(entry, escape_syntax=False)
-            )
+        value = message_from_json(entity.value)
+        if value:
+            self.message(value)
 
-        if entity.resource.format in {
-            Resource.Format.ANDROID,
-            Resource.Format.GETTEXT,
-            Resource.Format.WEBEXT,
-            Resource.Format.XCODE,
-            Resource.Format.XLIFF,
-        }:
-            format = Format.mf2
-            msg = parse_message(format, entity.string)
-        else:
-            format = None
-            msg = PatternMessage([entity.string])
-        self.message(msg)
-        return serialize_message(format, msg)
+        properties = (
+            {key: message_from_json(prop) for key, prop in entity.properties.items()}
+            if entity.properties
+            else {}
+        )
+
+        accesskeys: list[tuple[str, Message]] = []
+        for key, prop in properties.items():
+            if key.endswith("accesskey"):
+                accesskeys.append((key, prop))
+            else:
+                self.message(prop)
+
+        # `set_accesskey` reads the label from `entry.value`/`entry.properties`,
+        # so reconstruct an Entry from the (translated) value and properties.
+        entry = Entry(id=tuple(entity.key), value=value, properties=properties)
+        for key, prop in accesskeys:
+            set_accesskey(entry, key, prop)
+
+        return value, properties
+
+    def serialize(self, value: Message, properties: dict[str, Message]) -> str:
+        """Serialize translated `(value, properties)` back to a source string."""
+        entry = Entry(id=tuple(self.entity.key), value=value, properties=properties)
+        # `escape_syntax=False` keeps literal `{`/`}` from MT output raw, matching
+        # the prior pretranslation behavior (unlike sync, which escapes them).
+        return as_string(self.format, entry, escape_syntax=False)
 
     def message(self, msg: Message) -> None:
         """Modifies `msg`."""

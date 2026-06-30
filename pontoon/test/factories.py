@@ -119,6 +119,28 @@ class EntityFactory(DjangoModelFactory):
 
     class Meta:
         model = Entity
+        skip_postgeneration_save = True
+
+    @factory.post_generation
+    def parsed_value(entity, create, extracted, **kwargs):
+        # Populate key/value/properties from `string` (as sync does) so code
+        # that reads the parsed representation works in tests. Skipped when
+        # `value` is set explicitly; never blocks entity creation.
+        if entity.value:
+            return
+        try:
+            from pontoon.sync.formats import value_from_string
+
+            key, value, properties = value_from_string(
+                entity.resource.format, entity.string
+            )
+        except Exception:
+            return
+        entity.key = entity.key or key
+        entity.value = value
+        entity.properties = properties
+        if create:
+            entity.save()
 
 
 class ChangedEntityLocaleFactory(DjangoModelFactory):

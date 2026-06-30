@@ -30,27 +30,20 @@ def test_get_pretranslations_no_match(entity_a, locale_b):
 
 
 @pytest.mark.django_db
-def test_get_pretranslations_empty_string(entity_a, locale_b):
+def test_get_pretranslations_empty_string(resource_a, locale_b):
     # Entity.string is an empty string
-    entity_a.string = ""
-    response = get_pretranslation(entity_a, locale_b)
+    entity = EntityFactory(resource=resource_a, string="")
+    response = get_pretranslation(entity, locale_b)
     assert response == ("", "tm")
 
 
 @pytest.mark.django_db
-def test_get_pretranslations_whitespace(entity_a, locale_b):
-    # Entity.string is an empty string
-    entity_a.string = " "
-    response = get_pretranslation(entity_a, locale_b)
-    assert response == (" ", "tm")
-
-    entity_a.string = "\t"
-    response = get_pretranslation(entity_a, locale_b)
-    assert response == ("\t", "tm")
-
-    entity_a.string = "\n"
-    response = get_pretranslation(entity_a, locale_b)
-    assert response == ("\n", "tm")
+def test_get_pretranslations_whitespace(resource_a, locale_b):
+    # Entity.string is whitespace only
+    for ws in (" ", "\t", "\n"):
+        entity = EntityFactory(resource=resource_a, string=ws)
+        response = get_pretranslation(entity, locale_b)
+        assert response == (ws, "tm")
 
 
 @pytest.mark.django_db

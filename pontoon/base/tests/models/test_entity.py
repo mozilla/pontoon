@@ -36,6 +36,7 @@ def entity_test_models(translation_a, locale_b):
     )
     entity_a.string = "Entity zero"
     entity_a.key = [entity_a.string]
+    entity_a.value = [entity_a.string]
     entity_a.order = 0
     entity_a.save()
     entity_b = EntityFactory(
@@ -294,7 +295,7 @@ def test_entity_project_locale_no_paths(
         },
         "pk": entity_a.pk,
         "original": entity_a.string,
-        "value": [],
+        "value": ["Entity zero"],
         "date_created": entity_a.date_created,
     }
     assert e1["path"] == trX.entity.resource.path
