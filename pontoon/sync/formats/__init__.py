@@ -9,8 +9,8 @@ from re import Match, compile
 
 from fluent.syntax import FluentSerializer
 from moz.l10n.formats import Format, detect_format, l10n_extensions
-from moz.l10n.formats.fluent import fluent_astify_entry
-from moz.l10n.message import message_to_json, serialize_message
+from moz.l10n.formats.fluent import fluent_astify_entry, fluent_parse_entry
+from moz.l10n.message import message_to_json, parse_message, serialize_message
 from moz.l10n.model import (
     CatchallKey,
     Entry,
@@ -23,7 +23,44 @@ from moz.l10n.model import (
     VariableRef,
 )
 
-from pontoon.base.models import Entity
+from pontoon.base.models import Entity, Resource
+
+
+# Resource formats whose source strings are parsed as MF2 messages.
+_MF2_SOURCE_FORMATS = {
+    Resource.Format.ANDROID,
+    Resource.Format.GETTEXT,
+    Resource.Format.WEBEXT,
+    Resource.Format.XCODE,
+    Resource.Format.XLIFF,
+}
+
+
+def value_from_string(
+    format: Resource.Format | str | None, string: str
+) -> tuple[list[str], object, dict[str, object] | None]:
+    """
+    Parse an entity's source `string` into its `(key, value, properties)` JSON
+    representation — the inverse of `as_string`, matching what sync stores on
+    `Entity`. Used to pretranslate entities that aren't backed by a synced row.
+    """
+    if format == Resource.Format.FLUENT:
+        entry = fluent_parse_entry(string, with_linepos=False)
+        return (
+            list(entry.id),
+            message_to_json(entry.value),
+            (
+                {name: message_to_json(v) for name, v in entry.properties.items()}
+                if entry.properties
+                else None
+            ),
+        )
+    msg = (
+        parse_message(Format.mf2, string)
+        if format in _MF2_SOURCE_FORMATS
+        else PatternMessage([string])
+    )
+    return [], message_to_json(msg), None
 
 
 @dataclass
@@ -64,10 +101,14 @@ def _unicode_unescape(m: Match[str]):
     return m[0].encode("utf-8").decode("unicode_escape")
 
 
-def _as_string(format: Format | None, entry: Entry[Message]) -> str:
+def as_string(
+    format: Format | None, entry: Entry[Message], *, escape_syntax: bool = True
+) -> str:
     match format:
         case Format.fluent:
-            fluent_entry = fluent_astify_entry(entry, comment_str=lambda _: "")
+            fluent_entry = fluent_astify_entry(
+                entry, comment_str=lambda _: "", escape_syntax=escape_syntax
+            )
             return _fluent_serializer.serialize_entry(fluent_entry)
         case Format.android | Format.gettext | Format.webext | Format.xliff:
             return serialize_message(Format.mf2, entry.value)
@@ -95,7 +136,7 @@ def as_repo_translations(res: MozL10nResource[Message]) -> Iterator[RepoTranslat
                 )
                 yield RepoTranslation(
                     key=section.id + entry.id,
-                    string=_as_string(res.format, entry),
+                    string=as_string(res.format, entry),
                     value=entry.value,
                     properties=entry.properties,
                     fuzzy=fuzzy,
@@ -142,7 +183,7 @@ def as_entity(
             if entry.properties
             else None
         ),
-        string=_as_string(format, entry),
+        string=as_string(format, entry),
         comment=entry.comment,
         meta=[[m.key, m.value] for m in entry.meta],
         **kwargs,

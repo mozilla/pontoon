@@ -160,7 +160,8 @@ def machinery_composed(request):
             mt_supported=mt_supported,
             exclude_entity=True,
         )
-        translation = pt.walk_entity()
+        value, properties = pt.walk_entity()
+        translation = pt.serialize(value, properties)
     except ValueError:
         # Raised when a leaf has no TM match and MT is unavailable. Compose
         # endpoint treats this as "nothing to show" rather than an error.
