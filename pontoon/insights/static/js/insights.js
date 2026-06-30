@@ -9,7 +9,7 @@ const longMonthFormat = new Intl.DateTimeFormat('en', {
 
 const style = getComputedStyle(document.body);
 
-$('body').on('click', '#view-toggle', function (e) {
+$('body').on('click', '#show-scores', function (e) {
   e.stopPropagation();
 
   const table = $('.locale-list');
@@ -28,7 +28,7 @@ $('body').on('click', '#view-toggle', function (e) {
     }
   });
 
-  $('#view-toggle').text(showScores ? 'Show default' : 'Show scores');
+  $('#show-scores').text(showScores ? 'Show default' : 'Show scores');
 });
 
 // eslint-disable-next-line no-var
