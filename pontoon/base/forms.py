@@ -340,7 +340,7 @@ class CommunityHealthLocalesForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ("dashboard_locales",)
+        fields = ("community_health_locales",)
 
 
 class GetEntitiesForm(forms.Form):

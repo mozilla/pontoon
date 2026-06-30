@@ -134,8 +134,7 @@ class UserProfile(models.Model):
     search_match_whole_word = models.BooleanField(default=False)
     search_rejected_translations = models.BooleanField(default=False)
 
-    # Dashboard configurations
-    dashboard_locales = ArrayField(
+    community_health_locales = ArrayField(
         models.PositiveIntegerField(),
         default=list,
         blank=True,

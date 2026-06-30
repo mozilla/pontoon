@@ -10,7 +10,7 @@ from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from pontoon.base.forms import UserInsightsDashboardConfigForm
+from pontoon.base.forms import CommunityHealthLocalesForm
 from pontoon.base.models.locale import Locale
 from pontoon.insights.chs import KEY_PROJECT_SLUGS
 from pontoon.insights.models import LocaleHealthSnapshot
@@ -140,20 +140,20 @@ def insights_config(request):
         raise PermissionDenied
 
     if request.method == "POST":
-        dashboard_locales_form = UserInsightsDashboardConfigForm(
+        community_health_locales_form = CommunityHealthLocalesForm(
             request.POST, instance=profile
         )
 
-        if dashboard_locales_form.is_valid():
-            dashboard_locales_form.save()
+        if community_health_locales_form.is_valid():
+            community_health_locales_form.save()
             messages.success(request, "Configuration saved.")
             return redirect("pontoon.insights")
 
-    dashboard_locales = profile.dashboard_locales
+    community_health_locales = profile.community_health_locales
 
     locales = Locale.objects.visible()
-    selected_locales = locales.filter(pk__in=dashboard_locales)
-    available_locales = locales.exclude(pk__in=dashboard_locales)
+    selected_locales = locales.filter(pk__in=community_health_locales)
+    available_locales = locales.exclude(pk__in=community_health_locales)
     return render(
         request,
         "insights/config.html",
@@ -177,8 +177,8 @@ def insights(request):
     if not user.is_staff:
         raise PermissionDenied
 
-    dashboard_locales = profile.dashboard_locales
-    locales = Locale.objects.filter(pk__in=dashboard_locales).order_by("code")
+    community_health_locales = profile.community_health_locales
+    locales = Locale.objects.filter(pk__in=community_health_locales).order_by("code")
 
     current_anchor = timezone.now().date()
     previous_anchor = current_anchor.replace(day=1) - relativedelta(days=1)
