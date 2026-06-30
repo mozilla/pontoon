@@ -12,7 +12,7 @@ const style = getComputedStyle(document.body);
 $('body').on('click', '#show-scores', function (e) {
   e.stopPropagation();
 
-  const table = $('.locale-list');
+  const table = $('.community-health-table');
   table.toggleClass('show-score-view');
 
   const showScores = table.hasClass('show-score-view');
@@ -36,10 +36,7 @@ var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
-        Pontoon.insights.renderGlobalChart(
-          $('#community-health-chart'),
-          'chs',
-        );
+        Pontoon.insights.renderGlobalChart($('#community-health-chart'), 'chs');
         Pontoon.insights.renderGlobalChart(
           $('#team-pretranslation-quality-chart'),
           'approval_rate',

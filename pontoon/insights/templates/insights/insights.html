@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import 'heading.html' as Heading %}
 {% import "insights/widgets/tooltip.html" as Tooltip %}
-{% import 'insights/widgets/locale_list.html' as LocaleList %}
+{% import 'insights/widgets/community_health_table.html' as CommunityHealthTable %}
 
 {% block title %}Insights{% endblock %}
 
@@ -42,15 +42,15 @@
             </div>
           </menu>
           <div class="dashboard-container">
-            {{ LocaleList.header() }}
+            {{ CommunityHealthTable.header() }}
 
             {% for locale in locales %}
               {% set main_link = url('pontoon.teams.team', locale.code) %}
 
-              {{ LocaleList.item(locale, main_link, curr_snapshot=current_snapshots.get(locale.id), base_deltas=snapshot_base_deltas.get(locale.id), score_deltas=snapshot_score_deltas.get(locale.id), columns=columns) }}
+              {{ CommunityHealthTable.item(locale, main_link, curr_snapshot=current_snapshots.get(locale.id), base_deltas=snapshot_base_deltas.get(locale.id), score_deltas=snapshot_score_deltas.get(locale.id), columns=columns) }}
             {% endfor %}
 
-            {{ LocaleList.footer() }}
+            {{ CommunityHealthTable.footer() }}
 
             {% if not locales %}
               <div class="no-locales">
