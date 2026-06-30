@@ -21,7 +21,7 @@ import { ReplaceAll } from './ReplaceAll';
 import { CopyFromLocale } from './CopyFromLocale';
 import { fetchAllLocales } from '~/api/other-locales';
 import type { LocaleOption } from '~/api/other-locales';
-import LocaleSelector from './LocaleSelector';
+import LocaleSelector from '../../locale/components/LocaleSelector';
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
