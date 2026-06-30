@@ -3,7 +3,7 @@
 
 {# Widget to display insights. #}
 {% macro display() %}
-  <div id="insights" data-dates="{{ dates }}">
+  <div id="insights" data-dates="{{ dates|to_json() }}">
     <section class="clearfix">
       {% if total_users %}
         <section
@@ -71,8 +71,8 @@
               </h3>
               <canvas
                 id="time-to-review-suggestions-chart"
-                data-time-to-review-suggestions="{{ time_to_review_suggestions }}"
-                data-time-to-review-suggestions-12-month-avg="{{ time_to_review_suggestions_12_month_avg }}"
+                data-time-to-review-suggestions="{{ time_to_review_suggestions|to_json() }}"
+                data-time-to-review-suggestions-12-month-avg="{{ time_to_review_suggestions_12_month_avg|to_json() }}"
                 width="410"
                 height="160"
               >
@@ -103,7 +103,7 @@
               </h3>
               <canvas
                 id="unreviewed-suggestions-lifespan-chart"
-                data-lifespans="{{ unreviewed_lifespans }}"
+                data-lifespans="{{ unreviewed_lifespans|to_json() }}"
                 width="410"
                 height="160"
               >
@@ -133,8 +133,8 @@
               </h3>
               <canvas
                 id="time-to-review-pretranslations-chart"
-                data-time-to-review-pretranslations="{{ time_to_review_pretranslations }}"
-                data-time-to-review-pretranslations-12-month-avg="{{ time_to_review_pretranslations_12_month_avg }}"
+                data-time-to-review-pretranslations="{{ time_to_review_pretranslations|to_json() }}"
+                data-time-to-review-pretranslations-12-month-avg="{{ time_to_review_pretranslations_12_month_avg|to_json() }}"
                 width="410"
                 height="160"
               >
@@ -142,6 +142,34 @@
             </div>
           </div>
         </section>
+      </section>
+    {% endif %}
+
+    {% if community_health_scores %}
+      <section class="community-health-activity">
+        <figure class="block">
+          <h3 class="controls">
+            Community health score
+            {{
+              Tooltip.display(
+                  intro='Community health score at a particular point in time.',
+                  items=[{
+                      'class': 'current-month',
+                      'name': 'Current month',
+                      'definition': 'Community health score calculated for a specific month.',
+                  }]
+              )
+            }}
+          </h3>
+          <canvas
+            id="community-health-chart"
+            data-community-health-scores="{{ community_health_scores|to_json() }}"
+            data-community-health-dates="{{ community_health_dates|to_json() }}"
+            width="920"
+            height="400"
+          >
+          </canvas>
+        </figure>
       </section>
     {% endif %}
 
@@ -178,11 +206,11 @@
         </h3>
         <canvas
           id="review-activity-chart"
-          data-unreviewed="{{ review_activity.unreviewed }}"
-          data-peer-approved="{{ review_activity.peer_approved }}"
-          data-self-approved="{{ review_activity.self_approved }}"
-          data-rejected="{{ review_activity.rejected }}"
-          data-new-suggestions="{{ review_activity.new_suggestions }}"
+          data-unreviewed="{{ review_activity.unreviewed|to_json() }}"
+          data-peer-approved="{{ review_activity.peer_approved|to_json() }}"
+          data-self-approved="{{ review_activity.self_approved|to_json() }}"
+          data-rejected="{{ review_activity.rejected|to_json() }}"
+          data-new-suggestions="{{ review_activity.new_suggestions|to_json() }}"
           width="920"
           height="400"
         >
@@ -220,10 +248,10 @@
         </h3>
         <canvas
           id="translation-activity-chart"
-          data-completion="{{ translation_activity.completion }}"
-          data-human-translations="{{ translation_activity.human_translations }}"
-          data-machinery-translations="{{ translation_activity.machinery_translations }}"
-          data-new-source-strings="{{ translation_activity.new_source_strings }}"
+          data-completion="{{ translation_activity.completion|to_json() }}"
+          data-human-translations="{{ translation_activity.human_translations|to_json() }}"
+          data-machinery-translations="{{ translation_activity.machinery_translations|to_json() }}"
+          data-new-source-strings="{{ translation_activity.new_source_strings|to_json() }}"
           width="920"
           height="400"
         >
@@ -265,11 +293,11 @@
         </h3>
         <canvas
           id="pretranslation-quality-chart"
-          data-approval-rate="{{ pretranslation_quality.approval_rate }}"
-          data-chrf-score="{{ pretranslation_quality.chrf_score }}"
-          data-approved="{{ pretranslation_quality.approved }}"
-          data-rejected="{{ pretranslation_quality.rejected }}"
-          data-new="{{ pretranslation_quality.new }}"
+          data-approval-rate="{{ pretranslation_quality.approval_rate|to_json() }}"
+          data-chrf-score="{{ pretranslation_quality.chrf_score|to_json() }}"
+          data-approved="{{ pretranslation_quality.approved|to_json() }}"
+          data-rejected="{{ pretranslation_quality.rejected|to_json() }}"
+          data-new="{{ pretranslation_quality.new|to_json() }}"
           width="920"
           height="400"
         >

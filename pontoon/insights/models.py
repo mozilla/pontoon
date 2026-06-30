@@ -83,3 +83,37 @@ class LocaleInsightsSnapshot(InsightsSnapshot):
 
 class ProjectLocaleInsightsSnapshot(InsightsSnapshot):
     project_locale = models.ForeignKey("base.ProjectLocale", models.CASCADE)
+
+
+class LocaleHealthSnapshot(models.Model):
+    locale = models.ForeignKey("base.Locale", on_delete=models.CASCADE)
+    created_at = models.DateField()
+    completion = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    key_projects_enabled = models.PositiveIntegerField(default=0)
+    active_managers = models.PositiveIntegerField(default=0)
+    active_translators = models.PositiveIntegerField(default=0)
+    active_contributors = models.PositiveIntegerField(default=0)
+    all_contributors = models.PositiveIntegerField(default=0)
+    new_signups = models.PositiveIntegerField(default=0)
+    completion_score = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    key_projects_enabled_score = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0
+    )
+    active_managers_score = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0
+    )
+    active_translators_score = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0
+    )
+    active_contributors_score = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0
+    )
+    all_contributors_score = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0
+    )
+    new_signups_score = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    chs = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+
+    class Meta:
+        unique_together = [("locale", "created_at")]
+        indexes = [models.Index(fields=["created_at", "locale"])]
