@@ -37,7 +37,7 @@ var Pontoon = (function (my) {
     insights: {
       renderCharts: function () {
         Pontoon.insights.renderGlobalChart(
-          $('#team-community-health-chart'),
+          $('#community-health-chart'),
           'chs',
         );
         Pontoon.insights.renderGlobalChart(
