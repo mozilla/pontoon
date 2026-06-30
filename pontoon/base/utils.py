@@ -85,11 +85,20 @@ def aware_datetime(*args, **kwargs):
     return make_aware(datetime(*args, **kwargs))
 
 
-def convert_to_unix_time(my_datetime):
+def convert_to_unix_time(my_datetime, anchor_noon=False):
     """
-    Convert datetime object to UNIX time
+    Convert datetime object to UNIX time (milliseconds).
+
+    anchor_noon=True is needed for datetimes that are plotted on charts
+    rendered in user's timezone. That's because times that are set on
+    the 1st of each month leak into the previous month for viewers
+    behind UTC. Anchoring at 12:00 UTC keeps data point inside the
+    correct calendar month for every timezone.
     """
-    return int(time.mktime(my_datetime.timetuple()) * 1000)
+    seconds = time.mktime(my_datetime.timetuple())
+    if anchor_noon:
+        seconds += 12 * 60 * 60
+    return int(seconds * 1000)
 
 
 def sanitize_xml_input_string(string):

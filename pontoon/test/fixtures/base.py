@@ -11,6 +11,7 @@ def admin():
     return factories.UserFactory.create(
         username="admin",
         is_superuser=True,
+        is_staff=True,
     )
 
 

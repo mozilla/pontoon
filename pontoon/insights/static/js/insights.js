@@ -9,25 +9,49 @@ const longMonthFormat = new Intl.DateTimeFormat('en', {
 
 const style = getComputedStyle(document.body);
 
+$('body').on('click', '#show-scores', function (e) {
+  e.stopPropagation();
+
+  const table = $('.community-health-table');
+  table.toggleClass('show-score-view');
+
+  const showScores = table.hasClass('show-score-view');
+
+  // Keep each cells sort key in sync
+  table.find('td.cell').each(function () {
+    const td = $(this);
+    const key = showScores
+      ? td.attr('data-score-sort')
+      : td.attr('data-base-sort');
+    if (key !== undefined) {
+      td.attr('data-sort', key);
+    }
+  });
+
+  $('#show-scores').text(showScores ? 'Show default' : 'Show scores');
+});
+
 // eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
-        Pontoon.insights.renderPretranslationQualityChart(
+        Pontoon.insights.renderGlobalChart($('#community-health-chart'), 'chs');
+        Pontoon.insights.renderGlobalChart(
           $('#team-pretranslation-quality-chart'),
+          'approval_rate',
         );
-        Pontoon.insights.renderPretranslationQualityChart(
+        Pontoon.insights.renderGlobalChart(
           $('#project-pretranslation-quality-chart'),
+          'approval_rate',
         );
       },
-      renderPretranslationQualityChart: function (chart) {
+      renderGlobalChart: function (chart, key) {
         if (chart.length === 0) {
           return;
         }
 
         const colors = [
-          style.getPropertyValue('--white-1'),
           style.getPropertyValue('--purple'),
           style.getPropertyValue('--lilac'),
           style.getPropertyValue('--pink-2'),
@@ -43,11 +67,14 @@ var Pontoon = (function (my) {
         ];
 
         const datasets = chart.data('dataset').map(function (item, index) {
-          const color = colors[index % colors.length];
+          const color =
+            item.name === 'All'
+              ? style.getPropertyValue('--white-1')
+              : colors[index % colors.length];
           return {
             type: 'line',
             label: item.name,
-            data: item.approval_rate,
+            data: item[key],
             borderColor: [color],
             borderWidth: item.name === 'All' ? 3 : 1,
             pointBackgroundColor: color,
@@ -60,6 +87,7 @@ var Pontoon = (function (my) {
             fill: true,
             tension: 0.4,
             order: color.length - index,
+            hidden: item.name === 'All' ? false : true,
           };
         });
 

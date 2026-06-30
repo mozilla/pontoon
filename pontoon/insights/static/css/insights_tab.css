@@ -172,3 +172,9 @@
 #insights .pretranslation-quality h3 .tooltip li.new-pretranslations::marker {
   color: var(--black-3);
 }
+
+/* Community Health info tooltip */
+
+#insights .community-health-activity h3 .tooltip li.current-month::marker {
+  color: var(--status-translated);
+}

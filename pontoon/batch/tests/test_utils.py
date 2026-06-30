@@ -1,5 +1,3 @@
-from unittest.mock import MagicMock
-
 import pytest
 
 from fluent.syntax import FluentParser, FluentSerializer
@@ -95,14 +93,7 @@ def test_copy_from_another_locale():
         entity=entity, locale=source_locale, string="key = value", approved=True
     )
 
-    # Mock form and call the function
-    form = MagicMock()
-    form.cleaned_data = {
-        "other_locale": "en-GB",
-        "entities": [entity.pk],
-    }
-
-    copy_translation_from_locale(form, user, Translation.objects.none(), target_locale)
+    copy_translation_from_locale(user, target_locale, [entity], "en-GB")
     result = Translation.objects.filter(locale=target_locale, entity=entity)
 
     # Assert a suggestion was created in the target locale
@@ -146,13 +137,7 @@ def test_copy_from_another_locale_copies_all_strings():
         entity=entity2, locale=source_locale, string="key2 = value2", approved=True
     )
 
-    form = MagicMock()
-    form.cleaned_data = {
-        "other_locale": "en-GB",
-        "entities": [entity1.pk, entity2.pk],
-    }
-
-    copy_translation_from_locale(form, user, Translation.objects.none(), target_locale)
+    copy_translation_from_locale(user, target_locale, [entity1, entity2], "en-GB")
 
     # entity1 already has an active translation - new suggestion should be active=False
     assert (

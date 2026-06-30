@@ -54,7 +54,7 @@ from pontoon.base.user_utils import (
 )
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.views import ContributorsMixin
-from pontoon.insights.utils import get_locale_insights
+from pontoon.insights.utils import get_locale_health_insights, get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm
 
 from ..base.models.project import ProjectQuerySet
@@ -209,7 +209,9 @@ def ajax_insights(request, locale):
     key = f"/{__name__}/{locale.code}/insights"
     insights = cache.get(key)
     if not insights:
-        insights = get_locale_insights(Q(locale=locale))
+        locale_insights = get_locale_insights(Q(locale=locale))
+        locale_health_insights = get_locale_health_insights(locale)
+        insights = locale_insights | locale_health_insights
         cache.set(key, insights, settings.VIEW_CACHE_TIMEOUT)
 
     return render(request, "teams/includes/insights.html", insights)
