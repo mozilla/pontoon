@@ -17,17 +17,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        Collects per-locale Community Health Score (CHS) metrics, saved as
-        LocaleHealthSnapshots.
-
-        The metrics involve:
-        - project completion
-        - key projects enabled
-        - active managers
-        - active translators
-        - active contributors
-        - all contributors
-        - new signups
+        Collects Community Health Score (CHS) metrics, saved as LocaleHealthSnapshots.
 
         Only send on the given day of the month or when --force is used.
         """
