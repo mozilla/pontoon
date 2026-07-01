@@ -1,16 +1,15 @@
 from copy import deepcopy
 from re import compile
-from typing import Literal
+from typing import Callable, Literal
 
-from fluent.syntax import FluentSerializer, ast as FTL
+from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
 from moz.l10n.formats import Format
 from moz.l10n.formats.fluent import (
-    fluent_astify_entry,
     fluent_astify_message,
     fluent_parse_entry,
 )
-from moz.l10n.message import parse_message, serialize_message
+from moz.l10n.message import message_from_json
 from moz.l10n.model import (
     CatchallKey,
     Entry,
@@ -23,9 +22,13 @@ from moz.l10n.model import (
 
 from pontoon.base.models import Entity, Locale, Resource, TranslationMemoryEntry
 from pontoon.machinery.utils import get_google_translate_data
+from pontoon.sync.formats import as_string
 
 
 pt_placeholder = compile(r"{ *\$(\d+) *}")
+
+
+MTService = Callable[..., str]
 
 
 def get_pretranslation(
@@ -42,39 +45,9 @@ def get_pretranslation(
         - a pretranslation of the entity
         - a pretranslation service identifier, either "gt" or "tm"
     """
-
     pt = Pretranslation(entity, locale, preserve_placeables)
-    if entity.resource.format == Resource.Format.FLUENT:
-        entry = fluent_parse_entry(entity.string, with_linepos=False)
-        if entry.value:
-            pt.message(entry.value)
-        accesskeys: list[tuple[str, Message]] = []
-        for key, prop in entry.properties.items():
-            if key.endswith("accesskey"):
-                accesskeys.append((key, prop))
-            else:
-                pt.message(prop)
-        for key, prop in accesskeys:
-            set_accesskey(entry, key, prop)
-        pt_res = FluentSerializer().serialize_entry(
-            fluent_astify_entry(entry, escape_syntax=False)
-        )
-    else:
-        if entity.resource.format in {
-            Resource.Format.ANDROID,
-            Resource.Format.GETTEXT,
-            Resource.Format.WEBEXT,
-            Resource.Format.XCODE,
-            Resource.Format.XLIFF,
-        }:
-            format = Format.mf2
-            msg = parse_message(format, entity.string)
-        else:
-            format = None
-            msg = PatternMessage([entity.string])
-        pt.message(msg)
-        pt_res = serialize_message(format, msg)
-
+    value, properties = pt.walk_entity()
+    pt_res = pt.serialize(value, properties)
     pt_service = max(set(pt.services), key=pt.services.count) if pt.services else "tm"
     return (pt_res, pt_service)
 
@@ -83,10 +56,37 @@ class Pretranslation:
     format: Format | None
     locale: Locale
     preserve_placeables: bool
-    services: list[Literal["gt", "tm"]]
+    services: list[str]
     source: str
 
-    def __init__(self, entity: Entity, locale: Locale, preserve_placeables: bool):
+    def __init__(
+        self,
+        entity: Entity,
+        locale: Locale,
+        preserve_placeables: bool,
+        *,
+        mt_service: MTService | None = None,
+        mt_service_name: str = "gt",
+        mt_supported: bool | None = None,
+        exclude_entity: bool = False,
+    ):
+        """
+        :param mt_service: Callable invoked when no 100% TM match exists.
+            Signature: ``(text: str, locale: Locale, preserve_placeables: bool) -> str``.
+            Defaults to Google Translate.
+        :param mt_service_name: Identifier recorded in ``self.services`` for each
+            successful MT call. Must match ``mt_service``; defaults to ``"gt"``
+            (the identifier for the default Google Translate service).
+        :param mt_supported: If False, MT is skipped and ``ValueError`` is raised
+            when a leaf can't be served from TM. Defaults to whether the locale
+            has a ``google_translate_code`` (matching the original behavior).
+        :param exclude_entity: If True, the entity's own TM entries are excluded
+            from per-leaf TM lookups, matching ``get_translation_memory_data``.
+            A leaf that can only be served by the entity's own translation then
+            has no TM match, so a composed result is not reconstructed from the
+            current entity. Defaults to False.
+        """
+        self.entity = entity
         match entity.resource.format:
             case Resource.Format.FLUENT:
                 self.format = Format.fluent
@@ -104,6 +104,62 @@ class Pretranslation:
         self.locale = locale
         self.preserve_placeables = preserve_placeables
         self.services = []
+        # Resolve the default at call time (not as a parameter default) so tests
+        # can patch the module-level `get_google_translate_data`.
+        self.mt_service = mt_service or get_google_translate_data
+        self.mt_service_name = mt_service_name
+        self.mt_supported = (
+            mt_supported
+            if mt_supported is not None
+            else bool(locale.google_translate_code)
+        )
+        self.exclude_entity = exclude_entity
+
+    def walk_entity(self) -> tuple[Message, dict[str, Message]]:
+        """
+        Walk the entity, translating each leaf via TM (then MT fallback), and
+        return the translated `(value, properties)`. Serialization to a source
+        string is left to the caller (see `serialize`).
+
+        For Fluent, each value, attribute, and selector variant is translated
+        independently and recomposed. Accesskey attributes are derived from the
+        translated label after all other leaves are filled. For MF2-handled
+        formats (Android, Gettext, Webext, Xcode, Xliff), variants are walked
+        with plural-category handling. All other formats are treated as a
+        single leaf.
+        """
+        entity = self.entity
+        value = message_from_json(entity.value)
+        if value:
+            self.message(value)
+
+        properties = (
+            {key: message_from_json(prop) for key, prop in entity.properties.items()}
+            if entity.properties
+            else {}
+        )
+
+        accesskeys: list[tuple[str, Message]] = []
+        for key, prop in properties.items():
+            if key.endswith("accesskey"):
+                accesskeys.append((key, prop))
+            else:
+                self.message(prop)
+
+        # `set_accesskey` reads the label from `entry.value`/`entry.properties`,
+        # so reconstruct an Entry from the (translated) value and properties.
+        entry = Entry(id=tuple(entity.key), value=value, properties=properties)
+        for key, prop in accesskeys:
+            set_accesskey(entry, key, prop)
+
+        return value, properties
+
+    def serialize(self, value: Message, properties: dict[str, Message]) -> str:
+        """Serialize translated `(value, properties)` back to a source string."""
+        entry = Entry(id=tuple(self.entity.key), value=value, properties=properties)
+        # `escape_syntax=False` keeps literal `{`/`}` from MT output raw, matching
+        # the prior pretranslation behavior (unlike sync, which escapes them).
+        return as_string(self.format, entry, escape_syntax=False)
 
     def message(self, msg: Message) -> None:
         """Modifies `msg`."""
@@ -163,11 +219,14 @@ class Pretranslation:
         )
         if not tm_source or tm_source.isspace():
             return pattern
-        tm_q100 = list(
-            TranslationMemoryEntry.objects.filter(
-                locale=self.locale, source=tm_source
-            ).values_list("target", flat=True)
+        tm_entries = TranslationMemoryEntry.objects.filter(
+            locale=self.locale, source=tm_source
         )
+        if self.exclude_entity:
+            # Mirror get_translation_memory_data(): never suggest the entity's
+            # own translation back to itself.
+            tm_entries = tm_entries.exclude(entity=self.entity)
+        tm_q100 = list(tm_entries.values_list("target", flat=True))
         if tm_q100:
             tm_best = max(set(tm_q100), key=tm_q100.count)
             self.services.append("tm")
@@ -195,14 +254,14 @@ class Pretranslation:
         if not has_text:
             return pattern
 
-        if self.locale.google_translate_code:
-            # Try to fetch from Google Translate
-            gt_translation = get_google_translate_data(
+        if self.mt_supported:
+            # Try to fetch from the configured MT service (Google by default)
+            mt_translation = self.mt_service(
                 text=gt_source,
                 locale=self.locale,
                 preserve_placeables=self.preserve_placeables,
             )
-            self.services.append("gt")
+            self.services.append(self.mt_service_name)
             return [
                 el
                 if idx % 2 == 0
@@ -211,7 +270,7 @@ class Pretranslation:
                     if int(el) < len(placeholders)
                     else "{$" + el + "}"
                 )
-                for idx, el in enumerate(pt_placeholder.split(gt_translation))
+                for idx, el in enumerate(pt_placeholder.split(mt_translation))
                 if el != ""
             ]
 

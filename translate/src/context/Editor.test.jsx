@@ -533,6 +533,50 @@ describe('<EditorProvider>', () => {
     });
   });
 
+  it('distributes a composed helper entry across all fields', () => {
+    let editor, result, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    mountSpy(Spy, 'fluent', `key = VALUE\n    .title = TITLE\n`);
+
+    const source = ftl`
+      key = COMPOSED
+          .title = COMPOSED_TITLE
+      `;
+    act(() =>
+      actions.setEditorFromHelpers(source, ['translation-memory'], true, true),
+    );
+
+    // The full entry source is spread across the value and attribute fields,
+    // not dumped into the first field.
+    expect(editor).toMatchObject({
+      sourceView: false,
+      fields: [
+        {
+          handle: { current: { value: 'COMPOSED' } },
+          name: '',
+        },
+        {
+          handle: { current: { value: 'COMPOSED_TITLE' } },
+          name: 'title',
+        },
+      ],
+      machinery: { manual: true, sources: ['translation-memory'] },
+    });
+    // The editor result is the rebuilt entry, with the composed value and
+    // attribute distributed into their respective patterns.
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: ['COMPOSED'],
+      attributes: new Map([['title', ['COMPOSED_TITLE']]]),
+    });
+  });
+
   it('toggles Fluent source view', () => {
     let editor, result, actions;
     const Spy = () => {

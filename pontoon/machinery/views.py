@@ -6,6 +6,8 @@ from urllib.parse import quote
 
 import requests
 
+from moz.l10n.message import message_from_json
+from moz.l10n.model import SelectMessage
 from sacremoses import MosesDetokenizer
 
 from django.contrib.auth.decorators import login_required
@@ -23,12 +25,24 @@ from pontoon.machinery.utils import (
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
+from pontoon.pretranslation.pretranslate import Pretranslation
 from pontoon.terminology.models import Term
 
 from .openai_service import OpenAIService
 
 
 log = logging.getLogger(__name__)
+
+
+def _pattern_count(message):
+    """Number of independently-translatable patterns in a parsed message.
+
+    A `PatternMessage` has one; a `SelectMessage` has one per variant. Used to
+    tell single-pattern messages (nothing to compose) from multi-pattern ones.
+    """
+    if isinstance(message, SelectMessage):
+        return len(message.variants)
+    return 1 if message is not None else 0
 
 
 def _machinery_error_response(service_name, e):
@@ -61,6 +75,125 @@ def translation_memory(request):
 
     data = get_translation_memory_data(text, locale, pk)
     return JsonResponse(data, safe=False)
+
+
+def machinery_composed(request):
+    """
+    Return a composed multi-value translation for a multi-pattern entity.
+
+    Each translatable leaf — the entity's value and every property, with a
+    selector message contributing one leaf per variant — is looked up in
+    Translation Memory; leaves without a 100% TM match fall back to the requested
+    MT service. Mirrors the Pretranslation pipeline so the Machinery panel can
+    surface a directly-pasteable composed translation alongside the per-leaf
+    results. Single-pattern entities have nothing to compose and yield an empty
+    response.
+
+    Query params:
+        entity: Entity pk
+        locale: Locale code
+        service: one of `translation-memory`, `google-translate`,
+            `microsoft-translator`. Defaults to `google-translate`.
+            `translation-memory` disables MT fallback.
+    """
+    try:
+        entity_pk = int(request.GET["entity"])
+        locale = Locale.objects.get(code=request.GET["locale"])
+        service = request.GET.get("service", "google-translate")
+        entity = Entity.objects.select_related("resource").get(pk=entity_pk)
+    except (
+        Entity.DoesNotExist,
+        Locale.DoesNotExist,
+        MultiValueDictKeyError,
+        ValueError,
+    ) as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"}, status=400
+        )
+
+    match service:
+        case "translation-memory":
+            # TM-only: no MT service is called (mt_supported=False).
+            mt_service = None
+            mt_service_name = "tm"
+            mt_supported = False
+        case "google-translate":
+            mt_service = get_google_translate_data
+            mt_service_name = service
+            mt_supported = bool(locale.google_translate_code)
+        case "microsoft-translator":
+            mt_service = get_microsoft_translator_data
+            mt_service_name = service
+            mt_supported = bool(locale.ms_translator_code)
+        case _:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": f"Bad Request: unknown service `{service}`",
+                },
+                status=400,
+            )
+
+    # MT services call an external provider; translation-memory is anonymous-friendly.
+    if mt_service is not None and not request.user.is_authenticated:
+        return JsonResponse(
+            {"status": False, "message": "Authentication required"}, status=403
+        )
+
+    # Only multi-pattern messages — those with multiple properties and/or
+    # selector variants — have something to compose. A single-pattern message
+    # composes to the same string the per-leaf machinery already returns, so
+    # there is nothing extra to show.
+    entity_value = message_from_json(entity.value) if entity.value else None
+    entity_properties = entity.properties or {}
+    pattern_count = _pattern_count(entity_value) + sum(
+        _pattern_count(message_from_json(prop)) for prop in entity_properties.values()
+    )
+    if pattern_count < 2:
+        return JsonResponse({})
+
+    try:
+        pt = Pretranslation(
+            entity,
+            locale,
+            preserve_placeables=False,
+            mt_service=mt_service,
+            mt_service_name=mt_service_name,
+            mt_supported=mt_supported,
+            exclude_entity=True,
+        )
+        value, properties = pt.walk_entity()
+        translation = pt.serialize(value, properties)
+    except ValueError:
+        # Raised when a leaf has no TM match and MT is unavailable. Compose
+        # endpoint treats this as "nothing to show" rather than an error.
+        return JsonResponse({})
+    except Exception as e:
+        return _machinery_error_response(f"Composed machinery ({service})", e)
+
+    if not pt.services or translation == entity.string:
+        return JsonResponse({})
+
+    # Preserve insertion order while deduplicating. Map the internal `"tm"`
+    # identifier to the SourceType the frontend uses for the badge.
+    sources_used = list(
+        dict.fromkeys("translation-memory" if s == "tm" else s for s in pt.services)
+    )
+
+    response = {
+        "original": entity.string,
+        "translation": translation,
+        "sources": sources_used,
+    }
+
+    # When every leaf came from a 100% TM match (`pattern()` only accepts exact
+    # source matches from TM), the composed string is a complete TM match — give
+    # it the same quality badge regular TM matches get. Hybrid results that fall
+    # back to MT for any leaf have no meaningful aggregate score.
+    if set(pt.services) == {"tm"}:
+        response["quality"] = 100
+
+    return JsonResponse(response)
 
 
 def concordance_search(request):
@@ -115,12 +248,12 @@ def microsoft_translator(request):
     """Get translation from Microsoft machine translation service."""
     try:
         text = request.GET["text"]
-        locale_code = request.GET["locale"]
+        locale = Locale.objects.get(code=request.GET["locale"])
 
-        if not locale_code:
-            raise ValueError("Locale code is empty")
+        if not locale.ms_translator_code:
+            raise ValueError("Locale code not supported")
 
-    except (MultiValueDictKeyError, ValueError) as e:
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,
@@ -128,7 +261,7 @@ def microsoft_translator(request):
 
     try:
         return JsonResponse(
-            {"translation": get_microsoft_translator_data(text, locale_code)}
+            {"translation": get_microsoft_translator_data(text, locale)}
         )
     except Exception as e:
         return _machinery_error_response("Microsoft Translator", e)

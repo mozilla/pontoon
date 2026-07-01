@@ -31,6 +31,7 @@ from pontoon.base.models import (
 )
 from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
+from pontoon.sync.formats import value_from_string
 from pontoon.terminology.models import (
     Term,
     TermTranslation,
@@ -523,11 +524,21 @@ class PretranslationView(APIView):
 
         locale = generics.get_object_or_404(Locale, code=locale)
 
+        fmt = resource_format or None
         project = SimpleNamespace(slug="temp-project")
-        resource = SimpleNamespace(project=project, format=resource_format or None)
-        entity = SimpleNamespace(resource=resource, string=text)
+        resource = SimpleNamespace(project=project, format=fmt)
 
         try:
+            # Parsing happens here (not before) so invalid syntax for the chosen
+            # format is reported as a 400 rather than escaping as a 500.
+            key, value, properties = value_from_string(fmt, text)
+            entity = SimpleNamespace(
+                resource=resource,
+                string=text,
+                key=key,
+                value=value,
+                properties=properties,
+            )
             pretranslation = get_pretranslation(entity=entity, locale=locale)
         except Exception as e:
             return Response(
