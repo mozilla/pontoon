@@ -42,7 +42,7 @@ function editablePlaceholder(part: Expression | Markup): string {
     if (part.opt) {
       for (const [name, val] of Object.entries(part.opt)) {
         const opt = typeof val === 'string' ? JSON.stringify(val) : '$' + val.$;
-        str += ` ${name}=${opt}}`;
+        str += ` ${name}=${opt}`;
       }
     }
     return str + (part.open ? '>' : ' />');
