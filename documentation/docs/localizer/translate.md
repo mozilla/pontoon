@@ -70,7 +70,7 @@ Certain types of checks reported by the Translate Toolkit library may result in 
 
 Mass actions can be performed on multiple strings at once by clicking on the square to the left of any string in the sidebar. When clicked, the square will show a checkmark and the editing space will show the mass action panel. Note that mass actions are only available to users with [translator permissions](users.md#user-roles).
 
-![Mass action window](../assets/localizer/translate/batch_actions.png)
+![Mass action window](../assets/localizer/translate/batch_actions.png "Screenshot of the mass action panel for performing batch actions on strings")
 
 To select a range of strings, select the first one and hold `SHIFT`, then select the last one. To select all strings, click `SELECT ALL` on the top-right of the mass action panel. The number of selected strings will appear on the top-left, next to the Exit icon.
 
@@ -87,7 +87,7 @@ In the COPY FROM ANOTHER LOCALE section, the user can select a locale and click 
 
 Pontoon provides the ability to download and upload translations, including [terminology](glossary.md#terminology) and [translation memories](glossary.md#translation-memory). To access these features, click on the profile icon in the top-right corner of any page. Note that the user must be in the translation workspace for the download/upload options to be displayed in the dropdown menu.
 
-![Profile dropdown menu](../assets/localizer/translate/profile_menu.png)
+![Profile dropdown menu](../assets/localizer/translate/profile_menu.png "Screenshot of the profile dropdown menu with download and upload options")
 
 Anyone can download terminology (`.tbx`), translation memory (`.tmx`) and translations, while only users with translator permissions can upload translations. When downloading translations:
 

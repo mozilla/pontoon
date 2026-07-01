@@ -103,7 +103,7 @@ For each tag, it’s possible to define:
 * *Slug*: used in URLs for tag dashboards, e.g. `/projects/firefox/tags/devtools/`.
 * *Priority*: like for a project, it’s possible to select a priority level from one of the 5 levels available (Lowest, Low, Normal, High, Highest).
 
-![Tags resources](../assets/admin/manage_tags_resources.png)
+![Tags resources](../assets/admin/manage_tags_resources.png "Screenshot of the interface for managing resources associated with a tag")
 
 Once you’ve created a new tag, you need to save the project in order to be able to manage the resources associated to the tag itself, using the button highlighted in green.
 

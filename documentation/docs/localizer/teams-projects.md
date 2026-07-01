@@ -9,7 +9,7 @@ There is also a special Localization page that allows access to all resources fo
 
 The following diagram shows how these pages are organized and connected to each other:
 
-![Team and project pages flow](../assets/localizer/teams-projects/page_flow.png)
+![Team and project pages flow](../assets/localizer/teams-projects/page_flow.png "Diagram showing how the Teams, Projects, and Localization pages are connected")
 
 ## Teams
 
@@ -23,7 +23,7 @@ Access a specific team’s page by selecting it from the Teams page or by append
 
 The page header contains linguistic information about the current locale (plural form, writing direction, etc.), plus an indication of the overall status of completion and statistics. The statistics displayed in the rightmost column are active links to access the [translation workspace](translation-workspace.md) for all projects. For example, select `ALL STRINGS` to show all the strings for all projects enabled for a specific locale in Pontoon, or select `MISSING` to filter for all strings missing translations.
 
-![Header of team page for Italian](../assets/localizer/teams-projects/team_page_header.png)
+![Header of team page for Italian](../assets/localizer/teams-projects/team_page_header.png "Screenshot of the team page header for Italian")
 
 Underneath the header, the following tabs are available to navigate between various Team page panels:
 
@@ -41,13 +41,13 @@ Hovering a project in the Projects list will replace the progress bar with a set
 
 The rightmost column in the table will display a blue lightbulb icon if there are unreviewed translations. Note: clicking the lightbulb icon in the table header can be used to sort projects based on the number of unreviewed translations.
 
-![Project hover](../assets/localizer/teams-projects/project_hover.png)
+![Project hover](../assets/localizer/teams-projects/project_hover.png "Screenshot of the detailed statistics shown when hovering a project in the Projects list")
 
 ### Requesting a project
 
 It’s possible to request a project from a Team page. Note that this is a request to add the locale to a project already available in Pontoon, it can’t be used for requesting a brand new project.
 
-![Request a project](../assets/localizer/teams-projects/request_project.png)
+![Request a project](../assets/localizer/teams-projects/request_project.png "Screenshot of the request a project interface on a team page")
 
 The button is hidden if all available projects are already enabled for the locale.
 
@@ -62,7 +62,7 @@ An email will be sent to Pontoon’s administrators, and the Project manager in 
 
 For [locales supported by Google AutoML Translation](https://cloud.google.com/translate/automl/docs/languages), it’s possible to request to enable [pretranslation](glossary.md#pretranslation) for specific projects from a Team page.
 
-![Request pretranslation](../assets/localizer/teams-projects/request_pretranslation.png)
+![Request pretranslation](../assets/localizer/teams-projects/request_pretranslation.png "Screenshot of the request pretranslation interface on a team page")
 
 The button is only displayed to translators and team managers for the locale.
 
@@ -77,7 +77,7 @@ An email will be sent to Pontoon’s administrators, and they will act on the re
 
 The TM ([translation memory](glossary.md#translation-memory)) tab lists all TM entries for the team. A source string and translation are provided for each entry, which upon clicking leads to the [translation workspace](translation-workspace.md) for the corresponding strings. Entries are only shown once for each unique combination of source string and translation. TM entries can be searched by source string or translation using the `Search` field.
 
-![TM Tab](../assets/localizer/teams-projects/tm_tab.png)
+![TM Tab](../assets/localizer/teams-projects/tm_tab.png "Screenshot of the translation memory (TM) tab")
 
 The following actions are available:
 
@@ -105,7 +105,7 @@ The page header contains useful information about the current project:
 
 It also includes an indication of the overall status of completion and statistics across all enabled languages.
 
-![Header of project page for Mozilla.org](../assets/localizer/teams-projects/project_page_header.png)
+![Header of project page for Mozilla.org](../assets/localizer/teams-projects/project_page_header.png "Screenshot of the project page header for Mozilla.org")
 
 Underneath the header, the following tabs are available to navigate between various Team page panels:
 
@@ -121,7 +121,7 @@ By default, the Teams tab opens, showing a list of all locales enabled for the p
 
 It’s possible to request an additional locale for some projects from its Project page.
 
-![Request a project](../assets/localizer/teams-projects/request_locale.png)
+![Request a locale](../assets/localizer/teams-projects/request_locale.png "Screenshot of the request a new language interface on a project page")
 
 Click on `REQUEST NEW LANGUAGE`, select the locale to add and then click `REQUEST NEW LANGUAGE`.
 
@@ -136,7 +136,7 @@ Access a project’s Localization page in two ways:
 
 The page header contains useful information about the current project (same as the [Project page](#project-page)).
 
-![Header of localization page](../assets/localizer/teams-projects/localization_page_header.png)
+![Header of localization page](../assets/localizer/teams-projects/localization_page_header.png "Screenshot of the localization page header")
 
 Underneath the header, the following tabs are available to navigate between various Team page panels:
 

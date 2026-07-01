@@ -149,7 +149,7 @@ A Team Manager can upgrade other users’ permissions within a locale. To manage
 
 By default there’s only a `General` section: permissions defined here will apply to all projects, but can be overridden by custom project permissions.
 
-![General locale permissions](../assets/localizer/users/permissions_general.png)
+![General locale permissions](../assets/localizer/users/permissions_general.png "Screenshot of the general locale permissions panel")
 
 To move a user to a different column, hover the email address: arrows will appear to move the element to the left or right. Note that a user needs to log in at least once in Pontoon in order to upgrade their permission – simply having an account is not sufficient.
 
@@ -159,7 +159,7 @@ By default, the `TEAM CONTRIBUTORS` column will only include users that have alr
 
 By clicking `ADD CUSTOM PERMISSIONS PER PROJECT` (highlighted in orange), it’s possible to add specific permissions for a project. This can be useful to make sure that only some users can submit translations for a specific project, for example if it’s maintained by one person.
 
-![Project permissions](../assets/localizer/users/permissions_project.png)
+![Project permissions](../assets/localizer/users/permissions_project.png "Screenshot of the custom project permissions panel")
 
 Note that:
 
