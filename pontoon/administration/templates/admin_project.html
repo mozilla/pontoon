@@ -54,7 +54,24 @@
 
     <h3>Locales</h3>
 
-    <div class="locales clearfix">
+    <div class="repo-locale-control checkbox clearfix">
+      <label for="id_set_locales_from_repo">
+        {{ form.set_locales_from_repo }}
+        <span></span>
+      </label>
+    </div>
+
+    <div
+      class="repo-locale-control checkbox clearfix"
+      id="translated_resources_from_repo"
+      style="display: none"
+    >
+      <label for="id_set_translated_resources_from_repo">
+        {{ form.set_translated_resources_from_repo }}
+      </label>
+    </div>
+
+    <div class="locales clearfix" style="display: none">
       {{ admin_team_selector.render(locales_available, locales_selected, locales_readonly) }}
       {{ form.locales }}
       {{ form.locales.errors }}

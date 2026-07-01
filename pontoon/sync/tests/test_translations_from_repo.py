@@ -358,6 +358,8 @@ def test_remove_po_target_resource():
             name="test-rm-po",
             locales=[locale],
             repositories=[repo],
+            set_locales_from_repo=True,
+            set_translated_resources_from_repo=True,
             visibility="public",
         )
         res = {}

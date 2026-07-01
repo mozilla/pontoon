@@ -237,6 +237,27 @@ class Project(models.Model, AggregatedStats):
         """,
     )
 
+    set_locales_from_repo = models.BooleanField(
+        default=False,
+        help_text="""
+        Control target locales by their directories' presence in the target repository,
+        or in the root locales config if `configuration_file` is not None.
+        """,
+    )
+
+    set_translated_resources_from_repo = models.BooleanField(
+        default=False,
+        help_text="""
+        If `set_locales_from_repo` is True and `configuration_file` is None,
+        setting `set_translated_resources_from_repo` to True will
+        control the availability of each resource for translation in each locale
+        according to the presence of a file (even if empty) at its expected target path.
+
+        If `set_locales_from_repo` is False or `configuration_file` is not None,
+        this control has no effect.
+        """,
+    )
+
     objects = ProjectQuerySet.as_manager()
 
     project_locale: "ProjectLocaleQuerySet"

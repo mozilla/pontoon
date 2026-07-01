@@ -17,6 +17,7 @@ from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
     Locale,
+    ProjectLocale,
     Repository,
     TranslatedResource,
     Translation,
@@ -242,7 +243,11 @@ def test_add_resources():
         assert {
             (tr.resource.path, tr.locale.code)
             for tr in TranslatedResource.objects.filter(resource__project=project)
-        } == {("file.ftl", "de-Test"), ("file.xliff", "de-Test")}
+        } == {
+            ("file.ftl", "de-Test"),
+            ("file.po", "de-Test"),
+            ("file.xliff", "de-Test"),
+        }
 
         # Add an XLIFF translation
         TranslationFactory.create(
@@ -844,6 +849,85 @@ def test_add_project_locale():
         # After which the next sync should update the new locale's translated resources.
         sync_project_task(project.pk)
 
+        assert {
+            tr.locale.code: tr.total_strings
+            for tr in TranslatedResource.objects.filter(resource__project=project)
+        } == {"fr-Test": 1, "de-Test": 1}
+
+
+@pytest.mark.django_db
+def test_locales_from_repo():
+    mock_vcs = MockVersionControl(changed=[])
+    with mock_setup(mock_vcs) as (repo, _):
+        LocaleFactory.create(code="fr-Test", name="Test French")
+
+        # Database setup
+        project = ProjectFactory.create(
+            name="test-repo-locales",
+            locales=[],
+            repositories=[repo],
+            set_locales_from_repo=True,
+            system_project=False,
+        )
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"messages.json": '{ "key": { "message": "Entity" } }'},
+                "de-Test": {"messages.json": "{}"},
+                "fr-Test": {"messages.json": "{}"},
+            },
+        )
+
+        sync_project_task(project.pk)
+
+        assert {
+            pl.locale.code for pl in ProjectLocale.objects.filter(project=project)
+        } == {"de-Test", "fr-Test"}
+        assert {
+            tr.locale.code: tr.total_strings
+            for tr in TranslatedResource.objects.filter(resource__project=project)
+        } == {"fr-Test": 1, "de-Test": 1}
+
+
+@pytest.mark.django_db
+def test_locales_from_config():
+    mock_vcs = MockVersionControl(changed=[])
+    with mock_setup(mock_vcs) as (repo, _):
+        LocaleFactory.create(code="fr-Test", name="Test French")
+
+        # Database setup
+        project = ProjectFactory.create(
+            name="test-config-locales",
+            configuration_file="l10n.toml",
+            locales=[],
+            repositories=[repo],
+            set_locales_from_repo=True,
+            system_project=False,
+        )
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "foo": {"en": {"messages.json": '{ "key": { "message": "Entity" } }'}},
+                "l10n.toml": dedent("""\
+                    locales = ["de-Test", "fr-Test"]
+                    [[paths]]
+                        reference = "foo/en/**"
+                        l10n = "foo/{locale}/**"
+                    """),
+            },
+        )
+
+        sync_project_task(project.pk)
+
+        assert {
+            pl.locale.code for pl in ProjectLocale.objects.filter(project=project)
+        } == {"de-Test", "fr-Test"}
         assert {
             tr.locale.code: tr.total_strings
             for tr in TranslatedResource.objects.filter(resource__project=project)

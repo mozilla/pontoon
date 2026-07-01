@@ -178,10 +178,18 @@ form a:visited {
   margin: 5px 9px;
 }
 
+.controls .save {
+  width: 150px !important;
+}
+
 .controls .checkbox {
   float: left;
   margin: -1px 20px 0 0;
   text-transform: uppercase;
+}
+
+.locales {
+  margin-top: 40px;
 }
 
 .double-list-selector .locale.select .menu {
