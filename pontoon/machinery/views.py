@@ -31,15 +31,6 @@ from pontoon.terminology.models import Term
 from .openai_service import OpenAIService
 
 
-# Map machinery `service` query param to the locale attribute that indicates whether
-# the locale supports the MT service, used by the composed-translation view.
-# `translation-memory` is special-cased to mean "TM-only, no MT fallback".
-COMPOSED_MT_SERVICES = {
-    "google-translate": "google_translate_code",
-    "microsoft-translator": "ms_translator_code",
-}
-
-
 log = logging.getLogger(__name__)
 
 
@@ -120,26 +111,33 @@ def machinery_composed(request):
             {"status": False, "message": f"Bad Request: {e}"}, status=400
         )
 
-    if service == "translation-memory":
-        # TM-only: no MT service is called (mt_supported=False).
-        mt_service = None
-        mt_service_name = "tm"
-        mt_supported = False
-    elif service in COMPOSED_MT_SERVICES:
-        if not request.user.is_authenticated:
-            return JsonResponse(
-                {"status": False, "message": "Authentication required"}, status=403
-            )
-        if service == "google-translate":
+    match service:
+        case "translation-memory":
+            # TM-only: no MT service is called (mt_supported=False).
+            mt_service = None
+            mt_service_name = "tm"
+            mt_supported = False
+        case "google-translate":
             mt_service = get_google_translate_data
-        else:
+            mt_service_name = service
+            mt_supported = bool(locale.google_translate_code)
+        case "microsoft-translator":
             mt_service = get_microsoft_translator_data
-        mt_service_name = service
-        mt_supported = bool(getattr(locale, COMPOSED_MT_SERVICES[service], None))
-    else:
+            mt_service_name = service
+            mt_supported = bool(locale.ms_translator_code)
+        case _:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": f"Bad Request: unknown service `{service}`",
+                },
+                status=400,
+            )
+
+    # MT services call an external provider; translation-memory is anonymous-friendly.
+    if mt_service is not None and not request.user.is_authenticated:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: unknown service `{service}`"},
-            status=400,
+            {"status": False, "message": "Authentication required"}, status=403
         )
 
     # Only multi-pattern messages — those with multiple properties and/or
