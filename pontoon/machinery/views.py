@@ -29,22 +29,12 @@ from pontoon.terminology.models import Term
 from .openai_service import OpenAIService
 
 
-# Map machinery `service` query param to the (mt_service, locale-support attr) pair
-# used by the composed-translation view. `translation-memory` is special-cased to mean
-# "TM-only, no MT fallback".
+# Map machinery `service` query param to the locale attribute that indicates whether
+# the locale supports the MT service, used by the composed-translation view.
+# `translation-memory` is special-cased to mean "TM-only, no MT fallback".
 COMPOSED_MT_SERVICES = {
-    "google-translate": (
-        lambda text, locale, preserve_placeables: get_google_translate_data(
-            text=text, locale=locale, preserve_placeables=preserve_placeables
-        ),
-        "google_translate_code",
-    ),
-    "microsoft-translator": (
-        lambda text, locale, preserve_placeables: get_microsoft_translator_data(
-            text, locale.ms_translator_code
-        ),
-        "ms_translator_code",
-    ),
+    "google-translate": "google_translate_code",
+    "microsoft-translator": "ms_translator_code",
 }
 
 
@@ -141,9 +131,12 @@ def machinery_composed(request):
             return JsonResponse(
                 {"status": False, "message": "Authentication required"}, status=403
             )
-        mt_service, locale_attr = COMPOSED_MT_SERVICES[service]
+        if service == "google-translate":
+            mt_service = get_google_translate_data
+        else:
+            mt_service = get_microsoft_translator_data
         mt_service_name = service
-        mt_supported = bool(getattr(locale, locale_attr, None))
+        mt_supported = bool(getattr(locale, COMPOSED_MT_SERVICES[service], None))
     else:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: unknown service `{service}`"},
@@ -246,12 +239,12 @@ def microsoft_translator(request):
     """Get translation from Microsoft machine translation service."""
     try:
         text = request.GET["text"]
-        locale_code = request.GET["locale"]
+        locale = Locale.objects.get(code=request.GET["locale"])
 
-        if not locale_code:
-            raise ValueError("Locale code is empty")
+        if not locale.ms_translator_code:
+            raise ValueError("Locale code not supported")
 
-    except (MultiValueDictKeyError, ValueError) as e:
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,
@@ -259,7 +252,7 @@ def microsoft_translator(request):
 
     try:
         return JsonResponse(
-            {"translation": get_microsoft_translator_data(text, locale_code)}
+            {"translation": get_microsoft_translator_data(text, locale)}
         )
     except Exception as e:
         return _machinery_error_response("Microsoft Translator", e)

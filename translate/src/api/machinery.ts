@@ -258,7 +258,7 @@ export async function fetchMicrosoftTranslation(
   const url = '/microsoft-translator/';
   const params = {
     text: original,
-    locale: locale.msTranslatorCode,
+    locale: locale.code,
   };
 
   const { translation } = (await GET_(url, params)) as {
