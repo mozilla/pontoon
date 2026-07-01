@@ -211,7 +211,7 @@ describe('getPlainMessage', () => {
       expect(getPlainMessage(entry)).toEqual('a = {$b}');
     });
 
-    it('open/close tags', () => {
+    it('works with open/close tags', () => {
       const message =
         'Go to {#a href=open-account}Create password{/a} in settings.';
       const entry = parseEntry('android', message)!;
