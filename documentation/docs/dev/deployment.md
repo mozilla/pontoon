@@ -494,6 +494,19 @@ the day, every day.
 ./manage.py collect_insights
 ```
 
+### Collect Community Health Score Snapshots
+
+Captures per-locale Community Health Score (CHS) metrics—including completion, 
+enabled key projects, active managers, translators, contributors, and new signups—
+and stores them in the `LocaleHealthSnapshot` model. 
+These metrics are used by the Insights dashboard and related pages 
+to provide month-over-month CHS comparisons and monthly trend charts. 
+The job is designed to run once a month, on the first day of each month.
+
+``` bash
+./manage.py collect_chs_snapshots
+```
+
 ### Warm up cache
 
 We cache data for some of the views (e.g. Contributors) for a day. Some

@@ -1,6 +1,6 @@
 import pytest
 
-from pontoon.base.user_utils import gravatar_url, user_banner
+from pontoon.base.user_utils import avatar_url, user_banner
 from pontoon.test.factories import ProjectFactory
 
 
@@ -14,7 +14,7 @@ def test_serialize_comments(comment_a, team_comment_a):
         "user_banner": user_banner(
             comment_a.author, comment_a.translation.locale, project.contact
         ),
-        "user_gravatar_url_small": gravatar_url(comment_a.author),
+        "user_gravatar_url_small": avatar_url(comment_a.author),
         "created_at": comment_a.timestamp.strftime("%b %d, %Y %H:%M"),
         "date_iso": comment_a.timestamp.isoformat(),
         "content": comment_a.content,
@@ -28,7 +28,7 @@ def test_serialize_comments(comment_a, team_comment_a):
         "user_banner": user_banner(
             team_comment_a.author, team_comment_a.locale, project.contact
         ),
-        "user_gravatar_url_small": gravatar_url(team_comment_a.author),
+        "user_gravatar_url_small": avatar_url(team_comment_a.author),
         "created_at": team_comment_a.timestamp.strftime("%b %d, %Y %H:%M"),
         "date_iso": team_comment_a.timestamp.isoformat(),
         "content": team_comment_a.content,

@@ -63,7 +63,7 @@ When a string is selected in the sidebar, a small icon with four arrows is displ
 
 It’s possible to search within the currently selected project using the search field. Searches include strings and string IDs.
 
-![Search field](../assets/localizer/translation-workspace/search_field.png)
+![Search field](../assets/localizer/translation-workspace/search_field.png "Screenshot of the search field at the top of the string list")
 
 Note that searches take active [filters](#filters) into account, for example a search would be performed only on missing strings if that filter was previously selected.
 
@@ -75,7 +75,7 @@ To search for an exact match, wrap the search terms in double quotes, e.g. `"new
 
 In addition to the search filters listed below, Pontoon provides additional **search options**, allowing users to refine search results. Search options can be accessed by clicking the magnifying glass icon on the right side of the search box.
 
-![Options](../assets/localizer/translation-workspace/options.png)
+![Options](../assets/localizer/translation-workspace/options.png "Screenshot of the search options panel")
 
 Search options include:
 
@@ -114,7 +114,7 @@ In addition to statuses, additional filters can be used to further refine the li
 
 Filters can be accessed by clicking the icon on the left of the search field.
 
-![Filters](../assets/localizer/translation-workspace/filters.png)
+![Filters](../assets/localizer/translation-workspace/filters.png "Screenshot of the filters panel")
 
 At this point it’s possible to:
 
@@ -122,7 +122,7 @@ At this point it’s possible to:
 * Click on one or more filter icons or user avatars (multiple filters can be applied at once). Hovering over the icons transforms the icon into check marks. Clicking an icon will select that filter and a new button `APPLY X FILTERS` will appear at the bottom of the panel, where `X` is the number of active filters.
 * Click `EDIT RANGE` on `TRANSLATION TIME` to select a time range. Pick one of the defaults (30 days, 7 days, 24 hours, 60 minutes), or use the date picker (or slider) to adapt the range. Click on `SAVE RANGE` to store the range as a filter. A new button `APPLY X FILTERS` will appear at the bottom of the panel, where `X` is the number of active filters.
 
-![Multiple filters](../assets/localizer/translation-workspace/filters_multiple.png)
+![Multiple filters](../assets/localizer/translation-workspace/filters_multiple.png "Screenshot of the filters panel with multiple filters selected")
 
 In this case 3 filters are selected.
 
@@ -130,7 +130,7 @@ In this case 3 filters are selected.
 
 For specific projects it’s also possible to filter strings based on *tags*. Tags are used to logically group resources based on their priority, allowing localizers to focus their work on important strings first, and project managers to better assess the overall localization status of the project.
 
-![Tags in filters](../assets/localizer/translation-workspace/filters_tags.png)
+![Tags in filters](../assets/localizer/translation-workspace/filters_tags.png "Screenshot of the filters panel showing the tags available for the project")
 
 In this case, there are 10 tags defined for the project (highlighted in red). Near each tag there is a representation of the priority: like for projects, it goes from 5 stars (highest priority) to 1 star (lowest priority).
 
@@ -155,7 +155,7 @@ In the same area, the `REQUEST CONTEXT or REPORT ISSUE` button can be used to re
 
 Sometimes you may want to investigate more context about a particular string through an external resource such as a [Version Control System](glossary.md#version-control-system). The `CONTEXT` information provided underneath the source string shows the identifier, file, and project for the string — allowing you to find the string within the codebase of the project. For example, for some Mozilla projects these can be used to [track strings to bugs](https://mozilla-l10n.github.io/localizer-documentation/tools/mercurial/tracking_back_string_to_bug.html).
 
-![Context](../assets/localizer/translation-workspace/context.png)
+![Context](../assets/localizer/translation-workspace/context.png "Screenshot of the context information shown below the source string")
 
 ### Editor
 
@@ -233,7 +233,7 @@ If there is already a comment associated with a string, the button will display 
 
 The `DIFF` option appears if there are multiple translations for one string. Toggling `DIFF` compares the text to the current approved translation, or the most recent suggestion if no translation has been approved yet. Text highlighted in green indicates content that has been added, while strikethrough text in red indicates removed content. Toggling `DIFF` again will display the original string.
 
-![Diff for suggestions](../assets/localizer/translation-workspace/suggestions_diff.png)
+![Diff for suggestions](../assets/localizer/translation-workspace/suggestions_diff.png "Screenshot of the diff view comparing a suggestion to the approved translation")
 
 ## Fluent - FTL files
 
@@ -288,7 +288,7 @@ In addition, the user has the ability to search for translations containing word
 
 In the tab, the number of entries is visible alongside the `MACHINERY` title in white. If any of the machinery matches are from translation memory, the number of matches will appear separately in green. For example, the screenshot below shows `2+1`, where the green `2` represents the two matches from translation memory and the `1` represents a machinery entry from Google Translate.
 
-![Machinery tab](../assets/localizer/translation-workspace/machinery.png)
+![Machinery tab](../assets/localizer/translation-workspace/machinery.png "Screenshot of the Machinery tab showing translation suggestions")
 
 At the top of each entry, a diff view compares the current source string and the source string from the machinery entry. Strikethrough text highlighted in red indicates text that is present in the source string but not in the machinery source string, while text highlighted in green indicates text available only in the machinery source string.
 
@@ -316,13 +316,13 @@ After selecting an option, the revised translation will replace the original sug
 
 Concordance search allows users to search across all projects in Pontoon. Users can search for translations using strings in either source or target language. Matching results are displayed with the source string, translation, and project name; clicking a result will automatically fill the translation into the editor. Note that the search does not need to be related to the current string or project.
 
-![Concordance search](../assets/localizer/translation-workspace/concordance_search.png)
+![Concordance search](../assets/localizer/translation-workspace/concordance_search.png "Screenshot of concordance search results across projects")
 
 ### Locales
 
 The locales tab shows approved translations from Pontoon projects in other [locales](glossary.md#locale).
 
-![Locales tab](../assets/localizer/translation-workspace/locales.png)
+![Locales tab](../assets/localizer/translation-workspace/locales.png "Screenshot of the Locales tab showing translations in other locales")
 
 Next to the `LOCALES` title, the number of available entries is visible. The number for preferred locales is green, while the number for all other locales is in gray.
 

@@ -1,7 +1,15 @@
 import pytest
 
+from allauth.socialaccount.models import SocialAccount
+
 from pontoon.base.models.user import User
-from pontoon.base.user_utils import user_banner, user_locale_role, user_role
+from pontoon.base.user_utils import (
+    avatar_url,
+    fxa_avatar_url,
+    user_banner,
+    user_locale_role,
+    user_role,
+)
 
 
 @pytest.mark.django_db
@@ -91,3 +99,90 @@ def test_user_banner(user_a, user_b, user_c, user_d, gt_user, locale_a, project_
     # System user (Google Translate)
     project_contact = gt_user
     assert user_banner(gt_user, locale_a, project_contact)[1] == ""
+
+
+@pytest.mark.django_db
+def test_gravatar_url_returns_fxa_avatar_when_linked(user_a):
+    SocialAccount.objects.create(
+        user=user_a,
+        provider="fxa",
+        uid="1234",
+        extra_data={"avatar": "https://profile.accounts.firefox.com/v1/avatar/abc"},
+    )
+    assert avatar_url(user_a) == "https://profile.accounts.firefox.com/v1/avatar/abc"
+
+
+@pytest.mark.django_db
+def test_gravatar_url_falls_back_to_gravatar_when_no_fxa(user_a):
+    url = avatar_url(user_a)
+    assert "gravatar.com/avatar/" in url
+
+
+@pytest.mark.django_db
+def test_gravatar_url_falls_back_to_gravatar_when_fxa_has_no_avatar(user_a):
+    SocialAccount.objects.create(
+        user=user_a,
+        provider="fxa",
+        uid="1234",
+        extra_data={},
+    )
+    url = avatar_url(user_a)
+    assert "gravatar.com/avatar/" in url
+
+
+@pytest.mark.django_db
+def test_fxa_avatar_returns_none_for_unsaved_user():
+    user = User(username="unsaved", email="unsaved@example.com")
+    assert fxa_avatar_url(user) is None
+
+
+@pytest.mark.django_db
+def test_fxa_avatar_returns_url_from_db(user_a):
+    SocialAccount.objects.create(
+        user=user_a,
+        provider="fxa",
+        uid="1234",
+        extra_data={"avatar": "https://profile.accounts.firefox.com/v1/avatar/abc"},
+    )
+    assert (
+        fxa_avatar_url(user_a) == "https://profile.accounts.firefox.com/v1/avatar/abc"
+    )
+
+
+@pytest.mark.django_db
+def test_fxa_avatar_returns_none_when_no_fxa_account(user_a):
+    assert fxa_avatar_url(user_a) is None
+
+
+@pytest.mark.django_db
+def test_fxa_avatar_returns_none_when_fxa_has_no_avatar(user_a):
+    SocialAccount.objects.create(
+        user=user_a,
+        provider="fxa",
+        uid="1234",
+        extra_data={},
+    )
+    assert fxa_avatar_url(user_a) is None
+
+
+@pytest.mark.django_db
+def test_fxa_avatar_uses_prefetched_accounts(user_a):
+    account = SocialAccount(
+        user=user_a,
+        provider="fxa",
+        uid="1234",
+        extra_data={
+            "avatar": "https://profile.accounts.firefox.com/v1/avatar/prefetched"
+        },
+    )
+    user_a._prefetched_fxa_accounts = [account]
+    assert (
+        fxa_avatar_url(user_a)
+        == "https://profile.accounts.firefox.com/v1/avatar/prefetched"
+    )
+
+
+@pytest.mark.django_db
+def test_fxa_avatar_uses_prefetched_accounts_when_empty(user_a):
+    user_a._prefetched_fxa_accounts = []
+    assert fxa_avatar_url(user_a) is None

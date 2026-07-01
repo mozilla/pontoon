@@ -317,7 +317,7 @@ class EntityIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
                     "translation_set",
                     queryset=Translation.objects.filter(approved=True)
                     .select_related("locale")
-                    .order_by("locale__name"),
+                    .order_by("locale__code"),
                     to_attr="filtered_translations",
                 )
             )

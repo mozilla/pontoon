@@ -460,8 +460,12 @@ PIPELINE_CSS = {
     },
     "insights": {
         "source_filenames": (
+            "css/heading_info.css",
+            "css/table.css",
+            "css/multiple_item_selector.css",
             "css/insights_charts.css",
             "css/insights.css",
+            "css/config.css",
         ),
         "output_filename": "css/insights.min.css",
     },
@@ -619,6 +623,8 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/chart.umd.min.js",
             "js/lib/chartjs-adapter-date-fns.bundle.min.js",
+            "js/table.js",
+            "js/multiple_item_selector.js",
             "js/insights_charts.js",
             "js/insights.js",
         ),
@@ -1201,31 +1207,38 @@ NOTIFICATIONS_MAX_COUNT = 7
 # Integer representing a day of the week on which the `send_suggestion_notifications`
 # management command will run. 0 represents Monday, 6 represents Sunday. The default
 # value is 4 (Friday).
-SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
+SUGGESTION_NOTIFICATIONS_DAY = int(os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4))
 
 # Integer representing a day of the week on which the weekly notification digest
 # email will be sent. 0 represents Monday, 6 represents Sunday. The default value
 # is 4 (Friday).
-NOTIFICATION_DIGEST_DAY = os.environ.get("NOTIFICATION_DIGEST_DAY", 4)
+NOTIFICATION_DIGEST_DAY = int(os.environ.get("NOTIFICATION_DIGEST_DAY", 4))
 
 # Integer representing a day of the month on which the Monthly activity summary
 # email will be sent.
-MONTHLY_ACTIVITY_SUMMARY_DAY = os.environ.get("MONTHLY_ACTIVITY_SUMMARY_DAY", 1)
+MONTHLY_ACTIVITY_SUMMARY_DAY = int(os.environ.get("MONTHLY_ACTIVITY_SUMMARY_DAY", 1))
+
+# Integer representing a day of the month on which the Community Health Score
+# snapshots are collected via collect_chs_snapshots().
+MONTHLY_CHS_SNAPSHOTS_DAY = int(os.environ.get("MONTHLY_CHS_SNAPSHOTS_DAY", 1))
+
 
 # Number of days after user registration to send the 2nd onboarding email
-ONBOARDING_EMAIL_2_DELAY = os.environ.get("ONBOARDING_EMAIL_2_DELAY", 2)
+ONBOARDING_EMAIL_2_DELAY = int(os.environ.get("ONBOARDING_EMAIL_2_DELAY", 2))
 
 # Number of days after user registration to send the 3rd onboarding email
-ONBOARDING_EMAIL_3_DELAY = os.environ.get("ONBOARDING_EMAIL_3_DELAY", 7)
+ONBOARDING_EMAIL_3_DELAY = int(os.environ.get("ONBOARDING_EMAIL_3_DELAY", 7))
 
 # Number of months in which the user has to be inactive to receive
 # the inactive account email
-INACTIVE_CONTRIBUTOR_PERIOD = os.environ.get("INACTIVE_CONTRIBUTOR_PERIOD", 6)
-INACTIVE_TRANSLATOR_PERIOD = os.environ.get("INACTIVE_TRANSLATOR_PERIOD", 2)
-INACTIVE_MANAGER_PERIOD = os.environ.get("INACTIVE_MANAGER_PERIOD", 2)
+INACTIVE_CONTRIBUTOR_PERIOD = int(os.environ.get("INACTIVE_CONTRIBUTOR_PERIOD", 6))
+INACTIVE_TRANSLATOR_PERIOD = int(os.environ.get("INACTIVE_TRANSLATOR_PERIOD", 2))
+INACTIVE_MANAGER_PERIOD = int(os.environ.get("INACTIVE_MANAGER_PERIOD", 2))
 
 # Maximum number of personal access tokens user can simultaneously use
-PERSONAL_ACCESS_TOKEN_MAX_COUNT = os.environ.get("PERSONAL_ACCESS_TOKEN_MAX_COUNT", 10)
+PERSONAL_ACCESS_TOKEN_MAX_COUNT = int(
+    os.environ.get("PERSONAL_ACCESS_TOKEN_MAX_COUNT", 10)
+)
 
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
@@ -1255,6 +1268,35 @@ BADGES_PROMOTION_THRESHOLDS = list(
     map(int, os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","))
 )
 
+# Used for Community Health Score calculations
+MANAGER_STRING_THRESHOLD = int(os.environ.get("MANAGER_STRING_THRESHOLD", 500))
+TRANSLATOR_STRING_THRESHOLD = int(os.environ.get("TRANSLATOR_STRING_THRESHOLD", 400))
+ACTIVE_CONTRIBUTOR_STRING_THRESHOLD = int(
+    os.environ.get("ACTIVE_CONTRIBUTOR_STRING_THRESHOLD", 200)
+)
+ALL_CONTRIBUTOR_STRING_THRESHOLD = int(
+    os.environ.get("ALL_CONTRIBUTOR_STRING_THRESHOLD", 200)
+)
+NEW_SIGNUP_STRING_THRESHOLD = int(os.environ.get("NEW_SIGNUP_STRING_THRESHOLD", 100))
+
+MANAGER_PEOPLE_THRESHOLD = int(os.environ.get("MANAGER_PEOPLE_THRESHOLD", 1))
+TRANSLATOR_PEOPLE_THRESHOLD = int(os.environ.get("TRANSLATOR_PEOPLE_THRESHOLD", 2))
+ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD = int(
+    os.environ.get("ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD", 2)
+)
+ALL_CONTRIBUTOR_PEOPLE_THRESHOLD = int(
+    os.environ.get("ALL_CONTRIBUTOR_PEOPLE_THRESHOLD", 2)
+)
+NEW_SIGNUP_PEOPLE_THRESHOLD = int(os.environ.get("NEW_SIGNUP_PEOPLE_THRESHOLD", 2))
+
+MANAGER_POINTS = float(os.environ.get("MANAGER_POINTS", 20.0))
+TRANSLATOR_POINTS = float(os.environ.get("TRANSLATOR_POINTS", 15.0))
+ACTIVE_CONTRIBUTOR_POINTS = float(os.environ.get("ACTIVE_CONTRIBUTOR_POINTS", 6.0))
+ALL_CONTRIBUTOR_POINTS = float(os.environ.get("ALL_CONTRIBUTOR_POINTS", 4.0))
+NEW_SIGNUP_POINTS = float(os.environ.get("NEW_SIGNUP_POINTS", 5.0))
+ENABLED_PROJECT_POINTS = float(os.environ.get("ENABLED_PROJECT_POINTS", 4.0))
+COMPLETION_POINTS = float(os.environ.get("COMPLETION_POINTS", 46.0))
+
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Used in the header of the Terminology (.TBX) files.
@@ -1281,4 +1323,4 @@ SPECTACULAR_SETTINGS = {
 }
 
 # Maximum length of input text allowed for pretranslation
-PRETRANSLATION_API_MAX_CHARS = os.environ.get("PRETRANSLATION_API_MAX_CHARS", 2048)
+PRETRANSLATION_API_MAX_CHARS = int(os.environ.get("PRETRANSLATION_API_MAX_CHARS", 2048))

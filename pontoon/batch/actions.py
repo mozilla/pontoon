@@ -1,13 +1,18 @@
+from django.db.models import QuerySet
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.models import (
+    Entity,
+    Locale,
     Translation,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
+from pontoon.translations.utils import parse_db_string_to_json
 
 
 def batch_action_template(form, user, translations, locale):
@@ -43,7 +48,7 @@ def batch_action_template(form, user, translations, locale):
     }
 
 
-def approve_translations(form, user, translations, locale):
+def approve_translations(user, locale: Locale, translations: TranslationQuerySet):
     """Approve a series of translations.
 
     For documentation, refer to the `batch_action_template` function.
@@ -115,7 +120,7 @@ def approve_translations(form, user, translations, locale):
     }
 
 
-def reject_translations(form, user, translations, locale):
+def reject_translations(user, locale: Locale, entities: QuerySet[Entity]):
     """Reject a series of translations.
 
     Note that this function doesn't use the `translations` parameter, as it
@@ -127,7 +132,7 @@ def reject_translations(form, user, translations, locale):
     """
     suggestions = Translation.objects.filter(
         locale=locale,
-        entity__pk__in=form.cleaned_data["entities"],
+        entity__in=entities,
         approved=False,
         rejected=False,
     )
@@ -146,7 +151,7 @@ def reject_translations(form, user, translations, locale):
             performed_by=user,
             translation=t,
         )
-        for t in translations
+        for t in suggestions
     ]
     ActionLog.objects.bulk_create(actions_to_log)
 
@@ -182,7 +187,9 @@ def reject_translations(form, user, translations, locale):
     }
 
 
-def replace_translations(form, user, translations, locale):
+def replace_translations(
+    user, locale: Locale, translations: TranslationQuerySet, find: str, replace: str
+):
     """Replace characters in a series of translations.
 
     Replaces all occurences of the content of the `find` parameter with the
@@ -191,9 +198,6 @@ def replace_translations(form, user, translations, locale):
     For documentation, refer to the `batch_action_template` function.
 
     """
-    find = form.cleaned_data["find"]
-    replace = form.cleaned_data["replace"]
-    latest_translation_pk = None
 
     (
         old_translations,
@@ -263,6 +267,128 @@ def replace_translations(form, user, translations, locale):
 
     changed_translation_pks = [c.pk for c in changed_translations]
 
+    latest_translation_pk = (
+        max(changed_translation_pks) if changed_translation_pks else None
+    )
+
+    return {
+        "count": count,
+        "translated_resources": translated_resources,
+        "changed_entities": changed_entities,
+        "latest_translation_pk": latest_translation_pk,
+        "changed_translation_pks": changed_translation_pks,
+        "invalid_translation_pks": invalid_translation_pks,
+        "badge_update": badge_update,
+    }
+
+
+def copy_translation_from_locale(
+    user, locale: Locale, entities: QuerySet[Entity], other_locale: str
+):
+    """
+    Copy translations approved in a source locale and add them as suggestions
+    in the target locale. Existing active translations in the target locale
+    are deactivated before the new suggestions are created.
+    """
+
+    other_locale_translations = list(
+        Translation.objects.filter(
+            locale__code=other_locale,
+            entity__in=entities,
+            approved=True,
+        )
+    )
+
+    before_level = badges_translation_level(user)
+
+    already_active_entity_pks = set(
+        Translation.objects.filter(
+            locale=locale,
+            entity__in=entities,
+            active=True,
+        ).values_list("entity__pk", flat=True)
+    )
+
+    # Translations to create in the current locale
+    translations_to_create = []
+
+    if not other_locale:
+        # Copy from other locale (entity.string directly)
+        for entity in entities:
+            value, properties = parse_db_string_to_json(
+                entity.resource.format, entity.string
+            )
+            translations_to_create.append(
+                Translation(
+                    locale=locale,
+                    entity=entity,
+                    string=entity.string,
+                    approved=False,
+                    rejected=False,
+                    fuzzy=False,
+                    active=entity.pk not in already_active_entity_pks,
+                    user=user,
+                    value=value,
+                    properties=properties,
+                )
+            )
+    else:
+        for t in other_locale_translations:
+            value, properties = parse_db_string_to_json(
+                t.entity.resource.format, t.string
+            )
+            translations_to_create.append(
+                Translation(
+                    locale=locale,
+                    entity=t.entity,
+                    string=t.string,
+                    approved=False,
+                    rejected=False,
+                    fuzzy=False,
+                    active=t.entity.pk not in already_active_entity_pks,
+                    user=user,
+                    value=value,
+                    properties=properties,
+                )
+            )
+
+    # Create new translations
+    changed_translations = Translation.objects.bulk_create(
+        translations_to_create,
+    )
+
+    # Requery translation to get PKs
+    changed_translations_qs = Translation.objects.filter(
+        pk__in=[t.pk for t in changed_translations]
+    )
+
+    count, translated_resources, changed_entities = utils.get_translations_info(
+        changed_translations_qs,
+        locale,
+    )
+
+    # Log creating actions
+    actions_to_log = [
+        ActionLog(
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            performed_by=user,
+            translation=t,
+        )
+        for t in changed_translations
+    ]
+    ActionLog.objects.bulk_create(actions_to_log)
+
+    # Send Translation Champion Badge notification information
+    after_level = badges_translation_level(user)
+    badge_update = {}
+    if after_level > before_level:
+        badge_update["level"] = after_level
+        badge_update["name"] = "Translation Champion"
+        send_badge_notification(user, badge_update["name"], badge_update["level"])
+
+    changed_translation_pks = [t.pk for t in changed_translations]
+
+    latest_translation_pk = None
     if changed_translation_pks:
         latest_translation_pk = max(changed_translation_pks)
 
@@ -272,7 +398,7 @@ def replace_translations(form, user, translations, locale):
         "changed_entities": changed_entities,
         "latest_translation_pk": latest_translation_pk,
         "changed_translation_pks": changed_translation_pks,
-        "invalid_translation_pks": invalid_translation_pks,
+        "invalid_translation_pks": [],
         "badge_update": badge_update,
     }
 
@@ -288,4 +414,5 @@ ACTIONS_FN_MAP = {
     "approve": approve_translations,
     "reject": reject_translations,
     "replace": replace_translations,
+    "copy_from_locale": copy_translation_from_locale,
 }

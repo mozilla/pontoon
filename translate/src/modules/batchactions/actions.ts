@@ -117,7 +117,7 @@ const updateUI =
 export const performAction =
   (
     location: Location,
-    action: 'approve' | 'reject' | 'replace',
+    action: 'approve' | 'reject' | 'replace' | 'copy_from_locale',
     entityIds: number[],
     showBadgeTooltip: (tooltip: {
       badgeName: string | null;
@@ -125,6 +125,7 @@ export const performAction =
     }) => void,
     find?: string,
     replace?: string,
+    otherLocale?: string,
   ) =>
   async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_BATCHACTIONS, source: action });
@@ -135,6 +136,7 @@ export const performAction =
       entityIds,
       find,
       replace,
+      otherLocale,
     );
 
     const response: ResponseType = {

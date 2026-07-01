@@ -2,13 +2,18 @@ import pytest
 
 from fluent.syntax import FluentParser, FluentSerializer
 
-from pontoon.base.models import Translation
-from pontoon.batch.utils import find_and_replace, ftl_find_and_replace
+from pontoon.base.models import Locale, Translation
+from pontoon.batch.actions import copy_translation_from_locale
+from pontoon.batch.utils import (
+    find_and_replace,
+    ftl_find_and_replace,
+)
 from pontoon.test.factories import (
     EntityFactory,
     ProjectFactory,
     ResourceFactory,
     TranslationFactory,
+    UserFactory,
 )
 
 
@@ -68,3 +73,102 @@ def test_ftl_find_and_replace_non_text_value(locale_a, user_a):
     assert len(translations) == 0
     assert translations_to_create == []
     assert translations_with_errors == []
+
+
+@pytest.mark.django_db
+def test_copy_from_another_locale():
+    """
+    Translations that are approved in another locale can be copied to the current locale as suggestions.
+    """
+
+    project = ProjectFactory(slug="project", name="Project")
+    resource = ResourceFactory(project=project, path="resource.ftl", format="fluent")
+    entity = EntityFactory(resource=resource, string="key = value")
+    target_locale = Locale.objects.get(code="en-ZA")
+    user = UserFactory()
+
+    source_locale = Locale.objects.get(code="en-GB")
+
+    TranslationFactory(
+        entity=entity, locale=source_locale, string="key = value", approved=True
+    )
+
+    copy_translation_from_locale(user, target_locale, [entity], "en-GB")
+    result = Translation.objects.filter(locale=target_locale, entity=entity)
+
+    # Assert a suggestion was created in the target locale
+    assert Translation.objects.filter(
+        locale=target_locale,
+        entity=entity,
+        approved=False,
+    ).exists()
+    assert result.count() == 1
+    assert not result.first().approved
+    assert result.first().string == "key = value"
+
+
+@pytest.mark.django_db
+def test_copy_from_another_locale_copies_all_strings():
+    """
+    Translations are copied for all selected strings, including those
+    that already have an active translation in the target locale.
+    """
+    project = ProjectFactory(slug="project3", name="Project3")
+    resource = ResourceFactory(project=project, path="resource.ftl", format="fluent")
+    entity1 = EntityFactory(resource=resource, string="key1 = value1")
+    entity2 = EntityFactory(resource=resource, string="key2 = value2")
+    target_locale = Locale.objects.get(code="en-ZA")
+    source_locale = Locale.objects.get(code="en-GB")
+    user = UserFactory()
+
+    TranslationFactory(
+        entity=entity1,
+        locale=target_locale,
+        string="old value",
+        approved=True,
+        active=True,
+    )
+
+    # Both entities have approved translations in the source locale
+    TranslationFactory(
+        entity=entity1, locale=source_locale, string="key1 = value1", approved=True
+    )
+    TranslationFactory(
+        entity=entity2, locale=source_locale, string="key2 = value2", approved=True
+    )
+
+    copy_translation_from_locale(user, target_locale, [entity1, entity2], "en-GB")
+
+    # entity1 already has an active translation - new suggestion should be active=False
+    assert (
+        Translation.objects.filter(
+            locale=target_locale,
+            entity=entity1,
+            string="key1 = value1",
+            approved=False,
+            active=False,
+        ).count()
+        == 1
+    )
+    # entity2 has no existing translation - new suggestion should be active=True
+    assert (
+        Translation.objects.filter(
+            locale=target_locale,
+            entity=entity2,
+            approved=False,
+            active=True,
+        ).count()
+        == 1
+    )
+
+    #  The old approved translation for entity1 should remain unchanged
+    assert (
+        Translation.objects.filter(
+            locale=target_locale,
+            string="old value",
+            entity=entity1,
+            approved=True,
+            active=True,
+        ).count()
+        == 1
+    )

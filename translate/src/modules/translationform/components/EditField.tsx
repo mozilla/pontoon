@@ -14,7 +14,7 @@ import React, {
 
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
-import { ThemeContext } from '~/context/Theme';
+import { editorThemeClass, ThemeContext } from '~/context/Theme';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { getExtensions, useKeyHandlers } from '../utils/editFieldExtensions';
@@ -127,15 +127,10 @@ export const EditField = memo(
         [view],
       );
 
-      const editorThemeClass =
-        editorTheme === 'dark' || editorTheme === 'light'
-          ? `${editorTheme}-theme`
-          : '';
-
       return (
         <div
           className={
-            [readOnly && 'readonly', editorThemeClass]
+            [readOnly && 'readonly', editorThemeClass(editorTheme)]
               .filter(Boolean)
               .join(' ') || undefined
           }

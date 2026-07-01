@@ -18,7 +18,9 @@ from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity, Locale, TranslatedResource, Translation
+from pontoon.insights.chs import build_chs_snapshots
 from pontoon.insights.models import (
+    LocaleHealthSnapshot,
     LocaleInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
 )
@@ -615,3 +617,15 @@ def get_active_users(
         "reviewers": len(active_reviewers & locale_reviewers),
         "contributors": len(active_contributors & locale_contributors),
     }
+
+
+@shared_task
+def collect_chs_snapshots():
+    """Collect monthly LocaleHealthSnapshots (CHS), one per available locale."""
+
+    log.info("Start collecting CHS snapshots...")
+
+    now = timezone.now()
+    snapshots = build_chs_snapshots()
+    LocaleHealthSnapshot.objects.bulk_create(snapshots, ignore_conflicts=True)
+    log.info(f"Collected CHS snapshots for {now}: {len(snapshots)} snapshots created.")

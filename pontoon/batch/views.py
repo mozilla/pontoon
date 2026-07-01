@@ -1,5 +1,7 @@
 import logging
 
+from typing import cast
+
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
@@ -11,14 +13,19 @@ from pontoon.base.models import (
     Locale,
     Project,
     TranslatedResource,
-    Translation,
     TranslationMemoryEntry,
 )
+from pontoon.base.models.translation import Translation, TranslationQuerySet
 from pontoon.base.services import readonly_exists
 from pontoon.base.user_utils import can_translate
 from pontoon.base.utils import require_AJAX
 from pontoon.batch import forms
-from pontoon.batch.actions import ACTIONS_FN_MAP
+from pontoon.batch.actions import (
+    approve_translations,
+    copy_translation_from_locale,
+    reject_translations,
+    replace_translations,
+)
 
 
 log = logging.getLogger(__name__)
@@ -78,6 +85,7 @@ def batch_edit_translations(request):
     # Also make sure projects are not enabled in read-only mode for a locale.
     projects_pk = entities.values_list("resource__project__pk", flat=True)
     projects = Project.objects.filter(pk__in=projects_pk.distinct())
+    user = request.user
 
     for project in projects:
         if not can_translate(request.user, project, locale) or readonly_exists(
@@ -91,20 +99,34 @@ def batch_edit_translations(request):
                 status=403,
             )
 
-    active_translations = Translation.objects.filter(
-        active=True,
-        locale=locale,
-        entity__in=entities,
+    translations = cast(
+        TranslationQuerySet,
+        Translation.objects.filter(active=True, locale=locale, entity__in=entities),
     )
 
     # Execute the actual action.
-    action_function = ACTIONS_FN_MAP[form.cleaned_data["action"]]
-    action_status = action_function(
-        form,
-        request.user,
-        active_translations,
-        locale,
-    )
+    match form.cleaned_data["action"]:
+        case "approve":
+            action_status = approve_translations(user, locale, translations)
+        case "copy_from_locale":
+            action_status = copy_translation_from_locale(
+                user, locale, entities, form.cleaned_data["other_locale"]
+            )
+        case "reject":
+            action_status = reject_translations(user, locale, entities)
+        case "replace":
+            action_status = replace_translations(
+                user,
+                locale,
+                translations,
+                form.cleaned_data["find"],
+                form.cleaned_data["replace"],
+            )
+        case _:
+            return JsonResponse(
+                {"status": False, "message": "Unsupported action"},
+                status=400,
+            )
 
     if action_status.get("error"):
         return JsonResponse(action_status)
@@ -123,7 +145,7 @@ def batch_edit_translations(request):
     TranslatedResource.objects.filter(pk__in=tr_pks).calculate_stats()
 
     # Mark translations as changed
-    active_translations.bulk_mark_changed()
+    translations.bulk_mark_changed()
 
     # Reset term translations for entities belonging to the Terminology project
     changed_entity_pks = [entity.pk for entity in action_status["changed_entities"]]

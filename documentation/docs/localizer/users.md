@@ -111,6 +111,20 @@ It’s possible to set the default homepage displayed when visiting Pontoon as a
 
 ![LOCALES tab in translation tools](../assets/localizer/users/translation_locales.png "LOCALES tab in translation tools")
 
+### Personal Access Tokens
+
+Users can create Personal Access Tokens (PAT) which are required for accessing some endpoints of the Pontoon [REST API](https://github.com/mozilla/pontoon/blob/main/pontoon/api/README.md).
+
+To create a PAT, the user must enter a suitable token name no longer than 32 characters. The generated token can be used with the REST API as follows:
+
+```bash
+curl \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  https://example.com/api/v2/resource/
+```
+
+PATs can be manually deleted at any time and automatically expire after one year.
+
 ### Account removal
 
 Users can delete their account by scrolling to the `Account Management` section, where a button reading `Delete Account` is located. Once clicked, the user will need to
@@ -135,7 +149,7 @@ A Team Manager can upgrade other users’ permissions within a locale. To manage
 
 By default there’s only a `General` section: permissions defined here will apply to all projects, but can be overridden by custom project permissions.
 
-![General locale permissions](../assets/localizer/users/permissions_general.png)
+![General locale permissions](../assets/localizer/users/permissions_general.png "Screenshot of the general locale permissions panel")
 
 To move a user to a different column, hover the email address: arrows will appear to move the element to the left or right. Note that a user needs to log in at least once in Pontoon in order to upgrade their permission – simply having an account is not sufficient.
 
@@ -145,7 +159,7 @@ By default, the `TEAM CONTRIBUTORS` column will only include users that have alr
 
 By clicking `ADD CUSTOM PERMISSIONS PER PROJECT` (highlighted in orange), it’s possible to add specific permissions for a project. This can be useful to make sure that only some users can submit translations for a specific project, for example if it’s maintained by one person.
 
-![Project permissions](../assets/localizer/users/permissions_project.png)
+![Project permissions](../assets/localizer/users/permissions_project.png "Screenshot of the custom project permissions panel")
 
 Note that:
 
