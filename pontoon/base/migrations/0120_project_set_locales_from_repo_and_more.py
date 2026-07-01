@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0118_fix_terminology_entity_value"),
+        ("base", "0119_userprofile_community_health_locales"),
     ]
 
     operations = [
