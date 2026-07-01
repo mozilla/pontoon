@@ -90,12 +90,13 @@ def machinery_composed(request):
     """
     Return a composed multi-value translation for a multi-pattern entity.
 
-    Each translatable leaf (Fluent value/attribute, selector variant) is looked
-    up in Translation Memory; leaves without a 100% TM match fall back to the
-    requested MT service. Mirrors the Pretranslation pipeline so the Machinery
-    panel can surface a directly-pasteable composed translation alongside the
-    per-leaf results. Single-pattern entities have nothing to compose and yield
-    an empty response.
+    Each translatable leaf — the entity's value and every property, with a
+    selector message contributing one leaf per variant — is looked up in
+    Translation Memory; leaves without a 100% TM match fall back to the requested
+    MT service. Mirrors the Pretranslation pipeline so the Machinery panel can
+    surface a directly-pasteable composed translation alongside the per-leaf
+    results. Single-pattern entities have nothing to compose and yield an empty
+    response.
 
     Query params:
         entity: Entity pk
@@ -141,9 +142,10 @@ def machinery_composed(request):
             status=400,
         )
 
-    # Only multi-pattern messages (Fluent attributes, selector variants) have
-    # something to compose. A single-pattern message composes to the same string
-    # the per-leaf machinery already returns, so there is nothing extra to show.
+    # Only multi-pattern messages — those with multiple properties and/or
+    # selector variants — have something to compose. A single-pattern message
+    # composes to the same string the per-leaf machinery already returns, so
+    # there is nothing extra to show.
     entity_value = message_from_json(entity.value) if entity.value else None
     entity_properties = entity.properties or {}
     pattern_count = _pattern_count(entity_value) + sum(
