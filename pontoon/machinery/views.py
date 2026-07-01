@@ -6,6 +6,8 @@ from urllib.parse import quote
 
 import requests
 
+from moz.l10n.message import message_from_json
+from moz.l10n.model import SelectMessage
 from sacremoses import MosesDetokenizer
 
 from django.contrib.auth.decorators import login_required
@@ -16,7 +18,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.html import strip_tags
 from django.views.decorators.http import require_POST
 
-from pontoon.base.models import Comment, Entity, Locale, Project, Resource, Translation
+from pontoon.base.models import Comment, Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
@@ -38,20 +40,18 @@ COMPOSED_MT_SERVICES = {
 }
 
 
-# Formats whose entities can have multiple translatable leaves (Fluent attributes,
-# MF2 selector variants). These are the formats Pretranslation handles structurally;
-# other formats fall through to single-leaf behavior and don't need a composed result.
-COMPOSED_FORMATS = {
-    Resource.Format.FLUENT,
-    Resource.Format.ANDROID,
-    Resource.Format.GETTEXT,
-    Resource.Format.WEBEXT,
-    Resource.Format.XCODE,
-    Resource.Format.XLIFF,
-}
-
-
 log = logging.getLogger(__name__)
+
+
+def _pattern_count(message):
+    """Number of independently-translatable patterns in a parsed message.
+
+    A `PatternMessage` has one; a `SelectMessage` has one per variant. Used to
+    tell single-pattern messages (nothing to compose) from multi-pattern ones.
+    """
+    if isinstance(message, SelectMessage):
+        return len(message.variants)
+    return 1 if message is not None else 0
 
 
 def _machinery_error_response(service_name, e):
@@ -88,13 +88,14 @@ def translation_memory(request):
 
 def machinery_composed(request):
     """
-    Return a composed multi-value translation for a Fluent / MF2 entity.
+    Return a composed multi-value translation for a multi-pattern entity.
 
-    Each translatable leaf (Fluent value/attribute, MF2 variant) is looked up in
-    Translation Memory; leaves without a 100% TM match fall back to the requested
-    MT service. Mirrors the Pretranslation pipeline so the Machinery panel can
-    surface a directly-pasteable composed translation alongside the per-leaf
-    results.
+    Each translatable leaf (Fluent value/attribute, selector variant) is looked
+    up in Translation Memory; leaves without a 100% TM match fall back to the
+    requested MT service. Mirrors the Pretranslation pipeline so the Machinery
+    panel can surface a directly-pasteable composed translation alongside the
+    per-leaf results. Single-pattern entities have nothing to compose and yield
+    an empty response.
 
     Query params:
         entity: Entity pk
@@ -118,9 +119,6 @@ def machinery_composed(request):
             {"status": False, "message": f"Bad Request: {e}"}, status=400
         )
 
-    if entity.resource.format not in COMPOSED_FORMATS:
-        return JsonResponse({})
-
     if service == "translation-memory":
         # TM-only: no MT service is called (mt_supported=False).
         mt_service = None
@@ -142,6 +140,17 @@ def machinery_composed(request):
             {"status": False, "message": f"Bad Request: unknown service `{service}`"},
             status=400,
         )
+
+    # Only multi-pattern messages (Fluent attributes, selector variants) have
+    # something to compose. A single-pattern message composes to the same string
+    # the per-leaf machinery already returns, so there is nothing extra to show.
+    entity_value = message_from_json(entity.value) if entity.value else None
+    entity_properties = entity.properties or {}
+    pattern_count = _pattern_count(entity_value) + sum(
+        _pattern_count(message_from_json(prop)) for prop in entity_properties.values()
+    )
+    if pattern_count < 2:
+        return JsonResponse({})
 
     try:
         pt = Pretranslation(

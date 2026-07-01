@@ -35,12 +35,11 @@ def test_composed_bad_request(client, locale_a):
 
 
 @pytest.mark.django_db
-def test_composed_unsupported_format(client, entity_a, locale_a):
-    """Non-composable formats (e.g. gettext-without-MF2-context: still allowed) skip cleanly.
+def test_composed_single_pattern_message(client, entity_a, locale_a):
+    """Single-pattern messages have nothing to compose and skip cleanly.
 
-    `entity_a` uses the `resource_a` gettext fixture, which IS in COMPOSED_FORMATS,
-    so we should NOT get an empty response for it. Use a DTD fixture instead — DTD
-    is not in the composable set, so we expect an empty `{}`.
+    A DTD entity is a single `PatternMessage` with no properties, so composing it
+    would just repeat the per-leaf machinery suggestion; we expect an empty `{}`.
     """
     dtd_resource = ResourceFactory(
         project=entity_a.resource.project, path="r.dtd", format="dtd"
@@ -52,6 +51,25 @@ def test_composed_unsupported_format(client, entity_a, locale_a):
         url,
         {
             "entity": str(dtd_entity.pk),
+            "locale": locale_a.code,
+            "service": "translation-memory",
+        },
+    )
+    assert response.status_code == 200
+    assert json.loads(response.content) == {}
+
+
+@pytest.mark.django_db
+def test_composed_single_pattern_fluent(client, fluent_resource, locale_a):
+    """A Fluent message with only a value (no attributes or variants) is
+    single-pattern, so it skips even though its format supports composition."""
+    fluent_entity = EntityFactory(resource=fluent_resource, string="hello = Hello\n")
+
+    url = reverse("pontoon.machinery_composed")
+    response = client.get(
+        url,
+        {
+            "entity": str(fluent_entity.pk),
             "locale": locale_a.code,
             "service": "translation-memory",
         },
