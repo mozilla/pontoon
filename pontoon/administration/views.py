@@ -31,11 +31,10 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
 )
+from pontoon.base.models.project import ProjectQuerySet
 from pontoon.base.utils import require_AJAX
 from pontoon.pretranslation.tasks import pretranslate_task
 from pontoon.sync.tasks import sync_project_task
-
-from ..base.models.project import ProjectQuerySet
 
 
 log = logging.getLogger(__name__)
@@ -131,8 +130,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
     subtitle = "Add project"
     pk = None
     project = None
-    prev_config_file = None
-    prev_set_locales_from_repo = False
 
     # Save project
     if request.method == "POST":
@@ -166,8 +163,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 request.POST, instance=project
             )
             subtitle = "Edit project"
-            prev_config_file = project.configuration_file
-            prev_set_locales_from_repo = project.set_locales_from_repo
 
         # Add a new project
         except MultiValueDictKeyError:
@@ -195,9 +190,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 pk = project.pk
                 data = form.cleaned_data
 
-                set_locales_from_repo = data.get("set_locales_from_repo", False)
-
-                if set_locales_from_repo:
+                if data.get("set_locales_from_repo", False):
                     project_locales = ProjectLocale.objects.filter(project=project)
                 else:
                     # Manually save ProjectLocales due to intermediary model
@@ -256,14 +249,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 if project.tags_enabled:
                     tag_formset = TagInlineFormSet(instance=project)
                 subtitle += ". Saved."
-
-                if project.data_source == Project.DataSource.REPOSITORY and (
-                    set_locales_from_repo
-                    and not prev_set_locales_from_repo
-                    or data.get("configuration_file") != prev_config_file
-                ):
-                    sync_project_task.delay(project.pk)
-                    subtitle += " Sync started."
             else:
                 subtitle += ". Error."
         else:

@@ -59,9 +59,6 @@
         {{ form.set_locales_from_repo }}
         <span></span>
       </label>
-      <span id="hint_set_locales_from_repo"
-        >Locale is available if target directory is present.</span
-      >
     </div>
 
     <div
@@ -70,10 +67,8 @@
       style="display: none"
     >
       <label for="id_set_translated_resources_from_repo">
-        {{ form.set_translated_resources_from_repo }} Set per-resource
-        localizability from repository
+        {{ form.set_translated_resources_from_repo }}
       </label>
-      Resource is available if target file is present in locale directory.
     </div>
 
     <div class="locales clearfix" style="display: none">

@@ -35,6 +35,19 @@ class ProjectForm(forms.ModelForm):
         queryset=Locale.objects.all(),
         required=False,
     )
+    set_translated_resources_from_repo = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=(
+            (
+                False,
+                "All source resources are available for all locales.",
+            ),
+            (
+                True,
+                "Only resources that exist in locale directories are available for localization.",
+            ),
+        ),
+    )
 
     def clean(self):
         cleaned_data = super().clean()
