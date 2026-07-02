@@ -43,5 +43,7 @@ export function htmlElementEscapes(entry: MessageEntry): RegExp | null {
       }
     }
   }
-  return set.size ? new RegExp(`<(${Array.from(set).join('|')})`, 'g') : null;
+  return set.size
+    ? new RegExp(`<(${Array.from(set).join('|')})\\b`, 'g')
+    : null;
 }
