@@ -369,6 +369,48 @@ describe('<EditorProvider>', () => {
     });
   });
 
+  it('provides an Android value with HTML', () => {
+    let actions, result;
+    const Spy = () => {
+      actions = useContext(EditorActions);
+      result = useContext(EditorResult);
+      return null;
+    };
+    const trans = 'Tämä on <b>lihavoitu</b>.';
+    mountSpy(Spy, 'android', trans, 'This is {|<b>| :html}bold{|</b>| :html}.');
+
+    // Parse the translation with Android syntax
+    act(() => actions.setResultFromInput());
+
+    expect(result).toEqual({
+      format: 'android',
+      id: 'key',
+      value: [
+        'Tämä on ',
+        { _: '<b>', fn: 'html' },
+        'lihavoitu',
+        { _: '</b>', fn: 'html' },
+        '.',
+      ],
+    });
+  });
+
+  it('provides an Xliff value with HTML', () => {
+    let actions, result;
+    const Spy = () => {
+      actions = useContext(EditorActions);
+      result = useContext(EditorResult);
+      return null;
+    };
+    const trans = 'Tämä on <b>lihavoitu</b>.';
+    mountSpy(Spy, 'xliff', trans, 'This is <b>bold</b>.');
+
+    // Parse the translation with Xliff syntax
+    act(() => actions.setResultFromInput());
+
+    expect(result).toEqual({ format: 'xliff', id: 'key', value: [trans] });
+  });
+
   it('updates state on entity change', () => {
     let editor, result, location, entity;
     const Spy = () => {
