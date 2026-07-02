@@ -304,6 +304,63 @@ def test_add_resources():
 
 
 @pytest.mark.django_db
+def test_xliff_html_translation():
+    with mock_setup() as (repo, locale):
+        project = ProjectFactory.create(
+            name="xliff-html", locales=[locale], repositories=[repo]
+        )
+
+        makedirs(repo.checkout_path)
+        file_xliff = dedent("""\
+            <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+              <file original="file.txt" source-language="en" target-language="en" datatype="plaintext">
+                <body>
+                  <trans-unit id="key">
+                    <source>Hello &lt;b&gt;world&lt;/b&gt;!</source>
+                    <target>Hello &lt;b&gt;world&lt;/b&gt;!</target>
+                  </trans-unit>
+                </body>
+              </file>
+            </xliff>
+        """)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"file.xliff": file_xliff},
+                "de-Test": {},
+            },
+        )
+
+        # Sync to generate entities.
+        sync_project_task(project.pk)
+
+        # Add a translation for each resource.
+        TranslationFactory.create(
+            entity=Entity.objects.get(resource__project=project),
+            locale=locale,
+            string="translation: Hello <b>world</b>!",
+            active=True,
+            approved=True,
+        )
+        sync_project_task(project.pk)
+
+        with open(join(repo.checkout_path, "de-Test", "file.xliff")) as file:
+            assert file.read() == dedent("""\
+                <?xml version="1.0" encoding="utf-8"?>
+                <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+                  <file original="file.txt" source-language="en" target-language="de-Test" datatype="plaintext">
+                    <body>
+                      <trans-unit id="key">
+                        <source>Hello &lt;b&gt;world&lt;/b&gt;!</source>
+                        <target>translation: Hello &lt;b&gt;world&lt;/b&gt;!</target>
+                      </trans-unit>
+                    </body>
+                  </file>
+                </xliff>
+                """)
+
+
+@pytest.mark.django_db
 def test_xliff_target_language():
     """The iOS locale remapping (e.g. sv-SE -> sv) must only be applied to
     Xcode XLIFF projects, not to other XLIFF projects like the Mozilla VPN
