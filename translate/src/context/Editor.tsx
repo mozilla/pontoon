@@ -19,8 +19,8 @@ import {
   requiresSourceView,
   serializeEntry,
 } from '~/utils/message';
+import { hasOuterWhitespace } from '~/utils/message/entryInformation';
 import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
-import { hasOuterWhitespace } from '~/utils/message/hasOuterWhitespace';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 

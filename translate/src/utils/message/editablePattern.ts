@@ -32,11 +32,11 @@ function editablePlaceholder(part: Expression | Markup): string {
   }
   if (isExpression(part)) {
     if (part.fn === 'html' && part._) {
-      return part._;
-    } // android-only
+      return part._; // android-only
+    }
     if (part.fn === 'entity' && part.$) {
-      return `&${part.$};`;
-    } // android-only
+      return `&${part.$};`; // android-only
+    }
   } else if (part.open || part.elem) {
     let str = `<${part.open ?? part.elem}`;
     if (part.opt) {
