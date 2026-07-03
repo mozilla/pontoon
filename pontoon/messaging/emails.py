@@ -47,7 +47,8 @@ def _get_monthly_user_actions(users, months_ago):
             reviewed=Count(
                 "id",
                 filter=Q(
-                    action_type__in=["translation:approved", "translation:rejected"]
+                    action_type__in=["translation:approved", "translation:rejected"],
+                    is_implicit_action=False,
                 ),
             ),
         )
@@ -107,6 +108,8 @@ def _get_monthly_locale_contributors(locales, months_ago):
         performed_by__profile__system_user=False,
         # Exclude system projects
         translation__entity__resource__project__system_project=False,
+        # Exclude implicit actions (e.g. self-approvals on submission).
+        is_implicit_action=False,
     )
 
     # Get contributors that started contributing to the locale in the given month

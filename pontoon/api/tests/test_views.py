@@ -48,6 +48,46 @@ def test_user_actions_project_not_visible(member):
 
 
 @pytest.mark.django_db
+def test_user_actions_includes_implicit_flag(member):
+    from pontoon.actionlog.models import ActionLog
+
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+
+    project = ProjectFactory(slug="public-project", visibility="public")
+    resource = ResourceFactory(project=project)
+    entity = EntityFactory(resource=resource)
+    translation = TranslationFactory(entity=entity, user=member.user)
+
+    # Self-approval on submission: created + implicit approved.
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        performed_by=member.user,
+        translation=translation,
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=member.user,
+        translation=translation,
+        is_implicit_action=True,
+    )
+
+    date = now().strftime("%Y-%m-%d")
+    response = client.get(
+        f"/api/v2/user-actions/{date}/project/{project.slug}/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+    actions = response.data["actions"]
+    flags = {action["type"]: action["is_implicit_action"] for action in actions}
+    assert flags == {
+        "translation:created": False,
+        "translation:approved": True,
+    }
+
+
+@pytest.mark.django_db
 def test_dynamic_fields(django_assert_num_queries):
     expected_results = [
         {

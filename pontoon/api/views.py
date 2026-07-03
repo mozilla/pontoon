@@ -106,6 +106,7 @@ class UserActionsView(APIView):
 
             data = {
                 "type": action.action_type,
+                "is_implicit_action": action.is_implicit_action,
                 "date": action.created_at,
                 "user": {
                     "pk": user.pk,

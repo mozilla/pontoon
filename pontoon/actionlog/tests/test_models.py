@@ -74,6 +74,35 @@ def test_log_action_valid_with_translation(user_a, translation_a):
 
 
 @pytest.mark.django_db
+def test_log_action_valid_implicit_approved(user_a, translation_a):
+    # A `translation:approved` action can be logged as an implicit action
+    # (e.g. self-approval on submission).
+    utils.log_action(
+        ActionLog.ActionType.TRANSLATION_APPROVED,
+        user_a,
+        translation=translation_a,
+        is_implicit_action=True,
+    )
+
+    log = ActionLog.objects.filter(performed_by=user_a, translation=translation_a)
+    assert len(log) == 1
+    assert log[0].action_type == ActionLog.ActionType.TRANSLATION_APPROVED
+    assert log[0].is_implicit_action is True
+
+
+@pytest.mark.django_db
+def test_log_action_invalid_implicit_action_type(user_a, translation_a):
+    # Only a subset of action types are allowed as implicit actions.
+    with pytest.raises(ValidationError):
+        utils.log_action(
+            ActionLog.ActionType.TRANSLATION_CREATED,
+            user_a,
+            translation=translation_a,
+            is_implicit_action=True,
+        )
+
+
+@pytest.mark.django_db
 def test_log_action_valid_with_entity_locale(user_a, entity_a, locale_a):
     utils.log_action(
         ActionLog.ActionType.TRANSLATION_DELETED,

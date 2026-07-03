@@ -168,6 +168,16 @@ def create_translation(request):
 
     log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
+    # When a translation is submitted directly as approved (self-approval),
+    # also store the implicit approval action.
+    if approved:
+        log_action(
+            ActionLog.ActionType.TRANSLATION_APPROVED,
+            user,
+            translation=translation,
+            is_implicit_action=True,
+        )
+
     active_translation = entity.reset_active_translation(locale=locale)
 
     # When user makes their first contribution to the team, notify team managers
