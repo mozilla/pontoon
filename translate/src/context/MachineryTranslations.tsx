@@ -159,7 +159,11 @@ export function MachineryProvider({
       const wantsComposed =
         !query &&
         specialFormats.has(format) &&
-        hasMultipleFields(entity.value, entity.properties, locale.cldrPlurals.length);
+        hasMultipleFields(
+          entity.value,
+          entity.properties,
+          locale.cldrPlurals.length,
+        );
 
       if (!query) {
         promises.push(
