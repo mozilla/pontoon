@@ -313,7 +313,7 @@ def test_xliff_html_translation():
         makedirs(repo.checkout_path)
         file_xliff = dedent("""\
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-              <file original="file.txt" source-language="en" target-language="en" datatype="plaintext">
+              <file original="file.txt" source-language="en" datatype="plaintext">
                 <body>
                   <trans-unit id="key">
                     <source>Hello &lt;b&gt;world&lt;/b&gt;!</source>
@@ -348,7 +348,7 @@ def test_xliff_html_translation():
             assert file.read() == dedent("""\
                 <?xml version="1.0" encoding="utf-8"?>
                 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-                  <file original="file.txt" source-language="en" target-language="de-Test" datatype="plaintext">
+                  <file original="file.txt" source-language="en" datatype="plaintext" target-language="de-Test">
                     <body>
                       <trans-unit id="key">
                         <source>Hello &lt;b&gt;world&lt;/b&gt;!</source>
