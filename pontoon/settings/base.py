@@ -1094,8 +1094,16 @@ CELERY_ACCEPT_CONTENT = ["pickle"]
 SOCIALACCOUNT_ADAPTER = "pontoon.base.adapter.PontoonSocialAdapter"
 SOCIALACCOUNT_ONLY = True
 
-# Supported values: 'django', 'fxa', 'github', 'gitlab', 'google'
-AUTHENTICATION_METHOD = os.environ.get("AUTHENTICATION_METHOD", "django")
+# Supported values: 'django', 'fxa', 'github', 'gitlab', 'google', 'keycloak'
+# 'django' (username/password) login is a development-only convenience. Every
+# non-development environment must authenticate via SSO (Keycloak), so django
+# login can never be exposed in production -- even if AUTHENTICATION_METHOD is
+# left unset or is misconfigured there.
+AUTHENTICATION_METHOD = os.environ.get(
+    "AUTHENTICATION_METHOD", "django" if DEV else "keycloak"
+)
+if AUTHENTICATION_METHOD == "django" and not DEV:
+    AUTHENTICATION_METHOD = "keycloak"
 
 
 def account_username(user):

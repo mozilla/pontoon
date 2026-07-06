@@ -7,12 +7,14 @@ from types import SimpleNamespace
 from zipfile import ZipFile
 
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.db import transaction
 from django.db.models import Prefetch, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -24,6 +26,7 @@ from pontoon.api.authentication import (
     PersonalAccessTokenAuthentication,
 )
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
+from pontoon.api.services import review_translation, submit_translation
 from pontoon.base import forms
 from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
@@ -56,6 +59,8 @@ from .serializers import (
     NestedProjectSerializer,
     TermSerializer,
     TranslationMemorySerializer,
+    TranslationReviewSerializer,
+    TranslationSubmitSerializer,
 )
 
 
@@ -601,3 +606,165 @@ class PretranslationView(APIView):
             )
 
         return Response({"text": pretranslation[0], "author": pretranslation[1]})
+
+
+def _flatten_serializer_errors(errors):
+    """Turn a DRF serializer's error dict into a flat list of strings."""
+    messages = []
+    for field, field_errors in errors.items():
+        if isinstance(field_errors, (list, tuple)):
+            messages.extend(f"{field}: {err}" for err in field_errors)
+        else:
+            messages.append(f"{field}: {field_errors}")
+    return messages
+
+
+class _BulkWriteView(APIView):
+    """Base for write endpoints that accept a single object or an array.
+
+    Each item is validated by ``serializer_class`` and processed in its own
+    transaction so the batch can partially succeed (a failing item becomes an
+    ``error`` result without rolling back the others). The response echoes the
+    input shape: object in -> object out, array in -> array out.
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = None
+
+    def handle_item(self, request, validated_data):
+        raise NotImplementedError
+
+    def post(self, request):
+        data = request.data
+        if isinstance(data, list):
+            items, many = data, True
+        elif isinstance(data, dict):
+            items, many = [data], False
+        else:
+            return Response(
+                {"detail": "Expected an object or a list of objects."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        results = [self._process_item(request, raw) for raw in items]
+        return Response(results if many else results[0])
+
+    def _process_item(self, request, raw):
+        if not isinstance(raw, dict):
+            return {"status": "error", "errors": ["Each item must be an object."]}
+
+        serializer = self.serializer_class(data=raw)
+        if not serializer.is_valid():
+            return {
+                **self._coords(raw),
+                "status": "error",
+                "errors": _flatten_serializer_errors(serializer.errors),
+            }
+
+        try:
+            with transaction.atomic():
+                return self.handle_item(request, serializer.validated_data)
+        except Exception as err:
+            return {
+                **self._coords(raw),
+                "status": "error",
+                "errors": [str(err)],
+            }
+
+    @staticmethod
+    def _coords(raw):
+        return {
+            key: raw[key]
+            for key in ("project", "resource", "key", "locale")
+            if key in raw
+        }
+
+
+@extend_schema_view(
+    post=extend_schema(
+        tags=["Translations"],
+        request=TranslationSubmitSerializer,
+        description=(
+            "Create or suggest a translation. Accepts a single object or an "
+            "array of objects; each item is processed independently and the "
+            "response mirrors the input shape (object in -> object out, array "
+            "in -> array out). Whether an item is stored approved or as a "
+            "suggestion depends on the caller's translate permission for the "
+            "target locale/project."
+        ),
+    )
+)
+class TranslationSubmitView(_BulkWriteView):
+    """POST /api/v2/translations/ — create or suggest translations."""
+
+    serializer_class = TranslationSubmitSerializer
+
+    def handle_item(self, request, v):
+        return submit_translation(
+            user=request.user,
+            project_slug=v["project"],
+            resource_path=v["resource"],
+            key=v["key"],
+            locale_code=v["locale"],
+            value=v["value"],
+            properties=v["properties"],
+            ignore_warnings=v["ignore_warnings"],
+            approve=v["approve"],
+            force_suggestions=v["force_suggestions"],
+            machinery_sources=v["machinery_sources"],
+        )
+
+
+class _TranslationReviewView(_BulkWriteView):
+    """Base for the review actions; subclasses set ``action``."""
+
+    serializer_class = TranslationReviewSerializer
+    action = None
+
+    def handle_item(self, request, v):
+        return review_translation(
+            user=request.user,
+            action=self.action,
+            translation_id=v["translation_id"],
+            project_slug=v["project"],
+            resource_path=v["resource"],
+            key=v["key"],
+            locale_code=v["locale"],
+            value=v["value"],
+            ignore_warnings=v["ignore_warnings"],
+        )
+
+
+def _review_schema(action):
+    return extend_schema_view(
+        post=extend_schema(
+            tags=["Translations"],
+            request=TranslationReviewSerializer,
+            description=(
+                f"{action.capitalize()} one or more translations. Accepts a "
+                "single object or an array. Each item targets a translation by "
+                "`translation_id`, or by coordinates "
+                "(`project` + `resource` + `key` + `locale`) plus `value`."
+            ),
+        )
+    )
+
+
+@_review_schema("approve")
+class TranslationApproveView(_TranslationReviewView):
+    action = "approve"
+
+
+@_review_schema("reject")
+class TranslationRejectView(_TranslationReviewView):
+    action = "reject"
+
+
+@_review_schema("unapprove")
+class TranslationUnapproveView(_TranslationReviewView):
+    action = "unapprove"
+
+
+@_review_schema("delete")
+class TranslationDeleteView(_TranslationReviewView):
+    action = "delete"
