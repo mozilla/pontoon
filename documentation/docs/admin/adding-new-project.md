@@ -59,22 +59,23 @@ The new project will appear in the [public list of Projects](https://pontoon.moz
 * Name: name of the repository (it will be displayed in Pontoon’s project selector).
 * Slug: used in URLs, will be generated automatically based on the repository’s name.
 * Locales:
-
-  * Automatic control:
     * Select "Read list of locales from repository" to have Pontoon detect the supported locales from your repository.
-      If this is selected, adding a new locale will require adding its corresponding directory to the repository or, 
-      if a configuration file is used, adding the locale to its `locales` list.
-    * If automatic control is selected and no configuration file is used,
-      the availability of individual resources (files) for localization
-      may also be controlled per-locale by their presence in the repository.
-
-  * Manual control:
-    * Select at least one locale. To make things faster it’s possible to copy supported locales from an existing project.
-    * The *Read-only* column can be used to add languages in read-only mode.
-      In this way, their translations will be available to other languages in the LOCALES tab when translating,
-      but it won’t be possible to change or submit translations directly in Pontoon.
-    * You can uncheck the `Locales can opt-in` checkbox to prevent localizers from requesting this specific project.
-
+        * If a configuration file is provided, you will need to add the locale to its `locales` list.
+          Resource availability will also be determined by the configuration file.
+        * Without a configuration file, you will need to manually add a directory for the locale in the repository
+          in order for the locale to be available in Pontoon.
+          You will then have the option to have all resources added automatically for each locale (default),
+          or only expose in Pontoon resources already present in the repository within the locale directory.
+          The latter means that, for example, bootstrapping a new locale requires manually creating a directory
+          and all necessary files within it.
+    * To manually control locales, leave the option to read locales from repository unchecked, then:
+        * Select at least one locale. To make things faster it’s possible to copy supported locales from an existing project.
+        * The *Read-only* column can be used to add languages in read-only mode.
+          In this way, their translations will be available to other languages in the LOCALES tab when translating,
+          but it won’t be possible to change or submit translations directly in Pontoon.
+        * You can uncheck the `Locales can opt-in` checkbox to prevent localizers from requesting this specific project.
+        * The configuration file only determines which resources will be available in Pontoon for each locale.
+          The `locales` list within the file doesn't have any effect in Pontoon.
 * Repositories: select the type of repository and URL. Make sure to use SSH to allow write access.
   For example, if the repository is `https://github.com/meandavejustice/min-vid`,
   the URL should be `git@github.com:meandavejustice/min-vid.git`.
