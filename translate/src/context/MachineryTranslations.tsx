@@ -1,3 +1,4 @@
+import { isSelectMessage, type Message } from '@mozilla/l10n';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
@@ -11,12 +12,7 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import {
-  editMessageEntry,
-  getPlainMessage,
-  parseEntry,
-  specialFormats,
-} from '~/utils/message';
+import { getPlainMessage, specialFormats } from '~/utils/message';
 
 import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
@@ -48,13 +44,34 @@ const sortByQuality = (a: MachineryTranslation, b: MachineryTranslation) => {
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
+// Translatable leaves in a message: one per selector variant, or a single
+// pattern otherwise. Mirrors `_pattern_count` in machinery/views.py.
+function patternCount(msg: Message | null | undefined): number {
+  if (!msg) {
+    return 0;
+  }
+  return isSelectMessage(msg) ? msg.alt.length : 1;
+}
+
 // A composed translation is only meaningful when the entity has more than one
 // translatable leaf (Fluent attributes, MF2 selector variants). For a simple
 // single-field entity the composed result would just duplicate the per-leaf TM
 // or MT match, so we skip the request entirely.
-function hasMultipleFields(original: string, format: string): boolean {
-  const entry = parseEntry(format, original);
-  return !!entry && editMessageEntry(entry).length > 1;
+//
+// This counts the entity's *source* leaves as a heuristic: it can undercount a
+// source whose selector (e.g. a plural) has fewer categories than the target
+// locale needs, where the target would require multiple patterns even though
+// the source has one. We accept that gap rather than resolving target plurals
+// here — same limitation as machinery/views.py.
+function hasMultipleFields(
+  value: Message,
+  properties: Record<string, Message> | undefined,
+): boolean {
+  let count = patternCount(value);
+  for (const prop of Object.values(properties ?? {})) {
+    count += patternCount(prop);
+  }
+  return count > 1;
 }
 
 export function MachineryProvider({
@@ -118,7 +135,7 @@ export function MachineryProvider({
       const wantsComposed =
         !query &&
         specialFormats.has(format) &&
-        hasMultipleFields(entity.original, format);
+        hasMultipleFields(entity.value, entity.properties);
 
       if (!query) {
         promises.push(

@@ -138,6 +138,13 @@ def machinery_composed(request):
     # selector variants — have something to compose. A single-pattern message
     # composes to the same string the per-leaf machinery already returns, so
     # there is nothing extra to show.
+    #
+    # This counts the entity's *source* leaves as a heuristic: it can undercount
+    # a source whose selector (e.g. a plural) has fewer categories than the
+    # target locale needs, where the target would require multiple patterns even
+    # though the source has one. We accept that gap rather than expanding source
+    # selectors against every locale's plurals — same limitation as
+    # `hasMultipleFields` in the frontend's MachineryTranslations.tsx.
     entity_value = message_from_json(entity.value) if entity.value else None
     entity_properties = entity.properties or {}
     pattern_count = _pattern_count(entity_value) + sum(
