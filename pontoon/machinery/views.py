@@ -6,7 +6,6 @@ from urllib.parse import quote
 
 import requests
 
-from moz.l10n.message import message_from_json
 from moz.l10n.model import SelectMessage
 from sacremoses import MosesDetokenizer
 
@@ -134,25 +133,6 @@ def machinery_composed(request):
             {"status": False, "message": "Authentication required"}, status=403
         )
 
-    # Only multi-pattern messages — those with multiple properties and/or
-    # selector variants — have something to compose. A single-pattern message
-    # composes to the same string the per-leaf machinery already returns, so
-    # there is nothing extra to show.
-    #
-    # This counts the entity's *source* leaves as a heuristic: it can undercount
-    # a source whose selector (e.g. a plural) has fewer categories than the
-    # target locale needs, where the target would require multiple patterns even
-    # though the source has one. We accept that gap rather than expanding source
-    # selectors against every locale's plurals — same limitation as
-    # `hasMultipleFields` in the frontend's MachineryTranslations.tsx.
-    entity_value = message_from_json(entity.value) if entity.value else None
-    entity_properties = entity.properties or {}
-    pattern_count = _pattern_count(entity_value) + sum(
-        _pattern_count(message_from_json(prop)) for prop in entity_properties.values()
-    )
-    if pattern_count < 2:
-        return JsonResponse({})
-
     try:
         pt = Pretranslation(
             entity,
@@ -170,7 +150,17 @@ def machinery_composed(request):
     except Exception as e:
         return _machinery_error_response(f"Composed machinery ({service})", e)
 
-    if not pt.services or translation == entity.string:
+    # Only multi-pattern targets — those with multiple properties and/or selector
+    # variants — have something to compose. A single-pattern target composes to
+    # the same string the per-leaf machinery already returns, so there is nothing
+    # extra to show. We count the *target* patterns (not the source): walk_entity()
+    # expands plural selectors to the locale's CLDR categories, so a source with a
+    # single plural variant (e.g. en-US `*[other]`) still yields multiple patterns
+    # for locales like Slovenian (one/two/few/other).
+    pattern_count = _pattern_count(value) + sum(
+        _pattern_count(prop) for prop in properties.values()
+    )
+    if pattern_count < 2 or not pt.services or translation == entity.string:
         return JsonResponse({})
 
     # Preserve insertion order while deduplicating. Map the internal service

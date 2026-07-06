@@ -12,7 +12,11 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage, specialFormats } from '~/utils/message';
+import {
+  findPluralSelectors,
+  getPlainMessage,
+  specialFormats,
+} from '~/utils/message';
 
 import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
@@ -44,32 +48,52 @@ const sortByQuality = (a: MachineryTranslation, b: MachineryTranslation) => {
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
-// Translatable leaves in a message: one per selector variant, or a single
-// pattern otherwise. Mirrors `_pattern_count` in machinery/views.py.
-function patternCount(msg: Message | null | undefined): number {
+// Number of *target* patterns a message contributes: one per selector variant,
+// with plural-selector dimensions expanded to the target locale's CLDR plural
+// categories. This mirrors the plural expansion the backend's walk_entity()
+// performs, so an en-US `*[other]`-only source still counts as multi-pattern
+// for locales like Slovenian (one/two/few/other).
+function patternCount(
+  msg: Message | null | undefined,
+  pluralCategories: number,
+): number {
   if (!msg) {
     return 0;
   }
-  return isSelectMessage(msg) ? msg.alt.length : 1;
+  if (!isSelectMessage(msg)) {
+    return 1;
+  }
+  const plurals = findPluralSelectors(msg);
+  let count = 1;
+  for (let i = 0; i < msg.sel.length; ++i) {
+    if (plurals.has(i)) {
+      count *= Math.max(1, pluralCategories);
+    } else {
+      // Non-plural selector (e.g. a gender): keep its distinct source keys.
+      const keys = new Set(
+        msg.alt.map((v) => {
+          const key = v.keys[i];
+          return typeof key === 'string' ? key : '*';
+        }),
+      );
+      count *= keys.size || 1;
+    }
+  }
+  return count;
 }
 
 // A composed translation is only meaningful when the entity has more than one
-// translatable leaf (Fluent attributes, MF2 selector variants). For a simple
-// single-field entity the composed result would just duplicate the per-leaf TM
-// or MT match, so we skip the request entirely.
-//
-// This counts the entity's *source* leaves as a heuristic: it can undercount a
-// source whose selector (e.g. a plural) has fewer categories than the target
-// locale needs, where the target would require multiple patterns even though
-// the source has one. We accept that gap rather than resolving target plurals
-// here — same limitation as machinery/views.py.
+// translatable leaf in the target (Fluent attributes, MF2 selector variants).
+// For a single-field target the composed result would just duplicate the
+// per-leaf TM or MT match, so we skip the request entirely.
 function hasMultipleFields(
   value: Message,
   properties: Record<string, Message> | undefined,
+  pluralCategories: number,
 ): boolean {
-  let count = patternCount(value);
+  let count = patternCount(value, pluralCategories);
   for (const prop of Object.values(properties ?? {})) {
-    count += patternCount(prop);
+    count += patternCount(prop, pluralCategories);
   }
   return count > 1;
 }
@@ -135,7 +159,7 @@ export function MachineryProvider({
       const wantsComposed =
         !query &&
         specialFormats.has(format) &&
-        hasMultipleFields(entity.value, entity.properties);
+        hasMultipleFields(entity.value, entity.properties, locale.cldrPlurals.length);
 
       if (!query) {
         promises.push(

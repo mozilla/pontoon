@@ -9,6 +9,7 @@ from django.urls import reverse
 
 from pontoon.test.factories import (
     EntityFactory,
+    LocaleFactory,
     ResourceFactory,
     TranslationMemoryFactory,
 )
@@ -148,6 +149,56 @@ def test_composed_tm_only_full_hit(client, fluent_resource, entity_a, locale_a):
     assert "TM_tooltip" in body["translation"]
     assert body["sources"] == ["translation-memory"]
     # Every leaf is a 100% TM match, so the composed result is a full TM match.
+    assert body["quality"] == 100
+
+
+@pytest.mark.django_db
+def test_composed_expands_source_plural_for_target_locale(
+    client, fluent_resource, entity_a
+):
+    """A source with a single plural variant composes to multiple target patterns.
+
+    en-US declares only `*[other]`, but a locale with several CLDR plural
+    categories (here one/two/few/other) needs a pattern per category. The walk
+    expands the selector to the locale's categories, so the entity counts as
+    multi-pattern even though the source has a single variant, and a composed
+    suggestion is returned.
+    """
+    locale = LocaleFactory(code="sl-test", name="Plural", cldr_plurals="1,2,3,5")
+
+    fluent_string = dedent(
+        """\
+        popup =
+            { $count ->
+               *[other] Many popups.
+            }
+        """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+
+    TranslationMemoryFactory.create(
+        entity=entity_a, source="Many popups.", target="TM_popups", locale=locale
+    )
+
+    url = reverse("pontoon.machinery_composed")
+    response = client.get(
+        url,
+        {
+            "entity": str(fluent_entity.pk),
+            "locale": locale.code,
+            "service": "translation-memory",
+        },
+    )
+    assert response.status_code == 200
+    body = json.loads(response.content)
+    # The single `*[other]` source expands to all four target plural categories.
+    translation = body["translation"]
+    assert "[one]" in translation
+    assert "[two]" in translation
+    assert "[few]" in translation
+    assert "*[other]" in translation
+    assert translation.count("TM_popups") == 4
+    assert body["sources"] == ["translation-memory"]
     assert body["quality"] == 100
 
 
