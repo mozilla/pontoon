@@ -82,7 +82,7 @@ var Pontoon = (function (my) {
             label: item.name,
             data: item[key],
             borderColor: [color],
-            borderWidth: item.name === 'AAverage (all locales)ll' ? 3 : 1,
+            borderWidth: item.name === 'Average (all locales)ll' ? 3 : 1,
             pointBackgroundColor: color,
             pointHitRadius: 10,
             pointRadius: 3.25,
