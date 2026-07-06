@@ -222,7 +222,7 @@ def test_composed_tm_excludes_current_entity(client, fluent_resource, locale_a):
     assert json.loads(response.content) == {}
 
 
-@patch("pontoon.machinery.views.get_google_translate_data")
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_composed_hybrid_tm_and_mt(
     gt_mock,

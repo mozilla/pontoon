@@ -25,7 +25,7 @@ from pontoon.machinery.utils import (
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
-from pontoon.pretranslation.pretranslate import Pretranslation
+from pontoon.pretranslation.pretranslate import MTEngine, Pretranslation
 from pontoon.terminology.models import Term
 
 from .openai_service import OpenAIService
@@ -113,18 +113,12 @@ def machinery_composed(request):
 
     match service:
         case "translation-memory":
-            # TM-only: no MT service is called (mt_supported=False).
-            mt_service = None
-            mt_service_name = "tm"
-            mt_supported = False
+            # TM-only: no MT engine, so MT is never called.
+            mt_engine = None
         case "google-translate":
-            mt_service = get_google_translate_data
-            mt_service_name = service
-            mt_supported = bool(locale.google_translate_code)
+            mt_engine = MTEngine.GOOGLE_TRANSLATE
         case "microsoft-translator":
-            mt_service = get_microsoft_translator_data
-            mt_service_name = service
-            mt_supported = bool(locale.ms_translator_code)
+            mt_engine = MTEngine.MICROSOFT_TRANSLATOR
         case _:
             return JsonResponse(
                 {
@@ -135,7 +129,7 @@ def machinery_composed(request):
             )
 
     # MT services call an external provider; translation-memory is anonymous-friendly.
-    if mt_service is not None and not request.user.is_authenticated:
+    if mt_engine is not None and not request.user.is_authenticated:
         return JsonResponse(
             {"status": False, "message": "Authentication required"}, status=403
         )
@@ -157,9 +151,7 @@ def machinery_composed(request):
             entity,
             locale,
             preserve_placeables=False,
-            mt_service=mt_service,
-            mt_service_name=mt_service_name,
-            mt_supported=mt_supported,
+            mt_engine=mt_engine,
             exclude_entity=True,
         )
         value, properties = pt.walk_entity()
@@ -174,11 +166,14 @@ def machinery_composed(request):
     if not pt.services or translation == entity.string:
         return JsonResponse({})
 
-    # Preserve insertion order while deduplicating. Map the internal `"tm"`
-    # identifier to the SourceType the frontend uses for the badge.
-    sources_used = list(
-        dict.fromkeys("translation-memory" if s == "tm" else s for s in pt.services)
-    )
+    # Preserve insertion order while deduplicating. Map the internal service
+    # identifiers to the SourceType values the frontend uses for the badge.
+    badges = {
+        "tm": "translation-memory",
+        "gt": "google-translate",
+        "ms": "microsoft-translator",
+    }
+    sources_used = list(dict.fromkeys(badges.get(s, s) for s in pt.services))
 
     response = {
         "original": entity.string,

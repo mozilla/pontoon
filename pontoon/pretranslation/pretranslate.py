@@ -1,4 +1,5 @@
 from copy import deepcopy
+from enum import Enum
 from re import compile
 from typing import Callable, Literal
 
@@ -21,7 +22,10 @@ from moz.l10n.model import (
 )
 
 from pontoon.base.models import Entity, Locale, Resource, TranslationMemoryEntry
-from pontoon.machinery.utils import get_google_translate_data
+from pontoon.machinery.utils import (
+    get_google_translate_data,
+    get_microsoft_translator_data,
+)
 from pontoon.sync.formats import as_string
 
 
@@ -29,6 +33,36 @@ pt_placeholder = compile(r"{ *\$(\d+) *}")
 
 
 MTService = Callable[..., str]
+
+
+class MTEngine(Enum):
+    """A machine-translation engine used as fallback when no 100% TM match exists.
+
+    Each member bundles the facets that previously travelled as three separate
+    ``Pretranslation`` arguments: the identifier recorded in
+    ``Pretranslation.services``, the ``Locale`` attribute that says whether the
+    engine supports a given locale, and the callable that performs the request.
+    """
+
+    GOOGLE_TRANSLATE = ("gt", "google_translate_code")
+    MICROSOFT_TRANSLATOR = ("ms", "ms_translator_code")
+
+    def __init__(self, service_name: str, locale_code_attr: str):
+        self.service_name = service_name
+        self.locale_code_attr = locale_code_attr
+
+    def supports(self, locale: Locale) -> bool:
+        return bool(getattr(locale, self.locale_code_attr))
+
+    @property
+    def service(self) -> MTService:
+        # Resolved lazily (not stored on the member) so tests can patch the
+        # module-level service callables.
+        match self:
+            case MTEngine.GOOGLE_TRANSLATE:
+                return get_google_translate_data
+            case MTEngine.MICROSOFT_TRANSLATOR:
+                return get_microsoft_translator_data
 
 
 def get_pretranslation(
@@ -65,21 +99,15 @@ class Pretranslation:
         locale: Locale,
         preserve_placeables: bool,
         *,
-        mt_service: MTService | None = None,
-        mt_service_name: str = "gt",
-        mt_supported: bool | None = None,
+        mt_engine: MTEngine | None = MTEngine.GOOGLE_TRANSLATE,
         exclude_entity: bool = False,
     ):
         """
-        :param mt_service: Callable invoked when no 100% TM match exists.
-            Signature: ``(text: str, locale: Locale, preserve_placeables: bool) -> str``.
-            Defaults to Google Translate.
-        :param mt_service_name: Identifier recorded in ``self.services`` for each
-            successful MT call. Must match ``mt_service``; defaults to ``"gt"``
-            (the identifier for the default Google Translate service).
-        :param mt_supported: If False, MT is skipped and ``ValueError`` is raised
-            when a leaf can't be served from TM. Defaults to whether the locale
-            has a ``google_translate_code`` (matching the original behavior).
+        :param mt_engine: Machine-translation engine invoked when a leaf has no
+            100% TM match. ``None`` disables MT (TM-only): a leaf that can't be
+            served from TM then raises ``ValueError``. MT is likewise skipped
+            when the engine doesn't support the locale. Defaults to Google
+            Translate.
         :param exclude_entity: If True, the entity's own TM entries are excluded
             from per-leaf TM lookups, matching ``get_translation_memory_data``.
             A leaf that can only be served by the entity's own translation then
@@ -104,15 +132,11 @@ class Pretranslation:
         self.locale = locale
         self.preserve_placeables = preserve_placeables
         self.services = []
-        # Resolve the default at call time (not as a parameter default) so tests
-        # can patch the module-level `get_google_translate_data`.
-        self.mt_service = mt_service or get_google_translate_data
-        self.mt_service_name = mt_service_name
-        self.mt_supported = (
-            mt_supported
-            if mt_supported is not None
-            else bool(locale.google_translate_code)
-        )
+        # `service` is resolved here (not stored on the enum member) so tests can
+        # patch the module-level service callables.
+        self.mt_service = mt_engine.service if mt_engine is not None else None
+        self.mt_service_name = mt_engine.service_name if mt_engine is not None else ""
+        self.mt_supported = mt_engine is not None and mt_engine.supports(locale)
         self.exclude_entity = exclude_entity
 
     def walk_entity(self) -> tuple[Message, dict[str, Message]]:
