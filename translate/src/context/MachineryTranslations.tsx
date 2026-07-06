@@ -11,7 +11,12 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { editMessageEntry, getPlainMessage, parseEntry } from '~/utils/message';
+import {
+  editMessageEntry,
+  getPlainMessage,
+  parseEntry,
+  specialFormats,
+} from '~/utils/message';
 
 import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
@@ -42,19 +47,6 @@ const sortByQuality = (a: MachineryTranslation, b: MachineryTranslation) => {
   const { quality: qb } = b;
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
-
-// Formats whose entities can have multiple translatable leaves (Fluent
-// attributes, MF2 selector variants). For these we request a composed
-// multi-value translation in addition to the per-leaf matches. Mirrors
-// `COMPOSED_FORMATS` in pontoon/machinery/views.py.
-const COMPOSED_FORMATS = new Set([
-  'fluent',
-  'android',
-  'gettext',
-  'webext',
-  'xcode',
-  'xliff',
-]);
 
 // A composed translation is only meaningful when the entity has more than one
 // translatable leaf (Fluent attributes, MF2 selector variants). For a simple
@@ -125,7 +117,7 @@ export function MachineryProvider({
       // have multiple translatable leaves.
       const wantsComposed =
         !query &&
-        COMPOSED_FORMATS.has(format) &&
+        specialFormats.has(format) &&
         hasMultipleFields(entity.original, format);
 
       if (!query) {
