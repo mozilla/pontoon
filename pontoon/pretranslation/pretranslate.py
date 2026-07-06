@@ -146,8 +146,10 @@ class Pretranslation:
             else:
                 self.message(prop)
 
-        # `set_accesskey` reads the label from `entry.value`/`entry.properties`,
-        # so reconstruct an Entry from the (translated) value and properties.
+        # TODO: refactor `set_accesskey` to accept the value/properties directly
+        # so this temporary Entry is not required. It currently reads the label
+        # from `entry.value`/`entry.properties`, so reconstruct an Entry from the
+        # (translated) value and properties.
         entry = Entry(id=tuple(entity.key), value=value, properties=properties)
         for key, prop in accesskeys:
             set_accesskey(entry, key, prop)
