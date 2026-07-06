@@ -73,6 +73,7 @@ The new project will appear in the [public list of Projects](https://pontoon.moz
         * You can uncheck the `Locales can opt-in` checkbox to prevent localizers from requesting this specific project.
         * The configuration file only determines which resources will be available in Pontoon for each locale.
           The `locales` list within the file doesn't have any effect in Pontoon.
+        * Without a configuration file, all resources will be automatically available in each locale.
 * Repositories: select the type of repository and URL. Make sure to use SSH to allow write access.
   For example, if the repository is `https://github.com/meandavejustice/min-vid`,
   the URL should be `git@github.com:meandavejustice/min-vid.git`.
