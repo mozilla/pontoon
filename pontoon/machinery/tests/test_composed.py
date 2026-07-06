@@ -62,8 +62,8 @@ def test_composed_single_pattern_message(client, entity_a, locale_a):
 
 @pytest.mark.django_db
 def test_composed_single_pattern_fluent(client, fluent_resource, locale_a):
-    """A Fluent message with only a value (no attributes or variants) is
-    single-pattern, so it skips even though its format supports composition."""
+    """A Fluent message with a plain pattern value (no selector, no variants)
+    and no attributes skips even though its format supports composition."""
     fluent_entity = EntityFactory(resource=fluent_resource, string="hello = Hello\n")
 
     url = reverse("pontoon.machinery_composed")
