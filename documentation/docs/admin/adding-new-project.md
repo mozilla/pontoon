@@ -47,9 +47,6 @@ Incorrect pattern:
 
     locales/{locale_code}/path/to/file.{locale_code}.extension
 
-!!! note "Gettext .po files"
-    For Gettext files, you will need to ensure that `.po` files are included in the repository for each target locale for which they are to be translated (these files may be initially empty). For all other supported formats, Pontoon will automatically add files for each locale when it is translated.
-
 ## Create the project
 
 Access Pontoon’s [admin console](https://pontoon.mozilla.org/admin/) and click **ADD NEW PROJECT**.
