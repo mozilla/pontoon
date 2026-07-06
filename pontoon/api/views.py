@@ -34,11 +34,11 @@ from pontoon.base.models import (
 )
 from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
-from pontoon.sync.formats import value_from_string
 from pontoon.terminology.models import (
     Term,
     TermTranslation,
 )
+from pontoon.translations.utils import parse_source_string_to_json
 
 from .serializers import (
     TRANSLATION_STATS_FIELDS,
@@ -587,7 +587,7 @@ class PretranslationView(APIView):
         try:
             # Parsing happens here (not before) so invalid syntax for the chosen
             # format is reported as a 400 rather than escaping as a 500.
-            key, value, properties = value_from_string(fmt, text)
+            key, value, properties = parse_source_string_to_json(fmt, text)
             entity = SimpleNamespace(
                 resource=resource,
                 string=text,

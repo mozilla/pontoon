@@ -129,9 +129,9 @@ class EntityFactory(DjangoModelFactory):
         if entity.value:
             return
         try:
-            from pontoon.sync.formats import value_from_string
+            from pontoon.translations.utils import parse_source_string_to_json
 
-            key, value, properties = value_from_string(
+            key, value, properties = parse_source_string_to_json(
                 entity.resource.format, entity.string
             )
         except Exception:

@@ -8,8 +8,8 @@ from os.path import splitext
 
 from fluent.syntax import FluentSerializer
 from moz.l10n.formats import Format, detect_format, l10n_extensions
-from moz.l10n.formats.fluent import fluent_astify_entry, fluent_parse_entry
-from moz.l10n.message import message_to_json, parse_message, serialize_message
+from moz.l10n.formats.fluent import fluent_astify_entry
+from moz.l10n.message import message_to_json, serialize_message
 from moz.l10n.model import (
     CatchallKey,
     Entry,
@@ -22,44 +22,7 @@ from moz.l10n.model import (
     VariableRef,
 )
 
-from pontoon.base.models import Entity, Resource
-
-
-# Resource formats whose source strings are parsed as MF2 messages.
-_MF2_SOURCE_FORMATS = {
-    Resource.Format.ANDROID,
-    Resource.Format.GETTEXT,
-    Resource.Format.WEBEXT,
-    Resource.Format.XCODE,
-    Resource.Format.XLIFF,
-}
-
-
-def value_from_string(
-    format: Resource.Format | str | None, string: str
-) -> tuple[list[str], object, dict[str, object] | None]:
-    """
-    Parse an entity's source `string` into its `(key, value, properties)` JSON
-    representation — the inverse of `as_string`, matching what sync stores on
-    `Entity`. Used to pretranslate entities that aren't backed by a synced row.
-    """
-    if format == Resource.Format.FLUENT:
-        entry = fluent_parse_entry(string, with_linepos=False)
-        return (
-            list(entry.id),
-            message_to_json(entry.value),
-            (
-                {name: message_to_json(v) for name, v in entry.properties.items()}
-                if entry.properties
-                else None
-            ),
-        )
-    msg = (
-        parse_message(Format.mf2, string)
-        if format in _MF2_SOURCE_FORMATS
-        else PatternMessage([string])
-    )
-    return [], message_to_json(msg), None
+from pontoon.base.models import Entity
 
 
 @dataclass
