@@ -1012,7 +1012,7 @@ def test_project_locale(django_assert_num_queries):
 
 @pytest.mark.django_db
 def test_project_renamed_slug_redirects():
-    """Requesting a project by its old slug redirects to the new slug (#4182)."""
+    """Requesting a project by its old slug redirects to the new slug."""
     project = Project.objects.get(slug="terminology")
     project.slug = "terminology-renamed"
     project.save()
