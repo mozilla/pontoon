@@ -9,7 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.db.models import Prefetch, Q
-from django.shortcuts import get_object_or_404
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.timezone import make_aware
 
 from pontoon.actionlog.models import ActionLog
@@ -25,6 +26,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
+    ProjectSlugHistory,
     Resource,
     Translation,
     TranslationMemoryEntry,
@@ -281,6 +283,19 @@ class ProjectIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
             qs = qs.stats_data()
 
         return qs.distinct()
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except Http404:
+            slug_history = (
+                ProjectSlugHistory.objects.filter(old_slug=self.kwargs["slug"])
+                .order_by("-created_at")
+                .first()
+            )
+            if slug_history is None:
+                raise
+            return redirect("project-individual", slug=slug_history.project.slug)
 
 
 class EntityListView(RequestFieldsMixin, generics.ListAPIView):

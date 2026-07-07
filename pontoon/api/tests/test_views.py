@@ -495,8 +495,8 @@ def test_system_project(django_assert_num_queries):
 @pytest.mark.django_db
 def test_disabled_project(django_assert_num_queries):
     project = ProjectFactory.create(slug="disabled-1", disabled=True)
-
-    with django_assert_num_queries(1):
+    # 1 project lookup + 1 ProjectSlugHistory fallback lookup on the 404 path
+    with django_assert_num_queries(2):
         response = APIClient().get(
             f"/api/v2/projects/{project.slug}/", HTTP_ACCEPT="application/json"
         )
@@ -1008,6 +1008,29 @@ def test_project_locale(django_assert_num_queries):
             "complete": False,
         },
     }
+
+
+@pytest.mark.django_db
+def test_project_renamed_slug_redirects():
+    """Requesting a project by its old slug redirects to the new slug (#4182)."""
+    project = Project.objects.get(slug="terminology")
+    project.slug = "terminology-renamed"
+    project.save()
+
+    response = APIClient().get(
+        "/api/v2/projects/terminology/", HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 302
+    assert response["Location"] == "/api/v2/projects/terminology-renamed/"
+
+
+@pytest.mark.django_db
+def test_project_unknown_slug_404s():
+    response = APIClient().get(
+        "/api/v2/projects/does-not-exist/", HTTP_ACCEPT="application/json"
+    )
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db
