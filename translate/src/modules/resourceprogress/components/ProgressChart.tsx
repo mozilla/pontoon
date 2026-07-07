@@ -21,22 +21,18 @@ export function ProgressChart({
   const style = getComputedStyle(document.body);
 
   useEffect(() => {
-    if (canvas.current) {
-      const { height, width } = canvas.current;
-      // Set up canvas to be HiDPI display ready
-      canvas.current.style.width = width + 'px';
-      canvas.current.style.height = height + 'px';
-      canvas.current.width = width * dpr;
-      canvas.current.height = height * dpr;
-    }
-  }, [dpr]);
-
-  useEffect(() => {
     const { approved, pretranslated, warnings, errors, missing, total } = stats;
 
     if (!canvas.current || !total) {
       return;
     }
+
+    // Set up canvas to be HiDPI display ready.
+    canvas.current.style.width = size + 'px';
+    canvas.current.style.height = size + 'px';
+    canvas.current.width = size * dpr;
+    canvas.current.height = size * dpr;
+
     const { height, width } = canvas.current;
     const context = canvas.current.getContext('2d');
     if (!context) {
@@ -77,7 +73,7 @@ export function ProgressChart({
       context.strokeStyle = color;
       context.stroke();
     }
-  }, [stats]);
+  }, [stats, dpr, size]);
 
   return <canvas ref={canvas} height={size} width={size} />;
 }
