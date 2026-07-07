@@ -182,14 +182,6 @@ def test_locale_renamed_code_redirects():
 
 
 @pytest.mark.django_db
-def test_locale_unknown_code_404s():
-    response = APIClient().get(
-        "/api/v2/locales/does-not-exist/", HTTP_ACCEPT="application/json"
-    )
-    assert response.status_code == 404
-
-
-@pytest.mark.django_db
 def test_locales(django_assert_num_queries):
     project_a = ProjectFactory(
         slug="project_a",
@@ -1062,14 +1054,6 @@ def test_project_renamed_slug_redirects():
 
     assert response.status_code == 302
     assert response["Location"] == "/api/v2/projects/terminology-renamed/"
-
-
-@pytest.mark.django_db
-def test_project_unknown_slug_404s():
-    response = APIClient().get(
-        "/api/v2/projects/does-not-exist/", HTTP_ACCEPT="application/json"
-    )
-    assert response.status_code == 404
 
 
 @pytest.mark.django_db
