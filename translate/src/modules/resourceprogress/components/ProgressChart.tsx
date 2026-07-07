@@ -18,7 +18,6 @@ export function ProgressChart({
 }: Props): React.ReactElement<'canvas'> {
   const canvas = useRef<HTMLCanvasElement>(null);
   const dpr = window.devicePixelRatio || 1;
-  const style = getComputedStyle(document.body);
 
   useEffect(() => {
     const { approved, pretranslated, warnings, errors, missing, total } = stats;
@@ -26,6 +25,8 @@ export function ProgressChart({
     if (!canvas.current || !total) {
       return;
     }
+
+    const style = getComputedStyle(document.body);
 
     // Set up canvas to be HiDPI display ready.
     canvas.current.style.width = size + 'px';
