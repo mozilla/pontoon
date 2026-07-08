@@ -62,7 +62,7 @@ The new project will appear in the [public list of Projects](https://pontoon.moz
 
   * Select at least one locale. To make things faster it’s possible to copy supported locales from an existing project.
   * The *Read-only* column can be used to add languages in read-only mode. In this way, their translations will be available to other languages in the LOCALES tab when translating, but it won’t be possible to change or submit translations directly in Pontoon.
-  * You can uncheck the `Locales can opt-in` checkbox to prevent localizers from requesting this specific project.
+  * You can uncheck the `Locales can opt in` checkbox to prevent localizers from requesting this specific project.
 
 * Repositories: select the type of repository and URL. Make sure to use SSH to allow write access. For example, if the repository is `https://github.com/meandavejustice/min-vid`, the URL should be `git@github.com:meandavejustice/min-vid.git`. You can use the *Clone or download* button in the repository page on GitHub, making sure that *Clone with SSH* is selected.
 * Leave the `Branch` field empty, unless developers asked to commit translations in a specific branch instead of the default one (usually `main` or `master`).
