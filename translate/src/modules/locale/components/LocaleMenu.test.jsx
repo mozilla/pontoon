@@ -43,7 +43,7 @@ describe('<LocaleMenu>', () => {
     const button = getByRole('button');
     fireEvent.click(button);
 
-    const input = getByRole('textbox');
+    const input = getByRole('searchbox');
     fireEvent.change(input, { target: { value: 'Locale 1' } });
 
     getByText('Locale 1');

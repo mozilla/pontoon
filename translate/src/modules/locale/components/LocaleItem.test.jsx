@@ -1,14 +1,13 @@
 import React from 'react';
-
-import { LocaleItem } from './LocaleItem';
 import { render } from '@testing-library/react';
+import LocaleItem from './LocaleItem';
 
-function renderLocaleItem({ code = 'code' } = {}) {
+function renderLocaleItem({ code = 'code', selected = false } = {}) {
   return render(
     <LocaleItem
       locale={{ code, name: 'Locale' }}
       currentLocale='current'
-      selected={code === 'current'}
+      selected={selected}
       onClick={() => {}}
     />,
   );
@@ -16,18 +15,19 @@ function renderLocaleItem({ code = 'code' } = {}) {
 
 describe('<LocaleItem>', () => {
   it('renders correctly', () => {
-    const { getByRole, container } = renderLocaleItem();
+    const { getByRole, getByText } = renderLocaleItem();
     getByRole('listitem');
-    expect(container.querySelector('span.locale')).toBeInTheDocument();
+    getByText('Locale');
+    getByText('code');
   });
 
-  it('sets the className for the current locale', () => {
-    const { getByRole } = renderLocaleItem({ code: 'current' });
-    expect(getByRole('listitem')).toHaveClass('current');
+  it('sets the className when selected', () => {
+    const { getByRole } = renderLocaleItem({ selected: true });
+    expect(getByRole('listitem')).toHaveClass('selected');
   });
 
-  it('sets the className for another locale', () => {
-    const { getByRole } = renderLocaleItem();
-    expect(getByRole('listitem')).not.toHaveClass('current');
+  it('does not set the selected className otherwise', () => {
+    const { getByRole } = renderLocaleItem({ selected: false });
+    expect(getByRole('listitem')).not.toHaveClass('selected');
   });
 });

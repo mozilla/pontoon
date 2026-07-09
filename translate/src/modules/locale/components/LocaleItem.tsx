@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import './LocaleItem.css';
 import { LocaleOption } from '~/api/other-locales';
 
