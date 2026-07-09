@@ -23,16 +23,16 @@ function renderLocaleMenu({
 
 describe('<LocaleMenu>', () => {
   it('renders correctly', () => {
-    const { getByRole, container } = renderLocaleMenu();
+    const { getByRole } = renderLocaleMenu();
     getByRole('button');
-    expect(container.querySelector('input')).toBeInTheDocument();
   });
 
   it('opens the menu when the button is clicked', () => {
-    const { getByRole, getByText, queryByText } = renderLocaleMenu();
+    const { getByRole, getByText, queryByText, container } = renderLocaleMenu();
     const button = getByRole('button');
     fireEvent.click(button);
 
+    expect(container.querySelector('input')).toBeInTheDocument();
     getByText('Locale 1');
     getByText('Locale 2');
     expect(queryByText('Current Locale')).toBeNull();
@@ -52,9 +52,7 @@ describe('<LocaleMenu>', () => {
 
   it('calls onSelect and closes the menu when a locale is clicked', () => {
     const onSelect = vi.fn();
-    const { getByRole, getByText, queryByText } = renderLocaleMenu({
-      onSelect,
-    });
+    const { getByRole, getByText, queryByText } = renderLocaleMenu({ onSelect });
     fireEvent.click(getByRole('button'));
 
     fireEvent.click(getByText('Locale 1'));
