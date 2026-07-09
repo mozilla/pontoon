@@ -52,7 +52,9 @@ describe('<LocaleMenu>', () => {
 
   it('calls onSelect and closes the menu when a locale is clicked', () => {
     const onSelect = vi.fn();
-    const { getByRole, getByText, queryByText } = renderLocaleMenu({ onSelect });
+    const { getByRole, getByText, queryByText } = renderLocaleMenu({
+      onSelect,
+    });
     fireEvent.click(getByRole('button'));
 
     fireEvent.click(getByText('Locale 1'));
