@@ -43,7 +43,7 @@ export default function LocaleMenu({
   const selectedLocale = locales.find((locale) => locale.code === selected);
 
   return (
-    <div className='locale-selector' ref={ref}>
+    <div className='locale-menu' ref={ref}>
       <button
         type='button'
         className={`locale-menu-trigger ${selectedLocale ? 'has-selection' : ''} ${isOpen ? 'is-open' : ''}`}
@@ -61,8 +61,8 @@ export default function LocaleMenu({
         {!selectedLocale && <span className='locale-menu-arrow' />}
       </button>
       {isOpen && (
-        <div className='locale-selector-dropdown'>
-          <div className='locale-selector-search'>
+        <div className='locale-menu-dropdown'>
+          <div className='locale-menu-search'>
             <i className='icon fas fa-search'></i>
             <input
               type='search'
@@ -72,7 +72,7 @@ export default function LocaleMenu({
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <div className='locale-selector-list'>
+          <div className='locale-menu-list'>
             <ul>
               {filtered.map((locale) => (
                 <LocaleItem

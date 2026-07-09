@@ -1,11 +1,11 @@
-.locale-selector {
+.locale-menu {
   width: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
-.locale-selector-dropdown {
+.locale-menu-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
@@ -16,7 +16,7 @@
   box-sizing: border-box;
 }
 
-.locale-selector-search {
+.locale-menu-search {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -28,7 +28,7 @@
   padding-bottom: 0;
 }
 
-.locale-selector-search .icon {
+.locale-menu-search .icon {
   color: var(--light-grey-7);
   font-size: 1.2em;
   box-sizing: border-box;
@@ -36,12 +36,12 @@
   padding-left: 6px;
 }
 
-.locale-selector-list {
+.locale-menu-list {
   max-height: 200px;
   overflow-y: auto;
 }
 
-.locale-selector-trigger .locale-name {
+.locale-menu-trigger .locale-name {
   color: var(--light-grey-7);
   text-transform: uppercase;
   overflow: hidden;
@@ -50,12 +50,12 @@
   min-width: 0;
 }
 
-.locale-selector-trigger .locale-code {
+.locale-menu-trigger .locale-code {
   color: var(--status-translated);
   flex-shrink: 0;
 }
 
-.locale-selector-dropdown ul {
+.locale-menu-dropdown ul {
   list-style: none;
   margin: 0;
   padding: 0;

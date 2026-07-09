@@ -136,17 +136,17 @@
   margin-top: 0;
 }
 
-.batch-actions .copy-from-locale .locale-selector,
+.batch-actions .copy-from-locale .locale-menu,
 .batch-actions .copy-from-locale .copy-from-locale-btn {
   flex: 1 1 0;
   min-width: 0;
 }
 
-.batch-actions .actions-panel .locale-selector-trigger {
+.batch-actions .actions-panel .locale-menu-trigger {
   margin-top: 0;
 }
 
-#copy-locale-form .locale-selector button {
+#copy-locale-form .locale-menu button {
   text-align: center;
   text-align-last: center;
   border: none;
@@ -171,11 +171,11 @@
   gap: 10px;
 }
 
-#copy-locale-form .locale-selector button.is-open {
+#copy-locale-form .locale-menu button.is-open {
   border-radius: 3px 3px 0 0;
 }
 
-.batch-actions .actions-panel .locale-selector-search input {
+.batch-actions .actions-panel .locale-menu-search input {
   border-bottom: none;
   padding: 4px 3px 3px;
   margin: 0;
@@ -184,7 +184,7 @@
   color: var(--input-color-1);
 }
 
-#copy-locale-form .locale-selector button.has-selection {
+#copy-locale-form .locale-menu button.has-selection {
   background-image: none;
 }
 

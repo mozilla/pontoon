@@ -1,4 +1,4 @@
-.locale-selector-dropdown li {
+.locale-menu-dropdown li {
   display: flex;
   font-size: 14px;
   font-weight: 300;
@@ -9,17 +9,17 @@
   line-height: 18px;
 }
 
-.locale-selector-dropdown li:hover {
+.locale-menu-dropdown li:hover {
   background-color: var(--dark-grey-2);
 }
 
-.locale-selector-dropdown .locale-name {
+.locale-menu-dropdown .locale-name {
   color: var(--light-grey-7);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.locale-selector-dropdown .locale-code {
+.locale-menu-dropdown .locale-code {
   color: var(--status-translated);
 }
