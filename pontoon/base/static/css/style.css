@@ -494,16 +494,18 @@ time {
 }
 
 .search-wrapper {
-  border-bottom: 1px solid var(--main-border-1);
+  border: 1px solid var(--main-border-1);
   margin-bottom: 10px;
   position: relative;
+  border-radius: 3px;
+  background: var(--dark-grey-2);
 }
 
 .search-wrapper .icon {
   color: var(--light-grey-7);
   font-size: 1.2em;
   position: absolute;
-  left: 3px;
+  left: 6px;
   top: 5px;
 }
 
