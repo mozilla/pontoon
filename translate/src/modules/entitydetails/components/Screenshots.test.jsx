@@ -40,6 +40,24 @@ describe('<Screenshots>', () => {
     );
   });
 
+  it('strips trailing sentence punctuation from the image URL', () => {
+    const source =
+      'See http://link.to/image.png?size=large, then https://example.org/en-US/test.jpg#preview.';
+    const { getAllByRole } = render(
+      <Screenshots locale='kg' source={source} />,
+    );
+    const images = getAllByRole('img');
+    expect(images).toHaveLength(2);
+    expect(images[0]).toHaveAttribute(
+      'src',
+      'http://link.to/image.png?size=large',
+    );
+    expect(images[1]).toHaveAttribute(
+      'src',
+      'https://example.org/kg/test.jpg#preview',
+    );
+  });
+
   it('does not find non PNG or JPG images', () => {
     const source =
       'That is a non-supported image URL: http://link.to/image.bmp';
