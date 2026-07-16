@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import './Screenshots.css';
 
-// Matches http(s) URLs pointing at a PNG or JPG image.
-const IMAGE_URL_RE = /https?:\/\/[^\s"'<>]+?\.(?:png|jpg)/gi;
+// Matches http(s) URLs pointing at a PNG or JPG image, including any
+// trailing query string or fragment (e.g. .../image.jpg?size=large).
+const IMAGE_URL_RE = /https?:\/\/[^\s"'<>]+?\.(?:png|jpg)(?:[?#][^\s"'<>]*)?/gi;
 
 function getImageURLs(source: string, locale: string) {
   const matches = source.match(IMAGE_URL_RE);
