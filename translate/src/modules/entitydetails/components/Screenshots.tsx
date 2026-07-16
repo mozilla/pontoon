@@ -1,21 +1,16 @@
-import LinkifyIt from 'linkify-it';
 import React, { useEffect, useState } from 'react';
-import tlds from 'tlds';
 
 import './Screenshots.css';
 
-// Create and configure a URLs matcher.
-const linkify = new LinkifyIt();
-linkify.tlds(tlds);
+// Matches http(s) URLs pointing at a PNG or JPG image.
+const IMAGE_URL_RE = /https?:\/\/[^\s"'<>]+?\.(?:png|jpg)/gi;
 
 function getImageURLs(source: string, locale: string) {
-  const matches = linkify.match(source);
+  const matches = source.match(IMAGE_URL_RE);
   if (!matches) {
     return [];
   }
-  return matches
-    .filter((match) => /(https?:\/\/.*\.(?:png|jpg))/im.test(match.url))
-    .map((match) => match.url.replace(/en-US\//gi, locale + '/'));
+  return matches.map((url) => url.replace(/en-US\//gi, locale + '/'));
 }
 
 type Props = {

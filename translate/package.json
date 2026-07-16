@@ -22,7 +22,6 @@
     "history": "^4.10.1",
     "html-react-parser": "^5.2.6",
     "javascript-time-ago": "^2.3.9",
-    "linkify-it": "^2.1.0",
     "lodash.escaperegexp": "^4.1.2",
     "nprogress": "^0.2.0",
     "react": "^16.14.0",
@@ -38,8 +37,7 @@
     "redux-thunk": "^2.3.0",
     "slate": "^0.78.0",
     "slate-react": "^0.77.4",
-    "styled-components": "^5.3.3",
-    "tlds": "^1.218.0"
+    "styled-components": "^5.3.3"
   },
   "scripts": {
     "start": "rollup -c --watch",
