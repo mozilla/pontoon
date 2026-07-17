@@ -23,8 +23,8 @@ def _clean_and_parse(src: str):
 
 def fix_properties(apps, schema_editor):
     Entity = apps.get_model("base", "Entity")
-    entities = Entity.objects.filter(
-        resource__format="properties", string__contains="\\"
+    entities = Entity.objects.filter(resource__format="properties").filter(
+        Q(string__contains="\\") | Q(string__contains="\n")
     )
     for e in entities:
         msg = properties_parse_message(e.string)
@@ -34,8 +34,8 @@ def fix_properties(apps, schema_editor):
 
     Translation = apps.get_model("base", "Translation")
     translations = Translation.objects.filter(
-        entity__resource__format="properties", string__contains="\\"
-    )
+        entity__resource__format="properties"
+    ).filter(Q(string__contains="\\") | Q(string__contains="\n"))
     for t in translations:
         try:
             msg = _clean_and_parse(t.string)
@@ -82,7 +82,7 @@ def unfix_properties(apps, schema_editor):
     )
     for e in entities:
         e.string = _unfix_string(message_from_json(e.value))
-        e.value = PatternMessage([e.string])
+        e.value = [e.string]
     Entity.objects.bulk_update(entities, ["string", "value"])
 
     Translation = apps.get_model("base", "Translation")
@@ -91,7 +91,7 @@ def unfix_properties(apps, schema_editor):
     )
     for t in translations:
         t.string = _unfix_string(message_from_json(t.value))
-        t.value = PatternMessage([t.string])
+        t.value = [t.string]
     Translation.objects.bulk_update(
         translations, ["string", "value"], batch_size=10_000
     )
@@ -101,8 +101,8 @@ def unfix_properties(apps, schema_editor):
         entity__resource__format="properties"
     ).filter(Q(source__contains="\n") | Q(target__contains="\n"))
     for tm in tm_entries:
-        tm.source = _unfix_string(PatternMessage([tm.source] if tm.source else []))
-        tm.target = _unfix_string(PatternMessage([tm.target] if tm.target else []))
+        tm.source = _unfix_string(PatternMessage([tm.source])) if tm.source else ""
+        tm.target = _unfix_string(PatternMessage([tm.target])) if tm.target else ""
     TranslationMemoryEntry.objects.bulk_update(tm_entries, ["source", "target"])
 
 
