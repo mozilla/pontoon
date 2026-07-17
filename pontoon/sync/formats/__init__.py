@@ -5,7 +5,6 @@ Parsing resource files.
 from collections.abc import Iterator
 from dataclasses import dataclass
 from os.path import splitext
-from re import Match, compile
 
 from fluent.syntax import FluentSerializer
 from moz.l10n.formats import Format, detect_format, l10n_extensions
@@ -55,27 +54,13 @@ def are_compatible_files(file_a, file_b):
     return False
 
 
-_fluent_serializer = FluentSerializer()
-_prop_esc_u = compile(r"(?<!\\)\\u(?!0000)[0-9A-Fa-f]{4}")
-_prop_esc_ws = compile(r"(?<!\\)\\([^\S\n])")
-
-
-def _unicode_unescape(m: Match[str]):
-    return m[0].encode("utf-8").decode("unicode_escape")
-
-
 def _as_string(format: Format | None, entry: Entry[Message]) -> str:
     match format:
         case Format.fluent:
             fluent_entry = fluent_astify_entry(entry, comment_str=lambda _: "")
-            return _fluent_serializer.serialize_entry(fluent_entry)
+            return FluentSerializer().serialize_entry(fluent_entry)
         case Format.android | Format.gettext | Format.webext | Format.xliff:
             return serialize_message(Format.mf2, entry.value)
-        case Format.properties:
-            string = serialize_message(Format.properties, entry.value)
-            string = _prop_esc_u.sub(_unicode_unescape, string)
-            string = _prop_esc_ws.sub(r"\1", string)
-            return string
         case _:
             return serialize_message(format, entry.value)
 

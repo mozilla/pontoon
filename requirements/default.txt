@@ -275,6 +275,7 @@ click==8.3.1 \
     #   click-didyoumean
     #   click-plugins
     #   click-repl
+    #   moz-l10n
     #   sacremoses
     #   zensical
 click-didyoumean==0.3.1 \
@@ -979,9 +980,9 @@ markupsafe==2.0.1 \
     # via
     #   -r default.in
     #   jinja2
-moz-l10n[xml]==0.11.3 \
-    --hash=sha256:30b2d81aac683fe1c6c8ce17131c177fb10f8bed38f426872da3f52ffa4c1bdf \
-    --hash=sha256:f6e65ee6249b104161dcaf43f8a6b65da6c93d88206fcbdce4986993a03bd77a
+moz-l10n[xml]==0.12.0 \
+    --hash=sha256:1fef7ae191ba1c61cb62c73d3eb482f1c0fea774d7dd2e67bcd057c04ffbfd6b \
+    --hash=sha256:a2340b9540ae4b56ddd85d74528191e06dfb920e6aa8e1c94ca835ee408fbcf5
     # via
     #   -r default.in
     #   moz-l10n

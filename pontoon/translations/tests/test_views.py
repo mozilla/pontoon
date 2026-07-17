@@ -86,6 +86,46 @@ def test_create_translation_success_mf2(member, project_a, locale_a, project_loc
 
 
 @pytest.mark.django_db
+def test_create_translation_success_properties(
+    member, project_a, locale_a, project_locale_a
+):
+    resource = ResourceFactory(
+        project=project_a, path="file.properties", format="properties"
+    )
+    entity = EntityFactory(resource=resource, key=["key"])
+    response = request_create_translation(
+        member.client,
+        entity=entity.pk,
+        locale=locale_a.code,
+        value=["multiline\nvalue"],
+    )
+    assert response.status_code == 200
+    assert response.json()["status"]
+
+    translation = Translation.objects.get(entity=entity, locale=locale_a)
+    assert translation.string == "multiline\\nvalue"
+
+
+@pytest.mark.django_db
+def test_create_translation_fail_properties(
+    member, project_a, locale_a, project_locale_a
+):
+    resource = ResourceFactory(
+        project=project_a, path="file.properties", format="properties"
+    )
+    entity = EntityFactory(resource=resource, key=["key"])
+    response = request_create_translation(
+        member.client,
+        entity=entity.pk,
+        locale=locale_a.code,
+        value=["\x00value"],
+    )
+    assert response.status_code == 400
+    assert not response.json()["status"]
+    assert response.json()["message"]
+
+
+@pytest.mark.django_db
 def test_create_translation_not_logged_in(client, entity_a, locale_a):
     response = request_create_translation(
         client,
@@ -194,7 +234,7 @@ def test_run_checks_during_translation_update(
         member.client,
         entity=properties_entity.pk,
         locale=locale_a.code,
-        value=["bad suggestion \\q %q"],
+        value=["bad  suggestion %q"],
         ignore_warnings="true",
     )
 
@@ -202,7 +242,7 @@ def test_run_checks_during_translation_update(
     assert response.json() == {
         "failedChecks": {
             "clErrors": ["Found single %"],
-            "clWarnings": ["unknown escape sequence, \\q"],
+            "ttWarnings": ["Double spaces"],
         },
         "status": False,
     }

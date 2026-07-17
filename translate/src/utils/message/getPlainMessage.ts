@@ -23,7 +23,10 @@ export function getPlainMessage(entry: MessageEntry): string {
   return '';
 }
 
-function previewMessage(format: string, message: Message): string {
+function previewMessage(
+  format: MessageEntry['format'],
+  message: Message,
+): string {
   let pattern: Pattern;
   if (Array.isArray(message)) {
     pattern = message;

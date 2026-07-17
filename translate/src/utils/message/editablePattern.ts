@@ -1,29 +1,32 @@
 import {
-  Expression,
+  type Expression,
+  type Markup,
+  type Pattern,
+  fluentSerializePattern,
   isExpression,
   mf2SerializePattern,
-  Markup,
-  Pattern,
-  fluentSerializePattern,
 } from '@mozilla/l10n';
+import type { MessageEntry } from '.';
 
-/**
- * @param format - Either a `MessageEntry['format']` or an `Entity.format`;
- *   only the `'fluent'` value gets special consideration.
- */
-export function editablePattern(format: string, pattern: Pattern): string {
+export function editablePattern(
+  format: MessageEntry['format'],
+  pattern: Pattern,
+): string {
   if (format === 'fluent') {
-    return fluentSerializePattern(pattern, {
-      escapeSyntax: false,
-      onError: () => {},
-    });
+    return fluentSerializePattern(
+      // Drop empty literals: { "" }
+      pattern.filter((el) => typeof el === 'string' || el._ !== '' || el.fn),
+      undefined,
+      { escapeSyntax: false, onError: () => {} },
+    );
   }
 
   let str = '';
   for (const part of pattern) {
     str += typeof part === 'string' ? part : editablePlaceholder(part);
   }
-  return str;
+  // FIXME: https://bugzilla.mozilla.org/show_bug.cgi?id=2055465
+  return format === 'properties' ? str.replaceAll('\r', '\\r') : str;
 }
 
 function editablePlaceholder(part: Expression | Markup): string {
