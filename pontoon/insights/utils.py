@@ -166,7 +166,7 @@ def get_locale_health_data(locales):
     data.update(
         {
             "all": {
-                "name": "All",
+                "name": "Average (all locales)",
                 "chs": [None] * 12,
             }
         }
@@ -530,7 +530,7 @@ def get_global_pretranslation_quality(category, id):
     data.update(
         {
             "all": {
-                "name": "All",
+                "name": "Average (all locales)",
                 "approval_rate": [None] * 12,
             }
         }

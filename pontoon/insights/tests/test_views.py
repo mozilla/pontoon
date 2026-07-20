@@ -63,7 +63,7 @@ def test_default_empty(client_superuser, clear_cache, locale_a, project_a, user_
     team_pretranslation_quality = response_context["team_pretranslation_quality"]
     assert team_pretranslation_quality["dataset"] == [
         {
-            "name": "All",
+            "name": "Average (all locales)",
             "approval_rate": [
                 None,
                 None,
@@ -83,7 +83,7 @@ def test_default_empty(client_superuser, clear_cache, locale_a, project_a, user_
     project_pretranslation_quality = response_context["project_pretranslation_quality"]
     assert project_pretranslation_quality["dataset"] == [
         {
-            "name": "All",
+            "name": "Average (all locales)",
             "approval_rate": [
                 None,
                 None,
@@ -169,7 +169,7 @@ def test_default_with_data(
             ],
         },
         {
-            "name": "All",
+            "name": "Average (all locales)",
             "approval_rate": [
                 None,
                 None,
@@ -206,7 +206,7 @@ def test_default_with_data(
             ],
         },
         {
-            "name": "All",
+            "name": "Average (all locales)",
             "approval_rate": [
                 None,
                 None,
@@ -316,7 +316,7 @@ def test_get_global_locale_health_insights_shape():
             ],
         },
         {
-            "name": "All",
+            "name": "Average (all locales)",
             "chs": [
                 15.0,
                 None,

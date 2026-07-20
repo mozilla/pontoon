@@ -301,7 +301,7 @@ def set_translations(
                     else locale.code
                 )
                 if prev_tgt is None:
-                    res.meta.append(Metadata("@target-language", lc))
+                    section.meta.append(Metadata("@target-language", lc))
                 else:
                     prev_tgt.value = lc
 

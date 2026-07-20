@@ -2,6 +2,7 @@ import {
   fluentParseEntry,
   mf2ParseMessage,
   normalizeMessage,
+  propertiesParsePattern,
   type Message,
 } from '@mozilla/l10n';
 import type { MessageEntry } from '.';
@@ -28,6 +29,16 @@ export function parseEntry(
         return { format, id, value, attributes };
       }
       return value ? { format, id, value } : null;
+    } else if (format === 'properties') {
+      return {
+        format: 'properties',
+        id: '',
+        value: propertiesParsePattern(source)
+          // FIXME: https://bugzilla.mozilla.org/show_bug.cgi?id=2055465
+          .map((el) =>
+            typeof el === 'string' ? el.replaceAll('\\r', '\r') : el,
+          ),
+      };
     } else if (specialFormats.has(format)) {
       return {
         format: format as MessageEntry['format'],

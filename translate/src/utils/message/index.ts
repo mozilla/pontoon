@@ -8,6 +8,7 @@ export type MessageEntry =
         | 'fluent'
         | 'gettext'
         | 'plain'
+        | 'properties'
         | 'webext'
         | 'xcode'
         | 'xliff';

@@ -960,6 +960,23 @@ header .right .select .menu {
   line-height: 22px;
 }
 
+#profile .menu li#standalone-sign-out form {
+  display: flex;
+}
+
+#profile .menu li#standalone-sign-out button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 22px;
+  padding: 0;
+  text-align: left;
+}
+
 #profile .menu li i.fas,
 #profile .menu li i.fab {
   margin: 0 8px 0 -2px;

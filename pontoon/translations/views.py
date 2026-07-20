@@ -1,3 +1,4 @@
+from collections.abc import Iterable, Mapping
 from typing import cast
 
 from moz.l10n.message import message_to_json
@@ -54,6 +55,16 @@ def _add_badge_data(response_data, user, badge_name, badge_level):
     )
 
 
+def _contains_null_char(x) -> bool:
+    if isinstance(x, str):
+        return "\x00" in x
+    if isinstance(x, Mapping):
+        return any(_contains_null_char(y) for y in x.items())
+    if isinstance(x, Iterable):
+        return any(_contains_null_char(y) for y in x)
+    return False
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
@@ -101,6 +112,12 @@ def create_translation(request):
 
     json_value = message_to_json(value)
     json_properties = {k: message_to_json(v) for k, v in properties.items()} or None
+
+    if _contains_null_char((string, json_value, json_properties)):
+        # PostgreSQL does not support null characters in text or jsonb
+        return JsonResponse(
+            {"status": False, "message": "Unsupported null character"}, status=400
+        )
 
     # If same translation exists in the DB, don't save it again.
     if (

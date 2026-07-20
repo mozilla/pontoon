@@ -202,13 +202,22 @@ describe('getPlainMessage', () => {
       expect(getPlainMessage(entry)).toEqual('%1$s additional settings');
     });
 
-    it('work with a message entry value', () => {
+    it('message entry value with MF2 placeholder fallback', () => {
       const entry: MessageEntry = {
         format: 'android',
         id: '',
         value: ['a = ', { $: 'b' }],
       };
       expect(getPlainMessage(entry)).toEqual('a = {$b}');
+    });
+
+    it('works with open/close tags', () => {
+      const message =
+        'Go to {#a href=open-account}Create password{/a} in settings.';
+      const entry = parseEntry('android', message)!;
+      expect(getPlainMessage(entry)).toEqual(
+        'Go to <a href="open-account">Create password</a> in settings.',
+      );
     });
   });
 });

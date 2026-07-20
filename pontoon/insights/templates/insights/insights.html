@@ -17,48 +17,55 @@
       <div id="insights">
         <section class="team-community-health-activity block">
           <h3 class="controls">Community Health activity</h3>
-          <menu class="controls clearfix">
-            <div class="search-wrapper small clearfix">
-              <div class="icon fas fa-search"></div>
-              <input
-                class="table-filter"
-                type="search"
-                autocomplete="off"
-                autofocus
-                placeholder="Filter teams"
-                data-filter="td:nth-child(1)"
-              />
-            </div>
-            <div class="button-container">
-              <a
-                class="button config-button"
-                id="edit-config"
-                href="{{ url('pontoon.insights.config') }}"
-                >Edit Configuration
-              </a>
-              <button class="button config-button" id="show-scores">
-                Show scores
-              </button>
-            </div>
-          </menu>
-          <div class="dashboard-container">
-            {{ CommunityHealthTable.header() }}
-
-            {% for locale in locales %}
-              {% set main_link = url('pontoon.teams.team', locale.code) %}
-
-              {{ CommunityHealthTable.item(locale, main_link, curr_snapshot=current_snapshots.get(locale.id), base_deltas=snapshot_base_deltas.get(locale.id), score_deltas=snapshot_score_deltas.get(locale.id), columns=columns) }}
-            {% endfor %}
-
-            {{ CommunityHealthTable.footer() }}
-
-            {% if not locales %}
-              <div class="no-locales">
-                <p>No locales selected.</p>
+          {% if locales %}
+            <menu class="controls clearfix">
+              <div class="search-wrapper small clearfix">
+                <div class="icon fas fa-search"></div>
+                <input
+                  class="table-filter"
+                  type="search"
+                  autocomplete="off"
+                  autofocus
+                  placeholder="Filter teams"
+                  data-filter="td:nth-child(1)"
+                />
               </div>
-            {% endif %}
-          </div>
-          {% if global_locale_health_insights %}
+              <div class="button-container">
+                <a
+                  class="button config-button"
+                  id="edit-config"
+                  href="{{ url('pontoon.insights.config') }}"
+                  >Edit Configuration
+                </a>
+                <button class="button config-button" id="show-scores">
+                  Show scores
+                </button>
+              </div>
+            </menu>
+            <div class="dashboard-container">
+              {{ CommunityHealthTable.header() }}
+
+              {% for locale in locales %}
+                {% set main_link = url('pontoon.teams.team', locale.code) %}
+
+                {{ CommunityHealthTable.item(locale, main_link, curr_snapshot=current_snapshots.get(locale.id), base_deltas=snapshot_base_deltas.get(locale.id), score_deltas=snapshot_score_deltas.get(locale.id), columns=columns) }}
+              {% endfor %}
+
+              {{ CommunityHealthTable.footer() }}
+            </div>
+          {% else %}
+            <div class="no-locales">
+              <p>No locales selected.</p>
+              <p>
+                Please
+                <a href="{{ url('pontoon.insights.config') }}"
+                  >choose one or more locales</a
+                >
+                to display.
+              </p>
+            </div>
+          {% endif %}
+          {% if global_locale_health_insights and locales %}
             <figure>
               <h3 class="controls">
                 Community health score

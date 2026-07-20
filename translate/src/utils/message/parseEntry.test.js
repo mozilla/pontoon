@@ -98,7 +98,7 @@ describe('parseEntry:fluent', () => {
       format: 'fluent',
       id: '-term',
       value: ['My ', { $: 'awesome' }, ' term'],
-      attributes: new Map([['attr', []]]),
+      attributes: new Map([['attr', [{ _: '' }]]]),
     });
   });
 
@@ -154,6 +154,27 @@ describe('parseEntry:fluent', () => {
           },
         ],
       },
+    });
+  });
+});
+
+describe('parseEntry:properties', () => {
+  it('simple value', () => {
+    const res = parseEntry('properties', 'Hello');
+    expect(res).toEqual({ format: 'properties', id: '', value: ['Hello'] });
+  });
+
+  it('empty value', () => {
+    const res = parseEntry('properties', '');
+    expect(res).toEqual({ format: 'properties', id: '', value: [] });
+  });
+
+  it('multiline', () => {
+    const res = parseEntry('properties', 'foo\nbar\\r\nbaz');
+    expect(res).toEqual({
+      format: 'properties',
+      id: '',
+      value: ['foo\nbar\r\nbaz'],
     });
   });
 });

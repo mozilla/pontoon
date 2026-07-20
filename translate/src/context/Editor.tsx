@@ -19,8 +19,11 @@ import {
   requiresSourceView,
   serializeEntry,
 } from '~/utils/message';
+import {
+  hasOuterWhitespace,
+  htmlElementEscapes,
+} from '~/utils/message/entryInformation';
 import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
-import { hasOuterWhitespace } from '~/utils/message/hasOuterWhitespace';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 
@@ -160,7 +163,10 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     if (readonly) {
       return initEditorActions;
     }
-    const buildOpts = { trim: !hasOuterWhitespace(sourceEntry) };
+    const buildOpts = {
+      escapeHTML: htmlElementEscapes(sourceEntry),
+      trim: !hasOuterWhitespace(sourceEntry),
+    };
     return {
       clearEditor() {
         setState((state) => {

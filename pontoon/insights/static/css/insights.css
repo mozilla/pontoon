@@ -112,9 +112,16 @@
   }
 
   .no-locales {
+    display: flex;
+    flex-direction: column;
+    row-gap: 7px;
     color: var(--light-grey-7);
     font-style: italic;
-    padding: 10px 16px;
+    margin-top: 24px;
+    text-align: center;
+    a {
+      color: var(--status-translated);
+    }
   }
 
   .block {

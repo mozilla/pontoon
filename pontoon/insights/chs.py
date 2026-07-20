@@ -180,11 +180,11 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
         else:
             if is_superuser:
                 continue
-            if approved > ACTIVE_CONTRIBUTOR_STRING_THRESHOLD:
+            if approved >= ACTIVE_CONTRIBUTOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_contributors"] += 1
-            if total > ALL_CONTRIBUTOR_STRING_THRESHOLD:
+            if total >= ALL_CONTRIBUTOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["all_contributors"] += 1
-            if approved > NEW_SIGNUP_STRING_THRESHOLD and joined >= start_date:
+            if approved >= NEW_SIGNUP_STRING_THRESHOLD and joined >= start_date:
                 locale_contributors[locale_id]["new_signups"] += 1
 
     return locale_contributors

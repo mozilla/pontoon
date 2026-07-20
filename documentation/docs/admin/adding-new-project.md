@@ -70,7 +70,7 @@ The new project will appear in the [public list of Projects](https://pontoon.moz
         * The *Read-only* column can be used to add languages in read-only mode.
           In this way, their translations will be available to other languages in the LOCALES tab when translating,
           but it won’t be possible to change or submit translations directly in Pontoon.
-        * You can uncheck the `Locales can opt-in` checkbox to prevent localizers from requesting this specific project.
+        * You can uncheck the `Locales can opt in` checkbox to prevent localizers from requesting this specific project.
         * The configuration file only determines which resources will be available in Pontoon for each locale.
           The `locales` list within the file doesn't have any effect in Pontoon.
         * Without a configuration file, all resources will be automatically available in each locale.

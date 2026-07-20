@@ -275,6 +275,7 @@ click==8.3.1 \
     #   click-didyoumean
     #   click-plugins
     #   click-repl
+    #   moz-l10n
     #   sacremoses
     #   zensical
 click-didyoumean==0.3.1 \
@@ -411,9 +412,9 @@ dj-database-url==3.1.2 \
     --hash=sha256:544e015fee3efa5127a1eb1cca465f4ace578265b3671fe61d0ed7dbafb5ec8a \
     --hash=sha256:63c20e4bbaa51690dfd4c8d189521f6bf6bc9da9fcdb23d95d2ee8ee87f9ec62
     # via -r default.in
-django==5.2.14 \
-    --hash=sha256:58a63ba841662e5c686b57ba1fec52ddd68c0b93bd96ac3029d55728f00bf8a2 \
-    --hash=sha256:6f712143bd3064310d1f50fac859c3e9a274bdcfc9595339853be7779297fc76
+django==5.2.15 \
+    --hash=sha256:0eb4a9bb1853a35b0286dbc6d916bd352c8c2687195a7f2d6f80cefd840e4970 \
+    --hash=sha256:5154a9bf84ac01dde011e367f355c07dbb329532e06810dcf3ef2af269e236e7
     # via
     #   -r default.in
     #   dj-database-url
@@ -979,10 +980,12 @@ markupsafe==2.0.1 \
     # via
     #   -r default.in
     #   jinja2
-moz-l10n[xml]==0.11.3 \
-    --hash=sha256:30b2d81aac683fe1c6c8ce17131c177fb10f8bed38f426872da3f52ffa4c1bdf \
-    --hash=sha256:f6e65ee6249b104161dcaf43f8a6b65da6c93d88206fcbdce4986993a03bd77a
-    # via -r default.in
+moz-l10n[xml]==0.12.0 \
+    --hash=sha256:1fef7ae191ba1c61cb62c73d3eb482f1c0fea774d7dd2e67bcd057c04ffbfd6b \
+    --hash=sha256:a2340b9540ae4b56ddd85d74528191e06dfb920e6aa8e1c94ca835ee408fbcf5
+    # via
+    #   -r default.in
+    #   moz-l10n
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -1774,9 +1777,9 @@ sniffio==1.3.1 \
     --hash=sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2 \
     --hash=sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc
     # via openai
-soupsieve==2.8.3 \
-    --hash=sha256:3267f1eeea4251fb42728b6dfb746edc9acaffc4a45b27e19450b676586e8349 \
-    --hash=sha256:ed64f2ba4eebeab06cc4962affce381647455978ffc1e36bb79a545b91f45a95
+soupsieve==2.8.4 \
+    --hash=sha256:e121fd02e975c695e4e9e8774a5ee35d74714b59307868dcc5319ad2d9e3328e \
+    --hash=sha256:e7e6b0769c8f51ed59acab6e994b00621096cfb1c640a7509295987388fbaf65
     # via beautifulsoup4
 sqlparse==0.5.5 \
     --hash=sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba \
@@ -1964,6 +1967,3 @@ zensical==0.0.34 \
     --hash=sha256:eb9d880ccb25edba332e1f310b40e65afb0e1072c69530ec02afc6179b33c5ec \
     --hash=sha256:f77cb1152b51ccc5bf0c1055ac06802a6eeeff9cb8b4293919300c0becbd26bd
     # via -r default.in
-
-# The following packages were excluded from the output:
-# setuptools

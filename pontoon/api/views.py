@@ -9,7 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.db.models import Prefetch, Q
-from django.shortcuts import get_object_or_404
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.timezone import make_aware
 
 from pontoon.actionlog.models import ActionLog
@@ -23,8 +24,10 @@ from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Entity,
     Locale,
+    LocaleCodeHistory,
     Project,
     ProjectLocale,
+    ProjectSlugHistory,
     Resource,
     Translation,
     TranslationMemoryEntry,
@@ -198,6 +201,19 @@ class LocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
 
         return qs
 
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except Http404:
+            code_history = (
+                LocaleCodeHistory.objects.filter(old_code=self.kwargs["code"])
+                .order_by("-created_at")
+                .first()
+            )
+            if code_history is None:
+                raise
+            return redirect("locale-individual", code=code_history.locale.code)
+
 
 class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
     serializer_class = NestedProjectSerializer
@@ -281,6 +297,19 @@ class ProjectIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
             qs = qs.stats_data()
 
         return qs.distinct()
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except Http404:
+            slug_history = (
+                ProjectSlugHistory.objects.filter(old_slug=self.kwargs["slug"])
+                .order_by("-created_at")
+                .first()
+            )
+            if slug_history is None:
+                raise
+            return redirect("project-individual", slug=slug_history.project.slug)
 
 
 class EntityListView(RequestFieldsMixin, generics.ListAPIView):
@@ -373,6 +402,32 @@ class ProjectLocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
         obj = get_object_or_404(queryset, project__slug=slug, locale__code=code)
 
         return obj
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except Http404:
+            code = self.kwargs["code"]
+            slug = self.kwargs["slug"]
+
+            code_history = (
+                LocaleCodeHistory.objects.filter(old_code=code)
+                .order_by("-created_at")
+                .first()
+            )
+            slug_history = (
+                ProjectSlugHistory.objects.filter(old_slug=slug)
+                .order_by("-created_at")
+                .first()
+            )
+            if code_history is None and slug_history is None:
+                raise
+
+            if code_history is not None:
+                code = code_history.locale.code
+            if slug_history is not None:
+                slug = slug_history.project.slug
+            return redirect("project-locale-individual", code=code, slug=slug)
 
 
 class TermSearchListView(RequestFieldsMixin, generics.ListAPIView):

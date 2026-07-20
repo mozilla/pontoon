@@ -47,7 +47,11 @@ export function MachineryTranslationComponent({
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      const content = llmTranslation || translation.translation;
+      let content = llmTranslation || translation.translation;
+      // FIXME: https://bugzilla.mozilla.org/show_bug.cgi?id=2055465
+      // Should just strip these out;
+      // CodeMirror will throw an error if we leave any CR in the value.
+      content = content.replaceAll('\r', '\\r');
       const sources: SourceType[] = llmTranslation
         ? ['gpt-transform']
         : translation.sources;

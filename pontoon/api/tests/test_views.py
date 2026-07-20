@@ -169,6 +169,19 @@ def test_locale(django_assert_num_queries):
 
 
 @pytest.mark.django_db
+def test_locale_renamed_code_redirects():
+    """Requesting a locale by its old code redirects to the new code."""
+    locale = Locale.objects.get(code="af")
+    locale.code = "af-renamed"
+    locale.save()
+
+    response = APIClient().get("/api/v2/locales/af/", HTTP_ACCEPT="application/json")
+
+    assert response.status_code == 302
+    assert response["Location"] == "/api/v2/locales/af-renamed/"
+
+
+@pytest.mark.django_db
 def test_locales(django_assert_num_queries):
     project_a = ProjectFactory(
         slug="project_a",
@@ -478,6 +491,24 @@ def test_project(django_assert_num_queries):
 
 
 @pytest.mark.django_db
+def test_project_locale_renamed_redirects():
+    """Requesting a project locale by an old code and old slug redirects to the new URL."""
+    locale = Locale.objects.get(code="af")
+    locale.code = "af-renamed"
+    locale.save()
+    project = Project.objects.get(slug="terminology")
+    project.slug = "terminology-renamed"
+    project.save()
+
+    response = APIClient().get(
+        "/api/v2/af/terminology/", HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 302
+    assert response["Location"] == "/api/v2/af-renamed/terminology-renamed/"
+
+
+@pytest.mark.django_db
 def test_system_project(django_assert_num_queries):
     project = Project.objects.get(slug="tutorial")
 
@@ -495,8 +526,8 @@ def test_system_project(django_assert_num_queries):
 @pytest.mark.django_db
 def test_disabled_project(django_assert_num_queries):
     project = ProjectFactory.create(slug="disabled-1", disabled=True)
-
-    with django_assert_num_queries(1):
+    # 1 project lookup + 1 ProjectSlugHistory fallback lookup on the 404 path
+    with django_assert_num_queries(2):
         response = APIClient().get(
             f"/api/v2/projects/{project.slug}/", HTTP_ACCEPT="application/json"
         )
@@ -1008,6 +1039,21 @@ def test_project_locale(django_assert_num_queries):
             "complete": False,
         },
     }
+
+
+@pytest.mark.django_db
+def test_project_renamed_slug_redirects():
+    """Requesting a project by its old slug redirects to the new slug."""
+    project = Project.objects.get(slug="terminology")
+    project.slug = "terminology-renamed"
+    project.save()
+
+    response = APIClient().get(
+        "/api/v2/projects/terminology/", HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 302
+    assert response["Location"] == "/api/v2/projects/terminology-renamed/"
 
 
 @pytest.mark.django_db

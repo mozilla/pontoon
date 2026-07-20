@@ -2,6 +2,10 @@ const nf = new Intl.NumberFormat('en', {
   style: 'percent',
 });
 
+const scoreFormat = new Intl.NumberFormat('en', {
+  maximumFractionDigits: 2,
+});
+
 const longMonthFormat = new Intl.DateTimeFormat('en', {
   month: 'long',
   year: 'numeric',
@@ -51,6 +55,8 @@ var Pontoon = (function (my) {
           return;
         }
 
+        const isScore = key === 'chs';
+
         const colors = [
           style.getPropertyValue('--purple'),
           style.getPropertyValue('--lilac'),
@@ -68,7 +74,7 @@ var Pontoon = (function (my) {
 
         const datasets = chart.data('dataset').map(function (item, index) {
           const color =
-            item.name === 'All'
+            item.name === 'Average (all locales)'
               ? style.getPropertyValue('--white-1')
               : colors[index % colors.length];
           return {
@@ -76,7 +82,7 @@ var Pontoon = (function (my) {
             label: item.name,
             data: item[key],
             borderColor: [color],
-            borderWidth: item.name === 'All' ? 3 : 1,
+            borderWidth: item.name === 'Average (all locales)' ? 3 : 1,
             pointBackgroundColor: color,
             pointHitRadius: 10,
             pointRadius: 3.25,
@@ -87,7 +93,7 @@ var Pontoon = (function (my) {
             fill: true,
             tension: 0.4,
             order: color.length - index,
-            hidden: item.name === 'All' ? false : true,
+            hidden: item.name === 'Average (all locales)' ? false : true,
           };
         });
 
@@ -125,7 +131,9 @@ var Pontoon = (function (my) {
                   maxTicksLimit: 3,
                   precision: 0,
                   callback: function (value) {
-                    return nf.format(value / 100);
+                    return isScore
+                      ? scoreFormat.format(value)
+                      : nf.format(value / 100);
                   },
                 },
                 beginAtZero: true,
@@ -157,7 +165,9 @@ var Pontoon = (function (my) {
                     const { chart, datasetIndex, parsed } = context;
 
                     const label = chart.data.datasets[datasetIndex].label;
-                    const value = nf.format(parsed.y / 100);
+                    const value = isScore
+                      ? scoreFormat.format(parsed.y)
+                      : nf.format(parsed.y / 100);
                     return `${label}: ${value}`;
                   },
                   title: function (tooltipItems) {

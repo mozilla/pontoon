@@ -3,6 +3,7 @@ from textwrap import dedent
 from unittest import TestCase
 
 from moz.l10n.formats import Format
+from moz.l10n.model import PatternMessage
 from moz.l10n.resource import parse_resource
 
 from pontoon.sync.formats import as_entity, as_repo_translations
@@ -21,23 +22,24 @@ class PropertiesTests(TestCase):
             NoCommentsorSources=Translated No Comments or Sources
 
             EmptyTranslation=
+            Multiline=Foo\\n\\nbar\\n
             """)
 
         res = parse_resource(Format.properties, src)
-        e0, e1, e2, e3 = (
+        e0, e1, e2, e3, e4 = (
             as_entity(Format.properties, (), entry, date_created=datetime.now())
             for entry in res.all_entries()
         )
-        t0, t1, t2, t3 = as_repo_translations(res)
+        t0, t1, t2, t3, t4 = as_repo_translations(res)
 
         # basic
         assert e0.comment == "Sample comment"
         assert e0.key == ["SourceString"]
-        assert e0.string == "Translated String "
+        assert e0.string == "Translated String\\u0020"
         assert e0.value == ["Translated String "]
 
         assert t0.key == ("SourceString",)
-        assert t0.string == "Translated String "
+        assert t0.string == "Translated String\\u0020"
 
         # multiple comments
         assert e1.comment == "First comment\nSecond comment"
@@ -65,3 +67,9 @@ class PropertiesTests(TestCase):
 
         assert t3.key == ("EmptyTranslation",)
         assert t3.string == ""
+
+        # multiline
+        assert e4.string == "Foo\\n\\nbar\\n"
+        assert e4.value == ["Foo\n\nbar\n"]
+        assert t4.string == "Foo\\n\\nbar\\n"
+        assert t4.value == PatternMessage(["Foo\n\nbar\n"])
