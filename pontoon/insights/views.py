@@ -4,18 +4,23 @@ from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db import transaction
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
 
 from pontoon.base.models.locale import Locale
 from pontoon.base.utils import require_AJAX
-from pontoon.insights.chs import KEY_PROJECT_SLUGS
+from pontoon.insights.chs import (
+    KEY_PROJECT_SLUGS,
+    get_contributor_classification_by_locale,
+)
 from pontoon.insights.forms import CommunityHealthLocalesForm
 from pontoon.insights.models import LocaleHealthSnapshot
 from pontoon.insights.utils import (
@@ -136,10 +141,21 @@ def _community_health_context(profile):
     locales = Locale.objects.visible()
     display_locales = locales.filter(pk__in=community_health_locales).order_by("code")
 
-    current_anchor = timezone.now().date()
+    current_tz = timezone.now()
+    current_anchor = current_tz.date()
     previous_anchor = current_anchor.replace(day=1) - relativedelta(days=1)
     current_snapshots = get_monthly_snapshots(display_locales, current_anchor)
     previous_snapshots = get_monthly_snapshots(display_locales, previous_anchor)
+
+    locale_contributor_key = f"/{__name__}/locale_contributors"
+    locale_contributors = cache.get(locale_contributor_key)
+    if locale_contributors is None:
+        locale_contributors = get_contributor_classification_by_locale(
+            locales, current_tz
+        )
+        cache.set(
+            locale_contributor_key, locale_contributors, settings.VIEW_CACHE_TIMEOUT
+        )
 
     return {
         "display_locales": display_locales,
@@ -154,11 +170,13 @@ def _community_health_context(profile):
         "global_locale_health_insights": get_global_locale_health_insights(
             display_locales
         ),
+        "locale_contributors": locale_contributors,
     }
 
 
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
+@require_AJAX
 @transaction.atomic
 @require_AJAX
 def edit_locales(request):
@@ -170,7 +188,13 @@ def edit_locales(request):
     profile = user.profile
 
     if not user.is_staff:
-        raise PermissionDenied
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to submit this form.",
+            },
+            status=403,
+        )
 
     community_health_locales_form = CommunityHealthLocalesForm(
         request.POST, instance=profile
@@ -212,6 +236,58 @@ def render_panel(request):
     )
 
     return JsonResponse({"status": True, "html": html})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def get_locale_contributors(request):
+    if not settings.ENABLE_INSIGHTS:
+        raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
+
+    if not request.user.is_staff:
+        raise PermissionDenied
+
+    try:
+        locale_id = int(request.GET["locale"])
+        metric = request.GET["metric"]
+    except (MultiValueDictKeyError, ValueError) as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    locale = get_object_or_404(Locale, id=locale_id)
+
+    key = f"/{__name__}/locale_contributors"
+    classification = cache.get(key)
+    if classification is None:
+        classification = get_contributor_classification_by_locale(
+            Locale.objects.visible(), timezone.now()
+        )
+        cache.set(key, classification, settings.VIEW_CACHE_TIMEOUT)
+
+    contributors = classification.get(locale.pk, {})
+    if metric not in contributors:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: unknown metric '{metric}'"},
+            status=400,
+        )
+
+    users = User.objects.filter(pk__in=contributors[metric]).order_by("first_name")
+
+    return JsonResponse(
+        {
+            "status": True,
+            "users": [
+                {
+                    "name": user.name_or_email,
+                    "username": user.username,
+                    "avatar": user.avatar_url(),
+                }
+                for user in users
+            ],
+        }
+    )
 
 
 @login_required(redirect_field_name="", login_url="/403")

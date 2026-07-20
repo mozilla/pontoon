@@ -48,7 +48,7 @@
 
 {% macro value_cell(base_value, base_delta=None, base_threshold=None,
                     score_value=None, score_delta=None, score_threshold=None,
-                    percent=False, single=False) %}
+                    percent=False, single=False, locale_id=None, metric=None) %}
   <td class="cell" data-sort="{{ base_value }}"
       {% if not single %} data-base-sort="{{ base_value }}" data-score-sort="{{ score_value }}"{% endif %}>
     {% if single %}
@@ -61,13 +61,13 @@
     {% else %}
       <div class="info-container base-view">
         {{ delta_span(base_delta, percent) }}
-        <span class="info {% if base_threshold and base_value >= base_threshold %}met{% endif %}">
+        <span class="info {% if base_threshold and base_value >= base_threshold %}met{% endif %}"{% if metric and base_value > 0 %} data-locale="{{ locale_id }}" data-metric="{{ metric }}"{% endif %}>
           {{ base_value }}{{ '%' if percent }}
         </span>
       </div>
       <div class="info-container score-view">
         {{ delta_span(score_delta, false) }}
-        <span class="info {% if score_threshold and score_value >= score_threshold %}met{% endif %}">
+        <span class="info {% if score_threshold and score_value >= score_threshold %}met{% endif %}"{% if metric and base_value > 0 %} data-locale="{{ locale_id }}" data-metric="{{ metric }}"{% endif %}>
           {{ score_value }}
         </span>
       </div>
@@ -76,6 +76,7 @@
 {% endmacro %}
 
 {% macro item(locale, main_link, curr_snapshot=None, base_deltas=None, score_deltas=None, columns=None, class='limited') %}
+  {% set contributor_columns = ['active_managers', 'active_translators', 'active_contributors', 'all_contributors', 'new_signups'] %}
   <tr class="{{ class }}">
     <td class="code">
       <div>
@@ -98,7 +99,9 @@
                score_value=curr_snapshot[field + '_score'],
                score_delta=score_deltas[field + '_score'] if score_deltas else None,
                score_threshold=column.score_threshold,
-               percent=column.percent) }}
+               percent=column.percent,
+               locale_id=locale.id,
+               metric=field if field in contributor_columns else none) }}
         {% endif %}
       {% endfor %}
     {% else %}

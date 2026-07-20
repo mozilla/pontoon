@@ -1,6 +1,11 @@
 from django.urls import include, path
 
-from pontoon.insights.views import edit_locales, insights, render_panel
+from pontoon.insights.views import (
+    edit_locales,
+    get_locale_contributors,
+    insights,
+    render_panel,
+)
 
 
 urlpatterns = [
@@ -25,9 +30,14 @@ urlpatterns = [
                                 name="pontoon.insights.edit_locales",
                             ),
                             path(
-                                "render-panel/",
+                                "render-table/",
                                 render_panel,
-                                name="pontoon.insights.render_panel",
+                                name="pontoon.insights.render_table",
+                            ),
+                            path(
+                                "locale-contributors/",
+                                get_locale_contributors,
+                                name="pontoon.insights.locale_contributors",
                             ),
                         ]
                     ),

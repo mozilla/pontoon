@@ -56,6 +56,61 @@ function renderCommunityHealthPanel() {
   });
 }
 
+let contributorTooltipTimer = null;
+let activeContributorInfo = null;
+
+$('body')
+  .on('mouseenter', '.community-health-table .info[data-metric]', function () {
+    const info = $(this);
+    activeContributorInfo = this;
+
+    contributorTooltipTimer = setTimeout(function () {
+      $.ajax({
+        url: '/insights/ajax/locale-contributors/',
+        global: false,
+        data: {
+          locale: info.data('locale'),
+          metric: info.data('metric'),
+        },
+        success(response) {
+          if (activeContributorInfo !== info[0] || !response.users) {
+            return;
+          }
+
+          const list = $('<ul>');
+
+          if (response.users.length === 0) {
+            list.append($('<li class="empty">').text('No contributors'));
+          } else {
+            response.users.forEach(function (user) {
+              const link = $('<a>').attr(
+                'href',
+                '/contributors/' + user.username + '/',
+              );
+              link.append(
+                $('<img class="rounded">')
+                  .attr('width', 24)
+                  .attr('height', 24)
+                  .attr('src', user.avatar),
+              );
+              link.append($('<span>').text(user.name));
+              list.append($('<li>').append(link));
+            });
+          }
+
+          info.append($('<div class="metric-tooltip">').append(list));
+        },
+      });
+    }, 500);
+  })
+  .on('mouseleave', '.community-health-table .info[data-metric]', function () {
+    clearTimeout(contributorTooltipTimer);
+    if (activeContributorInfo === this) {
+      activeContributorInfo = null;
+    }
+    $(this).find('.metric-tooltip').remove();
+  });
+
 $('#edit-locales').on('click', function (e) {
   e.preventDefault();
 

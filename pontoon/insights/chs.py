@@ -90,9 +90,11 @@ def get_key_projects_enabled_by_locale(
     return {pl_count["locale_id"]: pl_count["count"] for pl_count in pl_counts}
 
 
-def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, dict]:
+def get_contributor_classification_by_locale(
+    locales, end_date: datetime
+) -> dict[int, dict]:
     """
-    Per-locale active-contributor counts over the 12-month window ending at end_date.
+    Per-locale active-contributor lists over the 12-month window ending at end_date.
     """
     start_date = end_date - relativedelta(months=13)
 
@@ -152,11 +154,11 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
 
     locale_contributors = {
         locale.pk: {
-            "active_managers": 0,
-            "active_translators": 0,
-            "active_contributors": 0,
-            "all_contributors": 0,
-            "new_signups": 0,
+            "active_managers": set(),
+            "active_translators": set(),
+            "active_contributors": set(),
+            "all_contributors": set(),
+            "new_signups": set(),
         }
         for locale in locales
     }
@@ -176,21 +178,35 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
 
         if user_id in managers[locale_id]:
             if action_count + approved > MANAGER_STRING_THRESHOLD:
-                locale_contributors[locale_id]["active_managers"] += 1
+                locale_contributors[locale_id]["active_managers"].add(user_id)
         elif user_id in translators[locale_id]:
             if action_count + approved > TRANSLATOR_STRING_THRESHOLD:
-                locale_contributors[locale_id]["active_translators"] += 1
+                locale_contributors[locale_id]["active_translators"].add(user_id)
         else:
             if is_superuser:
                 continue
             if approved >= ACTIVE_CONTRIBUTOR_STRING_THRESHOLD:
-                locale_contributors[locale_id]["active_contributors"] += 1
+                locale_contributors[locale_id]["active_contributors"].add(user_id)
             if total >= ALL_CONTRIBUTOR_STRING_THRESHOLD:
-                locale_contributors[locale_id]["all_contributors"] += 1
+                locale_contributors[locale_id]["all_contributors"].add(user_id)
             if approved >= NEW_SIGNUP_STRING_THRESHOLD and joined >= start_date:
-                locale_contributors[locale_id]["new_signups"] += 1
+                locale_contributors[locale_id]["new_signups"].add(user_id)
 
     return locale_contributors
+
+
+def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, dict]:
+    """
+    Per-locale active-contributor counts over the 12-month window ending at end_date.
+    """
+    locale_contributors = get_contributor_classification_by_locale(locales, end_date)
+
+    locale_contributor_counts = {
+        loc_id: {metric: len(contributors) for metric, contributors in counts.items()}
+        for loc_id, counts in locale_contributors.items()
+    }
+
+    return locale_contributor_counts
 
 
 def scaled_points(count, points) -> float:
