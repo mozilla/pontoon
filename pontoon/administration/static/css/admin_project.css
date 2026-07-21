@@ -145,6 +145,10 @@ form .controls .button.manage-resources[disabled]:hover {
   width: 150px;
 }
 
+.admin-project .search-wrapper {
+  background: var(--input-background-1);
+}
+
 #admin-strings-form .controls .add-inline {
   float: left;
   margin-left: 0;
