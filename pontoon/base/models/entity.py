@@ -13,7 +13,7 @@ from pontoon.base.models.section import Section
 
 if TYPE_CHECKING:
     from pontoon.base.models.comment import Comment
-    from pontoon.base.models.translation import Translation, TranslationQuerySet
+    from pontoon.base.models.translation import TranslationQuerySet
     from pontoon.terminology.models import Term
 
 
@@ -62,10 +62,11 @@ class Entity(DirtyFieldsMixin, models.Model):
         """
         return locale in self.changed_locales.all()
 
-    def reset_active_translation(self, locale: Locale) -> "Translation":
+    def reset_active_translation(self, locale: Locale) -> dict[str, Any] | None:
         """
         Reset active translation for given entity and locale.
-        Return active translation if exists or empty Translation instance.
+
+        Return data for the active translation if it exists, or None otherwise.
         """
         from pontoon.base.models.translation import Translation
 
@@ -83,9 +84,9 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Do not trigger the overridden Translation.save() method
             super(Translation, active_translation).save(update_fields=["active"])
 
-            return active_translation
+            return active_translation.serialize()
         else:
-            return Translation()
+            return None
 
     def reset_term_translation(self, locale):
         """

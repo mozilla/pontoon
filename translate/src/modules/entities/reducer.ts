@@ -25,7 +25,7 @@ type EntitiesState = {
 function updateEntityTranslation(
   state: EntitiesState,
   entity: number,
-  translation: EntityTranslation,
+  translation: EntityTranslation | undefined,
 ): Entity[] {
   return state.entities.map((item) => {
     if (item.pk !== entity) {

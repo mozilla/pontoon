@@ -168,7 +168,7 @@ def create_translation(request):
 
     log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
-    translation = entity.reset_active_translation(locale=locale)
+    active_translation = entity.reset_active_translation(locale=locale)
 
     # When user makes their first contribution to the team, notify team managers
     first_contribution = (
@@ -203,7 +203,7 @@ def create_translation(request):
                 category="new_contributor",
             )
 
-    response_data = {"status": True, "translation": translation.serialize()}
+    response_data = {"status": True, "translation": active_translation}
     _add_stats(response_data, resource, locale, req_data["stats"])
 
     # Send Translation Champion Badge notification information
@@ -343,8 +343,7 @@ def approve_translation(request):
     log_action(ActionLog.ActionType.TRANSLATION_APPROVED, user, translation=translation)
 
     active_translation = entity.reset_active_translation(locale=locale)
-
-    response_data = {"translation": active_translation.serialize()}
+    response_data = {"status": True, "translation": active_translation}
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
@@ -408,8 +407,7 @@ def unapprove_translation(request):
     )
 
     active_translation = entity.reset_active_translation(locale=locale)
-
-    response_data = {"translation": active_translation.serialize()}
+    response_data = {"status": True, "translation": active_translation}
     _add_stats(response_data, resource, locale, stats)
     return JsonResponse(response_data)
 
@@ -471,8 +469,7 @@ def reject_translation(request):
     )
 
     active_translation = entity.reset_active_translation(locale=locale)
-
-    response_data = {"translation": active_translation.serialize()}
+    response_data = {"status": True, "translation": active_translation}
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
@@ -536,7 +533,6 @@ def unreject_translation(request):
     )
 
     active_translation = translation.entity.reset_active_translation(locale=locale)
-
-    response = {"translation": active_translation.serialize()}
+    response = {"status": True, "translation": active_translation}
     _add_stats(response, resource, locale, stats)
     return JsonResponse(response)
