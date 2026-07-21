@@ -196,6 +196,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             focusField.current = next.fields[0];
             setResult(result);
           }
+          // Keep focus in the editor after a manual copy (click or shortcut),
+          // regardless of where in the helper the click landed. The automatic
+          // perfect-match prefill (manual = false) must not steal focus.
+          if (manual) {
+            (focusField.current ?? field).handle.current.focus();
+          }
           return next;
         }),
 
