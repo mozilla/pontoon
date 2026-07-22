@@ -111,11 +111,51 @@ export type EditorActions = {
   toggleSourceView(): void;
 };
 
-function parseEntryFromFluentSource(base: MessageEntry, fields: EditorField[]) {
+function parseEntryFromFluentSource(
+  sourceEntry: MessageEntry,
+  fields: EditorField[],
+) {
   const source = fields[0].handle.current.value;
   const entry = parseEntry('fluent', source);
-  if (entry) {
-    entry.id = base.id;
+  if (!entry) {
+    return null;
+  }
+
+  entry.id = sourceEntry.id;
+  if (sourceEntry.value) {
+    entry.value ??= [];
+  } else if (entry.value) {
+    entry.value = null;
+  }
+  if (sourceEntry.attributes?.size) {
+    const sourceKeys = Array.from(sourceEntry.attributes.keys());
+    if (!entry.attributes?.size) {
+      entry.attributes = new Map(sourceKeys.map((key) => [key, []]));
+    } else {
+      const attributes = entry.attributes;
+      const keys = Array.from(attributes.keys());
+      if (
+        keys.length !== sourceKeys.length ||
+        sourceKeys.some((key, i) => keys[i] !== key)
+      ) {
+        entry.attributes = new Map(
+          sourceKeys.map((key) => {
+            const msg = attributes.get(key);
+            if (msg) {
+              attributes.delete(key);
+              return [key, msg];
+            }
+            return [key, []];
+          }),
+        );
+        // Terms can have locale-specific attributes
+        if (entry.id.startsWith('-')) {
+          for (const [key, value] of attributes.entries()) {
+            entry.attributes.set(key, value);
+          }
+        }
+      }
+    }
   }
   return entry;
 }
@@ -244,7 +284,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           // Inside setState() only to access the current `state` value
           const { base, fields, sourceView } = state;
           const result = sourceView
-            ? parseEntryFromFluentSource(base, fields)
+            ? parseEntryFromFluentSource(sourceEntry, fields)
             : buildMessageEntry(base, fields, buildOpts);
           setResult(result);
           return state;
@@ -254,7 +294,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         setState((state) => {
           const { base, fields, sourceView } = state;
           if (sourceView) {
-            const entry = parseEntryFromFluentSource(base, fields);
+            const entry = parseEntryFromFluentSource(sourceEntry, fields);
             if (entry && !requiresSourceView(entry)) {
               const fields = editMessageEntry(sourceEntry, entry);
               state.focusField.current = fields[0];
