@@ -59,6 +59,9 @@
         #project-selector {
           margin-right: 10px;
         }
+        .search-wrapper {
+          background: var(--black-3);
+        }
 
         .check-list {
           display: inline-block;
