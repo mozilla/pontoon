@@ -48,8 +48,10 @@ const sortByQuality = (a: MachineryTranslation, b: MachineryTranslation) => {
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
-// Number of *target* patterns a message contributes: one per selector variant,
-// with plural-selector dimensions expanded to the target locale's CLDR plural
+// Number of *target* patterns a message contributes: zero for an empty value
+// (a Fluent value is empty when the message only has attributes), one for a
+// plain pattern, and one per selector variant for a select message — with
+// plural-selector dimensions expanded to the target locale's CLDR plural
 // categories. This mirrors the plural expansion the backend's walk_entity()
 // performs, so an en-US `*[other]`-only source still counts as multi-pattern
 // for locales like Slovenian (one/two/few/other).
@@ -61,7 +63,13 @@ function patternCount(
     return 0;
   }
   if (!isSelectMessage(msg)) {
-    return 1;
+    // A pattern with no elements — e.g. the value of a Fluent message that
+    // only has attributes — has nothing to translate and is not a leaf. This
+    // mirrors the backend's `_pattern_count`, so an attribute-only entity is
+    // not treated as multi-pattern (which would compose a redundant suggestion
+    // duplicating the single per-leaf match).
+    const pattern = Array.isArray(msg) ? msg : msg.msg;
+    return pattern && pattern.length > 0 ? 1 : 0;
   }
   const plurals = findPluralSelectors(msg);
   let count = 1;

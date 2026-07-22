@@ -80,6 +80,91 @@ def test_composed_single_pattern_fluent(client, fluent_resource, locale_a):
 
 
 @pytest.mark.django_db
+def test_composed_attribute_only_fluent(client, fluent_resource, entity_a, locale_a):
+    """A Fluent message with a single attribute but no value is single-leaf.
+
+    Its empty value must not count as a pattern; otherwise the lone attribute
+    would look like a second leaf and compose a redundant suggestion that just
+    duplicates the per-leaf TM match (see #2886 review).
+    """
+    fluent_string = dedent(
+        """\
+        networking-with-logs =
+            .label = Networking with Logs
+        """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="Networking with Logs",
+        target="TM_label",
+        locale=locale_a,
+    )
+
+    url = reverse("pontoon.machinery_composed")
+    response = client.get(
+        url,
+        {
+            "entity": str(fluent_entity.pk),
+            "locale": locale_a.code,
+            "service": "translation-memory",
+        },
+    )
+    assert response.status_code == 200
+    assert json.loads(response.content) == {}
+
+
+@pytest.mark.django_db
+def test_composed_multiple_attributes_no_value(
+    client, fluent_resource, entity_a, locale_a
+):
+    """A Fluent message with several attributes but no value is multi-leaf.
+
+    The empty value counts as zero, but the two attributes are two real leaves,
+    so composition still applies: the composed suggestion fills both fields at
+    once, which no single per-leaf match can do.
+    """
+    fluent_string = dedent(
+        """\
+        networking-with-logs =
+            .label = Networking with Logs
+            .tooltip = Record network requests
+        """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="Networking with Logs",
+        target="TM_label",
+        locale=locale_a,
+    )
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="Record network requests",
+        target="TM_tooltip",
+        locale=locale_a,
+    )
+
+    url = reverse("pontoon.machinery_composed")
+    response = client.get(
+        url,
+        {
+            "entity": str(fluent_entity.pk),
+            "locale": locale_a.code,
+            "service": "translation-memory",
+        },
+    )
+    assert response.status_code == 200
+    body = json.loads(response.content)
+    assert "TM_label" in body["translation"]
+    assert "TM_tooltip" in body["translation"]
+    assert body["sources"] == ["translation-memory"]
+    assert body["quality"] == 100
+
+
+@pytest.mark.django_db
 def test_composed_unknown_service(client, fluent_resource, locale_a):
     fluent_entity = EntityFactory(resource=fluent_resource, string="hello = Hello\n")
     url = reverse("pontoon.machinery_composed")

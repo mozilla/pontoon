@@ -36,12 +36,17 @@ log = logging.getLogger(__name__)
 def _pattern_count(message):
     """Number of independently-translatable patterns in a parsed message.
 
-    A `PatternMessage` has one; a `SelectMessage` has one per variant. Used to
-    tell single-pattern messages (nothing to compose) from multi-pattern ones.
+    A `PatternMessage` has one; a `SelectMessage` has one per variant. An empty
+    value — e.g. the value of a Fluent message that only has attributes — has
+    nothing to translate and counts as zero, so it doesn't turn an otherwise
+    single-leaf entity into a spuriously multi-pattern one. Used to tell
+    single-pattern messages (nothing to compose) from multi-pattern ones.
     """
+    if message is None or message.is_empty():
+        return 0
     if isinstance(message, SelectMessage):
         return len(message.variants)
-    return 1 if message is not None else 0
+    return 1
 
 
 def _machinery_error_response(service_name, e):
