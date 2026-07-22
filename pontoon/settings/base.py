@@ -91,91 +91,62 @@ GOOGLE_TRANSLATE_API_KEY = os.environ.get("GOOGLE_TRANSLATE_API_KEY", "")
 # Pontoon locale codes supported by Google Cloud AutoML Translation Project ID
 #
 # Source:
-# https://docs.cloud.google.com/translate/docs/languages?hl=en
+# https://docs.cloud.google.com/translate/docs/languages?hl=en#automl
 #
 # Some locales have been updated to match the internal Mozilla code:
-# - fy -> fy-NL
-# - ga -> ga-IE
-# - gu -> gu-IN
+# - fil -> tl
 # - hi -> hi-IN
-# - hy -> hy-AM
-# - nb -> nb-NO
+# - no -> nb-NO
 # - ne -> ne-NP
 # - pa -> pa-IN
 # - sv -> sv-SE
 
 GOOGLE_AUTOML_SUPPORTED_LOCALES = [
     "af",
-    "am",
     "ar",
     "az",
-    "be",
     "bg",
     "bn",
-    "bs",
     "ca",
     "cs",
     "cy",
     "da",
     "de",
     "el",
-    "en-CA",
-    "en-GB",
-    "en-ZA",
     "es",
     "es-AR",
     "es-CL",
     "es-ES",
     "es-MX",
     "et",
-    "eu",
     "fa",
     "fi",
-    "fil",
     "fr",
-    "fy-NL",
-    "ga-IE",
-    "gd",
     "gl",
-    "gn",
     "gu-IN",
-    "ha",
     "he",
     "hi",
     "hi-IN",
     "hr",
     "ht",
     "hu",
-    "hy-AM",
     "id",
-    "ig",
     "is",
     "it",
     "ja",
     "jv",
     "ka",
     "km",
-    "kn",
     "ko",
-    "ky",
-    "lb",
-    "ln",
-    "lo",
     "lt",
     "lv",
-    "mk",
-    "ml",
-    "mn",
     "mr",
     "ms",
-    "mt",
     "my",
     "nb-NO",
     "ne-NP",
     "nl",
-    "or",
     "pa-IN",
-    "pa-PK",
     "pl",
     "ps",
     "pt",
@@ -185,14 +156,12 @@ GOOGLE_AUTOML_SUPPORTED_LOCALES = [
     "ru",
     "sk",
     "sl",
-    "so",
     "sq",
     "sr",
     "sv-SE",
     "sw",
     "ta",
     "te",
-    "tg",
     "th",
     "tl",
     "tr",
