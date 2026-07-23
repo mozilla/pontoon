@@ -13,11 +13,7 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import {
-  findPluralSelectors,
-  getPlainMessage,
-  specialFormats,
-} from '~/utils/message';
+import { findPluralSelectors, getPlainMessage } from '~/utils/message';
 import { pojoEquals } from '~/utils/pojo';
 
 import { EntityView, useMachineryEntry } from './EntityView';
@@ -109,7 +105,7 @@ export function MachineryProvider({
   const locale = useContext(Locale);
   const { isAuthenticated } = useAppSelector((state) => state[USER]);
   const { entity } = useContext(EntityView);
-  const { pk, format } = entity;
+  const { pk } = entity;
   const entry = useMachineryEntry();
   const { query } = useContext(SearchData);
 
@@ -186,11 +182,13 @@ export function MachineryProvider({
       const promises: Promise<void>[] = [];
 
       // Composed multi-value translations are emitted only for entity-driven
-      // navigation (not concordance search) and only for formats that can
-      // have multiple translatable leaves.
+      // navigation (not concordance search) and only when the entity has more
+      // than one translatable pattern. `hasMultipleFields` already returns false
+      // for single-pattern messages, and only the multi-pattern formats (Fluent
+      // attributes, MF2 selector variants) can have more than one, so there's no
+      // need to also gate on the format.
       const wantsComposed =
         !query &&
-        specialFormats.has(format) &&
         hasMultipleFields(
           entity.value,
           entity.properties,
