@@ -596,6 +596,10 @@ class PretranslationView(APIView):
                 properties=properties,
             )
             pretranslation = get_pretranslation(entity=entity, locale=locale)
+            # TODO: refactor `get_pretranslation` (and `Pretranslation`) to accept
+            # the parsed `(key, value, properties)` directly, so callers not backed
+            # by a synced row don't need to fake `Project`, `Resource`, and `Entity`
+            # objects just to satisfy the attribute access in the pipeline.
         except Exception as e:
             return Response(
                 {
