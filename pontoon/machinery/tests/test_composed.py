@@ -277,14 +277,23 @@ def test_composed_expands_source_plural_for_target_locale(
     )
     assert response.status_code == 200
     body = json.loads(response.content)
-    # The single `*[other]` source expands to all four target plural categories,
-    # each filled from the same TM match.
-    leaves = json.dumps([body.get("value"), body.get("properties")])
-    for category in ("one", "two", "few", "other"):
-        assert category in leaves
-    assert leaves.count("TM_popups") == 4
-    assert body["sources"] == ["translation-memory"]
-    assert body["quality"] == 100
+    # The single `*[other]` source expands to all four of the target locale's
+    # plural categories, each filled from the same TM match.
+    assert body == {
+        "value": {
+            "decl": {"count": {"$": "count", "fn": "number"}},
+            "sel": ["count"],
+            "alt": [
+                {"keys": ["one"], "pat": ["TM_popups"]},
+                {"keys": ["two"], "pat": ["TM_popups"]},
+                {"keys": ["few"], "pat": ["TM_popups"]},
+                {"keys": [{"*": "other"}], "pat": ["TM_popups"]},
+            ],
+        },
+        "properties": {},
+        "sources": ["translation-memory"],
+        "quality": 100,
+    }
 
 
 @pytest.mark.django_db
