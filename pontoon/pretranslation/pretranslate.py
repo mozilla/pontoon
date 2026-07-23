@@ -165,7 +165,9 @@ class Pretranslation:
 
         accesskeys: list[tuple[str, Message]] = []
         for key, prop in properties.items():
-            if key.endswith("accesskey"):
+            # Match the accesskey suffix case-insensitively: real-world keys use
+            # both `accesskey` and camelCase `accessKey`.
+            if key.lower().endswith("accesskey"):
                 accesskeys.append((key, prop))
             else:
                 self.message(prop)
@@ -306,19 +308,33 @@ class Pretranslation:
 
 
 def set_accesskey(entry: Entry[Message], ak_name: str, ak_msg: Message):
-    """Modifies `ak_msg`."""
+    """Modifies `ak_msg`.
 
-    if ak_name == "accesskey":
+    `ak_name` is expected to end with `accesskey` (matched case-insensitively by
+    the caller), so anything before that suffix is the shared prefix that pairs
+    it with a label (e.g. `buttonAccessKey` ↔ `buttonLabel`).
+    """
+
+    prefix = ak_name[: -len("accesskey")]
+    if not prefix:
         label = next(
             (
                 value
                 for key, value in entry.properties.items()
-                if key in {"label", "value", "aria-label"}
+                if key.lower() in {"label", "value", "aria-label"}
             ),
             entry.value,
         )
     else:
-        label = entry.properties.get(ak_name.replace("accesskey", "label"), None)
+        label_name = f"{prefix}label".lower()
+        label = next(
+            (
+                value
+                for key, value in entry.properties.items()
+                if key.lower() == label_name
+            ),
+            None,
+        )
         if label is None:
             return
 

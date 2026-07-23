@@ -342,6 +342,70 @@ def test_get_pretranslations_fluent_accesskeys_prefixed_label_attribute(
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
+def test_get_pretranslations_fluent_accesskeys_camel_case(
+    gt_mock, fluent_resource, google_translate_locale
+):
+    # Detect the accesskey attribute case-insensitively (camelCase `accessKey`)
+    input_string = dedent(
+        """
+        title = Title
+            .label = Label
+            .accessKey = B
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
+
+    gt_mock.return_value = "gt_translation"
+
+    expected = dedent(
+        """
+        title = gt_translation
+            .label = gt_translation
+            .accessKey = g
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
+
+
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_accesskeys_prefixed_camel_case(
+    gt_mock, fluent_resource, google_translate_locale
+):
+    # Pair a prefixed camelCase accesskey with its camelCase label
+    input_string = dedent(
+        """
+        title = Title
+            .buttonLabel = Ignore this
+            .buttonAccessKey = B
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
+
+    gt_mock.return_value = "gt_translation"
+
+    expected = dedent(
+        """
+        title = gt_translation
+            .buttonLabel = gt_translation
+            .buttonAccessKey = g
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
+
+
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
 def test_get_pretranslations_fluent_accesskeys_ignore_placeables(
     gt_mock, fluent_resource, google_translate_locale
 ):
