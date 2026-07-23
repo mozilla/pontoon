@@ -1,3 +1,5 @@
+import type { Message } from '@mozilla/l10n';
+
 import type { Locale } from '~/context/Locale';
 
 import { GET, POST } from './utils/base';
@@ -22,15 +24,27 @@ export type MachineryTranslation = {
   original: string;
   translation: string;
   quality?: number;
-  // Set for `/machinery-composed/` results, whose `original` and `translation`
-  // are full entry sources (Fluent attributes, MF2 variants) rather than plain
-  // strings — the Machinery panel renders these in a rich, multi-field view.
-  composed?: boolean;
   projects?: {
     name: string;
     slug: string;
   }[];
   entities?: number[];
+};
+
+/**
+ * A composed multi-value suggestion from `/machinery-composed/`.
+ *
+ * Unlike {@link MachineryTranslation}, which carries a single plain-string
+ * pattern, a composed suggestion carries the whole `(value, properties)` data
+ * model — Fluent attributes, MF2 selector variants — so the Machinery panel can
+ * render it as a rich, multi-field view and copy it across all editor fields
+ * without serializing on the server and re-parsing on the client.
+ */
+export type ComposedMachineryTranslation = {
+  sources: SourceType[];
+  quality?: number;
+  value: Message;
+  properties?: Record<string, Message>;
 };
 
 type ConcordanceTranslations = {
@@ -150,7 +164,7 @@ export async function fetchComposedMachinery(
   pk: number,
   locale: Locale,
   service: 'translation-memory' | 'google-translate' | 'microsoft-translator',
-): Promise<MachineryTranslation[]> {
+): Promise<ComposedMachineryTranslation[]> {
   const url = '/machinery-composed/';
   const params = {
     entity: String(pk),
@@ -159,23 +173,22 @@ export async function fetchComposedMachinery(
   };
 
   const result = (await GET_(url, params)) as {
-    original?: string;
-    translation?: string;
+    value?: Message;
+    properties?: Record<string, Message>;
     sources?: string[];
     quality?: number;
   };
 
-  if (!result || !result.translation || !result.original) {
+  if (!result || !result.value) {
     return [];
   }
 
   return [
     {
       sources: (result.sources ?? [service]) as SourceType[],
-      original: result.original,
-      translation: result.translation,
+      value: result.value,
+      properties: result.properties,
       quality: result.quality,
-      composed: true,
     },
   ];
 }

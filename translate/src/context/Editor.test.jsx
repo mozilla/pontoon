@@ -613,15 +613,16 @@ describe('<EditorProvider>', () => {
     };
     mountSpy(Spy, 'fluent', `key = VALUE\n    .title = TITLE\n`);
 
-    const source = ftl`
-      key = COMPOSED
-          .title = COMPOSED_TITLE
-      `;
     act(() =>
-      actions.setEditorFromHelpers(source, ['translation-memory'], true, true),
+      actions.setEditorFromComposed(
+        ['COMPOSED'],
+        { title: ['COMPOSED_TITLE'] },
+        ['translation-memory'],
+        true,
+      ),
     );
 
-    // The full entry source is spread across the value and attribute fields,
+    // The composed data model is spread across the value and attribute fields,
     // not dumped into the first field.
     expect(editor).toMatchObject({
       sourceView: false,

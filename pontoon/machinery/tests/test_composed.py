@@ -158,8 +158,10 @@ def test_composed_multiple_attributes_no_value(
     )
     assert response.status_code == 200
     body = json.loads(response.content)
-    assert "TM_label" in body["translation"]
-    assert "TM_tooltip" in body["translation"]
+    # Attribute-only message: empty value, both attributes filled from TM.
+    assert body["value"] == []
+    assert body["properties"]["label"] == ["TM_label"]
+    assert body["properties"]["tooltip"] == ["TM_tooltip"]
     assert body["sources"] == ["translation-memory"]
     assert body["quality"] == 100
 
@@ -229,9 +231,8 @@ def test_composed_tm_only_full_hit(client, fluent_resource, entity_a, locale_a):
     )
     assert response.status_code == 200
     body = json.loads(response.content)
-    assert body["original"] == fluent_string
-    assert "TM_value" in body["translation"]
-    assert "TM_tooltip" in body["translation"]
+    assert body["value"] == ["TM_value"]
+    assert body["properties"]["title"] == ["TM_tooltip"]
     assert body["sources"] == ["translation-memory"]
     # Every leaf is a 100% TM match, so the composed result is a full TM match.
     assert body["quality"] == 100
@@ -276,13 +277,12 @@ def test_composed_expands_source_plural_for_target_locale(
     )
     assert response.status_code == 200
     body = json.loads(response.content)
-    # The single `*[other]` source expands to all four target plural categories.
-    translation = body["translation"]
-    assert "[one]" in translation
-    assert "[two]" in translation
-    assert "[few]" in translation
-    assert "*[other]" in translation
-    assert translation.count("TM_popups") == 4
+    # The single `*[other]` source expands to all four target plural categories,
+    # each filled from the same TM match.
+    leaves = json.dumps([body.get("value"), body.get("properties")])
+    for category in ("one", "two", "few", "other"):
+        assert category in leaves
+    assert leaves.count("TM_popups") == 4
     assert body["sources"] == ["translation-memory"]
     assert body["quality"] == 100
 
@@ -397,8 +397,8 @@ def test_composed_hybrid_tm_and_mt(
     )
     assert response.status_code == 200
     body = json.loads(response.content)
-    assert "TM_value" in body["translation"]
-    assert "MT_tooltip" in body["translation"]
+    assert body["value"] == ["TM_value"]
+    assert body["properties"]["title"] == ["MT_tooltip"]
     assert set(body["sources"]) == {"translation-memory", "google-translate"}
     # MT-assisted results have no meaningful aggregate quality score.
     assert "quality" not in body

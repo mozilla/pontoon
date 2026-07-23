@@ -4,17 +4,17 @@ import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 
 export function MachineryCount(): React.ReactElement<'span'> | null {
-  const { translations } = useContext(MachineryTranslations);
+  const { composed, translations } = useContext(MachineryTranslations);
   const { results } = useContext(SearchData);
 
   let preferred = 0;
-  for (const { sources } of translations) {
+  for (const { sources } of [...composed, ...translations]) {
     if (sources.includes('translation-memory')) {
       preferred += 1;
     }
   }
 
-  const machinery = translations.length + results.length;
+  const machinery = composed.length + translations.length + results.length;
   if (!machinery) {
     return null;
   }

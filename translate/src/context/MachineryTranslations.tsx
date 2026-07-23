@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
   abortMachineryRequests,
+  ComposedMachineryTranslation,
   fetchCaighdeanTranslation,
   fetchComposedMachinery,
   fetchGoogleTranslation,
@@ -17,6 +18,7 @@ import {
   getPlainMessage,
   specialFormats,
 } from '~/utils/message';
+import { pojoEquals } from '~/utils/pojo';
 
 import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
@@ -25,24 +27,23 @@ import { SearchData } from './SearchData';
 export type MachineryTranslations = {
   fetching: boolean;
   source: string;
+  // Composed multi-value suggestions, rendered above the per-leaf matches.
+  composed: ComposedMachineryTranslation[];
   translations: MachineryTranslation[];
 };
 
 const initTranslations: MachineryTranslations = {
   fetching: false,
   source: '',
+  composed: [],
   translations: [],
 };
 
 export const MachineryTranslations =
   createContext<MachineryTranslations>(initTranslations);
 
-// Composed multi-value suggestions always sort to the top, ahead of the
-// per-leaf matches; within each group we sort by descending quality.
-const sortByQuality = (a: MachineryTranslation, b: MachineryTranslation) => {
-  if (a.composed !== b.composed) {
-    return a.composed ? -1 : 1;
-  }
+// Sort by descending quality; entries without a quality score sort last.
+const sortByQuality = (a: { quality?: number }, b: { quality?: number }) => {
   const { quality: qa } = a;
   const { quality: qb } = b;
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
@@ -121,6 +122,7 @@ export function MachineryProvider({
   const [fetching, setFetching] = useState(false);
   const [translations, setTranslations] = useState({
     source: '',
+    composed: [] as ComposedMachineryTranslation[],
     translations: [] as MachineryTranslation[],
   });
 
@@ -147,7 +149,35 @@ export function MachineryProvider({
             }
           }
           translations.sort(sortByQuality);
-          return { source: prev.source, translations };
+          return { ...prev, translations };
+        });
+      }
+    };
+
+    // Composed suggestions dedupe on their data model (value + properties): the
+    // TM-only and MT-backed requests can yield the same composition, in which
+    // case we merge their source badges rather than list it twice.
+    const addComposed = (newComposed: ComposedMachineryTranslation[]) => {
+      if (newComposed.length > 0) {
+        setTranslations((prev) => {
+          const composed = [...prev.composed];
+          for (const tx of newComposed) {
+            const i = composed.findIndex(
+              (t0) =>
+                pojoEquals(t0.value, tx.value) &&
+                pojoEquals(t0.properties ?? {}, tx.properties ?? {}),
+            );
+            if (i === -1) {
+              composed.push(tx);
+            } else {
+              const t0 = composed[i];
+              const sources = t0.sources.concat(tx.sources);
+              const quality = t0.quality ?? tx.quality;
+              composed[i] = { ...t0, sources, quality };
+            }
+          }
+          composed.sort(sortByQuality);
+          return { ...prev, composed };
         });
       }
     };
@@ -155,7 +185,7 @@ export function MachineryProvider({
     const plain = query || getPlainMessage(entry);
 
     abortMachineryRequests();
-    setTranslations({ source: plain, translations: [] });
+    setTranslations({ source: plain, composed: [], translations: [] });
 
     if (plain) {
       setFetching(true);
@@ -182,7 +212,7 @@ export function MachineryProvider({
       if (wantsComposed) {
         promises.push(
           fetchComposedMachinery(pk!, locale, 'translation-memory').then(
-            addResults,
+            addComposed,
           ),
         );
       }
@@ -201,7 +231,7 @@ export function MachineryProvider({
           if (wantsComposed) {
             promises.push(
               fetchComposedMachinery(pk!, locale, 'google-translate').then(
-                addResults,
+                addComposed,
               ),
             );
           }
@@ -214,7 +244,7 @@ export function MachineryProvider({
           if (wantsComposed) {
             promises.push(
               fetchComposedMachinery(pk!, locale, 'microsoft-translator').then(
-                addResults,
+                addComposed,
               ),
             );
           }

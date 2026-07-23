@@ -84,9 +84,10 @@ export function useHandleCtrlShiftArrow(): (
   key: 'ArrowDown' | 'ArrowUp',
 ) => boolean {
   const { entity } = useContext(EntityView);
-  const { setEditorFromHelpers } = useContext(EditorActions);
+  const { setEditorFromHelpers, setEditorFromComposed } =
+    useContext(EditorActions);
   const helperSelection = useContext(HelperSelection);
-  const { translations: machineryTranslations } = useContext(
+  const { composed, translations: machineryTranslations } = useContext(
     MachineryTranslations,
   );
   const { results: concordanceSearchResults } = useContext(SearchData);
@@ -100,8 +101,12 @@ export function useHandleCtrlShiftArrow(): (
   return (key) => {
     const { tab, element, setElement } = helperSelection;
     const isMachinery = tab === 0;
+    // Machinery navigation runs across composed suggestions, per-leaf matches
+    // and concordance results as one list, matching their rendered order.
     const numTranslations = isMachinery
-      ? machineryTranslations.length + concordanceSearchResults.length
+      ? composed.length +
+        machineryTranslations.length +
+        concordanceSearchResults.length
       : otherLocaleTranslations.length;
 
     if (numTranslations === 0) {
@@ -114,24 +119,22 @@ export function useHandleCtrlShiftArrow(): (
     setElement(nextIdx);
 
     if (isMachinery) {
-      const len = machineryTranslations.length;
-      const translationObj =
-        nextIdx < len
-          ? machineryTranslations[nextIdx]
-          : concordanceSearchResults[nextIdx - len];
+      if (nextIdx < composed.length) {
+        const { value, properties, sources } = composed[nextIdx];
+        setEditorFromComposed(value, properties, sources, true);
+        return true;
+      }
 
-      const llmState = getLLMTranslationState(machineryTranslations[nextIdx]);
+      const i = nextIdx - composed.length;
+      const translationObj =
+        i < machineryTranslations.length
+          ? machineryTranslations[i]
+          : concordanceSearchResults[i - machineryTranslations.length];
+
+      const llmState = getLLMTranslationState(translationObj);
       const updatedTranslation =
         llmState.llmTranslation || translationObj.translation;
-      // A composed suggestion is a full entry source to spread across all
-      // fields; the LLM transform output is a plain string, so it isn't.
-      const isEntry = !llmState.llmTranslation && !!translationObj.composed;
-      setEditorFromHelpers(
-        updatedTranslation,
-        translationObj.sources,
-        true,
-        isEntry,
-      );
+      setEditorFromHelpers(updatedTranslation, translationObj.sources, true);
 
       if (llmState.llmTranslation) {
         logUXAction(

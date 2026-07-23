@@ -7,7 +7,10 @@ import {
   mountComponentWithStore,
 } from '~/test/store';
 
-import { MachineryTranslationComponent } from './MachineryTranslation';
+import {
+  ComposedTranslationComponent,
+  MachineryTranslationComponent,
+} from './MachineryTranslation';
 
 const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
 const DEFAULT_TRANSLATION = {
@@ -72,19 +75,25 @@ describe('<MachineryTranslationComponent>', () => {
   it('renders a composed multi-field translation as a rich table', () => {
     const translation = {
       sources: ['translation-memory'],
-      composed: true,
       quality: 100,
-      original: 'button = Click Me\n    .title = Tooltip\n',
-      translation: 'button = Cliquez\n    .title = Infobulle\n',
+      value: ['Cliquez'],
+      properties: { title: ['Infobulle'] },
     };
     const store = createReduxStore();
+    const entity = {
+      format: 'fluent',
+      key: ['button'],
+      value: ['Click Me'],
+      properties: { title: ['Tooltip'] },
+    };
     const Wrapped = (props) =>
       React.createElement(
         EntityView.Provider,
-        { value: { entity: { format: 'fluent' } } },
-        React.createElement(MachineryTranslationComponent, props),
+        { value: { entity } },
+        React.createElement(ComposedTranslationComponent, props),
       );
     const { container } = mountComponentWithStore(Wrapped, store, {
+      index: 0,
       translation,
     });
     createDefaultUser(store);
@@ -98,6 +107,8 @@ describe('<MachineryTranslationComponent>', () => {
     expect(original).toBeInTheDocument();
     expect(suggestion).toBeInTheDocument();
     expect(original.querySelectorAll('tr')).toHaveLength(2);
+    expect(original.textContent).toContain('Click Me');
+    expect(original.textContent).toContain('Tooltip');
     expect(suggestion.textContent).toContain('Cliquez');
     expect(suggestion.textContent).toContain('Infobulle');
   });

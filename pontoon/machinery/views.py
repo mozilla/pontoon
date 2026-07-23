@@ -6,6 +6,7 @@ from urllib.parse import quote
 
 import requests
 
+from moz.l10n.message import message_to_json
 from moz.l10n.model import SelectMessage
 from sacremoses import MosesDetokenizer
 
@@ -93,6 +94,10 @@ def machinery_composed(request):
     results. Single-pattern entities have nothing to compose and yield an empty
     response.
 
+    The composed translation is returned as the `(value, properties)` data model
+    (the same JSON shape entities use), so the frontend can build its editor fields
+    without re-parsing.
+
     Query params:
         entity: Entity pk
         locale: Locale code
@@ -147,13 +152,18 @@ def machinery_composed(request):
             exclude_entity=True,
         )
         value, properties = pt.walk_entity()
-        translation = pt.serialize(value, properties)
     except ValueError:
         # Raised when a leaf has no TM match and MT is unavailable. Compose
         # endpoint treats this as "nothing to show" rather than an error.
         return JsonResponse({})
     except Exception as e:
         return _machinery_error_response(f"Composed machinery ({service})", e)
+
+    # Return the composed (value, properties) as data-model JSON, matching how
+    # entities themselves are delivered (see `map_entities`). The frontend builds
+    # its editor fields straight from this, with no serialize/re-parse round trip.
+    value_json = message_to_json(value)
+    properties_json = {key: message_to_json(prop) for key, prop in properties.items()}
 
     # Only multi-pattern targets — those with multiple properties and/or selector
     # variants — have something to compose. A single-pattern target composes to
@@ -165,7 +175,12 @@ def machinery_composed(request):
     pattern_count = _pattern_count(value) + sum(
         _pattern_count(prop) for prop in properties.values()
     )
-    if pattern_count < 2 or not pt.services or translation == entity.string:
+    # Skip when nothing was actually translated, i.e. the composed data model is
+    # identical to the source entity's.
+    unchanged = value_json == entity.value and properties_json == (
+        entity.properties or {}
+    )
+    if pattern_count < 2 or not pt.services or unchanged:
         return JsonResponse({})
 
     # Preserve insertion order while deduplicating. Map the internal service
@@ -178,8 +193,8 @@ def machinery_composed(request):
     sources_used = list(dict.fromkeys(badges.get(s, s) for s in pt.services))
 
     response = {
-        "original": entity.string,
-        "translation": translation,
+        "value": value_json,
+        "properties": properties_json,
         "sources": sources_used,
     }
 

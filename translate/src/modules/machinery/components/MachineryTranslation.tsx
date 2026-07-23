@@ -2,19 +2,25 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
-import type { MachineryTranslation, SourceType } from '~/api/machinery';
+import type {
+  ComposedMachineryTranslation,
+  MachineryTranslation,
+  SourceType,
+} from '~/api/machinery';
 import { logUXAction } from '~/api/uxaction';
 import { EditorActions, EditorField } from '~/context/Editor';
-import { EntityView } from '~/context/EntityView';
+import { useMachineryEntry } from '~/context/EntityView';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
 import { GenericTranslation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import {
   editMessageEntry,
-  parseEntry,
   requiresSourceView,
+  serializeEntry,
+  type MessageEntry,
 } from '~/utils/message';
+import { messageEntryFromValue } from '~/utils/message/fromEntity';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { MachineryTranslationSource } from './MachineryTranslationSource';
@@ -61,10 +67,7 @@ export function MachineryTranslationComponent({
       const sources: SourceType[] = llmTranslation
         ? ['gpt-transform']
         : translation.sources;
-      // A composed suggestion is a full entry source (the LLM transform output
-      // is a plain string, so it isn't), to be spread across all fields.
-      const isEntry = !llmTranslation && !!translation.composed;
-      setEditorFromHelpers(content, sources, true, isEntry);
+      setEditorFromHelpers(content, sources, true);
       if (llmTranslation) {
         logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
           action: 'Copy LLM Translation',
@@ -123,21 +126,9 @@ function MachineryTranslationSuggestion({
   translation: MachineryTranslation;
 }) {
   const { code, direction, script } = useContext(Locale);
-  const { entity } = useContext(EntityView);
 
   const getLLMTranslationState = useLLMTranslation();
   const { llmTranslation, loading } = getLLMTranslationState(translation);
-
-  // Composed suggestions carry full entry sources (Fluent attributes, MF2
-  // variants). Render them as labeled fields — the same representation as the
-  // original string panel — instead of a single raw block of syntax.
-  const originalFields = translation.composed
-    ? richFields(entity.format, translation.original)
-    : null;
-  const suggestionFields = translation.composed
-    ? richFields(entity.format, translation.translation)
-    : null;
-  const isRich = originalFields !== null && suggestionFields !== null;
 
   return (
     <>
@@ -147,6 +138,122 @@ function MachineryTranslationSuggestion({
         )}
 
         <MachineryTranslationSource translation={translation} />
+      </header>
+      <p className='original'>
+        <GenericTranslation
+          content={translation.original}
+          diffTarget={
+            // Caighdean takes `gd` translations as input, so we shouldn't
+            // diff it against the `en-US` source string.
+            translation.sources.includes('caighdean') ? undefined : sourceString
+          }
+        />
+      </p>
+      <p
+        className='suggestion'
+        dir={direction}
+        data-script={script}
+        lang={code}
+      >
+        {loading ? (
+          <i className='fas fa-circle-notch fa-spin' />
+        ) : (
+          <GenericTranslation
+            content={llmTranslation || translation.translation}
+          />
+        )}
+      </p>
+    </>
+  );
+}
+
+/**
+ * Render a composed multi-value suggestion in the Machinery tab.
+ *
+ * A composed suggestion carries the whole `(value, properties)` data model, so
+ * it's shown as labeled fields (source above, suggestion below) and copied
+ * across all editor fields at once.
+ */
+export function ComposedTranslationComponent({
+  index,
+  translation,
+}: {
+  index: number;
+  translation: ComposedMachineryTranslation;
+}): React.ReactElement<React.ElementType> {
+  const { setEditorFromComposed } = useContext(EditorActions);
+  const { element, setElement } = useContext(HelperSelection);
+  const isSelected = element === index;
+
+  const copyIntoEditor = useCallback(() => {
+    if (window.getSelection()?.isCollapsed !== false) {
+      setElement(index);
+      setEditorFromComposed(
+        translation.value,
+        translation.properties,
+        translation.sources,
+        true,
+      );
+    }
+  }, [index, setEditorFromComposed, setElement, translation]);
+
+  const className = classNames(
+    'translation',
+    useReadonlyEditor() && 'cannot-copy',
+    isSelected && 'selected',
+  );
+
+  const translationRef = useRef<HTMLLIElement>(null);
+  useEffect(() => {
+    if (isSelected) {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      translationRef.current?.scrollIntoView({
+        behavior: mediaQuery.matches ? 'auto' : 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [isSelected]);
+
+  return (
+    <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
+      <li
+        className={className}
+        title='Copy Into Translation (Ctrl + Shift + Down)'
+        onClick={copyIntoEditor}
+        ref={translationRef}
+      >
+        <ComposedSuggestion translation={translation} />
+      </li>
+    </Localized>
+  );
+}
+
+function ComposedSuggestion({
+  translation,
+}: {
+  translation: ComposedMachineryTranslation;
+}) {
+  const { code, direction, script } = useContext(Locale);
+  const machineryEntry = useMachineryEntry();
+  const suggestionEntry = messageEntryFromValue(
+    machineryEntry.format,
+    machineryEntry.id,
+    translation.value,
+    translation.properties,
+  );
+
+  const originalFields = richFields(machineryEntry);
+  const suggestionFields = richFields(suggestionEntry);
+  const isRich = originalFields !== null && suggestionFields !== null;
+
+  return (
+    <>
+      <header>
+        {translation.quality && (
+          <span className='quality'>{translation.quality + '%'}</span>
+        )}
+
+        <MachineryTranslationSource translation={translation} composed />
       </header>
       {isRich ? (
         <>
@@ -162,16 +269,7 @@ function MachineryTranslationSuggestion({
       ) : (
         <>
           <p className='original'>
-            <GenericTranslation
-              content={translation.original}
-              diffTarget={
-                // Caighdean takes `gd` translations as input, so we shouldn't
-                // diff it against the `en-US` source string.
-                translation.sources.includes('caighdean')
-                  ? undefined
-                  : sourceString
-              }
-            />
+            <GenericTranslation content={serializeEntry(machineryEntry)} />
           </p>
           <p
             className='suggestion'
@@ -179,13 +277,7 @@ function MachineryTranslationSuggestion({
             data-script={script}
             lang={code}
           >
-            {loading ? (
-              <i className='fas fa-circle-notch fa-spin' />
-            ) : (
-              <GenericTranslation
-                content={llmTranslation || translation.translation}
-              />
-            )}
+            <GenericTranslation content={serializeEntry(suggestionEntry)} />
           </p>
         </>
       )}
@@ -194,13 +286,12 @@ function MachineryTranslationSuggestion({
 }
 
 /**
- * Parse a composed entry source into its editable fields, or return `null` when
- * it can't be shown as a rich multi-field view (parse error, source-view-only
- * entry, or a single field — in which case the plain rendering is used).
+ * Editable fields for a composed message entry, or `null` when it can't be
+ * shown as a rich multi-field view (source-view-only entry or a single field —
+ * in which case the plain rendering is used).
  */
-function richFields(format: string, content: string): EditorField[] | null {
-  const entry = parseEntry(format, content);
-  if (!entry || requiresSourceView(entry)) {
+function richFields(entry: MessageEntry): EditorField[] | null {
+  if (requiresSourceView(entry)) {
     return null;
   }
   const fields = editMessageEntry(entry);

@@ -67,11 +67,7 @@ export function GoogleTranslation({
     </Localized>
   );
 
-  // AI refinement isn't supported for composed (multi-field/plural)
-  // suggestions: the backend refines a single string, so it can't preserve the
-  // entry structure, and the rich rendering can't show the refined result. Show
-  // the plain source label instead. See follow-up to add composed support.
-  return isOpenAIChatGPTSupported && !translation.composed ? (
+  return isOpenAIChatGPTSupported ? (
     <li ref={dropdownRef} className='google-translation'>
       <Localized id='machinery-GoogleTranslation--selector'>
         <span

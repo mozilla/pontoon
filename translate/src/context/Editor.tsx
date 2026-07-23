@@ -1,4 +1,4 @@
-import { CatchallKey } from '@mozilla/l10n';
+import { CatchallKey, type Message } from '@mozilla/l10n';
 import React, {
   createContext,
   useContext,
@@ -24,7 +24,11 @@ import {
   hasOuterWhitespace,
   htmlElementEscapes,
 } from '~/utils/message/entryInformation';
-import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
+import {
+  messageEntryFromEntityTranslation,
+  messageEntryFromValue,
+} from '~/utils/message/fromEntity';
+import { getMessageEntryFormat } from '~/utils/message/getMessageEntryFormat';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 
@@ -100,15 +104,24 @@ export type EditorActions = {
 
   /**
    * @param manual Set `true` when value set due to direct user action
-   * @param entry Set `true` when `value` is the source of a full entry (e.g. a
-   *   composed Machinery suggestion) that should be parsed and distributed
-   *   across all fields rather than inserted into the focused field.
    */
   setEditorFromHelpers(
     value: string,
     sources: SourceType[],
     manual: boolean,
-    entry?: boolean,
+  ): void;
+
+  /**
+   * Distribute a composed Machinery suggestion — a full `(value, properties)`
+   * data model — across all editor fields.
+   *
+   * @param manual Set `true` when set due to direct user action
+   */
+  setEditorFromComposed(
+    value: Message,
+    properties: Record<string, Message> | undefined,
+    sources: SourceType[],
+    manual: boolean,
   ): void;
 
   setEditorSelection(content: string): void;
@@ -142,6 +155,7 @@ const initEditorActions: EditorActions = {
   clearEditor: () => {},
   setEditorBusy: () => {},
   setEditorFromHelpers: () => {},
+  setEditorFromComposed: () => {},
   setEditorFromHistory: () => {},
   setEditorSelection: () => {},
   setResultFromInput: () => {},
@@ -175,9 +189,47 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       trim: !hasOuterWhitespace(sourceEntry),
     };
 
+    // `next.fields` carry placeholder handles, but the on-screen editors stay
+    // bound (via their React key) to `prev.fields`' live handles. EditField only
+    // re-syncs when its `defaultValue` string changes, so re-applying a value
+    // that equals a stale `defaultValue` — e.g. restoring a composed suggestion
+    // after editing one field — would otherwise leave that field untouched until
+    // a second click. Push the values into the live handles directly, matching
+    // by field id, like `clearEditor` does.
+    const finalizeDistribution = (
+      prev: EditorData,
+      next: EditorData,
+    ): EditorData => {
+      for (const field of next.fields) {
+        const live = prev.fields.find((f) => f.id === field.id);
+        live?.handle.current.setValue(field.handle.current.value);
+      }
+      next.focusField.current = next.fields[0];
+      setResult(buildMessageEntry(next.base, next.fields, buildOpts));
+      return next;
+    };
+
+    // Distribute a parsed entry's leaves across all editor fields, falling back
+    // to a raw source-view field when it can't be shown as fields.
+    const distributeEntry = (
+      prev: EditorData,
+      entry: MessageEntry,
+    ): EditorData => {
+      const next = { ...prev, base: entry };
+      if (!requiresSourceView(entry)) {
+        next.fields = prev.sourceView
+          ? editSource(entry)
+          : editMessageEntry(sourceEntry, entry);
+      } else {
+        next.fields = editSource(entry);
+        next.sourceView = true;
+      }
+      return finalizeDistribution(prev, next);
+    };
+
     // Parse a full entry source and distribute its leaves across all editor
     // fields, falling back to a raw source-view field when it can't be parsed.
-    // Shared by history restores and composed Machinery copies.
+    // Used by history restores.
     const distributeEntrySource = (
       prev: EditorData,
       str: string,
@@ -202,20 +254,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         next.fields = editMessageEntry(sourceEntry, prev.initial);
         next.fields[0].handle.current.setValue(str);
       }
-      // `next.fields` carry placeholder handles, but the on-screen editors stay
-      // bound (via their React key) to `prev.fields`' live handles. EditField
-      // only re-syncs when its `defaultValue` string changes, so re-applying a
-      // value that equals a stale `defaultValue` — e.g. restoring a composed
-      // suggestion after editing one field — would otherwise leave that field
-      // untouched until a second click. Push the values into the live handles
-      // directly, matching by field id, like `clearEditor` does.
-      for (const field of next.fields) {
-        const live = prev.fields.find((f) => f.id === field.id);
-        live?.handle.current.setValue(field.handle.current.value);
-      }
-      next.focusField.current = next.fields[0];
-      setResult(buildMessageEntry(next.base, next.fields, buildOpts));
-      return next;
+      return finalizeDistribution(prev, next);
     };
 
     return {
@@ -232,25 +271,8 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorBusy: (busy) =>
         setState((prev) => (busy === prev.busy ? prev : { ...prev, busy })),
 
-      setEditorFromHelpers: (str, sources, manual, entry) =>
+      setEditorFromHelpers: (str, sources, manual) =>
         setState((prev) => {
-          // Composed suggestions carry a full entry source. Outside source view
-          // we must parse it and distribute the leaves across all fields rather
-          // than dumping the raw syntax into the focused field. Record the plain
-          // message as `machinery.translation` so source attribution still
-          // matches the saved translation (see `useSendTranslation`).
-          if (entry && !prev.sourceView) {
-            const next = distributeEntrySource(prev, str);
-            const parsed = parseEntry(format, str);
-            return {
-              ...next,
-              machinery: {
-                manual,
-                translation: parsed ? getPlainMessage(parsed) : str,
-                sources,
-              },
-            };
-          }
           const { fields, focusField, sourceView } = prev;
           let field = focusField.current ?? fields[0];
           field.handle.current.setValue(str);
@@ -268,6 +290,30 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             field.handle.current.focus();
           }
           return next;
+        }),
+
+      setEditorFromComposed: (value, properties, sources, manual) =>
+        setState((prev) => {
+          // A composed suggestion is a full `(value, properties)` data model.
+          // Build an entry from it and distribute the leaves across all fields.
+          // Record the plain message as `machinery.translation` so source
+          // attribution still matches the saved translation (see
+          // `useSendTranslation`).
+          const entry = messageEntryFromValue(
+            getMessageEntryFormat(format),
+            prev.base.id,
+            value,
+            properties,
+          );
+          const next = distributeEntry(prev, entry);
+          return {
+            ...next,
+            machinery: {
+              manual,
+              translation: getPlainMessage(entry),
+              sources,
+            },
+          };
         }),
 
       setEditorFromHistory: (str) =>

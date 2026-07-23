@@ -65,8 +65,8 @@ describe('fetchComposedMachinery', () => {
 
   it('sends entity, locale, and service params', async () => {
     GET.mockResolvedValueOnce({
-      original: 'src',
-      translation: 'composed',
+      value: ['composed'],
+      properties: {},
       sources: ['translation-memory'],
     });
 
@@ -79,10 +79,10 @@ describe('fetchComposedMachinery', () => {
     expect(params.get('service')).toBe('translation-memory');
   });
 
-  it('returns a MachineryTranslation with the response sources', async () => {
+  it('returns a ComposedMachineryTranslation with the response data model', async () => {
     GET.mockResolvedValueOnce({
-      original: 'Click Me\n  .title = Tip',
-      translation: 'composed-result',
+      value: ['Click Me'],
+      properties: { title: ['Tip'] },
       sources: ['translation-memory', 'google-translate'],
     });
 
@@ -91,17 +91,17 @@ describe('fetchComposedMachinery', () => {
     expect(result).toEqual([
       {
         sources: ['translation-memory', 'google-translate'],
-        original: 'Click Me\n  .title = Tip',
-        translation: 'composed-result',
-        composed: true,
+        value: ['Click Me'],
+        properties: { title: ['Tip'] },
+        quality: undefined,
       },
     ]);
   });
 
   it('passes through the quality of a full TM match', async () => {
     GET.mockResolvedValueOnce({
-      original: 'Click Me\n  .title = Tip',
-      translation: 'composed-result',
+      value: ['Click Me'],
+      properties: { title: ['Tip'] },
       sources: ['translation-memory'],
       quality: 100,
     });
@@ -113,7 +113,6 @@ describe('fetchComposedMachinery', () => {
     );
 
     expect(result[0].quality).toBe(100);
-    expect(result[0].composed).toBe(true);
   });
 
   it('returns empty array when response is empty', async () => {
@@ -128,8 +127,7 @@ describe('fetchComposedMachinery', () => {
 
   it('falls back to the requested service when sources is missing', async () => {
     GET.mockResolvedValueOnce({
-      original: 'src',
-      translation: 'composed',
+      value: ['composed'],
     });
 
     const result = await fetchComposedMachinery(
