@@ -121,6 +121,9 @@ function parseEntryFromFluentSource(
     return null;
   }
 
+  // Terms can have locale-specific attributes
+  const isTerm = sourceEntry.id.startsWith('-');
+
   entry.id = sourceEntry.id;
   if (sourceEntry.value) {
     entry.value ??= [];
@@ -148,14 +151,15 @@ function parseEntryFromFluentSource(
             return [key, []];
           }),
         );
-        // Terms can have locale-specific attributes
-        if (entry.id.startsWith('-')) {
+        if (isTerm) {
           for (const [key, value] of attributes.entries()) {
             entry.attributes.set(key, value);
           }
         }
       }
     }
+  } else if (!isTerm) {
+    delete entry.attributes;
   }
   return entry;
 }

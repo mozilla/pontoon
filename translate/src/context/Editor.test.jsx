@@ -25,16 +25,21 @@ function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
   });
 
   let key = ['key'];
-  let value;
+  let value, properties;
   let translation = undefined;
   switch (format) {
     case 'fluent': {
       const [id, entry] = fluentParseEntry(formatSource);
       key = [id];
       value = entry['='];
+      properties = entry['+'];
       if (formatTranslation) {
         const [, entry] = fluentParseEntry(formatTranslation);
-        translation = { string: formatTranslation, value: entry['='] };
+        translation = {
+          string: formatTranslation,
+          value: entry['='],
+          properties: entry['+'],
+        };
       }
       break;
     }
@@ -68,6 +73,7 @@ function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
           key,
           original: formatSource,
           value,
+          properties,
           translation,
           project: { contact: '' },
         },
@@ -660,6 +666,102 @@ describe('<EditorProvider>', () => {
           { keys: [{ '*': 'other' }], pat: ['OTHER'] },
         ],
       },
+    });
+  });
+
+  it('reconstructs message after Fluent source view changes', () => {
+    let editor, result, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source = ftl`
+      key = Value
+          .a = Attr
+          .b = Bttr
+      `;
+    mountSpy(Spy, 'fluent', source, source);
+
+    act(() => actions.toggleSourceView());
+    act(() =>
+      editor.fields[0].handle.current.setValue(ftl`
+        key =
+            .b = Bttr
+            .c = Cttr
+        `),
+    );
+    act(() => actions.setResultFromInput());
+
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: [],
+      attributes: new Map([
+        ['a', []],
+        ['b', ['Bttr']],
+      ]),
+    });
+
+    act(() => actions.toggleSourceView());
+
+    expect(editor).toMatchObject({
+      fields: [
+        { id: '', handle: { current: { value: '' } } },
+        { id: 'a', handle: { current: { value: '' } } },
+        { id: 'b', handle: { current: { value: 'Bttr' } } },
+      ],
+      sourceView: false,
+    });
+  });
+
+  it('reconstructs term after Fluent source view changes', () => {
+    let editor, result, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source = ftl`
+      -key = Value
+          .a = Attr
+          .b = Bttr
+      `;
+    mountSpy(Spy, 'fluent', source, source);
+
+    act(() => actions.toggleSourceView());
+    act(() =>
+      editor.fields[0].handle.current.setValue(ftl`
+        -key = { "" }
+            .b = Bttr
+            .c = Cttr
+        `),
+    );
+    act(() => actions.setResultFromInput());
+
+    expect(result).toEqual({
+      format: 'fluent',
+      id: '-key',
+      value: [{ _: '' }],
+      attributes: new Map([
+        ['a', []],
+        ['b', ['Bttr']],
+        ['c', ['Cttr']],
+      ]),
+    });
+
+    act(() => actions.toggleSourceView());
+
+    expect(editor).toMatchObject({
+      fields: [
+        { id: '', handle: { current: { value: '' } } },
+        { id: 'a', handle: { current: { value: '' } } },
+        { id: 'b', handle: { current: { value: 'Bttr' } } },
+        { id: 'c', handle: { current: { value: 'Cttr' } } },
+      ],
+      sourceView: false,
     });
   });
 
