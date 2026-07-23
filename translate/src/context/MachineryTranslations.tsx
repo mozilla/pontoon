@@ -49,62 +49,56 @@ const sortByQuality = (a: { quality?: number }, b: { quality?: number }) => {
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
-// Number of *target* patterns a message contributes: zero for an empty value
-// (a Fluent value is empty when the message only has attributes), one for a
-// plain pattern, and one per selector variant for a select message — with
-// plural-selector dimensions expanded to the target locale's CLDR plural
-// categories. This mirrors the plural expansion the backend's walk_entity()
-// performs, so an en-US `*[other]`-only source still counts as multi-pattern
-// for locales like Slovenian (one/two/few/other).
-function patternCount(
-  msg: Message | null | undefined,
-  pluralCategories: number,
-): number {
-  if (!msg) {
-    return 0;
-  }
-  if (!isSelectMessage(msg)) {
-    // A pattern with no elements — e.g. the value of a Fluent message that
-    // only has attributes — has nothing to translate and is not a leaf. This
-    // mirrors the backend's `_pattern_count`, so an attribute-only entity is
-    // not treated as multi-pattern (which would compose a redundant suggestion
-    // duplicating the single per-leaf match).
-    const pattern = Array.isArray(msg) ? msg : msg.msg;
-    return pattern && pattern.length > 0 ? 1 : 0;
-  }
-  const plurals = findPluralSelectors(msg);
-  let count = 1;
-  for (let i = 0; i < msg.sel.length; ++i) {
-    if (plurals.has(i)) {
-      count *= Math.max(1, pluralCategories);
-    } else {
-      // Non-plural selector (e.g. a gender): keep its distinct source keys.
-      const keys = new Set(
-        msg.alt.map((v) => {
-          const key = v.keys[i];
-          return typeof key === 'string' ? key : '*';
-        }),
-      );
-      count *= keys.size || 1;
-    }
-  }
-  return count;
-}
-
 // A composed translation is only meaningful when the entity has more than one
-// translatable leaf in the target (Fluent attributes, MF2 selector variants).
-// For a single-field target the composed result would just duplicate the
-// per-leaf TM or MT match, so we skip the request entirely.
+// translatable pattern in the target (Fluent attributes, MF2 selector variants).
+// For a single-pattern target the composed result would just duplicate the
+// per-leaf TM or MT match, so we skip the request entirely. We only care whether
+// there's more than one pattern, not the exact count, so this short-circuits as
+// soon as it finds a second one.
 function hasMultipleFields(
   value: Message,
   properties: Record<string, Message> | undefined,
   pluralCategories: number,
 ): boolean {
-  let count = patternCount(value, pluralCategories);
-  for (const prop of Object.values(properties ?? {})) {
-    count += patternCount(prop, pluralCategories);
+  let leaves = 0;
+  for (const msg of [value, ...Object.values(properties ?? {})]) {
+    if (!msg) {
+      continue;
+    }
+    if (isSelectMessage(msg)) {
+      // A select message is itself multi-pattern when any selector dimension
+      // has more than one target variant: a non-plural selector (e.g. a gender)
+      // with distinct keys, or a plural selector once the locale has multiple
+      // CLDR plural categories. The latter mirrors the plural expansion the
+      // backend's walk_entity() performs, so an en-US `*[other]`-only source is
+      // still multi-pattern for locales like Slovenian (one/two/few/other).
+      const plurals = findPluralSelectors(msg);
+      const multiPattern = msg.sel.some((_, i) =>
+        plurals.has(i)
+          ? pluralCategories > 1
+          : new Set(
+              msg.alt.map((v) =>
+                typeof v.keys[i] === 'string' ? v.keys[i] : '*',
+              ),
+            ).size > 1,
+      );
+      if (multiPattern) {
+        return true;
+      }
+      leaves += 1;
+    } else {
+      // A pattern with no elements — e.g. the value of a Fluent message that
+      // only has attributes — has nothing to translate and is not a leaf.
+      const pattern = Array.isArray(msg) ? msg : msg.msg;
+      if (pattern && pattern.length > 0) {
+        leaves += 1;
+      }
+    }
+    if (leaves > 1) {
+      return true;
+    }
   }
-  return count > 1;
+  return false;
 }
 
 export function MachineryProvider({
