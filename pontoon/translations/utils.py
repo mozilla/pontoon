@@ -55,14 +55,6 @@ def parse_source_string_to_json(
             return [], ([source] if source else []), None
 
 
-def parse_db_string_to_json(
-    res_format: str,
-    source: str,
-) -> tuple[JsonMessage, dict[str, JsonMessage] | None]:
-    _, value, properties = parse_source_string_to_json(res_format, source)
-    return value, properties
-
-
 def serialize_for_db(
     entity: Entity, value: Message, properties: dict[str, Message]
 ) -> str:

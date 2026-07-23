@@ -12,7 +12,7 @@ from pontoon.base.models import Entity, Resource, User
 from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.libraries import run_checks
-from pontoon.translations.utils import parse_db_string_to_json
+from pontoon.translations.utils import parse_source_string_to_json
 
 
 parser = FluentParser()
@@ -126,8 +126,8 @@ def find_and_replace(
 
         errors = False
         try:
-            new_translation.value, new_translation.properties = parse_db_string_to_json(
-                res_format, new_translation.string
+            _, new_translation.value, new_translation.properties = (
+                parse_source_string_to_json(res_format, new_translation.string)
             )
         except ValueError:
             errors = True
