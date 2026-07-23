@@ -2,10 +2,6 @@ import React from 'react';
 import './LocaleItem.css';
 import { LocaleOption } from '~/api/other-locales';
 
-/**
- *
- * Render a locale item.
- */
 type Props = {
   locale: LocaleOption;
   currentLocale: string;

@@ -75,7 +75,6 @@ export default function LocaleMenu({
           <div className='locale-menu-list'>
             <ul>
               <li
-                key='source'
                 className={`locale-item ${selected === '' ? 'selected' : ''}`}
                 onClick={() => {
                   onSelect('');
@@ -87,7 +86,7 @@ export default function LocaleMenu({
               </li>
               {filtered.map((locale) => (
                 <LocaleItem
-                  key='source'
+                  key={locale.code}
                   locale={locale}
                   currentLocale={currentLocale}
                   selected={locale.code === currentLocale}
