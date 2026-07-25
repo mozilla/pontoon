@@ -2,7 +2,7 @@
 
 Pontoon provides a global **Insights** dashboard for analyzing the health of localization communities and the quality of pretranslations across all locales and projects.
 
-The dashboard is restricted to staff and is available at [https://pontoon.mozilla.org/insights/](https://pontoon.mozilla.org/insights/) when logged in as an administrator.
+The dashboard is restricted to staff and is available at `/insights` when logged in as an administrator (e.g. [https://pontoon.mozilla.org/insights/](https://pontoon.mozilla.org/insights/) for the instance hosted by Mozilla).
 
 ## Community health activity
 
