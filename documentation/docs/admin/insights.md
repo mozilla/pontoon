@@ -6,7 +6,7 @@ The dashboard is restricted to staff and is available at `/insights` when logged
 
 ## Community health activity
 
-This section presents a table of the monthly `Community health score` and its underlying metrics for each selected locale. For every team it shows the number of managers, translators, active contributors, all contributors and new signups, along with the number of enabled projects, project completion, and the resulting `Community health score`.
+This section presents a table of the monthly `Community health score` and its underlying metrics for each selected locale. For every team it shows the number of users in different roles — managers, translators, contributors — above a certain threshold of submitted translations, all contributors independently of the number of approved translations, and new signups, along with the number of enabled projects, project completion, and the resulting `Community health score`.
 
 Each cell also displays the month-over-month change, making it possible to compare the current values against the previous month. Use the `Filter teams` search box to narrow the table down to specific locales.
 
