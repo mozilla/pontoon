@@ -20,7 +20,7 @@ By default the table shows the raw value of each metric. Click the `Show scores`
 
 ## Community health score chart
 
-This chart plots the monthly `Community health scores` of all selected locales for the most recent 12 months, along with the 12-month average. Hover over a data point in the graph to see all selected locale scores for that month along with the 12-month average.
+This chart plots the monthly `Community health scores` of each selected locale for the most recent 12 months, along with the average of all selected locales. Hover over a data point in the graph to see each selected locale's score for that month along with the average.
 
 ## Pretranslation quality
 
