@@ -18,6 +18,7 @@ from pontoon.settings.base import (
     ALL_CONTRIBUTOR_STRING_THRESHOLD,
     COMPLETION_POINTS,
     ENABLED_PROJECT_POINTS,
+    KEY_PROJECT_SLUGS,
     MANAGER_POINTS,
     MANAGER_STRING_THRESHOLD,
     NEW_SIGNUP_POINTS,
@@ -25,17 +26,6 @@ from pontoon.settings.base import (
     TRANSLATOR_POINTS,
     TRANSLATOR_STRING_THRESHOLD,
 )
-
-
-KEY_PROJECT_SLUGS = [
-    "firefox-for-android",
-    "firefox-for-ios",
-    "mozilla-monitor-website",
-    "firefox-relay-website",
-    "firefox",
-    "mozilla-accounts",
-    "mozilla-vpn-client",
-]
 
 
 def get_completion_by_locale(locales) -> dict[int, float]:

@@ -96,6 +96,22 @@
         background: var(--black-3);
       }
 
+      .cell {
+        vertical-align: bottom;
+        height: 44px;
+
+        a {
+          color: var(--status-translated-alt);
+        }
+
+        div {
+          margin-bottom: 6px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
       &.show-score-view {
         .info-container.base-view {
           display: none;
@@ -139,10 +155,6 @@
 
           &.down {
             color: var(--status-error);
-          }
-
-          &.equal {
-            color: var(--grey-1);
           }
 
           .fa-caret-up,

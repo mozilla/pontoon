@@ -1304,6 +1304,17 @@ NEW_SIGNUP_POINTS = float(os.environ.get("NEW_SIGNUP_POINTS", 5.0))
 ENABLED_PROJECT_POINTS = float(os.environ.get("ENABLED_PROJECT_POINTS", 4.0))
 COMPLETION_POINTS = float(os.environ.get("COMPLETION_POINTS", 46.0))
 
+KEY_PROJECT_SLUGS = os.environ.get(
+    "KEY_PROJECT_SLUGS",
+    "firefox-for-android,"
+    "firefox-for-ios,"
+    "mozilla-monitor-website,"
+    "firefox-relay-website,"
+    "firefox,"
+    "mozilla-accounts,"
+    "mozilla-vpn-client",
+).split(",")
+
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Used in the header of the Terminology (.TBX) files.
