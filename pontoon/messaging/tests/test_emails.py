@@ -4,6 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
+from notifications.signals import notify
+
 from django.core import mail
 from django.template import TemplateSyntaxError
 from django.test.client import RequestFactory
@@ -16,6 +18,8 @@ from pontoon.messaging.emails import (
     send_inactive_contributor_emails,
     send_inactive_manager_emails,
     send_inactive_translator_emails,
+    send_monthly_activity_summary,
+    send_notification_digest,
     send_onboarding_email_1,
     send_onboarding_emails_2,
     send_onboarding_emails_3,
@@ -39,6 +43,45 @@ def test_send_verification_email(member):
         kwargs = mock_email_message.call_args.kwargs
         assert link in kwargs["body"]
         assert kwargs["to"] == [request.user.email]
+
+
+@pytest.mark.django_db
+def test_send_monthly_activity_summary_excludes_system_users(member, sync_user):
+    """System users must not receive Monthly activity summary emails."""
+    for user in (member.user, sync_user):
+        user.profile.monthly_activity_summary = True
+        user.profile.save()
+
+    # Discard the onboarding email sent when the member fixture is created
+    mail.outbox.clear()
+    send_monthly_activity_summary()
+
+    recipients = [address for message in mail.outbox for address in message.to]
+    assert recipients == [member.user.contact_email]
+
+
+@pytest.mark.django_db
+def test_send_notification_digest_excludes_system_users(member, sync_user):
+    """System users must not receive notification email digests."""
+    for user in (member.user, sync_user):
+        user.profile.notification_email_frequency = "Daily"
+        user.profile.comment_notifications_email = True
+        user.profile.save()
+        # Bypasses messaging.notifications.send_notification, which already
+        # skips system users.
+        notify.send(
+            user,
+            recipient=user,
+            verb="has pinned a comment",
+            category="comment",
+        )
+
+    # Discard the onboarding email sent when the member fixture is created
+    mail.outbox.clear()
+    send_notification_digest(frequency="Daily")
+
+    recipients = [address for message in mail.outbox for address in message.to]
+    assert recipients == [member.user.contact_email]
 
 
 @pytest.mark.django_db
