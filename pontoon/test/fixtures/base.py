@@ -2,6 +2,7 @@ import pytest
 
 from django.contrib.auth.models import User
 
+from pontoon.base import system_users
 from pontoon.test import factories
 
 
@@ -24,17 +25,17 @@ def client_superuser(client, admin):
 
 @pytest.fixture
 def sync_user():
-    return User.objects.get(email="pontoon-sync@example.com")
+    return User.objects.get(email=system_users.SYNC)
 
 
 @pytest.fixture
 def gt_user():
-    return User.objects.get(email="pontoon-gt@example.com")
+    return User.objects.get(email=system_users.GOOGLE_TRANSLATE)
 
 
 @pytest.fixture
 def tm_user():
-    return User.objects.get(email="pontoon-tm@example.com")
+    return User.objects.get(email=system_users.TRANSLATION_MEMORY)
 
 
 @pytest.fixture

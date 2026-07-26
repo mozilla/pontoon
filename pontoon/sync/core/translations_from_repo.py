@@ -29,6 +29,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
     User,
 )
+from pontoon.base.system_users import get_sync_user
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.core.checkout import Checkout, Checkouts
@@ -304,7 +305,7 @@ def update_db_translations(
     scope = f"[{project.slug}]"
     log.debug(f"{scope} Syncing translations from repo...")
 
-    log_user = user or User.objects.get(username="pontoon-sync")
+    log_user = user or get_sync_user()
     translations_to_reject = Q()
     actions: list[ActionLog] = []
 

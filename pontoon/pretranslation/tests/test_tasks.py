@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from pontoon.base.models import ChangedEntityLocale, Translation, User
+from pontoon.base.models import ChangedEntityLocale, Translation
 from pontoon.pretranslation.tasks import pretranslate_task
 from pontoon.test.factories import (
     EntityFactory,
@@ -15,7 +15,7 @@ from pontoon.test.factories import (
 
 @patch("pontoon.pretranslation.tasks.get_pretranslation")
 @pytest.mark.django_db
-def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
+def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b, gt_user):
     project_a.pretranslation_enabled = True
     project_a.save()
 
@@ -45,7 +45,6 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
         pretranslation_enabled=True,
     )
 
-    gt_user = User.objects.get(email="pontoon-gt@example.com")
     gt_mock.return_value = ("pretranslation", "gt")
 
     pretranslate_task(project_a.pk)
@@ -66,7 +65,9 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
 
 @patch("pontoon.pretranslation.tasks.get_pretranslation")
 @pytest.mark.django_db
-def test_which_strings_to_pretranslate(gt_mock, project_a, locale_a, resource_a):
+def test_which_strings_to_pretranslate(
+    gt_mock, project_a, locale_a, resource_a, gt_user
+):
     """
     Verify that we only pretranslate:
     - strings without any translations
@@ -91,7 +92,6 @@ def test_which_strings_to_pretranslate(gt_mock, project_a, locale_a, resource_a)
     rejected_by_human = EntityFactory.create(resource=resource)
     rejected_by_machine = EntityFactory.create(resource=resource)
 
-    gt_user = User.objects.get(email="pontoon-gt@example.com")
     gt_mock.return_value = ("pretranslation", "gt")
 
     TranslationFactory.create(entity=non_rejected, locale=locale_a, rejected=False)
