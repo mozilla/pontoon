@@ -20,7 +20,7 @@
         {% set has_badges = badges and (badges.review_master_badge.level or badges.translation_champion_badge.level or badges.community_builder_badge.level) %}
         {% set translator_for_locales = contributor.translator_for_locales() %}
         {% set manager_for_locales = contributor.manager_for_locales() %}
-        {% set user_is_translator = user.can_translate_locales() %}
+        {% set user_is_translator = user.is_authenticated and user.can_translate_locales() %}
         {% set profile_is_disabled = contributor.is_active == False %}
         {% if ban_activity %}
           {%
