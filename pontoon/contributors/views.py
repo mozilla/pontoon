@@ -43,6 +43,7 @@ from pontoon.base.badge_utils import (
 from pontoon.base.models import Locale, Project, UserBanLog, UserProfile
 from pontoon.base.models.user import User
 from pontoon.base.services import anonymize_user, get_locale_or_redirect
+from pontoon.base.user_utils import is_system_user
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors import utils
 from pontoon.messaging.emails import send_verification_email
@@ -104,12 +105,11 @@ def contributor(request, user: User):
         user, request.user, False, default_contribution_type
     )
 
-    context = {
-        "contributor": user,
-        "contact_for": user.contact_for.filter(
-            disabled=False, system_project=False, visibility="public"
-        ).order_by("-priority"),
-        "badges": {
+    # Badges are a contributor gamification feature, exclude system users.
+    badges = (
+        {}
+        if is_system_user(user)
+        else {
             "translation_champion_badge": {
                 "level": get_badge_level(
                     BADGES_TRANSLATION_THRESHOLDS, badges_translation_count(user)
@@ -128,7 +128,15 @@ def contributor(request, user: User):
                 ),
                 "name": "Community Builder",
             },
-        },
+        }
+    )
+
+    context = {
+        "contributor": user,
+        "contact_for": user.contact_for.filter(
+            disabled=False, system_project=False, visibility="public"
+        ).order_by("-priority"),
+        "badges": badges,
         "all_time_stats": {
             "translations": user.translation_set.all(),
         },
