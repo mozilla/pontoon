@@ -1077,9 +1077,7 @@ def download_translation_memory(request, locale, slug):
         ),
         content_type="text/xml",
     )
-    response["Content-Disposition"] = 'attachment; filename="{filename}"'.format(
-        filename=filename
-    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response
 
 

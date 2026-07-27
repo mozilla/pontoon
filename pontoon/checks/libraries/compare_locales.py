@@ -29,11 +29,7 @@ class ComparePropertiesEntity(PropertiesEntityMixin):
         return "%s = %s"
 
     def __repr__(self):
-        return 'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
-            self.key,
-            self.raw_val,
-            self.pre_comment.all,
-        )
+        return f'ComparePropertiesEntity<key="{self.key}",raw_val="{self.raw_val}",pre_comment="{self.pre_comment.all}">'
 
 
 class CompareDTDEntity(DTDEntityMixin):
@@ -51,18 +47,10 @@ class CompareDTDEntity(DTDEntityMixin):
         else:
             wrap = '"'
 
-        return "<!ENTITY {key} {wrap}{entity}{wrap}>".format(
-            key=self.key,
-            entity=self.raw_val,
-            wrap=wrap,
-        )
+        return f"<!ENTITY {self.key} {wrap}{self.raw_val}{wrap}>"
 
     def __repr__(self):
-        return 'CompareDTDEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
-            self.key,
-            self.raw_val,
-            self.pre_comment.all,
-        )
+        return f'CompareDTDEntity<key="{self.key}",raw_val="{self.raw_val}",pre_comment="{self.pre_comment.all}">'
 
 
 class UnsupportedResourceTypeError(Exception):

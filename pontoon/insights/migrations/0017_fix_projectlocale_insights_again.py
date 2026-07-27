@@ -1,4 +1,4 @@
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import UTC, date, datetime, time, timedelta
 from statistics import mean
 
 from django.db import migrations
@@ -53,7 +53,7 @@ def fix_projectlocale_insights_again(apps, schema_editor):
     prev_date = None
     for days in range((end_date - start_date).days):
         d = start_date + timedelta(days=days)
-        dt = datetime.combine(d, time(), tzinfo=timezone.utc)
+        dt = datetime.combine(d, time(), tzinfo=UTC)
         activities = count_activities(dt)
         pls_list = [
             pls

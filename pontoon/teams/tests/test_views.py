@@ -41,7 +41,7 @@ def _tmx_file_upload(locale_code, entries):
         '<?xml version="1.0" encoding="UTF-8"?>'
         '<tmx version="1.4"><header srclang="en-US"/>'
         f"<body>{units}</body></tmx>"
-    ).encode("utf-8")
+    ).encode()
     return SimpleUploadedFile("upload.tmx", content, content_type="application/xml")
 
 

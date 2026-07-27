@@ -21,9 +21,7 @@ def log_ux_action(request):
         return JsonResponse(
             {
                 "status": False,
-                "message": "{error}".format(
-                    error=form.errors.as_json(escape_html=True)
-                ),
+                "message": f"{form.errors.as_json(escape_html=True)}",
             },
             status=400,
         )

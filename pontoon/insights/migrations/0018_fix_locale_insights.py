@@ -1,4 +1,4 @@
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import UTC, date, datetime, time, timedelta
 
 from django.db import migrations
 
@@ -29,7 +29,7 @@ def fix_locale_insights(apps, schema_editor):
     pl_stats = count_projectlocale_stats()
     for days in range((end_date - start_date).days):
         d = start_date + timedelta(days=days)
-        dt = datetime.combine(d, time(), tzinfo=timezone.utc)
+        dt = datetime.combine(d, time(), tzinfo=UTC)
         activities = count_activities(dt)
         new_entities = count_created_entities(dt)
         created = LocaleInsightsSnapshot.objects.bulk_create(

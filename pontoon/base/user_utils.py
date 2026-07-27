@@ -1,5 +1,6 @@
+from collections.abc import Collection
 from hashlib import md5
-from typing import TYPE_CHECKING, Any, Collection
+from typing import TYPE_CHECKING, Any
 from urllib.parse import quote, urlencode
 
 from dateutil.relativedelta import relativedelta
