@@ -5,6 +5,7 @@ import pytest
 
 from django.urls import reverse
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Translation
 from pontoon.checks.models import FailedCheck, Warning
 from pontoon.test.factories import EntityFactory, ResourceFactory, TranslationFactory
@@ -86,6 +87,46 @@ def test_create_translation_success_mf2(member, project_a, locale_a, project_loc
 
 
 @pytest.mark.django_db
+def test_create_translation_success_properties(
+    member, project_a, locale_a, project_locale_a
+):
+    resource = ResourceFactory(
+        project=project_a, path="file.properties", format="properties"
+    )
+    entity = EntityFactory(resource=resource, key=["key"])
+    response = request_create_translation(
+        member.client,
+        entity=entity.pk,
+        locale=locale_a.code,
+        value=["multiline\nvalue"],
+    )
+    assert response.status_code == 200
+    assert response.json()["status"]
+
+    translation = Translation.objects.get(entity=entity, locale=locale_a)
+    assert translation.string == "multiline\\nvalue"
+
+
+@pytest.mark.django_db
+def test_create_translation_fail_properties(
+    member, project_a, locale_a, project_locale_a
+):
+    resource = ResourceFactory(
+        project=project_a, path="file.properties", format="properties"
+    )
+    entity = EntityFactory(resource=resource, key=["key"])
+    response = request_create_translation(
+        member.client,
+        entity=entity.pk,
+        locale=locale_a.code,
+        value=["\x00value"],
+    )
+    assert response.status_code == 400
+    assert not response.json()["status"]
+    assert response.json()["message"]
+
+
+@pytest.mark.django_db
 def test_create_translation_not_logged_in(client, entity_a, locale_a):
     response = request_create_translation(
         client,
@@ -136,6 +177,77 @@ def test_create_translation_force_suggestions(
     )
     assert response.status_code == 200
     assert Translation.objects.last().approved is False
+
+
+@pytest.mark.django_db
+def test_create_translation_logs_implicit_approval(
+    project_locale_a, translation_a, locale_a, member
+):
+    """
+    A translation submitted directly as approved (self-approval) stores both a
+    `translation:created` and an implicit `translation:approved` action.
+    """
+    translation_a.locale.translators_group.user_set.add(member.user)
+
+    response = request_create_translation(
+        member.client,
+        entity=translation_a.entity.pk,
+        locale=locale_a.code,
+        value=["approved 0"],
+    )
+    assert response.status_code == 200
+
+    translation = Translation.objects.last()
+    assert translation.approved is True
+
+    actions = ActionLog.objects.filter(translation=translation)
+    assert (
+        actions.filter(
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            is_implicit_action=False,
+        ).count()
+        == 1
+    )
+    assert (
+        actions.filter(
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            is_implicit_action=True,
+        ).count()
+        == 1
+    )
+
+
+@pytest.mark.django_db
+def test_create_suggestion_does_not_log_approval(
+    project_locale_a, translation_a, locale_a, member
+):
+    """
+    A translation submitted as a suggestion only stores a `translation:created`
+    action, with no `translation:approved` action.
+    """
+    translation_a.locale.translators_group.user_set.add(member.user)
+
+    response = request_create_translation(
+        member.client,
+        entity=translation_a.entity.pk,
+        locale=locale_a.code,
+        value=["suggestion 0"],
+        force_suggestions="true",
+    )
+    assert response.status_code == 200
+
+    translation = Translation.objects.last()
+    assert translation.approved is False
+
+    actions = ActionLog.objects.filter(translation=translation)
+    assert (
+        actions.filter(action_type=ActionLog.ActionType.TRANSLATION_CREATED).count()
+        == 1
+    )
+    assert (
+        actions.filter(action_type=ActionLog.ActionType.TRANSLATION_APPROVED).count()
+        == 0
+    )
 
 
 @pytest.fixture
@@ -194,7 +306,7 @@ def test_run_checks_during_translation_update(
         member.client,
         entity=properties_entity.pk,
         locale=locale_a.code,
-        value=["bad suggestion \\q %q"],
+        value=["bad  suggestion %q"],
         ignore_warnings="true",
     )
 
@@ -202,7 +314,7 @@ def test_run_checks_during_translation_update(
     assert response.json() == {
         "failedChecks": {
             "clErrors": ["Found single %"],
-            "clWarnings": ["unknown escape sequence, \\q"],
+            "ttWarnings": ["Double spaces"],
         },
         "status": False,
     }

@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import './LocaleMenu.css';
+import LocaleItem from './LocaleItem';
 import { LocaleOption } from '~/api/other-locales';
 
 type Props = {
@@ -8,7 +10,7 @@ type Props = {
   onSelect: (code: string) => void;
 };
 
-export default function LocaleSelector({
+export default function LocaleMenu({
   locales,
   currentLocale,
   selected,
@@ -41,10 +43,10 @@ export default function LocaleSelector({
   const selectedLocale = locales.find((locale) => locale.code === selected);
 
   return (
-    <div className='locale-selector' ref={ref}>
+    <div className='locale-menu' ref={ref}>
       <button
         type='button'
-        className={`locale-selector-trigger ${selectedLocale ? 'has-selection' : ''} ${isOpen ? 'is-open' : ''}`}
+        className={`locale-menu-trigger ${selectedLocale ? 'has-selection' : ''} ${isOpen ? 'is-open' : ''}`}
         onClick={() => setIsOpen((o) => !o)}
         disabled={locales.length === 0}
       >
@@ -56,12 +58,11 @@ export default function LocaleSelector({
         ) : (
           <span className='locale-placeholder'>SOURCE LOCALE</span>
         )}
-        {!selectedLocale && <span className='locale-selector-arrow' />}
+        {!selectedLocale && <span className='locale-menu-arrow' />}
       </button>
-
       {isOpen && (
-        <div className='locale-selector-dropdown'>
-          <div className='locale-selector-search'>
+        <div className='locale-menu-dropdown'>
+          <div className='locale-menu-search'>
             <i className='icon fas fa-search'></i>
             <input
               type='search'
@@ -71,11 +72,10 @@ export default function LocaleSelector({
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <div className='locale-selector-list'>
+          <div className='locale-menu-list'>
             <ul>
               <li
-                key='source'
-                className={selected === '' ? 'selected' : ''}
+                className={`locale-item ${selected === '' ? 'selected' : ''}`}
                 onClick={() => {
                   onSelect('');
                   setIsOpen(false);
@@ -84,19 +84,18 @@ export default function LocaleSelector({
               >
                 <span className='locale-name'>Source Locale</span>
               </li>
-              {filtered.map(({ code, name }) => (
-                <li
-                  key={code}
-                  className={code === selected ? 'selected' : ''}
+              {filtered.map((locale) => (
+                <LocaleItem
+                  key={locale.code}
+                  locale={locale}
+                  currentLocale={currentLocale}
+                  selected={locale.code === currentLocale}
                   onClick={() => {
-                    onSelect(code);
+                    onSelect(locale.code);
                     setIsOpen(false);
                     setSearch('');
                   }}
-                >
-                  <span className='locale-name'>{name}</span>
-                  <span className='locale-code'>{code}</span>
-                </li>
+                />
               ))}
             </ul>
           </div>

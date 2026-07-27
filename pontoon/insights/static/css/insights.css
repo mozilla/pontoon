@@ -1,126 +1,174 @@
 #insights {
-  menu {
-    display: flex;
+  .community-health-score {
+    .config-button {
+      width: 120px;
+      user-select: none;
+      background-color: var(--button-background-2);
 
-    .search-wrapper {
-      background-color: var(--black-3);
+      &:hover {
+        background-color: var(--status-translated);
+      }
     }
-    .button-container {
+
+    #edit-locales {
+      &::before {
+        content: 'Edit Locales';
+        margin-right: 4px;
+      }
+
+      &.back::before {
+        content: '';
+        margin-right: 0;
+      }
+
+      &.back::after {
+        content: 'Back';
+        margin-left: 4px;
+      }
+    }
+
+    > .controls {
       display: flex;
-      margin-left: auto;
-      align-items: flex-end;
-      gap: 8px;
 
-      .config-button {
-        user-select: none;
-        background-color: var(--button-background-2);
-
-        &:hover {
-          background-color: var(--status-translated);
-        }
+      h3 {
+        margin-bottom: 0;
       }
 
-      #edit-config {
-        width: 160px;
-        margin-right: auto;
-      }
-
-      #show-scores {
-        width: 120px;
+      .health-activity-actions {
+        display: flex;
         margin-left: auto;
-      }
-    }
-  }
-
-  .dashboard-container {
-    margin-bottom: 40px;
-  }
-
-  .community-health-table {
-    table-layout: fixed;
-    width: 100%;
-
-    th:first-child {
-      text-align: center;
-    }
-
-    tbody tr:hover {
-      background: var(--black-3);
-    }
-
-    &.show-score-view {
-      .info-container.base-view {
-        display: none;
-      }
-      .info-container.score-view {
-        display: flex;
-      }
-    }
-
-    .info-container {
-      display: flex;
-      flex-direction: column;
-
-      .info {
-        align-self: center;
-
-        &.met {
-          color: var(--status-translated);
-          font-weight: bold;
-        }
-      }
-
-      &.score-view {
-        display: none;
-      }
-
-      .prev {
-        align-self: flex-end;
-        display: flex;
         align-items: center;
-        gap: 4px;
-        font-size: 12px;
-        user-select: none;
-        justify-content: center;
-        min-width: 36px;
-        height: 20px;
 
-        &.up {
-          color: var(--status-translated);
+        h3 {
+          display: flex;
+          align-items: center;
+          height: auto;
+          position: relative;
+
+          .tooltip {
+            top: 100%;
+            width: max-content;
+          }
         }
 
-        &.down {
-          color: var(--status-error);
-        }
-
-        &.equal {
-          color: var(--grey-1);
+        .selector {
+          width: 28px;
+          height: 28px;
+          padding-top: 0;
+          display: flex;
+          align-items: center;
           justify-content: center;
         }
-
-        .fa-caret-up,
-        .fa-caret-down {
-          font-size: 1.4em;
-        }
       }
     }
 
-    .no-snapshot {
-      color: var(--translation-secondary-color);
-      font-style: italic;
+    .community-health-locale-selector .multiple-item-selector {
+      width: 620px;
     }
-  }
 
-  .no-locales {
-    display: flex;
-    flex-direction: column;
-    row-gap: 7px;
-    color: var(--light-grey-7);
-    font-style: italic;
-    margin-top: 24px;
-    text-align: center;
-    a {
-      color: var(--status-translated);
+    menu {
+      display: flex;
+
+      .search-wrapper {
+        background-color: var(--black-3);
+      }
+      .button-container {
+        display: flex;
+        margin-left: auto;
+        align-items: flex-end;
+        gap: 8px;
+      }
+    }
+
+    .dashboard-container {
+      margin-bottom: 40px;
+    }
+
+    .community-health-table {
+      table-layout: fixed;
+      width: 100%;
+
+      th:first-child {
+        text-align: center;
+      }
+
+      tbody tr:hover {
+        background: var(--black-3);
+      }
+
+      &.show-score-view {
+        .info-container.base-view {
+          display: none;
+        }
+        .info-container.score-view {
+          display: flex;
+        }
+      }
+
+      .info-container {
+        display: flex;
+        flex-direction: column;
+
+        .info {
+          align-self: center;
+
+          &.met {
+            color: var(--status-translated);
+            font-weight: bold;
+          }
+        }
+
+        &.score-view {
+          display: none;
+        }
+
+        .prev {
+          align-self: flex-end;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 12px;
+          user-select: none;
+          justify-content: center;
+          min-width: 36px;
+          height: 20px;
+
+          &.up {
+            color: var(--status-translated);
+          }
+
+          &.down {
+            color: var(--status-error);
+          }
+
+          &.equal {
+            color: var(--grey-1);
+          }
+
+          .fa-caret-up,
+          .fa-caret-down {
+            font-size: 1.4em;
+          }
+        }
+      }
+
+      .no-snapshot {
+        color: var(--translation-secondary-color);
+        font-style: italic;
+      }
+    }
+
+    .no-locales {
+      display: flex;
+      flex-direction: column;
+      row-gap: 7px;
+      color: var(--light-grey-7);
+      font-style: italic;
+      margin-top: 24px;
+      text-align: center;
+      a {
+        color: var(--status-translated);
+      }
     }
   }
 

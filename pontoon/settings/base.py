@@ -91,7 +91,16 @@ GOOGLE_TRANSLATE_API_KEY = os.environ.get("GOOGLE_TRANSLATE_API_KEY", "")
 # Pontoon locale codes supported by Google Cloud AutoML Translation Project ID
 #
 # Source:
-# https://cloud.google.com/translate/automl/docs/languages#supported_codes_for_language_variants
+# https://docs.cloud.google.com/translate/docs/languages?hl=en#automl
+#
+# Some locales have been updated to match the internal Mozilla code:
+# - fil -> tl
+# - hi -> hi-IN
+# - no -> nb-NO
+# - ne -> ne-NP
+# - pa -> pa-IN
+# - sv -> sv-SE
+
 GOOGLE_AUTOML_SUPPORTED_LOCALES = [
     "af",
     "ar",
@@ -112,7 +121,6 @@ GOOGLE_AUTOML_SUPPORTED_LOCALES = [
     "et",
     "fa",
     "fi",
-    "fil",
     "fr",
     "gl",
     "gu-IN",
@@ -139,7 +147,6 @@ GOOGLE_AUTOML_SUPPORTED_LOCALES = [
     "ne-NP",
     "nl",
     "pa-IN",
-    "pa-PK",
     "pl",
     "ps",
     "pt",
@@ -156,6 +163,7 @@ GOOGLE_AUTOML_SUPPORTED_LOCALES = [
     "ta",
     "te",
     "th",
+    "tl",
     "tr",
     "uk",
     "ur",
@@ -465,7 +473,6 @@ PIPELINE_CSS = {
             "css/multiple_item_selector.css",
             "css/insights_charts.css",
             "css/insights.css",
-            "css/config.css",
         ),
         "output_filename": "css/insights.min.css",
     },

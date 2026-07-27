@@ -176,6 +176,9 @@ def query_actions(dt_max: datetime):
                 "translation__locale"
             ),
         )
+        # Exclude implicit actions (e.g. self-approvals on submission), which
+        # are already covered by the corresponding `translation:created` action.
+        .exclude(is_implicit_action=True)
         .values(
             "action_type",
             "performed_by",
@@ -431,6 +434,8 @@ def get_active_users_actions(
             created_at__gte=dt_max - relativedelta(year=1),
             created_at__lt=dt_max,
         )
+        # Exclude implicit actions (e.g. self-approvals on submission).
+        .exclude(is_implicit_action=True)
         .values("action_type", "created_at", "performed_by", "translation__locale")
         .order_by("translation__locale")
         .distinct()

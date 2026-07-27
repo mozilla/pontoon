@@ -1,3 +1,4 @@
+import { EditorView } from '@codemirror/view';
 import ftl from '@fluent/dedent';
 import { fluentParseEntry } from '@mozilla/l10n';
 import { fireEvent } from '@testing-library/react';
@@ -72,8 +73,8 @@ function mountForm(source, target = null) {
 
   // TODO:Replace the querySelector with testing-library-ish approaches
   const form = wrapper.container.querySelector('.translationform');
-  const views = Array.from(form.querySelectorAll('.cm-content')).map(
-    (el) => el.cmView.view,
+  const views = Array.from(form.querySelectorAll('.cm-content')).map((el) =>
+    EditorView.findFromDOM(el),
   );
 
   return { actions, getResult: () => result, views, wrapper };

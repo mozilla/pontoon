@@ -6,6 +6,10 @@ form.user-locales-settings div {
   text-align: right;
 }
 
+form.user-locales-settings .search-wrapper {
+  background: var(--input-background-1);
+}
+
 form a:link,
 form a:visited {
   color: var(--status-translated-alt);

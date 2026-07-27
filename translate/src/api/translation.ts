@@ -116,10 +116,15 @@ export function createTranslation(
   return POST('/translations/create/', payload, { headers });
 }
 
-type SetTranslationResponse =
-  | { failedChecks: ApiFailedChecks; string: string } // indicates failed approve
+type SetTranslationStatusResponse =
   | {
-      translation: EntityTranslation;
+      failedChecks: ApiFailedChecks;
+      status?: never;
+      string: string;
+    } // indicates failed approve
+  | {
+      status: true;
+      translation: EntityTranslation | null;
       stats: APIStats;
       badge_update?: BadgeInfo;
       failedChecks?: never;
@@ -130,7 +135,7 @@ export function setTranslationStatus(
   id: number,
   resource: string,
   ignoreWarnings: boolean,
-): Promise<SetTranslationResponse> {
+): Promise<SetTranslationStatusResponse> {
   const url = `/translations/${change}/`;
 
   const payload = new URLSearchParams({

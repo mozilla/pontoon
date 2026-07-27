@@ -264,8 +264,14 @@ def get_approvals_charts_data(user):
     self_approvals = get_monthly_action_counts(
         months,
         self_actions.filter(
-            # Self-approved after submitting suggestions
-            Q(action_type=ActionLog.ActionType.TRANSLATION_APPROVED)
+            # Self-approved after submitting as a suggestion.
+            # Exclude implicit approvals, which are logged alongside the
+            # `translation:created` action for translations submitted directly
+            # as approved (counted via the branch below).
+            Q(
+                action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+                is_implicit_action=False,
+            )
             # Submitted directly as translations
             | Q(
                 action_type=ActionLog.ActionType.TRANSLATION_CREATED,

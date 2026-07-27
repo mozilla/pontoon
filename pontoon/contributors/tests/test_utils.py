@@ -208,6 +208,47 @@ def test_get_approvals_charts_data_with_actions(user_a, action_user_a, action_us
 
 
 @pytest.mark.django_db
+def test_get_approvals_charts_data_self_approval_not_double_counted(
+    user_a, user_b, translation_a
+):
+    """
+    A translation submitted directly as approved logs both a
+    `translation:created` (with date == approved_date) and an implicit
+    `translation:approved` action. It must be counted as a single
+    self-approval, not two.
+    """
+    now = timezone.now()
+    translation_a.date = now
+    translation_a.approved_date = now
+    translation_a.save()
+
+    # Self-approval on submission: created + implicit approved, both by user_a.
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation_a,
+        is_implicit_action=True,
+    )
+    # Peer approval of user_a's translation by user_b.
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_b,
+        translation=translation_a,
+    )
+
+    data = utils.get_approvals_charts_data(user_a)
+
+    # 1 self-approval vs 1 peer approval this month => 50%.
+    # If the implicit approval were double-counted, this would be ~66.7%.
+    assert data["self_approval_rates"][-1] == 50
+
+
+@pytest.mark.django_db
 def test_get_contributions_map_keys(user_a, user_b):
     map = utils.get_contributions_map(user_a, user_b)
 

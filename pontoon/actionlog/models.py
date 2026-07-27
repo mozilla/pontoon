@@ -105,6 +105,7 @@ class ActionLog(models.Model):
 
     def validate_implicit_action_type_choice(self):
         valid_types = [
+            self.ActionType.TRANSLATION_APPROVED,
             self.ActionType.TRANSLATION_UNAPPROVED,
             self.ActionType.TRANSLATION_REJECTED,
         ]

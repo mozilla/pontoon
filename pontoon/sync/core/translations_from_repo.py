@@ -53,7 +53,15 @@ def sync_translations_from_repo(
     """(removed_resource_count, updated_translation_count)"""
     co = checkouts.target
     source_paths: set[str] = set(paths.ref_paths) if checkouts.source == co else set()
-    del_count = delete_removed_gettext_resources(project, co, paths, source_paths)
+    del_count = (
+        delete_removed_resources(project, co, paths, source_paths)
+        if (
+            isinstance(paths, L10nDiscoverPaths)
+            and project.set_locales_from_repo
+            and project.set_translated_resources_from_repo
+        )
+        else 0
+    )
 
     changed_target_paths = [
         path
@@ -83,10 +91,10 @@ def write_db_updates(
     add_translation_memory_entries(project, new_translations + updated_translations)
 
 
-def delete_removed_gettext_resources(
+def delete_removed_resources(
     project: Project,
     target: Checkout,
-    paths: L10nConfigPaths | L10nDiscoverPaths,
+    paths: L10nDiscoverPaths,
     source_paths: set[str],
 ) -> int:
     rm_t = Q()
@@ -95,7 +103,7 @@ def delete_removed_gettext_resources(
     removed_target_paths = (
         path
         for path in (join(target.path, co_path) for co_path in target.removed)
-        if path not in source_paths and splitext(path)[1] in {".po", ".pot"}
+        if path not in source_paths
     )
     for target_path in removed_target_paths:
         ref = paths.find_reference(target_path)
@@ -104,7 +112,7 @@ def delete_removed_gettext_resources(
             locale_code = get_path_locale(path_vars)
             if locale_code is not None:
                 db_path = relpath(ref_path, paths.ref_root)
-                if not project.configuration_file and db_path.endswith(".pot"):
+                if db_path.endswith(".pot"):
                     db_path = db_path[:-1]
                 rm_t |= Q(entity__resource__path=db_path, locale__code=locale_code)
                 rm_tr |= Q(resource__path=db_path, locale__code=locale_code)

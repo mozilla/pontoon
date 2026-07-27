@@ -35,12 +35,26 @@ class ProjectForm(forms.ModelForm):
         queryset=Locale.objects.all(),
         required=False,
     )
+    set_translated_resources_from_repo = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=(
+            (
+                False,
+                "All source resources are available for all locales.",
+            ),
+            (
+                True,
+                "Only resources that exist in locale directories are available for localization.",
+            ),
+        ),
+    )
 
     def clean(self):
         cleaned_data = super().clean()
+        set_locales_from_repo = cleaned_data.get("set_locales_from_repo")
         locales_readonly = cleaned_data.get("locales_readonly")
         locales = cleaned_data.get("locales")
-        if not (locales or locales_readonly):
+        if not (set_locales_from_repo or locales or locales_readonly):
             raise ValidationError("At least one locale must be selected.")
 
     class Meta:
@@ -61,6 +75,8 @@ class ProjectForm(forms.ModelForm):
             "sync_disabled",
             "tags_enabled",
             "pretranslation_enabled",
+            "set_locales_from_repo",
+            "set_translated_resources_from_repo",
             "visibility",
         )
 

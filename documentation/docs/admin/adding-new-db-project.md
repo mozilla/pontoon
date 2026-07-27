@@ -15,7 +15,7 @@ Access Pontoon’s [admin console](https://pontoon.allizom.org/admin/) on the **
 * Locales:
 
   * Select at least one locale. To make things faster it’s possible to copy supported locales from an existing project.
-  * You can uncheck the `Locales can opt-in` checkbox to prevent localizers from requesting this specific project.
+  * You can uncheck the `Locales can opt in` checkbox to prevent localizers from requesting this specific project.
 
 * Data Source: select `Database` in the list of options. This will hide the *Repositories* section and show a *Strings* section instead.
 * Strings: you can enter the initial set of strings here. Strings must be separated by new lines. If you leave this empty, you’ll be able to enter strings as a batch again after creating the project. Strings must be in `en-US`, and they will become the entities on that project. A resource named `database` will automatically be created.

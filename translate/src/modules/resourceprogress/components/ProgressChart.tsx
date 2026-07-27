@@ -18,18 +18,6 @@ export function ProgressChart({
 }: Props): React.ReactElement<'canvas'> {
   const canvas = useRef<HTMLCanvasElement>(null);
   const dpr = window.devicePixelRatio || 1;
-  const style = getComputedStyle(document.body);
-
-  useEffect(() => {
-    if (canvas.current) {
-      const { height, width } = canvas.current;
-      // Set up canvas to be HiDPI display ready
-      canvas.current.style.width = width + 'px';
-      canvas.current.style.height = height + 'px';
-      canvas.current.width = width * dpr;
-      canvas.current.height = height * dpr;
-    }
-  }, [dpr]);
 
   useEffect(() => {
     const { approved, pretranslated, warnings, errors, missing, total } = stats;
@@ -37,6 +25,15 @@ export function ProgressChart({
     if (!canvas.current || !total) {
       return;
     }
+
+    const style = getComputedStyle(document.body);
+
+    // Set up canvas to be HiDPI display ready.
+    canvas.current.style.width = size + 'px';
+    canvas.current.style.height = size + 'px';
+    canvas.current.width = size * dpr;
+    canvas.current.height = size * dpr;
+
     const { height, width } = canvas.current;
     const context = canvas.current.getContext('2d');
     if (!context) {
@@ -77,7 +74,7 @@ export function ProgressChart({
       context.strokeStyle = color;
       context.stroke();
     }
-  }, [stats]);
+  }, [stats, dpr, size]);
 
   return <canvas ref={canvas} height={size} width={size} />;
 }

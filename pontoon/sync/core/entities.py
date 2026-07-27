@@ -375,7 +375,7 @@ def update_translated_resources(
         _, locales = paths.target(resource.path)
         for lc in locales:
             locale = locale_map.get(lc, None)
-            if is_translated_resource(paths, resource, locale):
+            if is_translated_resource(project, paths, resource, locale):
                 assert locale is not None
                 key = (resource.pk, locale.pk)
                 if key in prev_tr_keys:
@@ -403,6 +403,7 @@ def update_translated_resources(
 
 
 def is_translated_resource(
+    project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     resource: Resource,
     locale: Locale | None,
@@ -410,9 +411,13 @@ def is_translated_resource(
     if locale is None:
         return False
 
-    if resource.format == Resource.Format.GETTEXT:
-        # For gettext, only create TranslatedResource
-        # if the resource exists for the locale.
+    if (
+        isinstance(paths, L10nDiscoverPaths)
+        and project.set_locales_from_repo
+        and project.set_translated_resources_from_repo
+    ):
+        # With `set_translated_resources_from_repo`,
+        # only create TranslatedResource if the resource exists for the locale.
         target, _ = paths.target(resource.path)
         if target is None:
             return False

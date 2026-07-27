@@ -118,6 +118,9 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
                     ActionLog.ActionType.TRANSLATION_APPROVED,
                     ActionLog.ActionType.TRANSLATION_REJECTED,
                 ],
+                # Exclude implicit actions (e.g. self-approvals on submission),
+                # which are already counted via the authored approved translations.
+                is_implicit_action=False,
                 translation__locale__in=locales,
                 performed_by__profile__system_user=False,
             )
