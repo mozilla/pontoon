@@ -376,6 +376,31 @@ describe('<TranslationForm> with multiple fields', () => {
     });
   });
 
+  it('re-applies a history entry after a field was edited', () => {
+    const { actions, views } = mountForm(ftl`
+      title = Value
+        .label = Something
+      `);
+
+    const restore = () =>
+      act(() =>
+        actions.setEditorFromHistory('title = RESTORED\n    .label = LABEL\n'),
+      );
+    const docs = () => views.map((view) => view.state.doc.toString());
+
+    restore();
+    expect(docs()).toEqual(['RESTORED', 'LABEL']);
+
+    act(() =>
+      views[0].dispatch({
+        changes: { from: 0, to: views[0].state.doc.length, insert: 'EDITED' },
+      }),
+    );
+
+    restore();
+    expect(docs()).toEqual(['RESTORED', 'LABEL']);
+  });
+
   it('re-applies a composed suggestion after a field was edited', () => {
     const { actions, views } = mountForm(ftl`
       title = Value

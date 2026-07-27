@@ -1,6 +1,6 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useRef } from 'react';
 
 import type { Entity } from '~/api/entity';
 import type { OtherLocaleTranslation } from '~/api/other-locales';
@@ -53,7 +53,8 @@ export function OtherLocaleTranslationComponent({
     isSelected && 'selected',
   );
 
-  const translationRef = useScrollOnSelect<HTMLLIElement>(isSelected);
+  const translationRef = useRef<HTMLLIElement>(null);
+  useScrollOnSelect(translationRef, isSelected);
 
   return (
     <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>

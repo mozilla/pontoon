@@ -120,11 +120,12 @@ def test_composed_multiple_attributes_no_value(
         },
     )
     assert response.status_code == 200
-    # Attribute-only message: empty value, both attributes filled from TM.
+    # Attribute-only message: empty value, both attributes filled from TM. Both
+    # leaves came from TM, so `sources` names it once per leaf.
     assert json.loads(response.content) == {
         "value": [],
         "properties": {"label": ["TM_label"], "tooltip": ["TM_tooltip"]},
-        "sources": ["translation-memory"],
+        "sources": ["translation-memory", "translation-memory"],
         "quality": 100,
     }
 
@@ -197,7 +198,7 @@ def test_composed_tm_only_full_hit(client, fluent_resource, entity_a, locale_a):
     assert json.loads(response.content) == {
         "value": ["TM_value"],
         "properties": {"title": ["TM_tooltip"]},
-        "sources": ["translation-memory"],
+        "sources": ["translation-memory", "translation-memory"],
         "quality": 100,
     }
 

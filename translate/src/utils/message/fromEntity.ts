@@ -4,12 +4,12 @@ import type { MessageEntry } from '.';
 import { getEmptyMessageEntry } from './getEmptyMessage';
 import { getMessageEntryFormat } from './getMessageEntryFormat';
 import { messageEntryFromTranslation } from './fromTranslation';
-import { messageEntryFromValue } from './fromValue';
+import { createMessageEntry } from './createMessageEntry';
 
 export function messageEntryFromEntity(entity: Entity): MessageEntry {
   const format = getMessageEntryFormat(entity.format);
   const id = entity.key[0] ?? '';
-  return messageEntryFromValue(format, id, entity.value, entity.properties);
+  return createMessageEntry(format, id, entity.value, entity.properties);
 }
 
 export function messageEntryFromEntityTranslation(

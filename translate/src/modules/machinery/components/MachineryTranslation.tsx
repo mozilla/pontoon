@@ -1,6 +1,6 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useRef } from 'react';
 
 import type {
   ComposedMachineryTranslation,
@@ -8,7 +8,7 @@ import type {
   SourceType,
 } from '~/api/machinery';
 import { logUXAction } from '~/api/uxaction';
-import { EditorActions } from '~/context/Editor';
+import { EditorActions, EditorField } from '~/context/Editor';
 import { useMachineryEntry } from '~/context/EntityView';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
@@ -16,13 +16,12 @@ import { GenericTranslation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { useScrollOnSelect } from '~/hooks/useScrollOnSelect';
 import {
-  messageEntryPatterns,
+  editMessageEntry,
   requiresSourceView,
   serializeEntry,
   type MessageEntry,
-  type MessagePattern,
 } from '~/utils/message';
-import { messageEntryFromValue } from '~/utils/message/fromValue';
+import { createMessageEntry } from '~/utils/message/createMessageEntry';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { MachineryTranslationSource } from './MachineryTranslationSource';
@@ -85,7 +84,8 @@ export function MachineryTranslationComponent({
     isSelected && 'selected',
   );
 
-  const translationRef = useScrollOnSelect<HTMLLIElement>(isSelected);
+  const translationRef = useRef<HTMLLIElement>(null);
+  useScrollOnSelect(translationRef, isSelected);
 
   return (
     <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
@@ -196,7 +196,8 @@ export function ComposedTranslationComponent({
     isSelected && 'selected',
   );
 
-  const translationRef = useScrollOnSelect<HTMLLIElement>(isSelected);
+  const translationRef = useRef<HTMLLIElement>(null);
+  useScrollOnSelect(translationRef, isSelected);
 
   return (
     <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
@@ -219,7 +220,7 @@ function ComposedSuggestion({
 }) {
   const { code, direction, script } = useContext(Locale);
   const machineryEntry = useMachineryEntry();
-  const suggestionEntry = messageEntryFromValue(
+  const suggestionEntry = createMessageEntry(
     machineryEntry.format,
     machineryEntry.id,
     translation.value,
@@ -229,8 +230,8 @@ function ComposedSuggestion({
   // Each side is rendered independently: a single-pattern source can compose to
   // a multi-pattern target, e.g. an en-US `*[other]`-only plural in a locale
   // with several CLDR categories.
-  const originalPatterns = richPatterns(machineryEntry);
-  const suggestionPatterns = richPatterns(suggestionEntry);
+  const originalFields = richFields(machineryEntry);
+  const suggestionFields = richFields(suggestionEntry);
 
   return (
     <>
@@ -241,17 +242,17 @@ function ComposedSuggestion({
 
         <MachineryTranslationSource translation={translation} composed />
       </header>
-      {originalPatterns ? (
-        <RichMessage className='original' patterns={originalPatterns} />
+      {originalFields ? (
+        <RichMessage className='original' fields={originalFields} />
       ) : (
         <p className='original'>
           <GenericTranslation content={serializeEntry(machineryEntry)} />
         </p>
       )}
-      {suggestionPatterns ? (
+      {suggestionFields ? (
         <RichMessage
           className='suggestion'
-          patterns={suggestionPatterns}
+          fields={suggestionFields}
           dir={direction}
           script={script}
           lang={code}
@@ -271,28 +272,33 @@ function ComposedSuggestion({
 }
 
 /**
- * Patterns of a message entry, or `null` when it can't be shown as a rich
- * multi-field view (source-view-only entry, or a single pattern — in which case
+ * Fields of a message entry, or `null` when it can't be shown as a rich
+ * multi-field view (source-view-only entry, or a single field — in which case
  * the plain rendering is used).
+ *
+ * Reuses `editMessageEntry()` so this read-only view splits an entry into
+ * labeled rows exactly as the editor splits it into inputs; the two must agree,
+ * because clicking the row copies it into those inputs. The editor handles it
+ * builds are unused here.
  */
-function richPatterns(entry: MessageEntry): MessagePattern[] | null {
+function richFields(entry: MessageEntry): EditorField[] | null {
   if (requiresSourceView(entry)) {
     return null;
   }
-  const patterns = messageEntryPatterns(entry);
-  return patterns.length > 1 ? patterns : null;
+  const fields = editMessageEntry(entry);
+  return fields.length > 1 ? fields : null;
 }
 
 /** Render a parsed message as a labeled table, mirroring the original string panel. */
 function RichMessage({
   className,
-  patterns,
+  fields,
   dir,
   lang,
   script,
 }: {
   className: string;
-  patterns: MessagePattern[];
+  fields: EditorField[];
   dir?: string;
   lang?: string;
   script?: string;
@@ -305,7 +311,7 @@ function RichMessage({
       lang={lang}
     >
       <tbody>
-        {patterns.map(({ id, labels, value }) => (
+        {fields.map(({ handle, id, labels }) => (
           <tr key={id}>
             <td>
               <label>
@@ -316,7 +322,7 @@ function RichMessage({
             </td>
             <td>
               <span>
-                <GenericTranslation content={value} />
+                <GenericTranslation content={handle.current.value} />
               </span>
             </td>
           </tr>

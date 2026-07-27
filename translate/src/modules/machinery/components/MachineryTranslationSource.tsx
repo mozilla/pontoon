@@ -14,11 +14,6 @@ import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
   translation: MachineryTranslation | ComposedMachineryTranslation;
-  /**
-   * Show Google Translate as a plain label instead of the AI refinement
-   * dropdown, which only refines a single string and so can't preserve the
-   * entry structure of a composed suggestion.
-   */
   composed?: boolean;
 };
 

@@ -23,9 +23,6 @@ export function editSource(source: string | MessageEntry): EditorField[] {
   return [{ id: '', name: '', keys: [], labels: [], handle }];
 }
 
-/** One editable pattern of an entry, without an editor handle attached. */
-export type MessagePattern = Omit<EditorField, 'handle'> & { value: string };
-
 /**
  * Get an `EditorField[]` corresponding to the `source` and `target` entries.
  *
@@ -38,21 +35,6 @@ export function editMessageEntry(
   source: MessageEntry,
   target?: MessageEntry,
 ): EditorField[] {
-  return messageEntryPatterns(source, target).map(({ value, ...field }) => ({
-    ...field,
-    handle: emptyHandleRef(value),
-  }));
-}
-
-/**
- * Get the editable patterns of the `source` and `target` entries, in editor
- * order. Same shape as {@link editMessageEntry}, for read-only uses that don't
- * need an editor handle per pattern.
- */
-export function messageEntryPatterns(
-  source: MessageEntry,
-  target?: MessageEntry,
-): MessagePattern[] {
   const { format } = source;
 
   let value, attributes;
@@ -73,15 +55,16 @@ export function messageEntryPatterns(
     attributes = source.attributes;
   }
 
-  const res: MessagePattern[] = [];
+  const res: EditorField[] = [];
   if (source.value) {
     const hasAttributes = !!attributes?.size;
     for (const [keys, labels, editable] of genPatterns(format, value ?? [])) {
       if (hasAttributes) {
         labels.unshift({ label: 'Value', plural: false });
       }
+      const handle = emptyHandleRef(editable);
       const id = getId('', keys);
-      res.push({ id, name: '', keys, labels, value: editable });
+      res.push({ handle, id, name: '', keys, labels });
     }
   }
   if (attributes) {
@@ -91,8 +74,9 @@ export function messageEntryPatterns(
         if (hasMultiple) {
           labels.unshift({ label: name, plural: false });
         }
+        const handle = emptyHandleRef(value);
         const id = getId(name, keys);
-        res.push({ id, name, keys, labels, value });
+        res.push({ handle, id, name, keys, labels });
       }
     }
   }

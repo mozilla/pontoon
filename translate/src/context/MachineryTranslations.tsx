@@ -1,9 +1,4 @@
-import {
-  isSelectMessage,
-  messagesEqual,
-  type Message,
-  type SelectMessage,
-} from '@mozilla/l10n';
+import { isSelectMessage, messagesEqual, type Message } from '@mozilla/l10n';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
@@ -49,12 +44,6 @@ const sortByQuality = (a: { quality?: number }, b: { quality?: number }) => {
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
-/** Distinct keys used by selector `i` across a message's variants. */
-const keysAt = (msg: SelectMessage, i: number) =>
-  new Set(
-    msg.alt.map((v) => (typeof v.keys[i] === 'string' ? v.keys[i] : '*')),
-  );
-
 // A composed translation only adds something when the entity has more than one
 // translatable pattern in the target; otherwise it just duplicates the per-leaf
 // TM or MT match, so we skip the request.
@@ -69,14 +58,13 @@ function hasMultipleFields(
       continue;
     }
     if (isSelectMessage(msg)) {
-      // Target variants are the product of each selector's key count, with
-      // plural selectors expanding to the locale's CLDR categories the way
-      // walk_entity() does. So there's more than one iff some selector has
-      // more than one.
+      // Plural selectors expand to the locale's CLDR categories the way
+      // walk_entity() does; any other selector is multi-pattern as soon as the
+      // message declares more than one variant.
       const plurals = findPluralSelectors(msg);
       if (
         msg.sel.some((_, i) =>
-          plurals.has(i) ? pluralCategories > 1 : keysAt(msg, i).size > 1,
+          plurals.has(i) ? pluralCategories > 1 : msg.alt.length > 1,
         )
       ) {
         return true;

@@ -155,14 +155,14 @@ def machinery_composed(request):
     if not pt.services or unchanged:
         return JsonResponse({})
 
-    # `pt.services` holds one entry per translated leaf; the badges are the
-    # distinct services used, in first-use order.
+    # Map the internal service identifiers to the SourceType values the frontend
+    # uses for the badges. One entry per translated leaf.
     badges = {
         "tm": "translation-memory",
         "gt": "google-translate",
         "ms": "microsoft-translator",
     }
-    sources_used = list(dict.fromkeys(badges[s] for s in pt.services))
+    sources_used = [badges.get(s, s) for s in pt.services]
 
     response = {
         "value": value_json,

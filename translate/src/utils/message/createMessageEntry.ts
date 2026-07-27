@@ -1,7 +1,7 @@
 import type { Message } from '@mozilla/l10n';
 import type { MessageEntry } from '.';
 
-export function messageEntryFromValue(
+export function createMessageEntry(
   format: MessageEntry['format'],
   id: string,
   value: Message,

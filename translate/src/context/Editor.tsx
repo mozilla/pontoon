@@ -25,7 +25,7 @@ import {
   htmlElementEscapes,
 } from '~/utils/message/entryInformation';
 import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
-import { messageEntryFromValue } from '~/utils/message/fromValue';
+import { createMessageEntry } from '~/utils/message/createMessageEntry';
 import { getMessageEntryFormat } from '~/utils/message/getMessageEntryFormat';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
@@ -238,7 +238,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromComposed: (value, properties, sources, manual) =>
         setState((prev) => {
-          const entry = messageEntryFromValue(
+          const entry = createMessageEntry(
             getMessageEntryFormat(format),
             prev.base.id,
             value,
