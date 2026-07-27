@@ -300,3 +300,7 @@
 #project-selector .menu li:not(.limited) {
   display: none;
 }
+
+#project-selector.select.opened .menu .search-wrapper {
+  background: var(--black-3);
+}

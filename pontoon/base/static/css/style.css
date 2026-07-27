@@ -1306,7 +1306,7 @@ body > form,
 }
 
 .controls > .search-wrapper input {
-  background: var(--black-3);
+  background: var(--dark-grey-1);
   border: 1px solid var(--main-border-1);
   color: var(--input-color-2);
   font-size: 13px;
