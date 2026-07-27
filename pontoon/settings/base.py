@@ -1304,16 +1304,24 @@ NEW_SIGNUP_POINTS = float(os.environ.get("NEW_SIGNUP_POINTS", 5.0))
 ENABLED_PROJECT_POINTS = float(os.environ.get("ENABLED_PROJECT_POINTS", 4.0))
 COMPLETION_POINTS = float(os.environ.get("COMPLETION_POINTS", 46.0))
 
-KEY_PROJECT_SLUGS = os.environ.get(
-    "KEY_PROJECT_SLUGS",
-    "firefox-for-android,"
-    "firefox-for-ios,"
-    "mozilla-monitor-website,"
-    "firefox-relay-website,"
-    "firefox,"
-    "mozilla-accounts,"
+DEFAULT_KEY_PROJECT_SLUGS = (
+    "firefox",
+    "firefox-for-android",
+    "firefox-for-ios",
+    "firefox-relay-website",
+    "mozilla-accounts",
+    "mozilla-monitor-website",
     "mozilla-vpn-client",
-).split(",")
+)
+
+KEY_PROJECT_SLUGS = [
+    slug.strip()
+    for slug in os.environ.get(
+        "KEY_PROJECT_SLUGS",
+        ",".join(DEFAULT_KEY_PROJECT_SLUGS),
+    ).split(",")
+    if slug.strip()
+]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
