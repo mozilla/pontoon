@@ -1,8 +1,6 @@
 import pytest
 
-from django.contrib.auth.models import User
-
-from pontoon.base import system_users
+from pontoon.base.system_users import get_pretranslation_authors, get_sync_user
 from pontoon.test import factories
 
 
@@ -25,17 +23,17 @@ def client_superuser(client, admin):
 
 @pytest.fixture
 def sync_user():
-    return User.objects.get(email=system_users.SYNC)
+    return get_sync_user()
 
 
 @pytest.fixture
 def gt_user():
-    return User.objects.get(email=system_users.GOOGLE_TRANSLATE)
+    return get_pretranslation_authors()["gt"]
 
 
 @pytest.fixture
 def tm_user():
-    return User.objects.get(email=system_users.TRANSLATION_MEMORY)
+    return get_pretranslation_authors()["tm"]
 
 
 @pytest.fixture

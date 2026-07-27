@@ -7,7 +7,7 @@ from django.db.models.functions import TruncMonth
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.system_users import get_pretranslation_user_pks, get_sync_user
+from pontoon.base.system_users import get_pretranslation_authors, get_sync_user
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
     LocaleHealthSnapshot,
@@ -455,7 +455,7 @@ def get_global_pretranslation_quality(category, id):
 
     sync_user = get_sync_user().pk
 
-    pretranslation_users = get_pretranslation_user_pks()
+    pretranslation_users = {user.pk for user in get_pretranslation_authors().values()}
 
     actions = (
         ActionLog.objects.filter(

@@ -8,8 +8,7 @@ This module defines which system user is used for each purpose and provides
 helper functions to retrieve them.
 
 Code that needs a specific system user should use these functions rather than
-looking one up by email or username, so that the lookup logic lives in a single
-place.
+looking one up directly, so that the lookup logic lives in a single place.
 """
 
 from typing import Literal
@@ -19,9 +18,9 @@ from django.contrib.auth.models import User
 
 PretranslationAuthor = Literal["gt", "tm"]
 
-SYNC = "pontoon-sync@example.com"
-GOOGLE_TRANSLATE = "pontoon-gt@example.com"
-TRANSLATION_MEMORY = "pontoon-tm@example.com"
+SYNC = "pontoon-sync"
+GOOGLE_TRANSLATE = "google-translate"
+TRANSLATION_MEMORY = "translation-memory"
 
 # Keyed by the short codes used by pretranslation ("gt", "tm").
 PRETRANSLATION_AUTHORS: dict[PretranslationAuthor, str] = {
@@ -29,26 +28,23 @@ PRETRANSLATION_AUTHORS: dict[PretranslationAuthor, str] = {
     "gt": GOOGLE_TRANSLATE,
 }
 
+# Every known system user. Not consumed directly by application code, but
+# used by tests to make sure every account here exists and is flagged.
 ALL: tuple[str, ...] = (SYNC, GOOGLE_TRANSLATE, TRANSLATION_MEMORY)
 
 
 def get_sync_user() -> User:
     """The user that VCS sync attributes its actions to."""
-    return User.objects.get(email=SYNC)
+    return User.objects.get(username=SYNC)
 
 
 def get_pretranslation_authors() -> dict[PretranslationAuthor, User]:
     """Pretranslation authors, keyed by the short codes in PRETRANSLATION_AUTHORS."""
-    return {
-        key: User.objects.get(email=email)
-        for key, email in PRETRANSLATION_AUTHORS.items()
+    users_by_username = {
+        user.username: user
+        for user in User.objects.filter(username__in=PRETRANSLATION_AUTHORS.values())
     }
-
-
-def get_pretranslation_user_pks() -> set[int]:
-    """Primary keys of the pretranslation authors, for use in QuerySet filters."""
-    return set(
-        User.objects.filter(email__in=PRETRANSLATION_AUTHORS.values()).values_list(
-            "pk", flat=True
-        )
-    )
+    return {
+        key: users_by_username[username]
+        for key, username in PRETRANSLATION_AUTHORS.items()
+    }
