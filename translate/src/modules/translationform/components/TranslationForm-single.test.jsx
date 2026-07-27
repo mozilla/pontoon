@@ -1,3 +1,4 @@
+import { EditorView } from '@codemirror/view';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 
@@ -56,7 +57,9 @@ function mountForm(string) {
     store,
   );
 
-  const view = container.querySelector('.singlefield .cm-content').cmView.view;
+  const view = EditorView.findFromDOM(
+    container.querySelector('.singlefield .cm-content'),
+  );
 
   return { actions, getResult: () => result, view };
 }
@@ -90,6 +93,26 @@ describe('<TranslationForm> with one field', () => {
       id: 'key',
       value: ['Foo, Bar'],
     });
+  });
+
+  it('draws the caret only while the field is empty', () => {
+    // drawSelection fixes tiny native caret (#4249) but regresses RTL selection (#4240)
+    // hence emptyEditorCaret toggles it on the empty <-> content boundary
+    // Not needed after https://bugzilla.mozilla.org/show_bug.cgi?id=2056439 is fixed
+    const { view } = mountForm('');
+    const hasDrawnCaret = () => !!view.dom.querySelector('.cm-cursorLayer');
+
+    expect(hasDrawnCaret()).toBe(true);
+
+    act(() => view.dispatch({ changes: { from: 0, insert: 'test' } }));
+    expect(hasDrawnCaret()).toBe(false);
+
+    act(() =>
+      view.dispatch({
+        changes: { from: 0, to: view.state.doc.length, insert: '' },
+      }),
+    );
+    expect(hasDrawnCaret()).toBe(true);
   });
 
   it('updates the translation when setEditorSelection is passed with focus', async () => {

@@ -28,6 +28,7 @@ import { placeholder } from '~/modules/placeable/placeholder';
 import type { MessageEntry } from '~/utils/message';
 import { editablePattern } from '~/utils/message/editablePattern';
 import { entryPatterns } from '~/utils/message/entryPatterns';
+import { emptyEditorCaret } from './editFieldCaret';
 import { decoratorPlugin } from './decoratorPlugin';
 import {
   useHandleCtrlShiftArrow,
@@ -83,8 +84,10 @@ const style = HighlightStyle.define([
 export const getExtensions = (
   entry: MessageEntry,
   ref: ReturnType<typeof useKeyHandlers>,
+  initialDoc = '',
 ): Extension[] => [
   history(),
+  emptyEditorCaret(initialDoc.length === 0),
   // .main-column sets overflow-y:auto, which disables overflow-x:visible,
   // and so an absolute-positioned tooltip in the .editor would introduce
   // horizontal scrolling if it overflows the right edge of .main-column.

@@ -52,6 +52,7 @@ export const EditField = memo(
             const extensions = getExtensions(
               messageEntryFromEntity(entity),
               keyHandlers,
+              defaultValue,
             );
             if (readOnly) {
               extensions.push(
