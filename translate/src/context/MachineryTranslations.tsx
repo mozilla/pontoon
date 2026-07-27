@@ -1,4 +1,9 @@
-import { isSelectMessage, type Message } from '@mozilla/l10n';
+import {
+  isSelectMessage,
+  messagesEqual,
+  type Message,
+  type SelectMessage,
+} from '@mozilla/l10n';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
@@ -14,7 +19,6 @@ import {
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
 import { findPluralSelectors, getPlainMessage } from '~/utils/message';
-import { pojoEquals } from '~/utils/pojo';
 
 import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
@@ -45,12 +49,15 @@ const sortByQuality = (a: { quality?: number }, b: { quality?: number }) => {
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
-// A composed translation is only meaningful when the entity has more than one
-// translatable pattern in the target (Fluent attributes, MF2 selector variants).
-// For a single-pattern target the composed result would just duplicate the
-// per-leaf TM or MT match, so we skip the request entirely. We only care whether
-// there's more than one pattern, not the exact count, so this short-circuits as
-// soon as it finds a second one.
+/** Distinct keys used by selector `i` across a message's variants. */
+const keysAt = (msg: SelectMessage, i: number) =>
+  new Set(
+    msg.alt.map((v) => (typeof v.keys[i] === 'string' ? v.keys[i] : '*')),
+  );
+
+// A composed translation only adds something when the entity has more than one
+// translatable pattern in the target; otherwise it just duplicates the per-leaf
+// TM or MT match, so we skip the request.
 function hasMultipleFields(
   value: Message,
   properties: Record<string, Message> | undefined,
@@ -62,29 +69,22 @@ function hasMultipleFields(
       continue;
     }
     if (isSelectMessage(msg)) {
-      // A select message is itself multi-pattern when any selector dimension
-      // has more than one target variant: a non-plural selector (e.g. a gender)
-      // with distinct keys, or a plural selector once the locale has multiple
-      // CLDR plural categories. The latter mirrors the plural expansion the
-      // backend's walk_entity() performs, so an en-US `*[other]`-only source is
-      // still multi-pattern for locales like Slovenian (one/two/few/other).
+      // Target variants are the product of each selector's key count, with
+      // plural selectors expanding to the locale's CLDR categories the way
+      // walk_entity() does. So there's more than one iff some selector has
+      // more than one.
       const plurals = findPluralSelectors(msg);
-      const multiPattern = msg.sel.some((_, i) =>
-        plurals.has(i)
-          ? pluralCategories > 1
-          : new Set(
-              msg.alt.map((v) =>
-                typeof v.keys[i] === 'string' ? v.keys[i] : '*',
-              ),
-            ).size > 1,
-      );
-      if (multiPattern) {
+      if (
+        msg.sel.some((_, i) =>
+          plurals.has(i) ? pluralCategories > 1 : keysAt(msg, i).size > 1,
+        )
+      ) {
         return true;
       }
       leaves += 1;
     } else {
-      // A pattern with no elements — e.g. the value of a Fluent message that
-      // only has attributes — has nothing to translate and is not a leaf.
+      // An empty pattern — e.g. the value of an attribute-only Fluent message
+      // — has nothing to translate and is not a leaf.
       const pattern = Array.isArray(msg) ? msg : msg.msg;
       if (pattern && pattern.length > 0) {
         leaves += 1;
@@ -95,6 +95,23 @@ function hasMultipleFields(
     }
   }
   return false;
+}
+
+/** Composed suggestions are identified by their `(value, properties)` model. */
+function composedEquals(
+  a: ComposedMachineryTranslation,
+  b: ComposedMachineryTranslation,
+): boolean {
+  if (!messagesEqual(a.value, b.value)) {
+    return false;
+  }
+  const ap = a.properties ?? {};
+  const bp = b.properties ?? {};
+  const keys = Object.keys(ap);
+  return (
+    keys.length === Object.keys(bp).length &&
+    keys.every((key) => key in bp && messagesEqual(ap[key], bp[key]))
+  );
 }
 
 export function MachineryProvider({
@@ -144,19 +161,14 @@ export function MachineryProvider({
       }
     };
 
-    // Composed suggestions dedupe on their data model (value + properties): the
-    // TM-only and MT-backed requests can yield the same composition, in which
-    // case we merge their source badges rather than list it twice.
+    // The TM-only and MT-backed requests can yield the same composition, in
+    // which case we merge their source badges rather than list it twice.
     const addComposed = (newComposed: ComposedMachineryTranslation[]) => {
       if (newComposed.length > 0) {
         setTranslations((prev) => {
           const composed = [...prev.composed];
           for (const tx of newComposed) {
-            const i = composed.findIndex(
-              (t0) =>
-                pojoEquals(t0.value, tx.value) &&
-                pojoEquals(t0.properties ?? {}, tx.properties ?? {}),
-            );
+            const i = composed.findIndex((t0) => composedEquals(t0, tx));
             if (i === -1) {
               composed.push(tx);
             } else {
@@ -181,12 +193,6 @@ export function MachineryProvider({
       setFetching(true);
       const promises: Promise<void>[] = [];
 
-      // Composed multi-value translations are emitted only for entity-driven
-      // navigation (not concordance search) and only when the entity has more
-      // than one translatable pattern. `hasMultipleFields` already returns false
-      // for single-pattern messages, and only the multi-pattern formats (Fluent
-      // attributes, MF2 selector variants) can have more than one, so there's no
-      // need to also gate on the format.
       const wantsComposed =
         !query &&
         hasMultipleFields(

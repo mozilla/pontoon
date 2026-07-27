@@ -101,8 +101,6 @@ export function useHandleCtrlShiftArrow(): (
   return (key) => {
     const { tab, element, setElement } = helperSelection;
     const isMachinery = tab === 0;
-    // Machinery navigation runs across composed suggestions, per-leaf matches
-    // and concordance results as one list, matching their rendered order.
     const numTranslations = isMachinery
       ? composed.length +
         machineryTranslations.length +

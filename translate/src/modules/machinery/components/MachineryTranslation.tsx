@@ -1,6 +1,6 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import type {
   ComposedMachineryTranslation,
@@ -8,19 +8,21 @@ import type {
   SourceType,
 } from '~/api/machinery';
 import { logUXAction } from '~/api/uxaction';
-import { EditorActions, EditorField } from '~/context/Editor';
+import { EditorActions } from '~/context/Editor';
 import { useMachineryEntry } from '~/context/EntityView';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
 import { GenericTranslation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useScrollOnSelect } from '~/hooks/useScrollOnSelect';
 import {
-  editMessageEntry,
+  messageEntryPatterns,
   requiresSourceView,
   serializeEntry,
   type MessageEntry,
+  type MessagePattern,
 } from '~/utils/message';
-import { messageEntryFromValue } from '~/utils/message/fromEntity';
+import { messageEntryFromValue } from '~/utils/message/fromValue';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { MachineryTranslationSource } from './MachineryTranslationSource';
@@ -83,16 +85,7 @@ export function MachineryTranslationComponent({
     isSelected && 'selected',
   );
 
-  const translationRef = useRef<HTMLLIElement>(null);
-  useEffect(() => {
-    if (isSelected) {
-      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      translationRef.current?.scrollIntoView({
-        behavior: mediaQuery.matches ? 'auto' : 'smooth',
-        block: 'nearest',
-      });
-    }
-  }, [isSelected]);
+  const translationRef = useScrollOnSelect<HTMLLIElement>(isSelected);
 
   return (
     <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
@@ -203,16 +196,7 @@ export function ComposedTranslationComponent({
     isSelected && 'selected',
   );
 
-  const translationRef = useRef<HTMLLIElement>(null);
-  useEffect(() => {
-    if (isSelected) {
-      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      translationRef.current?.scrollIntoView({
-        behavior: mediaQuery.matches ? 'auto' : 'smooth',
-        block: 'nearest',
-      });
-    }
-  }, [isSelected]);
+  const translationRef = useScrollOnSelect<HTMLLIElement>(isSelected);
 
   return (
     <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
@@ -242,9 +226,11 @@ function ComposedSuggestion({
     translation.properties,
   );
 
-  const originalFields = richFields(machineryEntry);
-  const suggestionFields = richFields(suggestionEntry);
-  const isRich = originalFields !== null && suggestionFields !== null;
+  // Each side is rendered independently: a single-pattern source can compose to
+  // a multi-pattern target, e.g. an en-US `*[other]`-only plural in a locale
+  // with several CLDR categories.
+  const originalPatterns = richPatterns(machineryEntry);
+  const suggestionPatterns = richPatterns(suggestionEntry);
 
   return (
     <>
@@ -255,59 +241,58 @@ function ComposedSuggestion({
 
         <MachineryTranslationSource translation={translation} composed />
       </header>
-      {isRich ? (
-        <>
-          <RichMessage className='original' fields={originalFields} />
-          <RichMessage
-            className='suggestion'
-            fields={suggestionFields}
-            dir={direction}
-            script={script}
-            lang={code}
-          />
-        </>
+      {originalPatterns ? (
+        <RichMessage className='original' patterns={originalPatterns} />
       ) : (
-        <>
-          <p className='original'>
-            <GenericTranslation content={serializeEntry(machineryEntry)} />
-          </p>
-          <p
-            className='suggestion'
-            dir={direction}
-            data-script={script}
-            lang={code}
-          >
-            <GenericTranslation content={serializeEntry(suggestionEntry)} />
-          </p>
-        </>
+        <p className='original'>
+          <GenericTranslation content={serializeEntry(machineryEntry)} />
+        </p>
+      )}
+      {suggestionPatterns ? (
+        <RichMessage
+          className='suggestion'
+          patterns={suggestionPatterns}
+          dir={direction}
+          script={script}
+          lang={code}
+        />
+      ) : (
+        <p
+          className='suggestion'
+          dir={direction}
+          data-script={script}
+          lang={code}
+        >
+          <GenericTranslation content={serializeEntry(suggestionEntry)} />
+        </p>
       )}
     </>
   );
 }
 
 /**
- * Editable fields for a composed message entry, or `null` when it can't be
- * shown as a rich multi-field view (source-view-only entry or a single field —
- * in which case the plain rendering is used).
+ * Patterns of a message entry, or `null` when it can't be shown as a rich
+ * multi-field view (source-view-only entry, or a single pattern — in which case
+ * the plain rendering is used).
  */
-function richFields(entry: MessageEntry): EditorField[] | null {
+function richPatterns(entry: MessageEntry): MessagePattern[] | null {
   if (requiresSourceView(entry)) {
     return null;
   }
-  const fields = editMessageEntry(entry);
-  return fields.length > 1 ? fields : null;
+  const patterns = messageEntryPatterns(entry);
+  return patterns.length > 1 ? patterns : null;
 }
 
 /** Render a parsed message as a labeled table, mirroring the original string panel. */
 function RichMessage({
   className,
-  fields,
+  patterns,
   dir,
   lang,
   script,
 }: {
   className: string;
-  fields: EditorField[];
+  patterns: MessagePattern[];
   dir?: string;
   lang?: string;
   script?: string;
@@ -320,7 +305,7 @@ function RichMessage({
       lang={lang}
     >
       <tbody>
-        {fields.map(({ handle, id, labels }) => (
+        {patterns.map(({ id, labels, value }) => (
           <tr key={id}>
             <td>
               <label>
@@ -331,7 +316,7 @@ function RichMessage({
             </td>
             <td>
               <span>
-                <GenericTranslation content={handle.current.value} />
+                <GenericTranslation content={value} />
               </span>
             </td>
           </tr>

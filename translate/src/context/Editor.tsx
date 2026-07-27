@@ -24,10 +24,8 @@ import {
   hasOuterWhitespace,
   htmlElementEscapes,
 } from '~/utils/message/entryInformation';
-import {
-  messageEntryFromEntityTranslation,
-  messageEntryFromValue,
-} from '~/utils/message/fromEntity';
+import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
+import { messageEntryFromValue } from '~/utils/message/fromValue';
 import { getMessageEntryFormat } from '~/utils/message/getMessageEntryFormat';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
@@ -112,8 +110,8 @@ export type EditorActions = {
   ): void;
 
   /**
-   * Distribute a composed Machinery suggestion — a full `(value, properties)`
-   * data model — across all editor fields.
+   * Rebuild the editor fields from a composed Machinery suggestion, i.e. a full
+   * `(value, properties)` data model rather than a single string.
    *
    * @param manual Set `true` when set due to direct user action
    */
@@ -189,17 +187,11 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       trim: !hasOuterWhitespace(sourceEntry),
     };
 
-    // `next.fields` carry placeholder handles, but the on-screen editors stay
-    // bound (via their React key) to `prev.fields`' live handles. EditField only
-    // re-syncs when its `defaultValue` string changes, so re-applying a value
-    // that equals a stale `defaultValue` — e.g. restoring a composed suggestion
-    // after editing one field — would otherwise leave that field untouched until
-    // a second click. Push the values into the live handles directly, matching
-    // by field id, like `clearEditor` does.
-    const finalizeDistribution = (
-      prev: EditorData,
-      next: EditorData,
-    ): EditorData => {
+    // The on-screen editors stay bound (via their React key) to `prev.fields`'
+    // live handles, and re-sync only when their `defaultValue` changes. Push the
+    // values in directly, as `clearEditor` does, so re-applying the values
+    // already on screen still resets a field the user has edited since.
+    const resetFields = (prev: EditorData, next: EditorData): EditorData => {
       for (const field of next.fields) {
         const live = prev.fields.find((f) => f.id === field.id);
         live?.handle.current.setValue(field.handle.current.value);
@@ -207,54 +199,6 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       next.focusField.current = next.fields[0];
       setResult(buildMessageEntry(next.base, next.fields, buildOpts));
       return next;
-    };
-
-    // Distribute a parsed entry's leaves across all editor fields, falling back
-    // to a raw source-view field when it can't be shown as fields.
-    const distributeEntry = (
-      prev: EditorData,
-      entry: MessageEntry,
-    ): EditorData => {
-      const next = { ...prev, base: entry };
-      if (!requiresSourceView(entry)) {
-        next.fields = prev.sourceView
-          ? editSource(entry)
-          : editMessageEntry(sourceEntry, entry);
-      } else {
-        next.fields = editSource(entry);
-        next.sourceView = true;
-      }
-      return finalizeDistribution(prev, next);
-    };
-
-    // Parse a full entry source and distribute its leaves across all editor
-    // fields, falling back to a raw source-view field when it can't be parsed.
-    // Used by history restores.
-    const distributeEntrySource = (
-      prev: EditorData,
-      str: string,
-    ): EditorData => {
-      const next = { ...prev };
-      if (specialFormats.has(format)) {
-        const entry = parseEntry(format, str);
-        if (entry) {
-          next.base = entry;
-        } else if (format !== 'fluent') {
-          return prev;
-        }
-        if (entry && !requiresSourceView(entry)) {
-          next.fields = prev.sourceView
-            ? editSource(entry)
-            : editMessageEntry(sourceEntry, entry);
-        } else {
-          next.fields = editSource(str);
-          next.sourceView = true;
-        }
-      } else {
-        next.fields = editMessageEntry(sourceEntry, prev.initial);
-        next.fields[0].handle.current.setValue(str);
-      }
-      return finalizeDistribution(prev, next);
     };
 
     return {
@@ -294,20 +238,23 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromComposed: (value, properties, sources, manual) =>
         setState((prev) => {
-          // A composed suggestion is a full `(value, properties)` data model.
-          // Build an entry from it and distribute the leaves across all fields.
-          // Record the plain message as `machinery.translation` so source
-          // attribution still matches the saved translation (see
-          // `useSendTranslation`).
           const entry = messageEntryFromValue(
             getMessageEntryFormat(format),
             prev.base.id,
             value,
             properties,
           );
-          const next = distributeEntry(prev, entry);
+          const next = { ...prev, base: entry };
+          if (requiresSourceView(entry)) {
+            next.fields = editSource(entry);
+            next.sourceView = true;
+          } else {
+            next.fields = prev.sourceView
+              ? editSource(entry)
+              : editMessageEntry(sourceEntry, entry);
+          }
           return {
-            ...next,
+            ...resetFields(prev, next),
             machinery: {
               manual,
               translation: getPlainMessage(entry),
@@ -317,7 +264,29 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         }),
 
       setEditorFromHistory: (str) =>
-        setState((prev) => distributeEntrySource(prev, str)),
+        setState((prev) => {
+          const next = { ...prev };
+          if (specialFormats.has(format)) {
+            const entry = parseEntry(format, str);
+            if (entry) {
+              next.base = entry;
+            } else if (format !== 'fluent') {
+              return prev;
+            }
+            if (entry && !requiresSourceView(entry)) {
+              next.fields = prev.sourceView
+                ? editSource(entry)
+                : editMessageEntry(sourceEntry, entry);
+            } else {
+              next.fields = editSource(str);
+              next.sourceView = true;
+            }
+          } else {
+            next.fields = editMessageEntry(sourceEntry, prev.initial);
+            next.fields[0].handle.current.setValue(str);
+          }
+          return resetFields(prev, next);
+        }),
 
       setEditorSelection: (content) =>
         setState((state) => {

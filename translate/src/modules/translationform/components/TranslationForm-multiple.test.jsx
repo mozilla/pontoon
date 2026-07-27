@@ -375,4 +375,37 @@ describe('<TranslationForm> with multiple fields', () => {
       attributes: new Map([['label', ['Something']]]),
     });
   });
+
+  it('re-applies a composed suggestion after a field was edited', () => {
+    const { actions, views } = mountForm(ftl`
+      title = Value
+        .label = Something
+      `);
+
+    const applyComposed = () =>
+      act(() =>
+        actions.setEditorFromComposed(
+          ['COMPOSED'],
+          { label: ['COMPOSED_LABEL'] },
+          ['translation-memory'],
+          true,
+        ),
+      );
+    const docs = () => views.map((view) => view.state.doc.toString());
+
+    applyComposed();
+    expect(docs()).toEqual(['COMPOSED', 'COMPOSED_LABEL']);
+
+    act(() =>
+      views[0].dispatch({
+        changes: { from: 0, to: views[0].state.doc.length, insert: 'EDITED' },
+      }),
+    );
+    expect(docs()).toEqual(['EDITED', 'COMPOSED_LABEL']);
+
+    // Same suggestion, same values: the edited field must still be reset, even
+    // though its `defaultValue` prop doesn't change.
+    applyComposed();
+    expect(docs()).toEqual(['COMPOSED', 'COMPOSED_LABEL']);
+  });
 });

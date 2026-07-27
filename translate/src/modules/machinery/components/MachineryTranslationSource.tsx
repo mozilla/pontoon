@@ -14,11 +14,11 @@ import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
   translation: MachineryTranslation | ComposedMachineryTranslation;
-  // AI refinement isn't supported for composed (multi-field/plural) suggestions:
-  // the backend refines a single string, so it can't preserve the entry
-  // structure, and the rich rendering can't show the refined result. The Google
-  // source is shown as a plain label rather than the refinement dropdown.
-  // See follow-up to add composed support.
+  /**
+   * Show Google Translate as a plain label instead of the AI refinement
+   * dropdown, which only refines a single string and so can't preserve the
+   * entry structure of a composed suggestion.
+   */
   composed?: boolean;
 };
 

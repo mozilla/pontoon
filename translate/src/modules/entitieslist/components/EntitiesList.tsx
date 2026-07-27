@@ -7,6 +7,7 @@ import { logUXAction } from '~/api/uxaction';
 import { EntitiesList as EntitiesListContext } from '~/context/EntitiesList';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
+import { scrollIntoView } from '~/utils/scrollIntoView';
 import {
   getEntities,
   getSiblingEntities,
@@ -230,12 +231,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
     if (!mounted.current) {
       return;
     }
-    const element = list.current?.querySelector('li.selected');
-    const mediaQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    element?.scrollIntoView?.({
-      behavior: mediaQuery?.matches ? 'auto' : 'smooth',
-      block: 'nearest',
-    });
+    scrollIntoView(list.current?.querySelector('li.selected'));
   }, []);
 
   // Scroll to selected entity when entity changes

@@ -86,12 +86,11 @@ describe('<MachineryTranslationComponent>', () => {
       value: ['Click Me'],
       properties: { title: ['Tooltip'] },
     };
-    const Wrapped = (props) =>
-      React.createElement(
-        EntityView.Provider,
-        { value: { entity } },
-        React.createElement(ComposedTranslationComponent, props),
-      );
+    const Wrapped = (props) => (
+      <EntityView.Provider value={{ entity }}>
+        <ComposedTranslationComponent {...props} />
+      </EntityView.Provider>
+    );
     const { container } = mountComponentWithStore(Wrapped, store, {
       index: 0,
       translation,
@@ -111,5 +110,52 @@ describe('<MachineryTranslationComponent>', () => {
     expect(original.textContent).toContain('Tooltip');
     expect(suggestion.textContent).toContain('Cliquez');
     expect(suggestion.textContent).toContain('Infobulle');
+  });
+
+  it('renders a single-pattern original against a multi-pattern suggestion', () => {
+    // en-US declares one plural variant; the target locale needs two.
+    const translation = {
+      sources: ['translation-memory'],
+      value: {
+        decl: { count: { $: 'count', fn: 'number' } },
+        sel: ['count'],
+        alt: [
+          { keys: ['one'], pat: ['Un popup'] },
+          { keys: [{ '*': 'other' }], pat: ['Des popups'] },
+        ],
+      },
+    };
+    const store = createReduxStore();
+    const entity = {
+      format: 'fluent',
+      key: ['popup'],
+      value: ['Many popups'],
+    };
+    const Wrapped = (props) => (
+      <EntityView.Provider value={{ entity }}>
+        <ComposedTranslationComponent {...props} />
+      </EntityView.Provider>
+    );
+    const { container } = mountComponentWithStore(Wrapped, store, {
+      index: 0,
+      translation,
+    });
+    createDefaultUser(store);
+
+    // The original has nothing to lay out as fields, so it stays plain while
+    // the suggestion still gets the rich per-variant rendering.
+    expect(
+      container.querySelector('.fluent-rich-string.original'),
+    ).not.toBeInTheDocument();
+    expect(container.querySelector('p.original').textContent).toContain(
+      'Many popups',
+    );
+
+    const suggestion = container.querySelector(
+      '.fluent-rich-string.suggestion',
+    );
+    expect(suggestion.querySelectorAll('tr')).toHaveLength(2);
+    expect(suggestion.textContent).toContain('Un popup');
+    expect(suggestion.textContent).toContain('Des popups');
   });
 });

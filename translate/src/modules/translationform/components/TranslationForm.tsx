@@ -117,8 +117,6 @@ export function TranslationForm(): React.ReactElement<'div'> | null {
           {fields.map(({ handle, id, labels, name }, i) => {
             const value = handle.current.value;
             const EditPattern =
-              // Match the accesskey suffix case-insensitively (`accesskey` and
-              // camelCase `accessKey` both occur in the wild).
               name.toLowerCase().endsWith('accesskey') && value.length <= 1
                 ? EditAccesskey
                 : EditField;

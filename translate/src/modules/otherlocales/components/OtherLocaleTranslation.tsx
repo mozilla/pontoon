@@ -1,6 +1,6 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import type { Entity } from '~/api/entity';
 import type { OtherLocaleTranslation } from '~/api/other-locales';
@@ -9,6 +9,7 @@ import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
 import { GenericTranslation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useScrollOnSelect } from '~/hooks/useScrollOnSelect';
 import { getPlainMessage, parseEntry } from '~/utils/message';
 
 import './OtherLocaleTranslation.css';
@@ -52,16 +53,7 @@ export function OtherLocaleTranslationComponent({
     isSelected && 'selected',
   );
 
-  const translationRef = useRef<HTMLLIElement>(null);
-  useEffect(() => {
-    if (isSelected) {
-      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      translationRef.current?.scrollIntoView({
-        behavior: mediaQuery.matches ? 'auto' : 'smooth',
-        block: 'nearest',
-      });
-    }
-  }, [isSelected]);
+  const translationRef = useScrollOnSelect<HTMLLIElement>(isSelected);
 
   return (
     <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>
