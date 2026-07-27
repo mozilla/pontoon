@@ -19,13 +19,13 @@
   {% for locale_row in locale_rows %}
     <tr>
       <td>
-        <a href="{{ full_url('pontoon.teams.team', row.locale.code) }}"
+        <a href="{{ full_url('pontoon.teams.team', locale_row.locale.code) }}"
           >{{ locale_row.locale.name }} ({{ locale_row.locale.code }})</a
         >
       </td>
       <td>{{ locale_row.previous_chs }}</td>
       <td>{{ locale_row.current_chs }}</td>
-      <td class="{{ 'positive' if locale_row.percentage > 0 else 'negative' }}">
+      <td class="{{ 'positive' if locale_row.delta > 0 else 'negative' }}">
         {{ locale_row.percentage }}
       </td>
     </tr>
@@ -39,5 +39,5 @@
 <p>
   You can view the full breakdown, including individual contributor, translator
   & manager activity metrics, via the
-  <a href="{ full_url('pontoon.insights') }">Insights Dashboard</a>.
+  <a href="{{ full_url('pontoon.insights') }}">Insights Dashboard</a>.
 </p>

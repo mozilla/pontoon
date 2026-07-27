@@ -24,6 +24,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
 )
 from pontoon.checks.models import Error, Warning
+from pontoon.insights.models import LocaleHealthSnapshot
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import Term, TermTranslation
 from pontoon.translations.utils import parse_source_string_to_json
@@ -259,3 +260,11 @@ class LocaleCodeHistoryFactory(DjangoModelFactory):
 
     class Meta:
         model = LocaleCodeHistory
+
+
+class LocaleHealthSnapshotFactory(DjangoModelFactory):
+    locale = SubFactory(LocaleFactory)
+    key_projects_enabled = 1
+
+    class Meta:
+        model = LocaleHealthSnapshot
