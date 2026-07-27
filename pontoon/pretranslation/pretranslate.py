@@ -132,11 +132,9 @@ class Pretranslation:
         self.locale = locale
         self.preserve_placeables = preserve_placeables
         self.services = []
-        # `service` is resolved here (not stored on the enum member) so tests can
-        # patch the module-level service callables.
-        self.mt_service = mt_engine.service if mt_engine is not None else None
-        self.mt_service_name = mt_engine.service_name if mt_engine is not None else ""
-        self.mt_supported = mt_engine is not None and mt_engine.supports(locale)
+        self.mt_engine = (
+            mt_engine if mt_engine is not None and mt_engine.supports(locale) else None
+        )
         self.exclude_entity = exclude_entity
 
     def walk_entity(self) -> tuple[Message, dict[str, Message]]:
@@ -183,11 +181,13 @@ class Pretranslation:
         return value, properties
 
     def serialize(self, value: Message, properties: dict[str, Message]) -> str:
-        """Serialize translated `(value, properties)` back to a source string."""
+        """Serialize translated `(value, properties)` back to a source string.
+
+        Keeps literal `{`/`}` from MT output raw for Fluent, matching the prior
+        pretranslation behavior (unlike sync, which escapes them).
+        """
         entry = Entry(id=tuple(self.entity.key), value=value, properties=properties)
-        # `escape_syntax=False` keeps literal `{`/`}` from MT output raw, matching
-        # the prior pretranslation behavior (unlike sync, which escapes them).
-        return as_string(self.format, entry, escape_syntax=False)
+        return as_string(self.format, entry, fluent_escape_syntax=False)
 
     def message(self, msg: Message) -> None:
         """Modifies `msg`."""
@@ -282,14 +282,14 @@ class Pretranslation:
         if not has_text:
             return pattern
 
-        if self.mt_supported:
+        if self.mt_engine is not None:
             # Try to fetch from the configured MT service (Google by default)
-            mt_translation = self.mt_service(
+            mt_translation = self.mt_engine.service(
                 text=gt_source,
                 locale=self.locale,
                 preserve_placeables=self.preserve_placeables,
             )
-            self.services.append(self.mt_service_name)
+            self.services.append(self.mt_engine.service_name)
             return [
                 el
                 if idx % 2 == 0

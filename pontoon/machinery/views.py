@@ -7,7 +7,6 @@ from urllib.parse import quote
 import requests
 
 from moz.l10n.message import message_to_json
-from moz.l10n.model import SelectMessage
 from sacremoses import MosesDetokenizer
 
 from django.contrib.auth.decorators import login_required
@@ -32,22 +31,6 @@ from .openai_service import OpenAIService
 
 
 log = logging.getLogger(__name__)
-
-
-def _pattern_count(message):
-    """Number of independently-translatable patterns in a parsed message.
-
-    A `PatternMessage` has one; a `SelectMessage` has one per variant. An empty
-    value — e.g. the value of a Fluent message that only has attributes — has
-    nothing to translate and counts as zero, so it doesn't turn an otherwise
-    single-leaf entity into a spuriously multi-pattern one. Used to tell
-    single-pattern messages (nothing to compose) from multi-pattern ones.
-    """
-    if message is None or message.is_empty():
-        return 0
-    if isinstance(message, SelectMessage):
-        return len(message.variants)
-    return 1
 
 
 def _machinery_error_response(service_name, e):
@@ -84,15 +67,14 @@ def translation_memory(request):
 
 def machinery_composed(request):
     """
-    Return a composed multi-value translation for a multi-pattern entity.
+    Return a composed multi-value translation for an entity.
 
     Each translatable leaf — the entity's value and every property, with a
     selector message contributing one leaf per variant — is looked up in
     Translation Memory; leaves without a 100% TM match fall back to the requested
     MT service. Mirrors the Pretranslation pipeline so the Machinery panel can
     surface a directly-pasteable composed translation alongside the per-leaf
-    results. Single-pattern entities have nothing to compose and yield an empty
-    response.
+    results.
 
     The composed translation is returned as the `(value, properties)` data model
     (the same JSON shape entities use), so the frontend can build its editor fields
@@ -165,32 +147,22 @@ def machinery_composed(request):
     value_json = message_to_json(value)
     properties_json = {key: message_to_json(prop) for key, prop in properties.items()}
 
-    # Only multi-pattern targets — those with multiple properties and/or selector
-    # variants — have something to compose. A single-pattern target composes to
-    # the same string the per-leaf machinery already returns, so there is nothing
-    # extra to show. We count the *target* patterns (not the source): walk_entity()
-    # expands plural selectors to the locale's CLDR categories, so a source with a
-    # single plural variant (e.g. en-US `*[other]`) still yields multiple patterns
-    # for locales like Slovenian (one/two/few/other).
-    pattern_count = _pattern_count(value) + sum(
-        _pattern_count(prop) for prop in properties.values()
-    )
     # Skip when nothing was actually translated, i.e. the composed data model is
     # identical to the source entity's.
     unchanged = value_json == entity.value and properties_json == (
         entity.properties or {}
     )
-    if pattern_count < 2 or not pt.services or unchanged:
+    if not pt.services or unchanged:
         return JsonResponse({})
 
-    # Preserve insertion order while deduplicating. Map the internal service
-    # identifiers to the SourceType values the frontend uses for the badge.
+    # `pt.services` holds one entry per translated leaf; the badges are the
+    # distinct services used, in first-use order.
     badges = {
         "tm": "translation-memory",
         "gt": "google-translate",
         "ms": "microsoft-translator",
     }
-    sources_used = list(dict.fromkeys(badges.get(s, s) for s in pt.services))
+    sources_used = list(dict.fromkeys(badges[s] for s in pt.services))
 
     response = {
         "value": value_json,
@@ -198,10 +170,9 @@ def machinery_composed(request):
         "sources": sources_used,
     }
 
-    # When every leaf came from a 100% TM match (`pattern()` only accepts exact
-    # source matches from TM), the composed string is a complete TM match — give
-    # it the same quality badge regular TM matches get. Hybrid results that fall
-    # back to MT for any leaf have no meaningful aggregate score.
+    # `pattern()` only accepts exact TM matches and MT results carry no score at
+    # all, so per-leaf quality is either 100 or undefined. The only aggregate
+    # that means anything is therefore "every leaf was a 100% TM match".
     if set(pt.services) == {"tm"}:
         response["quality"] = 100
 

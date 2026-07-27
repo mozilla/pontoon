@@ -26,6 +26,7 @@ from pontoon.base.models import (
 from pontoon.checks.models import Error, Warning
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import Term, TermTranslation
+from pontoon.translations.utils import parse_source_string_to_json
 
 
 class UserFactory(DjangoModelFactory):
@@ -125,17 +126,12 @@ class EntityFactory(DjangoModelFactory):
     def parsed_value(entity, create, extracted, **kwargs):
         # Populate key/value/properties from `string` (as sync does) so code
         # that reads the parsed representation works in tests. Skipped when
-        # `value` is set explicitly; never blocks entity creation.
+        # `value` is set explicitly.
         if entity.value:
             return
-        try:
-            from pontoon.translations.utils import parse_source_string_to_json
-
-            key, value, properties = parse_source_string_to_json(
-                entity.resource.format, entity.string
-            )
-        except Exception:
-            return
+        key, value, properties = parse_source_string_to_json(
+            entity.resource.format, entity.string
+        )
         entity.key = entity.key or key
         entity.value = value
         entity.properties = properties

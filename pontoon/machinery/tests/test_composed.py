@@ -36,56 +36,14 @@ def test_composed_bad_request(client, locale_a):
 
 
 @pytest.mark.django_db
-def test_composed_single_pattern_message(client, entity_a, locale_a):
-    """Single-pattern messages have nothing to compose and skip cleanly.
+def test_composed_single_leaf_is_still_returned(
+    client, fluent_resource, entity_a, locale_a
+):
+    """A single-leaf message composes; whether to show it is the caller's call.
 
-    A DTD entity is a single `PatternMessage` with no properties, so composing it
-    would just repeat the per-leaf machinery suggestion; we expect an empty `{}`.
-    """
-    dtd_resource = ResourceFactory(
-        project=entity_a.resource.project, path="r.dtd", format="dtd"
-    )
-    dtd_entity = EntityFactory(resource=dtd_resource, string="Hello")
-
-    url = reverse("pontoon.machinery_composed")
-    response = client.get(
-        url,
-        {
-            "entity": str(dtd_entity.pk),
-            "locale": locale_a.code,
-            "service": "translation-memory",
-        },
-    )
-    assert response.status_code == 200
-    assert json.loads(response.content) == {}
-
-
-@pytest.mark.django_db
-def test_composed_single_pattern_fluent(client, fluent_resource, locale_a):
-    """A Fluent message with a plain pattern value (no selector, no variants)
-    and no attributes skips even though its format supports composition."""
-    fluent_entity = EntityFactory(resource=fluent_resource, string="hello = Hello\n")
-
-    url = reverse("pontoon.machinery_composed")
-    response = client.get(
-        url,
-        {
-            "entity": str(fluent_entity.pk),
-            "locale": locale_a.code,
-            "service": "translation-memory",
-        },
-    )
-    assert response.status_code == 200
-    assert json.loads(response.content) == {}
-
-
-@pytest.mark.django_db
-def test_composed_attribute_only_fluent(client, fluent_resource, entity_a, locale_a):
-    """A Fluent message with a single attribute but no value is single-leaf.
-
-    Its empty value must not count as a pattern; otherwise the lone attribute
-    would look like a second leaf and compose a redundant suggestion that just
-    duplicates the per-leaf TM match (see #2886 review).
+    The composed result here just repeats the per-leaf TM match, so the
+    Machinery panel doesn't ask for it (see `hasMultipleFields`), but the
+    endpoint doesn't second-guess a caller that does.
     """
     fluent_string = dedent(
         """\
@@ -112,7 +70,12 @@ def test_composed_attribute_only_fluent(client, fluent_resource, entity_a, local
         },
     )
     assert response.status_code == 200
-    assert json.loads(response.content) == {}
+    assert json.loads(response.content) == {
+        "value": [],
+        "properties": {"label": ["TM_label"]},
+        "sources": ["translation-memory"],
+        "quality": 100,
+    }
 
 
 @pytest.mark.django_db
@@ -157,13 +120,13 @@ def test_composed_multiple_attributes_no_value(
         },
     )
     assert response.status_code == 200
-    body = json.loads(response.content)
     # Attribute-only message: empty value, both attributes filled from TM.
-    assert body["value"] == []
-    assert body["properties"]["label"] == ["TM_label"]
-    assert body["properties"]["tooltip"] == ["TM_tooltip"]
-    assert body["sources"] == ["translation-memory"]
-    assert body["quality"] == 100
+    assert json.loads(response.content) == {
+        "value": [],
+        "properties": {"label": ["TM_label"], "tooltip": ["TM_tooltip"]},
+        "sources": ["translation-memory"],
+        "quality": 100,
+    }
 
 
 @pytest.mark.django_db
@@ -230,12 +193,13 @@ def test_composed_tm_only_full_hit(client, fluent_resource, entity_a, locale_a):
         },
     )
     assert response.status_code == 200
-    body = json.loads(response.content)
-    assert body["value"] == ["TM_value"]
-    assert body["properties"]["title"] == ["TM_tooltip"]
-    assert body["sources"] == ["translation-memory"]
     # Every leaf is a 100% TM match, so the composed result is a full TM match.
-    assert body["quality"] == 100
+    assert json.loads(response.content) == {
+        "value": ["TM_value"],
+        "properties": {"title": ["TM_tooltip"]},
+        "sources": ["translation-memory"],
+        "quality": 100,
+    }
 
 
 @pytest.mark.django_db
@@ -405,9 +369,9 @@ def test_composed_hybrid_tm_and_mt(
         },
     )
     assert response.status_code == 200
-    body = json.loads(response.content)
-    assert body["value"] == ["TM_value"]
-    assert body["properties"]["title"] == ["MT_tooltip"]
-    assert set(body["sources"]) == {"translation-memory", "google-translate"}
-    # MT-assisted results have no meaningful aggregate quality score.
-    assert "quality" not in body
+    # No `quality`: MT results carry no score, so there's nothing to aggregate.
+    assert json.loads(response.content) == {
+        "value": ["TM_value"],
+        "properties": {"title": ["MT_tooltip"]},
+        "sources": ["translation-memory", "google-translate"],
+    }

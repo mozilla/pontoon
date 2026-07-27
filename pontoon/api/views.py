@@ -584,6 +584,13 @@ class PretranslationView(APIView):
         project = SimpleNamespace(slug="temp-project")
         resource = SimpleNamespace(project=project, format=fmt)
 
+        # TODO: refactor `get_pretranslation` (and `Pretranslation`) to accept the
+        # parsed `(value, properties)` directly, so callers not backed by a synced
+        # row don't need to fake `Project`, `Resource`, and `Entity` objects just
+        # to satisfy the attribute access in the pipeline. `key` is only read by
+        # `Pretranslation.serialize()`, to id an Entry that `set_accesskey()`
+        # ignores — once that serialization goes away, `parse_source_string_to_json`
+        # can stop returning an identifier nothing uses.
         try:
             # Parsing happens here (not before) so invalid syntax for the chosen
             # format is reported as a 400 rather than escaping as a 500.
@@ -596,10 +603,6 @@ class PretranslationView(APIView):
                 properties=properties,
             )
             pretranslation = get_pretranslation(entity=entity, locale=locale)
-            # TODO: refactor `get_pretranslation` (and `Pretranslation`) to accept
-            # the parsed `(key, value, properties)` directly, so callers not backed
-            # by a synced row don't need to fake `Project`, `Resource`, and `Entity`
-            # objects just to satisfy the attribute access in the pipeline.
         except Exception as e:
             return Response(
                 {

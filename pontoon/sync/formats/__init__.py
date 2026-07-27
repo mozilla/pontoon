@@ -55,12 +55,12 @@ def are_compatible_files(file_a, file_b):
 
 
 def as_string(
-    format: Format | None, entry: Entry[Message], *, escape_syntax: bool = True
+    format: Format | None, entry: Entry[Message], *, fluent_escape_syntax: bool = True
 ) -> str:
     match format:
         case Format.fluent:
             fluent_entry = fluent_astify_entry(
-                entry, comment_str=lambda _: "", escape_syntax=escape_syntax
+                entry, comment_str=lambda _: "", escape_syntax=fluent_escape_syntax
             )
             return FluentSerializer().serialize_entry(fluent_entry)
         case Format.android | Format.gettext | Format.webext | Format.xliff:
