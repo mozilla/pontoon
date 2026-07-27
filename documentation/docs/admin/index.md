@@ -30,6 +30,10 @@ This guide covers administrative tasks in Pontoon — managing projects, locales
 
     How to enable automated pretranslation for a project and train custom Google AutoML models.
 
+- :material-eye: **[Insights](insights.md)**
+
+    Resources for analyzing locale & project health.
+
 - :material-message-text: **[Messaging Center](messaging-center.md)**
 
     How to send targeted emails and in-app notifications to contributors.

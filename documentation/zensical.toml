@@ -33,7 +33,8 @@ nav = [
     { "Renaming a Localization File" = "admin/renaming-file.md" },
     { "Renaming a Project" = "admin/renaming-project.md" },
     { "Managing Users" = "admin/managing-users.md" },
-    { "Adding Terminology" = "admin/adding-terminology.md" }
+    { "Adding Terminology" = "admin/adding-terminology.md" },
+    { "Insights" = "admin/insights.md" }
   ]},
 
   { "Developer Guide" = [
