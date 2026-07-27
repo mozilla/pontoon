@@ -6,12 +6,14 @@ target-version = "py313"
 
 [lint]
 ignore = [
-    "E501",  # Line too long
+    "E501",   # Line too long
+    "UP031",  # Use format specifiers instead of percent format
 ]
 select = [
     "E",  # pycodestyle errors
     "F",  # pyflakes
     "I",  # isort
+    "UP", # pyupgrade
     "W",  # pycodestyle warnings
 ]
 
