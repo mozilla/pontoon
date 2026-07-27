@@ -30,15 +30,15 @@ from pontoon.translations.utils import parse_source_string_to_json
 
 
 class UserFactory(DjangoModelFactory):
-    username = Sequence(lambda n: "user%s" % n)
-    email = LazyAttribute(lambda o: "%s@example.com" % o.username)
+    username = Sequence(lambda n: f"user{n}")
+    email = LazyAttribute(lambda o: f"{o.username}@example.com")
 
     class Meta:
         model = get_user_model()
 
 
 class GroupFactory(DjangoModelFactory):
-    name = Sequence(lambda n: "group%s" % n)
+    name = Sequence(lambda n: f"group{n}")
 
     class Meta:
         model = Group

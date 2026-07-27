@@ -117,7 +117,7 @@ def test_cast_to_dtd(entity_with_comment, translation_a, entity_a):
     assert refEnt.key == "key_entity_a"
     assert refEnt.val == entity_a.string
     assert refEnt.pre_comment.all == "example comment"
-    assert refEnt.all == '<!ENTITY key_entity_a "%s">' % entity_a.string
+    assert refEnt.all == f'<!ENTITY key_entity_a "{entity_a.string}">'
 
     assert transEnt.key == "key_entity_a"
     assert transEnt.val == "Translation for entity_a"

@@ -6,8 +6,7 @@ target-version = "py313"
 
 [lint]
 ignore = [
-    "E501",   # Line too long
-    "UP031",  # Use format specifiers instead of percent format
+    "E501",  # Line too long
 ]
 select = [
     "E",  # pycodestyle errors

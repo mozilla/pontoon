@@ -398,7 +398,7 @@ def _get_resource_for_database_project(project):
         # There are several resources for this project, that should not
         # be allowed. Log an error and raise.
         log.error(
-            "There is more than 1 Resource for in_database project %s" % project.name
+            f"There is more than 1 Resource for in_database project {project.name}"
         )
         raise
 
@@ -476,8 +476,7 @@ def manage_project_strings(request, slug=None):
 
     if project.data_source != Project.DataSource.DATABASE:
         return HttpResponseForbidden(
-            "Project %s's strings come from a repository, managing strings is forbidden."
-            % project.name
+            f"Project {project.name}'s strings come from a repository, managing strings is forbidden."
         )
 
     entities = Entity.objects.filter(resource__project=project, obsolete=False)
@@ -487,7 +486,7 @@ def manage_project_strings(request, slug=None):
     if request.GET.get("format") == "csv":
         # Return a CSV document containing all translations for this project.
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="%s.csv"' % project.name
+        response["Content-Disposition"] = f'attachment; filename="{project.name}.csv"'
 
         return _get_project_strings_csv(project, entities, response)
 

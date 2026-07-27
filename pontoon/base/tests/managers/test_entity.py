@@ -101,7 +101,7 @@ def entity_test_search(admin, resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_translated(admin, resource_a, locale_a):
     entities = [
-        EntityFactory.create(resource=resource_a, string="testentity%s" % i)
+        EntityFactory.create(resource=resource_a, string=f"testentity{i}")
         for i in range(0, 3)
     ]
     TranslationFactory.create(
@@ -132,7 +132,7 @@ def test_mgr_entity_filter_translated(admin, resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_errors(admin, resource_a, locale_a):
     entities = [
-        EntityFactory.create(resource=resource_a, string="testentity%s" % i)
+        EntityFactory.create(resource=resource_a, string=f"testentity{i}")
         for i in range(0, 3)
     ]
 
@@ -164,7 +164,7 @@ def test_mgr_entity_filter_errors(admin, resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_warnings(admin, resource_a, locale_a):
     entities = [
-        EntityFactory.create(resource=resource_a, string="testentity%s" % i)
+        EntityFactory.create(resource=resource_a, string=f"testentity{i}")
         for i in range(0, 3)
     ]
 
@@ -202,7 +202,7 @@ def test_mgr_entity_filter_fuzzy(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -239,7 +239,7 @@ def test_mgr_entity_filter_pretranslated(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -276,7 +276,7 @@ def test_mgr_entity_filter_missing(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -310,7 +310,7 @@ def test_mgr_entity_filter_unreviewed(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -408,7 +408,7 @@ def test_mgr_entity_filter_rejected(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -466,7 +466,7 @@ def test_mgr_entity_filter_missing_without_unreviewed(admin, resource_a, locale_
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 5)
     ]
@@ -533,7 +533,7 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 2)
     ]
@@ -580,9 +580,9 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
 def test_mgr_entity_option_match_case(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
-            key=["key %s" % i],
+            key=[f"key {i}"],
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -618,7 +618,7 @@ def test_mgr_entity_option_match_whole_word(admin, resource_a, locale_a, user_a)
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -665,9 +665,9 @@ def test_mgr_entity_option_match_whole_word(admin, resource_a, locale_a, user_a)
 def test_mgr_entity_option_identifiers(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
-            key=["key %s" % i],
+            key=[f"key {i}"],
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -703,7 +703,7 @@ def test_mgr_entity_option_rejected_translations(admin, resource_a, locale_a, us
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -741,7 +741,7 @@ def test_mgr_entity_option_exclude_source_strings(admin, resource_a, locale_a, u
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -780,9 +780,9 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
 
     entities = [
         EntityFactory.create(
-            key=["key %s" % i],
+            key=[f"key {i}"],
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]

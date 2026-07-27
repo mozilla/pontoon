@@ -138,9 +138,9 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         ' segtype="sentence"'
         ' o-tmf="plain text"'
         ' srclang="en-US"'
-        ' creationdate="%(creation_date)s">'
+        f' creationdate="{creation_date.isoformat()}">'
         "\n\t</header>"
-        "\n\t<body>" % {"creation_date": creation_date.isoformat()}
+        "\n\t<body>"
     )
     for resource_path, key, source, target, project_slug in entries:
         tuid = ":".join((project_slug, resource_path, slugify("".join(key))))
@@ -148,20 +148,14 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         target = sanitize_xml_input_string(target)
 
         yield (
-            '\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
+            f'\n\t\t<tu tuid={quoteattr(tuid)} srclang="en-US">'
             '\n\t\t\t<tuv xml:lang="en-US">'
-            "\n\t\t\t\t<seg>%(source)s</seg>"
+            f"\n\t\t\t\t<seg>{escape(source)}</seg>"
             "\n\t\t\t</tuv>"
-            "\n\t\t\t<tuv xml:lang=%(locale_code)s>"
-            "\n\t\t\t\t<seg>%(target)s</seg>"
+            f"\n\t\t\t<tuv xml:lang={quoteattr(locale_code)}>"
+            f"\n\t\t\t\t<seg>{escape(target)}</seg>"
             "\n\t\t\t</tuv>"
             "\n\t\t</tu>"
-            % {
-                "tuid": quoteattr(tuid),
-                "source": escape(source),
-                "locale_code": quoteattr(locale_code),
-                "target": escape(target),
-            }
         )
 
     yield ("\n\t</body>\n</tmx>\n")

@@ -461,7 +461,7 @@ def test_view_translation_memory_best_quality_entry(
     translation string.
     """
     entities = [
-        EntityFactory(resource=resource_a, string="Entity %s" % i, order=i)
+        EntityFactory(resource=resource_a, string=f"Entity {i}", order=i)
         for i in range(3)
     ]
     tm = TranslationMemoryFactory.create(
@@ -563,14 +563,14 @@ def test_view_tm_minimal_quality(client, locale_a, resource_a):
     View shouldn't return any entries if 70% of quality at minimum.
     """
     entities = [
-        EntityFactory(resource=resource_a, string="Entity %s" % i, order=i)
+        EntityFactory(resource=resource_a, string=f"Entity {i}", order=i)
         for i in range(5)
     ]
     for i, entity in enumerate(entities):
         TranslationMemoryFactory.create(
             entity=entity,
-            source="source %s" % entity.string,
-            target="target %s" % entity.string,
+            source=f"source {entity.string}",
+            target=f"target {entity.string}",
             locale=locale_a,
         )
     response = client.get(
