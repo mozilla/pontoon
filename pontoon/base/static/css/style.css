@@ -303,6 +303,10 @@ time {
   z-index: 19; /* Must be lower than for the (popup) .menu */
 }
 
+.select.opened .menu .search-wrapper {
+  background: var(--black-3);
+}
+
 .project.select,
 .locale.select,
 .part.select,
@@ -1302,7 +1306,7 @@ body > form,
 }
 
 .controls > .search-wrapper input {
-  background: var(--dark-grey-1);
+  background: var(--black-3);
   border: 1px solid var(--main-border-1);
   color: var(--input-color-2);
   font-size: 13px;

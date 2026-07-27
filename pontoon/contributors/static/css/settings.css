@@ -29,10 +29,6 @@ form a:visited {
   margin-top: 10px;
 }
 
-#preferred-locale .search-wrapper {
-  background: var(--black-3);
-}
-
 #locale-settings .label,
 #account-settings .label,
 .double-check-box > .label,
