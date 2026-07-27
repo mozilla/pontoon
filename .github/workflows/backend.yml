@@ -6,18 +6,22 @@ on:
       - main
     paths:
       - requirements/**
-      - docker/config/server.env.template
+      - docker/**
       - pontoon/**
+      - requirements/**
       - .github/workflows/backend.yml
   pull_request:
     branches:
       - main
     paths:
       - requirements/**
-      - docker/config/server.env.template
+      - docker/**
       - pontoon/**
+      - requirements/**
       - .github/workflows/backend.yml
   workflow_dispatch:
+
+permissions: {}
 
 jobs:
   test:

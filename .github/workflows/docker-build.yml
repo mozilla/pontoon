@@ -11,6 +11,8 @@ on:
       - dev
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   build:
     name: Build Docker Image

@@ -17,6 +17,8 @@ on:
       - requirements/lint.txt
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   ruff:
     runs-on: ubuntu-latest
