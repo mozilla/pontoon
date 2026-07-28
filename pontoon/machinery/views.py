@@ -156,13 +156,13 @@ def machinery_composed(request):
         return JsonResponse({})
 
     # Map the internal service identifiers to the SourceType values the frontend
-    # uses for the badges. One entry per translated leaf.
+    # uses for the badges.
     badges = {
         "tm": "translation-memory",
         "gt": "google-translate",
         "ms": "microsoft-translator",
     }
-    sources_used = [badges.get(s, s) for s in pt.services]
+    sources_used = sorted({badges.get(s, s) for s in pt.services})
 
     response = {
         "value": value_json,

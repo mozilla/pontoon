@@ -63,9 +63,9 @@ function hasMultipleFields(
       // message declares more than one variant.
       const plurals = findPluralSelectors(msg);
       if (
-        msg.sel.some((_, i) =>
-          plurals.has(i) ? pluralCategories > 1 : msg.alt.length > 1,
-        )
+        plurals.size === msg.sel.length
+          ? pluralCategories > 1
+          : msg.alt.length > 1
       ) {
         return true;
       }
