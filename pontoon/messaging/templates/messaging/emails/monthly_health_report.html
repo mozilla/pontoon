@@ -48,7 +48,7 @@
   <p>
     The monthly locale health report for {{ month }} {{ year }} is now
     available. Below are the locales whose Community Health Score (CHS) changed
-    by at least {{ threshold }} points compared to the previous month.
+    by at least {{ threshold }}% compared to the previous month.
   </p>
 
   <table class="report">
@@ -72,11 +72,7 @@
           <td>{{ locale_row.previous_chs }}</td>
           <td>{{ locale_row.current_chs }}</td>
           <td class="{{ 'positive' if locale_row.delta > 0 else 'negative' }}">
-            {% if locale_row.percentage is not none %}
-              {{ locale_row.percentage }}%
-            {% else %}
-              n/a
-            {% endif %}
+            {{ locale_row.percentage }}%
           </td>
         </tr>
       {% endfor %}
@@ -95,5 +91,7 @@
 {% endblock %}
 
 {% block footer %}
-  You are receiving this report because you are a Pontoon administrator.
+  If you no longer want to receive these health reports, you can turn off the
+  “Monthly health report” feature in your
+  <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 {% endblock %}
