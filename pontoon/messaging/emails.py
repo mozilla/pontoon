@@ -652,6 +652,39 @@ def send_verification_email(user, link):
     log.info(f"Verification email sent to {user.contact_email}.")
 
 
+def send_monthly_health_report_emails(report):
+    """
+    Sends community health report emails to filtered users.
+    """
+    log.info("Start sending report emails.")
+
+    users = User.objects.filter(is_superuser=True, profile__monthly_health_report=True)
+
+    subject = f"Monthly locale health report for {report['month']} {report['year']}"
+    template = get_template("messaging/emails/monthly_health_report.html")
+
+    body_html = template.render(
+        {
+            "subject": subject,
+            "settings": settings,
+            **report,
+        }
+    )
+    body_text = html_to_plain_text_with_links(body_html)
+
+    for user in users:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.contact_email],
+        )
+        msg.attach_alternative(body_html, "text/html")
+        msg.send()
+
+    log.info(f"Sent {len(users)} report emails.")
+
+
 @shared_task(bind=True)
 def send_manual_emails(self, users, subject, body, is_transactional):
     """

@@ -110,6 +110,18 @@
             title='Receive monthly activity summary email',
             help="Get an email summary of your personal activity and the activity within your teams in the last month.")
           }}
+
+          {% if user.is_superuser %}
+            {{
+              Checkbox.checkbox(
+              'Monthly health report',
+              class='field monthly-health-report',
+              attribute='monthly_health_report',
+              is_enabled=user.profile.monthly_health_report,
+              title='Receive monthly health report email',
+              help="Get an email report of community health score metrics in the last month.")
+            }}
+          {% endif %}
         </div>
       </section>
 
