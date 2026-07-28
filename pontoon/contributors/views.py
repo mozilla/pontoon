@@ -294,6 +294,7 @@ def toggle_user_profile_attribute(request):
         # Email settings
         "email_communications_enabled",
         "monthly_activity_summary",
+        "monthly_health_report",
         # Editor settings
         "quality_checks",
         "force_suggestions",

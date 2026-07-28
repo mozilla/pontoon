@@ -4,6 +4,7 @@ from django.utils.timezone import now
 
 from pontoon.base.models.user import User
 from pontoon.insights.utils import get_monthly_health_report
+from pontoon.messaging.emails import send_monthly_health_report_emails
 from pontoon.messaging.notifications import send_notification
 from pontoon.settings.base import MONTHLY_CHS_SNAPSHOTS_DAY
 
@@ -34,16 +35,18 @@ class Command(BaseCommand):
             return
 
         report = get_monthly_health_report()
-
         if not report["locale_rows"]:
             self.stdout.write("No locales crossed the health report threshold.")
             return
 
-        description = render_to_string(
-            "messaging/notifications/health_report.html", report
-        )
+        send_monthly_health_report_emails(report)
 
         admins = User.objects.filter(is_superuser=True)
+
+        description = render_to_string(
+            "messaging/notifications/monthly_health_report.html", report
+        )
+
         for admin in admins:
             send_notification(
                 admin,

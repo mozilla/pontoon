@@ -9,7 +9,7 @@ from pontoon.base.templatetags.helpers import full_url
 from pontoon.messaging.management.commands.send_deadline_notifications import (
     Command as DeadlineCommand,
 )
-from pontoon.messaging.management.commands.send_monthly_health_report_notifications import (
+from pontoon.messaging.management.commands.send_monthly_health_report_notifications_and_emails import (
     Command as HealthReportCommand,
 )
 from pontoon.messaging.management.commands.send_review_notifications import (
@@ -202,7 +202,7 @@ def test_send_deadline_notifications_excludes_system_users(
 
 
 @patch(
-    "pontoon.messaging.management.commands.send_monthly_health_report_notifications.get_monthly_health_report",
+    "pontoon.messaging.management.commands.send_monthly_health_report_notifications_and_emails.get_monthly_health_report",
     return_value={"locale_rows": []},
 )
 @patch("pontoon.messaging.notifications.notify.send")
@@ -224,7 +224,7 @@ def test_send_monthly_health_report_notifications_notifies_admins(
     another_admin = UserFactory.create(username="admin_b", is_superuser=True)
     report = health_report(locale_a)
     with patch(
-        "pontoon.messaging.management.commands.send_monthly_health_report_notifications.get_monthly_health_report",
+        "pontoon.messaging.management.commands.send_monthly_health_report_notifications_and_emails.get_monthly_health_report",
         return_value=report,
     ):
         HealthReportCommand().handle(force=True)
