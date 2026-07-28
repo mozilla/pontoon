@@ -40,7 +40,7 @@ def test_get_monthly_health_report_reports_locales_above_threshold():
         locale=locale_a, created_at=previous_anchor, chs=50
     )
     LocaleHealthSnapshotFactory.create(
-        locale=locale_a, created_at=current_anchor, chs=51
+        locale=locale_a, created_at=current_anchor, chs=50.5
     )
     LocaleHealthSnapshotFactory.create(
         locale=locale_b, created_at=previous_anchor, chs=50
@@ -110,6 +110,28 @@ def test_get_monthly_health_report_excludes_locales_without_previous_snapshot():
     )
 
     assert get_monthly_health_report()["locale_rows"] == []
+
+
+@pytest.mark.django_db
+def test_get_monthly_health_report_reports_locales_without_previous_chs_as_full_gain():
+    current_anchor, previous_anchor = anchors()
+
+    locale_a = LocaleFactory.create(code="kg", name="Klingon")
+    project = ProjectFactory.create(slug="project", name="Project", repositories=[])
+    resource = ResourceFactory.create(project=project, path="resource.po")
+    ProjectLocaleFactory.create(project=project, locale=locale_a)
+    TranslatedResourceFactory.create(resource=resource, locale=locale_a)
+
+    LocaleHealthSnapshotFactory.create(
+        locale=locale_a, created_at=previous_anchor, chs=0
+    )
+    LocaleHealthSnapshotFactory.create(
+        locale=locale_a, created_at=current_anchor, chs=60
+    )
+
+    (locale_row,) = get_monthly_health_report()["locale_rows"]
+    assert locale_row["delta"] == 60
+    assert locale_row["percentage"] == 100
 
 
 @pytest.mark.django_db

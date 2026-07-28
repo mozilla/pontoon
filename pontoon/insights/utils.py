@@ -136,9 +136,9 @@ def get_monthly_health_report():
     Build the monthly Community Health report.
 
     Returns the locales that run at least one key project (per their current
-    snapshot) and whose CHS moved by at least MONTHLY_HEALTH_REPORT_CHS_THRESHOLD
-    between the two most recent monthly snapshots, ranked by the size of that
-    change.
+    snapshot) and whose CHS moved by at least
+    MONTHLY_HEALTH_REPORT_CHS_THRESHOLD percent between the two most recent
+    monthly snapshots, ranked by the size of that change.
     """
     locales = Locale.objects.visible()
 
@@ -153,7 +153,11 @@ def get_monthly_health_report():
         if previous is None or current.key_projects_enabled < 1:
             continue
         delta = current.chs - previous.chs
-        if abs(delta) < MONTHLY_HEALTH_REPORT_CHS_THRESHOLD:
+        if previous.chs:
+            percentage = round(delta / previous.chs * 100, 2)
+        else:
+            percentage = 100 if delta else 0
+        if abs(percentage) < MONTHLY_HEALTH_REPORT_CHS_THRESHOLD:
             continue
         locale_rows.append(
             {
@@ -161,13 +165,11 @@ def get_monthly_health_report():
                 "previous_chs": previous.chs,
                 "current_chs": current.chs,
                 "delta": delta,
-                "percentage": round(delta / previous.chs * 100, 2)
-                if previous.chs
-                else None,
+                "percentage": percentage,
             }
         )
 
-    locale_rows.sort(key=lambda locale_row: locale_row["delta"], reverse=True)
+    locale_rows.sort(key=lambda locale_row: locale_row["percentage"], reverse=True)
 
     reported_month = current_anchor.replace(day=1) - relativedelta(months=1)
 
