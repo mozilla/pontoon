@@ -19,11 +19,10 @@ def parse_source_string_to_json(
     res_format: str,
     source: str,
 ) -> tuple[list[str], JsonMessage, dict[str, JsonMessage] | None]:
-    """
-    Parse an entity's `source` string into its `(key, value, properties)` JSON
-    representation — matching what sync stores on `Entity`, and the inverse of
-    `serialize_for_db`. Used to build entities that aren't backed by a synced
-    row (e.g. the pretranslate API and test factories).
+    """Parse an entity's `source` string into its `(key, value, properties)` JSON.
+
+    Used to build entities that aren't backed by a synced row, i.e. in the
+    pretranslate API and in test factories.
     """
     match res_format:
         case Resource.Format.FLUENT:

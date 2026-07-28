@@ -227,9 +227,6 @@ function ComposedSuggestion({
     translation.properties,
   );
 
-  // Each side is rendered independently: a single-pattern source can compose to
-  // a multi-pattern target, e.g. an en-US `*[other]`-only plural in a locale
-  // with several CLDR categories.
   const originalFields = richFields(machineryEntry);
   const suggestionFields = richFields(suggestionEntry);
 

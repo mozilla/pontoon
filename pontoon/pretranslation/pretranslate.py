@@ -143,12 +143,8 @@ class Pretranslation:
         return the translated `(value, properties)`. Serialization to a source
         string is left to the caller (see `serialize`).
 
-        For Fluent, each value, attribute, and selector variant is translated
-        independently and recomposed. Accesskey attributes are derived from the
-        translated label after all other leaves are filled. For MF2-handled
-        formats (Android, Gettext, Webext, Xcode, Xliff), variants are walked
-        with plural-category handling. All other formats are treated as a
-        single leaf.
+        Accesskey properties are derived from the translated label, after all
+        other leaves are filled.
         """
         entity = self.entity
         value = message_from_json(entity.value)
@@ -163,8 +159,6 @@ class Pretranslation:
 
         accesskeys: list[tuple[str, Message]] = []
         for key, prop in properties.items():
-            # Match the accesskey suffix case-insensitively: real-world keys use
-            # both `accesskey` and camelCase `accessKey`.
             if key.lower().endswith("accesskey"):
                 accesskeys.append((key, prop))
             else:
@@ -251,8 +245,6 @@ class Pretranslation:
             locale=self.locale, source=tm_source
         )
         if self.exclude_entity:
-            # Mirror get_translation_memory_data(): never suggest the entity's
-            # own translation back to itself.
             tm_entries = tm_entries.exclude(entity=self.entity)
         tm_q100 = list(tm_entries.values_list("target", flat=True))
         if tm_q100:
@@ -283,7 +275,6 @@ class Pretranslation:
             return pattern
 
         if self.mt_engine is not None:
-            # Try to fetch from the configured MT service (Google by default)
             mt_translation = self.mt_engine.service(
                 text=gt_source,
                 locale=self.locale,
@@ -316,7 +307,7 @@ def set_accesskey(entry: Entry[Message], ak_name: str, ak_msg: Message):
     """
 
     prefix = ak_name[: -len("accesskey")]
-    if not prefix:
+    if len(ak_name) == len("accesskey"):
         label = next(
             (
                 value

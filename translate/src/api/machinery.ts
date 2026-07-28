@@ -42,7 +42,7 @@ export type MachineryTranslation = {
  */
 export type ComposedMachineryTranslation = {
   sources: SourceType[];
-  quality?: number;
+  quality?: 100;
   value: Message;
   properties?: Record<string, Message>;
 };
@@ -150,15 +150,15 @@ export async function fetchTranslationMemory(
 }
 
 /**
- * Return a composed multi-value translation for a Fluent / MF2 entity.
+ * Return a composed multi-value translation for an entity.
  *
- * Each translatable leaf (Fluent value/attribute, MF2 variant) is looked up
- * in Translation Memory, falling back to the requested MT service when no
- * exact TM match exists. Use `service: 'translation-memory'` to disable the
- * MT fallback and only emit a result when every leaf has a TM hit.
+ * Each translatable leaf is looked up in Translation Memory, falling back to the
+ * requested MT service when no exact TM match exists. Use
+ * `service: 'translation-memory'` to disable the MT fallback and only emit a
+ * result when every leaf has a TM hit.
  *
- * Returns an empty array when the entity isn't a composable format or when
- * no composed translation can be produced (e.g. MT unavailable for locale).
+ * Returns an empty array when no composed translation can be produced, e.g.
+ * when MT is unavailable for the locale.
  */
 export async function fetchComposedMachinery(
   pk: number,
@@ -176,10 +176,10 @@ export async function fetchComposedMachinery(
     value?: Message;
     properties?: Record<string, Message>;
     sources?: string[];
-    quality?: number;
+    quality?: 100;
   };
 
-  if (!result || !result.value) {
+  if (!result?.value) {
     return [];
   }
 

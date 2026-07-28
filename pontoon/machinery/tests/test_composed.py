@@ -120,7 +120,6 @@ def test_composed_multiple_attributes_no_value(
         },
     )
     assert response.status_code == 200
-    # Attribute-only message: empty value, both attributes filled from TM.
     assert json.loads(response.content) == {
         "value": [],
         "properties": {"label": ["TM_label"], "tooltip": ["TM_tooltip"]},
@@ -193,7 +192,6 @@ def test_composed_tm_only_full_hit(client, fluent_resource, entity_a, locale_a):
         },
     )
     assert response.status_code == 200
-    # Every leaf is a 100% TM match, so the composed result is a full TM match.
     assert json.loads(response.content) == {
         "value": ["TM_value"],
         "properties": {"title": ["TM_tooltip"]},
@@ -241,8 +239,6 @@ def test_composed_expands_source_plural_for_target_locale(
     )
     assert response.status_code == 200
     body = json.loads(response.content)
-    # The single `*[other]` source expands to all four of the target locale's
-    # plural categories, each filled from the same TM match.
     assert body == {
         "value": {
             "decl": {"count": {"$": "count", "fn": "number"}},
@@ -273,7 +269,6 @@ def test_composed_tm_only_partial_returns_empty(
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
 
-    # Only one of the two leaves has a TM match.
     TranslationMemoryFactory.create(
         entity=entity_a, source="Click Me", target="TM_value", locale=locale_a
     )
@@ -307,7 +302,6 @@ def test_composed_tm_excludes_current_entity(client, fluent_resource, locale_a):
     )
     fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
 
-    # Both leaves only match TM entries that belong to this same entity.
     TranslationMemoryFactory.create(
         entity=fluent_entity, source="Click Me", target="TM_value", locale=locale_a
     )

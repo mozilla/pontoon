@@ -124,9 +124,6 @@ class EntityFactory(DjangoModelFactory):
 
     @factory.post_generation
     def parsed_value(entity, create, extracted, **kwargs):
-        # Populate key/value/properties from `string` (as sync does) so code
-        # that reads the parsed representation works in tests. Skipped when
-        # `value` is set explicitly.
         if entity.value:
             return
         key, value, properties = parse_source_string_to_json(

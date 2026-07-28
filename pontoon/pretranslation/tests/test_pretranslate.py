@@ -357,16 +357,9 @@ def test_get_pretranslations_fluent_accesskeys_camel_case(
 
     gt_mock.return_value = "gt_translation"
 
-    expected = dedent(
-        """
-        title = gt_translation
-            .label = gt_translation
-            .accessKey = g
-    """
+    pretranslated_string = (
+        "title = gt_translation\n    .label = gt_translation\n    .accessKey = g\n"
     )
-
-    # Re-serialize to match whitespace
-    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
     response = get_pretranslation(fluent_entity, google_translate_locale)
     assert response == (pretranslated_string, "gt")
@@ -389,16 +382,11 @@ def test_get_pretranslations_fluent_accesskeys_prefixed_camel_case(
 
     gt_mock.return_value = "gt_translation"
 
-    expected = dedent(
-        """
-        title = gt_translation
-            .buttonLabel = gt_translation
-            .buttonAccessKey = g
-    """
+    pretranslated_string = (
+        "title = gt_translation\n"
+        "    .buttonLabel = gt_translation\n"
+        "    .buttonAccessKey = g\n"
     )
-
-    # Re-serialize to match whitespace
-    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
     response = get_pretranslation(fluent_entity, google_translate_locale)
     assert response == (pretranslated_string, "gt")

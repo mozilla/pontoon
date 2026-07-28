@@ -104,7 +104,6 @@ def machinery_composed(request):
 
     match service:
         case "translation-memory":
-            # TM-only: no MT engine, so MT is never called.
             mt_engine = None
         case "google-translate":
             mt_engine = MTEngine.GOOGLE_TRANSLATE
@@ -135,34 +134,27 @@ def machinery_composed(request):
         )
         value, properties = pt.walk_entity()
     except ValueError:
-        # Raised when a leaf has no TM match and MT is unavailable. Compose
-        # endpoint treats this as "nothing to show" rather than an error.
+        # A leaf has no TM match and MT is unavailable, so there is nothing to show.
         return JsonResponse({})
     except Exception as e:
         return _machinery_error_response(f"Composed machinery ({service})", e)
 
-    # Return the composed (value, properties) as data-model JSON, matching how
-    # entities themselves are delivered (see `map_entities`). The frontend builds
-    # its editor fields straight from this, with no serialize/re-parse round trip.
     value_json = message_to_json(value)
     properties_json = {key: message_to_json(prop) for key, prop in properties.items()}
 
-    # Skip when nothing was actually translated, i.e. the composed data model is
-    # identical to the source entity's.
     unchanged = value_json == entity.value and properties_json == (
         entity.properties or {}
     )
     if not pt.services or unchanged:
         return JsonResponse({})
 
-    # Map the internal service identifiers to the SourceType values the frontend
-    # uses for the badges.
-    badges = {
+    service_names = {
         "tm": "translation-memory",
         "gt": "google-translate",
         "ms": "microsoft-translator",
     }
-    sources_used = sorted({badges.get(s, s) for s in pt.services})
+    # Sorted only to keep the response deterministic; the order means nothing.
+    sources_used = sorted({service_names.get(s, s) for s in pt.services})
 
     response = {
         "value": value_json,
@@ -170,9 +162,7 @@ def machinery_composed(request):
         "sources": sources_used,
     }
 
-    # `pattern()` only accepts exact TM matches and MT results carry no score at
-    # all, so per-leaf quality is either 100 or undefined. The only aggregate
-    # that means anything is therefore "every leaf was a 100% TM match".
+    # Only exact TM matches have a quality score, so 100 is the only one to report.
     if set(pt.services) == {"tm"}:
         response["quality"] = 100
 

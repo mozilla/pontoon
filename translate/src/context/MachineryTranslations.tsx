@@ -22,7 +22,7 @@ import { SearchData } from './SearchData';
 export type MachineryTranslations = {
   fetching: boolean;
   source: string;
-  // Composed multi-value suggestions, rendered above the per-leaf matches.
+  /** Composed multi-value suggestions, rendered above the per-leaf matches. */
   composed: ComposedMachineryTranslation[];
   translations: MachineryTranslation[];
 };
@@ -37,16 +37,18 @@ const initTranslations: MachineryTranslations = {
 export const MachineryTranslations =
   createContext<MachineryTranslations>(initTranslations);
 
-// Sort by descending quality; entries without a quality score sort last.
+/** Sort by descending quality; entries without a quality score sort last. */
 const sortByQuality = (a: { quality?: number }, b: { quality?: number }) => {
   const { quality: qa } = a;
   const { quality: qb } = b;
   return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
-// A composed translation only adds something when the entity has more than one
-// translatable pattern in the target; otherwise it just duplicates the per-leaf
-// TM or MT match, so we skip the request.
+/**
+ * A composed translation only adds something when the entity has more than one
+ * translatable pattern in the target; otherwise it just duplicates the per-leaf
+ * TM or MT match, so we skip the request.
+ */
 function hasMultipleFields(
   value: Message,
   properties: Record<string, Message> | undefined,
@@ -58,9 +60,8 @@ function hasMultipleFields(
       continue;
     }
     if (isSelectMessage(msg)) {
-      // Plural selectors expand to the locale's CLDR categories the way
-      // walk_entity() does; any other selector is multi-pattern as soon as the
-      // message declares more than one variant.
+      // Plural selectors expand to the locale's CLDR categories; any other
+      // selector is multi-pattern as soon as it declares more than one variant.
       const plurals = findPluralSelectors(msg);
       if (
         plurals.size === msg.sel.length
@@ -71,8 +72,8 @@ function hasMultipleFields(
       }
       leaves += 1;
     } else {
-      // An empty pattern — e.g. the value of an attribute-only Fluent message
-      // — has nothing to translate and is not a leaf.
+      // An empty pattern has nothing to translate, so it is not a leaf. The
+      // value of an attribute-only Fluent message is one.
       const pattern = Array.isArray(msg) ? msg : msg.msg;
       if (pattern && pattern.length > 0) {
         leaves += 1;

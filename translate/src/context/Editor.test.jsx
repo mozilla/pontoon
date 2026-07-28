@@ -622,8 +622,6 @@ describe('<EditorProvider>', () => {
       ),
     );
 
-    // The composed data model is spread across the value and attribute fields,
-    // not dumped into the first field.
     expect(editor).toMatchObject({
       sourceView: false,
       fields: [
@@ -638,8 +636,6 @@ describe('<EditorProvider>', () => {
       ],
       machinery: { manual: true, sources: ['translation-memory'] },
     });
-    // The editor result is the rebuilt entry, with the composed value and
-    // attribute distributed into their respective patterns.
     expect(result).toEqual({
       format: 'fluent',
       id: 'key',
