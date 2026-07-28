@@ -429,7 +429,7 @@ describe('<TranslationForm> with multiple fields', () => {
     expect(docs()).toEqual(['EDITED', 'COMPOSED_LABEL']);
 
     // Same suggestion, same values: the edited field must still be reset, even
-    // though its `defaultValue` prop doesn't change.
+    // though `defaultValue` comes back around as the edited value.
     applyComposed();
     expect(docs()).toEqual(['COMPOSED', 'COMPOSED_LABEL']);
   });

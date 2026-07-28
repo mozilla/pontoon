@@ -187,10 +187,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       trim: !hasOuterWhitespace(sourceEntry),
     };
 
-    // The on-screen editors stay bound (via their React key) to `prev.fields`'
-    // live handles, and re-sync only when their `defaultValue` changes. Push the
-    // values in directly, as `clearEditor` does, so re-applying the values
-    // already on screen still resets a field the user has edited since.
+    // HACK: Without this code, re-applying a composed Machinery suggestion
+    // (or restoring history) after editing a field takes two clicks:
+    // the first does nothing.
+    // Changing the `fields` changes the `defaultValue` of each field,
+    // but then for some reason the `fields` changes a second time,
+    // and we end up re-rendering the `TranslationForm` with the old field values.
     const resetFields = (prev: EditorData, next: EditorData): EditorData => {
       for (const field of next.fields) {
         const live = prev.fields.find((f) => f.id === field.id);
