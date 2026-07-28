@@ -8,7 +8,6 @@ on:
       - requirements/**
       - docker/**
       - pontoon/**
-      - requirements/**
       - .github/workflows/backend.yml
   pull_request:
     branches:
@@ -17,7 +16,6 @@ on:
       - requirements/**
       - docker/**
       - pontoon/**
-      - requirements/**
       - .github/workflows/backend.yml
   workflow_dispatch:
 
