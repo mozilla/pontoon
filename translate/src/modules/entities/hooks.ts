@@ -19,10 +19,7 @@ export function useEntityNotFound(): EntityNotFound {
   const { entity } = useContext(Location);
   const { requestedEntityLocation } = useEntities();
 
-  return {
-    show: requestedEntityLocation?.pk === entity,
-    entityLocation: requestedEntityLocation,
-  };
+  return requestedEntityLocation?.pk === entity ? requestedEntityLocation : null;
 }
 
 /** Next entity, or `null` if no next entity is available */
