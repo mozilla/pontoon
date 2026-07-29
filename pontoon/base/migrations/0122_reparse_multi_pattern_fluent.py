@@ -12,17 +12,13 @@ def reparse_multi_pattern_fluent(apps, schema_editor):
     Entity = apps.get_model("base", "Entity")
     Translation = apps.get_model("base", "Translation")
 
-    # The `?` JSON operator is not directly supported by Django
-    value_entities = Entity.objects.raw("""
-        SELECT * FROM base_entity e
-        JOIN base_resource r ON r.id = e.resource_id
-        WHERE r.format = 'fluent' AND e.value ? 'decl'
-    """)
-
+    value_entities = Entity.objects.filter(
+        resource__format="fluent", value__has_key="decl"
+    )
     for e in value_entities:
         msg = fluent_parse_entry(e.string)
         e.value = message_to_json(msg.value)
-    Entity.objects.bulk_update(value_entities, ["value"])
+    Entity.objects.bulk_update(value_entities, ["value"], batch_size=10_000)
 
     # The `@?` JSON operator is not directly supported by Django
     prop_entities = Entity.objects.raw("""
@@ -33,14 +29,11 @@ def reparse_multi_pattern_fluent(apps, schema_editor):
     for e in prop_entities:
         msg = fluent_parse_entry(e.string)
         e.properties = {k: message_to_json(v) for k, v in msg.properties.items()}
-    Entity.objects.bulk_update(prop_entities, ["properties"])
+    Entity.objects.bulk_update(prop_entities, ["properties"], batch_size=10_000)
 
-    value_translations = Translation.objects.raw("""
-        SELECT * FROM base_translation t
-        JOIN base_entity e ON e.id = t.entity_id
-        JOIN base_resource r ON r.id = e.resource_id
-        WHERE r.format = 'fluent' AND t.value ? 'decl'
-    """)
+    value_translations = Translation.objects.filter(
+        entity__resource__format="fluent", value__has_key="decl"
+    )
     for t in value_translations:
         msg = fluent_parse_entry(t.string)
         t.value = message_to_json(msg.value)
