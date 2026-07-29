@@ -1,3 +1,4 @@
+import { EditorView } from '@codemirror/view';
 import ftl from '@fluent/dedent';
 import { fluentParseEntry } from '@mozilla/l10n';
 import { fireEvent } from '@testing-library/react';
@@ -72,8 +73,8 @@ function mountForm(source, target = null) {
 
   // TODO:Replace the querySelector with testing-library-ish approaches
   const form = wrapper.container.querySelector('.translationform');
-  const views = Array.from(form.querySelectorAll('.cm-content')).map(
-    (el) => el.cmView.view,
+  const views = Array.from(form.querySelectorAll('.cm-content')).map((el) =>
+    EditorView.findFromDOM(el),
   );
 
   return { actions, getResult: () => result, views, wrapper };
@@ -374,5 +375,62 @@ describe('<TranslationForm> with multiple fields', () => {
       value: ['ValueAdd'],
       attributes: new Map([['label', ['Something']]]),
     });
+  });
+
+  it('re-applies a history entry after a field was edited', () => {
+    const { actions, views } = mountForm(ftl`
+      title = Value
+        .label = Something
+      `);
+
+    const restore = () =>
+      act(() =>
+        actions.setEditorFromHistory('title = RESTORED\n    .label = LABEL\n'),
+      );
+    const docs = () => views.map((view) => view.state.doc.toString());
+
+    restore();
+    expect(docs()).toEqual(['RESTORED', 'LABEL']);
+
+    act(() =>
+      views[0].dispatch({
+        changes: { from: 0, to: views[0].state.doc.length, insert: 'EDITED' },
+      }),
+    );
+
+    restore();
+    expect(docs()).toEqual(['RESTORED', 'LABEL']);
+  });
+
+  it('re-applies a composed suggestion after a field was edited', () => {
+    const { actions, views } = mountForm(ftl`
+      title = Value
+        .label = Something
+      `);
+
+    const applyComposed = () =>
+      act(() =>
+        actions.setEditorFromComposed(
+          ['COMPOSED'],
+          { label: ['COMPOSED_LABEL'] },
+          ['translation-memory'],
+          true,
+        ),
+      );
+    const docs = () => views.map((view) => view.state.doc.toString());
+
+    applyComposed();
+    expect(docs()).toEqual(['COMPOSED', 'COMPOSED_LABEL']);
+
+    act(() =>
+      views[0].dispatch({
+        changes: { from: 0, to: views[0].state.doc.length, insert: 'EDITED' },
+      }),
+    );
+    expect(docs()).toEqual(['EDITED', 'COMPOSED_LABEL']);
+
+    // Same suggestion, same values: the edited field must still be reset.
+    applyComposed();
+    expect(docs()).toEqual(['COMPOSED', 'COMPOSED_LABEL']);
   });
 });

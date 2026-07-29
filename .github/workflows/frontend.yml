@@ -17,6 +17,8 @@ on:
       - .github/workflows/frontend.yml
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   typescript:
     name: TypeScript
@@ -44,8 +46,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with: { node-version: '24' }
-      - name: Install globals
-        run: npm install --global license-checker-rseidelsohn@4.4.2
+      - run: | # zizmor: ignore[adhoc-packages]
+          npm install --global license-checker-rseidelsohn@4.4.2
       - name: Install dependencies
         run: npm ci
       - name: Check licenses

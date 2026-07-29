@@ -54,10 +54,14 @@ def are_compatible_files(file_a, file_b):
     return False
 
 
-def _as_string(format: Format | None, entry: Entry[Message]) -> str:
+def as_string(
+    format: Format | None, entry: Entry[Message], *, fluent_escape_syntax: bool = True
+) -> str:
     match format:
         case Format.fluent:
-            fluent_entry = fluent_astify_entry(entry, comment_str=lambda _: "")
+            fluent_entry = fluent_astify_entry(
+                entry, comment_str=lambda _: "", escape_syntax=fluent_escape_syntax
+            )
             return FluentSerializer().serialize_entry(fluent_entry)
         case Format.android | Format.gettext | Format.webext | Format.xliff:
             return serialize_message(Format.mf2, entry.value)
@@ -80,7 +84,7 @@ def as_repo_translations(res: MozL10nResource[Message]) -> Iterator[RepoTranslat
                 )
                 yield RepoTranslation(
                     key=section.id + entry.id,
-                    string=_as_string(res.format, entry),
+                    string=as_string(res.format, entry),
                     value=entry.value,
                     properties=entry.properties,
                     fuzzy=fuzzy,
@@ -127,7 +131,7 @@ def as_entity(
             if entry.properties
             else None
         ),
-        string=_as_string(format, entry),
+        string=as_string(format, entry),
         comment=entry.comment,
         meta=[[m.key, m.value] for m in entry.meta],
         **kwargs,

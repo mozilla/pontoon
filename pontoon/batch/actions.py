@@ -12,7 +12,7 @@ from pontoon.base.models import (
 from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
-from pontoon.translations.utils import parse_db_string_to_json
+from pontoon.translations.utils import parse_source_string_to_json
 
 
 def batch_action_template(form, user, translations, locale):
@@ -315,7 +315,7 @@ def copy_translation_from_locale(
     if not other_locale:
         # Copy from other locale (entity.string directly)
         for entity in entities:
-            value, properties = parse_db_string_to_json(
+            _, value, properties = parse_source_string_to_json(
                 entity.resource.format, entity.string
             )
             translations_to_create.append(
@@ -334,7 +334,7 @@ def copy_translation_from_locale(
             )
     else:
         for t in other_locale_translations:
-            value, properties = parse_db_string_to_json(
+            _, value, properties = parse_source_string_to_json(
                 t.entity.resource.format, t.string
             )
             translations_to_create.append(

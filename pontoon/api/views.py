@@ -38,6 +38,7 @@ from pontoon.terminology.models import (
     Term,
     TermTranslation,
 )
+from pontoon.translations.utils import parse_source_string_to_json
 
 from .serializers import (
     TRANSLATION_STATS_FIELDS,
@@ -579,11 +580,28 @@ class PretranslationView(APIView):
 
         locale = generics.get_object_or_404(Locale, code=locale)
 
+        fmt = resource_format or None
         project = SimpleNamespace(slug="temp-project")
-        resource = SimpleNamespace(project=project, format=resource_format or None)
-        entity = SimpleNamespace(resource=resource, string=text)
+        resource = SimpleNamespace(project=project, format=fmt)
 
+        # TODO: refactor `get_pretranslation` (and `Pretranslation`) to accept the
+        # parsed `(value, properties)` directly, so callers not backed by a synced
+        # row don't need to fake `Project`, `Resource`, and `Entity` objects just
+        # to satisfy the attribute access in the pipeline. `key` is only read by
+        # `Pretranslation.serialize()`, to id an Entry that `set_accesskey()`
+        # ignores — once that serialization goes away, `parse_source_string_to_json`
+        # can stop returning an identifier nothing uses.
         try:
+            # Parsing happens here (not before) so invalid syntax for the chosen
+            # format is reported as a 400 rather than escaping as a 500.
+            key, value, properties = parse_source_string_to_json(fmt, text)
+            entity = SimpleNamespace(
+                resource=resource,
+                string=text,
+                key=key,
+                value=value,
+                properties=properties,
+            )
             pretranslation = get_pretranslation(entity=entity, locale=locale)
         except Exception as e:
             return Response(

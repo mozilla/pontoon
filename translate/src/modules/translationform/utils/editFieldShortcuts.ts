@@ -84,9 +84,10 @@ export function useHandleCtrlShiftArrow(): (
   key: 'ArrowDown' | 'ArrowUp',
 ) => boolean {
   const { entity } = useContext(EntityView);
-  const { setEditorFromHelpers } = useContext(EditorActions);
+  const { setEditorFromHelpers, setEditorFromComposed } =
+    useContext(EditorActions);
   const helperSelection = useContext(HelperSelection);
-  const { translations: machineryTranslations } = useContext(
+  const { composed, translations: machineryTranslations } = useContext(
     MachineryTranslations,
   );
   const { results: concordanceSearchResults } = useContext(SearchData);
@@ -101,7 +102,9 @@ export function useHandleCtrlShiftArrow(): (
     const { tab, element, setElement } = helperSelection;
     const isMachinery = tab === 0;
     const numTranslations = isMachinery
-      ? machineryTranslations.length + concordanceSearchResults.length
+      ? composed.length +
+        machineryTranslations.length +
+        concordanceSearchResults.length
       : otherLocaleTranslations.length;
 
     if (numTranslations === 0) {
@@ -114,13 +117,19 @@ export function useHandleCtrlShiftArrow(): (
     setElement(nextIdx);
 
     if (isMachinery) {
-      const len = machineryTranslations.length;
-      const translationObj =
-        nextIdx < len
-          ? machineryTranslations[nextIdx]
-          : concordanceSearchResults[nextIdx - len];
+      if (nextIdx < composed.length) {
+        const { value, properties, sources } = composed[nextIdx];
+        setEditorFromComposed(value, properties, sources, true);
+        return true;
+      }
 
-      const llmState = getLLMTranslationState(machineryTranslations[nextIdx]);
+      const i = nextIdx - composed.length;
+      const translationObj =
+        i < machineryTranslations.length
+          ? machineryTranslations[i]
+          : concordanceSearchResults[i - machineryTranslations.length];
+
+      const llmState = getLLMTranslationState(translationObj);
       const updatedTranslation =
         llmState.llmTranslation || translationObj.translation;
       setEditorFromHelpers(updatedTranslation, translationObj.sources, true);

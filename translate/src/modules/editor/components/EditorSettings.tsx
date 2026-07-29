@@ -10,6 +10,7 @@ import React, {
 import { ThemeContext } from '~/context/Theme';
 import type { Settings } from '~/modules/user';
 import { useOnDiscard } from '~/utils';
+import { scrollIntoView } from '~/utils/scrollIntoView';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import './EditorSettings.css';
@@ -60,11 +61,7 @@ export function EditorSettingsDialog({
   useOnDiscard(ref, onDiscard);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    ref.current?.scrollIntoView({
-      behavior: mediaQuery?.matches ? 'auto' : 'smooth',
-      block: 'nearest',
-    });
+    scrollIntoView(ref.current);
   });
 
   return (

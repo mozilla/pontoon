@@ -21,7 +21,7 @@ from pontoon.base.system_users import get_pretranslation_authors
 from pontoon.base.tasks import PontoonTask
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import bulk_run_checks
-from pontoon.translations.utils import parse_db_string_to_json
+from pontoon.translations.utils import parse_source_string_to_json
 
 from .pretranslate import get_pretranslation
 
@@ -136,7 +136,9 @@ def pretranslate(project: Project, paths: set[str] | None):
                     continue
 
             string, author_key = pretranslation
-            value, properties = parse_db_string_to_json(entity.resource.format, string)
+            _, value, properties = parse_source_string_to_json(
+                entity.resource.format, string
+            )
 
             t = Translation(
                 entity=entity,

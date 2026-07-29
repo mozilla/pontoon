@@ -151,7 +151,8 @@ def get_google_automl_translation(
     return translation
 
 
-def get_microsoft_translator_data(text, locale_code):
+def get_microsoft_translator_data(text, locale, preserve_placeables=False):
+    locale_code = locale.ms_translator_code
     cache_key = get_machinery_service_cache_key(
         "microsoft_translator", text, locale_code
     )
