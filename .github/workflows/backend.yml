@@ -5,17 +5,17 @@ on:
     branches:
       - main
     paths:
-      - requirements/**
       - docker/**
       - pontoon/**
+      - requirements/dev.txt
       - .github/workflows/backend.yml
   pull_request:
     branches:
       - main
     paths:
-      - requirements/**
       - docker/**
       - pontoon/**
+      - requirements/dev.txt
       - .github/workflows/backend.yml
   workflow_dispatch:
 
@@ -58,10 +58,7 @@ jobs:
           # Version should match the one used in docker/Dockerfile*
           version: "0.11.32"
       - name: Install requirements
-        run: >
-          uv pip install
-          -r requirements/prod.txt
-          -r requirements/dev.txt
+        run: uv pip install -r requirements/dev.txt
       - name: Install pip-licenses
         run: uv pip install 'pip-licenses==5.0.0'
       - name: Check licenses

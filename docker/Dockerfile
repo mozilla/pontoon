@@ -33,8 +33,8 @@ COPY --from=ghcr.io/astral-sh/uv:0.11.32 /uv /bin/uv
 WORKDIR /app
 
 # Install Pontoon Python requirements
-COPY requirements/* /app/requirements/
-RUN uv pip install --system -r requirements/prod.txt -r requirements/dev.txt
+COPY requirements/dev.txt /app/requirements/
+RUN uv pip install --system -r requirements/dev.txt
 
 # Create the app user
 RUN groupadd -r --gid=${GROUP_ID} pontoon && useradd --uid=${USER_ID} --no-log-init -r -m -g pontoon pontoon
