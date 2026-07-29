@@ -1,10 +1,9 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
+import type { RequestedEntityLocation } from '~/api/entity';
 import { emptyParams, Location } from '~/context/Location';
 import { useProject } from '~/modules/project';
-
-import type { EntityNotFound } from '../hooks';
 
 import './StringNotFound.css';
 
@@ -13,13 +12,12 @@ import './StringNotFound.css';
  * viewable string that doesn't match the rest of the query (#2921).
  */
 export function StringNotFound({
-  notFound,
+  entityLocation,
 }: {
-  notFound: EntityNotFound;
+  entityLocation: RequestedEntityLocation | null;
 }): React.ReactElement<'section'> | null {
   const location = useContext(Location);
   const { name: viewProjectName } = useProject();
-  const { entityLocation } = notFound;
 
   if (!entityLocation) {
     return null;

@@ -23,7 +23,7 @@ entities-StringNotFound--show-matching = show matching
 `;
 
 function mount(
-  notFound,
+  entityLocation,
   url = '/kg/firefox/all-resources/?status=missing&string=99',
 ) {
   const history = createMemoryHistory({ initialEntries: [url] });
@@ -33,7 +33,7 @@ function mount(
   const result = mountComponentWithStore(
     StringNotFound,
     store,
-    { notFound },
+    { entityLocation },
     history,
     FTL,
   );
@@ -43,8 +43,9 @@ function mount(
 describe('<StringNotFound>', () => {
   it('blames the filters when the string is in the open project and scope', () => {
     const { getByText } = mount({
-      show: true,
-      entityLocation: { pk: 99, project: 'firefox', resource: 'toolbar.ftl' },
+      pk: 99,
+      project: 'firefox',
+      resource: 'toolbar.ftl',
     });
 
     getByText('filtered');
@@ -52,7 +53,7 @@ describe('<StringNotFound>', () => {
 
   it('points to the project when the string lives in another project', () => {
     const { getByText } = mount(
-      { show: true, entityLocation: ENTITY_LOCATION },
+      ENTITY_LOCATION,
       '/kg/firefox/all-resources/?string=99',
     );
 
@@ -62,13 +63,10 @@ describe('<StringNotFound>', () => {
   it('points to the resource when the string is elsewhere in the open project', () => {
     const { getByText } = mount(
       {
-        show: true,
-        entityLocation: {
-          pk: 99,
-          project: 'firefox',
-          project_name: 'Firefox',
-          resource: 'foo.ftl',
-        },
+        pk: 99,
+        project: 'firefox',
+        project_name: 'Firefox',
+        resource: 'foo.ftl',
       },
       '/kg/firefox/browser.ftl/?string=99',
     );
@@ -78,7 +76,7 @@ describe('<StringNotFound>', () => {
 
   it('mentions all projects when viewing every project', () => {
     const { getByText } = mount(
-      { show: true, entityLocation: ENTITY_LOCATION },
+      ENTITY_LOCATION,
       '/kg/all-projects/all-resources/?string=99',
     );
 
@@ -86,10 +84,7 @@ describe('<StringNotFound>', () => {
   });
 
   it('goes to the string, dropping filters but keeping the string', () => {
-    const { getByRole, spy } = mount({
-      show: true,
-      entityLocation: ENTITY_LOCATION,
-    });
+    const { getByRole, spy } = mount(ENTITY_LOCATION);
 
     fireEvent.click(getByRole('button', { name: 'go to string' }));
 
@@ -99,10 +94,7 @@ describe('<StringNotFound>', () => {
   });
 
   it('keeps the filters but drops the string', () => {
-    const { getByRole, spy } = mount({
-      show: true,
-      entityLocation: ENTITY_LOCATION,
-    });
+    const { getByRole, spy } = mount(ENTITY_LOCATION);
 
     fireEvent.click(getByRole('button', { name: 'show matching' }));
 
@@ -113,7 +105,7 @@ describe('<StringNotFound>', () => {
   });
 
   it('renders nothing without a string location', () => {
-    const { container } = mount({ show: true, entityLocation: null });
+    const { container } = mount(null);
     expect(container).toBeEmptyDOMElement();
   });
 });

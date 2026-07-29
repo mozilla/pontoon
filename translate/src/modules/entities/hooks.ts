@@ -10,16 +10,13 @@ import { ENTITIES } from './reducer';
 
 export const useEntities = () => useAppSelector((state) => state[ENTITIES]);
 
-export type EntityNotFound = {
-  show: boolean;
-  entityLocation: RequestedEntityLocation | null;
-};
-
-export function useEntityNotFound(): EntityNotFound {
+export function useEntityNotFound(): RequestedEntityLocation | null {
   const { entity } = useContext(Location);
   const { requestedEntityLocation } = useEntities();
 
-  return requestedEntityLocation?.pk === entity ? requestedEntityLocation : null;
+  return requestedEntityLocation?.pk === entity
+    ? requestedEntityLocation
+    : null;
 }
 
 /** Next entity, or `null` if no next entity is available */
