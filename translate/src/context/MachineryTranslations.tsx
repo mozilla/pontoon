@@ -72,8 +72,8 @@ function hasMultipleFields(
       }
       leaves += 1;
     } else {
-      // An empty pattern has nothing to translate, so it is not a leaf. The
-      // value of an attribute-only Fluent message is one.
+      // An empty pattern, such as the value of an attribute-only Fluent
+      // message, has nothing to translate, so it is not a leaf.
       const pattern = Array.isArray(msg) ? msg : msg.msg;
       if (pattern && pattern.length > 0) {
         leaves += 1;

@@ -306,7 +306,6 @@ def set_accesskey(entry: Entry[Message], ak_name: str, ak_msg: Message):
     it with a label (e.g. `buttonAccessKey` ↔ `buttonLabel`).
     """
 
-    prefix = ak_name[: -len("accesskey")]
     if len(ak_name) == len("accesskey"):
         label = next(
             (
@@ -317,6 +316,7 @@ def set_accesskey(entry: Entry[Message], ak_name: str, ak_msg: Message):
             entry.value,
         )
     else:
+        prefix = ak_name[: -len("accesskey")]
         label_name = f"{prefix}label".lower()
         label = next(
             (
