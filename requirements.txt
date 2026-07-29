@@ -2,4 +2,4 @@
 # add a pip requirements file named requirements.txt to the root of your repository."
 #
 # Source: https://devcenter.heroku.com/articles/python-pip
--r requirements/default.txt
+-r requirements/prod.txt

@@ -60,7 +60,7 @@ jobs:
       - name: Install requirements
         run: >
           uv pip install
-          -r requirements/default.txt
+          -r requirements/prod.txt
           -r requirements/dev.txt
       - name: Install pip-licenses
         run: uv pip install 'pip-licenses==5.0.0'
