@@ -30,7 +30,7 @@ def mark_system_users(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0121_project_set_locales_from_repo_and_more"),
+        ("base", "0122_reparse_multi_pattern_fluent"),
         # Ensures the sync user exists before we try to mark it.
         ("sync", "0002_change_pontoon_sync_email"),
     ]
