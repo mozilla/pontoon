@@ -7,14 +7,14 @@ on:
     paths:
       - pontoon/**.py
       - .github/workflows/py-lint.yml
-      - requirements/lint.txt
+      - requirements/dev.txt
   pull_request:
     branches:
       - main
     paths:
       - pontoon/**.py
       - .github/workflows/py-lint.yml
-      - requirements/lint.txt
+      - requirements/dev.txt
   workflow_dispatch:
 
 permissions: {}
@@ -35,11 +35,11 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: |
-            **/requirements/*.txt
+            **/requirements/dev.txt
           # Version should match the one used in docker/Dockerfile*
           version: "0.11.32"
       - name: Install Dependencies
-        run: uv pip install -r requirements/lint.txt
+        run: uv pip install -r requirements/dev.txt
         env:
           UV_SYSTEM_PYTHON: 1
       - name: ruff lint

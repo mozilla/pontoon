@@ -3,8 +3,6 @@
 # The dependencies are grouped by function:
 # default.in: required for running a pontoon instance
 # dev.in: required for development
-# test.in: required for running tests
-# lint.in: required for linting
 #
 # All requirements/*.in files are compiled to requirements/*.txt files with pip-compile.
 # This step is only required when adding, removing or updating dependencies,

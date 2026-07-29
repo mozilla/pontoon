@@ -8,7 +8,7 @@ export CUSTOM_COMPILE_COMMAND="./docker/compile_requirements.sh"
 # Run compile command from the requirements directory
 cd "$(dirname "$0")/../requirements"
 
-requirement_files=(default dev lint test)
+requirement_files=(default dev)
 
 for name in "${requirement_files[@]}"; do
   # --no-emit-package matches pip-tools' default "unsafe packages" set, so the

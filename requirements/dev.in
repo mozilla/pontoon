@@ -3,8 +3,6 @@
 # The dependencies are grouped by function:
 # default.in: required for running a pontoon instance
 # dev.in: required for development
-# test.in: required for running tests
-# lint.in: required for linting
 #
 # All requirements/*.in files are compiled to requirements/*.txt files with pip-compile.
 # This step is only required when adding, removing or updating dependencies,
@@ -17,7 +15,15 @@
 # requirements/default.txt contains all dependencies required to run the project in the production environment.
 -c default.txt
 
+coverage==7.6.1
 django-debug-toolbar==6.3.0
 django-extensions==4.1
 django-stubs[compatible-mypy]==6.0.5
+factory-boy==3.3.1
 mypy==2.1.0
+pytest-cov==5.0.0
+pytest-django==4.9.0
+pytest-xdist==3.8.0
+pytest==9.0.3
+requests-mock==1.12.1
+ruff==0.16.0

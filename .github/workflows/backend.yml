@@ -62,8 +62,6 @@ jobs:
           uv pip install
           -r requirements/default.txt
           -r requirements/dev.txt
-          -r requirements/test.txt
-          -r requirements/lint.txt
       - name: Install pip-licenses
         run: uv pip install 'pip-licenses==5.0.0'
       - name: Check licenses
