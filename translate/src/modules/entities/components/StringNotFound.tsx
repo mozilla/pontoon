@@ -84,22 +84,12 @@ export function StringNotFound({
           <p className='description' />
         </Localized>
         <div className='actions'>
-          <div className='action'>
-            <Localized id='entities-StringNotFound--go-to-string'>
-              <button onClick={goToString} />
-            </Localized>
-            <Localized id='entities-StringNotFound--go-to-string-hint'>
-              <span className='hint' />
-            </Localized>
-          </div>
-          <div className='action'>
-            <Localized id='entities-StringNotFound--show-matching'>
-              <button onClick={showMatching} />
-            </Localized>
-            <Localized id='entities-StringNotFound--show-matching-hint'>
-              <span className='hint' />
-            </Localized>
-          </div>
+          <Localized id='entities-StringNotFound--go-to-string'>
+            <button onClick={goToString} />
+          </Localized>
+          <Localized id='entities-StringNotFound--show-matching'>
+            <button onClick={showMatching} />
+          </Localized>
         </div>
       </div>
     </section>

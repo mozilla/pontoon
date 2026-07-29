@@ -20,8 +20,6 @@ entities-StringNotFound--description-in-resource = in resource
 entities-StringNotFound--description-in-all-projects = in all projects
 entities-StringNotFound--go-to-string = go to string
 entities-StringNotFound--show-matching = show matching
-entities-StringNotFound--go-to-string-hint = go to string hint
-entities-StringNotFound--show-matching-hint = show matching hint
 `;
 
 function mount(

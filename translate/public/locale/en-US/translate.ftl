@@ -359,11 +359,9 @@ entities-StringNotFound--description-in-project = String with internal ID <id>{ 
 
 entities-StringNotFound--description-in-all-projects = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing all projects.
 
-entities-StringNotFound--go-to-string = See requested string
-entities-StringNotFound--go-to-string-hint = Reset current filters.
+entities-StringNotFound--go-to-string = Reset filters and show requested string
 
-entities-StringNotFound--show-matching = See first available string
-entities-StringNotFound--show-matching-hint = Keep current filters.
+entities-StringNotFound--show-matching = Keep filters and show first available string
 
 
 ## Translation Form

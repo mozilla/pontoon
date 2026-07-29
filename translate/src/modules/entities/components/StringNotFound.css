@@ -29,22 +29,11 @@
 }
 
 #string-not-found .actions {
+  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 20px;
   margin-top: 30px;
-}
-
-#string-not-found .action {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-#string-not-found .hint {
-  color: var(--light-grey-7);
-  font-size: 13px;
 }
 
 #string-not-found .actions button {
