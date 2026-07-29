@@ -276,14 +276,19 @@ def _get_paginated_entities(
                 resource__project__system_project=False,
                 resource__project__in=Project.objects.visible_for(user),
             )
-            .values_list("resource__project__slug", "resource__path")
+            .values_list(
+                "resource__project__slug",
+                "resource__project__name",
+                "resource__path",
+            )
             .first()
         )
         if located:
             requested_entity_location = {
                 "pk": requested_entity,
                 "project": located[0],
-                "resource": located[1],
+                "project_name": located[1],
+                "resource": located[2],
             }
         requested_entity = None
 

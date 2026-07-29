@@ -119,6 +119,7 @@ def test_entities_not_matching_string_reports_location(member, entity_a, locale_
     assert data["requested_entity"] == {
         "pk": entity_a.pk,
         "project": entity_a.resource.project.slug,
+        "project_name": entity_a.resource.project.name,
         "resource": entity_a.resource.path,
     }
 

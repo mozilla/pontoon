@@ -2,6 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
 import { emptyParams, Location } from '~/context/Location';
+import { useProject } from '~/modules/project';
 
 import type { EntityNotFound } from '../hooks';
 
@@ -17,6 +18,7 @@ export function StringNotFound({
   notFound: EntityNotFound;
 }): React.ReactElement<'section'> | null {
   const location = useContext(Location);
+  const { name: viewProjectName } = useProject();
   const { entityLocation } = notFound;
 
   if (!entityLocation) {
@@ -25,25 +27,26 @@ export function StringNotFound({
 
   const { push } = location;
   const stringId = String(entityLocation.pk);
-  const stringProject = entityLocation.project;
+  const stringProjectSlug = entityLocation.project;
+  const stringProject = entityLocation.project_name;
   const stringResource = entityLocation.resource;
 
-  const viewProject = location.project;
+  const viewProjectSlug = location.project;
+  const viewProject = viewProjectName;
   const viewResource = location.resource;
-  const allProjects = viewProject === 'all-projects';
+  const allProjects = viewProjectSlug === 'all-projects';
   const allResources = !viewResource || viewResource === 'all-resources';
-
-  const queryLabel = allResources ? viewProject : viewResource;
+  const sameProject = stringProjectSlug === viewProjectSlug;
 
   const filteredOut =
     !allProjects &&
-    stringProject === viewProject &&
+    sameProject &&
     (allResources || stringResource === viewResource);
 
   const goToString = () =>
     push({
       ...emptyParams,
-      project: stringProject,
+      project: stringProjectSlug,
       resource: stringResource,
       entity: entityLocation.pk,
     });
@@ -55,7 +58,7 @@ export function StringNotFound({
     descriptionId = 'entities-StringNotFound--description-filtered';
   } else if (allProjects) {
     descriptionId = 'entities-StringNotFound--description-in-all-projects';
-  } else if (allResources) {
+  } else if (!sameProject) {
     descriptionId = 'entities-StringNotFound--description-in-project';
   } else {
     descriptionId = 'entities-StringNotFound--description-in-resource';
@@ -73,15 +76,16 @@ export function StringNotFound({
             viewProject,
             viewResource,
           }}
+          elems={{
+            id: <span className='id' />,
+            project: <span className='project' />,
+          }}
         >
           <p className='description' />
         </Localized>
         <div className='actions'>
           <div className='action'>
-            <Localized
-              id='entities-StringNotFound--go-to-string'
-              vars={{ stringId, stringResource }}
-            >
+            <Localized id='entities-StringNotFound--go-to-string'>
               <button onClick={goToString} />
             </Localized>
             <Localized id='entities-StringNotFound--go-to-string-hint'>
@@ -89,10 +93,7 @@ export function StringNotFound({
             </Localized>
           </div>
           <div className='action'>
-            <Localized
-              id='entities-StringNotFound--show-matching'
-              vars={{ queryLabel }}
-            >
+            <Localized id='entities-StringNotFound--show-matching'>
               <button onClick={showMatching} />
             </Localized>
             <Localized id='entities-StringNotFound--show-matching-hint'>

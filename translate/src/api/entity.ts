@@ -83,6 +83,7 @@ export async function batchEditEntities(
 export type RequestedEntityLocation = {
   readonly pk: number;
   readonly project: string;
+  readonly project_name: string;
   readonly resource: string;
 };
 

@@ -6,7 +6,12 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { StringNotFound } from './StringNotFound';
 
-const ENTITY_LOCATION = { pk: 99, project: 'thunderbird', resource: 'foo.ftl' };
+const ENTITY_LOCATION = {
+  pk: 99,
+  project: 'thunderbird',
+  project_name: 'Thunderbird',
+  resource: 'foo.ftl',
+};
 
 const FTL = `
 entities-StringNotFound--description-filtered = filtered
@@ -56,9 +61,17 @@ describe('<StringNotFound>', () => {
     getByText('in project');
   });
 
-  it('points to the resource when a single resource is open', () => {
+  it('points to the resource when the string is elsewhere in the open project', () => {
     const { getByText } = mount(
-      { show: true, entityLocation: ENTITY_LOCATION },
+      {
+        show: true,
+        entityLocation: {
+          pk: 99,
+          project: 'firefox',
+          project_name: 'Firefox',
+          resource: 'foo.ftl',
+        },
+      },
       '/kg/firefox/browser.ftl/?string=99',
     );
 

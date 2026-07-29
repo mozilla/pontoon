@@ -348,22 +348,22 @@ entitieslist-EntitiesList--edit-selected =
 
 ## StringNotFound
 ## Shown in the editor when the string in the URL is valid but not in the list
-## on screen. One description per case: hidden by filters, or living in another
-## resource, project, or outside all open projects.
+## on screen. One description per case: (1) hidden by filters, (2) living in a different project
+## (3) living in a different resource of the same project, (4) outside all open projects.
 
-entities-StringNotFound--description-filtered = String { $stringId } is in { $stringResource } ({ $stringProject }), but it doesn’t match your current filters.
+entities-StringNotFound--description-filtered = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>), but it doesn’t match your current filters.
 
-entities-StringNotFound--description-in-resource = String { $stringId } is in { $stringResource } ({ $stringProject }). You’re viewing { $viewResource } ({ $viewProject }).
+entities-StringNotFound--description-in-resource = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing <id>{ $viewResource }</id>.
 
-entities-StringNotFound--description-in-project = String { $stringId } is in { $stringResource } ({ $stringProject }). You’re viewing { $viewProject }.
+entities-StringNotFound--description-in-project = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing project <project>{ $viewProject }</project>.
 
-entities-StringNotFound--description-in-all-projects = String { $stringId } is in { $stringResource } ({ $stringProject }). You’re viewing all projects.
+entities-StringNotFound--description-in-all-projects = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing all projects.
 
-entities-StringNotFound--go-to-string = See string in { $stringResource }
-entities-StringNotFound--go-to-string-hint = Search for the requested string, reset current filters.
+entities-StringNotFound--go-to-string = See requested string
+entities-StringNotFound--go-to-string-hint = Reset current filters.
 
-entities-StringNotFound--show-matching = See other strings in { $queryLabel }
-entities-StringNotFound--show-matching-hint = Keep current filters, display the first available string.
+entities-StringNotFound--show-matching = See first available string
+entities-StringNotFound--show-matching-hint = Keep current filters.
 
 
 ## Translation Form
