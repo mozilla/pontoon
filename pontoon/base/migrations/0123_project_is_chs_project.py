@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('base', '0122_reparse_multi_pattern_fluent'),
+        ("base", "0122_reparse_multi_pattern_fluent"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='is_chs_project',
-            field=models.BooleanField(default=False, help_text='Used to flag key projects referenced in the Insights Dashboard.'),
+            model_name="project",
+            name="is_chs_project",
+            field=models.BooleanField(
+                default=False,
+                help_text="Used to flag key projects referenced in the Insights Dashboard.",
+            ),
         ),
     ]
