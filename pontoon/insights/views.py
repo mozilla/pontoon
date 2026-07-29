@@ -14,8 +14,8 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from pontoon.base.models.locale import Locale
+from pontoon.base.models.project import Project
 from pontoon.base.utils import require_AJAX
-from pontoon.insights.chs import KEY_PROJECT_SLUGS
 from pontoon.insights.forms import CommunityHealthLocalesForm
 from pontoon.insights.models import LocaleHealthSnapshot
 from pontoon.insights.utils import (
@@ -85,7 +85,6 @@ CHS_COLUMNS = {
         "score_threshold": NEW_SIGNUP_POINTS,
     },
     "key_projects_enabled": {
-        "base_threshold": len(KEY_PROJECT_SLUGS),
         "score_threshold": ENABLED_PROJECT_POINTS,
     },
     "completion": {
@@ -140,6 +139,10 @@ def _community_health_context(profile):
     previous_anchor = current_anchor.replace(day=1) - relativedelta(days=1)
     current_snapshots = get_monthly_snapshots(display_locales, current_anchor)
     previous_snapshots = get_monthly_snapshots(display_locales, previous_anchor)
+
+    CHS_COLUMNS["key_projects_enabled"]["base_threshold"] = Project.objects.filter(
+        is_chs_project=True
+    ).count()
 
     return {
         "display_locales": display_locales,

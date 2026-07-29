@@ -258,6 +258,8 @@ class Project(models.Model, AggregatedStats):
         """,
     )
 
+    is_chs_project = models.BooleanField(default=False)
+
     objects = ProjectQuerySet.as_manager()
 
     project_locale: "ProjectLocaleQuerySet"

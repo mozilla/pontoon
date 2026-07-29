@@ -18,7 +18,6 @@ from pontoon.settings.base import (
     ALL_CONTRIBUTOR_STRING_THRESHOLD,
     COMPLETION_POINTS,
     ENABLED_PROJECT_POINTS,
-    KEY_PROJECT_SLUGS,
     MANAGER_POINTS,
     MANAGER_STRING_THRESHOLD,
     NEW_SIGNUP_POINTS,
@@ -28,15 +27,13 @@ from pontoon.settings.base import (
 )
 
 
-def get_completion_by_locale(locales) -> dict[int, float]:
+def get_completion_by_locale(locales, key_projects) -> dict[int, float]:
     """Locale-level completion %: (approved + warnings) / total * 100."""
-
-    projects = Project.objects.filter(slug__in=KEY_PROJECT_SLUGS)
 
     locale_groupings = (
         TranslatedResource.objects.filter(
             locale__in=locales,
-            resource__project__in=projects,
+            resource__project__in=key_projects,
             resource__project__disabled=False,
             resource__project__system_project=False,
             resource__project__visibility="public",
@@ -64,14 +61,12 @@ def get_completion_by_locale(locales) -> dict[int, float]:
     return locale_completion
 
 
-def get_key_projects_enabled_by_locale(
-    locales, key_project_slugs: list[str]
-) -> dict[int, int]:
+def get_key_projects_enabled_by_locale(locales, key_projects) -> dict[int, int]:
     """Count of active key projects enabled for each locale."""
     pl_counts = (
         ProjectLocale.objects.filter(
             locale__in=locales,
-            project__slug__in=key_project_slugs,
+            project__in=key_projects,
             project__disabled=False,
         )
         .values("locale_id")
@@ -192,7 +187,7 @@ def scaled_points(count, points) -> float:
     return 0
 
 
-def compute_chs(args: dict) -> float:
+def compute_chs(args: dict, key_projects_count: int) -> float:
     active_managers = args.get("active_managers", 0)
     active_translators = args.get("active_translators", 0)
     active_contributors = args.get("active_contributors", 0)
@@ -212,8 +207,10 @@ def compute_chs(args: dict) -> float:
     )
     total_new_signup_points = scaled_points(new_signups, NEW_SIGNUP_POINTS)
 
-    total_enabled_project_points = round(
-        (key_projects_enabled / len(KEY_PROJECT_SLUGS)) * ENABLED_PROJECT_POINTS, 2
+    total_enabled_project_points = (
+        round((key_projects_enabled / key_projects_count) * ENABLED_PROJECT_POINTS, 2)
+        if key_projects_count
+        else 0.0
     )
     total_completion_points = round((completion / 100) * COMPLETION_POINTS, 2)
 
@@ -249,8 +246,10 @@ def build_chs_snapshots(locales=None) -> list[LocaleHealthSnapshot]:
     if locales is None:
         locales = Locale.objects.visible()
 
-    completion = get_completion_by_locale(locales)
-    enabled = get_key_projects_enabled_by_locale(locales, KEY_PROJECT_SLUGS)
+    key_projects = Project.objects.filter(is_chs_project=True)
+    key_projects_count = key_projects.count()
+    completion = get_completion_by_locale(locales, key_projects)
+    enabled = get_key_projects_enabled_by_locale(locales, key_projects)
     contributors = get_contributor_metrics_by_locale(locales, now)
 
     snapshots = []
@@ -265,7 +264,7 @@ def build_chs_snapshots(locales=None) -> list[LocaleHealthSnapshot]:
             "all_contributors": c.get("all_contributors", 0),
             "new_signups": c.get("new_signups", 0),
         }
-        chs_fields = compute_chs(args)
+        chs_fields = compute_chs(args, key_projects_count)
 
         snapshots.append(
             LocaleHealthSnapshot(locale=locale, created_at=now, **args, **chs_fields)

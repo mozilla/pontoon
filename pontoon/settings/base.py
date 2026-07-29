@@ -1314,15 +1314,6 @@ DEFAULT_KEY_PROJECT_SLUGS = (
     "mozilla-vpn-client",
 )
 
-KEY_PROJECT_SLUGS = [
-    slug.strip()
-    for slug in os.environ.get(
-        "KEY_PROJECT_SLUGS",
-        ",".join(DEFAULT_KEY_PROJECT_SLUGS),
-    ).split(",")
-    if slug.strip()
-]
-
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Used in the header of the Terminology (.TBX) files.
