@@ -4,8 +4,13 @@
 # The requirements listed here are incomplete,
 # and no compiled requirements/base.txt file is provided.
 # Instead, install dependencies from one of the following:
-# - prod.txt: required for running a Pontoon instance
-# - dev.txt: required for development
+# - prod.txt: required for running Pontoon in production
+# - dev.txt: required for running and working on Pontoon in development
+#
+# When making changes to any requirements/*.in file,
+# recompile the requirements with:
+# - `make requirements` if using the development Docker environment
+# - `sh docker/compile_requirements.sh` if using `uv` directly
 #
 # The dependencies are sorted by alphabetical order.
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.

@@ -1,10 +1,10 @@
 # This requirements file only contains direct dependencies of our project
-# that are used in prod environments only.
+# that are used in production environments only.
 #
-# All requirements/*.txt files are compiled from requirements/*.in files with pip-compile.
-# This step is only required when adding, removing or updating dependencies,
-# or to force an update of indirect dependencies.
-# Run 'make requirements' when updating this file.
+# When making changes to any requirements/*.in file,
+# recompile the requirements with:
+# - `make requirements` if using the development Docker environment
+# - `sh docker/compile_requirements.sh` if using `uv` directly
 #
 # The dependencies are sorted by alphabetical order.
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
