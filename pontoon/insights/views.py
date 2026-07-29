@@ -63,37 +63,40 @@ CHS_SCORE_METRICS = [
     "chs",
 ]
 
-CHS_COLUMNS = {
-    "active_managers": {
-        "base_threshold": MANAGER_PEOPLE_THRESHOLD,
-        "score_threshold": MANAGER_POINTS,
-    },
-    "active_translators": {
-        "base_threshold": TRANSLATOR_PEOPLE_THRESHOLD,
-        "score_threshold": TRANSLATOR_POINTS,
-    },
-    "active_contributors": {
-        "base_threshold": ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD,
-        "score_threshold": ACTIVE_CONTRIBUTOR_POINTS,
-    },
-    "all_contributors": {
-        "base_threshold": ALL_CONTRIBUTOR_PEOPLE_THRESHOLD,
-        "score_threshold": ALL_CONTRIBUTOR_POINTS,
-    },
-    "new_signups": {
-        "base_threshold": NEW_SIGNUP_PEOPLE_THRESHOLD,
-        "score_threshold": NEW_SIGNUP_POINTS,
-    },
-    "key_projects_enabled": {
-        "score_threshold": ENABLED_PROJECT_POINTS,
-    },
-    "completion": {
-        "base_threshold": 100,
-        "percent": True,
-        "score_threshold": COMPLETION_POINTS,
-    },
-    "chs": {"base_threshold": 100},
-}
+
+def get_chs_columns():
+    return {
+        "active_managers": {
+            "base_threshold": MANAGER_PEOPLE_THRESHOLD,
+            "score_threshold": MANAGER_POINTS,
+        },
+        "active_translators": {
+            "base_threshold": TRANSLATOR_PEOPLE_THRESHOLD,
+            "score_threshold": TRANSLATOR_POINTS,
+        },
+        "active_contributors": {
+            "base_threshold": ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD,
+            "score_threshold": ACTIVE_CONTRIBUTOR_POINTS,
+        },
+        "all_contributors": {
+            "base_threshold": ALL_CONTRIBUTOR_PEOPLE_THRESHOLD,
+            "score_threshold": ALL_CONTRIBUTOR_POINTS,
+        },
+        "new_signups": {
+            "base_threshold": NEW_SIGNUP_PEOPLE_THRESHOLD,
+            "score_threshold": NEW_SIGNUP_POINTS,
+        },
+        "key_projects_enabled": {
+            "base_threshold": Project.objects.filter(is_chs_project=True).count(),
+            "score_threshold": ENABLED_PROJECT_POINTS,
+        },
+        "completion": {
+            "base_threshold": 100,
+            "percent": True,
+            "score_threshold": COMPLETION_POINTS,
+        },
+        "chs": {"base_threshold": 100},
+    }
 
 
 def get_monthly_snapshots(locales, date):
@@ -140,10 +143,6 @@ def _community_health_context(profile):
     current_snapshots = get_monthly_snapshots(display_locales, current_anchor)
     previous_snapshots = get_monthly_snapshots(display_locales, previous_anchor)
 
-    CHS_COLUMNS["key_projects_enabled"]["base_threshold"] = Project.objects.filter(
-        is_chs_project=True
-    ).count()
-
     return {
         "display_locales": display_locales,
         "current_snapshots": current_snapshots,
@@ -153,7 +152,7 @@ def _community_health_context(profile):
         "snapshot_score_deltas": get_monthly_snapshot_deltas(
             current_snapshots, previous_snapshots, CHS_SCORE_METRICS
         ),
-        "columns": CHS_COLUMNS,
+        "columns": get_chs_columns(),
         "global_locale_health_insights": get_global_locale_health_insights(
             display_locales
         ),

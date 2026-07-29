@@ -258,7 +258,10 @@ class Project(models.Model, AggregatedStats):
         """,
     )
 
-    is_chs_project = models.BooleanField(default=False)
+    is_chs_project = models.BooleanField(
+        default=False,
+        help_text="Used to flag key projects referenced in the Insights Dashboard.",
+    )
 
     objects = ProjectQuerySet.as_manager()
 

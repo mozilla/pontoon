@@ -12,6 +12,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="project",
             name="is_chs_project",
-            field=models.BooleanField(default=False),
+            field=models.BooleanField(
+                default=False,
+                help_text="Used to flag key projects referenced in the Insights Dashboard.",
+            ),
         ),
     ]
