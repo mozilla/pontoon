@@ -17,7 +17,6 @@ const FTL = `
 entities-StringNotFound--description-filtered = filtered
 entities-StringNotFound--description-in-project = in project
 entities-StringNotFound--description-in-resource = in resource
-entities-StringNotFound--description-in-all-projects = in all projects
 entities-StringNotFound--go-to-string = go to string
 entities-StringNotFound--show-matching = show matching
 `;
@@ -74,13 +73,13 @@ describe('<StringNotFound>', () => {
     getByText('in resource');
   });
 
-  it('mentions all projects when viewing every project', () => {
+  it('blames the filters in the all-projects view (scope is everything)', () => {
     const { getByText } = mount(
       ENTITY_LOCATION,
-      '/kg/all-projects/all-resources/?string=99',
+      '/kg/all-projects/all-resources/?status=missing&string=99',
     );
 
-    getByText('in all projects');
+    getByText('filtered');
   });
 
   it('goes to the string, dropping filters but keeping the string', () => {

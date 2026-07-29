@@ -348,16 +348,15 @@ entitieslist-EntitiesList--edit-selected =
 
 ## StringNotFound
 ## Shown in the editor when the string in the URL is valid but not in the list
-## on screen. One description per case: (1) hidden by filters, (2) living in a different project
-## (3) living in a different resource of the same project, (4) outside all open projects.
+## on screen. One description per case: (1) hidden by the active filters,
+## (2) living in a different project, (3) living in a different resource of the
+## same project.
 
 entities-StringNotFound--description-filtered = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>), but it doesn’t match your current filters.
 
 entities-StringNotFound--description-in-resource = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing <id>{ $viewResource }</id>.
 
 entities-StringNotFound--description-in-project = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing project <project>{ $viewProject }</project>.
-
-entities-StringNotFound--description-in-all-projects = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing all projects.
 
 entities-StringNotFound--go-to-string = Reset filters and show requested string
 

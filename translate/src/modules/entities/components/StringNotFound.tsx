@@ -37,9 +37,8 @@ export function StringNotFound({
   const sameProject = stringProjectSlug === viewProjectSlug;
 
   const filteredOut =
-    !allProjects &&
-    sameProject &&
-    (allResources || stringResource === viewResource);
+    allProjects ||
+    (sameProject && (allResources || stringResource === viewResource));
 
   const goToString = () =>
     push({
@@ -54,8 +53,6 @@ export function StringNotFound({
   let descriptionId: string;
   if (filteredOut) {
     descriptionId = 'entities-StringNotFound--description-filtered';
-  } else if (allProjects) {
-    descriptionId = 'entities-StringNotFound--description-in-all-projects';
   } else if (!sameProject) {
     descriptionId = 'entities-StringNotFound--description-in-project';
   } else {
