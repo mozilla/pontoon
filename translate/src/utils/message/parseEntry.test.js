@@ -31,8 +31,8 @@ describe('parseEntry:fluent', () => {
       format: 'fluent',
       id: 'my-entry',
       value: {
-        decl: { _1: { fn: 'platform' } },
-        sel: ['_1'],
+        decl: { sel_1: { fn: 'platform', attr: { 'fluent-fn': 'PLATFORM' } } },
+        sel: ['sel_1'],
         alt: [
           { keys: ['variant'], pat: ['Hello!'] },
           { keys: [{ '*': 'another-variant' }], pat: ['World!'] },
@@ -119,7 +119,7 @@ describe('parseEntry:fluent', () => {
       id: 'my-entry',
       value: {
         decl: {
-          num_1: { $: 'num', fn: 'number' },
+          num_1: { $: 'num', fn: 'number', attr: { 'fluent-fn': 'NUMBER' } },
           gender: { $: 'gender', fn: 'string' },
         },
         sel: ['num_1', 'gender'],

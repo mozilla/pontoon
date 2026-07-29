@@ -76,8 +76,8 @@ class FTLTests(TestCase):
                 }
             """)
         assert e3.value == {
-            "decl": {"n_1": {"$": "n", "fn": "number"}},
-            "sel": ["n_1"],
+            "decl": {"n": {"$": "n", "fn": "number"}},
+            "sel": ["n"],
             "alt": [
                 {"keys": ["one"], "pat": [{"$": "n"}, " thing"]},
                 {"keys": [{"*": "other"}], "pat": [{"$": "n"}, " things"]},
@@ -100,8 +100,8 @@ class FTLTests(TestCase):
                 }
             """)
         assert e4.value == {
-            "decl": {"_1": {"fn": "platform"}},
-            "sel": ["_1"],
+            "decl": {"sel_1": {"fn": "platform", "attr": {"fluent-fn": "PLATFORM"}}},
+            "sel": ["sel_1"],
             "alt": [
                 {"keys": ["mac"], "pat": ["Mac"]},
                 {"keys": [{"*": "other"}], "pat": ["PC"]},

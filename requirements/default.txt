@@ -980,9 +980,9 @@ markupsafe==2.0.1 \
     # via
     #   -r default.in
     #   jinja2
-moz-l10n[xml]==0.12.0 \
-    --hash=sha256:1fef7ae191ba1c61cb62c73d3eb482f1c0fea774d7dd2e67bcd057c04ffbfd6b \
-    --hash=sha256:a2340b9540ae4b56ddd85d74528191e06dfb920e6aa8e1c94ca835ee408fbcf5
+moz-l10n[xml]==0.13.0 \
+    --hash=sha256:c194494e48ce1576907c756096186f24dbdd9669d70f6341dddcbed4465a0b3f \
+    --hash=sha256:c90efd78a2940db57da1fa19307e24f21d27ffb6769a42ca8221f0d3f8aae707
     # via
     #   -r default.in
     #   moz-l10n
