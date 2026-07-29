@@ -26,7 +26,12 @@ const mountMachinery = (translations, search) =>
       ]}
     >
       <MachineryTranslations.Provider
-        value={{ fetching: false, source: 'source', translations }}
+        value={{
+          fetching: false,
+          source: 'source',
+          composed: [],
+          translations,
+        }}
       >
         <SearchData.Provider
           value={{
@@ -133,7 +138,7 @@ describe('<Machinery>', () => {
     const { getByTestId } = render(
       <MockLocalizationProvider resources={[]}>
         <MachineryTranslations.Provider
-          value={{ fetching: true, source: '', translations: [] }}
+          value={{ fetching: true, source: '', composed: [], translations: [] }}
         >
           <SearchData.Provider
             value={{
@@ -162,6 +167,7 @@ describe('<Machinery>', () => {
           value={{
             fetching: true,
             source: 'source',
+            composed: [],
             translations: [{ original: '1', translation: 'one', sources: [] }],
           }}
         >

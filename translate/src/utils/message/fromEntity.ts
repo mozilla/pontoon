@@ -4,18 +4,12 @@ import type { MessageEntry } from '.';
 import { getEmptyMessageEntry } from './getEmptyMessage';
 import { getMessageEntryFormat } from './getMessageEntryFormat';
 import { messageEntryFromTranslation } from './fromTranslation';
+import { createMessageEntry } from './createMessageEntry';
 
 export function messageEntryFromEntity(entity: Entity): MessageEntry {
   const format = getMessageEntryFormat(entity.format);
   const id = entity.key[0] ?? '';
-  const { value, properties } = entity;
-  if (format === 'fluent' && properties) {
-    const attributes = new Map(Object.entries(properties));
-    const value_ = Array.isArray(value) && value.length === 0 ? null : value;
-    return { format, id, value: value_, attributes };
-  } else {
-    return { format, id, value };
-  }
+  return createMessageEntry(format, id, entity.value, entity.properties);
 }
 
 export function messageEntryFromEntityTranslation(

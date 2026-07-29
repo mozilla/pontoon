@@ -26,6 +26,7 @@ from pontoon.base.models import (
 from pontoon.checks.models import Error, Warning
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import Term, TermTranslation
+from pontoon.translations.utils import parse_source_string_to_json
 
 
 class UserFactory(DjangoModelFactory):
@@ -119,6 +120,20 @@ class EntityFactory(DjangoModelFactory):
 
     class Meta:
         model = Entity
+        skip_postgeneration_save = True
+
+    @factory.post_generation
+    def parsed_value(entity, create, extracted, **kwargs):
+        if entity.value:
+            return
+        key, value, properties = parse_source_string_to_json(
+            entity.resource.format, entity.string
+        )
+        entity.key = entity.key or key
+        entity.value = value
+        entity.properties = properties
+        if create:
+            entity.save()
 
 
 class ChangedEntityLocaleFactory(DjangoModelFactory):

@@ -1,6 +1,10 @@
+import { Localized } from '@fluent/react';
 import React from 'react';
 
-import type { MachineryTranslation } from '~/api/machinery';
+import type {
+  ComposedMachineryTranslation,
+  MachineryTranslation,
+} from '~/api/machinery';
 
 import { GoogleTranslation } from './source/GoogleTranslation';
 import { MicrosoftTranslation } from './source/MicrosoftTranslation';
@@ -9,7 +13,8 @@ import { CaighdeanTranslation } from './source/CaighdeanTranslation';
 import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
-  translation: MachineryTranslation;
+  translation: MachineryTranslation | ComposedMachineryTranslation;
+  composed?: boolean;
 };
 
 /**
@@ -17,6 +22,7 @@ type Props = {
  */
 export function MachineryTranslationSource({
   translation,
+  composed,
 }: Props): React.ReactElement<'ul'> {
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
@@ -33,16 +39,29 @@ export function MachineryTranslationSource({
     switch (source) {
       case 'translation-memory':
         sources.push(
-          <TranslationMemory itemCount={translation.itemCount} key={source} />,
+          <TranslationMemory
+            itemCount={
+              'itemCount' in translation ? translation.itemCount : undefined
+            }
+            key={source}
+          />,
         );
         break;
       case 'google-translate':
         sources.push(
-          <GoogleTranslation
-            isOpenAIChatGPTSupported={isOpenAIChatGPTSupported}
-            translation={translation}
-            key={source}
-          />,
+          composed ? (
+            <li className='google-translation' key={source}>
+              <Localized id='machinery-GoogleTranslation--translation-source'>
+                <span className='translation-source'>GOOGLE TRANSLATE</span>
+              </Localized>
+            </li>
+          ) : (
+            <GoogleTranslation
+              isOpenAIChatGPTSupported={isOpenAIChatGPTSupported}
+              translation={translation as MachineryTranslation}
+              key={source}
+            />
+          ),
         );
         break;
       case 'microsoft-translator':

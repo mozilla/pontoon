@@ -80,6 +80,32 @@ describe('extractAccessKeyCandidates', () => {
     expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
   });
 
+  it('detects a camelCase accessKey attribute', () => {
+    const input = ftl`
+      title = Title
+        .label = Candidates
+        .accessKey = B
+      `;
+    const message = editMessageEntry(parseEntry('fluent', input));
+    const res = extractAccessKeyCandidates(message, 'accessKey');
+
+    expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
+  });
+
+  it('detects a prefixed camelCase accessKey attribute', () => {
+    const input = ftl`
+      title = Title
+        .buttonLabel = Candidates
+        .buttonAccessKey = B
+        .label = Ignore this
+        .value = Ignore this
+      `;
+    const message = editMessageEntry(parseEntry('fluent', input));
+    const res = extractAccessKeyCandidates(message, 'buttonAccessKey');
+
+    expect(res).toEqual(['C', 'a', 'n', 'd', 'i', 't', 'e', 's']);
+  });
+
   it('Does not take Placeables into account when generating candidates', () => {
     const input = ftl`
       title = Title

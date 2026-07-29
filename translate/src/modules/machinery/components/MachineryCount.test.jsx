@@ -9,7 +9,9 @@ import { expect } from 'vitest';
 
 const mountMachineryCount = (translations, results) =>
   render(
-    <MachineryTranslations.Provider value={{ source: 'source', translations }}>
+    <MachineryTranslations.Provider
+      value={{ source: 'source', composed: [], translations }}
+    >
       <SearchData.Provider
         value={{
           input: '',

@@ -1,14 +1,27 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useRef } from 'react';
 
-import type { MachineryTranslation, SourceType } from '~/api/machinery';
+import type {
+  ComposedMachineryTranslation,
+  MachineryTranslation,
+  SourceType,
+} from '~/api/machinery';
 import { logUXAction } from '~/api/uxaction';
-import { EditorActions } from '~/context/Editor';
+import { EditorActions, EditorField } from '~/context/Editor';
+import { useMachineryEntry } from '~/context/EntityView';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
 import { GenericTranslation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useScrollOnSelect } from '~/hooks/useScrollOnSelect';
+import {
+  editMessageEntry,
+  requiresSourceView,
+  serializeEntry,
+  type MessageEntry,
+} from '~/utils/message';
+import { createMessageEntry } from '~/utils/message/createMessageEntry';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { MachineryTranslationSource } from './MachineryTranslationSource';
@@ -72,15 +85,7 @@ export function MachineryTranslationComponent({
   );
 
   const translationRef = useRef<HTMLLIElement>(null);
-  useEffect(() => {
-    if (isSelected) {
-      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      translationRef.current?.scrollIntoView({
-        behavior: mediaQuery.matches ? 'auto' : 'smooth',
-        block: 'nearest',
-      });
-    }
-  }, [isSelected]);
+  useScrollOnSelect(translationRef, isSelected);
 
   return (
     <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
@@ -152,5 +157,174 @@ function MachineryTranslationSuggestion({
         )}
       </p>
     </>
+  );
+}
+
+/**
+ * Render a composed multi-value suggestion in the Machinery tab.
+ *
+ * A composed suggestion carries the whole `(value, properties)` data model, so
+ * it's shown as labeled fields (source above, suggestion below) and copied
+ * across all editor fields at once.
+ */
+export function ComposedTranslationComponent({
+  index,
+  translation,
+}: {
+  index: number;
+  translation: ComposedMachineryTranslation;
+}): React.ReactElement<React.ElementType> {
+  const { setEditorFromComposed } = useContext(EditorActions);
+  const { element, setElement } = useContext(HelperSelection);
+  const isSelected = element === index;
+
+  const copyIntoEditor = useCallback(() => {
+    if (window.getSelection()?.isCollapsed !== false) {
+      setElement(index);
+      setEditorFromComposed(
+        translation.value,
+        translation.properties,
+        translation.sources,
+        true,
+      );
+    }
+  }, [index, setEditorFromComposed, setElement, translation]);
+
+  const className = classNames(
+    'translation',
+    useReadonlyEditor() && 'cannot-copy',
+    isSelected && 'selected',
+  );
+
+  const translationRef = useRef<HTMLLIElement>(null);
+  useScrollOnSelect(translationRef, isSelected);
+
+  return (
+    <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
+      <li
+        className={className}
+        title='Copy Into Translation (Ctrl + Shift + Down)'
+        onClick={copyIntoEditor}
+        ref={translationRef}
+      >
+        <ComposedSuggestion translation={translation} />
+      </li>
+    </Localized>
+  );
+}
+
+function ComposedSuggestion({
+  translation,
+}: {
+  translation: ComposedMachineryTranslation;
+}) {
+  const { code, direction, script } = useContext(Locale);
+  const machineryEntry = useMachineryEntry();
+  const suggestionEntry = createMessageEntry(
+    machineryEntry.format,
+    machineryEntry.id,
+    translation.value,
+    translation.properties,
+  );
+
+  const originalFields = richFields(machineryEntry);
+  const suggestionFields = richFields(suggestionEntry);
+
+  return (
+    <>
+      <header>
+        {translation.quality && (
+          <span className='quality'>{translation.quality + '%'}</span>
+        )}
+
+        <MachineryTranslationSource translation={translation} composed />
+      </header>
+      {originalFields ? (
+        <RichMessage className='original' fields={originalFields} />
+      ) : (
+        <p className='original'>
+          <GenericTranslation content={serializeEntry(machineryEntry)} />
+        </p>
+      )}
+      {suggestionFields ? (
+        <RichMessage
+          className='suggestion'
+          fields={suggestionFields}
+          dir={direction}
+          script={script}
+          lang={code}
+        />
+      ) : (
+        <p
+          className='suggestion'
+          dir={direction}
+          data-script={script}
+          lang={code}
+        >
+          <GenericTranslation content={serializeEntry(suggestionEntry)} />
+        </p>
+      )}
+    </>
+  );
+}
+
+/**
+ * Fields of a message entry, or `null` when it can't be shown as a rich
+ * multi-field view (source-view-only entry, or a single field — in which case
+ * the plain rendering is used).
+ *
+ * Reuses `editMessageEntry()` so this read-only view splits an entry into
+ * labeled rows exactly as the editor splits it into inputs; the two must agree,
+ * because clicking the row copies it into those inputs. The editor handles it
+ * builds are unused here.
+ */
+function richFields(entry: MessageEntry): EditorField[] | null {
+  if (requiresSourceView(entry)) {
+    return null;
+  }
+  const fields = editMessageEntry(entry);
+  return fields.length > 1 ? fields : null;
+}
+
+/** Render a parsed message as a labeled table, mirroring the original string panel. */
+function RichMessage({
+  className,
+  fields,
+  dir,
+  lang,
+  script,
+}: {
+  className: string;
+  fields: EditorField[];
+  dir?: string;
+  lang?: string;
+  script?: string;
+}): React.ReactElement<'table'> {
+  return (
+    <table
+      className={`fluent-rich-string ${className}`}
+      dir={dir}
+      data-script={script}
+      lang={lang}
+    >
+      <tbody>
+        {fields.map(({ handle, id, labels }) => (
+          <tr key={id}>
+            <td>
+              <label>
+                {labels.map(({ label }) => (
+                  <span key={label}>{label}</span>
+                ))}
+              </label>
+            </td>
+            <td>
+              <span>
+                <GenericTranslation content={handle.current.value} />
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

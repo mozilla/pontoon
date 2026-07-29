@@ -1693,7 +1693,7 @@ def test_pretranslation_tm(member):
         format="fluent",
     )
     entity_b = EntityFactory.create(
-        string="Entity B",
+        string="entity-b = Entity B\n",
         resource=resource_b,
     )
     project_c = ProjectFactory(

@@ -609,6 +609,47 @@ describe('<EditorProvider>', () => {
     });
   });
 
+  it('distributes a composed helper entry across all fields', () => {
+    let editor, result, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    mountSpy(Spy, 'fluent', `key = VALUE\n    .title = TITLE\n`);
+
+    act(() =>
+      actions.setEditorFromComposed(
+        ['COMPOSED'],
+        { title: ['COMPOSED_TITLE'] },
+        ['translation-memory'],
+        true,
+      ),
+    );
+
+    expect(editor).toMatchObject({
+      sourceView: false,
+      fields: [
+        {
+          handle: { current: { value: 'COMPOSED' } },
+          name: '',
+        },
+        {
+          handle: { current: { value: 'COMPOSED_TITLE' } },
+          name: 'title',
+        },
+      ],
+      machinery: { manual: true, sources: ['translation-memory'] },
+    });
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: ['COMPOSED'],
+      attributes: new Map([['title', ['COMPOSED_TITLE']]]),
+    });
+  });
+
   it('toggles Fluent source view', () => {
     let editor, result, actions;
     const Spy = () => {

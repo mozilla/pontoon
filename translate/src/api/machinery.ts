@@ -1,3 +1,5 @@
+import type { Message } from '@mozilla/l10n';
+
 import type { Locale } from '~/context/Locale';
 
 import { GET, POST } from './utils/base';
@@ -27,6 +29,22 @@ export type MachineryTranslation = {
     slug: string;
   }[];
   entities?: number[];
+};
+
+/**
+ * A composed multi-value suggestion from `/machinery-composed/`.
+ *
+ * Unlike {@link MachineryTranslation}, which carries a single plain-string
+ * pattern, a composed suggestion carries the whole `(value, properties)` data
+ * model — Fluent attributes, MF2 selector variants — so the Machinery panel can
+ * render it as a rich, multi-field view and copy it across all editor fields
+ * without serializing on the server and re-parsing on the client.
+ */
+export type ComposedMachineryTranslation = {
+  sources: SourceType[];
+  quality?: 100;
+  value: Message;
+  properties?: Record<string, Message>;
 };
 
 type ConcordanceTranslations = {
@@ -132,6 +150,50 @@ export async function fetchTranslationMemory(
 }
 
 /**
+ * Return a composed multi-value translation for an entity.
+ *
+ * Each translatable leaf is looked up in Translation Memory, falling back to the
+ * requested MT service when no exact TM match exists. Use
+ * `service: 'translation-memory'` to disable the MT fallback and only emit a
+ * result when every leaf has a TM hit.
+ *
+ * Returns an empty array when no composed translation can be produced, e.g.
+ * when MT is unavailable for the locale.
+ */
+export async function fetchComposedMachinery(
+  pk: number,
+  locale: Locale,
+  service: 'translation-memory' | 'google-translate' | 'microsoft-translator',
+): Promise<ComposedMachineryTranslation[]> {
+  const url = '/machinery-composed/';
+  const params = {
+    entity: String(pk),
+    locale: locale.code,
+    service,
+  };
+
+  const result = (await GET_(url, params)) as {
+    value?: Message;
+    properties?: Record<string, Message>;
+    sources?: string[];
+    quality?: 100;
+  };
+
+  if (!result?.value) {
+    return [];
+  }
+
+  return [
+    {
+      sources: (result.sources ?? [service]) as SourceType[],
+      value: result.value,
+      properties: result.properties,
+      quality: result.quality,
+    },
+  ];
+}
+
+/**
  * Return translation by Google Translate.
  */
 export async function fetchGoogleTranslation(
@@ -209,7 +271,7 @@ export async function fetchMicrosoftTranslation(
   const url = '/microsoft-translator/';
   const params = {
     text: original,
-    locale: locale.msTranslatorCode,
+    locale: locale.code,
   };
 
   const { translation } = (await GET_(url, params)) as {
