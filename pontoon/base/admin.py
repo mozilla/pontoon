@@ -219,6 +219,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     "pretranslation_enabled",
                     "sync_disabled",
                     "disabled",
+                    "is_chs_project",
                 ),
             },
         ),
