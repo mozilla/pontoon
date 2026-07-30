@@ -267,14 +267,20 @@ def _get_paginated_entities(
     requested_entity = cleaned_data["entity"] if page_idx == 1 else None
     requested_entity_location = None
     if requested_entity and not entities.filter(pk=requested_entity).exists():
+        viewable = Q(
+            resource__project__disabled=False,
+            resource__project__system_project=False,
+            resource__project__in=Project.objects.visible_for(user),
+        )
+        if project.pk:
+            viewable |= Q(resource__project=project)
+
         located = (
             Entity.objects.filter(
+                viewable,
                 pk=requested_entity,
                 obsolete=False,
                 resource__translatedresources__locale=locale,
-                resource__project__disabled=False,
-                resource__project__system_project=False,
-                resource__project__in=Project.objects.visible_for(user),
             )
             .values_list(
                 "resource__project__slug",
