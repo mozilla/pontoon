@@ -94,12 +94,6 @@ export function App() {
                     </section>
                     <section className='panel-content'>
                       <BadgeTooltip />
-                      {entityNotFound ? (
-                        <StringNotFound entityLocation={entityNotFound} />
-                      ) : batchactions.entities.length === 0 ? (
-                        <Entity />
-                      ) : (
-                        <BatchActions />
                       {batchactions.entities.length > 0 ? (
                         <BatchActions />
                       ) : entityNotFound ? (
