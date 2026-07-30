@@ -5,7 +5,7 @@ import pytest
 from django.shortcuts import render
 from django.urls import reverse
 
-from pontoon.base.tests import (
+from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
     ResourceFactory,

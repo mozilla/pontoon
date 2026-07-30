@@ -22,7 +22,11 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
 )
-from pontoon.base.tests import (
+from pontoon.sync.models import Sync
+from pontoon.sync.tasks import sync_project_task
+from pontoon.sync.tests.test_checkouts import MockVersionControl
+from pontoon.sync.tests.utils import build_file_tree
+from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
@@ -32,10 +36,6 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.models import Sync
-from pontoon.sync.tasks import sync_project_task
-from pontoon.sync.tests.test_checkouts import MockVersionControl
-from pontoon.sync.tests.utils import build_file_tree
 
 
 @contextmanager
@@ -51,16 +51,6 @@ def mock_setup(mock_vcs=None):
         repo = cast(Repository, RepositoryFactory.create(url="http://example.com/repo"))
         locale = cast(Locale, LocaleFactory.create(code="de-Test", name="Test German"))
         yield repo, locale
-
-
-def sync_errors(caplog):
-    """Error messages logged while syncing entities."""
-    return [
-        record.getMessage()
-        for record in caplog.records
-        if record.levelno == logging.ERROR
-        and record.name == "pontoon.sync.core.entities"
-    ]
 
 
 @pytest.mark.django_db
@@ -181,10 +171,10 @@ def test_kitchen_sink():
                 r"""
                 Pontoon/test-project: Update Test (German|French) \((de|fr)-Test\), Test (German|French) \((de|fr)-Test\)
 
-                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
                 """
             ).strip(),
             commit_msg,
@@ -736,14 +726,13 @@ def test_plain_json(caplog):
         # Test
         with caplog.at_level(logging.ERROR, logger="pontoon.sync.core.entities"):
             sync_project_task(project.pk)
-        (bad_json_error,) = sync_errors(caplog)
-        assert "Resource format detection failed" in bad_json_error
+        assert "Resource format detection failed" in caplog.text
         with open(join(repo.checkout_path, "de-Test", "old-file.json")) as file:
             assert file.read() == dedent("""\
-        {
-          "o1": "Translation 1"
-        }
-        """)
+            {
+              "o1": "Translation 1"
+            }
+            """)
         assert {
             (ent.resource.path, ent.resource.format, *ent.key)
             for ent in Entity.objects.filter(resource__project=project)
@@ -777,13 +766,12 @@ def test_unsupported_formats(caplog):
 
         with caplog.at_level(logging.ERROR, logger="pontoon.sync.core.entities"):
             sync_project_task(project.pk)
-        bad_inc_error = next(msg for msg in sync_errors(caplog) if ":file.inc]" in msg)
+        log_lines = caplog.text.strip().split("\n")
+        bad_inc_error = next(msg for msg in log_lines if ":file.inc]" in msg)
         assert "Skipping resource with unsupported format: inc" in bad_inc_error
-        bad_lang_error = next(
-            msg for msg in sync_errors(caplog) if ":file.lang]" in msg
-        )
+        bad_lang_error = next(msg for msg in log_lines if ":file.lang]" in msg)
         assert "Resource format detection failed" in bad_lang_error
-        assert len(sync_errors(caplog)) == 2
+        assert len(log_lines) == 2
         assert {
             (ent.resource.path, ent.resource.format, *ent.key)
             for ent in Entity.objects.filter(resource__project=project)

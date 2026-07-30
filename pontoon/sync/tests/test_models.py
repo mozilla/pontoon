@@ -3,9 +3,9 @@ import pytest
 
 from django.utils import timezone
 
-from pontoon.base.tests import ProjectFactory
 from pontoon.sync.models import Sync
 from pontoon.sync.tasks import sync_project_task
+from pontoon.test.factories import ProjectFactory
 
 
 class SyncFactory(factory.django.DjangoModelFactory):

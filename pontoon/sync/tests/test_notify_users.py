@@ -6,7 +6,8 @@ import pytest
 from notifications.models import Notification
 
 from pontoon.base.models import Project
-from pontoon.base.tests import (
+from pontoon.sync.core import notify_users
+from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
@@ -15,7 +16,6 @@ from pontoon.base.tests import (
     TranslationFactory,
     UserFactory,
 )
-from pontoon.sync.core import notify_users
 
 
 @patch("pontoon.messaging.notifications.notify.send")

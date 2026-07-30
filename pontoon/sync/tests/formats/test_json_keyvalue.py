@@ -7,7 +7,7 @@ from moz.l10n.resource import parse_resource
 from pontoon.sync.formats import as_entity, as_repo_translations
 
 
-def test_plain_json():
+def test_json_keyvalue():
     src = dedent("""
         {
           "No Comments or Sources": "Translated No Comments or Sources",
@@ -39,7 +39,7 @@ def test_plain_json():
     assert t1.string == "value"
 
 
-def test_key_conflict():
+def test_json_key_conflict():
     src = dedent("""
         {
             "Source": { "String": "foo" },

@@ -7,7 +7,7 @@ from moz.l10n.resource import parse_resource
 from pontoon.sync.formats import as_entity, as_repo_translations
 
 
-def test_webext():
+def test_json_extensions():
     src = dedent("""
         {
           "SourceString": {

@@ -198,7 +198,7 @@ def test_gettext():
     assert not t7.fuzzy
 
 
-def test_context_and_empty_messages():
+def test_gettext_context_and_empty_messages():
     src = dedent("""
         #
         msgid ""

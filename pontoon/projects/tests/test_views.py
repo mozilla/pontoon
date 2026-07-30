@@ -5,7 +5,7 @@ import pytest
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from pontoon.base.tests import TranslationFactory
+from pontoon.test.factories import TranslationFactory
 
 
 @pytest.mark.no_cover

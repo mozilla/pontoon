@@ -13,7 +13,12 @@ from django.utils import timezone
 
 from pontoon.base.models import Entity, Project, TranslatedResource
 from pontoon.base.models.translation import Translation
-from pontoon.base.tests import (
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.entities import sync_resources_from_repo
+from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.stats import update_stats
+from pontoon.sync.tests.utils import build_file_tree
+from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
@@ -21,11 +26,6 @@ from pontoon.base.tests import (
     ResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.core.checkout import Checkout, Checkouts
-from pontoon.sync.core.entities import sync_resources_from_repo
-from pontoon.sync.core.paths import find_paths
-from pontoon.sync.core.stats import update_stats
-from pontoon.sync.tests.utils import build_file_tree
 
 
 now = timezone.now()
@@ -55,17 +55,17 @@ def test_resource_obsoletion():
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
         res_b = ResourceFactory.create(project=project, path="b.po", format="gettext")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
-        entity_a = EntityFactory.create(resource=res_a, string="Window")
+        entity_a = EntityFactory.create(resource=res_a, string="key = Window\n")
         entity_b = EntityFactory.create(resource=res_b, string="Close")
-        entity_c = EntityFactory.create(resource=res_c, string="Hello")
+        entity_c = EntityFactory.create(resource=res_c, string="key = Hello\n")
         translation_a = TranslationFactory.create(
-            entity=entity_a, locale=locale, string="Fenetre"
+            entity=entity_a, locale=locale, string="key = Fenetre\n"
         )
         translation_b = TranslationFactory.create(
             entity=entity_b, locale=locale, string="Ferme"
         )
         translation_c = TranslationFactory.create(
-            entity=entity_c, locale=locale, string="Bonjour"
+            entity=entity_c, locale=locale, string="key = Bonjour\n"
         )
 
         # Filesystem setup
