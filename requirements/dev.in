@@ -13,6 +13,7 @@
 
 # Runtime dependencies
 -r base.in
+# Should match the psycopg2 version of prod.in
 psycopg2-binary==2.9.12
 
 # Development, testing, and linting dependencies

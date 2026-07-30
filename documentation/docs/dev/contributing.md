@@ -216,9 +216,9 @@ system.
 
 Direct dependencies for Pontoon are distributed across these files:
 
-1. ``requirements/base.in``: Running Pontoon in any environment
-2. ``requirements/prod.in``: Running Pontoon in production
-3. ``requirements/dev.in``: Development
+1. `requirements/base.in`: Running Pontoon in any environment
+2. `requirements/prod.in`: Running Pontoon in production
+3. `requirements/dev.in`: Development
 
 In order to pin and hash the direct and indirect dependencies, we use
 [uv pip compile](https://docs.astral.sh/uv/#the-pip-interface), which

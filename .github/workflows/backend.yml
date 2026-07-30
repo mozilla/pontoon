@@ -7,7 +7,7 @@ on:
     paths:
       - docker/**
       - pontoon/**
-      - requirements/dev.txt
+      - requirements/**
       - .github/workflows/backend.yml
   pull_request:
     branches:
@@ -15,7 +15,7 @@ on:
     paths:
       - docker/**
       - pontoon/**
-      - requirements/dev.txt
+      - requirements/**
       - .github/workflows/backend.yml
   workflow_dispatch:
 
