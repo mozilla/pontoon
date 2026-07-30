@@ -3,7 +3,7 @@
 # This compiles all requirements files with uv pip compile.
 # You should always use this script, because dev.txt depends on prod.txt.
 
-export CUSTOM_COMPILE_COMMAND="./docker/compile_requirements.sh"
+export UV_CUSTOM_COMPILE_COMMAND="./docker/compile_requirements.sh"
 
 # Run compile command from the requirements directory
 cd "$(dirname "$0")/../requirements"
