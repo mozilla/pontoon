@@ -20,6 +20,7 @@ from pontoon.messaging.emails import (
     send_inactive_manager_emails,
     send_inactive_translator_emails,
     send_monthly_activity_summary,
+    send_monthly_health_report_emails,
     send_notification_digest,
     send_onboarding_email_1,
     send_onboarding_emails_2,
