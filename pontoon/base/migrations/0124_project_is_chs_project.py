@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name="is_chs_project",
             field=models.BooleanField(
                 default=False,
-                help_text="Used to flag key projects referenced in the Insights Dashboard.",
+                help_text="Used to mark key projects included in the Community Health Score calculation.",
             ),
         ),
     ]
