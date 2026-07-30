@@ -100,6 +100,12 @@ export function App() {
                         <Entity />
                       ) : (
                         <BatchActions />
+                      {batchactions.entities.length > 0 ? (
+                        <BatchActions />
+                      ) : entityNotFound ? (
+                        <StringNotFound entityLocation={entityNotFound} />
+                      ) : (
+                        <Entity />
                       )}
                     </section>
                   </section>
