@@ -1,6 +1,5 @@
 from datetime import datetime
 from textwrap import dedent
-from unittest import TestCase
 
 from moz.l10n.formats import Format
 from moz.l10n.model import PatternMessage
@@ -9,67 +8,66 @@ from moz.l10n.resource import parse_resource
 from pontoon.sync.formats import as_entity, as_repo_translations
 
 
-class PropertiesTests(TestCase):
-    def test_properties(self):
-        src = dedent("""
-            # Sample comment
-            SourceString=Translated String\\u0020
+def test_properties():
+    src = dedent("""
+        # Sample comment
+        SourceString=Translated String\\u0020
 
-            # First comment
-            # Second comment
-            MultipleComments=Translated Multiple Comments
+        # First comment
+        # Second comment
+        MultipleComments=Translated Multiple Comments
 
-            NoCommentsorSources=Translated No Comments or Sources
+        NoCommentsorSources=Translated No Comments or Sources
 
-            EmptyTranslation=
-            Multiline=Foo\\n\\nbar\\n
-            """)
+        EmptyTranslation=
+        Multiline=Foo\\n\\nbar\\n
+        """)
 
-        res = parse_resource(Format.properties, src)
-        e0, e1, e2, e3, e4 = (
-            as_entity(Format.properties, (), entry, date_created=datetime.now())
-            for entry in res.all_entries()
-        )
-        t0, t1, t2, t3, t4 = as_repo_translations(res)
+    res = parse_resource(Format.properties, src)
+    e0, e1, e2, e3, e4 = (
+        as_entity(Format.properties, (), entry, date_created=datetime.now())
+        for entry in res.all_entries()
+    )
+    t0, t1, t2, t3, t4 = as_repo_translations(res)
 
-        # basic
-        assert e0.comment == "Sample comment"
-        assert e0.key == ["SourceString"]
-        assert e0.string == "Translated String\\u0020"
-        assert e0.value == ["Translated String "]
+    # basic
+    assert e0.comment == "Sample comment"
+    assert e0.key == ["SourceString"]
+    assert e0.string == "Translated String\\u0020"
+    assert e0.value == ["Translated String "]
 
-        assert t0.key == ("SourceString",)
-        assert t0.string == "Translated String\\u0020"
+    assert t0.key == ("SourceString",)
+    assert t0.string == "Translated String\\u0020"
 
-        # multiple comments
-        assert e1.comment == "First comment\nSecond comment"
-        assert e1.key == ["MultipleComments"]
-        assert e1.string == "Translated Multiple Comments"
-        assert e1.value == ["Translated Multiple Comments"]
+    # multiple comments
+    assert e1.comment == "First comment\nSecond comment"
+    assert e1.key == ["MultipleComments"]
+    assert e1.string == "Translated Multiple Comments"
+    assert e1.value == ["Translated Multiple Comments"]
 
-        assert t1.key == ("MultipleComments",)
-        assert t1.string == "Translated Multiple Comments"
+    assert t1.key == ("MultipleComments",)
+    assert t1.string == "Translated Multiple Comments"
 
-        # no comments or sources
-        assert e2.comment == ""
-        assert e2.key == ["NoCommentsorSources"]
-        assert e2.string == "Translated No Comments or Sources"
-        assert e2.value == ["Translated No Comments or Sources"]
+    # no comments or sources
+    assert e2.comment == ""
+    assert e2.key == ["NoCommentsorSources"]
+    assert e2.string == "Translated No Comments or Sources"
+    assert e2.value == ["Translated No Comments or Sources"]
 
-        assert t2.key == ("NoCommentsorSources",)
-        assert t2.string == "Translated No Comments or Sources"
+    assert t2.key == ("NoCommentsorSources",)
+    assert t2.string == "Translated No Comments or Sources"
 
-        # empty translation
-        assert e3.comment == ""
-        assert e3.key == ["EmptyTranslation"]
-        assert e3.string == ""
-        assert e3.value == []
+    # empty translation
+    assert e3.comment == ""
+    assert e3.key == ["EmptyTranslation"]
+    assert e3.string == ""
+    assert e3.value == []
 
-        assert t3.key == ("EmptyTranslation",)
-        assert t3.string == ""
+    assert t3.key == ("EmptyTranslation",)
+    assert t3.string == ""
 
-        # multiline
-        assert e4.string == "Foo\\n\\nbar\\n"
-        assert e4.value == ["Foo\n\nbar\n"]
-        assert t4.string == "Foo\\n\\nbar\\n"
-        assert t4.value == PatternMessage(["Foo\n\nbar\n"])
+    # multiline
+    assert e4.string == "Foo\\n\\nbar\\n"
+    assert e4.value == ["Foo\n\nbar\n"]
+    assert t4.string == "Foo\\n\\nbar\\n"
+    assert t4.value == PatternMessage(["Foo\n\nbar\n"])

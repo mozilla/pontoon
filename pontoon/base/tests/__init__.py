@@ -1,4 +1,11 @@
-from unittest.mock import patch
+"""Deprecated test factories.
+
+These duplicate `pontoon.test.factories`, which is the canonical set and what
+the fixtures in `pontoon.test.fixtures` are built on. Don't use these in new
+tests, and prefer migrating existing ones: the duplicates have drifted, most
+notably `EntityFactory`, which here doesn't populate `key`, `value` and
+`properties` from `string`.
+"""
 
 from factory import LazyAttribute, Sequence, SubFactory, post_generation
 from factory.django import DjangoModelFactory
@@ -7,7 +14,6 @@ from django.contrib.auth.models import (
     User,
 )
 from django.template.defaultfilters import slugify
-from django.test import Client as BaseClient, TestCase as BaseTestCase
 
 from pontoon.base.models import (
     Entity,
@@ -19,36 +25,6 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
 )
-
-
-class PontoonClient(BaseClient):
-    """Useful helper methods that can be used in tests."""
-
-    def ajax_post(self, url, params):
-        """Send data to the ajax-type view."""
-        return self.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-
-
-class TestCase(BaseTestCase):
-    client_class = PontoonClient
-
-    def patch(self, *args, **kwargs):
-        """
-        Wrapper around mock.patch that automatically cleans up the patch
-        in the test cleanup phase.
-        """
-        patch_obj = patch(*args, **kwargs)
-        self.addCleanup(patch_obj.stop)
-        return patch_obj.start()
-
-    def patch_object(self, *args, **kwargs):
-        """
-        Wrapper around mock.patch.object that automatically cleans up
-        the patch in the test cleanup phase.
-        """
-        patch_obj = patch.object(*args, **kwargs)
-        self.addCleanup(patch_obj.stop)
-        return patch_obj.start()
 
 
 class UserFactory(DjangoModelFactory):

@@ -1,3 +1,4 @@
+import logging
 import re
 
 from contextlib import contextmanager
@@ -6,7 +7,6 @@ from os.path import isfile, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
 from typing import cast
-from unittest import TestCase
 from unittest.mock import patch
 
 import pytest
@@ -51,6 +51,16 @@ def mock_setup(mock_vcs=None):
         repo = cast(Repository, RepositoryFactory.create(url="http://example.com/repo"))
         locale = cast(Locale, LocaleFactory.create(code="de-Test", name="Test German"))
         yield repo, locale
+
+
+def sync_errors(caplog):
+    """Error messages logged while syncing entities."""
+    return [
+        record.getMessage()
+        for record in caplog.records
+        if record.levelno == logging.ERROR
+        and record.name == "pontoon.sync.core.entities"
+    ]
 
 
 @pytest.mark.django_db
@@ -686,96 +696,98 @@ def test_gettext_fuzzy():
             )
 
 
-class TestEndToEnd(TestCase):
-    @pytest.mark.django_db
-    def test_plain_json(self):
-        with mock_setup() as (repo, locale):
-            # Database setup
-            project = ProjectFactory.create(
-                name="test-plain-json", locales=[locale], repositories=[repo]
-            )
-            res = ResourceFactory.create(
-                project=project, path="old-file.json", format="plain_json"
-            )
+@pytest.mark.django_db
+def test_plain_json(caplog):
+    with mock_setup() as (repo, locale):
+        # Database setup
+        project = ProjectFactory.create(
+            name="test-plain-json", locales=[locale], repositories=[repo]
+        )
+        res = ResourceFactory.create(
+            project=project, path="old-file.json", format="plain_json"
+        )
 
-            entity = EntityFactory.create(resource=res, key=["o1"], string="Entity 1")
-            TranslationFactory.create(
-                entity=entity,
-                locale=locale,
-                string="Translation 1",
-                active=True,
-                approved=True,
-            )
+        entity = EntityFactory.create(resource=res, key=["o1"], string="Entity 1")
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="Translation 1",
+            active=True,
+            approved=True,
+        )
 
-            # Filesystem setup
-            makedirs(repo.checkout_path)
-            build_file_tree(
-                repo.checkout_path,
-                {
-                    "en-US": {
-                        "bad-file.json": '{ "b1": "Entity 1", "b2": "Entity 2", }',  # trailing comma
-                        "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
-                        "old-file.json": '{ "o1": "Entity 1", "o2": "Entity 2" }',
-                    },
-                    "de-Test": {
-                        "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
-                        "old-file.json": "{}",
-                    },
-                },
-            )
-
-            # Test
-            with self.assertLogs("pontoon.sync.core.entities", level="ERROR") as cm:
-                sync_project_task(project.pk)
-            (bad_json_error,) = cm.output
-            assert "Resource format detection failed" in bad_json_error
-            with open(join(repo.checkout_path, "de-Test", "old-file.json")) as file:
-                assert file.read() == dedent("""\
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
             {
-              "o1": "Translation 1"
-            }
-            """)
-            assert {
-                (ent.resource.path, ent.resource.format, *ent.key)
-                for ent in Entity.objects.filter(resource__project=project)
-            } == {
-                ("new-file.json", "plain_json", "n1"),
-                ("new-file.json", "plain_json", "n2"),
-                ("old-file.json", "plain_json", "o1"),
-                ("old-file.json", "plain_json", "o2"),
-            }
-
-    @pytest.mark.django_db
-    def test_unsupported_formats(self):
-        with mock_setup() as (repo, locale):
-            project = ProjectFactory.create(
-                name="test-unsupported-formats", locales=[locale], repositories=[repo]
-            )
-
-            makedirs(repo.checkout_path)
-            build_file_tree(
-                repo.checkout_path,
-                {
-                    "en-US": {
-                        "file.inc": "#define inc unsupported\n",
-                        "file.json": '{ "json": "valid src" }',
-                        "file.lang": "",
-                    },
-                    "de-Test": {},
+                "en-US": {
+                    "bad-file.json": '{ "b1": "Entity 1", "b2": "Entity 2", }',  # trailing comma
+                    "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
+                    "old-file.json": '{ "o1": "Entity 1", "o2": "Entity 2" }',
                 },
-            )
+                "de-Test": {
+                    "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
+                    "old-file.json": "{}",
+                },
+            },
+        )
 
-            with self.assertLogs("pontoon.sync.core.entities", level="ERROR") as cm:
-                sync_project_task(project.pk)
-            bad_inc_error = next(msg for msg in cm.output if ":file.inc]" in msg)
-            assert "Skipping resource with unsupported format: inc" in bad_inc_error
-            bad_lang_error = next(msg for msg in cm.output if ":file.lang]" in msg)
-            assert "Resource format detection failed" in bad_lang_error
-            assert len(cm.output) == 2
-            assert {
-                (ent.resource.path, ent.resource.format, *ent.key)
-                for ent in Entity.objects.filter(resource__project=project)
-            } == {("file.json", "plain_json", "json")}
+        # Test
+        with caplog.at_level(logging.ERROR, logger="pontoon.sync.core.entities"):
+            sync_project_task(project.pk)
+        (bad_json_error,) = sync_errors(caplog)
+        assert "Resource format detection failed" in bad_json_error
+        with open(join(repo.checkout_path, "de-Test", "old-file.json")) as file:
+            assert file.read() == dedent("""\
+        {
+          "o1": "Translation 1"
+        }
+        """)
+        assert {
+            (ent.resource.path, ent.resource.format, *ent.key)
+            for ent in Entity.objects.filter(resource__project=project)
+        } == {
+            ("new-file.json", "plain_json", "n1"),
+            ("new-file.json", "plain_json", "n2"),
+            ("old-file.json", "plain_json", "o1"),
+            ("old-file.json", "plain_json", "o2"),
+        }
+
+
+@pytest.mark.django_db
+def test_unsupported_formats(caplog):
+    with mock_setup() as (repo, locale):
+        project = ProjectFactory.create(
+            name="test-unsupported-formats", locales=[locale], repositories=[repo]
+        )
+
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {
+                    "file.inc": "#define inc unsupported\n",
+                    "file.json": '{ "json": "valid src" }',
+                    "file.lang": "",
+                },
+                "de-Test": {},
+            },
+        )
+
+        with caplog.at_level(logging.ERROR, logger="pontoon.sync.core.entities"):
+            sync_project_task(project.pk)
+        bad_inc_error = next(msg for msg in sync_errors(caplog) if ":file.inc]" in msg)
+        assert "Skipping resource with unsupported format: inc" in bad_inc_error
+        bad_lang_error = next(
+            msg for msg in sync_errors(caplog) if ":file.lang]" in msg
+        )
+        assert "Resource format detection failed" in bad_lang_error
+        assert len(sync_errors(caplog)) == 2
+        assert {
+            (ent.resource.path, ent.resource.format, *ent.key)
+            for ent in Entity.objects.filter(resource__project=project)
+        } == {("file.json", "plain_json", "json")}
 
 
 @pytest.mark.django_db
