@@ -16,13 +16,14 @@ from pontoon.base.models import (
     Project,
     TranslatedResource,
     Translation,
+    User,
 )
-from pontoon.base.system_users import get_pretranslation_authors
 from pontoon.base.tasks import PontoonTask
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.translations.utils import parse_source_string_to_json
 
+from . import AUTHORS
 from .pretranslate import get_pretranslation
 
 
@@ -79,7 +80,7 @@ def pretranslate(project: Project, paths: set[str] | None):
     )
 
     # Fetch all locale-entity pairs with non-rejected or pretranslated translations
-    pt_authors = get_pretranslation_authors()
+    pt_authors = {key: User.objects.get(email=email) for key, email in AUTHORS.items()}
     translated_entities = (
         Translation.objects.filter(
             locale__in=locales,

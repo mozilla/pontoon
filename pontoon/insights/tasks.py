@@ -18,7 +18,6 @@ from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity, Locale, TranslatedResource, Translation
-from pontoon.base.system_users import get_pretranslation_authors, get_sync_user
 from pontoon.insights.chs import build_chs_snapshots
 from pontoon.insights.models import (
     LocaleHealthSnapshot,
@@ -92,10 +91,12 @@ def count_activities(dt_max: datetime):
     """
     res: dict[int, Activity] = dict()
 
-    sync_user = get_sync_user().pk
-    pretranslation_users: set[int] = {
-        user.pk for user in get_pretranslation_authors().values()
-    }
+    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
+    pretranslation_users: set[int] = set(
+        User.objects.filter(
+            email__in=["pontoon-tm@example.com", "pontoon-gt@example.com"]
+        ).values_list("pk", flat=True)
+    )
 
     actions = query_actions(dt_max)
     approved_translations = get_approved_translations(actions, pretranslation_users)

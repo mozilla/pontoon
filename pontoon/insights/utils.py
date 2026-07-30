@@ -2,12 +2,12 @@ from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
 
+from django.contrib.auth.models import User
 from django.db.models import Avg, Count, Q, Sum
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.system_users import get_pretranslation_authors, get_sync_user
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
     LocaleHealthSnapshot,
@@ -453,9 +453,14 @@ def get_insights(locale=None, project=None):
 def get_global_pretranslation_quality(category, id):
     start_date = get_insight_start_date()
 
-    sync_user = get_sync_user().pk
+    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
 
-    pretranslation_users = {user.pk for user in get_pretranslation_authors().values()}
+    pretranslation_users = User.objects.filter(
+        email__in=[
+            "pontoon-tm@example.com",
+            "pontoon-gt@example.com",
+        ]
+    ).values_list("pk", flat=True)
 
     actions = (
         ActionLog.objects.filter(
