@@ -1,7 +1,7 @@
 import pytest
 
 from pontoon.base.models import Project, ProjectLocale
-from pontoon.base.tests import ProjectFactory, ProjectLocaleFactory
+from pontoon.test.factories import ProjectFactory, ProjectLocaleFactory
 
 
 @pytest.fixture
@@ -11,7 +11,7 @@ def public_project():
 
 @pytest.fixture
 def private_project():
-    yield ProjectFactory.create()
+    yield ProjectFactory.create(visibility=Project.Visibility.PRIVATE)
 
 
 @pytest.fixture
@@ -21,7 +21,7 @@ def public_project_locale():
 
 @pytest.fixture
 def private_project_locale():
-    yield ProjectLocaleFactory.create()
+    yield ProjectLocaleFactory.create(project__visibility=Project.Visibility.PRIVATE)
 
 
 @pytest.mark.django_db

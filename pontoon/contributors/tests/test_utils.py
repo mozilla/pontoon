@@ -11,10 +11,10 @@ from django.utils import timezone
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import User
 from pontoon.base.models.project import Project
-from pontoon.base.tests import EntityFactory
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.contributors import utils
 from pontoon.test.factories import (
+    EntityFactory,
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,

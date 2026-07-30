@@ -74,11 +74,6 @@ class ProjectFactory(DjangoModelFactory):
             self.repositories.add(RepositoryFactory.build(), bulk=False)
 
 
-class ProjectLocaleFactory(DjangoModelFactory):
-    class Meta:
-        model = ProjectLocale
-
-
 class RepositoryFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
     type = Repository.Type.GIT
@@ -111,6 +106,14 @@ class LocaleFactory(DjangoModelFactory):
 
     class Meta:
         model = Locale
+
+
+class ProjectLocaleFactory(DjangoModelFactory):
+    class Meta:
+        model = ProjectLocale
+
+    project = SubFactory(ProjectFactory)
+    locale = SubFactory(LocaleFactory)
 
 
 class EntityFactory(DjangoModelFactory):

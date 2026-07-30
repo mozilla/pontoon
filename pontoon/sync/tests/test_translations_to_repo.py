@@ -11,7 +11,11 @@ from django.conf import settings
 from django.utils import timezone
 
 from pontoon.base.models import ChangedEntityLocale
-from pontoon.base.tests import (
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.translations_to_repo import sync_translations_to_repo
+from pontoon.sync.tests.utils import build_file_tree
+from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
@@ -20,10 +24,6 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.core.checkout import Checkout, Checkouts
-from pontoon.sync.core.paths import find_paths
-from pontoon.sync.core.translations_to_repo import sync_translations_to_repo
-from pontoon.sync.tests.utils import build_file_tree
 
 
 now = timezone.now()

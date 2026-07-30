@@ -1,6 +1,5 @@
 from datetime import datetime
 from textwrap import dedent
-from unittest import TestCase
 
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
@@ -8,123 +7,125 @@ from moz.l10n.resource import parse_resource
 from pontoon.sync.formats import as_entity, as_repo_translations
 
 
-class AndroidXMLTests(TestCase):
-    def test_android(self):
-        src = dedent("""
-            <?xml version="1.0" encoding="utf-8"?>
-            <resources>
-                <!-- Sample comment -->
-                <string name="Source String">Translated &lt;b&gt;String&lt;/b&gt;</string>
+def test_android():
+    src = dedent("""
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources>
+            <!-- Sample comment -->
+            <string name="Source String">Translated &lt;b&gt;String&lt;/b&gt;</string>
 
-                <!-- First comment -->
-                <!-- Second comment -->
-                <string name="Multiple Comments">Translated Multiple Comments</string>
+            <!-- First comment -->
+            <!-- Second comment -->
+            <string name="Multiple Comments">Translated Multiple Comments</string>
 
-                <string name="No Comments or Sources">Translated No Comments or Sources</string>
-                <string name="Empty Translation"></string>
-            </resources>
-            """).strip()
+            <string name="No Comments or Sources">Translated No Comments or Sources</string>
+            <string name="Empty Translation"></string>
+        </resources>
+        """).strip()
 
-        res = parse_resource(Format.android, src)
-        e0, e1, e2, e3 = (
-            as_entity(Format.android, (), entry, date_created=datetime.now())
-            for entry in res.all_entries()
-        )
-        t0, t1, t2, t3 = as_repo_translations(res)
+    res = parse_resource(Format.android, src)
+    e0, e1, e2, e3 = (
+        as_entity(Format.android, (), entry, date_created=datetime.now())
+        for entry in res.all_entries()
+    )
+    t0, t1, t2, t3 = as_repo_translations(res)
 
-        # basic
-        assert e0.comment == "Sample comment"
-        assert e0.key == ["Source String"]
-        assert e0.string == "Translated {|<b>| :html}String{|</b>| :html}"
-        assert e0.value == [
-            "Translated ",
-            {"_": "<b>", "fn": "html"},
-            "String",
-            {"_": "</b>", "fn": "html"},
-        ]
+    # basic
+    assert e0.comment == "Sample comment"
+    assert e0.key == ["Source String"]
+    assert e0.string == "Translated {|<b>| :html}String{|</b>| :html}"
+    assert e0.value == [
+        "Translated ",
+        {"_": "<b>", "fn": "html"},
+        "String",
+        {"_": "</b>", "fn": "html"},
+    ]
 
-        assert t0.key == ("Source String",)
-        assert t0.string == "Translated {|<b>| :html}String{|</b>| :html}"
+    assert t0.key == ("Source String",)
+    assert t0.string == "Translated {|<b>| :html}String{|</b>| :html}"
 
-        # multiple comments
-        assert e1.comment == "First comment\n\nSecond comment"
-        assert e1.key == ["Multiple Comments"]
-        assert e1.string == "Translated Multiple Comments"
-        assert e1.value == ["Translated Multiple Comments"]
+    # multiple comments
+    assert e1.comment == "First comment\n\nSecond comment"
+    assert e1.key == ["Multiple Comments"]
+    assert e1.string == "Translated Multiple Comments"
+    assert e1.value == ["Translated Multiple Comments"]
 
-        assert t1.key == ("Multiple Comments",)
-        assert t1.string == "Translated Multiple Comments"
+    assert t1.key == ("Multiple Comments",)
+    assert t1.string == "Translated Multiple Comments"
 
-        # no comments or sources
-        assert e2.comment == ""
-        assert e2.key == ["No Comments or Sources"]
-        assert e2.string == "Translated No Comments or Sources"
-        assert e2.value == ["Translated No Comments or Sources"]
+    # no comments or sources
+    assert e2.comment == ""
+    assert e2.key == ["No Comments or Sources"]
+    assert e2.string == "Translated No Comments or Sources"
+    assert e2.value == ["Translated No Comments or Sources"]
 
-        assert t2.key == ("No Comments or Sources",)
-        assert t2.string == "Translated No Comments or Sources"
+    assert t2.key == ("No Comments or Sources",)
+    assert t2.string == "Translated No Comments or Sources"
 
-        # empty translation
-        assert e3.comment == ""
-        assert e3.key == ["Empty Translation"]
-        assert e3.string == ""
-        assert e3.value == []
+    # empty translation
+    assert e3.comment == ""
+    assert e3.key == ["Empty Translation"]
+    assert e3.string == ""
+    assert e3.value == []
 
-        assert t3.key == ("Empty Translation",)
-        assert t3.string == ""
+    assert t3.key == ("Empty Translation",)
+    assert t3.string == ""
 
-    def test_android_quotes(self):
-        src = dedent("""
-            <?xml version="1.0" encoding="utf-8"?>
-            <resources>
-                <string name="String">\'</string>
-            </resources>
-            """).strip()
-        res = parse_resource(Format.android, src)
-        (t0,) = as_repo_translations(res)
-        assert t0.string == "'"
 
-    def test_android_escapes_and_trimming(self):
-        src = dedent("""\
-            <?xml version="1.0" encoding="utf-8"?>
-            <resources>
-                <string name="key"> \\u0020\\u000a </string>
-            </resources>
-            """)
-        res = parse_resource(Format.android, src)
-        (t0,) = as_repo_translations(res)
-        assert t0.string == " \n"
+def test_android_quotes():
+    src = dedent("""
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources>
+            <string name="String">\'</string>
+        </resources>
+        """).strip()
+    res = parse_resource(Format.android, src)
+    (t0,) = as_repo_translations(res)
+    assert t0.string == "'"
 
-    def test_android_xliffg(self):
-        src = dedent("""\
-            <?xml version="1.0" encoding="utf-8"?>
-            <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-                <string name="shortcuts_additional_settings"><xliff:g id="vendor" example="Xiaomi">%1$s</xliff:g> additional settings</string>
-            </resources>
-            """)
-        res = parse_resource(Format.android, src)
 
-        (e0,) = (
-            as_entity(Format.android, (), entry, date_created=datetime.now())
-            for entry in res.all_entries()
-        )
-        (t0,) = as_repo_translations(res)
+def test_android_escapes_and_trimming():
+    src = dedent("""\
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources>
+            <string name="key"> \\u0020\\u000a </string>
+        </resources>
+        """)
+    res = parse_resource(Format.android, src)
+    (t0,) = as_repo_translations(res)
+    assert t0.string == " \n"
 
-        assert (
-            e0.string
-            == "{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings"
-        )
-        assert e0.value == [
-            {
-                "$": "vendor",
-                "fn": "xliff:g",
-                "opt": {"example": "Xiaomi", "id": "vendor"},
-                "attr": {"source": "%1$s", "translate": "no"},
-            },
-            " additional settings",
-        ]
 
-        assert (
-            t0.string
-            == "{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings"
-        )
+def test_android_xliffg():
+    src = dedent("""\
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+            <string name="shortcuts_additional_settings"><xliff:g id="vendor" example="Xiaomi">%1$s</xliff:g> additional settings</string>
+        </resources>
+        """)
+    res = parse_resource(Format.android, src)
+
+    (e0,) = (
+        as_entity(Format.android, (), entry, date_created=datetime.now())
+        for entry in res.all_entries()
+    )
+    (t0,) = as_repo_translations(res)
+
+    assert (
+        e0.string
+        == "{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings"
+    )
+    assert e0.value == [
+        {
+            "$": "vendor",
+            "fn": "xliff:g",
+            "opt": {"example": "Xiaomi", "id": "vendor"},
+            "attr": {"source": "%1$s", "translate": "no"},
+        },
+        " additional settings",
+    ]
+
+    assert (
+        t0.string
+        == "{$vendor :xliff:g id=vendor example=Xiaomi @translate=no @source=|%1$s|} additional settings"
+    )

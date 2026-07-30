@@ -11,13 +11,15 @@ from django.utils.timezone import make_aware, now
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base.models import User, UserBanLog
 from pontoon.base.models.translation import Translation
-from pontoon.base.tests import (
-    LocaleFactory,
-    TranslationFactory,
-)
 from pontoon.base.utils import aware_datetime
 from pontoon.contributors import views
-from pontoon.test.factories import EntityFactory, ProjectFactory, ResourceFactory
+from pontoon.test.factories import (
+    EntityFactory,
+    LocaleFactory,
+    ProjectFactory,
+    ResourceFactory,
+    TranslationFactory,
+)
 
 
 def commajoin(*items):

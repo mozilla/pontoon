@@ -1,6 +1,5 @@
 from datetime import datetime
 from textwrap import dedent
-from unittest import TestCase
 
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
@@ -8,70 +7,69 @@ from moz.l10n.resource import parse_resource
 from pontoon.sync.formats import as_entity, as_repo_translations
 
 
-class JsonExtensionsTests(TestCase):
-    def test_webext(self):
-        src = dedent("""
-            {
-              "SourceString": {
-                "message": "Translated String",
-                "description": "Sample comment"
-              },
+def test_json_extensions():
+    src = dedent("""
+        {
+          "SourceString": {
+            "message": "Translated String",
+            "description": "Sample comment"
+          },
 
-              "MultipleComments": {
-                "message": "Translated Multiple Comments",
-                "description": "First comment",
-                "description": "Second comment"
-              },
+          "MultipleComments": {
+            "message": "Translated Multiple Comments",
+            "description": "First comment",
+            "description": "Second comment"
+          },
 
-              "NoCommentsorSources": {
-                "message": "Translated No Comments or Sources"
-              },
+          "NoCommentsorSources": {
+            "message": "Translated No Comments or Sources"
+          },
 
-              "placeholder": {
-                "message": "Hello $YOUR_NAME$",
-                "description": "Peer greeting",
-                "placeholders": {
-                  "your_name": {
-                    "content": "$1",
-                    "example": "Cira"
-                  }
-                }
+          "placeholder": {
+            "message": "Hello $YOUR_NAME$",
+            "description": "Peer greeting",
+            "placeholders": {
+              "your_name": {
+                "content": "$1",
+                "example": "Cira"
               }
             }
-            """)
-
-        res = parse_resource(Format.webext, src)
-        e0, e1, e2, e3 = (
-            as_entity(Format.webext, (), entry, date_created=datetime.now())
-            for entry in res.all_entries()
-        )
-        t0, t1, t2, t3 = as_repo_translations(res)
-
-        assert e0.comment == "Sample comment"
-        assert t0.string == "Translated String"
-
-        assert e1.comment == "Second comment"
-
-        assert t2.string == "Translated No Comments or Sources"
-
-        assert e3.key == ["placeholder"]
-        assert (
-            e3.string
-            == ".local $YOUR_NAME = {$arg1 @source=|$1| @example=Cira}\n"
-            + "{{Hello {$YOUR_NAME @source=|$YOUR_NAME$|}}}"
-        )
-        assert e3.value == {
-            "decl": {
-                "YOUR_NAME": {"$": "arg1", "attr": {"example": "Cira", "source": "$1"}}
-            },
-            "msg": ["Hello ", {"$": "YOUR_NAME", "attr": {"source": "$YOUR_NAME$"}}],
+          }
         }
-        assert e3.comment == "Peer greeting"
-        assert e3.meta == []
+        """)
 
-        assert t3.key == ("placeholder",)
-        assert (
-            t3.string
-            == ".local $YOUR_NAME = {$arg1 @source=|$1| @example=Cira}\n"
-            + "{{Hello {$YOUR_NAME @source=|$YOUR_NAME$|}}}"
-        )
+    res = parse_resource(Format.webext, src)
+    e0, e1, e2, e3 = (
+        as_entity(Format.webext, (), entry, date_created=datetime.now())
+        for entry in res.all_entries()
+    )
+    t0, t1, t2, t3 = as_repo_translations(res)
+
+    assert e0.comment == "Sample comment"
+    assert t0.string == "Translated String"
+
+    assert e1.comment == "Second comment"
+
+    assert t2.string == "Translated No Comments or Sources"
+
+    assert e3.key == ["placeholder"]
+    assert (
+        e3.string
+        == ".local $YOUR_NAME = {$arg1 @source=|$1| @example=Cira}\n"
+        + "{{Hello {$YOUR_NAME @source=|$YOUR_NAME$|}}}"
+    )
+    assert e3.value == {
+        "decl": {
+            "YOUR_NAME": {"$": "arg1", "attr": {"example": "Cira", "source": "$1"}}
+        },
+        "msg": ["Hello ", {"$": "YOUR_NAME", "attr": {"source": "$YOUR_NAME$"}}],
+    }
+    assert e3.comment == "Peer greeting"
+    assert e3.meta == []
+
+    assert t3.key == ("placeholder",)
+    assert (
+        t3.string
+        == ".local $YOUR_NAME = {$arg1 @source=|$1| @example=Cira}\n"
+        + "{{Hello {$YOUR_NAME @source=|$YOUR_NAME$|}}}"
+    )

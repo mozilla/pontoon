@@ -8,7 +8,10 @@ from django.conf import settings
 from django.test import RequestFactory
 
 from pontoon.base.models import Project, Resource
-from pontoon.base.tests import (
+from pontoon.base.views import download_translations
+from pontoon.sync.tests.test_checkouts import MockVersionControl
+from pontoon.sync.tests.utils import build_file_tree
+from pontoon.test.factories import (
     LocaleFactory,
     ProjectFactory,
     RepositoryFactory,
@@ -16,9 +19,6 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     UserFactory,
 )
-from pontoon.base.views import download_translations
-from pontoon.sync.tests.test_checkouts import MockVersionControl
-from pontoon.sync.tests.utils import build_file_tree
 
 
 @pytest.mark.django_db
