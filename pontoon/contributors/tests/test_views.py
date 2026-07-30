@@ -148,6 +148,47 @@ def test_profile_view_logged_user_profile(member, mock_profile_render):
 
 
 @pytest.mark.django_db
+def test_profile_view_contributor_badges(member, mock_profile_render):
+    """Badges are computed for regular contributors."""
+    member.client.get(f"/contributors/{member.user.username}/")
+
+    assert set(mock_profile_render.call_args[0][2]["badges"]) == {
+        "translation_champion_badge",
+        "review_master_badge",
+        "community_builder_badge",
+    }
+
+
+@pytest.mark.django_db
+def test_profile_view_system_user_badges(member, sync_user, mock_profile_render):
+    """Skip badges for for system users."""
+    member.client.get(f"/contributors/{sync_user.username}/")
+
+    assert mock_profile_render.call_args[0][2]["badges"] == {}
+
+
+@pytest.mark.django_db
+def test_profile_view_system_user_renders(member, sync_user):
+    """The profile page renders for system users, without the Achievements section."""
+    response = member.client.get(f"/contributors/{sync_user.username}/")
+
+    assert response.status_code == 200
+    assert b"Achievements" not in response.content
+
+
+@pytest.mark.django_db
+def test_profile_view_renders_for_anonymous_users(client, user_a):
+    """Contributor profiles are public, so they must render without a logged in user.
+
+    Note: do not request the `member` fixture here, it force_logins the same
+    `client` fixture and the request would no longer be anonymous.
+    """
+    response = client.get(f"/contributors/{user_a.username}/")
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
 def test_profile_view_unlogged_user_profile(member):
     """Unlogged users shouldn't have access to edit any profile."""
     member.client.logout()
