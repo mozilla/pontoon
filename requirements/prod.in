@@ -4,7 +4,7 @@
 # When making changes to any requirements/*.in file,
 # recompile the requirements with:
 # - `make requirements` if using the development Docker environment
-# - `sh docker/compile_requirements.sh` if using `uv` directly
+# - `./docker/compile_requirements.sh` if using `uv` directly
 #
 # The dependencies are sorted by alphabetical order.
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
