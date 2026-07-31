@@ -1,4 +1,4 @@
-# This requirements file only contains direct dependencies of our project
+# This requirements file only contains direct dependencies
 # that are used in development environments only.
 #
 # When making changes to any requirements/*.in file,

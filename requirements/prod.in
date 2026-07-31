@@ -1,5 +1,6 @@
-# This requirements file only contains direct dependencies of our project
-# that are used in production environments only.
+# This requirements file only contains direct dependencies
+# that are used in production environments only,
+# and which are not appropriate to install in a development environment.
 #
 # When making changes to any requirements/*.in file,
 # recompile the requirements with:

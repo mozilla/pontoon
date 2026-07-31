@@ -1,4 +1,4 @@
-# This requirements file only contains direct dependencies of our project
+# This requirements file contains direct dependencies
 # that are used in both prod and dev environments.
 #
 # The requirements listed here are incomplete,
