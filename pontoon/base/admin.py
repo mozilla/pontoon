@@ -215,6 +215,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     "date_disabled",
                     "date_modified",
                     "system_project",
+                    "is_chs_project",
                     "visibility",
                     "pretranslation_enabled",
                     "sync_disabled",

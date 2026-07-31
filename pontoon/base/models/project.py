@@ -258,6 +258,11 @@ class Project(models.Model, AggregatedStats):
         """,
     )
 
+    is_chs_project = models.BooleanField(
+        default=False,
+        help_text="Used to mark key projects included in the Community Health Score calculation.",
+    )
+
     objects = ProjectQuerySet.as_manager()
 
     project_locale: "ProjectLocaleQuerySet"

@@ -8,9 +8,8 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Locale
+from pontoon.base.models import Locale, Project
 from pontoon.insights.chs import (
-    KEY_PROJECT_SLUGS,
     build_chs_snapshots,
     compute_chs,
     get_completion_by_locale,
@@ -295,9 +294,10 @@ def test_compute_chs():
             "active_contributors": 2,
             "all_contributors": 2,
             "new_signups": 2,
-            "key_projects_enabled": len(KEY_PROJECT_SLUGS),
+            "key_projects_enabled": 7,
             "completion": 100.0,
-        }
+        },
+        7,
     ) == {
         "active_managers_score": 20.0,
         "active_translators_score": 15.0,
@@ -317,9 +317,10 @@ def test_compute_chs():
             "active_contributors": 1,
             "all_contributors": 1,
             "new_signups": 1,
-            "key_projects_enabled": len(KEY_PROJECT_SLUGS),
+            "key_projects_enabled": 7,
             "completion": 50.0,
-        }
+        },
+        7,
     ) == {
         "active_managers_score": 20.0,
         "active_translators_score": 7.5,
@@ -341,7 +342,8 @@ def test_compute_chs():
             "new_signups": 0,
             "key_projects_enabled": 0,
             "completion": 0.0,
-        }
+        },
+        7,
     ) == {
         "active_managers_score": 0,
         "active_translators_score": 0,
@@ -356,7 +358,9 @@ def test_compute_chs():
 
 @pytest.mark.django_db
 def test_get_completion_by_locale(locale_a, locale_b):
-    key_project = ProjectFactory.create(slug="firefox", name="Firefox", repositories=[])
+    key_project = ProjectFactory.create(
+        slug="firefox", name="Firefox", repositories=[], is_chs_project=True
+    )
     key_resource_a = ResourceFactory.create(project=key_project, path="key_a.po")
     key_resource_b = ResourceFactory.create(project=key_project, path="key_b.po")
     key_resource_c = ResourceFactory.create(project=key_project, path="key_c.po")
@@ -391,7 +395,9 @@ def test_get_completion_by_locale(locale_a, locale_b):
     )
 
     locales = Locale.objects.filter(pk__in=[locale_a.pk, locale_b.pk])
-    assert get_completion_by_locale(locales) == {
+    assert get_completion_by_locale(
+        locales, Project.objects.filter(is_chs_project=True)
+    ) == {
         locale_a.pk: 80.0,
         locale_b.pk: 0.0,
     }
@@ -399,15 +405,21 @@ def test_get_completion_by_locale(locale_a, locale_b):
 
 @pytest.mark.django_db
 def test_get_key_projects_enabled_by_locale(locale_a, locale_b):
-    enabled_a = ProjectFactory.create(slug="firefox", name="Firefox", repositories=[])
+    enabled_a = ProjectFactory.create(
+        slug="firefox", name="Firefox", repositories=[], is_chs_project=True
+    )
     enabled_b = ProjectFactory.create(
-        slug="firefox-for-ios", name="Firefox for iOS", repositories=[]
+        slug="firefox-for-ios",
+        name="Firefox for iOS",
+        repositories=[],
+        is_chs_project=True,
     )
     disabled = ProjectFactory.create(
         slug="firefox-for-android",
         name="Firefox for Android",
         repositories=[],
         disabled=True,
+        is_chs_project=True,
     )
     non_key = ProjectFactory.create(
         slug="not-a-key-project", name="Other", repositories=[]
@@ -422,7 +434,9 @@ def test_get_key_projects_enabled_by_locale(locale_a, locale_b):
     ProjectLocaleFactory.create(project=non_key, locale=locale_b)
 
     locales = Locale.objects.filter(pk__in=[locale_a.pk, locale_b.pk])
-    assert get_key_projects_enabled_by_locale(locales, KEY_PROJECT_SLUGS) == {
+    assert get_key_projects_enabled_by_locale(
+        locales, Project.objects.filter(is_chs_project=True)
+    ) == {
         locale_a.pk: 2,
     }
 
@@ -533,7 +547,9 @@ def test_get_contributor_metrics_by_locale(locale_a, locale_b, resource_a):
 
 @pytest.mark.django_db
 def test_build_chs_snapshots(locale_a):
-    key_project = ProjectFactory.create(slug="firefox", name="Firefox", repositories=[])
+    key_project = ProjectFactory.create(
+        slug="firefox", name="Firefox", repositories=[], is_chs_project=True
+    )
     resource = ResourceFactory.create(project=key_project, path="firefox.po")
     ProjectLocaleFactory.create(project=key_project, locale=locale_a)
     TranslatedResourceFactory.create(
@@ -557,5 +573,5 @@ def test_build_chs_snapshots(locale_a):
     assert snapshot.active_managers == 0
     assert snapshot.active_contributors == 0
     assert snapshot.completion_score == 36.8
-    assert snapshot.key_projects_enabled_score == 0.57
-    assert snapshot.chs == 37.37
+    assert snapshot.key_projects_enabled_score == 4.0
+    assert snapshot.chs == 40.8
