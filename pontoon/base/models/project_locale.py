@@ -127,7 +127,4 @@ class ProjectLocale(models.Model, AggregatedStats):
         permissions = (("can_translate_project_locale", "Can add translations"),)
 
     def __str__(self):
-        return "{project} / {locale}".format(
-            project=self.project.name,
-            locale=self.locale.code,
-        )
+        return f"{self.project.name} / {self.locale.code}"

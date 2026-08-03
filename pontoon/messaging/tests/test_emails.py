@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from unittest.mock import patch
 
 import pytest
@@ -108,7 +108,7 @@ def test_get_monthly_locale_stats_uses_end_of_month_snapshot():
     )
 
     with patch("pontoon.messaging.emails.timezone") as mock_tz:
-        mock_tz.now.return_value = datetime(2025, 11, 1, 6, 30, 0, tzinfo=timezone.utc)
+        mock_tz.now.return_value = datetime(2025, 11, 1, 6, 30, 0, tzinfo=UTC)
         result = _get_monthly_locale_stats(months_ago=1)
 
     assert locale.pk in result

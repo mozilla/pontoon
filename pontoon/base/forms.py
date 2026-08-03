@@ -64,9 +64,7 @@ class UploadFileForm(DownloadFileForm):
             # File size validation
             if uploadfile.size > limit * 1000:
                 current = round(uploadfile.size / 1000)
-                message = "Upload failed. Keep filesize under {limit} kB. Your upload: {current} kB.".format(
-                    limit=limit, current=current
-                )
+                message = f"Upload failed. Keep filesize under {limit} kB. Your upload: {current} kB."
                 raise forms.ValidationError(message)
 
             # File format validation
@@ -76,9 +74,7 @@ class UploadFileForm(DownloadFileForm):
 
                 # Fail if upload and target file are incompatible
                 if not are_compatible_files(uploadfile_name, targetfile_name):
-                    message = "Upload failed. File format not supported. Use {supported}.".format(
-                        supported=targetfile_name
-                    )
+                    message = f"Upload failed. File format not supported. Use {targetfile_name}."
                     raise forms.ValidationError(message)
 
 

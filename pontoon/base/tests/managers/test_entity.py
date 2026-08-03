@@ -1,3 +1,5 @@
+from datetime import UTC
+
 import pytest
 
 from pontoon.base.get_entities import get_entities_for_project_locale
@@ -99,7 +101,7 @@ def entity_test_search(admin, resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_translated(admin, resource_a, locale_a):
     entities = [
-        EntityFactory.create(resource=resource_a, string="testentity%s" % i)
+        EntityFactory.create(resource=resource_a, string=f"testentity{i}")
         for i in range(0, 3)
     ]
     TranslationFactory.create(
@@ -130,7 +132,7 @@ def test_mgr_entity_filter_translated(admin, resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_errors(admin, resource_a, locale_a):
     entities = [
-        EntityFactory.create(resource=resource_a, string="testentity%s" % i)
+        EntityFactory.create(resource=resource_a, string=f"testentity{i}")
         for i in range(0, 3)
     ]
 
@@ -162,7 +164,7 @@ def test_mgr_entity_filter_errors(admin, resource_a, locale_a):
 @pytest.mark.django_db
 def test_mgr_entity_filter_warnings(admin, resource_a, locale_a):
     entities = [
-        EntityFactory.create(resource=resource_a, string="testentity%s" % i)
+        EntityFactory.create(resource=resource_a, string=f"testentity{i}")
         for i in range(0, 3)
     ]
 
@@ -200,7 +202,7 @@ def test_mgr_entity_filter_fuzzy(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -237,7 +239,7 @@ def test_mgr_entity_filter_pretranslated(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -274,7 +276,7 @@ def test_mgr_entity_filter_missing(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -308,7 +310,7 @@ def test_mgr_entity_filter_unreviewed(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -406,7 +408,7 @@ def test_mgr_entity_filter_rejected(admin, resource_a, locale_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 3)
     ]
@@ -464,7 +466,7 @@ def test_mgr_entity_filter_missing_without_unreviewed(admin, resource_a, locale_
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 5)
     ]
@@ -531,7 +533,7 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="testentity%s" % i,
+            string=f"testentity{i}",
         )
         for i in range(0, 2)
     ]
@@ -578,9 +580,9 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
 def test_mgr_entity_option_match_case(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
-            key=["key %s" % i],
+            key=[f"key {i}"],
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -616,7 +618,7 @@ def test_mgr_entity_option_match_whole_word(admin, resource_a, locale_a, user_a)
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -663,9 +665,9 @@ def test_mgr_entity_option_match_whole_word(admin, resource_a, locale_a, user_a)
 def test_mgr_entity_option_identifiers(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
-            key=["key %s" % i],
+            key=[f"key {i}"],
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -701,7 +703,7 @@ def test_mgr_entity_option_rejected_translations(admin, resource_a, locale_a, us
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -739,7 +741,7 @@ def test_mgr_entity_option_exclude_source_strings(admin, resource_a, locale_a, u
     entities = [
         EntityFactory.create(
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -778,9 +780,9 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
 
     entities = [
         EntityFactory.create(
-            key=["key %s" % i],
+            key=[f"key {i}"],
             resource=resource_a,
-            string="TestEntity%s" % i,
+            string=f"TestEntity{i}",
         )
         for i in range(0, 2)
     ]
@@ -998,7 +1000,7 @@ def test_mgr_entity_filter_created_time(admin, resource_a, locale_a):
     which is how the new-string notification link points to the exact
     batch of strings added in a single sync.
     """
-    from datetime import datetime, timezone
+    from datetime import datetime
 
     TranslatedResourceFactory.create(locale=locale_a, resource=resource_a)
 
@@ -1008,10 +1010,10 @@ def test_mgr_entity_filter_created_time(admin, resource_a, locale_a):
 
     # Two distinct bulk batches: 2026-05-22 12:48 (newer) and 2026-05-22 05:20 (older).
     Entity.objects.filter(pk=older.pk).update(
-        date_created=datetime(2026, 5, 22, 5, 20, 8, 146586, tzinfo=timezone.utc),
+        date_created=datetime(2026, 5, 22, 5, 20, 8, 146586, tzinfo=UTC),
     )
     Entity.objects.filter(pk__in=[newer_a.pk, newer_b.pk]).update(
-        date_created=datetime(2026, 5, 22, 12, 48, 35, 638056, tzinfo=timezone.utc),
+        date_created=datetime(2026, 5, 22, 12, 48, 35, 638056, tzinfo=UTC),
     )
 
     # created_time=202605221248-202605221248 matches the 12:48 batch only.

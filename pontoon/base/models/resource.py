@@ -105,7 +105,4 @@ class Resource(models.Model):
         return self.path
 
     def __str__(self):
-        return "{project}: {resource}".format(
-            project=self.project.name,
-            resource=self.path,
-        )
+        return f"{self.project.name}: {self.path}"

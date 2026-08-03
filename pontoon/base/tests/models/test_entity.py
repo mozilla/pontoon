@@ -49,13 +49,13 @@ def entity_test_models(translation_a, locale_b):
         entity=entity_a,
         locale=locale_a,
         active=False,
-        string="Alternative %s" % translation_a.string,
+        string=f"Alternative {translation_a.string}",
     )
     translationX = TranslationFactory(
         entity=entity_b,
         locale=locale_a,
         active=True,
-        string="Translation %s" % entity_b.string,
+        string=f"Translation {entity_b.string}",
     )
     return translation_a, translation_a_alt, translationX
 

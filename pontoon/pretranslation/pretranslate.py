@@ -1,7 +1,8 @@
+from collections.abc import Callable
 from copy import deepcopy
 from enum import Enum
 from re import compile
-from typing import Callable, Literal
+from typing import Literal
 
 from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression

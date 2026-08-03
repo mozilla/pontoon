@@ -41,7 +41,7 @@ def _tmx_file_upload(locale_code, entries):
         '<?xml version="1.0" encoding="UTF-8"?>'
         '<tmx version="1.4"><header srclang="en-US"/>'
         f"<body>{units}</body></tmx>"
-    ).encode("utf-8")
+    ).encode()
     return SimpleUploadedFile("upload.tmx", content, content_type="application/xml")
 
 
@@ -115,7 +115,7 @@ def test_ajax_permissions_locale_translators_managers_order(
     locale_a.translators_group.user_set.add(*translators)
     locale_a.managers_group.user_set.add(*managers)
 
-    admin_client.get("/%s/ajax/permissions/" % locale_a.code)
+    admin_client.get(f"/{locale_a.code}/ajax/permissions/")
     response_context = render_mock.call_args[0][2]
 
     assert list(response_context["translators"]) == translators
@@ -140,7 +140,7 @@ def test_ajax_permissions_project_locale_translators_order(
     project_locale_a.has_custom_translators = True
     project_locale_a.save()
 
-    admin_client.get("/%s/ajax/permissions/" % locale_a.code)
+    admin_client.get(f"/{locale_a.code}/ajax/permissions/")
     response_context = render_mock.call_args[0][2]
     project_locales = response_context["project_locales"]
 

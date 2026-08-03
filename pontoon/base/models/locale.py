@@ -27,9 +27,7 @@ def validate_cldr(value):
         except ValueError:
             return
         if number < 0 or number >= len(Locale.CLDR_PLURALS):
-            raise ValidationError(
-                "%s must be a list of integers between 0 and 5" % value
-            )
+            raise ValidationError(f"{value} must be a list of integers between 0 and 5")
 
 
 class LocaleCodeHistory(models.Model):

@@ -81,7 +81,7 @@ def translate_locale_agnostic(request, slug, part):
     """Locale Agnostic Translate view."""
     user = request.user
     query = urlparse(request.get_full_path()).query
-    query = "?%s" % query if query else ""
+    query = f"?{query}" if query else ""
 
     if slug.lower() == "all-projects":
         project_locales = Locale.objects.available()
@@ -1077,9 +1077,7 @@ def download_translation_memory(request, locale, slug):
         ),
         content_type="text/xml",
     )
-    response["Content-Disposition"] = 'attachment; filename="{filename}"'.format(
-        filename=filename
-    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response
 
 

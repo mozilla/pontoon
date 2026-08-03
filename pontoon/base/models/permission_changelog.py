@@ -31,9 +31,4 @@ class PermissionChangelog(models.Model):
         ordering = ("pk",)
 
     def __repr__(self):
-        return "User(pk={}) {} User(pk={}) from {}".format(
-            self.performed_by_id,
-            self.action_type,
-            self.performed_on_id,
-            self.group.name,
-        )
+        return f"User(pk={self.performed_by_id}) {self.action_type} User(pk={self.performed_on_id}) from {self.group.name}"

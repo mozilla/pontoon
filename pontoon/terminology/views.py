@@ -53,9 +53,7 @@ class DownloadTerminologyViewV2(ListView):
         content = self.get_tbx_file_content(term_translations, locale.code)
 
         response = StreamingHttpResponse(content, content_type="text/xml")
-        response["Content-Disposition"] = 'attachment; filename="{locale}.tbx"'.format(
-            locale=locale.code
-        )
+        response["Content-Disposition"] = f'attachment; filename="{locale.code}.tbx"'
         return response
 
 

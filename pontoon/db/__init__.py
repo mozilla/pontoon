@@ -48,9 +48,7 @@ class IContainsCollate(IContains):
             if "::text" not in lhs:
                 lhs = lhs.replace(
                     f'."{self.lhs.target.column}"',
-                    '."{}"::text COLLATE "{}"'.format(
-                        self.lhs.target.column, self.collation
-                    ),
+                    f'."{self.lhs.target.column}"::text COLLATE "{self.collation}"',
                 )
         return lhs, params
 

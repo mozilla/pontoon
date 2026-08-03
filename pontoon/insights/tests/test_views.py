@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from http import HTTPStatus
 from unittest.mock import patch
 
@@ -59,7 +59,7 @@ def test_default_empty(client_superuser, clear_cache, locale_a, project_a, user_
     response_context = mock_render.call_args[0][2]
     start_date = response_context["start_date"]
     end_date = response_context["end_date"]
-    assert start_date < end_date <= datetime.now(timezone.utc)
+    assert start_date < end_date <= datetime.now(UTC)
     team_pretranslation_quality = response_context["team_pretranslation_quality"]
     assert team_pretranslation_quality["dataset"] == [
         {
@@ -116,7 +116,7 @@ def test_default_with_data(
     ]
     resource = ResourceFactory.create(project=project_a, path="has/stats.po")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     for entry in entries:
         timestamp = now - relativedelta(now, months=entry.months_ago)
         for approval_index in range(entry.approved):
@@ -148,7 +148,7 @@ def test_default_with_data(
     response_context = mock_render.call_args[0][2]
     start_date = response_context["start_date"]
     end_date = response_context["end_date"]
-    assert start_date < end_date <= datetime.now(timezone.utc)
+    assert start_date < end_date <= datetime.now(UTC)
     team_pretranslation_quality = response_context["team_pretranslation_quality"]
     assert team_pretranslation_quality["dataset"] == [
         {

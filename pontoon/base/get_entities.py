@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta, timezone
+from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta
 from re import escape, match
-from typing import Iterator, cast
+from typing import cast
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -226,7 +227,7 @@ def _parse_time_interval(interval: str) -> tuple[datetime, datetime]:
 
 
 def _parse_timestamp(timestamp: str) -> datetime:
-    return make_aware(datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=timezone.utc)
+    return make_aware(datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=UTC)
 
 
 def _is_email(email: str) -> bool:

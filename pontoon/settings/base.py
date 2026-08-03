@@ -6,7 +6,7 @@ import re
 import socket
 import sys
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from ipaddress import ip_address, ip_network
 
 import dj_database_url
@@ -1251,7 +1251,7 @@ PERSONAL_ACCESS_TOKEN_MAX_COUNT = int(
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
 try:
     BADGES_START_DATE = datetime.strptime(badges_start_date, "%Y-%m-%d").replace(
-        tzinfo=timezone.utc
+        tzinfo=UTC
     )
 except ValueError as e:
     raise ValueError(f"Error: {e}")
