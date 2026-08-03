@@ -42,6 +42,7 @@
   color: var(--homepage-tour-button-color);
   display: inline-block;
   font-size: 14px;
+  font-weight: 400;
   padding: 10px 25px;
   text-align: center;
   text-decoration: none;
