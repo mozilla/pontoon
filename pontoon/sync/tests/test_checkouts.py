@@ -1,3 +1,5 @@
+from os import symlink
+from os.path import join
 from tempfile import TemporaryDirectory
 from typing import Any
 from unittest.mock import Mock, patch
@@ -113,6 +115,38 @@ def test_no_changes_with_no_prev_commit():
                 ("update", ("URL", root, "BRANCH", False)),
                 ("revision", (root,)),
             ]
+
+
+def test_changed_excludes_paths_outside_checkout():
+    """A repo can commit a symlink pointing anywhere, so paths that resolve
+    outside the checkout are dropped. Links that stay inside are kept."""
+    tree: FileTree = {"checkout": {"en-US": {"ok.ftl": ""}}, "elsewhere.ftl": ""}
+    with TemporaryDirectory() as root:
+        build_file_tree(root, tree)
+        co_path = join(root, "checkout")
+        symlink(join(root, "elsewhere.ftl"), join(co_path, "en-US", "escapes.ftl"))
+        symlink(join(co_path, "en-US", "ok.ftl"), join(co_path, "en-US", "inside.ftl"))
+
+        mock_vcs = MockVersionControl(
+            changed=[
+                join("en-US", "ok.ftl"),
+                join("en-US", "escapes.ftl"),
+                join("en-US", "inside.ftl"),
+            ]
+        )
+        mock_repo = Mock(
+            Repository,
+            branch="BRANCH",
+            checkout_path=co_path,
+            last_synced_revision="def456",
+            source_repo=True,
+            url="URL",
+            type=Repository.Type.GIT,
+        )
+        with patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs):
+            co = Checkout("SLUG", mock_repo)
+
+        assert co.changed == [join("en-US", "ok.ftl"), join("en-US", "inside.ftl")]
 
 
 @patch("pontoon.sync.core.checkout.Checkout")
