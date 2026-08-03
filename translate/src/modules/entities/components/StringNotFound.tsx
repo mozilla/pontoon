@@ -60,7 +60,11 @@ export function StringNotFound({
   const showMatching = () => push({ entity: 0 });
 
   const requestProject = allProjects
-    ? l10n.getString('entities-StringNotFound--all-projects', null, 'All Projects')
+    ? l10n.getString(
+        'entities-StringNotFound--all-projects',
+        null,
+        'All Projects',
+      )
     : viewProjectName || location.project;
   const requestResource = allResources
     ? l10n.getString(
@@ -70,13 +74,13 @@ export function StringNotFound({
       )
     : location.resource;
 
-  const filters = (['status', 'extra', 'tag', 'author', 'time'] as const).flatMap(
-    (key) => location[key]?.split(',') ?? [],
-  );
+  const filters = (
+    ['status', 'extra', 'tag', 'author', 'time'] as const
+  ).flatMap((key) => location[key]?.split(',') ?? []);
   const [uiBundle] = l10n.bundles;
-  const filterList = new Intl.ListFormat(uiBundle?.locales[0] ?? 'en-US').format(
-    filters,
-  );
+  const filterList = new Intl.ListFormat(
+    uiBundle?.locales[0] ?? 'en-US',
+  ).format(filters);
 
   return (
     <section id='string-not-found'>
@@ -104,8 +108,7 @@ export function StringNotFound({
             </Localized>
             <div className='fields'>
               <Detail labelId='entities-StringNotFound--label-locale'>
-                {locale.name}{' '}
-                <span className='accent'>{locale.code}</span>
+                {locale.name} <span className='accent'>{locale.code}</span>
               </Detail>
               <Detail labelId='entities-StringNotFound--label-project'>
                 {requestProject}
