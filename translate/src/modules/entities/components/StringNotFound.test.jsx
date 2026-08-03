@@ -57,19 +57,19 @@ describe('<StringNotFound>', () => {
     getByText('Thunderbird');
   });
 
-  it('lists the mismatched filters when the string is hidden by filters', () => {
+  it('shows the string’s own filter state when it’s hidden by filters', () => {
     const { getByText } = mount(
       {
         pk: 99,
         project: 'firefox',
         project_name: 'Firefox',
         resource: 'foo.ftl',
-        filters: ['missing'],
+        filters: ['translated'],
       },
-      '/kg/firefox/all-resources/?status=missing,warnings&string=99',
+      '/kg/firefox/all-resources/?status=missing&string=99',
     );
 
-    getByText('missing');
+    getByText('translated');
   });
 
   it('lists the active filters, splitting packed params into a clean list', () => {

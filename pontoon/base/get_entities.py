@@ -296,25 +296,26 @@ def _query(project: Project | None, locale: Locale, query: Q) -> Q:
     return Q(pk__in=translations.values("entity"))
 
 
-def get_mismatched_filters(
-    entity_pk: int,
-    locale: Locale,
-    project: Project,
-    status: str | None,
-    extra: str | None,
-) -> list[str]:
-    """Return active status/extra filter slugs a single entity does NOT match.
+_STATE_FILTER_SLUGS = (
+    ("missing", "translated", "pretranslated", "warnings", "errors", "unreviewed"),
+    ("unchanged", "empty", "fuzzy", "rejected"),
+)
 
-    Used by "string not found" page, shows which of the current filters a
-    requested string fails.
+
+def get_matching_filters(entity_pk: int, locale: Locale, project: Project) -> list[str]:
+    """Return the status/extra filter slugs a single entity matches.
+
+    Used by the "string not found" page to show the requested string's own filter
+    state. Reuses the same filter builders as the entity list.
     """
-    mismatched = []
-    for slug in filter(None, (status or "").split(",")):
+    status_slugs, extra_slugs = _STATE_FILTER_SLUGS
+    matching = []
+    for slug in status_slugs:
         query = _status_filter(project, locale, slug)
-        if query and not Entity.objects.filter(query, pk=entity_pk).exists():
-            mismatched.append(slug)
-    for slug in filter(None, (extra or "").split(",")):
+        if query and Entity.objects.filter(query, pk=entity_pk).exists():
+            matching.append(slug)
+    for slug in extra_slugs:
         query = _extra_filter(locale, slug)
-        if query and not Entity.objects.filter(query, pk=entity_pk).exists():
-            mismatched.append(slug)
-    return mismatched
+        if query and Entity.objects.filter(query, pk=entity_pk).exists():
+            matching.append(slug)
+    return matching
