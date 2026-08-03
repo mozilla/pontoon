@@ -20,7 +20,7 @@ entities-StringNotFound--description = doesn’t match
 entities-StringNotFound--go-to-string = Show the string
 entities-StringNotFound--show-matching = Keep the parameters
 entities-StringNotFound--request-details = Request details
-entities-StringNotFound--string-details = String { $stringId } details
+entities-StringNotFound--string-details = Mismatched string { $stringId } details
 entities-StringNotFound--label-locale = Locale
 entities-StringNotFound--label-project = Project
 entities-StringNotFound--label-resource = Resource
@@ -57,19 +57,19 @@ describe('<StringNotFound>', () => {
     getByText('Thunderbird');
   });
 
-  it('shows the string’s own filter state when it’s hidden by filters', () => {
+  it('lists the mismatched filters when the string is hidden by filters', () => {
     const { getByText } = mount(
       {
         pk: 99,
         project: 'firefox',
         project_name: 'Firefox',
         resource: 'foo.ftl',
-        filters: ['translated'],
+        filters: ['missing'],
       },
-      '/kg/firefox/all-resources/?status=missing&string=99',
+      '/kg/firefox/all-resources/?status=missing,warnings&string=99',
     );
 
-    getByText('translated');
+    getByText('missing');
   });
 
   it('lists the active filters, splitting packed params into a clean list', () => {

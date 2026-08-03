@@ -37,7 +37,7 @@ from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
 from pontoon.base.get_entities import (
     get_entities_for_project_locale,
-    get_matching_filters,
+    get_mismatched_filters,
 )
 from pontoon.base.map_entities import map_entities_to_json
 from pontoon.base.models import (
@@ -298,7 +298,13 @@ def _get_paginated_entities(
                 "project": located[0],
                 "project_name": located[1],
                 "resource": located[2],
-                "filters": get_matching_filters(requested_entity, locale, project),
+                "filters": get_mismatched_filters(
+                    requested_entity,
+                    locale,
+                    project,
+                    cleaned_data.get("status"),
+                    cleaned_data.get("extra"),
+                ),
             }
         requested_entity = None
 
