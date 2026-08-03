@@ -13,7 +13,8 @@
 
 # Runtime dependencies
 -r base.in
-# Should match the psycopg2 version of prod.in
+# Should match the psycopg2 version of requirements/prod.in.
+# Pre-compiled binary version for easier dev env setup.
 psycopg2-binary==2.9.12
 
 # Development, testing, and linting dependencies

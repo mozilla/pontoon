@@ -11,5 +11,6 @@
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
 -r base.in
-# Should match the psycopg2-binary version of dev.in
+# Should match the psycopg2-binary version of requirements/dev.in.
+# Requires libpq-dev or similar, see https://www.psycopg.org/docs/install.html
 psycopg2==2.9.12
