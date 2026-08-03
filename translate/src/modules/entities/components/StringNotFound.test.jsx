@@ -11,6 +11,7 @@ const ENTITY_LOCATION = {
   project: 'thunderbird',
   project_name: 'Thunderbird',
   resource: 'foo.ftl',
+  filters: [],
 };
 
 const FTL = `
@@ -19,7 +20,7 @@ entities-StringNotFound--description = doesn’t match
 entities-StringNotFound--go-to-string = Show the string
 entities-StringNotFound--show-matching = Keep the parameters
 entities-StringNotFound--request-details = Request details
-entities-StringNotFound--string-details = String details
+entities-StringNotFound--string-details = String { $stringId } details
 entities-StringNotFound--label-locale = Locale
 entities-StringNotFound--label-project = Project
 entities-StringNotFound--label-resource = Resource
@@ -56,6 +57,21 @@ describe('<StringNotFound>', () => {
     getByText('Thunderbird');
   });
 
+  it('lists the mismatched filters when the string is hidden by filters', () => {
+    const { getByText } = mount(
+      {
+        pk: 99,
+        project: 'firefox',
+        project_name: 'Firefox',
+        resource: 'foo.ftl',
+        filters: ['missing'],
+      },
+      '/kg/firefox/all-resources/?status=missing,warnings&string=99',
+    );
+
+    getByText('missing');
+  });
+
   it('lists the active filters, splitting packed params into a clean list', () => {
     const { getByText } = mount(
       ENTITY_LOCATION,
@@ -78,7 +94,7 @@ describe('<StringNotFound>', () => {
   it('primary action shows the string, dropping filters', () => {
     const { getByRole, spy } = mount(ENTITY_LOCATION);
 
-    fireEvent.click(getByRole('button', { name: 'Show the string' }));
+    fireEvent.click(getByRole('link', { name: 'Show the string' }));
 
     const { pathname, search } = spy.mock.calls.at(-1)[0];
     expect(pathname).toBe('/kg/thunderbird/foo.ftl/');
@@ -88,7 +104,7 @@ describe('<StringNotFound>', () => {
   it('secondary action keeps the parameters, dropping the string', () => {
     const { getByRole, spy } = mount(ENTITY_LOCATION);
 
-    fireEvent.click(getByRole('button', { name: 'Keep the parameters' }));
+    fireEvent.click(getByRole('link', { name: 'Keep the parameters' }));
 
     const { pathname, search } = spy.mock.calls.at(-1)[0];
     expect(pathname).toBe('/kg/firefox/all-resources/');

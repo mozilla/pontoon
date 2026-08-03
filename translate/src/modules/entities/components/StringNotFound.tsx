@@ -48,6 +48,9 @@ export function StringNotFound({
   const allResources =
     !location.resource || location.resource === 'all-resources';
   const sameProject = entityLocation.project === location.project;
+  const sameResource =
+    allResources || entityLocation.resource === location.resource;
+  const filteredOut = allProjects || (sameProject && sameResource);
 
   const goToString = () =>
     push({
@@ -58,6 +61,16 @@ export function StringNotFound({
     });
 
   const showMatching = () => push({ entity: 0 });
+
+  const goToStringHref = `/${location.locale}/${entityLocation.project}/${entityLocation.resource}/?string=${entityLocation.pk}`;
+  const showMatchingUrl = new URL(window.location.href);
+  showMatchingUrl.searchParams.delete('string');
+  const showMatchingHref = showMatchingUrl.pathname + showMatchingUrl.search;
+
+  const onClick = (navigate: () => void) => (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    navigate();
+  };
 
   const requestProject = allProjects
     ? l10n.getString(
@@ -74,13 +87,16 @@ export function StringNotFound({
       )
     : location.resource;
 
+  const [uiBundle] = l10n.bundles;
+  const formatFilters = (slugs: readonly string[]) =>
+    new Intl.ListFormat(uiBundle?.locales[0] ?? 'en-US').format(slugs);
+
   const filters = (
     ['status', 'extra', 'tag', 'author', 'time'] as const
   ).flatMap((key) => location[key]?.split(',') ?? []);
-  const [uiBundle] = l10n.bundles;
-  const filterList = new Intl.ListFormat(
-    uiBundle?.locales[0] ?? 'en-US',
-  ).format(filters);
+  const filterList = formatFilters(filters);
+
+  const stringFilterList = formatFilters(entityLocation.filters);
 
   return (
     <section id='string-not-found'>
@@ -94,10 +110,20 @@ export function StringNotFound({
 
         <div className='actions'>
           <Localized id='entities-StringNotFound--go-to-string'>
-            <button className='primary' onClick={goToString} />
+            <a
+              className='primary'
+              href={goToStringHref}
+              title={goToStringHref}
+              onClick={onClick(goToString)}
+            />
           </Localized>
           <Localized id='entities-StringNotFound--show-matching'>
-            <button className='secondary' onClick={showMatching} />
+            <a
+              className='secondary'
+              href={showMatchingHref}
+              title={showMatchingHref}
+              onClick={onClick(showMatching)}
+            />
           </Localized>
         </div>
 
@@ -128,18 +154,29 @@ export function StringNotFound({
           </section>
 
           <section className='group'>
-            <Localized id='entities-StringNotFound--string-details'>
+            <Localized
+              id='entities-StringNotFound--string-details'
+              vars={{ stringId: String(entityLocation.pk) }}
+            >
               <h3 />
             </Localized>
             <div className='fields'>
-              {!sameProject && (
-                <Detail labelId='entities-StringNotFound--label-project'>
-                  {entityLocation.project_name}
+              {filteredOut && entityLocation.filters.length > 0 ? (
+                <Detail labelId='entities-StringNotFound--label-filters'>
+                  {stringFilterList}
                 </Detail>
+              ) : (
+                <>
+                  {!sameProject && (
+                    <Detail labelId='entities-StringNotFound--label-project'>
+                      {entityLocation.project_name}
+                    </Detail>
+                  )}
+                  <Detail labelId='entities-StringNotFound--label-resource'>
+                    {entityLocation.resource}
+                  </Detail>
+                </>
               )}
-              <Detail labelId='entities-StringNotFound--label-resource'>
-                {entityLocation.resource}
-              </Detail>
             </div>
           </section>
         </div>

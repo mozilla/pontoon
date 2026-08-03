@@ -356,7 +356,7 @@ entities-StringNotFound--description = The requested string doesn’t match your
 entities-StringNotFound--go-to-string = Show the string
 entities-StringNotFound--show-matching = Keep the parameters
 entities-StringNotFound--request-details = Request details
-entities-StringNotFound--string-details = String details
+entities-StringNotFound--string-details = String { $stringId } details
 
 entities-StringNotFound--label-locale = Locale
 entities-StringNotFound--label-project = Project

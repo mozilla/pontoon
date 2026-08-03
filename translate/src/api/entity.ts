@@ -85,6 +85,7 @@ export type RequestedEntityLocation = {
   readonly project: string;
   readonly project_name: string;
   readonly resource: string;
+  readonly filters: readonly string[];
 };
 
 type EntitiesResponse =

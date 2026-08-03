@@ -34,21 +34,25 @@
   margin-bottom: 24px;
 }
 
-#string-not-found .actions button {
+#string-not-found .actions a {
   background-color: var(--homepage-tour-button-background);
   border: none;
   border-radius: 3px;
+  box-sizing: border-box;
   color: var(--homepage-tour-button-color);
+  display: inline-block;
   font-size: 14px;
   padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
   width: 200px;
 }
 
-#string-not-found .actions button.primary {
+#string-not-found .actions a.primary {
   background-color: var(--status-translated);
 }
 
-#string-not-found .actions button:first-child {
+#string-not-found .actions a:first-child {
   margin-right: 18px;
 }
 
