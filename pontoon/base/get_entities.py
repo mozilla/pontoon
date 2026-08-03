@@ -295,3 +295,23 @@ def _query(project: Project | None, locale: Locale, query: Q) -> Q:
     if project and project.slug != "all-projects":
         translations = translations.filter(entity__resource__project=project)
     return Q(pk__in=translations.values("entity"))
+
+
+def get_mismatched_filters(
+    entity_pk: int,
+    locale: Locale,
+    project: Project,
+    status: str | None,
+    extra: str | None,
+) -> list[str]:
+    """Return active status/extra filter slugs a single entity does not match."""
+    mismatched = []
+    for slug in filter(None, (status or "").split(",")):
+        query = _status_filter(project, locale, slug)
+        if query and not Entity.objects.filter(query, pk=entity_pk).exists():
+            mismatched.append(slug)
+    for slug in filter(None, (extra or "").split(",")):
+        query = _extra_filter(locale, slug)
+        if query and not Entity.objects.filter(query, pk=entity_pk).exists():
+            mismatched.append(slug)
+    return mismatched

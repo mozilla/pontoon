@@ -1,4 +1,8 @@
-import type { Entity, EntitySiblings } from '~/api/entity';
+import type {
+  Entity,
+  EntitySiblings,
+  RequestedEntityLocation,
+} from '~/api/entity';
 import type { EntityTranslation } from '~/api/translation';
 
 import {
@@ -20,6 +24,7 @@ type EntitiesState = {
   readonly fetchCount: number;
   readonly hasMore: boolean;
   readonly page: number;
+  readonly requestedEntityLocation: RequestedEntityLocation | null;
 };
 
 function updateEntityTranslation(
@@ -76,6 +81,7 @@ const initial: EntitiesState = {
   fetchCount: 0,
   hasMore: true,
   page: 1,
+  requestedEntityLocation: null,
 };
 
 export function reducer(
@@ -91,6 +97,8 @@ export function reducer(
         fetchCount: state.fetchCount + 1,
         hasMore: action.hasMore,
         page: state.page + 1,
+        requestedEntityLocation:
+          action.requestedEntityLocation ?? state.requestedEntityLocation,
       };
     case REQUEST_ENTITIES:
       return {
@@ -105,6 +113,7 @@ export function reducer(
         fetching: false,
         hasMore: true,
         page: 1,
+        requestedEntityLocation: null,
       };
     case UPDATE_ENTITIES:
       return {

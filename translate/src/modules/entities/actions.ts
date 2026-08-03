@@ -3,6 +3,7 @@ import {
   EntitySiblings,
   fetchEntities,
   fetchSiblingEntities,
+  RequestedEntityLocation,
 } from '~/api/entity';
 import { EntityTranslation } from '~/api/translation';
 import { Location } from '~/context/Location';
@@ -25,6 +26,7 @@ type ReceiveAction = {
   type: typeof RECEIVE_ENTITIES;
   entities: Entity[];
   hasMore: boolean;
+  requestedEntityLocation: RequestedEntityLocation | null;
 };
 
 /** Update the siblings of an entity.  */
@@ -71,6 +73,7 @@ export const getEntities =
         type: RECEIVE_ENTITIES,
         entities: content.entities,
         hasMore: content.has_next,
+        requestedEntityLocation: content.requested_entity ?? null,
       });
       dispatch(updateStats(content.stats));
     }

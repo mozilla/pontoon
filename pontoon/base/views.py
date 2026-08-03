@@ -35,7 +35,10 @@ from django.views.generic.edit import FormView
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
-from pontoon.base.get_entities import get_entities_for_project_locale
+from pontoon.base.get_entities import (
+    get_entities_for_project_locale,
+    get_mismatched_filters,
+)
 from pontoon.base.map_entities import map_entities_to_json
 from pontoon.base.models import (
     Comment,
@@ -245,6 +248,7 @@ def _get_entities_list(
 
 
 def _get_paginated_entities(
+    user: User,
     locale: Locale,
     preferred_source_locale: str | None,
     project: Project,
@@ -264,24 +268,61 @@ def _get_paginated_entities(
         return JsonResponse({"has_next": False, "stats": {}})
 
     requested_entity = cleaned_data["entity"] if page_idx == 1 else None
+    requested_entity_location = None
     if requested_entity and not entities.filter(pk=requested_entity).exists():
+        viewable = Q(
+            resource__project__disabled=False,
+            resource__project__system_project=False,
+            resource__project__in=Project.objects.visible_for(user),
+        )
+        if project.pk:
+            viewable |= Q(resource__project=project)
+
+        located = (
+            Entity.objects.filter(
+                viewable,
+                pk=requested_entity,
+                obsolete=False,
+                resource__translatedresources__locale=locale,
+            )
+            .values_list(
+                "resource__project__slug",
+                "resource__project__name",
+                "resource__path",
+            )
+            .first()
+        )
+        if located:
+            requested_entity_location = {
+                "pk": requested_entity,
+                "project": located[0],
+                "project_name": located[1],
+                "resource": located[2],
+                "filters": get_mismatched_filters(
+                    requested_entity,
+                    locale,
+                    project,
+                    cleaned_data.get("status"),
+                    cleaned_data.get("extra"),
+                ),
+            }
         requested_entity = None
 
-    return JsonResponse(
-        {
-            "entities": map_entities_to_json(
-                locale,
-                preferred_source_locale,
-                cast(QuerySet[Entity], entities_page.object_list),
-                requested_entity=requested_entity,
-            ),
-            "has_next": entities_page.has_next(),
-            "stats": TranslatedResource.objects.query_stats(
-                project, cleaned_data["paths"], locale
-            ),
-        },
-        safe=False,
-    )
+    response = {
+        "entities": map_entities_to_json(
+            locale,
+            preferred_source_locale,
+            cast(QuerySet[Entity], entities_page.object_list),
+            requested_entity=requested_entity,
+        ),
+        "has_next": entities_page.has_next(),
+        "stats": TranslatedResource.objects.query_stats(
+            project, cleaned_data["paths"], locale
+        ),
+    }
+    if requested_entity_location is not None:
+        response["requested_entity"] = requested_entity_location
+    return JsonResponse(response, safe=False)
 
 
 @csrf_exempt
@@ -366,7 +407,7 @@ def entities(request: HttpRequest):
 
     # Out-of-context view: paginate entities
     return _get_paginated_entities(
-        locale, preferred_source_locale, project, form.cleaned_data, entities
+        user, locale, preferred_source_locale, project, form.cleaned_data, entities
     )
 
 

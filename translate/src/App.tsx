@@ -25,6 +25,8 @@ import { AddonPromotion } from './modules/addonpromotion/components/AddonPromoti
 import { BatchActions } from './modules/batchactions/components/BatchActions';
 import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
+import { useEntityNotFound } from './modules/entities/hooks';
+import { StringNotFound } from './modules/entities/components/StringNotFound';
 import { Entity } from './modules/entitydetails/components/Entity';
 import { InteractiveTour } from './modules/interactivetour/components/InteractiveTour';
 import { Navigation } from './modules/navbar/components/Navigation';
@@ -47,6 +49,7 @@ export function App() {
 
   const l10nReady = !!l10n.parseMarkup;
   const allProjects = location.project === 'all-projects';
+  const entityNotFound = useEntityNotFound();
 
   useEffect(() => {
     updateLocale(locale, location.locale);
@@ -91,10 +94,12 @@ export function App() {
                     </section>
                     <section className='panel-content'>
                       <BadgeTooltip />
-                      {batchactions.entities.length === 0 ? (
-                        <Entity />
-                      ) : (
+                      {batchactions.entities.length > 0 ? (
                         <BatchActions />
+                      ) : entityNotFound ? (
+                        <StringNotFound entityLocation={entityNotFound} />
+                      ) : (
+                        <Entity />
                       )}
                     </section>
                   </section>

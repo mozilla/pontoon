@@ -346,6 +346,28 @@ entitieslist-EntitiesList--edit-selected =
     .title = Edit Selected Strings
 
 
+## StringNotFound
+## Shown when the selected string is hidden by active filters
+
+entities-StringNotFound--title = String not found
+
+entities-StringNotFound--description = The requested string doesn’t match your current parameters.
+
+entities-StringNotFound--go-to-string = Show the string
+entities-StringNotFound--show-matching = Keep the parameters
+entities-StringNotFound--request-details = Request details
+entities-StringNotFound--string-details = Mismatched string { $stringId } details
+
+entities-StringNotFound--label-locale = Locale
+entities-StringNotFound--label-project = Project
+entities-StringNotFound--label-resource = Resource
+entities-StringNotFound--label-filters = Filters
+entities-StringNotFound--label-string = String
+
+entities-StringNotFound--all-projects = All Projects
+entities-StringNotFound--all-resources = All Resources
+
+
 ## Translation Form
 
 translationform--label-with-example = { $label } (e.g. <stress>{ $example }</stress>)

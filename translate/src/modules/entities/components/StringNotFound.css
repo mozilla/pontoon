@@ -1,0 +1,99 @@
+/* Shown in the editor panel in place of the string, when the requested string
+ * doesn't match the rest of the query (#2921). */
+#string-not-found {
+  box-sizing: border-box;
+  height: 100%;
+  overflow: auto;
+  padding: 30px;
+  align-items: safe center;
+  display: flex;
+  justify-content: center;
+}
+
+#string-not-found .inner {
+  max-width: 640px;
+  text-align: left;
+}
+
+#string-not-found .title {
+  color: var(--white-1);
+  font-size: 48px;
+}
+
+#string-not-found .description {
+  font-size: 20px;
+  line-height: 36px;
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+
+#string-not-found .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+#string-not-found .actions a {
+  background-color: var(--homepage-tour-button-background);
+  border: none;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: var(--homepage-tour-button-color);
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  width: 200px;
+}
+
+#string-not-found .actions a.primary {
+  background-color: var(--status-translated);
+}
+
+#string-not-found .actions a:first-child {
+  margin-right: 18px;
+}
+
+#string-not-found .details .group {
+  background: var(--dark-grey-1);
+  border-radius: 6px;
+  padding: 20px 22px;
+}
+
+#string-not-found .group + .group {
+  margin-top: 24px;
+}
+
+#string-not-found .group h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+#string-not-found .fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#string-not-found .detail {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+#string-not-found .detail .label {
+  color: var(--light-grey-6);
+  font-weight: 700;
+}
+
+#string-not-found .detail .value {
+  color: var(--light-grey-2);
+  overflow-wrap: anywhere;
+}
+
+#string-not-found .detail .value .accent {
+  color: var(--status-translated);
+}
