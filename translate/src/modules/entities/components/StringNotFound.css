@@ -1,53 +1,95 @@
 /* Shown in the editor panel in place of the string, when the requested string
  * doesn't match the rest of the query (#2921). */
 #string-not-found {
-  align-items: safe center;
-  display: flex;
+  box-sizing: border-box;
   height: 100%;
-  justify-content: center;
-  overflow: auto;
+  overflow-y: auto;
   padding: 30px;
-  text-align: center;
 }
 
 #string-not-found .inner {
-  max-width: 500px;
+  max-width: 640px;
+}
+
+#string-not-found .title {
+  color: var(--white-1);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  margin: 0 0 6px;
 }
 
 #string-not-found .description {
-  color: var(--white-1);
-  font-size: 18px;
-  line-height: 1.5;
-}
-
-#string-not-found .description .id,
-#string-not-found .description .project {
   color: var(--light-grey-7);
-  font-family: monospace;
-  font-size: 0.9em;
-  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 24px;
 }
 
 #string-not-found .actions {
-  align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 30px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 30px;
 }
 
 #string-not-found .actions button {
-  background: transparent;
-  border: 1.5px solid var(--status-translated);
-  border-radius: 2px;
-  color: var(--white-1);
-  font-size: 14px;
-  font-weight: 300;
-  min-height: 40px;
-  line-height: 17px;
-  padding: 10px 25px;
+  background-color: var(--homepage-tour-button-background);
+  border: none;
+  border-radius: 3px;
+  color: var(--homepage-tour-button-color);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 9px 18px;
 }
 
-#string-not-found .actions button:hover {
-  background: var(--status-translated);
+#string-not-found .actions button.primary {
+  background-color: var(--status-translated);
+}
+
+#string-not-found .details {
+  background: var(--dark-grey-1);
+  border-radius: 6px;
+  padding: 20px 22px;
+}
+
+#string-not-found .group + .group {
+  margin-top: 24px;
+}
+
+#string-not-found .group h3 {
+  color: var(--white-1);
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+#string-not-found .fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#string-not-found .detail {
+  display: flex;
+  flex-direction: column;
+}
+
+#string-not-found .detail .label {
+  color: var(--light-grey-6);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+#string-not-found .detail .value {
+  color: var(--light-grey-7);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+#string-not-found .detail .value .accent {
+  color: var(--status-translated);
 }

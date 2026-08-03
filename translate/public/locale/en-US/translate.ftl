@@ -347,20 +347,25 @@ entitieslist-EntitiesList--edit-selected =
 
 
 ## StringNotFound
-## Shown in the editor when the string in the URL is valid but not in the list
-## on screen. One description per case: (1) hidden by the active filters,
-## (2) living in a different project, (3) living in a different resource of the
-## same project.
+## Shown when the selected string is hidden by active filters
 
-entities-StringNotFound--description-filtered = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>), but it doesn’t match your current filters.
+entities-StringNotFound--title = String not found
 
-entities-StringNotFound--description-in-resource = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing <id>{ $viewResource }</id>.
+entities-StringNotFound--description = The requested string doesn’t match your current parameters.
 
-entities-StringNotFound--description-in-project = String with internal ID <id>{ $stringId }</id> is in <id>{ $stringResource }</id> (project <project>{ $stringProject }</project>). You’re viewing project <project>{ $viewProject }</project>.
+entities-StringNotFound--go-to-string = Show the string
+entities-StringNotFound--show-matching = Keep the parameters
+entities-StringNotFound--request-details = Request details
+entities-StringNotFound--string-details = String details
 
-entities-StringNotFound--go-to-string = Reset filters and show requested string
+entities-StringNotFound--label-locale = Locale
+entities-StringNotFound--label-project = Project
+entities-StringNotFound--label-resource = Resource
+entities-StringNotFound--label-filters = Filters
+entities-StringNotFound--label-string = String
 
-entities-StringNotFound--show-matching = Keep filters and show first available string
+entities-StringNotFound--all-projects = All Projects
+entities-StringNotFound--all-resources = All Resources
 
 
 ## Translation Form

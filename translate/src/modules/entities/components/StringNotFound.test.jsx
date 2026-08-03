@@ -14,11 +14,19 @@ const ENTITY_LOCATION = {
 };
 
 const FTL = `
-entities-StringNotFound--description-filtered = filtered
-entities-StringNotFound--description-in-project = in project
-entities-StringNotFound--description-in-resource = in resource
-entities-StringNotFound--go-to-string = go to string
-entities-StringNotFound--show-matching = show matching
+entities-StringNotFound--title = String not found
+entities-StringNotFound--description = doesn’t match
+entities-StringNotFound--go-to-string = Show the string
+entities-StringNotFound--show-matching = Keep the parameters
+entities-StringNotFound--request-details = Request details
+entities-StringNotFound--string-details = String details
+entities-StringNotFound--label-locale = Locale
+entities-StringNotFound--label-project = Project
+entities-StringNotFound--label-resource = Resource
+entities-StringNotFound--label-filters = Filters
+entities-StringNotFound--label-string = String
+entities-StringNotFound--all-projects = All Projects
+entities-StringNotFound--all-resources = All Resources
 `;
 
 function mount(
@@ -40,62 +48,47 @@ function mount(
 }
 
 describe('<StringNotFound>', () => {
-  it('blames the filters when the string is in the open project and scope', () => {
-    const { getByText } = mount({
-      pk: 99,
-      project: 'firefox',
-      resource: 'toolbar.ftl',
-    });
+  it('lays out where the requested string lives', () => {
+    const { getByText } = mount(ENTITY_LOCATION);
 
-    getByText('filtered');
+    getByText('foo.ftl');
+    getByText('99');
+    getByText('Thunderbird');
   });
 
-  it('points to the project when the string lives in another project', () => {
+  it('lists the active filters, splitting packed params into a clean list', () => {
     const { getByText } = mount(
       ENTITY_LOCATION,
-      '/kg/firefox/all-resources/?string=99',
+      '/kg/firefox/all-resources/?status=missing,warnings&extra=fuzzy&string=99',
     );
 
-    getByText('in project');
+    getByText('missing, warnings, and fuzzy');
   });
 
-  it('points to the resource when the string is elsewhere in the open project', () => {
-    const { getByText } = mount(
-      {
-        pk: 99,
-        project: 'firefox',
-        project_name: 'Firefox',
-        resource: 'foo.ftl',
-      },
-      '/kg/firefox/browser.ftl/?string=99',
-    );
-
-    getByText('in resource');
-  });
-
-  it('blames the filters in the all-projects view (scope is everything)', () => {
+  it('labels the all-projects, all-resources view', () => {
     const { getByText } = mount(
       ENTITY_LOCATION,
       '/kg/all-projects/all-resources/?status=missing&string=99',
     );
 
-    getByText('filtered');
+    getByText('All Projects');
+    getByText('All Resources');
   });
 
-  it('goes to the string, dropping filters but keeping the string', () => {
+  it('primary action shows the string, dropping filters', () => {
     const { getByRole, spy } = mount(ENTITY_LOCATION);
 
-    fireEvent.click(getByRole('button', { name: 'go to string' }));
+    fireEvent.click(getByRole('button', { name: 'Show the string' }));
 
     const { pathname, search } = spy.mock.calls.at(-1)[0];
     expect(pathname).toBe('/kg/thunderbird/foo.ftl/');
     expect(search).toBe('?string=99');
   });
 
-  it('keeps the filters but drops the string', () => {
+  it('secondary action keeps the parameters, dropping the string', () => {
     const { getByRole, spy } = mount(ENTITY_LOCATION);
 
-    fireEvent.click(getByRole('button', { name: 'show matching' }));
+    fireEvent.click(getByRole('button', { name: 'Keep the parameters' }));
 
     const { pathname, search } = spy.mock.calls.at(-1)[0];
     expect(pathname).toBe('/kg/firefox/all-resources/');
