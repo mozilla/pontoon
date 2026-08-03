@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # This compiles all requirements files with uv pip compile.
-# You should always use this script, because dev.txt and test.txt depend on default.txt.
+# You should always use this script, because dev.txt depends on prod.txt.
 
-export CUSTOM_COMPILE_COMMAND="./docker/compile_requirements.sh"
+export UV_CUSTOM_COMPILE_COMMAND="./docker/compile_requirements.sh"
 
 # Run compile command from the requirements directory
 cd "$(dirname "$0")/../requirements"
 
-requirement_files=(default dev lint test)
+requirement_files=(prod dev)
 
 for name in "${requirement_files[@]}"; do
   # --no-emit-package matches pip-tools' default "unsafe packages" set, so the

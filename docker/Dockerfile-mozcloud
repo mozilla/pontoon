@@ -22,9 +22,9 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-COPY requirements/* /app/requirements/
+COPY requirements/prod.txt /app/requirements/
 # Only install production requirements
-RUN uv pip install -r requirements/default.txt
+RUN uv pip install -r requirements/prod.txt
 
 
 # Stage 2: Node.js frontend builder
