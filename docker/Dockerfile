@@ -18,12 +18,9 @@ RUN apt-get update \
     # Install software
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-        build-essential \
         libmemcached-dev \
         nodejs \
         postgresql-client \
-        # required to build psycopg2
-        libpq-dev \
     # Clean up what can be cleaned up.
     && apt-get autoremove -y
 
