@@ -3,35 +3,35 @@
 #string-not-found {
   box-sizing: border-box;
   height: 100%;
-  overflow-y: auto;
+  overflow: auto;
   padding: 30px;
+  align-items: safe center;
+  display: flex;
+  justify-content: center;
 }
 
 #string-not-found .inner {
   max-width: 640px;
+  text-align: left;
 }
 
 #string-not-found .title {
   color: var(--white-1);
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-  margin: 0 0 6px;
+  font-size: 48px;
 }
 
 #string-not-found .description {
-  color: var(--light-grey-7);
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0 0 24px;
+  font-size: 20px;
+  line-height: 36px;
+  font-weight: 300;
+  margin-bottom: 40px;
 }
 
 #string-not-found .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 #string-not-found .actions button {
@@ -39,17 +39,20 @@
   border: none;
   border-radius: 3px;
   color: var(--homepage-tour-button-color);
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 400;
-  padding: 9px 18px;
+  font-size: 14px;
+  padding: 10px 25px;
+  width: 200px;
 }
 
 #string-not-found .actions button.primary {
   background-color: var(--status-translated);
 }
 
-#string-not-found .details {
+#string-not-found .actions button:first-child {
+  margin-right: 18px;
+}
+
+#string-not-found .details .group {
   background: var(--dark-grey-1);
   border-radius: 6px;
   padding: 20px 22px;
@@ -60,10 +63,8 @@
 }
 
 #string-not-found .group h3 {
-  color: var(--white-1);
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0 0 14px;
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 
 #string-not-found .fields {
@@ -75,18 +76,16 @@
 #string-not-found .detail {
   display: flex;
   flex-direction: column;
+  font-size: 14px;
 }
 
 #string-not-found .detail .label {
   color: var(--light-grey-6);
-  font-size: 12px;
   font-weight: 700;
-  margin-bottom: 3px;
 }
 
 #string-not-found .detail .value {
-  color: var(--light-grey-7);
-  font-size: 13px;
+  color: var(--light-grey-2);
   overflow-wrap: anywhere;
 }
 
