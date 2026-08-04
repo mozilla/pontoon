@@ -85,7 +85,7 @@ Python needs to be available on the method to use this system: save [this file](
 
 For example, this is the output of the script when checking data for `sl`:
 
-```
+```console
 $ python scripts/cldr_population.py sl
 
 Adding HU: 4937 (0.05% of 9874780)

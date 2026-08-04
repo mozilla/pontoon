@@ -15,7 +15,7 @@ The following describes how to set up an instance of the site on your computer f
 
 1.  Clone the [Pontoon repository](https://github.com/mozilla/pontoon):
 
-    ```
+    ```console
     $ git clone https://github.com/mozilla/pontoon.git
     ```
 
@@ -24,7 +24,7 @@ The following describes how to set up an instance of the site on your computer f
 
 2.  From the root of the repository, run:
 
-    ```
+    ```console
     $ make build
     ```
 
@@ -35,7 +35,7 @@ The following describes how to set up an instance of the site on your computer f
 
 3.  Run the webapp:
 
-    ```
+    ```console
     $ make run
     ```
 
@@ -46,7 +46,7 @@ The following describes how to set up an instance of the site on your computer f
 
 4.  Finally, you need to run some setup steps, while the server is running:
 
-    ```
+    ```console
     $ make setup
     ```
 

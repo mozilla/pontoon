@@ -1,0 +1,7 @@
+/*
+ * Exclude shell prompts and command output from the code-copy button.
+ */
+[data-md-copying] .gp,
+[data-md-copying] .go {
+  display: none;
+}

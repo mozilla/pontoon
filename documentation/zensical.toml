@@ -8,6 +8,8 @@ repo_url = "https://github.com/mozilla/pontoon"
 repo_name = "mozilla/pontoon"
 edit_uri = "edit/main/documentation/docs/"
 
+extra_css = ["stylesheets/extra.css"]
+
 nav = [
   { "Home" = "index.md" },
 

@@ -41,20 +41,20 @@ database.
 
 Make sure you backup your existing database first:
 
-``` shell
+```console
 $ make dumpdb
 ```
 
 And then load the dump:
 
-``` shell
+```console
 $ make loaddb DB_DUMP_FILE=path/to/my/dump
 ```
 
 Note that your database container needs to be running while you do that.
 You can start just the postgresql container by running:
 
-``` shell
+```console
 $ docker-compose up -d postgresql
 ```
 
@@ -64,7 +64,7 @@ If you need to run specific commands, that are not covered by our
 `Makefile`, you can start an interactive
 shell inside a Pontoon container:
 
-``` shell
+```console
 $ make shell
 ```
 
@@ -95,7 +95,7 @@ never-ending code style discussions.
 
 To format the Python and the JavaScript code at once you can use:
 
-``` shell
+```console
 $ make format
 ```
 
@@ -104,7 +104,7 @@ Code formatting is explained in more detail in the following sections.
 To run the required linters on the Python and the JavaScript code at
 once you can use:
 
-``` shell
+```console
 $ make lint
 ```
 
@@ -121,7 +121,7 @@ as a [git pre-hook
 commit](https://docs.astral.sh/ruff/integrations/#pre-commit).
 Alternatively, you can format your code using:
 
-``` shell
+```console
 $ make ruff
 ```
 
@@ -143,14 +143,14 @@ editor](https://prettier.io/docs/en/editors.html), or as a [git pre-hook
 commit](https://prettier.io/docs/en/precommit.html). Alternatively, you
 can format your code using:
 
-``` shell
+```console
 $ make prettier
 ```
 
 Additionally, there are linting rules that are defined in our
 `eslint.config.mjs` file. To run the linter, do:
 
-``` shell
+```console
 $ make eslint
 ```
 
@@ -227,7 +227,7 @@ direct and indirect dependencies, and can be used for installation with
 `uv pip`. After any change to the `*.in` files, you should run the
 following command to update all `requirements/*.txt` files.
 
-``` shell
+```console
 $ make requirements
 ```
 
@@ -239,7 +239,7 @@ run the command from above.
 Once you are done adding, removing or updating requirements, rebuild
 your docker environment:
 
-``` shell
+```console
 $ make build-server
 ```
 
@@ -249,7 +249,7 @@ To upgrade existing dependencies within the given constraints of the
 input files, you can pass options through to the `uv pip compile`
 invocations, i.e.
 
-``` shell
+```console
 $ make requirements opts=--upgrade
 ```
 
@@ -260,7 +260,7 @@ and is available on `http://localhost:8000/docs/`.
 
 To build the docs, run:
 
-``` shell
+```console
 $ make docs
 ```
 
@@ -268,26 +268,26 @@ $ make docs
 
 To run the entire test suite, do:
 
-``` shell
+```console
 $ make test
 ```
 
 To run only the `translate` tests:
 
-``` shell
+```console
 $ make test-translate
 ```
 
 To run only the Python tests:
 
-``` shell
+```console
 $ make pytest
 ```
 
 To run specific tests or specify arguments, you'll want to start a shell
 in the test container:
 
-``` shell
+```console
 $ make shell
 ```
 
@@ -296,19 +296,19 @@ Then you can run tests as you like.
 Running all the unittests (make sure you run `./manage.py collectstatic`
 first):
 
-``` shell
+```console
 app@...:/app$ pytest
 ```
 
 Running a directory of tests:
 
-``` shell
+```console
 app@...:/app$ pytest pontoon/base/
 ```
 
 Running a file of tests:
 
-``` shell
+```console
 app@...:/app$ pytest pontoon/base/tests/test_views.py
 ```
 
