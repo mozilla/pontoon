@@ -41,7 +41,7 @@ class Command(BaseCommand):
 
         send_monthly_health_report_emails(report)
 
-        admins = User.objects.filter(is_superuser=True)
+        admins = User.objects.filter(is_staff=True)
 
         description = render_to_string(
             "messaging/notifications/monthly_health_report.html", report
