@@ -13,12 +13,57 @@ from django.utils import timezone
 
 if TYPE_CHECKING:
     from pontoon.base.models import Locale, Project, User
+    from pontoon.base.models.user_profile import UserProfile
+
+    SystemUserRole = UserProfile.SystemUserRole
 else:
     from django.contrib.auth.models import User
 
 
 def is_system_user(user: User) -> bool:
     return user.pk is None or user.profile.system_user
+
+
+def human_users() -> QuerySet[Any]:
+    """All users that are not system users."""
+    return User.objects.filter(profile__system_user=False)
+
+
+def system_users(role: "SystemUserRole | None" = None) -> QuerySet[Any]:
+    """All system users, optionally limited to those serving a specific role."""
+    users = User.objects.filter(profile__system_user=True)
+    return users.filter(profile__system_user_role=role) if role else users
+
+
+def get_system_user(role: "SystemUserRole") -> User:
+    """The system user serving the given role."""
+    return system_users(role).get()
+
+
+def get_pretranslation_authors() -> dict[str, User]:
+    """System users used as authors of pretranslations, keyed by role.
+
+    Raises User.DoesNotExist if any of them is missing. Callers use the authors
+    both to attribute new pretranslations and to recognize existing ones, and
+    neither works with an incomplete set.
+    """
+    from pontoon.base.models.user_profile import UserProfile
+
+    roles = [
+        UserProfile.SystemUserRole.TRANSLATION_MEMORY,
+        UserProfile.SystemUserRole.GOOGLE_TRANSLATE,
+    ]
+    authors = {
+        user.profile.system_user_role: user
+        for user in system_users()
+        .filter(profile__system_user_role__in=roles)
+        .select_related("profile")
+    }
+    if missing := set(roles) - authors.keys():
+        raise User.DoesNotExist(
+            f"No system user found for pretranslation roles: {', '.join(sorted(missing))}"
+        )
+    return authors
 
 
 def fxa_avatar_url(user: User) -> str | None:

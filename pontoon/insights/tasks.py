@@ -11,13 +11,23 @@ from celery import shared_task
 from dateutil.relativedelta import relativedelta
 from sacrebleu.metrics import CHRF
 
-from django.contrib.auth.models import User
 from django.db.models import Avg, Count, F, Sum
 from django.db.models.functions import Extract, Now
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Entity, Locale, TranslatedResource, Translation
+from pontoon.base.models import (
+    Entity,
+    Locale,
+    TranslatedResource,
+    Translation,
+    UserProfile,
+)
+from pontoon.base.user_utils import (
+    get_pretranslation_authors,
+    get_system_user,
+    system_users,
+)
 from pontoon.insights.chs import build_chs_snapshots
 from pontoon.insights.models import (
     LocaleHealthSnapshot,
@@ -91,12 +101,10 @@ def count_activities(dt_max: datetime):
     """
     res: dict[int, Activity] = dict()
 
-    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
-    pretranslation_users: set[int] = set(
-        User.objects.filter(
-            email__in=["pontoon-tm@example.com", "pontoon-gt@example.com"]
-        ).values_list("pk", flat=True)
-    )
+    sync_user = get_system_user(UserProfile.SystemUserRole.SYNC).pk
+    pretranslation_users: set[int] = {
+        user.pk for user in get_pretranslation_authors().values()
+    }
 
     actions = query_actions(dt_max)
     approved_translations = get_approved_translations(actions, pretranslation_users)
@@ -414,7 +422,7 @@ def get_contributors() -> dict[int, set[int]]:
     """
     contributors = (
         Translation.objects.filter(user__isnull=False)
-        .exclude(user__in=User.objects.filter(profile__system_user=True))
+        .exclude(user__in=system_users())
         .values("locale", "user")
         .order_by("locale")
         .distinct()

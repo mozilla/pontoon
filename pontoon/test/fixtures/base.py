@@ -1,7 +1,7 @@
 import pytest
 
-from django.contrib.auth.models import User
-
+from pontoon.base.models import UserProfile
+from pontoon.base.user_utils import get_system_user
 from pontoon.test import factories
 
 
@@ -24,17 +24,17 @@ def client_superuser(client, admin):
 
 @pytest.fixture
 def sync_user():
-    return User.objects.get(email="pontoon-sync@example.com")
+    return get_system_user(UserProfile.SystemUserRole.SYNC)
 
 
 @pytest.fixture
 def gt_user():
-    return User.objects.get(email="pontoon-gt@example.com")
+    return get_system_user(UserProfile.SystemUserRole.GOOGLE_TRANSLATE)
 
 
 @pytest.fixture
 def tm_user():
-    return User.objects.get(email="pontoon-tm@example.com")
+    return get_system_user(UserProfile.SystemUserRole.TRANSLATION_MEMORY)
 
 
 @pytest.fixture

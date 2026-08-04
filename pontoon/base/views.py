@@ -62,6 +62,7 @@ from pontoon.base.user_utils import (
     can_manage_locales,
     can_translate,
     can_translate_locales,
+    human_users,
     manager_for_locales,
     profile_url,
     translated_projects,
@@ -930,9 +931,8 @@ def get_users(request):
         project_id = int(project_id)
 
     users = (
-        User.objects
         # Exclude system users
-        .exclude(profile__system_user=True)
+        human_users()
         # Exclude deleted users
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
         # Prefetch profile for retrieving username
