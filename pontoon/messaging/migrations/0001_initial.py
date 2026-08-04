@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="message",
             constraint=models.CheckConstraint(
-                check=models.Q(
+                condition=models.Q(
                     ("notification", True), ("email", True), _connector="OR"
                 ),
                 name="at_least_one_message_type",
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="message",
             constraint=models.CheckConstraint(
-                check=models.Q(
+                condition=models.Q(
                     ("managers", True),
                     ("translators", True),
                     ("contributors", True),
