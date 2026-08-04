@@ -1,3 +1,4 @@
+from collections.abc import Iterable, Mapping
 from typing import cast
 
 from moz.l10n.message import message_to_json
@@ -54,6 +55,16 @@ def _add_badge_data(response_data, user, badge_name, badge_level):
     )
 
 
+def _contains_null_char(x) -> bool:
+    if isinstance(x, str):
+        return "\x00" in x
+    if isinstance(x, Mapping):
+        return any(_contains_null_char(y) for y in x.items())
+    if isinstance(x, Iterable):
+        return any(_contains_null_char(y) for y in x)
+    return False
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
@@ -101,6 +112,12 @@ def create_translation(request):
 
     json_value = message_to_json(value)
     json_properties = {k: message_to_json(v) for k, v in properties.items()} or None
+
+    if _contains_null_char((string, json_value, json_properties)):
+        # PostgreSQL does not support null characters in text or jsonb
+        return JsonResponse(
+            {"status": False, "message": "Unsupported null character"}, status=400
+        )
 
     # If same translation exists in the DB, don't save it again.
     if (
@@ -151,7 +168,17 @@ def create_translation(request):
 
     log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
-    translation = entity.reset_active_translation(locale=locale)
+    # When a translation is submitted directly as approved (self-approval),
+    # also store the implicit approval action.
+    if approved:
+        log_action(
+            ActionLog.ActionType.TRANSLATION_APPROVED,
+            user,
+            translation=translation,
+            is_implicit_action=True,
+        )
+
+    active_translation = entity.reset_active_translation(locale=locale)
 
     # When user makes their first contribution to the team, notify team managers
     first_contribution = (
@@ -186,7 +213,7 @@ def create_translation(request):
                 category="new_contributor",
             )
 
-    response_data = {"status": True, "translation": translation.serialize()}
+    response_data = {"status": True, "translation": active_translation}
     _add_stats(response_data, resource, locale, req_data["stats"])
 
     # Send Translation Champion Badge notification information
@@ -326,8 +353,7 @@ def approve_translation(request):
     log_action(ActionLog.ActionType.TRANSLATION_APPROVED, user, translation=translation)
 
     active_translation = entity.reset_active_translation(locale=locale)
-
-    response_data = {"translation": active_translation.serialize()}
+    response_data = {"status": True, "translation": active_translation}
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
@@ -391,8 +417,7 @@ def unapprove_translation(request):
     )
 
     active_translation = entity.reset_active_translation(locale=locale)
-
-    response_data = {"translation": active_translation.serialize()}
+    response_data = {"status": True, "translation": active_translation}
     _add_stats(response_data, resource, locale, stats)
     return JsonResponse(response_data)
 
@@ -454,8 +479,7 @@ def reject_translation(request):
     )
 
     active_translation = entity.reset_active_translation(locale=locale)
-
-    response_data = {"translation": active_translation.serialize()}
+    response_data = {"status": True, "translation": active_translation}
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
@@ -519,7 +543,6 @@ def unreject_translation(request):
     )
 
     active_translation = translation.entity.reset_active_translation(locale=locale)
-
-    response = {"translation": active_translation.serialize()}
+    response = {"status": True, "translation": active_translation}
     _add_stats(response, resource, locale, stats)
     return JsonResponse(response)

@@ -9,6 +9,9 @@
     section {
       padding: 20px;
     }
+    .search-wrapper {
+      background: var(--black-3);
+    }
   }
 
   .controls {

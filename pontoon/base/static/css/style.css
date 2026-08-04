@@ -303,6 +303,10 @@ time {
   z-index: 19; /* Must be lower than for the (popup) .menu */
 }
 
+.select.opened .menu .search-wrapper {
+  background: var(--black-3);
+}
+
 .project.select,
 .locale.select,
 .part.select,
@@ -494,16 +498,17 @@ time {
 }
 
 .search-wrapper {
-  border-bottom: 1px solid var(--main-border-1);
+  border: 1px solid var(--main-border-1);
   margin-bottom: 10px;
   position: relative;
+  border-radius: 3px;
 }
 
 .search-wrapper .icon {
   color: var(--light-grey-7);
   font-size: 1.2em;
   position: absolute;
-  left: 3px;
+  left: 6px;
   top: 5px;
 }
 
@@ -958,6 +963,23 @@ header .right .select .menu {
 #profile .menu li a {
   display: block;
   line-height: 22px;
+}
+
+#profile .menu li#standalone-sign-out form {
+  display: flex;
+}
+
+#profile .menu li#standalone-sign-out button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 22px;
+  padding: 0;
+  text-align: left;
 }
 
 #profile .menu li i.fas,

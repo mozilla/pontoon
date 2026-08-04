@@ -1,0 +1,62 @@
+.locale-menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.locale-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: var(--dark-grey-1);
+  padding: 0 12px 12px;
+  box-sizing: border-box;
+}
+
+.locale-menu-search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--main-border-1);
+  background-color: var(--dark-grey-2);
+  border-radius: 3px;
+  margin-bottom: 10px;
+  padding-bottom: 0;
+}
+
+.locale-menu-search .icon {
+  color: var(--light-grey-7);
+  font-size: 1.2em;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding-left: 6px;
+}
+
+.locale-menu-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.locale-menu-trigger .locale-name {
+  color: var(--light-grey-7);
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.locale-menu-trigger .locale-code {
+  color: var(--status-translated);
+  flex-shrink: 0;
+}
+
+.locale-menu-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

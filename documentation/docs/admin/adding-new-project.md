@@ -47,9 +47,6 @@ Incorrect pattern:
 
     locales/{locale_code}/path/to/file.{locale_code}.extension
 
-!!! note "Gettext .po files"
-    For Gettext files, you will need to ensure that `.po` files are included in the repository for each target locale for which they are to be translated (these files may be initially empty). For all other supported formats, Pontoon will automatically add files for each locale when it is translated.
-
 ## Create the project
 
 Access Pontoon’s [admin console](https://pontoon.mozilla.org/admin/) and click **ADD NEW PROJECT**.
@@ -59,15 +56,33 @@ The new project will appear in the [public list of Projects](https://pontoon.moz
 * Name: name of the repository (it will be displayed in Pontoon’s project selector).
 * Slug: used in URLs, will be generated automatically based on the repository’s name.
 * Locales:
-
-  * Select at least one locale. To make things faster it’s possible to copy supported locales from an existing project.
-  * The *Read-only* column can be used to add languages in read-only mode. In this way, their translations will be available to other languages in the LOCALES tab when translating, but it won’t be possible to change or submit translations directly in Pontoon.
-  * You can uncheck the `Locales can opt-in` checkbox to prevent localizers from requesting this specific project.
-
-* Repositories: select the type of repository and URL. Make sure to use SSH to allow write access. For example, if the repository is `https://github.com/meandavejustice/min-vid`, the URL should be `git@github.com:meandavejustice/min-vid.git`. You can use the *Clone or download* button in the repository page on GitHub, making sure that *Clone with SSH* is selected.
+    * Select "Read list of locales from repository" to have Pontoon detect the supported locales from your repository.
+        * If a configuration file is provided, you will need to add the locale to its `locales` list.
+          Resource availability will also be determined by the configuration file.
+        * Without a configuration file, you will need to manually add a directory for the locale in the repository
+          in order for the locale to be available in Pontoon.
+          You will then have the option to have all resources added automatically for each locale (default),
+          or only expose in Pontoon resources already present in the repository within the locale directory.
+          The latter means that, for example, bootstrapping a new locale requires manually creating a directory
+          and all necessary files within it.
+    * To manually control locales, leave the option to read locales from repository unchecked, then:
+        * Select at least one locale. To make things faster it’s possible to copy supported locales from an existing project.
+        * The *Read-only* column can be used to add languages in read-only mode.
+          In this way, their translations will be available to other languages in the LOCALES tab when translating,
+          but it won’t be possible to change or submit translations directly in Pontoon.
+        * You can uncheck the `Locales can opt in` checkbox to prevent localizers from requesting this specific project.
+        * The configuration file only determines which resources will be available in Pontoon for each locale.
+          The `locales` list within the file doesn't have any effect in Pontoon.
+        * Without a configuration file, all resources will be automatically available in each locale.
+* Repositories: select the type of repository and URL. Make sure to use SSH to allow write access.
+  For example, if the repository is `https://github.com/meandavejustice/min-vid`,
+  the URL should be `git@github.com:meandavejustice/min-vid.git`.
+  On GitHub, this is available via the green *<> Code* button on the repository page, under the *SSH* tab of the dialog.
 * Leave the `Branch` field empty, unless developers asked to commit translations in a specific branch instead of the default one (usually `main` or `master`).
-* Download prefix or path to TOML file: a URL prefix for downloading localized files. For GitHub repositories, select any localized file on GitHub, click `Raw` and replace locale code and the following bits in the URL with `{locale_code}`. For example, if the link is `https://raw.githubusercontent.com/bwinton/TabCenter-l10n/master/locales/en-US/addon.properties`, the field should be set to `https://raw.githubusercontent.com/bwinton/TabCenter-l10n/master/locales/{locale_code}`. If you use a project configuration file, you need to provide the path to the raw TOML file on GitHub, e.g. `https://raw.githubusercontent.com/mozilla/common-voice/main/l10n.toml`.
 * Public Repository Website: displayed on dashboards. E.g. `https://github.com/meandavejustice/min-vid`. Pontoon will try to prefill it after you enter Repository URL.
+* Configuration file:
+  A path to an optional [project configuration file](https://github.com/mozilla/moz-l10n/wiki/L10nConfigPaths-file-format),
+  relative to the source string repository.
 * Project info: provide some information about the project to help localizers with context or testing instructions. HTML is supported, so you can add external links. For example:
 
 ```HTML

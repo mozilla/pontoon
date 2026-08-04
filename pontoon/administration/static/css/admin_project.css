@@ -145,6 +145,10 @@ form .controls .button.manage-resources[disabled]:hover {
   width: 150px;
 }
 
+.admin-project .search-wrapper {
+  background: var(--input-background-1);
+}
+
 #admin-strings-form .controls .add-inline {
   float: left;
   margin-left: 0;
@@ -178,10 +182,18 @@ form a:visited {
   margin: 5px 9px;
 }
 
+.controls .save {
+  width: 150px !important;
+}
+
 .controls .checkbox {
   float: left;
   margin: -1px 20px 0 0;
   text-transform: uppercase;
+}
+
+.locales {
+  margin-top: 40px;
 }
 
 .double-list-selector .locale.select .menu {

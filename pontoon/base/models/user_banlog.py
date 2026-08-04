@@ -29,11 +29,6 @@ class UserBanLog(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return "User(pk={}) {} User(pk={}) for {}".format(
-            self.performed_by_id,
-            self.action_type,
-            self.performed_on_id,
-            self.action_reason,
-        )
+        return f"User(pk={self.performed_by_id}) {self.action_type} User(pk={self.performed_on_id}) for {self.action_reason}"
 
     __repr__ = __str__

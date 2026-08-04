@@ -118,11 +118,12 @@
 
                 {% if settings.AUTHENTICATION_METHOD == 'django' %}
                   <li id="standalone-sign-out">
-                    <a
-                      href="{{ url('standalone_logout') }}"
-                      title="{{ user.email|nospam }}"
-                      ><i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a
-                    >
+                    <form action="{{ url('standalone_logout') }}" method="post">
+                      {% csrf_token %}
+                      <button type="submit" title="{{ user.email|nospam }}">
+                        <i class="fas fa-sign-out-alt fa-fw"></i>Sign out
+                      </button>
+                    </form>
                   </li>
                 {% else %}
                   <li id="sign-out">

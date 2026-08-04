@@ -2,7 +2,8 @@ const nf = new Intl.NumberFormat('en', {
   style: 'percent',
 });
 
-const scoreFormat = new Intl.NumberFormat('en', {
+const sf = new Intl.NumberFormat('en', {
+  minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
 
@@ -12,6 +13,70 @@ const longMonthFormat = new Intl.DateTimeFormat('en', {
 });
 
 const style = getComputedStyle(document.body);
+
+function saveCommunityHealthLocales() {
+  const selectedLocales = $('.multiple-item-selector .item.selected')
+    .find('input[type=hidden]')
+    .val();
+
+  $.ajax({
+    url: '/insights/ajax/edit-locales/',
+    type: 'POST',
+    data: {
+      csrfmiddlewaretoken: $('body').data('csrf'),
+      community_health_locales: selectedLocales,
+    },
+    error(request) {
+      if (request.responseText === 'error') {
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
+      } else {
+        Pontoon.endLoader(request.responseText, 'error');
+      }
+    },
+  });
+}
+
+function renderCommunityHealthPanel() {
+  $.ajax({
+    url: '/insights/ajax/render-panel/',
+    success(response) {
+      if (response.html) {
+        Chart.getChart('community-health-chart')?.destroy();
+        $('.community-health-score-container').html(response.html);
+        Pontoon.insights.renderGlobalChart($('#community-health-chart'), 'chs');
+      }
+    },
+    error(request) {
+      if (request.responseText === 'error') {
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
+      } else {
+        Pontoon.endLoader(request.responseText, 'error');
+      }
+    },
+  });
+}
+
+$('#edit-locales').on('click', function (e) {
+  e.preventDefault();
+
+  const container = $('.community-health-score-container');
+  const localeSelector = $('.community-health-locale-selector');
+
+  container.toggleClass('hidden');
+  localeSelector.toggleClass('hidden');
+
+  const isHidden = container.hasClass('hidden');
+
+  $('#edit-locales')
+    .toggleClass('back', isHidden)
+    .find('span')
+    .toggleClass('fa-chevron-right', !isHidden)
+    .toggleClass('fa-chevron-left', isHidden);
+
+  if (!isHidden) {
+    renderCommunityHealthPanel();
+  }
+});
 
 $('body').on('click', '#show-scores', function (e) {
   e.stopPropagation();
@@ -33,6 +98,16 @@ $('body').on('click', '#show-scores', function (e) {
   });
 
   $('#show-scores').text(showScores ? 'Show default' : 'Show scores');
+});
+
+$(function () {
+  $('body').on('click', '.multiple-item-selector .item.select li', function () {
+    saveCommunityHealthLocales();
+  });
+
+  $('body').on('click', '.multiple-item-selector .move-all', function () {
+    saveCommunityHealthLocales();
+  });
 });
 
 // eslint-disable-next-line no-var
@@ -82,7 +157,7 @@ var Pontoon = (function (my) {
             label: item.name,
             data: item[key],
             borderColor: [color],
-            borderWidth: item.name === 'AAverage (all locales)ll' ? 3 : 1,
+            borderWidth: item.name === 'Average (all locales)' ? 3 : 1,
             pointBackgroundColor: color,
             pointHitRadius: 10,
             pointRadius: 3.25,
@@ -131,9 +206,7 @@ var Pontoon = (function (my) {
                   maxTicksLimit: 3,
                   precision: 0,
                   callback: function (value) {
-                    return isScore
-                      ? scoreFormat.format(value)
-                      : nf.format(value / 100);
+                    return isScore ? sf.format(value) : nf.format(value / 100);
                   },
                 },
                 beginAtZero: true,
@@ -166,7 +239,7 @@ var Pontoon = (function (my) {
 
                     const label = chart.data.datasets[datasetIndex].label;
                     const value = isScore
-                      ? scoreFormat.format(parsed.y)
+                      ? sf.format(parsed.y)
                       : nf.format(parsed.y / 100);
                     return `${label}: ${value}`;
                   },

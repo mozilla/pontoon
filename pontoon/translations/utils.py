@@ -2,6 +2,10 @@ from typing import Any
 
 from moz.l10n.formats.fluent import fluent_parse_entry, fluent_serialize_entry
 from moz.l10n.formats.mf2 import mf2_parse_message, mf2_serialize_message
+from moz.l10n.formats.properties import (
+    properties_parse_message,
+    properties_serialize_message,
+)
 from moz.l10n.message import message_to_json, serialize_message
 from moz.l10n.model import CatchallKey, Entry, Message, SelectMessage
 
@@ -11,10 +15,15 @@ from pontoon.base.models import Entity, Resource
 JsonMessage = list[Any] | dict[str, Any]
 
 
-def parse_db_string_to_json(
+def parse_source_string_to_json(
     res_format: str,
     source: str,
-) -> tuple[JsonMessage, dict[str, JsonMessage] | None]:
+) -> tuple[list[str], JsonMessage, dict[str, JsonMessage] | None]:
+    """Parse an entity's `source` string into its `(key, value, properties)` JSON.
+
+    Used to build entities that aren't backed by a synced row, i.e. in the
+    pretranslate API and in test factories.
+    """
     match res_format:
         case Resource.Format.FLUENT:
             fe = fluent_parse_entry(source)
@@ -22,7 +31,7 @@ def parse_db_string_to_json(
             properties = {
                 name: message_to_json(prop) for name, prop in fe.properties.items()
             } or None
-            return value, properties
+            return list(fe.id), value, properties
         case (
             Resource.Format.ANDROID
             | Resource.Format.GETTEXT
@@ -37,9 +46,12 @@ def parse_db_string_to_json(
                     for key in keys:
                         if isinstance(key, CatchallKey):
                             key.value = "other"
-            return message_to_json(msg), None
+            return [], message_to_json(msg), None
+        case Resource.Format.PROPERTIES:
+            msg = properties_parse_message(source)
+            return [], message_to_json(msg), None
         case _:
-            return [source] if source else [], None
+            return [], ([source] if source else []), None
 
 
 def serialize_for_db(
@@ -57,5 +69,7 @@ def serialize_for_db(
             | Resource.Format.XLIFF
         ):
             return mf2_serialize_message(value)
+        case Resource.Format.PROPERTIES:
+            return properties_serialize_message(value)
         case _:
             return serialize_message(None, value)

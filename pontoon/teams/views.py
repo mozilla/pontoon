@@ -626,9 +626,7 @@ def request_item(request, locale=None):
 
         projects = "".join(f"- {p.name} ({p.slug})\n" for p in project_list)
 
-        mail_subject = "Project request for {locale} ({code})".format(
-            locale=locale.name, code=locale.code
-        )
+        mail_subject = f"Project request for {locale.name} ({locale.code})"
 
         payload = {
             "locale": locale.name,
@@ -650,9 +648,7 @@ def request_item(request, locale=None):
         code = form.cleaned_data["code"]
         name = form.cleaned_data["name"]
 
-        mail_subject = "New team request: {locale} ({code})".format(
-            locale=name, code=code
-        )
+        mail_subject = f"New team request: {name} ({code})"
 
         payload = {
             "locale": name,
@@ -714,9 +710,7 @@ def request_pretranslation(request, locale):
 
     projects = "".join(f"- {p.name} ({p.slug})\n" for p in project_list)
 
-    mail_subject = "Pretranslation request for {locale} ({code})".format(
-        locale=locale.name, code=locale.code
-    )
+    mail_subject = f"Pretranslation request for {locale.name} ({locale.code})"
 
     payload = {
         "locale": locale,

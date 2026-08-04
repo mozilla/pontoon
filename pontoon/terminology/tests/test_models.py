@@ -15,7 +15,7 @@ def available_terms(_):
     - 6 terms to be used for matching in strings
     """
     for i in range(0, 4):
-        TermFactory.create(text="term%s" % i)
+        TermFactory.create(text=f"term{i}")
 
     TermFactory.create(text="abnormality")
     TermFactory.create(text="student ambassador")

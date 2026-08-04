@@ -6,7 +6,10 @@ import { SearchData } from '~/context/SearchData';
 
 import { MachinerySkeletonLoader } from '~/modules/loaders/';
 import './Machinery.css';
-import { MachineryTranslationComponent } from './MachineryTranslation';
+import {
+  ComposedTranslationComponent,
+  MachineryTranslationComponent,
+} from './MachineryTranslation';
 
 /**
  * Show translations from machines.
@@ -19,6 +22,7 @@ export function Machinery(): React.ReactElement<'section'> {
   const {
     fetching: machineryFetching,
     source,
+    composed,
     translations,
   } = useContext(MachineryTranslations);
   const { fetching, hasMore, input, query, results, setInput, getResults } =
@@ -84,10 +88,19 @@ export function Machinery(): React.ReactElement<'section'> {
             ))}
           </ul>
         ) : (
+          // Composed suggestions render first, ahead of the per-leaf matches;
+          // the selection index runs across both lists as one.
           <ul>
+            {composed.map((translation, index) => (
+              <ComposedTranslationComponent
+                index={index}
+                translation={translation}
+                key={`composed-${index}`}
+              />
+            ))}
             {translations.map((translation, index) => (
               <MachineryTranslationComponent
-                index={index}
+                index={composed.length + index}
                 sourceString={source}
                 translation={translation}
                 key={index}

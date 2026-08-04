@@ -84,3 +84,59 @@ def test_entities_string_not_shown_if_not_matching_filters(member, entity_a, loc
     data = json.loads(response.content)
     entity_pks = [e["pk"] for e in data["entities"]]
     assert entity_a.pk not in entity_pks
+
+
+@pytest.mark.django_db
+def test_entities_not_matching_string_reports_location(member, entity_a, locale_a):
+    """
+    When the requested `string` exists and is viewable but doesn't match the
+    active filters, the response reports where it actually lives so the frontend
+    can offer to navigate there. Regression test for
+    https://github.com/mozilla/pontoon/issues/2921
+    """
+    ProjectLocaleFactory.create(project=entity_a.resource.project, locale=locale_a)
+    TranslatedResource.objects.create(resource=entity_a.resource, locale=locale_a)
+    entity_a.resource.total_strings = 1
+    entity_a.resource.save()
+
+    TranslationFactory.create(entity=entity_a, locale=locale_a, approved=True)
+
+    response = member.client.post(
+        "/get-entities/",
+        {
+            "project": entity_a.resource.project.slug,
+            "locale": locale_a.code,
+            "paths[]": [entity_a.resource.path],
+            "status": "missing",
+            "entity": entity_a.pk,
+            "page": 1,
+            "limit": 50,
+        },
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    data = json.loads(response.content)
+    assert data["requested_entity"] == {
+        "pk": entity_a.pk,
+        "project": entity_a.resource.project.slug,
+        "project_name": entity_a.resource.project.name,
+        "resource": entity_a.resource.path,
+        "filters": ["missing"],
+    }
+
+    response = member.client.post(
+        "/get-entities/",
+        {
+            "project": entity_a.resource.project.slug,
+            "locale": locale_a.code,
+            "paths[]": [entity_a.resource.path],
+            "entity": entity_a.pk,
+            "page": 1,
+            "limit": 50,
+        },
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    data = json.loads(response.content)
+    assert entity_a.pk in [e["pk"] for e in data["entities"]]
+    assert "requested_entity" not in data

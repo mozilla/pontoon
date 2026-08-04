@@ -161,5 +161,7 @@ The following insights only appear on Team pages:
 * **Active users**: shows the ratio of active versus total for each [user role](users.md#user-roles): managers (Team managers), reviewers (Team managers and Translators), and contributors, filterable by time period (last 12/6/3/1 months).
 * **Time to review suggestions**: shows the average age of [suggestions](glossary.md#translation) reviewed for a particular month, and the 12 month average. Hover over a data point in the graph to see the exact age in days for that month’s current and 12 month average.
 * **Age of unreviewed suggestions**: this can be accessed by clicking `Age of unreviewed` on the bottom of the Time to review suggestions graph. Shows the average age of unreviewed suggestions at a particular point in time. Hover over a data point in the graph to see the exact age in days for unreviewed suggestions for that month.
+* **Community health score**: shows the community health score calculated for a particular
+month. Hover over a data point in the graph to see the exact score for that month.
 
 Note: clicking on the `i` icon in the top right of each insight will provide detailed definitions for the data shown.

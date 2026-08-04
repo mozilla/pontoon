@@ -1,4 +1,4 @@
-import { CatchallKey } from '@mozilla/l10n';
+import { CatchallKey, type Message } from '@mozilla/l10n';
 import React, {
   createContext,
   useContext,
@@ -14,6 +14,7 @@ import {
   buildMessageEntry,
   editMessageEntry,
   editSource,
+  getPlainMessage,
   type MessageEntry,
   parseEntry,
   requiresSourceView,
@@ -24,6 +25,8 @@ import {
   htmlElementEscapes,
 } from '~/utils/message/entryInformation';
 import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
+import { createMessageEntry } from '~/utils/message/createMessageEntry';
+import { getMessageEntryFormat } from '~/utils/message/getMessageEntryFormat';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
 
@@ -97,9 +100,24 @@ export type EditorActions = {
   /** If `format: 'fluent'`, must be called with the source of a full entry */
   setEditorFromHistory(value: string): void;
 
-  /** @param manual Set `true` when value set due to direct user action */
+  /**
+   * @param manual Set `true` when value set due to direct user action
+   */
   setEditorFromHelpers(
     value: string,
+    sources: SourceType[],
+    manual: boolean,
+  ): void;
+
+  /**
+   * Rebuild the editor fields from a composed Machinery suggestion, i.e. a full
+   * `(value, properties)` data model rather than a single string.
+   *
+   * @param manual Set `true` when set due to direct user action
+   */
+  setEditorFromComposed(
+    value: Message,
+    properties: Record<string, Message> | undefined,
     sources: SourceType[],
     manual: boolean,
   ): void;
@@ -111,11 +129,55 @@ export type EditorActions = {
   toggleSourceView(): void;
 };
 
-function parseEntryFromFluentSource(base: MessageEntry, fields: EditorField[]) {
+function parseEntryFromFluentSource(
+  sourceEntry: MessageEntry,
+  fields: EditorField[],
+) {
   const source = fields[0].handle.current.value;
   const entry = parseEntry('fluent', source);
-  if (entry) {
-    entry.id = base.id;
+  if (!entry) {
+    return null;
+  }
+
+  // Terms can have locale-specific attributes
+  const isTerm = sourceEntry.id.startsWith('-');
+
+  entry.id = sourceEntry.id;
+  if (sourceEntry.value) {
+    entry.value ??= [];
+  } else if (entry.value) {
+    entry.value = null;
+  }
+  if (sourceEntry.attributes?.size) {
+    const sourceKeys = Array.from(sourceEntry.attributes.keys());
+    if (!entry.attributes?.size) {
+      entry.attributes = new Map(sourceKeys.map((key) => [key, []]));
+    } else {
+      const attributes = entry.attributes;
+      const keys = Array.from(attributes.keys());
+      if (
+        keys.length !== sourceKeys.length ||
+        sourceKeys.some((key, i) => keys[i] !== key)
+      ) {
+        entry.attributes = new Map(
+          sourceKeys.map((key) => {
+            const msg = attributes.get(key);
+            if (msg) {
+              attributes.delete(key);
+              return [key, msg];
+            }
+            return [key, []];
+          }),
+        );
+        if (isTerm) {
+          for (const [key, value] of attributes.entries()) {
+            entry.attributes.set(key, value);
+          }
+        }
+      }
+    }
+  } else if (!isTerm) {
+    delete entry.attributes;
   }
   return entry;
 }
@@ -135,6 +197,7 @@ const initEditorActions: EditorActions = {
   clearEditor: () => {},
   setEditorBusy: () => {},
   setEditorFromHelpers: () => {},
+  setEditorFromComposed: () => {},
   setEditorFromHistory: () => {},
   setEditorSelection: () => {},
   setResultFromInput: () => {},
@@ -167,6 +230,23 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       escapeHTML: htmlElementEscapes(sourceEntry),
       trim: !hasOuterWhitespace(sourceEntry),
     };
+
+    // HACK: Without this code, re-applying a composed Machinery suggestion
+    // (or restoring history) after editing a field takes two clicks:
+    // the first does nothing.
+    // Changing the `fields` changes the `defaultValue` of each field,
+    // but then for some reason the `fields` changes a second time,
+    // and we end up re-rendering the `TranslationForm` with the old field values.
+    const resetFields = (prev: EditorData, next: EditorData): EditorData => {
+      for (const field of next.fields) {
+        const live = prev.fields.find((f) => f.id === field.id);
+        live?.handle.current.setValue(field.handle.current.value);
+      }
+      next.focusField.current = next.fields[0];
+      setResult(buildMessageEntry(next.base, next.fields, buildOpts));
+      return next;
+    };
+
     return {
       clearEditor() {
         setState((state) => {
@@ -184,7 +264,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorFromHelpers: (str, sources, manual) =>
         setState((prev) => {
           const { fields, focusField, sourceView } = prev;
-          const field = focusField.current ?? fields[0];
+          let field = focusField.current ?? fields[0];
           field.handle.current.setValue(str);
           const next = {
             ...prev,
@@ -193,10 +273,40 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (sourceView) {
             const result = buildMessageEntry(prev.base, prev.fields, buildOpts);
             next.fields = editSource(result ?? str);
-            focusField.current = next.fields[0];
+            field = focusField.current = next.fields[0];
             setResult(result);
           }
+          if (manual) {
+            field.handle.current.focus();
+          }
           return next;
+        }),
+
+      setEditorFromComposed: (value, properties, sources, manual) =>
+        setState((prev) => {
+          const entry = createMessageEntry(
+            getMessageEntryFormat(format),
+            prev.base.id,
+            value,
+            properties,
+          );
+          const next = { ...prev, base: entry };
+          if (requiresSourceView(entry)) {
+            next.fields = editSource(entry);
+            next.sourceView = true;
+          } else {
+            next.fields = prev.sourceView
+              ? editSource(entry)
+              : editMessageEntry(sourceEntry, entry);
+          }
+          return {
+            ...resetFields(prev, next),
+            machinery: {
+              manual,
+              translation: getPlainMessage(entry),
+              sources,
+            },
+          };
         }),
 
       setEditorFromHistory: (str) =>
@@ -221,10 +331,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             next.fields = editMessageEntry(sourceEntry, prev.initial);
             next.fields[0].handle.current.setValue(str);
           }
-          next.focusField.current = next.fields[0];
-          const result = buildMessageEntry(next.base, next.fields, buildOpts);
-          setResult(result);
-          return next;
+          return resetFields(prev, next);
         }),
 
       setEditorSelection: (content) =>
@@ -241,7 +348,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           // Inside setState() only to access the current `state` value
           const { base, fields, sourceView } = state;
           const result = sourceView
-            ? parseEntryFromFluentSource(base, fields)
+            ? parseEntryFromFluentSource(sourceEntry, fields)
             : buildMessageEntry(base, fields, buildOpts);
           setResult(result);
           return state;
@@ -251,7 +358,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         setState((state) => {
           const { base, fields, sourceView } = state;
           if (sourceView) {
-            const entry = parseEntryFromFluentSource(base, fields);
+            const entry = parseEntryFromFluentSource(sourceEntry, fields);
             if (entry && !requiresSourceView(entry)) {
               const fields = editMessageEntry(sourceEntry, entry);
               state.focusField.current = fields[0];

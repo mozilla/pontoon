@@ -37,7 +37,7 @@ export type Location = {
   exclude_self_reviewed: boolean;
 };
 
-const emptyParams = {
+export const emptyParams = {
   list: null,
   search: null,
   status: null,

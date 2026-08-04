@@ -214,12 +214,11 @@ system.
 
 ## Python Dependencies
 
-Direct dependencies for Pontoon are distributed across four files:
+Direct dependencies for Pontoon are distributed across these files:
 
-1.  `requirements/default.in`: Running Pontoon in production
-2.  `requirements/dev.in`: Development
-3.  `requirements/test.in`: Testing
-4.  `requirements/lint.in`: Linting
+1. `requirements/base.in`: Running Pontoon in any environment
+2. `requirements/prod.in`: Running Pontoon in production
+3. `requirements/dev.in`: Development
 
 In order to pin and hash the direct and indirect dependencies, we use
 [uv pip compile](https://docs.astral.sh/uv/#the-pip-interface), which
@@ -346,7 +345,7 @@ these steps, as they don't affect your setup if nothing has changed:
 git pull origin main
 
 # Install new dependencies or update existing ones.
-uv pip install -U --force -r requirements/default.txt
+uv pip install -U --force -r requirements/prod.txt
 
 # Run database migrations.
 python manage.py migrate

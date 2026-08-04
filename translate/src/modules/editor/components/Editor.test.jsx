@@ -88,6 +88,14 @@ const ENTITIES = [
       value: nested_selectors_entry['='],
     },
   },
+  {
+    pk: 6,
+    format: 'fluent',
+    key: ['-my-term'],
+    original: '-my-term = Hello',
+    value: ['Hello'],
+    translation: { string: '-my-term = Salut', value: ['Salut'] },
+  },
 ];
 
 function mountEditor(entityPk = 1) {
@@ -182,7 +190,7 @@ describe('<Editor>', () => {
   });
 
   it('changes editor implementation when changing translation syntax', () => {
-    const [wrapper, actions] = mountEditor(1);
+    const [wrapper, actions] = mountEditor(6);
 
     // Force source mode.
     wrapper.find('button.ftl').simulate('click');

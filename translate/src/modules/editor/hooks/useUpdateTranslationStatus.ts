@@ -77,7 +77,7 @@ export function useUpdateTranslationStatus(
       setTimeout(() => setFailedChecks(results.failedChecks, translationId));
     } else {
       // Show a notification to explain what happened.
-      const notif = getNotification(change, !!results.translation);
+      const notif = getNotification(change, results.status);
       showNotification(notif);
 
       if (results.translation && change === 'approve') {
@@ -113,7 +113,9 @@ export function useUpdateTranslationStatus(
       }
 
       // Update entity translation data now that it has changed on the server.
-      dispatch(updateEntityTranslation(entity.pk, results.translation));
+      dispatch(
+        updateEntityTranslation(entity.pk, results.translation ?? undefined),
+      );
     }
 
     NProgress.done();

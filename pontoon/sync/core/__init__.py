@@ -11,6 +11,7 @@ from pontoon.base.models import (
     Entity,
     Locale,
     Project,
+    ProjectLocale,
     TranslatedResource,
     Translation,
     User,
@@ -50,10 +51,30 @@ def sync_project(
         log.error(f"{log_prefix} {e}")
         raise e
 
-    locale_map: dict[str, Locale] = {
-        lc.code: lc for lc in project.locales.order_by("code")
-    }
+    locale_map: dict[str, Locale]
+    if project.set_locales_from_repo:
+        if not paths.locales:
+            errmsg = "No locales found in repo"
+            log.error(f"{log_prefix} {errmsg}")
+            raise Exception(errmsg)
+        locales = Locale.objects.filter(code__in=paths.locales).order_by("code")
+        locale_map = {lc.code: lc for lc in locales}
+
+        # Update project locales
+        ProjectLocale.objects.filter(project=project).exclude(
+            locale__in=locales
+        ).delete()
+        for locale in locales:
+            # The implicit pre_save and post_save signals sent here are required
+            # to maintain django-guardian permissions.
+            ProjectLocale.objects.get_or_create(project=project, locale=locale)
+        ProjectLocale.objects.filter(project=project, readonly=True).update(
+            readonly=False
+        )
+    else:
+        locale_map = {lc.code: lc for lc in project.locales.order_by("code")}
     paths.locales = list(locale_map.keys())
+
     added_entities_count, changed_paths, removed_paths = sync_resources_from_repo(
         project, locale_map, checkouts.source, paths, now
     )

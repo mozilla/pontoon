@@ -1,3 +1,4 @@
+import logging
 import re
 
 from contextlib import contextmanager
@@ -6,7 +7,6 @@ from os.path import isfile, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
 from typing import cast
-from unittest import TestCase
 from unittest.mock import patch
 
 import pytest
@@ -17,11 +17,16 @@ from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
     Locale,
+    ProjectLocale,
     Repository,
     TranslatedResource,
     Translation,
 )
-from pontoon.base.tests import (
+from pontoon.sync.models import Sync
+from pontoon.sync.tasks import sync_project_task
+from pontoon.sync.tests.test_checkouts import MockVersionControl
+from pontoon.sync.tests.utils import build_file_tree
+from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
@@ -31,10 +36,6 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.models import Sync
-from pontoon.sync.tasks import sync_project_task
-from pontoon.sync.tests.test_checkouts import MockVersionControl
-from pontoon.sync.tests.utils import build_file_tree
 
 
 @contextmanager
@@ -170,10 +171,10 @@ def test_kitchen_sink():
                 r"""
                 Pontoon/test-project: Update Test (German|French) \((de|fr)-Test\), Test (German|French) \((de|fr)-Test\)
 
-                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
                 """
             ).strip(),
             commit_msg,
@@ -242,7 +243,11 @@ def test_add_resources():
         assert {
             (tr.resource.path, tr.locale.code)
             for tr in TranslatedResource.objects.filter(resource__project=project)
-        } == {("file.ftl", "de-Test"), ("file.xliff", "de-Test")}
+        } == {
+            ("file.ftl", "de-Test"),
+            ("file.po", "de-Test"),
+            ("file.xliff", "de-Test"),
+        }
 
         # Add an XLIFF translation
         TranslationFactory.create(
@@ -313,7 +318,7 @@ def test_xliff_html_translation():
         makedirs(repo.checkout_path)
         file_xliff = dedent("""\
             <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-              <file original="file.txt" source-language="en" target-language="en" datatype="plaintext">
+              <file original="file.txt" source-language="en" datatype="plaintext">
                 <body>
                   <trans-unit id="key">
                     <source>Hello &lt;b&gt;world&lt;/b&gt;!</source>
@@ -348,7 +353,7 @@ def test_xliff_html_translation():
             assert file.read() == dedent("""\
                 <?xml version="1.0" encoding="utf-8"?>
                 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-                  <file original="file.txt" source-language="en" target-language="de-Test" datatype="plaintext">
+                  <file original="file.txt" source-language="en" datatype="plaintext" target-language="de-Test">
                     <body>
                       <trans-unit id="key">
                         <source>Hello &lt;b&gt;world&lt;/b&gt;!</source>
@@ -681,96 +686,96 @@ def test_gettext_fuzzy():
             )
 
 
-class TestEndToEnd(TestCase):
-    @pytest.mark.django_db
-    def test_plain_json(self):
-        with mock_setup() as (repo, locale):
-            # Database setup
-            project = ProjectFactory.create(
-                name="test-plain-json", locales=[locale], repositories=[repo]
-            )
-            res = ResourceFactory.create(
-                project=project, path="old-file.json", format="plain_json"
-            )
+@pytest.mark.django_db
+def test_plain_json(caplog):
+    with mock_setup() as (repo, locale):
+        # Database setup
+        project = ProjectFactory.create(
+            name="test-plain-json", locales=[locale], repositories=[repo]
+        )
+        res = ResourceFactory.create(
+            project=project, path="old-file.json", format="plain_json"
+        )
 
-            entity = EntityFactory.create(resource=res, key=["o1"], string="Entity 1")
-            TranslationFactory.create(
-                entity=entity,
-                locale=locale,
-                string="Translation 1",
-                active=True,
-                approved=True,
-            )
+        entity = EntityFactory.create(resource=res, key=["o1"], string="Entity 1")
+        TranslationFactory.create(
+            entity=entity,
+            locale=locale,
+            string="Translation 1",
+            active=True,
+            approved=True,
+        )
 
-            # Filesystem setup
-            makedirs(repo.checkout_path)
-            build_file_tree(
-                repo.checkout_path,
-                {
-                    "en-US": {
-                        "bad-file.json": '{ "b1": "Entity 1", "b2": "Entity 2", }',  # trailing comma
-                        "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
-                        "old-file.json": '{ "o1": "Entity 1", "o2": "Entity 2" }',
-                    },
-                    "de-Test": {
-                        "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
-                        "old-file.json": "{}",
-                    },
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {
+                    "bad-file.json": '{ "b1": "Entity 1", "b2": "Entity 2", }',  # trailing comma
+                    "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
+                    "old-file.json": '{ "o1": "Entity 1", "o2": "Entity 2" }',
                 },
-            )
+                "de-Test": {
+                    "new-file.json": '{ "n1": "Entity 1", "n2": "Entity 2" }',
+                    "old-file.json": "{}",
+                },
+            },
+        )
 
-            # Test
-            with self.assertLogs("pontoon.sync.core.entities", level="ERROR") as cm:
-                sync_project_task(project.pk)
-            (bad_json_error,) = cm.output
-            assert "Resource format detection failed" in bad_json_error
-            with open(join(repo.checkout_path, "de-Test", "old-file.json")) as file:
-                assert file.read() == dedent("""\
+        # Test
+        with caplog.at_level(logging.ERROR, logger="pontoon.sync.core.entities"):
+            sync_project_task(project.pk)
+        assert "Resource format detection failed" in caplog.text
+        with open(join(repo.checkout_path, "de-Test", "old-file.json")) as file:
+            assert file.read() == dedent("""\
             {
               "o1": "Translation 1"
             }
             """)
-            assert {
-                (ent.resource.path, ent.resource.format, *ent.key)
-                for ent in Entity.objects.filter(resource__project=project)
-            } == {
-                ("new-file.json", "plain_json", "n1"),
-                ("new-file.json", "plain_json", "n2"),
-                ("old-file.json", "plain_json", "o1"),
-                ("old-file.json", "plain_json", "o2"),
-            }
+        assert {
+            (ent.resource.path, ent.resource.format, *ent.key)
+            for ent in Entity.objects.filter(resource__project=project)
+        } == {
+            ("new-file.json", "plain_json", "n1"),
+            ("new-file.json", "plain_json", "n2"),
+            ("old-file.json", "plain_json", "o1"),
+            ("old-file.json", "plain_json", "o2"),
+        }
 
-    @pytest.mark.django_db
-    def test_unsupported_formats(self):
-        with mock_setup() as (repo, locale):
-            project = ProjectFactory.create(
-                name="test-unsupported-formats", locales=[locale], repositories=[repo]
-            )
 
-            makedirs(repo.checkout_path)
-            build_file_tree(
-                repo.checkout_path,
-                {
-                    "en-US": {
-                        "file.inc": "#define inc unsupported\n",
-                        "file.json": '{ "json": "valid src" }',
-                        "file.lang": "",
-                    },
-                    "de-Test": {},
+@pytest.mark.django_db
+def test_unsupported_formats(caplog):
+    with mock_setup() as (repo, locale):
+        project = ProjectFactory.create(
+            name="test-unsupported-formats", locales=[locale], repositories=[repo]
+        )
+
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {
+                    "file.inc": "#define inc unsupported\n",
+                    "file.json": '{ "json": "valid src" }',
+                    "file.lang": "",
                 },
-            )
+                "de-Test": {},
+            },
+        )
 
-            with self.assertLogs("pontoon.sync.core.entities", level="ERROR") as cm:
-                sync_project_task(project.pk)
-            bad_inc_error = next(msg for msg in cm.output if ":file.inc]" in msg)
-            assert "Skipping resource with unsupported format: inc" in bad_inc_error
-            bad_lang_error = next(msg for msg in cm.output if ":file.lang]" in msg)
-            assert "Resource format detection failed" in bad_lang_error
-            assert len(cm.output) == 2
-            assert {
-                (ent.resource.path, ent.resource.format, *ent.key)
-                for ent in Entity.objects.filter(resource__project=project)
-            } == {("file.json", "plain_json", "json")}
+        with caplog.at_level(logging.ERROR, logger="pontoon.sync.core.entities"):
+            sync_project_task(project.pk)
+        log_lines = caplog.text.strip().split("\n")
+        bad_inc_error = next(msg for msg in log_lines if ":file.inc]" in msg)
+        assert "Skipping resource with unsupported format: inc" in bad_inc_error
+        bad_lang_error = next(msg for msg in log_lines if ":file.lang]" in msg)
+        assert "Resource format detection failed" in bad_lang_error
+        assert len(log_lines) == 2
+        assert {
+            (ent.resource.path, ent.resource.format, *ent.key)
+            for ent in Entity.objects.filter(resource__project=project)
+        } == {("file.json", "plain_json", "json")}
 
 
 @pytest.mark.django_db
@@ -901,6 +906,85 @@ def test_add_project_locale():
         # After which the next sync should update the new locale's translated resources.
         sync_project_task(project.pk)
 
+        assert {
+            tr.locale.code: tr.total_strings
+            for tr in TranslatedResource.objects.filter(resource__project=project)
+        } == {"fr-Test": 1, "de-Test": 1}
+
+
+@pytest.mark.django_db
+def test_locales_from_repo():
+    mock_vcs = MockVersionControl(changed=[])
+    with mock_setup(mock_vcs) as (repo, _):
+        LocaleFactory.create(code="fr-Test", name="Test French")
+
+        # Database setup
+        project = ProjectFactory.create(
+            name="test-repo-locales",
+            locales=[],
+            repositories=[repo],
+            set_locales_from_repo=True,
+            system_project=False,
+        )
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"messages.json": '{ "key": { "message": "Entity" } }'},
+                "de-Test": {"messages.json": "{}"},
+                "fr-Test": {"messages.json": "{}"},
+            },
+        )
+
+        sync_project_task(project.pk)
+
+        assert {
+            pl.locale.code for pl in ProjectLocale.objects.filter(project=project)
+        } == {"de-Test", "fr-Test"}
+        assert {
+            tr.locale.code: tr.total_strings
+            for tr in TranslatedResource.objects.filter(resource__project=project)
+        } == {"fr-Test": 1, "de-Test": 1}
+
+
+@pytest.mark.django_db
+def test_locales_from_config():
+    mock_vcs = MockVersionControl(changed=[])
+    with mock_setup(mock_vcs) as (repo, _):
+        LocaleFactory.create(code="fr-Test", name="Test French")
+
+        # Database setup
+        project = ProjectFactory.create(
+            name="test-config-locales",
+            configuration_file="l10n.toml",
+            locales=[],
+            repositories=[repo],
+            set_locales_from_repo=True,
+            system_project=False,
+        )
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "foo": {"en": {"messages.json": '{ "key": { "message": "Entity" } }'}},
+                "l10n.toml": dedent("""\
+                    locales = ["de-Test", "fr-Test"]
+                    [[paths]]
+                        reference = "foo/en/**"
+                        l10n = "foo/{locale}/**"
+                    """),
+            },
+        )
+
+        sync_project_task(project.pk)
+
+        assert {
+            pl.locale.code for pl in ProjectLocale.objects.filter(project=project)
+        } == {"de-Test", "fr-Test"}
         assert {
             tr.locale.code: tr.total_strings
             for tr in TranslatedResource.objects.filter(resource__project=project)

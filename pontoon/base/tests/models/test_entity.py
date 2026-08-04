@@ -36,6 +36,7 @@ def entity_test_models(translation_a, locale_b):
     )
     entity_a.string = "Entity zero"
     entity_a.key = [entity_a.string]
+    entity_a.value = [entity_a.string]
     entity_a.order = 0
     entity_a.save()
     entity_b = EntityFactory(
@@ -48,13 +49,13 @@ def entity_test_models(translation_a, locale_b):
         entity=entity_a,
         locale=locale_a,
         active=False,
-        string="Alternative %s" % translation_a.string,
+        string=f"Alternative {translation_a.string}",
     )
     translationX = TranslationFactory(
         entity=entity_b,
         locale=locale_a,
         active=True,
-        string="Translation %s" % entity_b.string,
+        string=f"Translation {entity_b.string}",
     )
     return translation_a, translation_a_alt, translationX
 
@@ -84,7 +85,7 @@ def test_reset_active_translation_single_unreviewed(translation_a):
     entity = translation_a.entity
     locale = translation_a.locale
 
-    assert entity.reset_active_translation(locale) == translation_a
+    assert entity.reset_active_translation(locale) == translation_a.serialize()
 
 
 @pytest.mark.django_db
@@ -99,7 +100,7 @@ def test_reset_active_translation_single_approved(translation_a):
     translation_a.approved = True
     translation_a.save()
 
-    assert entity.reset_active_translation(locale) == translation_a
+    assert entity.reset_active_translation(locale) == translation_a.serialize()
 
 
 @pytest.mark.django_db
@@ -114,7 +115,7 @@ def test_reset_active_translation_single_pretranslated(translation_a):
     translation_a.pretranslated = True
     translation_a.save()
 
-    assert entity.reset_active_translation(locale) == translation_a
+    assert entity.reset_active_translation(locale) == translation_a.serialize()
 
 
 @pytest.mark.django_db
@@ -129,7 +130,7 @@ def test_reset_active_translation_single_fuzzy(translation_a):
     translation_a.fuzzy = True
     translation_a.save()
 
-    assert entity.reset_active_translation(locale) == translation_a
+    assert entity.reset_active_translation(locale) == translation_a.serialize()
 
 
 @pytest.mark.django_db
@@ -144,7 +145,7 @@ def test_reset_active_translation_single_rejected(translation_a):
     translation_a.rejected = True
     translation_a.save()
 
-    assert entity.reset_active_translation(locale).pk is None
+    assert entity.reset_active_translation(locale) is None
 
 
 @pytest.mark.django_db
@@ -159,7 +160,7 @@ def test_reset_active_translation_two_unreviewed(
     entity = translation_a.entity
     locale = translation_a.locale
 
-    assert entity.reset_active_translation(locale) == translation_b
+    assert entity.reset_active_translation(locale) == translation_b.serialize()
 
 
 @pytest.mark.django_db
@@ -177,7 +178,7 @@ def test_reset_active_translation_unreviewed_and_approved(
     translation_b.approved = True
     translation_b.save()
 
-    assert entity.reset_active_translation(locale) == translation_b
+    assert entity.reset_active_translation(locale) == translation_b.serialize()
 
 
 @pytest.mark.django_db
@@ -195,7 +196,7 @@ def test_reset_active_translation_fuzzy_and_unreviewed(
     translation_a.fuzzy = True
     translation_a.save()
 
-    assert entity.reset_active_translation(locale) == translation_a
+    assert entity.reset_active_translation(locale) == translation_a.serialize()
 
 
 @pytest.mark.django_db
@@ -294,7 +295,7 @@ def test_entity_project_locale_no_paths(
         },
         "pk": entity_a.pk,
         "original": entity_a.string,
-        "value": [],
+        "value": ["Entity zero"],
         "date_created": entity_a.date_created,
     }
     assert e1["path"] == trX.entity.resource.path

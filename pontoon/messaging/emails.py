@@ -47,7 +47,8 @@ def _get_monthly_user_actions(users, months_ago):
             reviewed=Count(
                 "id",
                 filter=Q(
-                    action_type__in=["translation:approved", "translation:rejected"]
+                    action_type__in=["translation:approved", "translation:rejected"],
+                    is_implicit_action=False,
                 ),
             ),
         )
@@ -107,6 +108,8 @@ def _get_monthly_locale_contributors(locales, months_ago):
         performed_by__profile__system_user=False,
         # Exclude system projects
         translation__entity__resource__project__system_project=False,
+        # Exclude implicit actions (e.g. self-approvals on submission).
+        is_implicit_action=False,
     )
 
     # Get contributors that started contributing to the locale in the given month
@@ -195,7 +198,11 @@ def send_monthly_activity_summary():
     log.info("Start sending Monthly activity summary emails.")
 
     # Get user monthly actions
-    users = User.objects.filter(is_active=True, profile__monthly_activity_summary=True)
+    users = User.objects.filter(
+        is_active=True,
+        profile__monthly_activity_summary=True,
+        profile__system_user=False,
+    )
     user_month_actions = _get_monthly_user_actions(users, months_ago=1)
     previous_user_month_actions = _get_monthly_user_actions(users, months_ago=2)
 
@@ -283,7 +290,7 @@ def send_notification_digest(frequency: Literal["Daily", "Weekly"] = "Daily"):
         start_time = timezone.now() - datetime.timedelta(weeks=1)
 
     users = (
-        User.objects.filter(is_active=True)
+        User.objects.filter(is_active=True, profile__system_user=False)
         # Users with the selected notification email frequency
         .filter(profile__notification_email_frequency=frequency)
         # Users subscribed to at least one email notification type

@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta, timezone
+from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta
 from re import escape, match
-from typing import Iterator, cast
+from typing import cast
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -226,7 +227,7 @@ def _parse_time_interval(interval: str) -> tuple[datetime, datetime]:
 
 
 def _parse_timestamp(timestamp: str) -> datetime:
-    return make_aware(datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=timezone.utc)
+    return make_aware(datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=UTC)
 
 
 def _is_email(email: str) -> bool:
@@ -294,3 +295,23 @@ def _query(project: Project | None, locale: Locale, query: Q) -> Q:
     if project and project.slug != "all-projects":
         translations = translations.filter(entity__resource__project=project)
     return Q(pk__in=translations.values("entity"))
+
+
+def get_mismatched_filters(
+    entity_pk: int,
+    locale: Locale,
+    project: Project,
+    status: str | None,
+    extra: str | None,
+) -> list[str]:
+    """Return active status/extra filter slugs a single entity does not match."""
+    mismatched = []
+    for slug in filter(None, (status or "").split(",")):
+        query = _status_filter(project, locale, slug)
+        if query and not Entity.objects.filter(query, pk=entity_pk).exists():
+            mismatched.append(slug)
+    for slug in filter(None, (extra or "").split(",")):
+        query = _extra_filter(locale, slug)
+        if query and not Entity.objects.filter(query, pk=entity_pk).exists():
+            mismatched.append(slug)
+    return mismatched

@@ -230,6 +230,10 @@
   width: 100%;
 }
 
+#permissions-form .search-wrapper {
+  background: var(--dark-grey-1);
+}
+
 #permissions-form .user.select .menu ul {
   height: 168px;
   margin-bottom: 0;
@@ -295,4 +299,8 @@
 
 #project-selector .menu li:not(.limited) {
   display: none;
+}
+
+#project-selector.select.opened .menu .search-wrapper {
+  background: var(--black-3);
 }

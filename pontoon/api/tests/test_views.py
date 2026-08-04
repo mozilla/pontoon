@@ -48,6 +48,46 @@ def test_user_actions_project_not_visible(member):
 
 
 @pytest.mark.django_db
+def test_user_actions_includes_implicit_flag(member):
+    from pontoon.actionlog.models import ActionLog
+
+    client = APIClient()
+    client.force_authenticate(user=member.user)
+
+    project = ProjectFactory(slug="public-project", visibility="public")
+    resource = ResourceFactory(project=project)
+    entity = EntityFactory(resource=resource)
+    translation = TranslationFactory(entity=entity, user=member.user)
+
+    # Self-approval on submission: created + implicit approved.
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        performed_by=member.user,
+        translation=translation,
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=member.user,
+        translation=translation,
+        is_implicit_action=True,
+    )
+
+    date = now().strftime("%Y-%m-%d")
+    response = client.get(
+        f"/api/v2/user-actions/{date}/project/{project.slug}/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+    actions = response.data["actions"]
+    flags = {action["type"]: action["is_implicit_action"] for action in actions}
+    assert flags == {
+        "translation:created": False,
+        "translation:approved": True,
+    }
+
+
+@pytest.mark.django_db
 def test_dynamic_fields(django_assert_num_queries):
     expected_results = [
         {
@@ -166,6 +206,19 @@ def test_locale(django_assert_num_queries):
         "completed_strings": 12,
         "complete": False,
     } in localizations
+
+
+@pytest.mark.django_db
+def test_locale_renamed_code_redirects():
+    """Requesting a locale by its old code redirects to the new code."""
+    locale = Locale.objects.get(code="af")
+    locale.code = "af-renamed"
+    locale.save()
+
+    response = APIClient().get("/api/v2/locales/af/", HTTP_ACCEPT="application/json")
+
+    assert response.status_code == 302
+    assert response["Location"] == "/api/v2/locales/af-renamed/"
 
 
 @pytest.mark.django_db
@@ -478,6 +531,24 @@ def test_project(django_assert_num_queries):
 
 
 @pytest.mark.django_db
+def test_project_locale_renamed_redirects():
+    """Requesting a project locale by an old code and old slug redirects to the new URL."""
+    locale = Locale.objects.get(code="af")
+    locale.code = "af-renamed"
+    locale.save()
+    project = Project.objects.get(slug="terminology")
+    project.slug = "terminology-renamed"
+    project.save()
+
+    response = APIClient().get(
+        "/api/v2/af/terminology/", HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 302
+    assert response["Location"] == "/api/v2/af-renamed/terminology-renamed/"
+
+
+@pytest.mark.django_db
 def test_system_project(django_assert_num_queries):
     project = Project.objects.get(slug="tutorial")
 
@@ -495,8 +566,8 @@ def test_system_project(django_assert_num_queries):
 @pytest.mark.django_db
 def test_disabled_project(django_assert_num_queries):
     project = ProjectFactory.create(slug="disabled-1", disabled=True)
-
-    with django_assert_num_queries(1):
+    # 1 project lookup + 1 ProjectSlugHistory fallback lookup on the 404 path
+    with django_assert_num_queries(2):
         response = APIClient().get(
             f"/api/v2/projects/{project.slug}/", HTTP_ACCEPT="application/json"
         )
@@ -1008,6 +1079,21 @@ def test_project_locale(django_assert_num_queries):
             "complete": False,
         },
     }
+
+
+@pytest.mark.django_db
+def test_project_renamed_slug_redirects():
+    """Requesting a project by its old slug redirects to the new slug."""
+    project = Project.objects.get(slug="terminology")
+    project.slug = "terminology-renamed"
+    project.save()
+
+    response = APIClient().get(
+        "/api/v2/projects/terminology/", HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 302
+    assert response["Location"] == "/api/v2/projects/terminology-renamed/"
 
 
 @pytest.mark.django_db
@@ -1607,7 +1693,7 @@ def test_pretranslation_tm(member):
         format="fluent",
     )
     entity_b = EntityFactory.create(
-        string="Entity B",
+        string="entity-b = Entity B\n",
         resource=resource_b,
     )
     project_c = ProjectFactory(

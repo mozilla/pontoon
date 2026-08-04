@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 
 
 def send_notification(sender, recipient, **kwargs):
-    """Send a notification, skipping system users (e.g. pontoon-sync, pontoon-gt, pontoon-tm)."""
+    """Send a notification, skipping system users."""
     if recipient.profile.system_user:
         return
     notify.send(sender, recipient=recipient, **kwargs)

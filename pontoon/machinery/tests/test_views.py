@@ -29,7 +29,7 @@ from pontoon.test.factories import (
 @pytest.mark.django_db
 def test_view_microsoft_translator_not_logged_in(client, ms_locale, ms_api_key):
     url = reverse("pontoon.microsoft_translator")
-    response = client.get(url, {"text": "text", "locale": ms_locale.ms_translator_code})
+    response = client.get(url, {"text": "text", "locale": ms_locale.code})
 
     assert response.status_code == 302
 
@@ -43,7 +43,7 @@ def test_view_microsoft_translator(member, ms_locale, ms_api_key):
         m.post("https://api.cognitive.microsofttranslator.com/translate", json=data)
         response = member.client.get(
             url,
-            {"text": "text", "locale": ms_locale.ms_translator_code},
+            {"text": "text", "locale": ms_locale.code},
         )
 
     assert response.status_code == 200
@@ -68,7 +68,7 @@ def test_view_microsoft_translator_bad_locale(member, ms_locale, ms_api_key):
     url = reverse("pontoon.microsoft_translator")
     response = member.client.get(url, {"text": "text", "locale": "bad"})
 
-    assert response.status_code == 401
+    assert response.status_code == 400
 
 
 @pytest.mark.django_db
@@ -76,9 +76,7 @@ def test_view_microsoft_translator_missing_api_key(member, ms_locale, settings):
     settings.MICROSOFT_TRANSLATOR_API_KEY = ""
     cache.clear()
     url = reverse("pontoon.microsoft_translator")
-    response = member.client.get(
-        url, {"text": "text", "locale": ms_locale.ms_translator_code}
-    )
+    response = member.client.get(url, {"text": "text", "locale": ms_locale.code})
     assert response.status_code == 400
 
 
@@ -91,9 +89,7 @@ def test_view_microsoft_translator_api_http_error(member, ms_locale, ms_api_key)
             "https://api.cognitive.microsofttranslator.com/translate",
             status_code=401,
         )
-        response = member.client.get(
-            url, {"text": "text", "locale": ms_locale.ms_translator_code}
-        )
+        response = member.client.get(url, {"text": "text", "locale": ms_locale.code})
     assert response.status_code == 401
 
 
@@ -106,9 +102,7 @@ def test_view_microsoft_translator_api_connection_error(member, ms_locale, ms_ap
             "https://api.cognitive.microsofttranslator.com/translate",
             exc=requests.exceptions.ConnectionError,
         )
-        response = member.client.get(
-            url, {"text": "text", "locale": ms_locale.ms_translator_code}
-        )
+        response = member.client.get(url, {"text": "text", "locale": ms_locale.code})
     assert response.status_code == 500
 
 
@@ -121,9 +115,7 @@ def test_view_microsoft_translator_api_error_in_response(member, ms_locale, ms_a
             "https://api.cognitive.microsofttranslator.com/translate",
             json={"error": {"code": 400000, "message": "Bad request"}},
         )
-        response = member.client.get(
-            url, {"text": "text", "locale": ms_locale.ms_translator_code}
-        )
+        response = member.client.get(url, {"text": "text", "locale": ms_locale.code})
     assert response.status_code == 400
 
 
@@ -254,15 +246,11 @@ def test_view_microsoft_translator_cache(member, ms_locale, ms_api_key):
         data = [{"translations": [{"text": "target"}]}]
         m.post("https://api.cognitive.microsofttranslator.com/translate", json=data)
 
-        response1 = member.client.get(
-            url, {"text": "text", "locale": ms_locale.ms_translator_code}
-        )
+        response1 = member.client.get(url, {"text": "text", "locale": ms_locale.code})
         assert len(m.request_history) == 1
 
         # Second identical request should be served from cache
-        response2 = member.client.get(
-            url, {"text": "text", "locale": ms_locale.ms_translator_code}
-        )
+        response2 = member.client.get(url, {"text": "text", "locale": ms_locale.code})
         assert len(m.request_history) == 1
 
     assert json.loads(response1.content) == json.loads(response2.content)
@@ -473,7 +461,7 @@ def test_view_translation_memory_best_quality_entry(
     translation string.
     """
     entities = [
-        EntityFactory(resource=resource_a, string="Entity %s" % i, order=i)
+        EntityFactory(resource=resource_a, string=f"Entity {i}", order=i)
         for i in range(3)
     ]
     tm = TranslationMemoryFactory.create(
@@ -575,14 +563,14 @@ def test_view_tm_minimal_quality(client, locale_a, resource_a):
     View shouldn't return any entries if 70% of quality at minimum.
     """
     entities = [
-        EntityFactory(resource=resource_a, string="Entity %s" % i, order=i)
+        EntityFactory(resource=resource_a, string=f"Entity {i}", order=i)
         for i in range(5)
     ]
     for i, entity in enumerate(entities):
         TranslationMemoryFactory.create(
             entity=entity,
-            source="source %s" % entity.string,
-            target="target %s" % entity.string,
+            source=f"source {entity.string}",
+            target=f"target {entity.string}",
             locale=locale_a,
         )
     response = client.get(

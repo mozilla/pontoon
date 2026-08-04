@@ -110,7 +110,7 @@ def test_view_lang_agnostic_anon_available_accept_language(
     # mock return_value for get_project_locale_from_request
     util_mock.return_value = 23
 
-    response = client.get("%s?baz=17" % view)
+    response = client.get(f"{view}?baz=17")
 
     # Project.objects.visible_for was called with the test user
     assert projects_mock.visible_for.call_args[0][0] == AnonymousUser()
@@ -170,7 +170,7 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(
     # mock return_value for get_project_locale_from_request
     util_mock.return_value = None
 
-    response = client.get("%s?foo=bar" % view)
+    response = client.get(f"{view}?foo=bar")
 
     # Project.objects.visible_for was called with the test user
     assert projects_mock.visible_for.call_args[0][0] == AnonymousUser()

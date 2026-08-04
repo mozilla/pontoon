@@ -1,0 +1,25 @@
+.locale-menu-dropdown li {
+  display: flex;
+  font-size: 14px;
+  font-weight: 300;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 18px;
+}
+
+.locale-menu-dropdown li:hover {
+  background-color: var(--dark-grey-2);
+}
+
+.locale-menu-dropdown .locale-name {
+  color: var(--light-grey-7);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.locale-menu-dropdown .locale-code {
+  color: var(--status-translated);
+}

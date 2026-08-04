@@ -55,7 +55,7 @@
   background: var(--status-missing);
 }
 
-.editor-menu .actions .action-approve:hover,
+.editor-menu .actions .action-approve:not(.has-error):hover,
 .editor-menu .actions .action-save:not(.has-error):hover,
 .editor-menu .actions .action-suggest:not(.has-error):hover {
   color: var(--white-1);

@@ -5,8 +5,8 @@ Collation lookups allow a user to set text-collation to search queries.
 import pytest
 
 from pontoon.base.models import Entity
-from pontoon.base.tests import EntityFactory
 from pontoon.db import IContainsCollate  # noqa
+from pontoon.test.factories import EntityFactory
 
 
 @pytest.fixture

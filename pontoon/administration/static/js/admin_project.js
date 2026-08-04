@@ -76,8 +76,9 @@ $(function () {
 
     button.addClass('in-progress').html('Syncing...');
 
+    const slug = $('#id_slug').val();
     $.ajax({
-      url: '/admin/projects/' + $('#id_slug').val() + '/sync/',
+      url: `/admin/projects/${slug}/sync/`,
       success: function () {
         button.html('Started');
       },
@@ -105,8 +106,9 @@ $(function () {
 
     button.addClass('in-progress').html('Pretranslating...');
 
+    const slug = $('#id_slug').val();
     $.ajax({
-      url: '/admin/projects/' + $('#id_slug').val() + '/pretranslate/',
+      url: `/admin/projects/${slug}/pretranslate/`,
       success: function () {
         button.html('Started');
       },
@@ -165,6 +167,39 @@ $(function () {
       },
     });
   });
+
+  const setLocalesCheckbox = $('#id_set_locales_from_repo');
+  const configFileInput = $('#id_configuration_file');
+  function setLocalesUpdate() {
+    const controls = $('.repo-locale-control');
+    if ($('#id_data_source').val() === 'repository') {
+      controls.show();
+    } else {
+      controls.hide();
+      setLocalesCheckbox.prop('checked', false);
+    }
+
+    const configFile = configFileInput.val();
+    const localeSource = configFile ? 'the configuration file' : 'repository';
+    const label = $('#id_set_locales_from_repo + span');
+    label.text(`Read list of locales from ${localeSource}`);
+
+    const setLocalesFromRepo = setLocalesCheckbox.prop('checked');
+    const trDiv = $('#translated_resources_from_repo');
+    const locales = $('.locales, .locales-toolbar');
+    if (setLocalesFromRepo) {
+      trDiv.toggle(!configFile);
+      locales.hide();
+    } else {
+      trDiv.hide();
+      locales.show();
+    }
+  }
+  setLocalesCheckbox.data('init', setLocalesCheckbox.prop('checked'));
+  setLocalesCheckbox.on('change', setLocalesUpdate);
+  configFileInput.data('init', configFileInput.val());
+  configFileInput.on('change', setLocalesUpdate);
+  setLocalesUpdate();
 
   self.NProgressUnbind();
 

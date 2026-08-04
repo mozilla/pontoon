@@ -7,6 +7,7 @@ import { logUXAction } from '~/api/uxaction';
 import { EntitiesList as EntitiesListContext } from '~/context/EntitiesList';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
+import { scrollIntoView } from '~/utils/scrollIntoView';
 import {
   getEntities,
   getSiblingEntities,
@@ -91,7 +92,14 @@ export function EntitiesList(): React.ReactElement<'div'> {
 
   const showNotification = useContext(ShowNotification);
   const batchactions = useBatchactions();
-  const { entities, fetchCount, fetching, hasMore, page } = useEntities();
+  const {
+    entities,
+    fetchCount,
+    fetching,
+    hasMore,
+    page,
+    requestedEntityLocation,
+  } = useEntities();
   const location = useContext(Location);
   const isAuthUser = useAppSelector((state) => state[USER].isAuthenticated);
   const { checkUnsavedChanges } = useContext(UnsavedActions);
@@ -142,13 +150,18 @@ export function EntitiesList(): React.ReactElement<'div'> {
   /*
    * If entity not provided through a URL parameter, or if provided entity
    * cannot be found, select the first entity in the list.
+   *
+   * Exception: a `string` that is valid and viewable but doesn't match the
+   * current query is handled by the "string not found" page
    */
   useEffect(() => {
     const selectedEntity = location.entity;
     const firstEntity = entities[0];
     const isValid = entities.some(({ pk }) => pk === selectedEntity);
 
-    if ((!selectedEntity || !isValid) && firstEntity) {
+    const stringNotFound = requestedEntityLocation?.pk === selectedEntity;
+
+    if ((!selectedEntity || !isValid) && firstEntity && !stringNotFound) {
       // Replace the last history item instead of pushing a new one.
       selectEntity(firstEntity, true);
 
@@ -230,12 +243,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
     if (!mounted.current) {
       return;
     }
-    const element = list.current?.querySelector('li.selected');
-    const mediaQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    element?.scrollIntoView?.({
-      behavior: mediaQuery?.matches ? 'auto' : 'smooth',
-      block: 'nearest',
-    });
+    scrollIntoView(list.current?.querySelector('li.selected'));
   }, []);
 
   // Scroll to selected entity when entity changes

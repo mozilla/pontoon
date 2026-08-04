@@ -1,16 +1,17 @@
+from collections.abc import Callable
 from copy import deepcopy
+from enum import Enum
 from re import compile
 from typing import Literal
 
-from fluent.syntax import FluentSerializer, ast as FTL
+from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
 from moz.l10n.formats import Format
 from moz.l10n.formats.fluent import (
-    fluent_astify_entry,
     fluent_astify_message,
     fluent_parse_entry,
 )
-from moz.l10n.message import parse_message, serialize_message
+from moz.l10n.message import message_from_json
 from moz.l10n.model import (
     CatchallKey,
     Entry,
@@ -22,10 +23,47 @@ from moz.l10n.model import (
 )
 
 from pontoon.base.models import Entity, Locale, Resource, TranslationMemoryEntry
-from pontoon.machinery.utils import get_google_translate_data
+from pontoon.machinery.utils import (
+    get_google_translate_data,
+    get_microsoft_translator_data,
+)
+from pontoon.sync.formats import as_string
 
 
 pt_placeholder = compile(r"{ *\$(\d+) *}")
+
+
+MTService = Callable[..., str]
+
+
+class MTEngine(Enum):
+    """A machine-translation engine used as fallback when no 100% TM match exists.
+
+    Each member bundles the facets that previously travelled as three separate
+    ``Pretranslation`` arguments: the identifier recorded in
+    ``Pretranslation.services``, the ``Locale`` attribute that says whether the
+    engine supports a given locale, and the callable that performs the request.
+    """
+
+    GOOGLE_TRANSLATE = ("gt", "google_translate_code")
+    MICROSOFT_TRANSLATOR = ("ms", "ms_translator_code")
+
+    def __init__(self, service_name: str, locale_code_attr: str):
+        self.service_name = service_name
+        self.locale_code_attr = locale_code_attr
+
+    def supports(self, locale: Locale) -> bool:
+        return bool(getattr(locale, self.locale_code_attr))
+
+    @property
+    def service(self) -> MTService:
+        # Resolved lazily (not stored on the member) so tests can patch the
+        # module-level service callables.
+        match self:
+            case MTEngine.GOOGLE_TRANSLATE:
+                return get_google_translate_data
+            case MTEngine.MICROSOFT_TRANSLATOR:
+                return get_microsoft_translator_data
 
 
 def get_pretranslation(
@@ -42,39 +80,9 @@ def get_pretranslation(
         - a pretranslation of the entity
         - a pretranslation service identifier, either "gt" or "tm"
     """
-
     pt = Pretranslation(entity, locale, preserve_placeables)
-    if entity.resource.format == Resource.Format.FLUENT:
-        entry = fluent_parse_entry(entity.string, with_linepos=False)
-        if entry.value:
-            pt.message(entry.value)
-        accesskeys: list[tuple[str, Message]] = []
-        for key, prop in entry.properties.items():
-            if key.endswith("accesskey"):
-                accesskeys.append((key, prop))
-            else:
-                pt.message(prop)
-        for key, prop in accesskeys:
-            set_accesskey(entry, key, prop)
-        pt_res = FluentSerializer().serialize_entry(
-            fluent_astify_entry(entry, escape_syntax=False)
-        )
-    else:
-        if entity.resource.format in {
-            Resource.Format.ANDROID,
-            Resource.Format.GETTEXT,
-            Resource.Format.WEBEXT,
-            Resource.Format.XCODE,
-            Resource.Format.XLIFF,
-        }:
-            format = Format.mf2
-            msg = parse_message(format, entity.string)
-        else:
-            format = None
-            msg = PatternMessage([entity.string])
-        pt.message(msg)
-        pt_res = serialize_message(format, msg)
-
+    value, properties = pt.walk_entity()
+    pt_res = pt.serialize(value, properties)
     pt_service = max(set(pt.services), key=pt.services.count) if pt.services else "tm"
     return (pt_res, pt_service)
 
@@ -83,10 +91,31 @@ class Pretranslation:
     format: Format | None
     locale: Locale
     preserve_placeables: bool
-    services: list[Literal["gt", "tm"]]
+    services: list[str]
     source: str
 
-    def __init__(self, entity: Entity, locale: Locale, preserve_placeables: bool):
+    def __init__(
+        self,
+        entity: Entity,
+        locale: Locale,
+        preserve_placeables: bool,
+        *,
+        mt_engine: MTEngine | None = MTEngine.GOOGLE_TRANSLATE,
+        exclude_entity: bool = False,
+    ):
+        """
+        :param mt_engine: Machine-translation engine invoked when a leaf has no
+            100% TM match. ``None`` disables MT (TM-only): a leaf that can't be
+            served from TM then raises ``ValueError``. MT is likewise skipped
+            when the engine doesn't support the locale. Defaults to Google
+            Translate.
+        :param exclude_entity: If True, the entity's own TM entries are excluded
+            from per-leaf TM lookups, matching ``get_translation_memory_data``.
+            A leaf that can only be served by the entity's own translation then
+            has no TM match, so a composed result is not reconstructed from the
+            current entity. Defaults to False.
+        """
+        self.entity = entity
         match entity.resource.format:
             case Resource.Format.FLUENT:
                 self.format = Format.fluent
@@ -104,6 +133,56 @@ class Pretranslation:
         self.locale = locale
         self.preserve_placeables = preserve_placeables
         self.services = []
+        self.mt_engine = (
+            mt_engine if mt_engine is not None and mt_engine.supports(locale) else None
+        )
+        self.exclude_entity = exclude_entity
+
+    def walk_entity(self) -> tuple[Message, dict[str, Message]]:
+        """
+        Walk the entity, translating each leaf via TM (then MT fallback), and
+        return the translated `(value, properties)`. Serialization to a source
+        string is left to the caller (see `serialize`).
+
+        Accesskey properties are derived from the translated label, after all
+        other leaves are filled.
+        """
+        entity = self.entity
+        value = message_from_json(entity.value)
+        if value:
+            self.message(value)
+
+        properties = (
+            {key: message_from_json(prop) for key, prop in entity.properties.items()}
+            if entity.properties
+            else {}
+        )
+
+        accesskeys: list[tuple[str, Message]] = []
+        for key, prop in properties.items():
+            if key.lower().endswith("accesskey"):
+                accesskeys.append((key, prop))
+            else:
+                self.message(prop)
+
+        # TODO: refactor `set_accesskey` to accept the value/properties directly
+        # so this temporary Entry is not required. It currently reads the label
+        # from `entry.value`/`entry.properties`, so reconstruct an Entry from the
+        # (translated) value and properties.
+        entry = Entry(id=tuple(entity.key), value=value, properties=properties)
+        for key, prop in accesskeys:
+            set_accesskey(entry, key, prop)
+
+        return value, properties
+
+    def serialize(self, value: Message, properties: dict[str, Message]) -> str:
+        """Serialize translated `(value, properties)` back to a source string.
+
+        Keeps literal `{`/`}` from MT output raw for Fluent, matching the prior
+        pretranslation behavior (unlike sync, which escapes them).
+        """
+        entry = Entry(id=tuple(self.entity.key), value=value, properties=properties)
+        return as_string(self.format, entry, fluent_escape_syntax=False)
 
     def message(self, msg: Message) -> None:
         """Modifies `msg`."""
@@ -163,11 +242,12 @@ class Pretranslation:
         )
         if not tm_source or tm_source.isspace():
             return pattern
-        tm_q100 = list(
-            TranslationMemoryEntry.objects.filter(
-                locale=self.locale, source=tm_source
-            ).values_list("target", flat=True)
+        tm_entries = TranslationMemoryEntry.objects.filter(
+            locale=self.locale, source=tm_source
         )
+        if self.exclude_entity:
+            tm_entries = tm_entries.exclude(entity=self.entity)
+        tm_q100 = list(tm_entries.values_list("target", flat=True))
         if tm_q100:
             tm_best = max(set(tm_q100), key=tm_q100.count)
             self.services.append("tm")
@@ -195,14 +275,13 @@ class Pretranslation:
         if not has_text:
             return pattern
 
-        if self.locale.google_translate_code:
-            # Try to fetch from Google Translate
-            gt_translation = get_google_translate_data(
+        if self.mt_engine is not None:
+            mt_translation = self.mt_engine.service(
                 text=gt_source,
                 locale=self.locale,
                 preserve_placeables=self.preserve_placeables,
             )
-            self.services.append("gt")
+            self.services.append(self.mt_engine.service_name)
             return [
                 el
                 if idx % 2 == 0
@@ -211,7 +290,7 @@ class Pretranslation:
                     if int(el) < len(placeholders)
                     else "{$" + el + "}"
                 )
-                for idx, el in enumerate(pt_placeholder.split(gt_translation))
+                for idx, el in enumerate(pt_placeholder.split(mt_translation))
                 if el != ""
             ]
 
@@ -221,19 +300,33 @@ class Pretranslation:
 
 
 def set_accesskey(entry: Entry[Message], ak_name: str, ak_msg: Message):
-    """Modifies `ak_msg`."""
+    """Modifies `ak_msg`.
 
-    if ak_name == "accesskey":
+    `ak_name` is expected to end with `accesskey` (matched case-insensitively by
+    the caller), so anything before that suffix is the shared prefix that pairs
+    it with a label (e.g. `buttonAccessKey` ↔ `buttonLabel`).
+    """
+
+    if len(ak_name) == len("accesskey"):
         label = next(
             (
                 value
                 for key, value in entry.properties.items()
-                if key in {"label", "value", "aria-label"}
+                if key.lower() in {"label", "value", "aria-label"}
             ),
             entry.value,
         )
     else:
-        label = entry.properties.get(ak_name.replace("accesskey", "label"), None)
+        prefix = ak_name[: -len("accesskey")]
+        label_name = f"{prefix}label".lower()
+        label = next(
+            (
+                value
+                for key, value in entry.properties.items()
+                if key.lower() == label_name
+            ),
+            None,
+        )
         if label is None:
             return
 

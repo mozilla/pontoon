@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import patch
 
 import pytest
@@ -6,7 +6,8 @@ import pytest
 from notifications.models import Notification
 
 from pontoon.base.models import Project
-from pontoon.base.tests import (
+from pontoon.sync.core import notify_users
+from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
@@ -15,7 +16,6 @@ from pontoon.base.tests import (
     TranslationFactory,
     UserFactory,
 )
-from pontoon.sync.core import notify_users
 
 
 @patch("pontoon.messaging.notifications.notify.send")
@@ -25,7 +25,7 @@ def test_notify_users_excludes_system_users(
 ):
     """System users that authored translations in a project must not be
     notified about new strings landing in that project."""
-    now = datetime(2026, 5, 24, 4, 44, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 24, 4, 44, tzinfo=UTC)
     resource = ResourceFactory.create(project=project_a)
     entity = EntityFactory.create(resource=resource, date_created=now)
 
@@ -46,7 +46,7 @@ def test_notify_users_stores_created_time():
     created_time (YYYYMMDDHHmm), so the bell menu and digest template can
     link to the precise batch of entities created in that sync.
     """
-    now = datetime(2026, 5, 24, 4, 44, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 24, 4, 44, tzinfo=UTC)
     locale = LocaleFactory.create()
     project = ProjectFactory.create(
         locales=[locale], visibility=Project.Visibility.PUBLIC
@@ -74,7 +74,7 @@ def test_notify_users_stores_created_time():
 @pytest.mark.django_db
 def test_notify_users_singular_verb():
     """One added string uses the singular form in the verb."""
-    now = datetime(2026, 1, 2, 3, 4, tzinfo=timezone.utc)
+    now = datetime(2026, 1, 2, 3, 4, tzinfo=UTC)
     locale = LocaleFactory.create()
     project = ProjectFactory.create(
         locales=[locale], visibility=Project.Visibility.PUBLIC
@@ -97,7 +97,7 @@ def test_notify_users_singular_verb():
 @pytest.mark.django_db
 def test_notify_users_skips_unsubscribed():
     """Users without new_string_notifications enabled are not notified."""
-    now = datetime(2026, 5, 24, 4, 44, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 24, 4, 44, tzinfo=UTC)
     locale = LocaleFactory.create()
     project = ProjectFactory.create(
         locales=[locale], visibility=Project.Visibility.PUBLIC
@@ -119,7 +119,7 @@ def test_notify_users_skips_unsubscribed():
 @pytest.mark.django_db
 def test_notify_users_skips_locales_without_new_strings(mock_notify):
     """If the locale doesn't have any new strings, translator is not notified."""
-    now = datetime(2026, 5, 24, 4, 44, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 24, 4, 44, tzinfo=UTC)
     locale_1 = LocaleFactory.create()
     locale_2 = LocaleFactory.create()
     project = ProjectFactory.create(
@@ -138,7 +138,7 @@ def test_notify_users_skips_locales_without_new_strings(mock_notify):
     old_resource = ResourceFactory.create(project=project)
     old_entity = EntityFactory.create(
         resource=old_resource,
-        date_created=datetime(2020, 1, 1, tzinfo=timezone.utc),
+        date_created=datetime(2020, 1, 1, tzinfo=UTC),
     )
     user_2 = UserFactory.create()
     user_2.profile.new_string_notifications = True
@@ -158,7 +158,7 @@ def test_notify_users_per_locale_counts(mock_notify):
     """Each translator's notification reports the count for their own locale,
     not the project-wide total (accurate under syncs involving project
     configuration and files exposed to a subset of locales)."""
-    now = datetime(2026, 5, 24, 4, 44, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 24, 4, 44, tzinfo=UTC)
     locale_1 = LocaleFactory.create()
     locale_2 = LocaleFactory.create()
     project = ProjectFactory.create(
@@ -202,7 +202,7 @@ def test_notify_users_per_locale_counts(mock_notify):
 def test_notify_users_uses_homepage_count(mock_notify):
     """A multi-locale translator gets a single notification, reporting the
     count for the locale they selected as homepage."""
-    now = datetime(2026, 5, 24, 4, 44, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 24, 4, 44, tzinfo=UTC)
     locale_1 = LocaleFactory.create()
     locale_2 = LocaleFactory.create()
     project = ProjectFactory.create(
@@ -234,7 +234,7 @@ def test_notify_users_uses_homepage_count(mock_notify):
 def test_notify_users_falls_back_to_max_without_homepage(mock_notify):
     """Without a defined homepage, a multi-locale translator will receive a
     notification with the largest count among their locales."""
-    now = datetime(2026, 5, 24, 4, 44, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 24, 4, 44, tzinfo=UTC)
     locale_1 = LocaleFactory.create()
     locale_2 = LocaleFactory.create()
     project = ProjectFactory.create(
@@ -263,7 +263,7 @@ def test_notify_users_falls_back_to_max_without_homepage(mock_notify):
 def test_notify_users_private_project_only_superusers(mock_notify):
     """A private project is only visible to superusers, so other past
     contributors are not notified about new strings."""
-    now = datetime(2026, 5, 24, 4, 44, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 24, 4, 44, tzinfo=UTC)
     locale = LocaleFactory.create()
     project = ProjectFactory.create(
         locales=[locale], visibility=Project.Visibility.PRIVATE

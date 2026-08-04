@@ -6,6 +6,7 @@ from urllib.parse import quote
 
 import requests
 
+from moz.l10n.message import message_to_json
 from sacremoses import MosesDetokenizer
 
 from django.contrib.auth.decorators import login_required
@@ -23,6 +24,7 @@ from pontoon.machinery.utils import (
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
+from pontoon.pretranslation.pretranslate import MTEngine, Pretranslation
 from pontoon.terminology.models import Term
 
 from .openai_service import OpenAIService
@@ -61,6 +63,110 @@ def translation_memory(request):
 
     data = get_translation_memory_data(text, locale, pk)
     return JsonResponse(data, safe=False)
+
+
+def machinery_composed(request):
+    """
+    Return a composed multi-value translation for an entity.
+
+    Each translatable leaf — the entity's value and every property, with a
+    selector message contributing one leaf per variant — is looked up in
+    Translation Memory; leaves without a 100% TM match fall back to the requested
+    MT service. Mirrors the Pretranslation pipeline so the Machinery panel can
+    surface a directly-pasteable composed translation alongside the per-leaf
+    results.
+
+    The composed translation is returned as the `(value, properties)` data model
+    (the same JSON shape entities use), so the frontend can build its editor fields
+    without re-parsing.
+
+    Query params:
+        entity: Entity pk
+        locale: Locale code
+        service: one of `translation-memory`, `google-translate`,
+            `microsoft-translator`. Defaults to `google-translate`.
+            `translation-memory` disables MT fallback.
+    """
+    try:
+        entity_pk = int(request.GET["entity"])
+        locale = Locale.objects.get(code=request.GET["locale"])
+        service = request.GET.get("service", "google-translate")
+        entity = Entity.objects.select_related("resource").get(pk=entity_pk)
+    except (
+        Entity.DoesNotExist,
+        Locale.DoesNotExist,
+        MultiValueDictKeyError,
+        ValueError,
+    ) as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"}, status=400
+        )
+
+    match service:
+        case "translation-memory":
+            mt_engine = None
+        case "google-translate":
+            mt_engine = MTEngine.GOOGLE_TRANSLATE
+        case "microsoft-translator":
+            mt_engine = MTEngine.MICROSOFT_TRANSLATOR
+        case _:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": f"Bad Request: unknown service `{service}`",
+                },
+                status=400,
+            )
+
+    # MT services call an external provider; translation-memory is anonymous-friendly.
+    if mt_engine is not None and not request.user.is_authenticated:
+        return JsonResponse(
+            {"status": False, "message": "Authentication required"}, status=403
+        )
+
+    try:
+        pt = Pretranslation(
+            entity,
+            locale,
+            preserve_placeables=False,
+            mt_engine=mt_engine,
+            exclude_entity=True,
+        )
+        value, properties = pt.walk_entity()
+    except ValueError:
+        # A leaf has no TM match and MT is unavailable, so there is nothing to show.
+        return JsonResponse({})
+    except Exception as e:
+        return _machinery_error_response(f"Composed machinery ({service})", e)
+
+    value_json = message_to_json(value)
+    properties_json = {key: message_to_json(prop) for key, prop in properties.items()}
+
+    unchanged = value_json == entity.value and properties_json == (
+        entity.properties or {}
+    )
+    if not pt.services or unchanged:
+        return JsonResponse({})
+
+    service_names = {
+        "tm": "translation-memory",
+        "gt": "google-translate",
+        "ms": "microsoft-translator",
+    }
+    # Sorted only to keep the response deterministic; the order means nothing.
+    sources_used = sorted({service_names.get(s, s) for s in pt.services})
+
+    response = {
+        "value": value_json,
+        "properties": properties_json,
+        "sources": sources_used,
+    }
+
+    # Only exact TM matches have a quality score, so 100 is the only one to report.
+    if set(pt.services) == {"tm"}:
+        response["quality"] = 100
+
+    return JsonResponse(response)
 
 
 def concordance_search(request):
@@ -115,12 +221,12 @@ def microsoft_translator(request):
     """Get translation from Microsoft machine translation service."""
     try:
         text = request.GET["text"]
-        locale_code = request.GET["locale"]
+        locale = Locale.objects.get(code=request.GET["locale"])
 
-        if not locale_code:
-            raise ValueError("Locale code is empty")
+        if not locale.ms_translator_code:
+            raise ValueError("Locale code not supported")
 
-    except (MultiValueDictKeyError, ValueError) as e:
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,
@@ -128,7 +234,7 @@ def microsoft_translator(request):
 
     try:
         return JsonResponse(
-            {"translation": get_microsoft_translator_data(text, locale_code)}
+            {"translation": get_microsoft_translator_data(text, locale)}
         )
     except Exception as e:
         return _machinery_error_response("Microsoft Translator", e)

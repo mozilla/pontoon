@@ -18,7 +18,12 @@ from pontoon.base.models import (
     Translation,
     TranslationMemoryEntry,
 )
-from pontoon.base.tests import (
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.stats import update_stats
+from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
+from pontoon.sync.tests.utils import build_file_tree
+from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
@@ -27,11 +32,6 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.core.checkout import Checkout, Checkouts
-from pontoon.sync.core.paths import find_paths
-from pontoon.sync.core.stats import update_stats
-from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
-from pontoon.sync.tests.utils import build_file_tree
 
 
 now = timezone.now()
@@ -358,6 +358,8 @@ def test_remove_po_target_resource():
             name="test-rm-po",
             locales=[locale],
             repositories=[repo],
+            set_locales_from_repo=True,
+            set_translated_resources_from_repo=True,
             visibility="public",
         )
         res = {}

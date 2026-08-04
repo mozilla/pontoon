@@ -23,10 +23,5 @@ def check_translations(self, translations_pks):
         warnings, errors = bulk_run_checks(translations)
 
         log.info(
-            "Task: {}, Processed items: {}, Warnings: {}, Errors: {}".format(
-                self.request.id,
-                len(translations),
-                len(warnings),
-                len(errors),
-            )
+            f"Task: {self.request.id}, Processed items: {len(translations)}, Warnings: {len(warnings)}, Errors: {len(errors)}"
         )

@@ -26,18 +26,19 @@ from pontoon.base.models import (
 from pontoon.checks.models import Error, Warning
 from pontoon.tags.models import Tag
 from pontoon.terminology.models import Term, TermTranslation
+from pontoon.translations.utils import parse_source_string_to_json
 
 
 class UserFactory(DjangoModelFactory):
-    username = Sequence(lambda n: "user%s" % n)
-    email = LazyAttribute(lambda o: "%s@example.com" % o.username)
+    username = Sequence(lambda n: f"user{n}")
+    email = LazyAttribute(lambda o: f"{o.username}@example.com")
 
     class Meta:
         model = get_user_model()
 
 
 class GroupFactory(DjangoModelFactory):
-    name = Sequence(lambda n: "group%s" % n)
+    name = Sequence(lambda n: f"group{n}")
 
     class Meta:
         model = Group
@@ -71,11 +72,6 @@ class ProjectFactory(DjangoModelFactory):
                 self.repositories.add(repository)
         else:  # Default to a single valid repo.
             self.repositories.add(RepositoryFactory.build(), bulk=False)
-
-
-class ProjectLocaleFactory(DjangoModelFactory):
-    class Meta:
-        model = ProjectLocale
 
 
 class RepositoryFactory(DjangoModelFactory):
@@ -112,6 +108,14 @@ class LocaleFactory(DjangoModelFactory):
         model = Locale
 
 
+class ProjectLocaleFactory(DjangoModelFactory):
+    class Meta:
+        model = ProjectLocale
+
+    project = SubFactory(ProjectFactory)
+    locale = SubFactory(LocaleFactory)
+
+
 class EntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
     string = Sequence(lambda n: f"string {n}")
@@ -119,6 +123,20 @@ class EntityFactory(DjangoModelFactory):
 
     class Meta:
         model = Entity
+        skip_postgeneration_save = True
+
+    @factory.post_generation
+    def parsed_value(entity, create, extracted, **kwargs):
+        if entity.value:
+            return
+        key, value, properties = parse_source_string_to_json(
+            entity.resource.format, entity.string
+        )
+        entity.key = entity.key or key
+        entity.value = value
+        entity.properties = properties
+        if create:
+            entity.save()
 
 
 class ChangedEntityLocaleFactory(DjangoModelFactory):
