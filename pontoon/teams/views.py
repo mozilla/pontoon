@@ -507,7 +507,7 @@ def ajax_translation_memory_upload(request, locale):
     ns = {"xml": "http://www.w3.org/XML/1998/namespace"}
 
     header = root.find("header")
-    header_srclang = header.attrib.get("srclang", "") if header else ""
+    header_srclang = header.attrib.get("srclang", "") if header is not None else ""
 
     def get_seg_text(tu, lang, ns):
         # Try to find <tuv> with the xml:lang attribute
