@@ -221,7 +221,7 @@ def test_send_monthly_health_report_notifications_notifies_admins(
     mock_notify, admin, user_a, locale_a
 ):
     """Only admins can get monthly health reports."""
-    another_admin = UserFactory.create(username="admin_b", is_superuser=True)
+    another_admin = UserFactory.create(username="admin_b", is_staff=True)
     report = health_report(locale_a)
     with patch(
         "pontoon.messaging.management.commands.send_monthly_health_report_notifications_and_emails.get_monthly_health_report",
