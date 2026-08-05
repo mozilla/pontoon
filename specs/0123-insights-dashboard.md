@@ -8,7 +8,7 @@ Introduce an admin-only Community health score panel within the global Insights 
 
 # Motivation
 
-Currently, the CHS is calculated via a series of moz-l10n scripts and Google Sheets formulas, collected manually on a monthly basis. Other than the tedious nature of needing to do this monthly, PMs need better options to analyze CHS data holistically.
+Currently, the Community health score is calculated via a series of moz-l10n scripts and Google Sheets formulas, collected manually on a monthly basis. Other than the tedious nature of needing to do this manually, PMs need better options to analyze CHS data holistically.
 
 # Feature explanation
 
