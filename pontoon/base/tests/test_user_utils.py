@@ -2,14 +2,76 @@ import pytest
 
 from allauth.socialaccount.models import SocialAccount
 
+from django.db.utils import IntegrityError
+
 from pontoon.base.models.user import User
+from pontoon.base.models.user_profile import UserProfile
 from pontoon.base.user_utils import (
     avatar_url,
     fxa_avatar_url,
+    get_pretranslation_authors,
+    get_system_user,
+    human_users,
+    system_users,
     user_banner,
     user_locale_role,
     user_role,
 )
+
+
+@pytest.mark.django_db
+def test_human_users(user_a, sync_user, gt_user, tm_user):
+    users = human_users()
+    assert user_a in users
+    assert not any(user in users for user in (sync_user, gt_user, tm_user))
+
+
+@pytest.mark.django_db
+def test_system_users(user_a, sync_user, gt_user, tm_user):
+    assert set(system_users()) == {sync_user, gt_user, tm_user}
+    assert user_a not in system_users()
+
+    # Filtered by role
+    assert set(system_users(UserProfile.SystemUserRole.SYNC)) == {sync_user}
+
+    # Bots without a role are still system users
+    user_a.profile.system_user = True
+    user_a.profile.save()
+    assert user_a in system_users()
+    assert user_a not in system_users(UserProfile.SystemUserRole.SYNC)
+
+
+@pytest.mark.django_db
+def test_system_user_role_is_unique(user_a, sync_user):
+    """Two profiles can't share a role."""
+    profile = user_a.profile
+    profile.system_user = True
+    profile.system_user_role = UserProfile.SystemUserRole.SYNC
+    with pytest.raises(IntegrityError):
+        profile.save()
+
+
+@pytest.mark.django_db
+def test_get_system_user(sync_user, gt_user, tm_user):
+    assert get_system_user(UserProfile.SystemUserRole.SYNC) == sync_user
+    assert get_system_user(UserProfile.SystemUserRole.GOOGLE_TRANSLATE) == gt_user
+    assert get_system_user(UserProfile.SystemUserRole.TRANSLATION_MEMORY) == tm_user
+
+
+@pytest.mark.django_db
+def test_get_pretranslation_authors(sync_user, gt_user, tm_user):
+    assert get_pretranslation_authors() == {"gt": gt_user, "tm": tm_user}
+
+
+@pytest.mark.django_db
+def test_get_pretranslation_authors_missing(gt_user, tm_user):
+    """An incomplete set of authors is an error."""
+    profile = gt_user.profile
+    profile.system_user_role = None
+    profile.save()
+
+    with pytest.raises(User.DoesNotExist, match="pretranslation roles: gt"):
+        get_pretranslation_authors()
 
 
 @pytest.mark.django_db

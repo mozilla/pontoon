@@ -2,13 +2,13 @@ from collections import defaultdict
 from datetime import timedelta
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.models import Prefetch
 from django.utils.timezone import now
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Locale
+from pontoon.base.user_utils import human_users
 from pontoon.messaging.emails import (
     send_inactive_contributor_emails,
     send_inactive_manager_emails,
@@ -20,7 +20,7 @@ class Command(BaseCommand):
     help = "Send inactive account reminder emails based on user role and activity."
 
     def handle(self, *args, **options):
-        users = User.objects.filter(
+        users = human_users().filter(
             profile__last_inactive_reminder_sent__isnull=True,
         )
 

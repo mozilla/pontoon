@@ -62,6 +62,7 @@ from pontoon.base.user_utils import (
     can_manage_locales,
     can_translate,
     can_translate_locales,
+    human_users,
     manager_for_locales,
     profile_url,
     translated_projects,
@@ -723,10 +724,11 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         User.objects.filter(username__in=usernames).values_list("pk", flat=True)
     )
 
-    for recipient in User.objects.filter(
-        pk__in=recipients,
-        profile__comment_notifications=True,
-    ).exclude(pk=user.pk):
+    for recipient in (
+        human_users()
+        .filter(pk__in=recipients, profile__comment_notifications=True)
+        .exclude(pk=user.pk)
+    ):
         send_notification(
             user,
             recipient=recipient,
@@ -757,8 +759,8 @@ def _send_pin_comment_notifications(user, comment):
             if u:
                 recipient_data[u.pk].append(t.locale.pk)
 
-    for recipient in User.objects.filter(pk__in=recipient_data.keys()).exclude(
-        pk=user.pk
+    for recipient in (
+        human_users().filter(pk__in=recipient_data.keys()).exclude(pk=user.pk)
     ):
         # Send separate notification for each locale (which results in links to corresponding translate views)
         for locale in Locale.objects.filter(pk__in=recipient_data[recipient.pk]):
@@ -930,9 +932,8 @@ def get_users(request):
         project_id = int(project_id)
 
     users = (
-        User.objects
         # Exclude system users
-        .exclude(profile__system_user=True)
+        human_users()
         # Exclude deleted users
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
         # Prefetch profile for retrieving username

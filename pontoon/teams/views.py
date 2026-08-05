@@ -48,6 +48,7 @@ from pontoon.base.models.translation import Translation
 from pontoon.base.services import get_locale_or_redirect
 from pontoon.base.user_utils import (
     can_translate_locales,
+    human_users,
     profile_url,
     user_locale_role,
     user_role,
@@ -283,9 +284,8 @@ def ajax_permissions(request, locale):
     )
 
     locale_contributors = (
-        User.objects.filter(
-            translation__locale=locale, profile__system_user=False, is_active=True
-        )
+        human_users()
+        .filter(translation__locale=locale, is_active=True)
         .distinct()
         .order_by("email")
     )

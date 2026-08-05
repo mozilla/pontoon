@@ -169,6 +169,22 @@ class UserProfile(models.Model):
     # Used to mark users as system users.
     system_user = models.BooleanField(default=False)
 
+    # Used to identify the system user responsible for a specific feature.
+    # Not every system user has a role: generic bots (e.g. scripts or agents
+    # interacting with Pontoon) are only marked with system_user.
+    class SystemUserRole(models.TextChoices):
+        SYNC = "sync", "Sync"
+        GOOGLE_TRANSLATE = "gt", "Google Translate"
+        TRANSLATION_MEMORY = "tm", "Translation Memory"
+
+    system_user_role = models.CharField(
+        max_length=20,
+        choices=SystemUserRole.choices,
+        null=True,
+        blank=True,
+        default=None,
+    )
+
     @property
     def preferred_locales(self):
         return Locale.objects.filter(pk__in=self.locales_order)
@@ -179,7 +195,13 @@ class UserProfile(models.Model):
                 Lower("username"),
                 name="base_userprofile_username_lower_uniq",
                 condition=models.Q(username__isnull=False),
-            )
+            ),
+            # Allow only one system user for each role.
+            models.UniqueConstraint(
+                "system_user_role",
+                name="base_userprofile_system_user_role_uniq",
+                condition=models.Q(system_user_role__isnull=False),
+            ),
         ]
 
     @property

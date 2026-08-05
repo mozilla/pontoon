@@ -19,6 +19,7 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Locale, User, UserProfile
 from pontoon.base.notification_utils import is_subscribed_to_notification
 from pontoon.base.templatetags.helpers import full_url
+from pontoon.base.user_utils import human_users
 from pontoon.insights.models import LocaleInsightsSnapshot
 from pontoon.messaging.models import EmailContent
 from pontoon.messaging.utils import html_to_plain_text_with_links
@@ -198,10 +199,9 @@ def send_monthly_activity_summary():
     log.info("Start sending Monthly activity summary emails.")
 
     # Get user monthly actions
-    users = User.objects.filter(
+    users = human_users().filter(
         is_active=True,
         profile__monthly_activity_summary=True,
-        profile__system_user=False,
     )
     user_month_actions = _get_monthly_user_actions(users, months_ago=1)
     previous_user_month_actions = _get_monthly_user_actions(users, months_ago=2)
@@ -290,7 +290,8 @@ def send_notification_digest(frequency: Literal["Daily", "Weekly"] = "Daily"):
         start_time = timezone.now() - datetime.timedelta(weeks=1)
 
     users = (
-        User.objects.filter(is_active=True, profile__system_user=False)
+        human_users()
+        .filter(is_active=True)
         # Users with the selected notification email frequency
         .filter(profile__notification_email_frequency=frequency)
         # Users subscribed to at least one email notification type

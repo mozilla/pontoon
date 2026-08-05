@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 
 from pontoon.base.models import Comment, Locale, ProjectLocale, Translation
+from pontoon.base.user_utils import human_users
 from pontoon.messaging.notifications import send_notification
 
 
@@ -56,17 +57,19 @@ class Command(BaseCommand):
         recipients = recipients.union(self.locale_reviewers[locale])
 
         # Authors of previous translations of the same string
-        recipients = recipients.union(User.objects.filter(translation__in=translations))
+        recipients = recipients.union(
+            human_users().filter(translation__in=translations)
+        )
 
         # Authors of comments of previous translations
         translations_comments = Comment.objects.filter(translation__in=translations)
         recipients = recipients.union(
-            User.objects.filter(comment__in=translations_comments)
+            human_users().filter(comment__in=translations_comments)
         )
 
         # Authors of team comments of the same string
         team_comments = Comment.objects.filter(entity=entity, locale=locale)
-        recipients = recipients.union(User.objects.filter(comment__in=team_comments))
+        recipients = recipients.union(human_users().filter(comment__in=team_comments))
 
         for recipient in recipients:
             data[recipient].add(project_locale)

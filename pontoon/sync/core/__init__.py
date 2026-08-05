@@ -14,8 +14,8 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslatedResource,
     Translation,
-    User,
 )
+from pontoon.base.user_utils import human_users
 from pontoon.messaging.notifications import send_notification
 from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.core.checkout import checkout_repos
@@ -172,7 +172,7 @@ def notify_users(project: Project, now: datetime) -> None:
     # the user's homepage locale: report that locale's count when the user
     # contributes to it, otherwise fall back to the largest count among the
     # locales they contributed to.
-    users = User.objects.filter(id__in=user_locales.keys()).select_related("profile")
+    users = human_users().filter(id__in=user_locales.keys()).select_related("profile")
     for user in users:
         locale_ids = user_locales[user.id]
         homepage_id = locale_id_by_code.get(user.profile.custom_homepage)
@@ -188,4 +188,4 @@ def notify_users(project: Project, now: datetime) -> None:
             category="new_string",
             created_time=created_time,
         )
-    log.info(f"[{project.slug}] Notifying {len(user_locales)} users about new strings")
+    log.info(f"[{project.slug}] Notifying {len(users)} users about new strings")

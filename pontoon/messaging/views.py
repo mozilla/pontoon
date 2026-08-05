@@ -15,6 +15,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from pontoon.base.models import Locale, Project, Translation, UserProfile
+from pontoon.base.user_utils import human_users
 from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.messaging import forms
 from pontoon.messaging.emails import send_manual_emails
@@ -125,15 +126,15 @@ def get_recipients(form):
 
     translations = Translation.objects.all()
     if form.cleaned_data.get("contributors"):
-        recipients = User.objects.exclude(
+        recipients = human_users().exclude(
             Q(pk__in=manager_ids) | Q(pk__in=translator_ids) | Q(pk=-1)
         )
 
     if form.cleaned_data.get("managers"):
-        recipients = recipients | User.objects.filter(pk__in=manager_ids)
+        recipients = recipients | human_users().filter(pk__in=manager_ids)
 
     if form.cleaned_data.get("translators"):
-        recipients = recipients | User.objects.filter(pk__in=translator_ids)
+        recipients = recipients | human_users().filter(pk__in=translator_ids)
 
     if form.cleaned_data.get("locale_toggle"):
         translations = translations.filter(
