@@ -18,7 +18,7 @@ export function buildMessageEntry(
   options: {
     escapeHTML: RegExp | null;
     trim: boolean;
-    xliffIsXcode: boolean;
+    xliffIsXcode?: boolean;
   } = {
     escapeHTML: null,
     trim: false,
