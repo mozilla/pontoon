@@ -29,7 +29,7 @@ This feature located at `/insights` consists of a table of locales similar to th
     - \# of contributors with > 200 submissions trailing 12 months / 2
     - \# of contributors (all) this month / 2
     - \# of new signups with > 100 submissions / 2
-    - \# of enabled projects / total # of key projects * 100%
+    - Number of enabled key projects / total number of key projects * 100%
     - Overall completion percentage of locale
     - CHS, written as a float
   - Beside each statistic, an up/down arrow combined with a smaller number, indicating increase or decrease, presents the delta over the previous month's statistic. Data that has no change is not represented with a delta.
