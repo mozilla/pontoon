@@ -127,7 +127,7 @@ def get_recipients(form):
     translations = Translation.objects.all()
     if form.cleaned_data.get("contributors"):
         recipients = human_users().exclude(
-            Q(pk__in=manager_ids) | Q(pk__in=translator_ids)
+            Q(pk__in=manager_ids) | Q(pk__in=translator_ids) | Q(pk=-1)
         )
 
     if form.cleaned_data.get("managers"):
