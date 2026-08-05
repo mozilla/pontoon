@@ -20,7 +20,6 @@ This new "Community health score" panel located at `/insights` consists of a tab
   - Widget: contains locale search and buttons titled `Configuration` and `Show Scores`
     - `Configuration`: links to a separate page that enables admins to change locale availability on the dashboard and CHS activity graph
     - `Show Scores`: toggles default and score view of components that make up the CHS
-  - Layout: tabular
   - Each row contains the following information:
     - Locale code linking to individual locale pages
     - Number of managers with > 500 submissions trailing 12 months / 1
