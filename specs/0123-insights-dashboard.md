@@ -17,8 +17,8 @@ Currently, the Community health score is calculated via a series of moz-l10n scr
 This new "Community health score" panel located at `/insights` consists of a table of locales similar to the `/teams` page, and a graph.
 
 - Table:
-  - Widget: contains locale search and buttons titled `Configuration` and `Show Scores`
-    - `Configuration`: links to a separate page that enables admins to change locale availability on the dashboard and CHS activity graph
+  - Widget: contains locale search and buttons titled `Edit Locales` and `Show Scores`
+    - `Edit Locales`: links to a selector that enables admins to change locale availability on the CHS panel
     - `Show Scores`: toggles default and score view of components that make up the CHS
   - Each row contains the following information:
     - Locale code linking to individual locale pages
@@ -41,7 +41,7 @@ This new "Community health score" panel located at `/insights` consists of a tab
 
 ## Insights Configuration
 
-The dashboard page has a button named `Edit Locales`. Upon clicking it, admins are redirected to a locale selector that enables them to add/remove locales from their dashboard view.
+The CHS panel has a button named `Edit Locales`. Upon clicking it, admins are redirected to a locale selector that enables them to add/remove locales from their view.
 
 ## Locale Insights changes
 
