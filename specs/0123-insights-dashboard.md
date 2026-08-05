@@ -69,7 +69,7 @@ The CHS panel has a button named `Edit Locales`. Upon clicking it, admins are re
 
 ## Locale Insights changes
 
-The `/<locale-code>/insights/` page currently includes statistics and useful information regarding locale health and performance. The main change includes a new graph as follows:
+The [locale insights](https://github.com/mozilla/pontoon/blob/main/specs/0108-community-health-dashboard.md) page currently includes statistics and useful information regarding locale health and performance. The main change includes a new graph as follows:
 
 - Graph:
   - Name: `Community health score`
