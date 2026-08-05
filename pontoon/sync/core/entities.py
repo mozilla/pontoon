@@ -276,8 +276,15 @@ def update_resources(
         mod_entities, ["value", "properties", "string", "comment", "meta", "section"]
     )
 
-    # FIXME: Entity order should be updated on insertion
-    # https://github.com/mozilla/pontoon/issues/2115
+    reorder_entities: list[Entity] = []
+    for key, next_ent in next_entities.items():
+        prev_ent = prev_entities.get(key, None)
+        if prev_ent is not None and prev_ent.order != next_ent.order:
+            prev_ent.order = next_ent.order
+            reorder_entities.append(prev_ent)
+    if reorder_entities:
+        Entity.objects.bulk_update(reorder_entities, ["order"])
+
     added_entities = Entity.objects.bulk_create(added_entities)
     add_count = len(added_entities)
 

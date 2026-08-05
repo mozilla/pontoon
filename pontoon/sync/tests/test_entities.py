@@ -294,14 +294,10 @@ def test_add_resource():
         res_c = project.resources.get(path="c.ftl")
         TranslatedResource.objects.get(resource=res_c)
         section = Section.objects.get(resource=res_c)
-        assert {
+        assert [
             (*ent.key, ent.section == section)
-            for ent in Entity.objects.filter(resource=res_c)
-        } == {
-            ("key-1", True),
-            ("key-2", True),
-            ("key-3", True),
-        }
+            for ent in Entity.objects.filter(resource=res_c).order_by("order")
+        ] == [("key-1", True), ("key-2", True), ("key-3", True)]
 
 
 @pytest.mark.django_db
@@ -487,10 +483,10 @@ def test_change_entities():
         # Filesystem setup
         res_ftl = dedent(
             """
-            key-1 = Message 1
             key-2 = Fixed message 2
             # New comment
             key-3 = Message 3
+            key-1 = Message 1
             """
         )
         makedirs(repo.checkout_path)
@@ -517,12 +513,12 @@ def test_change_entities():
             project, locale_map, mock_checkout, paths, now
         ) == (0, {"res.ftl"}, set())
         assert {
-            tuple(ent.key): (ent.value, ent.section, ent.comment)
+            tuple(ent.key): (ent.order, ent.value, ent.section, ent.comment)
             for ent in Entity.objects.filter(resource=res)
         } == {
-            ("key-1",): (["Message 1"], section, ""),
-            ("key-2",): (["Fixed message 2"], section, ""),
-            ("key-3",): (["Message 3"], section, "New comment"),
+            ("key-1",): (2, ["Message 1"], section, ""),
+            ("key-2",): (0, ["Fixed message 2"], section, ""),
+            ("key-3",): (1, ["Message 3"], section, "New comment"),
         }
 
         # Test stats
@@ -548,6 +544,7 @@ def test_fluent_group_comment_change():
             resource=res,
             section=old_section,
             key=["key-1"],
+            order=13,
             string="key-1 = Message 1\n",
         )
         EntityFactory.create(
@@ -593,14 +590,14 @@ def test_fluent_group_comment_change():
         assert len(sections) == 1
         assert sections[0].comment == "New comment"
         assert {
-            (
-                *ent.key,
+            tuple(ent.key): (
+                ent.order,
                 ent.section.comment if ent.section is not None else None,
                 ent.obsolete,
             )
             for ent in Entity.objects.filter(resource=res)
         } == {
-            ("key-1", None, True),
-            ("key-2", "New comment", False),
-            ("key-3", "New comment", False),
+            ("key-1",): (13, None, True),
+            ("key-2",): (0, "New comment", False),
+            ("key-3",): (1, "New comment", False),
         }
