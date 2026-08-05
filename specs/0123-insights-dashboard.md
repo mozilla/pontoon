@@ -14,7 +14,7 @@ Currently, the CHS is calculated via a series of moz-l10n scripts and Google She
 
 ## Community health score panel
 
-This feature located at `/insights` consists of a table of locales similar to the `/teams` page, and a multi-line graph.
+This new "Community health score" panel located at `/insights` consists of a table of locales similar to the `/teams` page, and a graph.
 
 - Top menu title: `Community health activity`
 - Dashboard:
