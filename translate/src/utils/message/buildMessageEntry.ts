@@ -47,7 +47,7 @@ export function buildMessageEntry(
     if (options.trim) {
       src = src.trim();
     }
-    return parsePattern(format, src, { baseMsg: msg, xliffIsXcode });
+    return parsePattern(format, src, { webextBaseMsg: msg, xliffIsXcode: xliffIsXcode });
   };
 
   try {
