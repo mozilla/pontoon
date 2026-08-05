@@ -147,6 +147,20 @@ export function EntitiesList(): React.ReactElement<'div'> {
     [dispatch, location, store],
   );
 
+  const listKey = [
+    location.locale,
+    location.project,
+    location.resource,
+    location.search,
+    location.status,
+    location.extra,
+    location.tag,
+    location.author,
+    location.time,
+  ].join('\n');
+  const prevListKey = usePrevious(listKey);
+  const entitiesAreStale = prevListKey !== undefined && prevListKey !== listKey;
+
   /*
    * If entity not provided through a URL parameter, or if provided entity
    * cannot be found, select the first entity in the list.
@@ -155,6 +169,10 @@ export function EntitiesList(): React.ReactElement<'div'> {
    * current query is handled by the "string not found" page
    */
   useEffect(() => {
+    if (entitiesAreStale) {
+      return;
+    }
+
     const selectedEntity = location.entity;
     const firstEntity = entities[0];
     const isValid = entities.some(({ pk }) => pk === selectedEntity);
