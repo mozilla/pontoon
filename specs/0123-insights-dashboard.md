@@ -4,7 +4,7 @@
 
 # Summary
 
-Introduce an admin-only dashboard within `/insights` where PMs can observe the monthly changes to the Community Health Score through a deconstruction of its algorithm, and implement additional statistics tracking within global and locale Insights pages for PM ingestion.
+Introduce an admin-only Community health score panel within the global Insights dashboard that provides a monthly breakdown of the Community health score and its underlying metrics, along with historical score tracking. Also make the historical tracking available on locale Insights dashboards.
 
 # Motivation
 
