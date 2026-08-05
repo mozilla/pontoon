@@ -24,7 +24,7 @@ This feature located at `/insights` consists of a table of locales similar to th
   - Layout: tabular
   - Each row contains the following information:
     - Locale code linking to individual locale pages
-    - \# of managers with > 500 submissions trailing 12 months / 1
+    - Number of managers with > 500 submissions trailing 12 months / 1
     - \# of translators with > 400 submissions trailing 12 months / 2
     - \# of contributors with > 200 submissions trailing 12 months / 2
     - \# of contributors (all) this month / 2
