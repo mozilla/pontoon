@@ -16,7 +16,7 @@ Currently, the CHS is calculated via a series of moz-l10n scripts and Google She
 
 This new "Community health score" panel located at `/insights` consists of a table of locales similar to the `/teams` page, and a graph.
 
-- Dashboard:
+- Table:
   - Widget: contains locale search and buttons titled `Configuration` and `Show Scores`
     - `Configuration`: links to a separate page that enables admins to change locale availability on the dashboard and CHS activity graph
     - `Show Scores`: toggles default and score view of components that make up the CHS
