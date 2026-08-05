@@ -32,7 +32,7 @@ def human_users() -> QuerySet[Any]:
 def system_users(role: "SystemUserRole | None" = None) -> QuerySet[Any]:
     """All system users, optionally limited to those serving a specific role."""
     users = User.objects.filter(profile__system_user=True)
-    return users.filter(profile__system_user_role=role) if role else users
+    return users.filter(profile__system_user_role=role) if role is not None else users
 
 
 def get_system_user(role: "SystemUserRole") -> User:

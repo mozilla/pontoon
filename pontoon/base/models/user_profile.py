@@ -180,8 +180,9 @@ class UserProfile(models.Model):
     system_user_role = models.CharField(
         max_length=20,
         choices=SystemUserRole.choices,
+        null=True,
         blank=True,
-        default="",
+        default=None,
     )
 
     @property
@@ -194,7 +195,13 @@ class UserProfile(models.Model):
                 Lower("username"),
                 name="base_userprofile_username_lower_uniq",
                 condition=models.Q(username__isnull=False),
-            )
+            ),
+            # Allow only one system user for each role.
+            models.UniqueConstraint(
+                "system_user_role",
+                name="base_userprofile_system_user_role_uniq",
+                condition=models.Q(system_user_role__isnull=False),
+            ),
         ]
 
     @property
