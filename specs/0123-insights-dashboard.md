@@ -1,4 +1,4 @@
-- Feature Name: Insights Dashboard
+- Feature Name: Community health score (CHS) panel
 - Created: 2026-08-04
 - Associated PR: [#4189](https://github.com/mozilla/pontoon/pull/4189)
 
