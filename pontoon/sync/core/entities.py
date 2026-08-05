@@ -227,6 +227,7 @@ def update_resources(
         if key not in next_entities:
             prev_ent.obsolete = True
             prev_ent.date_obsoleted = now
+            # Avoids a separate later update if/once the section is removed
             prev_ent.section = None
             obsolete_entities.append(prev_ent)
             key_path, key_entity = key
@@ -239,11 +240,14 @@ def update_resources(
 
     # Order matters here: Sections can be simultaneously modified and deleted.
     Section.objects.bulk_update(mod_sections, ["meta"])
-    del_section_ids = [
+    del_section_ids = {
         section.pk for section in prev_sections.values() if section not in keep_sections
-    ]
+    }
     if del_section_ids:
         Section.objects.filter(pk__in=del_section_ids).delete()
+        for prev_ent in prev_entities.values():
+            if prev_ent.section_id in del_section_ids:
+                prev_ent.refresh_from_db(fields=["section"])
 
     # The Section.pk values need to be set before we modify or create Entities.
     Section.objects.bulk_create(new_sections)
@@ -264,11 +268,12 @@ def update_resources(
             + model_update(prev_ent, "string", next_ent.string)
             + model_update(prev_ent, "comment", next_ent.comment)
             + model_update(prev_ent, "meta", next_ent.meta)
+            + model_update(prev_ent, "section", next_ent.section)
         ):
             mod_entities.append(prev_ent)
             log_mod[key_path].append("/".join(key_entity))
     Entity.objects.bulk_update(
-        mod_entities, ["value", "properties", "string", "comment", "meta"]
+        mod_entities, ["value", "properties", "string", "comment", "meta", "section"]
     )
 
     # FIXME: Entity order should be updated on insertion

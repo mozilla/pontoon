@@ -94,6 +94,7 @@ class ResourceFactory(DjangoModelFactory):
 
 
 class SectionFactory(DjangoModelFactory):
+    key = Sequence(lambda n: [f"Section {n}"])
     resource = SubFactory(ResourceFactory)
 
     class Meta:
@@ -118,6 +119,7 @@ class ProjectLocaleFactory(DjangoModelFactory):
 
 class EntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
+    section = SubFactory(SectionFactory, resource=SelfAttribute("..resource"))
     string = Sequence(lambda n: f"string {n}")
     order = Sequence(lambda n: n)
 
