@@ -14,7 +14,7 @@ Currently, the Community health score is calculated via a series of moz-l10n scr
 
 ## Community health score aggregation
 
-On the first of each month, an automation is run that collects telemetry on the state of each locale for the **previous month**. The data collected for **each locale** is compiled into the following datapoints:
+On the first day of each month, a scheduled job collects telemetry on the state of each locale for the **previous month**. The data collected for **each locale** is compiled into the following metrics:
 - `active_managers`: managers with **reviews performed** + **approved translations** > 500 in the past 12 months
 - `active_translators`: translators with **reviews performed** + **approved translations** > 400 in the past 12 months
 - `active_contributors`: contributors with **approved translations** >= 200 in the past 12 months
