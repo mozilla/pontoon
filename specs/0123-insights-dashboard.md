@@ -58,7 +58,4 @@ The chart is a line chart that displays Community Health Score (CHS) values for 
 
 ## Locale Insights changes
 
-The [locale insights](https://github.com/mozilla/pontoon/blob/main/specs/0108-community-health-dashboard.md) page currently includes statistics and useful information regarding locale health and performance.
-
-
-The main change introduces a new graph called `Community health score` which contains a tooltip that describes basic functionality, which is to show the CHS of the current locale at a particular point in time. It displays CHS scores for current locale trailing 12 months. As soon as the CHS calculation automation on Pontoon runs on the first of each month, the previous month's scores will be automatically available for display.
+A new graph called `Community health score` is added to the [locale insights page](https://github.com/mozilla/pontoon/blob/main/specs/0108-community-health-dashboard.md), which shows the CHS values for the locale over the past 12 months.
