@@ -54,7 +54,7 @@ The table of locales represents the locales the admin wishes to observe based on
 
 Beside each statistic, an up/down arrow combined with a number represents the delta over the previous month's statistic. Data that has no change is not represented with a delta. For counts (contributor, translator, manager counts etc.), each value is represented as an integer. For the scores and percentages, each value is represented with 2 decimal places.
 
-The graph consists of a tooltip, legend and display. The tooltip describes basic functionality. The legend contains locales and `Average (all locales)`, which can be selected/deselected to display corresponding CHS datapoints over time. The display shows CHS scores for selected locales in the past 12 months.
+The chart is a line chart that displays Community Health Score (CHS) values for the selected locales over the past 12 months. Hovering over any data point displays a tooltip with the exact CHS value for that month for all selected locales. The legend lists individual locales along with `Average (all locales)` and allows each line to be shown or hidden.
 
 ## Locale Insights changes
 
