@@ -169,7 +169,7 @@ def get_monthly_health_report():
             }
         )
 
-    locale_rows.sort(key=lambda locale_row: locale_row["percentage"], reverse=True)
+    locale_rows.sort(key=lambda locale_row: abs(locale_row["percentage"]), reverse=True)
 
     reported_month = current_anchor.replace(day=1) - relativedelta(months=1)
 

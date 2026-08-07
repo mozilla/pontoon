@@ -461,6 +461,16 @@ at any time using the `--force` option.
 ./manage.py send_monthly_activity_emails
 ```
 
+### Send Monthly Health Report Notifications & Emails
+
+This job sends a summary of monthly health report to admin users via
+notifications & email. It is designed to run on a specific day of the
+month but can be forced to run at any time using the `--force` option.
+
+``` bash
+./manage.py send_monthly_health_report_notifications_and_emails
+```
+
 ### Send Onboarding Emails
 
 Pontoon sends onboarding emails to new users. The first one is sent upon
