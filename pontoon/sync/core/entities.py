@@ -158,6 +158,7 @@ def update_resources(
     changed_res_paths: set[str] = {res.path for res in changed_resources.values()}
     log.info(f"[{project.slug}] Changed source files: {', '.join(changed_res_paths)}")
 
+    # Most Entity.section fields are deferred; use prev_sections instead when required.
     prev_entities: dict[tuple[str, L10nId], Entity] = {
         (changed_resources[e.resource_id].path, tuple(e.key)): e
         for e in Entity.objects.filter(resource__in=changed_resources, obsolete=False)
