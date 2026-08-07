@@ -2,9 +2,9 @@ name: Automated Releases
 on:
   # schedule:
   #   - cron: "0 5 * * *"
-  # push:
-  #   branches:
-  #     - automate_releases
+  push:
+    branches:
+      - automate_releases
   workflow_dispatch:
 # amazing grace
 permissions:
