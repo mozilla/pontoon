@@ -16,12 +16,12 @@ Currently, the Community health score is calculated via a series of moz-l10n scr
 
 On the first day of each month, a scheduled job collects telemetry on the state of each locale for the **previous month**. The data collected for **each locale** is compiled into the following metrics:
 - `active_managers`: Managers whose combined total of performed reviews and approved translations during the past 12 months exceeds 500.
-- `active_translators`: translators with **reviews performed** + **approved translations** > 400 in the past 12 months
-- `active_contributors`: contributors with **approved translations** >= 200 in the past 12 months
-- `all_contributors`: contributors with **approved translations** + **rejected translations** + **pending suggestions** >= 200 in the past 12 months
-- `new_signups`: new signups with **approved translations** >= 100 in the past 12 months
+- `active_translators`: Translators whose combined total of performed reviews and approved translations during the past 12 months exceeds 400.
+- `active_contributors`: Contributors whose approved translations during the past 12 months meets or exceeds 200.
+- `all_contributors`: Contributors whose combined total of approved translations, rejected translations and pending suggestions during the past 12 months meets or exceeds 200.
+- `new_signups`: New signups whose approved translations during the past 12 months meets or exceeds 100.
 - `key_projects_enabled`: number of projects that are classified as key projects via the `is_chs_project` flag
-- `completion`: locale completion, as a percentage of (**approved_strings** + **strings_with_warnings**) out of **total strings**
+- `completion`: locale completion, as a percentage of (**approved strings** + **strings with warnings**) out of **total strings**
 
 The data used is then computed into the following scores based on predetermined thresholds:
 
@@ -33,7 +33,7 @@ The data used is then computed into the following scores based on predetermined 
 - `key_projects_enabled_score` score representation of `key_projects_enabled`
 - `completion_score` score representation of `completion`
 
-Finally the scores are combined into a **Community health score** for that locale on that month which is used for measuring locale health.
+Finally the scores are summated to a **Community health score** for that locale on that month which is used for measuring locale health.
 
 ## Community health score panel
 
