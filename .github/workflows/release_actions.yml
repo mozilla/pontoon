@@ -1,0 +1,67 @@
+name: Automated Releases
+on:
+  # schedule:
+  #   - cron: "0 5 * * *"
+  push:
+    branches:
+      - automate_releases
+  workflow_dispatch:
+# amazing grace
+permissions:
+  contents: write
+
+jobs:
+  copy:
+    name: New release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          # `git tag --points-at` needs deployed commit as a local object.
+          fetch-depth: 0
+      - name: Fetch deployed revision
+        id: revision
+        run: |
+          SHA=$(curl -fsS --max-time 10 \
+            https://pontoon.mozilla.org/static/revision.txt | tr -d '[:space:]')
+
+          # Also guards the interpolation below: an HTML error page or anything
+          # else unexpected stops here rather than reaching a shell.
+          if ! printf '%s' "$SHA" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::Expected a 40-character commit hash, got: ${SHA:-<empty>}"
+            exit 1
+          fi
+
+          echo "Deployed revision: $SHA"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+      - name: Check for an existing release tag
+        id: check
+        env:
+          SHA: ${{ steps.revision.outputs.sha }}
+        run: |
+          if ! git cat-file -e "${SHA}^{commit}" 2>/dev/null; then
+            echo "::error::Commit $SHA is not in this repository."
+            exit 1
+          fi
+
+          COMMIT_EXISTS=$(git tag --points-at "$SHA" | grep '^v202' || true)
+
+          if [ -n "$COMMIT_EXISTS" ]; then
+            echo "Already released as ${COMMIT_EXISTS}; nothing to do."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "release=true" >> "$GITHUB_OUTPUT"
+          echo "version=v$(date -u +%Y.%m.%d)" >> "$GITHUB_OUTPUT"
+      - name: Create GitHub Release
+        if: steps.check.outputs.release == 'true'
+        uses: softprops/action-gh-release@v2 # need to change to sha
+        with:
+          tag_name: "${{ steps.check.outputs.version }}"
+          target_commitish: "${{ steps.revision.outputs.sha }}"
+          name: "Release ${{ steps.check.outputs.version }}"
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
