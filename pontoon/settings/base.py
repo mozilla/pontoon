@@ -1229,6 +1229,12 @@ MONTHLY_ACTIVITY_SUMMARY_DAY = int(os.environ.get("MONTHLY_ACTIVITY_SUMMARY_DAY"
 # snapshots are collected via collect_chs_snapshots().
 MONTHLY_CHS_SNAPSHOTS_DAY = int(os.environ.get("MONTHLY_CHS_SNAPSHOTS_DAY", 1))
 
+# Minimum absolute month-over-month Community Health Score percentage change for
+# a locale to be included in the monthly health report notification.
+MONTHLY_HEALTH_REPORT_CHS_THRESHOLD = int(
+    os.environ.get("MONTHLY_HEALTH_REPORT_CHS_THRESHOLD", 2)
+)
+
 
 # Number of days after user registration to send the 2nd onboarding email
 ONBOARDING_EMAIL_2_DELAY = int(os.environ.get("ONBOARDING_EMAIL_2_DELAY", 2))
