@@ -219,13 +219,11 @@ def test_send_inactive_translator_emails(user_a, locale_a):
 
 @pytest.mark.django_db
 def test_send_monthly_health_report_emails(locale_a):
-    subscribed_admin = UserFactory.create(
-        username="admin_subscribed", is_superuser=True
-    )
+    subscribed_admin = UserFactory.create(username="admin_subscribed", is_staff=True)
     subscribed_admin.profile.monthly_health_report = True
     subscribed_admin.profile.save()
 
-    UserFactory.create(username="admin_unsubscribed", is_superuser=True)
+    UserFactory.create(username="admin_unsubscribed", is_staff=True)
 
     subscribed_contributor = UserFactory.create(username="contributor")
     subscribed_contributor.profile.monthly_health_report = True

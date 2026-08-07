@@ -659,7 +659,7 @@ def send_monthly_health_report_emails(report):
     log.info("Start sending report emails.")
 
     users = User.objects.filter(
-        is_active=True, is_superuser=True, profile__monthly_health_report=True
+        is_active=True, is_staff=True, profile__monthly_health_report=True
     )
 
     subject = f"Monthly locale health report for {report['month']} {report['year']}"
