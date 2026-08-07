@@ -160,9 +160,12 @@ def update_resources(
 
     prev_entities: dict[tuple[str, L10nId], Entity] = {
         (changed_resources[e.resource_id].path, tuple(e.key)): e
-        for e in Entity.objects.filter(
-            resource__in=changed_resources, obsolete=False
-        ).iterator()
+        for e in Entity.objects.filter(resource__in=changed_resources, obsolete=False)
+        .select_related("section")
+        .defer(
+            "section__key", "section__comment", "section__meta", "section__resource_id"
+        )
+        .iterator()
     }
     prev_sections: dict[tuple[str, L10nId, str], Section] = {
         (changed_resources[s.resource_id].path, tuple(s.key), s.comment): s
