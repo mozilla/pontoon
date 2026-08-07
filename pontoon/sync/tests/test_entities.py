@@ -483,6 +483,8 @@ def test_change_entities():
         # Filesystem setup
         res_ftl = dedent(
             """
+            key-4 = New message 4
+            key-5 = New message 5
             key-2 = Fixed message 2
             # New comment
             key-3 = Message 3
@@ -511,20 +513,22 @@ def test_change_entities():
         # Test sync
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (0, {"res.ftl"}, set())
+        ) == (2, {"res.ftl"}, set())
         assert {
             tuple(ent.key): (ent.order, ent.value, ent.section, ent.comment)
             for ent in Entity.objects.filter(resource=res)
         } == {
-            ("key-1",): (2, ["Message 1"], section, ""),
-            ("key-2",): (0, ["Fixed message 2"], section, ""),
-            ("key-3",): (1, ["Message 3"], section, "New comment"),
+            ("key-4",): (0, ["New message 4"], section, ""),
+            ("key-5",): (1, ["New message 5"], section, ""),
+            ("key-2",): (2, ["Fixed message 2"], section, ""),
+            ("key-3",): (3, ["Message 3"], section, "New comment"),
+            ("key-1",): (4, ["Message 1"], section, ""),
         }
 
         # Test stats
         update_stats(project)
         project.refresh_from_db()
-        assert (project.total_strings, project.approved_strings) == (3, 3)
+        assert (project.total_strings, project.approved_strings) == (5, 3)
 
 
 @pytest.mark.django_db
