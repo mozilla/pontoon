@@ -21,9 +21,11 @@ class Entity(DirtyFieldsMixin, models.Model):
     resource: models.ForeignKey["Resource"] = models.ForeignKey(
         Resource, models.CASCADE, related_name="entities"
     )
+    resource_id: int
     section: models.ForeignKey[Section | None] = models.ForeignKey(
         Section, models.SET_NULL, related_name="entities", null=True, blank=True
     )
+    section_id: int | None
     string = models.TextField()
     key = ArrayField(models.TextField(), default=list)
     value = models.JSONField(default=list)

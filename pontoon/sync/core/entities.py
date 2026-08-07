@@ -158,11 +158,15 @@ def update_resources(
     changed_res_paths: set[str] = {res.path for res in changed_resources.values()}
     log.info(f"[{project.slug}] Changed source files: {', '.join(changed_res_paths)}")
 
+    # Most Entity.section fields are deferred; use prev_sections instead when required.
     prev_entities: dict[tuple[str, L10nId], Entity] = {
         (changed_resources[e.resource_id].path, tuple(e.key)): e
-        for e in Entity.objects.filter(
-            resource__in=changed_resources, obsolete=False
-        ).iterator()
+        for e in Entity.objects.filter(resource__in=changed_resources, obsolete=False)
+        .select_related("section")
+        .defer(
+            "section__key", "section__comment", "section__meta", "section__resource_id"
+        )
+        .iterator()
     }
     prev_sections: dict[tuple[str, L10nId, str], Section] = {
         (changed_resources[s.resource_id].path, tuple(s.key), s.comment): s
@@ -227,6 +231,7 @@ def update_resources(
         if key not in next_entities:
             prev_ent.obsolete = True
             prev_ent.date_obsoleted = now
+            # Avoids a separate later update if/once the section is removed
             prev_ent.section = None
             obsolete_entities.append(prev_ent)
             key_path, key_entity = key
@@ -239,11 +244,14 @@ def update_resources(
 
     # Order matters here: Sections can be simultaneously modified and deleted.
     Section.objects.bulk_update(mod_sections, ["meta"])
-    del_section_ids = [
+    del_section_ids = {
         section.pk for section in prev_sections.values() if section not in keep_sections
-    ]
+    }
     if del_section_ids:
         Section.objects.filter(pk__in=del_section_ids).delete()
+        for prev_ent in prev_entities.values():
+            if prev_ent.section_id in del_section_ids:
+                prev_ent.section = None
 
     # The Section.pk values need to be set before we modify or create Entities.
     Section.objects.bulk_create(new_sections)
@@ -264,15 +272,23 @@ def update_resources(
             + model_update(prev_ent, "string", next_ent.string)
             + model_update(prev_ent, "comment", next_ent.comment)
             + model_update(prev_ent, "meta", next_ent.meta)
+            + model_update(prev_ent, "section", next_ent.section)
         ):
             mod_entities.append(prev_ent)
             log_mod[key_path].append("/".join(key_entity))
     Entity.objects.bulk_update(
-        mod_entities, ["value", "properties", "string", "comment", "meta"]
+        mod_entities, ["value", "properties", "string", "comment", "meta", "section"]
     )
 
-    # FIXME: Entity order should be updated on insertion
-    # https://github.com/mozilla/pontoon/issues/2115
+    reorder_entities: list[Entity] = []
+    for key, next_ent in next_entities.items():
+        prev_ent = prev_entities.get(key, None)
+        if prev_ent is not None and prev_ent.order != next_ent.order:
+            prev_ent.order = next_ent.order
+            reorder_entities.append(prev_ent)
+    if reorder_entities:
+        Entity.objects.bulk_update(reorder_entities, ["order"])
+
     added_entities = Entity.objects.bulk_create(added_entities)
     add_count = len(added_entities)
 

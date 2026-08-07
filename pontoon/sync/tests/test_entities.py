@@ -11,7 +11,7 @@ from moz.l10n.paths import L10nDiscoverPaths
 from django.conf import settings
 from django.utils import timezone
 
-from pontoon.base.models import Entity, Project, TranslatedResource
+from pontoon.base.models import Entity, Project, Section, TranslatedResource
 from pontoon.base.models.translation import Translation
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.entities import sync_resources_from_repo
@@ -24,6 +24,7 @@ from pontoon.test.factories import (
     ProjectFactory,
     RepositoryFactory,
     ResourceFactory,
+    SectionFactory,
     TranslationFactory,
 )
 
@@ -292,11 +293,11 @@ def test_add_resource():
         ) == (3, {"c.ftl"}, set())
         res_c = project.resources.get(path="c.ftl")
         TranslatedResource.objects.get(resource=res_c)
-        assert {tuple(ent.key) for ent in Entity.objects.filter(resource=res_c)} == {
-            ("key-1",),
-            ("key-2",),
-            ("key-3",),
-        }
+        section = Section.objects.get(resource=res_c)
+        assert [
+            (*ent.key, ent.section == section)
+            for ent in Entity.objects.filter(resource=res_c).order_by("order")
+        ] == [("key-1", True), ("key-2", True), ("key-3", True)]
 
 
 @pytest.mark.django_db
@@ -379,9 +380,11 @@ def test_update_resource():
             res[n] = ResourceFactory.create(
                 project=project, path=f"{n}.ftl", format="fluent", total_strings=3
             )
+            section = SectionFactory(resource=res[n], key=[])
             for i in (1, 2, 3):
                 entity = EntityFactory.create(
                     resource=res[n],
+                    section=section,
                     key=[f"key-{n}-{i}"],
                     string=f"key-{n}-{i} = Message {i}\n",
                 )
@@ -423,13 +426,19 @@ def test_update_resource():
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (1, {"c.ftl"}, set())
+        section = Section.objects.get(resource=res["c"])
         assert {
-            (*ent.key, ent.obsolete) for ent in Entity.objects.filter(resource=res["c"])
+            (
+                *ent.key,
+                1 if ent.section == section else -1 if ent.section is None else 0,
+                ent.obsolete,
+            )
+            for ent in Entity.objects.filter(resource=res["c"])
         } == {
-            ("key-c-1", True),
-            ("key-c-2", False),
-            ("key-c-3", True),
-            ("key-c-4", False),
+            ("key-c-1", -1, True),
+            ("key-c-2", 1, False),
+            ("key-c-3", -1, True),
+            ("key-c-4", 1, False),
         }
 
         # Test stats
@@ -455,9 +464,11 @@ def test_change_entities():
         res = ResourceFactory.create(
             project=project, path="res.ftl", format="fluent", total_strings=3
         )
+        section = SectionFactory(resource=res, key=[])
         for i in (1, 2, 3):
             entity = EntityFactory.create(
                 resource=res,
+                section=section,
                 key=[f"key-{i}"],
                 string=f"key-{i} = Message {i}\n",
             )
@@ -472,10 +483,12 @@ def test_change_entities():
         # Filesystem setup
         res_ftl = dedent(
             """
-            key-1 = Message 1
+            key-4 = New message 4
+            key-5 = New message 5
             key-2 = Fixed message 2
             # New comment
             key-3 = Message 3
+            key-1 = Message 1
             """
         )
         makedirs(repo.checkout_path)
@@ -500,17 +513,95 @@ def test_change_entities():
         # Test sync
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (0, {"res.ftl"}, set())
+        ) == (2, {"res.ftl"}, set())
         assert {
-            tuple(ent.key): (ent.value, ent.comment)
+            tuple(ent.key): (ent.order, ent.value, ent.section, ent.comment)
             for ent in Entity.objects.filter(resource=res)
         } == {
-            ("key-1",): (["Message 1"], ""),
-            ("key-2",): (["Fixed message 2"], ""),
-            ("key-3",): (["Message 3"], "New comment"),
+            ("key-4",): (0, ["New message 4"], section, ""),
+            ("key-5",): (1, ["New message 5"], section, ""),
+            ("key-2",): (2, ["Fixed message 2"], section, ""),
+            ("key-3",): (3, ["Message 3"], section, "New comment"),
+            ("key-1",): (4, ["Message 1"], section, ""),
         }
 
         # Test stats
         update_stats(project)
         project.refresh_from_db()
-        assert (project.total_strings, project.approved_strings) == (3, 3)
+        assert (project.total_strings, project.approved_strings) == (5, 3)
+
+
+@pytest.mark.django_db
+def test_fluent_group_comment_change():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-gc", locales=[locale], repositories=[repo], visibility="public"
+        )
+        res = ResourceFactory.create(project=project, path="file.ftl", format="fluent")
+        old_section = SectionFactory(resource=res, key=[], comment="Old comment")
+        EntityFactory.create(
+            resource=res,
+            section=old_section,
+            key=["key-1"],
+            order=13,
+            string="key-1 = Message 1\n",
+        )
+        EntityFactory.create(
+            resource=res,
+            section=old_section,
+            key=["key-2"],
+            string="key-2 = Message 2\n",
+        )
+
+        # Filesystem setup
+        file_ftl = dedent(
+            """
+            ## New comment
+
+            key-2 = Message 2
+            key-3 = Message 3
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"file.ftl": file_ftl},
+                "fr-Test": {"file.ftl": ""},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("en-US", "file.ftl")],
+            removed=[],
+            renamed=[],
+        )
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
+
+        # Test sync
+        assert sync_resources_from_repo(
+            project, locale_map, mock_checkout, paths, now
+        ) == (1, {"file.ftl"}, set())
+        sections = Section.objects.filter(resource=res)
+        assert len(sections) == 1
+        assert sections[0].comment == "New comment"
+        assert {
+            tuple(ent.key): (
+                ent.order,
+                ent.section.comment if ent.section is not None else None,
+                ent.obsolete,
+            )
+            for ent in Entity.objects.filter(resource=res)
+        } == {
+            ("key-1",): (13, None, True),
+            ("key-2",): (0, "New comment", False),
+            ("key-3",): (1, "New comment", False),
+        }
