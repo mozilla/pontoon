@@ -8,9 +8,9 @@ from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import UserProfile
-from pontoon.base.user_utils import get_pretranslation_authors, get_system_user
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
+from pontoon.base.user_utils import get_pretranslation_authors, get_system_user
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
     LocaleHealthSnapshot,
