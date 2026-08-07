@@ -247,7 +247,7 @@ def update_resources(
         Section.objects.filter(pk__in=del_section_ids).delete()
         for prev_ent in prev_entities.values():
             if prev_ent.section_id in del_section_ids:
-                prev_ent.refresh_from_db(fields=["section"])
+                prev_ent.section = None
 
     # The Section.pk values need to be set before we modify or create Entities.
     Section.objects.bulk_create(new_sections)
