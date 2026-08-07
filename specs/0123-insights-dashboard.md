@@ -38,7 +38,7 @@ The table of locales represents the locales the admin wishes to observe based on
 - Number of **active contributors**
 - Number of **all contributors**
 - Number of **new signups**
-- Number of **enabled key projects** (%)
+- Number of **enabled key projects**
 - Overall locale **completion** (%)
 - CHS
 
