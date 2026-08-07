@@ -20,8 +20,8 @@ On the first day of each month, a scheduled job collects telemetry on the state 
 - `active_contributors`: Contributors whose approved translations during the past 12 months meets or exceeds 200.
 - `all_contributors`: Contributors whose combined total of approved translations, rejected translations and pending suggestions during the past 12 months meets or exceeds 200.
 - `new_signups`: New signups whose approved translations during the past 12 months meets or exceeds 100.
-- `key_projects_enabled`: number of projects that are classified as key projects via the `is_chs_project` flag
-- `completion`: locale completion, as a percentage of (**approved strings** + **strings with warnings**) out of **total strings**
+- `key_projects_enabled`: Number of projects that are classified as key projects via the `is_chs_project` flag.
+- `completion`: Locale completion, expressed as a percentage of **approved strings** + **strings with warnings** out of **total strings**.
 
 The data used is then computed into the following scores based on predetermined thresholds. Finally the scores are summated to a **Community health score** for that locale on that month which is used for measuring locale health.
 
