@@ -27,7 +27,7 @@ from pontoon.machinery.utils import (
 from pontoon.pretranslation.pretranslate import MTEngine, Pretranslation
 from pontoon.terminology.models import Term
 
-from .openai_service import OpenAIService
+from .openai_service import OpenAIService, get_llm_string_id
 
 
 log = logging.getLogger(__name__)
@@ -290,7 +290,7 @@ def gpt_transform(request):
             entity = Entity.objects.select_related("resource", "section").get(
                 pk=entity_pk
             )
-            entity_key = entity.key[0] if entity.key else None
+            entity_key = get_llm_string_id(entity)
             entity_comment = entity.comment or None
             group_comment = (entity.section.comment if entity.section else None) or None
             resource_comment = entity.resource.comment or None

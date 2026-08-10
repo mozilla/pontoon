@@ -13,10 +13,12 @@ from django.urls import reverse
 from pontoon.base.models import (
     Entity,
     Locale,
+    Resource,
 )
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
+    ResourceFactory,
     SectionFactory,
     TeamCommentFactory,
     TermFactory,
@@ -319,12 +321,13 @@ def test_view_gpt_transform_context(member, locale_a, openai_api_key):
 
     # Create entity with full context: key, comment, group (section) comment,
     # resource comment
-    section = SectionFactory(key=["nav"], comment="Navigation section")
+    resource = ResourceFactory(path="ui.properties", format=Resource.Format.PROPERTIES)
+    section = SectionFactory(key=[], comment="Navigation section", resource=resource)
     entity = EntityFactory(
         key=["open-browser"],
         string="Open browser",
         comment="Button label",
-        resource=section.resource,
+        resource=resource,
         section=section,
     )
     entity.resource.comment = "Main UI file"
@@ -372,6 +375,64 @@ def test_view_gpt_transform_context(member, locale_a, openai_api_key):
     assert "Keep it short" in user_message
     assert "TERMINOLOGY:" in user_message
     assert '"browser" (noun) → "navigateur"' in user_message
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "format, section_key, entity_key, expected",
+    [
+        # For XLIFF (e.g. iOS projects), the section key is the file name
+        (
+            Resource.Format.XLIFF,
+            ["Client/Client.strings"],
+            ["Client/Client.strings", "Settings.Title"],
+            "STRING ID:\nSettings.Title",
+        ),
+        # For gettext, the message id is the source string itself
+        (Resource.Format.GETTEXT, [], ["Open browser"], None),
+    ],
+)
+def test_view_gpt_transform_string_id(
+    member, locale_a, openai_api_key, format, section_key, entity_key, expected
+):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    resource = ResourceFactory(format=format)
+    section = SectionFactory(key=section_key, resource=resource)
+    entity = EntityFactory(
+        key=entity_key,
+        string="Open browser",
+        resource=resource,
+        section=section,
+    )
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(
+            url,
+            {
+                "english_text": "Open browser",
+                "translated_text": "Ouvrir le navigateur",
+                "characteristic": "formal",
+                "locale": locale_a.code,
+                "entity_pk": entity.pk,
+            },
+        )
+
+    call_args = MockOpenAI.return_value.chat.completions.create.call_args
+    system_message = call_args.kwargs["messages"][0]["content"]
+    user_message = call_args.kwargs["messages"][1]["content"]
+    if expected is None:
+        assert "STRING ID" not in user_message
+        assert "STRING ID" not in system_message
+    else:
+        assert expected in user_message
+        assert "STRING ID:" in system_message
 
 
 @pytest.mark.django_db
