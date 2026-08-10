@@ -15,7 +15,7 @@ Currently, the Community health score is calculated via a series of moz-l10n scr
 ## Community health score aggregation
 
 On the first day of each month, a scheduled job collects telemetry on the state of each locale for the **previous month**. The data collected for **each locale** is compiled into the following metrics:
-- `active_managers`: Managers whose combined total of performed reviews and approved translations during the past 12 months exceeds 500.
+- `active_managers`: Managers whose combined total of performed reviews and approved translations during the past 12 months exceeds `MANAGER_STRING_THRESHOLD` (default: 500).
 - `active_translators`: Translators whose combined total of performed reviews and approved translations during the past 12 months exceeds 400.
 - `active_contributors`: Contributors whose approved translations during the past 12 months meets or exceeds 200.
 - `all_contributors`: Contributors whose combined total of approved translations, rejected translations and pending suggestions during the past 12 months meets or exceeds 200.
