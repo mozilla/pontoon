@@ -21,13 +21,14 @@ from pontoon.base.models import Comment, Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
+    get_llm_string_id,
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
 from pontoon.pretranslation.pretranslate import MTEngine, Pretranslation
 from pontoon.terminology.models import Term
 
-from .openai_service import OpenAIService, get_llm_string_id
+from .openai_service import OpenAIService
 
 
 log = logging.getLogger(__name__)

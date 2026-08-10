@@ -5,29 +5,10 @@ from openai import OpenAI
 from django.conf import settings
 from django.core.cache import cache
 
-from pontoon.base.models import Entity, Resource
 from pontoon.machinery.utils import (
     get_machinery_service_cache_key,
     set_machinery_service_cache_key,
 )
-
-
-def get_llm_string_id(entity: Entity) -> str | None:
-    """
-    String identifier to pass to the LLM prompt as additional context,
-    or None if the entity doesn't have a meaningful one.
-    """
-    key = entity.key
-    section_key = entity.section.key if entity.section_id is not None else []
-    # Entity.key is the section key followed by the entry's own id, so drop
-    # the section part.
-    if section_key and key[: len(section_key)] == section_key:
-        key = key[len(section_key) :]
-    if entity.resource.format == Resource.Format.GETTEXT:
-        # For gettext, don't include the msgid as it's the same as source text.
-        # key is (msgid,) or (msgid, msgctxt)
-        key = key[1:]
-    return ".".join(key) or None
 
 
 class OpenAIService:

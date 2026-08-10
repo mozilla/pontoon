@@ -24,7 +24,13 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 from django.db.models.functions import JSONObject
 
-from pontoon.base.models import Locale, Project, ProjectLocale, TranslationMemoryEntry
+from pontoon.base.models import (
+    Entity,
+    Locale,
+    Project,
+    ProjectLocale,
+    TranslationMemoryEntry,
+)
 from pontoon.base.placeables import get_placeables
 from pontoon.base.utils import get_search_phrases
 
@@ -40,6 +46,23 @@ def get_machinery_service_cache_key(service, *parts):
 
 def set_machinery_service_cache_key(key, value):
     cache.set(key, value, settings.MACHINERY_SERVICE_CACHE_TIMEOUT)
+
+
+def get_llm_string_id(entity: Entity) -> str | None:
+    """
+    String identifier to pass to the LLM prompt as additional context,
+    or None if the entity doesn't have a meaningful one.
+    """
+    key = entity.key
+    section_key = entity.section.key if entity.section_id is not None else []
+    # Entity.key is the section key followed by the entry's own id, so drop
+    # the section part.
+    if section_key and key[: len(section_key)] == section_key:
+        key = key[len(section_key) :]
+    # Drop parts that only repeat the source string: e.g. the msgid in gettext,
+    # or ids in XLIFF and XCODE files that are set to the source string.
+    key = [part for part in key if part != entity.string]
+    return ".".join(key) or None
 
 
 def get_google_translate_data(text, locale, format="text", preserve_placeables=False):
