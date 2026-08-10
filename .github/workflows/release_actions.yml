@@ -6,8 +6,9 @@ on:
     branches:
       - automate_releases
   workflow_dispatch:
-
-permissions: {read-all, write-all}
+permissions:
+  contents: write
+  actions: write
 
 jobs:
   release:
