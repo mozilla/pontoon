@@ -18,7 +18,6 @@ export function buildMessageEntry(
   options: {
     escapeHTML: RegExp | null;
     trim: boolean;
-    xliffIsXcode?: boolean;
   } = {
     escapeHTML: null,
     trim: false,
@@ -27,7 +26,7 @@ export function buildMessageEntry(
 ): MessageEntry | null {
   const res = structuredClone(base);
   let format: FormatKey;
-  let xliffIsXcode = options.xliffIsXcode ?? false;
+  let xliffIsXcode = false;
   switch (res.format) {
     case 'gettext':
       format = 'plain';
