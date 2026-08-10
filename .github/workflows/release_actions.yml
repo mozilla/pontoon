@@ -1,12 +1,12 @@
 name: Automated Releases
 on:
   # schedule:
-  #   - cron: "0 5 * * *"
+  #   - cron: "0 6 * * *"
   push:
     branches:
       - automate_releases
   workflow_dispatch:
-# amazing grace
+
 permissions:
   contents: write
 
@@ -19,16 +19,14 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-          # `git tag --points-at` needs deployed commit as a local object.
           fetch-depth: 0
       - name: Fetch deployed revision
         id: revision
         run: |
           # SHA=$(curl -fsS --max-time 10 \
             # https://pontoon.mozilla.org/static/revision.txt | tr -d '[:space:]')
-          SHA=4259c337c9019c0bbd3a89a575adf503420184f6
-          # Also guards the interpolation below: an HTML error page or anything
-          # else unexpected stops here rather than reaching a shell.
+          SHA=4259c337c9019c0bbd3a89a575adf503420184f6 # remove after successful testing :/
+
           if ! printf '%s' "$SHA" | grep -qE '^[0-9a-f]{40}$'; then
             echo "::error::Expected a 40-character commit hash, got: ${SHA:-<empty>}"
             exit 1
@@ -58,7 +56,7 @@ jobs:
           echo "version=v$(date -u +%Y.%m.%d)" >> "$GITHUB_OUTPUT"
       - name: Create GitHub Release
         if: steps.check.outputs.release == 'true'
-        uses: softprops/action-gh-release@v2 # need to change to sha
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           tag_name: "${{ steps.check.outputs.version }}"
           target_commitish: "${{ steps.revision.outputs.sha }}"
