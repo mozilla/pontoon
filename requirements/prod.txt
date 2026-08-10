@@ -980,9 +980,9 @@ markupsafe==2.0.1 \
     # via
     #   -r base.in
     #   jinja2
-moz-l10n[xml]==0.13.0 \
-    --hash=sha256:c194494e48ce1576907c756096186f24dbdd9669d70f6341dddcbed4465a0b3f \
-    --hash=sha256:c90efd78a2940db57da1fa19307e24f21d27ffb6769a42ca8221f0d3f8aae707
+moz-l10n[xml]==0.14.0 \
+    --hash=sha256:451050fe26ad019f610813e9d9b702484fb0257cf84a6a57d3b9f36c3e99d3ff \
+    --hash=sha256:65225e6781b29369b2aaf1e8c47a52e403252a8bc69e7792ce35a2c4f3762576
     # via -r base.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
@@ -1965,3 +1965,6 @@ zensical==0.0.34 \
     --hash=sha256:eb9d880ccb25edba332e1f310b40e65afb0e1072c69530ec02afc6179b33c5ec \
     --hash=sha256:f77cb1152b51ccc5bf0c1055ac06802a6eeeff9cb8b4293919300c0becbd26bd
     # via -r base.in
+
+# The following packages were excluded from the output:
+# setuptools
