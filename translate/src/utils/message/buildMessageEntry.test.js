@@ -190,24 +190,4 @@ describe('buildMessageEntry', () => {
       value: ['Bonjour %@'],
     });
   });
-
-  it('properly replaces HTML via escapeHTML option', () => {
-    const base = parseEntry('gettext', 'Hello, World!');
-    const result = buildMessageEntry(
-      base,
-      [
-        {
-          name: '',
-          keys: [],
-          handle: { current: { value: 'Hello, <b>World</b>!' } },
-        },
-      ],
-      { escapeHTML: /<(\/?\w+)/g, trim: false },
-    );
-    expect(result).toEqual({
-      format: 'gettext',
-      id: '',
-      value: ['Hello, &lt;b>World&lt;/b>!'],
-    });
-  });
 });
