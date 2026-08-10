@@ -25,7 +25,7 @@ jobs:
         run: |
           # SHA=$(curl -fsS --max-time 10 \
             # https://pontoon.mozilla.org/static/revision.txt | tr -d '[:space:]')
-          SHA=4259c337c9019c0bbd3a89a575adf503420184f6 # remove after successful testing :/
+          SHA=bc344f8d1562102ec4b65bcf31bc7545d9e5b288 # remove after successful testing :/
 
           if ! printf '%s' "$SHA" | grep -qE '^[0-9a-f]{40}$'; then
             echo "::error::Expected a 40-character commit hash, got: ${SHA:-<empty>}"
