@@ -256,6 +256,32 @@ def test_send_monthly_health_report_emails(locale_a):
 
 
 @pytest.mark.django_db
+def test_send_monthly_health_report_emails_no_locales(locale_a):
+    subscribed_admin = UserFactory.create(username="admin_subscribed", is_staff=True)
+    subscribed_admin.profile.monthly_health_report = True
+    subscribed_admin.profile.save()
+
+    report = {
+        "locale_rows": [],
+        "month": "June",
+        "year": 2025,
+        "threshold": 2,
+    }
+
+    sent_before = len(mail.outbox)
+    send_monthly_health_report_emails(report)
+    sent = mail.outbox[sent_before:]
+
+    assert [message.to for message in sent] == [[subscribed_admin.contact_email]]
+    assert sent[0].subject == "Monthly locale health report for June 2025"
+    assert "no locales have experienced" in sent[0].body
+    assert full_url("pontoon.insights") in sent[0].body
+
+    assert "Previous CHS" not in sent[0].body
+    assert f"{locale_a.name} ({locale_a.code})" not in sent[0].body
+
+
+@pytest.mark.django_db
 def test_send_inactive_manager_emails(user_a, locale_a):
     managers = defaultdict(set)
 

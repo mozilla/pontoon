@@ -35,9 +35,6 @@ class Command(BaseCommand):
             return
 
         report = get_monthly_health_report()
-        if not report["locale_rows"]:
-            self.stdout.write("No locales crossed the health report threshold.")
-            return
 
         send_monthly_health_report_emails(report)
 

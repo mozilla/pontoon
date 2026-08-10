@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from pontoon.base.templatetags.helpers import full_url
@@ -201,20 +202,6 @@ def test_send_deadline_notifications_excludes_system_users(
     assert tm_user not in recipients
 
 
-@patch(
-    "pontoon.messaging.management.commands.send_monthly_health_report_notifications_and_emails.get_monthly_health_report",
-    return_value={"locale_rows": []},
-)
-@patch("pontoon.messaging.notifications.notify.send")
-@pytest.mark.django_db
-def test_send_monthly_health_report_notifications_skips_empty_report(
-    mock_notify, mock_report, admin
-):
-    """No notification is sent when no locale crossed the threshold."""
-    HealthReportCommand().handle(force=True)
-    assert mock_notify.call_count == 0
-
-
 @patch("pontoon.messaging.notifications.notify.send")
 @pytest.mark.django_db
 def test_send_monthly_health_report_notifications_notifies_admins(
@@ -238,6 +225,24 @@ def test_send_monthly_health_report_notifications_notifies_admins(
     assert f"{report['month']} {report['year']}" in kwargs["description"]
     assert f"{locale_a.name} ({locale_a.code})" in kwargs["description"]
     assert full_url("pontoon.teams.team", locale_a.code) in kwargs["description"]
+
+
+@pytest.mark.django_db
+def test_monthly_health_report_notification_no_locales(locale_a):
+    """No locales crossed the threshold for notification."""
+    report = health_report(locale_a)
+    report["locale_rows"] = []
+
+    description = render_to_string(
+        "messaging/notifications/monthly_health_report.html", report
+    )
+
+    assert "no locales have experienced" in description
+    assert f"{report['month']} {report['year']}" in description
+    assert full_url("pontoon.insights") in description
+
+    assert "Last month CHS" not in description
+    assert f"{locale_a.name} ({locale_a.code})" not in description
 
 
 @patch("pontoon.messaging.notifications.notify.send")

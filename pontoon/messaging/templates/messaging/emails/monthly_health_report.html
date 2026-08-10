@@ -47,41 +47,54 @@
 {% block content %}
   <p>
     The monthly locale health report for {{ month }} {{ year }} is now
-    available. Below are the locales whose Community Health Score (CHS) changed
-    by at least {{ threshold }}% compared to the previous month.
+    available.
   </p>
 
-  <table class="report">
-    <thead>
-      <tr>
-        <th>Locale</th>
-        <th>Previous CHS</th>
-        <th>Current CHS</th>
-        <th>Change</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for locale_row in locale_rows %}
+  {% if locale_rows %}
+    <p>
+      Below are the locales whose Community Health Score (CHS) changed by at
+      least {{ threshold }}% compared to the previous month.
+    </p>
+
+    <table class="report">
+      <thead>
         <tr>
-          <td>
-            <a
-              href="{{ full_url('pontoon.teams.team', locale_row.locale.code) }}"
-              >{{ locale_row.locale.name }} ({{ locale_row.locale.code }})</a
-            >
-          </td>
-          <td>{{ locale_row.previous_chs }}</td>
-          <td>{{ locale_row.current_chs }}</td>
-          <td class="{{ 'positive' if locale_row.delta > 0 else 'negative' }}">
-            {{ locale_row.percentage }}%
-          </td>
+          <th>Locale</th>
+          <th>Previous CHS</th>
+          <th>Current CHS</th>
+          <th>Change</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for locale_row in locale_rows %}
+          <tr>
+            <td>
+              <a
+                href="{{ full_url('pontoon.teams.team', locale_row.locale.code) }}"
+                >{{ locale_row.locale.name }} ({{ locale_row.locale.code }})</a
+              >
+            </td>
+            <td>{{ locale_row.previous_chs }}</td>
+            <td>{{ locale_row.current_chs }}</td>
+            <td
+              class="{{ 'positive' if locale_row.delta > 0 else 'negative' }}"
+            >
+              {{ locale_row.percentage }}%
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
-  <p class="note">
-    Only locales with at least one key project enabled are included.
-  </p>
+    <p class="note">
+      Only locales with at least one key project enabled are included.
+    </p>
+  {% else %}
+    <p>
+      However, it seems no locales have experienced a Community Health Score
+      (CHS) fluctuation of at least {{ threshold }}% compared to last month.
+    </p>
+  {% endif %}
 
   <p>
     You can view the full breakdown, including individual contributor,
