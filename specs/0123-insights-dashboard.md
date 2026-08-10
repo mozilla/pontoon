@@ -23,7 +23,7 @@ On the first day of each month, a scheduled job collects telemetry on the state 
 - `key_projects_enabled`: Number of projects that are classified as key projects via the `is_chs_project` flag.
 - `completion`: Locale completion, expressed as a percentage of **approved strings** + **strings with warnings** out of **total strings**.
 
-The data used is then computed into the following scores based on predetermined thresholds. Finally the scores are summated to a **Community health score** for that locale on that month which is used for measuring locale health.
+The data used is then computed into scores based on predetermined metric thresholds, which are set as environment variables for admin customization. Finally the scores are summated to a **Community health score** for that locale on that month which is used for measuring locale health.
 
 ## Community health score panel
 
