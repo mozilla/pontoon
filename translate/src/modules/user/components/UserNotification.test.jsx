@@ -35,7 +35,7 @@ describe('<UserNotification>', () => {
 
     const element = getByText('foo');
     expect(element).toHaveAttribute('id', 'foo');
-    expect(element.closest('span.description')).toBeInTheDocument();
+    expect(element.closest('div.description')).toBeInTheDocument();
   });
 
   it('shows a "has reviewed suggestions" notification', () => {
@@ -50,7 +50,7 @@ describe('<UserNotification>', () => {
 
     const element = getByText('bar');
     expect(element).toHaveAttribute('id', 'bar');
-    expect(element.closest('span.description')).toBeInTheDocument();
+    expect(element.closest('div.description')).toBeInTheDocument();
   });
 
   it('shows a comment notification', () => {
