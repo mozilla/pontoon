@@ -7,11 +7,13 @@ on:
       - automate_releases
   workflow_dispatch:
 
-permissions:
-  contents: write
+permissions: {read-all, write-all}
 
 jobs:
-  copy:
+  release:
+    # permissions:
+    #   actions: read
+    #   contents: write
     name: New release
     runs-on: ubuntu-latest
     steps:
