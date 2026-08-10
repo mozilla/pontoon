@@ -9,8 +9,7 @@ from django.core.files import File
 from django.utils import timezone
 
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
-from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
-from pontoon.base.models.repository import Repository
+from pontoon.base.models import ChangedEntityLocale, Locale, Project, Repository, User
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.sync.core.checkout import checkout_repos
 from pontoon.sync.core.paths import UploadPaths, find_paths

@@ -121,10 +121,13 @@ class TranslationQuerySet(models.QuerySet["Translation"]):
 
 class Translation(DirtyFieldsMixin, models.Model):
     entity: models.ForeignKey[Entity] = models.ForeignKey(Entity, models.CASCADE)
+    entity_id: int
     locale: models.ForeignKey[Locale] = models.ForeignKey(Locale, models.CASCADE)
+    locale_id: int
     user: models.ForeignKey[User | None] = models.ForeignKey(
         User, models.SET_NULL, null=True, blank=True
     )
+    user_id: int | None
     string = models.TextField()
     value = models.JSONField()
     properties = models.JSONField(null=True, blank=True)
@@ -146,6 +149,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         null=True,
         blank=True,
     )
+    approved_user_id: int | None
     approved_date = models.DateTimeField(null=True, blank=True)
 
     unapproved_user = models.ForeignKey(
@@ -155,6 +159,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         null=True,
         blank=True,
     )
+    unapproved_user_id: int | None
     unapproved_date = models.DateTimeField(null=True, blank=True)
 
     rejected = models.BooleanField(default=False)
@@ -165,6 +170,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         null=True,
         blank=True,
     )
+    rejected_user_id: int | None
     rejected_date = models.DateTimeField(null=True, blank=True)
 
     unrejected_user = models.ForeignKey(
@@ -174,6 +180,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         null=True,
         blank=True,
     )
+    unrejected_user_id: int | None
     unrejected_date = models.DateTimeField(null=True, blank=True)
 
     class MachinerySource(models.TextChoices):

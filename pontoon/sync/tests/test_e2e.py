@@ -33,6 +33,7 @@ from pontoon.test.factories import (
     ProjectLocaleFactory,
     RepositoryFactory,
     ResourceFactory,
+    SectionFactory,
     TranslatedResourceFactory,
     TranslationFactory,
 )
@@ -71,9 +72,11 @@ def test_kitchen_sink():
         ResourceFactory.create(project=project, path="a.ftl", format="fluent")
         ResourceFactory.create(project=project, path="b.po", format="gettext")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
+        section = SectionFactory.create(resource=res_c, key=[])
         for i in range(3):
             entity = EntityFactory.create(
                 resource=res_c,
+                section=section,
                 key=[f"key-{i}"],
                 string=f"key-{i} = Message {i}\n",
             )
