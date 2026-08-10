@@ -21,6 +21,7 @@ from pontoon.base.models import Comment, Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
+    get_llm_string_id,
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
@@ -290,7 +291,7 @@ def gpt_transform(request):
             entity = Entity.objects.select_related("resource", "section").get(
                 pk=entity_pk
             )
-            entity_key = entity.key[0] if entity.key else None
+            entity_key = get_llm_string_id(entity)
             entity_comment = entity.comment or None
             group_comment = (entity.section.comment if entity.section else None) or None
             resource_comment = entity.resource.comment or None
