@@ -129,7 +129,7 @@ class EntityFactory(DjangoModelFactory):
 
     @factory.post_generation
     def parsed_value(entity, create, extracted, **kwargs):
-        if entity.value:
+        if entity.value or entity.properties:
             return
         key, value, properties = parse_source_string_to_json(
             entity.resource.format, entity.string

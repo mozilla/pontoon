@@ -118,12 +118,12 @@ def test_remove_entity():
                     resource=res_c,
                     section=section,
                     key=[f"key-{i}"],
-                    string=f"key-{i} = Message {i}\n",
+                    value=[f"Message {i}"],
                 )
                 TranslationFactory.create(
                     entity=entity,
                     locale=locale,
-                    string=f"key-{i} = Translation {i}\n",
+                    value=[f"Translation {i}"],
                     active=True,
                     approved=True,
                 )
@@ -206,12 +206,12 @@ def test_add_translation():
             resource=res_c,
             section=section,
             key=["key-0"],
-            string="key-0 = Message 0\n",
+            value=["Message 0"],
         )
         TranslationFactory.create(
             entity=ent_0,
             locale=locale,
-            string="key-0 = Translation 0\n",
+            value=["Translation 0"],
             active=True,
             approved=True,
         )
@@ -219,12 +219,12 @@ def test_add_translation():
             resource=res_c,
             section=section,
             key=["key-1"],
-            string="key-1 = Message 1\n",
+            value=["Message 1"],
         )
         TranslationFactory.create(
             entity=ent_1,
             locale=locale,
-            string="key-1 = Translation 1\n",
+            value=["Translation 1"],
             active=True,
             approved=True,
         )
@@ -232,12 +232,14 @@ def test_add_translation():
             resource=res_c,
             section=section,
             key=["key-2"],
-            string="key-2 =\n    .attr = Message 2\n",
+            value=[],
+            properties={"attr": ["Message 2"]},
         )
         TranslationFactory.create(
             entity=ent_2,
             locale=locale,
-            string="key-2 =\n    .attr = Translation 2\n",
+            value=[],
+            properties={"attr": ["Translation 2"]},
             active=True,
             approved=True,
         )
@@ -245,12 +247,13 @@ def test_add_translation():
             resource=res_c,
             section=section,
             key=["-term-3"],
-            string="-term-3 = Term 3\n",
+            value=["Term 3"],
         )
         TranslationFactory.create(
             entity=ent_3,
             locale=locale,
-            string="-term-3 = Translation 3\n    .attr = Term attribute\n",
+            value=["Translation 3"],
+            properties={"attr": ["Term attribute"]},
             active=True,
             approved=True,
         )
@@ -330,12 +333,12 @@ def test_directory_creation_on_translation_update():
         entity = EntityFactory.create(
             resource=res_c,
             key=["key-0"],
-            string="key-0 = Message 0\n",
+            value=["Message 0"],
         )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="key-0 = Translation 0\n",
+            value=["Translation 0"],
             active=True,
             approved=True,
         )

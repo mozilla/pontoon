@@ -9,7 +9,7 @@ from os.path import commonpath, dirname, isfile
 
 from moz.l10n.formats import Format
 from moz.l10n.formats.xliff import xliff_is_xcode
-from moz.l10n.message import message_from_json, parse_message, serialize_message
+from moz.l10n.message import message_from_json, serialize_message
 from moz.l10n.model import (
     CatchallKey,
     Entry,
@@ -22,7 +22,7 @@ from moz.l10n.model import (
     SelectMessage,
 )
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
-from moz.l10n.resource import parse_resource, serialize_resource
+from moz.l10n.resource import serialize_resource
 
 from django.conf import settings
 from django.db.models import Q
@@ -236,8 +236,11 @@ def update_changed_resources(
         )
         res = build_moz_l10n_resource(db_res)
         for locale in locales:
-            lc_scope = f"[{project.slug}:{path}, {locale.code}]"
-            lc_translations = [tx for tx in translations if tx.locale_id == locale.pk]
+            lc_translations = {
+                tuple(tx.entity.key): tx
+                for tx in translations
+                if tx.locale_id == locale.pk
+            }
             target_path = paths.format_target_path(target, locale.code)
             if not lc_translations and not isfile(target_path):
                 continue
@@ -249,12 +252,14 @@ def update_changed_resources(
                     for line in serialize_resource(tr_res, gettext_plurals=lc_plurals):
                         file.write(line)
                 updated_locales.add(locale)
-                for tx in lc_translations:
+                for tx in lc_translations.values():
                     if tx.approved and tx.entity in changed_entities and tx.user:
                         translators[tx.user].add(locale.code)
                 count += 1
             except Exception as error:
-                log.error(f"{lc_scope} Update failed: {error}")
+                log.error(
+                    f"[{project.slug}:{path}, {locale.code}] Update failed: {error}"
+                )
                 continue
     return count, updated_locales, translators
 
@@ -324,60 +329,26 @@ def _entry_from_entity(format: Format, e: Entity) -> Entry[Message]:
 
 
 def build_translated_resource(
-    locale: Locale, translations: list[Translation], res: Resource
-) -> Resource:
+    locale: Locale, translations: dict[Id, Translation], res: Resource[Message]
+) -> Resource[Message]:
     res = deepcopy(res)
-    if res.format == Format.fluent:
-        trans_res = parse_resource(
-            Format.fluent, "".join(tx.string for tx in translations)
-        )
-        trans_entries: dict[Id, Entry | None] = {
-            entry.id: entry
-            for section in trans_res.sections
-            for entry in section.entries
-            if isinstance(entry, Entry)
-        }
-        for section in res.sections:
-            rm: list[Entry] = []
-            for entry in section.entries:
-                if isinstance(entry, Entry):
-                    te = trans_entries.get(entry.id, None)
-                    if te is None:
+    for section in res.sections:
+        rm = []
+        for entry in section.entries:
+            assert isinstance(entry, Entry)
+            tx = translations.get(section.id + entry.id, None)
+            if tx is not None:
+                _set_translation(res.format, entry, tx)
+            else:
+                match res.format:
+                    case Format.gettext if isinstance(entry.value, SelectMessage):
+                        entry.value.variants = {(CatchallKey(),): []}
+                    case Format.gettext | Format.xliff:
+                        entry.value = PatternMessage([])
+                    case _:
                         rm.append(entry)
-                    else:
-                        entry.value = te.value
-                        entry.properties = (
-                            te.properties
-                            if entry.id[0].startswith("-")
-                            else {
-                                name: tp
-                                for name, tp in te.properties.items()
-                                if name in entry.properties
-                            }
-                        )
-            if rm:
-                section.entries = [e for e in section.entries if e not in rm]
-    else:
-        # The iOS locale remapping is a hacky workaround for Xcode projects only,
-        # so don't apply it to other XLIFF projects.
-        is_xcode = res.format == Format.xliff and xliff_is_xcode(res)
-        for section in res.sections:
-            if (
-                res.format == Format.xliff
-                and section.get_meta("@source-language") is not None
-            ):
-                lc = str(locale.code)
-                if is_xcode and lc in ios_locale_map:
-                    lc = ios_locale_map[lc]
-                section.set_meta("@target-language", lc)
-
-            rm = []
-            for entry in section.entries:
-                if isinstance(entry, Entry):
-                    if not _set_translation(translations, res.format, section, entry):
-                        rm.append(entry)
-            if rm and res.format not in (Format.gettext, Format.xliff):
-                section.entries = [e for e in section.entries if e not in rm]
+        if rm:
+            section.entries = [e for e in section.entries if e not in rm]
 
     match res.format:
         case Format.gettext:
@@ -392,8 +363,15 @@ def build_translated_resource(
                 for key, value in header.items()
                 if key not in gettext_trim_headers
             ]
+
         case Format.xliff:
-            pass
+            lc = str(locale.code)
+            if xliff_is_xcode(res):
+                lc = ios_locale_map.get(lc, lc)
+            for section in res.sections:
+                if section.get_meta("@source-language") is not None:
+                    section.set_meta("@target-language", lc)
+
         case _:
             res.sections = [
                 section
@@ -403,27 +381,22 @@ def build_translated_resource(
     return res
 
 
-def _set_translation(
-    translations: list[Translation],
-    format: Format | None,
-    section: Section,
-    entry: Entry,
-) -> bool:
-    key = list(section.id + entry.id)
-    tx = next((tx for tx in translations if tx.entity.key == key), None)
-    if tx is None:
-        if format == Format.gettext:
-            if isinstance(entry.value, SelectMessage):
-                entry.value.variants = {(CatchallKey(),): []}
-            else:
-                entry.value = PatternMessage([])
-            return True
-        else:
-            return False
-
+def _set_translation(format: Format | None, entry: Entry, tx: Translation) -> None:
     match format:
+        case Format.fluent:
+            entry.value = message_from_json(tx.value)
+            is_term = entry.id[0].startswith("-")
+            entry.properties = (
+                {
+                    name: message_from_json(pv)
+                    for name, pv in tx.properties.items()
+                    if is_term or name in entry.properties
+                }
+                if tx.properties
+                else {}
+            )
         case Format.android | Format.gettext | Format.webext | Format.xliff:
-            msg = parse_message(Format.mf2, tx.string)
+            msg = message_from_json(tx.value)
             if isinstance(entry.value, SelectMessage):
                 entry.value.variants = (
                     {(CatchallKey(),): msg.pattern}
@@ -443,6 +416,4 @@ def _set_translation(
                     entry.meta = [m for m in entry.meta if m != fuzzy_flag]
 
         case _:
-            entry.value = tx.string
-
-    return True
+            entry.value = message_from_json(tx.value)
