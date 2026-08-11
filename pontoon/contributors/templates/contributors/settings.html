@@ -111,7 +111,7 @@
             help="Get an email summary of your personal activity and the activity within your teams in the last month.")
           }}
 
-          {% if user.is_superuser %}
+          {% if user.is_staff %}
             {{
               Checkbox.checkbox(
               'Monthly health report',
