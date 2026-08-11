@@ -1,0 +1,73 @@
+name: Automated Releases
+on:
+  # schedule:
+  #   - cron: "0 6 * * *" european evening 23:00 UTC
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: read
+  actions: write
+
+jobs:
+  release:
+    name: New release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Fetch deployed revision
+        id: revision
+        run: |
+          # SHA=$(curl -fsS --max-time 10 \
+            # https://pontoon.mozilla.org/static/revision.txt | tr -d '[:space:]')
+          SHA=d3d770ee0c2e79530c097fafa59b3cffeda99cb6 # remove after successful testing :/
+
+          if ! printf '%s' "$SHA" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::Expected a 40-character commit hash, got: ${SHA:-<empty>}"
+            exit 1
+          fi
+
+          echo "Deployed revision: $SHA"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+      - name: Check for an existing release tag
+        id: check
+        env:
+          SHA: ${{ steps.revision.outputs.sha }}
+        run: |
+          if ! git cat-file -e "${SHA}^{commit}" 2>/dev/null; then
+            echo "::error::Commit $SHA is not in this repository."
+            exit 1
+          fi
+
+          COMMIT_EXISTS=$(git tag --points-at "$SHA" | grep '^v202' || true)
+
+          if [ -n "$COMMIT_EXISTS" ]; then
+            echo "Already released as ${COMMIT_EXISTS}."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          VERSION="v$(date -u +%Y.%m.%d)"
+
+          if [ -n "$(git tag -l "$VERSION")" ]; then
+            echo "::error::Tag $VERSION already exists. Delete it or this deploy must wait for tomorrow's date."
+            exit 1
+          fi
+
+          echo "release=true" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Create GitHub Release
+        if: steps.check.outputs.release == 'true'
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        with:
+          tag_name: "${{ steps.check.outputs.version }}"
+          target_commitish: "${{ steps.revision.outputs.sha }}"
+          name: "Release ${{ steps.check.outputs.version }}"
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
