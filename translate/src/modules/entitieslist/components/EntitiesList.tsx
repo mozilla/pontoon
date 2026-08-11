@@ -167,6 +167,9 @@ export function EntitiesList(): React.ReactElement<'div'> {
    *
    * Exception: a `string` that is valid and viewable but doesn't match the
    * current query is handled by the "string not found" page
+   *
+   * A stale list (query params just changed, so is about to be reset) is
+   * skipped, else would drag old `string` into new URL. See #4371.
    */
   useEffect(() => {
     if (entitiesAreStale) {
