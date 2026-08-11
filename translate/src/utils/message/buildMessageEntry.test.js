@@ -190,4 +190,41 @@ describe('buildMessageEntry', () => {
       value: ['Bonjour %@'],
     });
   });
+
+  it('properly replaces HTML via escapeHTML option', () => {
+    let base = parseEntry('xliff', 'Hello, World!');
+    const testValue = 'Hello, <b>World</b>!';
+    const fields = [
+      { name: '', keys: [], handle: { current: { value: testValue } } },
+    ];
+    let unescaped = [
+      'Hello, ',
+      { open: 'b', opt: undefined },
+      'World',
+      { close: 'b' },
+      '!',
+    ];
+
+    let result = buildMessageEntry(base, fields, { escapeHTML: /<(\/?b)/g });
+    expect(result).toEqual({ format: 'xliff', id: '', value: [testValue] });
+    result = buildMessageEntry(base, fields);
+    expect(result).toEqual({ format: 'xliff', id: '', value: unescaped });
+
+    base = parseEntry('android', 'Hello, World!');
+    result = buildMessageEntry(base, fields, { escapeHTML: /<(\/?b)/g });
+    expect(result).toEqual({
+      format: 'android',
+      id: '',
+      value: [
+        'Hello, ',
+        { _: '<b>', fn: 'html' },
+        'World',
+        { _: '</b>', fn: 'html' },
+        '!',
+      ],
+    });
+
+    result = buildMessageEntry(base, fields);
+    expect(result).toEqual({ format: 'android', id: '', value: unescaped });
+  });
 });
