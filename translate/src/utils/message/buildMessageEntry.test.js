@@ -191,27 +191,37 @@ describe('buildMessageEntry', () => {
     });
   });
 
-  it('properly replaces HTML via escapeHTML option', () => {
-    let base = parseEntry('xliff', 'Hello, World!');
-    const testValue = 'Hello, <b>World</b>!';
-    const fields = [
-      { name: '', keys: [], handle: { current: { value: testValue } } },
-    ];
-    let unescaped = [
-      'Hello, ',
-      { open: 'b', opt: undefined },
-      'World',
-      { close: 'b' },
-      '!',
-    ];
+  it('properly replaces HTML in xliff via escapeHTML option', () => {
+    const result = buildMessageEntry(
+      parseEntry('xliff', 'Hello, World!'),
+      [
+        {
+          name: '',
+          keys: [],
+          handle: { current: { value: 'Hello, <b>World</b>!' } },
+        },
+      ],
+      { escapeHTML: /<(\/?b)/g },
+    );
+    expect(result).toEqual({
+      format: 'xliff',
+      id: '',
+      value: ['Hello, <b>World</b>!'],
+    });
+  });
 
-    let result = buildMessageEntry(base, fields, { escapeHTML: /<(\/?b)/g });
-    expect(result).toEqual({ format: 'xliff', id: '', value: [testValue] });
-    result = buildMessageEntry(base, fields);
-    expect(result).toEqual({ format: 'xliff', id: '', value: unescaped });
-
-    base = parseEntry('android', 'Hello, World!');
-    result = buildMessageEntry(base, fields, { escapeHTML: /<(\/?b)/g });
+  it('properly replaces HTML in android via escapeHTML option', () => {
+    const result = buildMessageEntry(
+      parseEntry('android', 'Hello, World!'),
+      [
+        {
+          name: '',
+          keys: [],
+          handle: { current: { value: 'Hello, <b>World</b>!' } },
+        },
+      ],
+      { escapeHTML: /<(\/?b)/g },
+    );
     expect(result).toEqual({
       format: 'android',
       id: '',
@@ -223,8 +233,29 @@ describe('buildMessageEntry', () => {
         '!',
       ],
     });
-
-    result = buildMessageEntry(base, fields);
-    expect(result).toEqual({ format: 'android', id: '', value: unescaped });
   });
+
+  it.each(['xliff', 'android'])(
+    'replaces HTML in %s without escapeHTML option',
+    (format) => {
+      const result = buildMessageEntry(parseEntry(format, 'Hello, World!'), [
+        {
+          name: '',
+          keys: [],
+          handle: { current: { value: 'Hello, <b>World</b>!' } },
+        },
+      ]);
+      expect(result).toEqual({
+        format: format,
+        id: '',
+        value: [
+          'Hello, ',
+          { open: 'b', opt: undefined },
+          'World',
+          { close: 'b' },
+          '!',
+        ],
+      });
+    },
+  );
 });
