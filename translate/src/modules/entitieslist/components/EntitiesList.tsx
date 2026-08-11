@@ -239,23 +239,13 @@ export function EntitiesList(): React.ReactElement<'div'> {
   //  * I haven't been able to figure out how to test this feature. It
   //    is possible that going for another possible solutions will make
   //    testing easier, which would be very desirable.
+  //
+  // `listKey` holds all of these parameters, explicitly not selected entity
   useEffect(() => {
     if (mounted.current) {
       dispatch(resetEntities());
     }
-  }, [
-    dispatch,
-    // Note: location.entity is explicitly not included here
-    location.locale,
-    location.project,
-    location.resource,
-    location.search,
-    location.status,
-    location.extra,
-    location.tag,
-    location.author,
-    location.time,
-  ]);
+  }, [dispatch, listKey]);
 
   const scrollToSelected = useCallback(() => {
     if (!mounted.current) {

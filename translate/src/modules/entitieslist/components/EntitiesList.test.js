@@ -13,7 +13,7 @@ import {
 
 import { EntitiesList } from './EntitiesList';
 import { expect, vi } from 'vitest';
-import { fireEvent } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 
 // Entities shared between tests
 const ENTITIES = [
@@ -25,6 +25,14 @@ describe('<EntitiesList>', () => {
   let mockLogUXAction;
 
   beforeAll(() => {
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+      },
+    );
     vi.spyOn(BatchActions, 'resetSelection').mockReturnValue({
       type: 'whatever',
     });
@@ -50,6 +58,7 @@ describe('<EntitiesList>', () => {
 
   afterAll(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
   // FIXME: https://github.com/mozilla/pontoon/issues/3883
   it.skip('shows a loading animation when there are more entities to load', () => {
@@ -154,6 +163,33 @@ describe('<EntitiesList>', () => {
         'REPLACE',
       ],
     ]);
+  });
+
+  it('does not redirect to a stale entity when the entity list changes', () => {
+    const history = createMemoryHistory({
+      initialEntries: ['/kg/firefox/all-resources/?string=2'],
+    });
+
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
+
+    mountComponentWithStore(EntitiesList, store, {}, history);
+
+    const spy = vi.fn();
+    history.listen(spy);
+
+    act(() => {
+      history.push('/kg/firefox/all-resources/?status=missing');
+    });
+
+    const redirected = spy.mock.calls.some(
+      ([, action]) => action === 'REPLACE',
+    );
+    expect(redirected).toBe(false);
   });
 
   it('toggles entity for batch editing', () => {
