@@ -178,4 +178,16 @@ describe('buildMessageEntry', () => {
       value: ['Bonjour Monde'],
     });
   });
+
+  it('updates standard xliff entry without Xcode printf variables', () => {
+    const base = parseEntry('xliff', 'Hello %@');
+    const result = buildMessageEntry(base, [
+      { name: '', keys: [], handle: { current: { value: 'Bonjour %@' } } },
+    ]);
+    expect(result).toEqual({
+      format: 'xliff',
+      id: '',
+      value: ['Bonjour %@'],
+    });
+  });
 });
