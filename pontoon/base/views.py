@@ -20,7 +20,6 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseForbidden,
-    HttpResponseRedirect,
     JsonResponse,
     StreamingHttpResponse,
 )
@@ -1008,9 +1007,12 @@ def perform_checks(request):
 
 @transaction.atomic
 def download_translations(request):
-    """Download translated resource from its backing repository."""
+    """Download translated resource."""
 
-    from pontoon.sync.utils import translations_target_url
+    from io import BytesIO
+    from zipfile import ZIP_DEFLATED, ZipFile
+
+    from pontoon.sync.utils import serialize_translated_resource
 
     try:
         slug = request.GET["slug"]
@@ -1020,16 +1022,21 @@ def download_translations(request):
         raise Http404
 
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
+    resource = get_object_or_404(Resource, project=project, path=res_path)
     locale = get_object_or_404(Locale, code=code)
 
-    # FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
-    # Once fixed, we should remove SSH credentials from the web pod
-    # https://github.com/mozilla/webservices-infra/pull/9295
-    url = translations_target_url(project, locale, res_path)
-    if url and url.startswith("https://"):
-        return HttpResponseRedirect(url)
-    else:
-        raise Http404
+    filename = re.sub(r"[/\\]", "_", f"{locale.code}_{slug}_{res_path}")
+    bytes_io = BytesIO()
+    zipfile = ZipFile(bytes_io, "w", compression=ZIP_DEFLATED)
+    zipfile.writestr(filename, serialize_translated_resource(resource, locale))
+    zipfile.close()
+
+    response = HttpResponse()
+    response.content = bytes_io.getvalue()
+    response["Content-Type"] = "application/zip"
+    zip_name = re.sub(r"[^.]+$", "zip", filename)
+    response["Content-Disposition"] = f"attachment; filename={zip_name}"
+    return response
 
 
 @login_required(redirect_field_name="", login_url="/403")

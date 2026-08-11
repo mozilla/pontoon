@@ -1,88 +1,143 @@
-from os import makedirs
-from tempfile import TemporaryDirectory
-from unittest.mock import patch
+from io import BytesIO
+from textwrap import dedent
+from zipfile import ZipFile
 
 import pytest
 
-from django.conf import settings
 from django.test import RequestFactory
 
-from pontoon.base.models import Project, Resource
+from pontoon.base.models import Project
 from pontoon.base.views import download_translations
-from pontoon.sync.tests.test_checkouts import MockVersionControl
-from pontoon.sync.tests.utils import build_file_tree
 from pontoon.test.factories import (
+    EntityFactory,
     LocaleFactory,
     ProjectFactory,
-    RepositoryFactory,
     ResourceFactory,
+    SectionFactory,
     TranslatedResourceFactory,
+    TranslationFactory,
     UserFactory,
 )
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("two_repos", [True, False])
-@pytest.mark.parametrize(
-    "repo_url,expected_location",
-    [
-        (
-            "https://github.com:gh-org/gh-repo.git",
-            "https://raw.githubusercontent.com/gh-org/gh-repo/HEAD/de-Test/a.ftl",
-        ),
-        (
-            "git@gitlab.com:gl-org/gl-repo.git",
-            "https://gitlab.com/gl-org/gl-repo/-/raw/HEAD/de-Test/a.ftl?inline=false",
-        ),
-        ("http://example.com/tgt-repo", "https://example.com/tgt-repo"),
-    ],
-)
-def test_download(two_repos, repo_url, expected_location):
-    with (
-        TemporaryDirectory() as root,
-        patch("pontoon.sync.core.checkout.get_repo", return_value=MockVersionControl()),
-    ):
-        settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="de-Test")
-        if two_repos:
-            repo_src = RepositoryFactory(
-                url="http://example.com/src-repo", source_repo=True
-            )
-            repo_tgt = RepositoryFactory(url=repo_url)
-            project = ProjectFactory.create(
-                name="test-dl",
-                locales=[locale],
-                repositories=[repo_src, repo_tgt],
-                visibility=Project.Visibility.PUBLIC,
-            )
-            src_root = repo_src.checkout_path
-            tgt_root = repo_tgt.checkout_path
-            makedirs(src_root)
-            build_file_tree(src_root, {"en-US": {"a.ftl": ""}})
-            makedirs(tgt_root)
-            build_file_tree(tgt_root, {"de-Test": {"a.ftl": ""}})
-        else:
-            repo = RepositoryFactory(url=repo_url)
-            project = ProjectFactory.create(
-                name="test-dl",
-                locales=[locale],
-                repositories=[repo],
-                visibility=Project.Visibility.PUBLIC,
-            )
-            repo_root = repo.checkout_path
-            makedirs(repo_root)
-            build_file_tree(
-                repo_root, {"en-US": {"a.ftl": ""}, "de-Test": {"a.ftl": ""}}
-            )
-        res = ResourceFactory.create(
-            project=project, path="a.ftl", format=Resource.Format.FLUENT
-        )
-        TranslatedResourceFactory.create(locale=locale, resource=res)
+def test_download_fluent():
+    locale = LocaleFactory.create(code="de-Test")
+    project = ProjectFactory.create(
+        name="test-dl",
+        locales=[locale],
+        visibility=Project.Visibility.PUBLIC,
+    )
+    res = ResourceFactory.create(
+        project=project, format="fluent", path="path/to/file.ftl"
+    )
+    TranslatedResourceFactory.create(locale=locale, resource=res)
+    section = SectionFactory.create(resource=res, key=[], comment="Group")
+    e1 = EntityFactory.create(resource=res, section=section, key=["e1"], value=["E1"])
+    e2 = EntityFactory.create(
+        resource=res,
+        section=section,
+        key=["e2"],
+        value=[],
+        properties={"attr": ["E2"]},
+    )
+    EntityFactory.create(resource=res, section=section, key=["e3"], value=["E3"])
+    TranslationFactory.create(
+        locale=locale, entity=e1, value=["T1"], active=True, approved=True
+    )
+    TranslationFactory.create(
+        locale=locale,
+        entity=e2,
+        value=[],
+        properties={"attr": ["T2"]},
+        active=True,
+        approved=True,
+    )
 
-        request = RequestFactory().get(
-            "/translations/?code=de-Test&slug=test-dl&part=a.ftl"
-        )
-        request.user = UserFactory()
-        response = download_translations(request)
-        assert response.status_code == 302
-        assert response.get("Location") == expected_location
+    request = RequestFactory().get(
+        "/translations/?code=de-Test&slug=test-dl&part=path/to/file.ftl"
+    )
+    request.user = UserFactory()
+    response = download_translations(request)
+    assert response.status_code == 200
+    assert response["Content-Type"] == "application/zip"
+    assert (
+        response["Content-Disposition"]
+        == "attachment; filename=de-Test_test-dl_path_to_file.zip"
+    )
+    bytes_io = BytesIO(response.content)
+    with ZipFile(bytes_io, "r") as zipfile:
+        assert zipfile.namelist() == ["de-Test_test-dl_path_to_file.ftl"]
+        raw = zipfile.read("de-Test_test-dl_path_to_file.ftl")
+    assert raw.decode("utf-8") == dedent("""\
+        ## Group
+
+        e1 = T1
+        e2 =
+            .attr = T2
+        """)
+
+
+@pytest.mark.django_db
+def test_download_xliff():
+    locale = LocaleFactory.create(code="de-Test")
+    project = ProjectFactory.create(
+        name="test-dlx",
+        locales=[locale],
+        visibility=Project.Visibility.PUBLIC,
+    )
+    res = ResourceFactory.create(project=project, format="xliff", path="file.xlf")
+    TranslatedResourceFactory.create(locale=locale, resource=res)
+    section = SectionFactory.create(resource=res, key=["file.foo"], comment="Group")
+    e1 = EntityFactory.create(
+        resource=res, section=section, key=["file.foo", "e1"], value=["E1"]
+    )
+    e2 = EntityFactory.create(
+        resource=res, section=section, key=["file.foo", "e2"], value=["E2"]
+    )
+    EntityFactory.create(
+        resource=res, section=section, key=["file.foo", "e3"], value=["E3"]
+    )
+    TranslationFactory.create(
+        locale=locale, entity=e1, value=["T1"], active=True, approved=True
+    )
+    TranslationFactory.create(
+        locale=locale, entity=e2, value=["T2"], active=True, approved=True
+    )
+
+    request = RequestFactory().get(
+        "/translations/?code=de-Test&slug=test-dlx&part=file.xlf"
+    )
+    request.user = UserFactory()
+    response = download_translations(request)
+    assert response.status_code == 200
+    assert response["Content-Type"] == "application/zip"
+    assert (
+        response["Content-Disposition"]
+        == "attachment; filename=de-Test_test-dlx_file.zip"
+    )
+    bytes_io = BytesIO(response.content)
+    with ZipFile(bytes_io, "r") as zipfile:
+        assert zipfile.namelist() == ["de-Test_test-dlx_file.xlf"]
+        raw = zipfile.read("de-Test_test-dlx_file.xlf")
+    assert raw.decode("utf-8") == dedent("""\
+        <?xml version="1.0" encoding="utf-8"?>
+        <xliff>
+          <file original="file.foo">
+            <!-- Group -->
+            <body>
+              <trans-unit id="e1">
+                <source>E1</source>
+                <target>T1</target>
+              </trans-unit>
+              <trans-unit id="e2">
+                <source>E2</source>
+                <target>T2</target>
+              </trans-unit>
+              <trans-unit id="e3">
+                <source>E3</source>
+              </trans-unit>
+            </body>
+          </file>
+        </xliff>
+        """)

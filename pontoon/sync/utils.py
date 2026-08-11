@@ -1,82 +1,53 @@
-import re
-
-from io import BytesIO
-from os.path import basename, exists, join, relpath
+from os.path import basename, join
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile
+
+from moz.l10n.resource import serialize_resource
 
 from django.core.files import File
+from django.db.models import Q
 from django.utils import timezone
 
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
-from pontoon.base.models import ChangedEntityLocale, Locale, Project, Repository, User
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    Locale,
+    Project,
+    Resource as DbResource,
+    Translation,
+    User,
+)
 from pontoon.messaging.notifications import send_badge_notification
-from pontoon.sync.core.checkout import checkout_repos
-from pontoon.sync.core.paths import UploadPaths, find_paths
+from pontoon.sync.core.paths import UploadPaths
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import find_db_updates, write_db_updates
-from pontoon.sync.core.translations_to_repo import update_changed_resources
+from pontoon.sync.core.translations_to_repo import (
+    build_moz_l10n_resource,
+    build_translated_resource,
+)
 
 
-# FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
-# Once fixed, we should remove SSH credentials from the web pod
-# https://github.com/mozilla/webservices-infra/pull/9295
-def translations_target_url(
-    project: Project, locale: Locale, resource_path: str
-) -> str | None:
-    """The target repository URL for a resource, for direct download."""
+def serialize_translated_resource(db_res: DbResource, locale: Locale) -> str:
+    res = build_moz_l10n_resource(db_res)
+    translations = {
+        tuple(tx.entity.key): tx
+        for tx in Translation.objects.filter(
+            entity__obsolete=False,
+            entity__resource=db_res,
+            locale=locale,
+            active=True,
+        )
+        .filter(
+            Q(approved=True)
+            | Q(pretranslated=True, warnings__isnull=True)
+            | Q(fuzzy=True)
+        )
+        .select_related("entity")
+        .iterator()
+    }
+    tr_res = build_translated_resource(locale, translations, res)
 
-    if project.repositories.count() > 1:
-        # HACK: Let's assume that no config is used, and the target repo root is the right base.
-        target_repo: Repository = project.repositories.get(source_repo=False)
-        rel_path = f"{locale.code}/{resource_path}"
-    else:
-        checkouts = checkout_repos(project, shallow=True)
-        target_repo = checkouts.target.repo
-        paths = find_paths(project, checkouts)
-        target, _ = paths.target(resource_path)
-        if not target:
-            return None
-        abs_path = paths.format_target_path(target, locale.code)
-        rel_path = relpath(abs_path, checkouts.target.path).replace("\\", "/")
-
-    github = re.search(r"\bgithub\.com[:/]([^/]+)/([^/]+)\.git$", target_repo.url)
-    if github:
-        org, repo = github.groups()
-        ref = f"refs/heads/{target_repo.branch}" if target_repo.branch else "HEAD"
-        return f"https://raw.githubusercontent.com/{org}/{repo}/{ref}/{rel_path}"
-
-    gitlab = re.search(r"gitlab\.com[:/]([^/]+)/([^/]+)\.git$", target_repo.url)
-    if gitlab:
-        org, repo = gitlab.groups()
-        ref = target_repo.branch or "HEAD"
-        return f"https://gitlab.com/{org}/{repo}/-/raw/{ref}/{rel_path}?inline=false"
-
-    # Default to bare repo link
-    return re.sub(r"^.*?(://|@)", "https://", target_repo.url, count=1)
-
-
-# FIXME Currently not in use, to be refactored for proper download support
-def download_translations_zip(
-    project: Project, locale: Locale
-) -> tuple[bytes, str] | tuple[None, None]:
-    checkouts = checkout_repos(project, shallow=True)
-    paths = find_paths(project, checkouts)
-    db_changes = ChangedEntityLocale.objects.filter(
-        entity__resource__project=project, locale=locale
-    ).select_related("entity__resource", "locale")
-    update_changed_resources(project, paths, {}, [], db_changes, set(), timezone.now())
-
-    bytes_io = BytesIO()
-    zipfile = ZipFile(bytes_io, "w")
-    for _, tgt_path in paths.all():
-        filename = paths.format_target_path(tgt_path, locale.code)
-        if exists(filename):
-            arcname = relpath(filename, checkouts.target.path)
-            zipfile.write(filename, arcname)
-    zipfile.close()
-
-    return bytes_io.getvalue(), f"{project.slug}.zip"
+    lc_plurals = locale.cldr_plurals_list()
+    return "".join(serialize_resource(tr_res, gettext_plurals=lc_plurals))
 
 
 def import_uploaded_file(
