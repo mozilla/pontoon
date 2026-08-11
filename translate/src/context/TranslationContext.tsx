@@ -53,7 +53,7 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
 
     const machineryTranslations = await fetchGPTTransform(
       mt.original,
-      mt.translation,
+      [{ source: mt.sources[0], text: mt.translation }],
       characteristic,
       localeCode,
       entityPk,

@@ -216,23 +216,35 @@ export async function fetchGoogleTranslation(
 }
 
 /**
+ * An existing translation passed to the LLM as reference.
+ *
+ * Sent as a list so that references can be dropped entirely, or extended
+ * with other Machinery results, without changing the request shape.
+ */
+export type LLMReference = {
+  source: SourceType;
+  text: string;
+};
+
+/**
  * Return refined translation by GPT.
  */
-
 export async function fetchGPTTransform(
   englishText: string,
-  translatedText: string,
+  references: LLMReference[],
   characteristic: string,
   localeCode: string,
   entityPk?: number,
+  trigger: 'auto' | 'manual' = 'manual',
 ): Promise<MachineryTranslation[]> {
   const url = '/gpt-transform/';
   const payload = new URLSearchParams({
     csrfmiddlewaretoken: getCSRFToken(),
     english_text: englishText,
-    translated_text: translatedText,
+    references: JSON.stringify(references),
     characteristic: characteristic,
     locale: localeCode,
+    trigger: trigger,
   });
   if (entityPk !== undefined) {
     payload.append('entity_pk', String(entityPk));

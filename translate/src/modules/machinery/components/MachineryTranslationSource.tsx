@@ -7,6 +7,7 @@ import type {
 } from '~/api/machinery';
 
 import { GoogleTranslation } from './source/GoogleTranslation';
+import { LLMTranslation } from './source/LLMTranslation';
 import { MicrosoftTranslation } from './source/MicrosoftTranslation';
 import { MicrosoftTerminology } from './source/MicrosoftTerminology';
 import { CaighdeanTranslation } from './source/CaighdeanTranslation';
@@ -63,6 +64,9 @@ export function MachineryTranslationSource({
             />
           ),
         );
+        break;
+      case 'gpt-transform':
+        sources.push(<LLMTranslation key={source} />);
         break;
       case 'microsoft-translator':
         sources.push(<MicrosoftTranslation key={source} />);

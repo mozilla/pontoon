@@ -296,7 +296,7 @@ def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
 
         params = {
             "english_text": "Hello",
-            "translated_text": "Hola",
+            "references": json.dumps([{"source": "google-translate", "text": "Hola"}]),
             "characteristic": "formal",
             "locale": locale_a.code,
         }
@@ -357,7 +357,9 @@ def test_view_gpt_transform_context(member, locale_a, openai_api_key):
             url,
             {
                 "english_text": "Open browser",
-                "translated_text": "Ouvrir le navigateur",
+                "references": json.dumps(
+                    [{"source": "google-translate", "text": "Ouvrir le navigateur"}]
+                ),
                 "characteristic": "formal",
                 "locale": locale_a.code,
                 "entity_pk": entity.pk,
@@ -417,7 +419,9 @@ def test_view_gpt_transform_string_id(
             url,
             {
                 "english_text": "Open browser",
-                "translated_text": "Ouvrir le navigateur",
+                "references": json.dumps(
+                    [{"source": "google-translate", "text": "Ouvrir le navigateur"}]
+                ),
                 "characteristic": "formal",
                 "locale": locale_a.code,
                 "entity_pk": entity.pk,
@@ -433,6 +437,202 @@ def test_view_gpt_transform_string_id(
     else:
         assert expected in user_message
         assert "STRING ID:" in system_message
+
+
+def _gpt_params(locale, **kwargs):
+    params = {
+        "english_text": "Hello",
+        "references": json.dumps([{"source": "google-translate", "text": "Hola"}]),
+        "characteristic": "rephrased",
+        "locale": locale.code,
+    }
+    params.update(kwargs)
+    return params
+
+
+@pytest.mark.django_db
+def test_view_gpt_transform_auto_requires_enabled_locale(
+    member, locale_a, openai_api_key, settings
+):
+    """An automatic request for a locale it is not enabled for is refused, so
+    that spend stays bounded by the locales it was enabled for."""
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+    settings.OPENAI_AUTO_SUGGESTION_LOCALES = ["some-other-locale"]
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        response = member.client.post(url, _gpt_params(locale_a, trigger="auto"))
+
+        assert response.status_code == 403
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 0
+
+
+@pytest.mark.django_db
+def test_view_gpt_transform_auto_allowed_for_enabled_locale(
+    member, locale_a, openai_api_key, settings
+):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+    settings.OPENAI_AUTO_SUGGESTION_LOCALES = [locale_a.code]
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "rephrased"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        response = member.client.post(url, _gpt_params(locale_a, trigger="auto"))
+
+        assert response.status_code == 200
+        assert json.loads(response.content) == {"translation": "rephrased"}
+
+
+@pytest.mark.django_db
+def test_view_gpt_transform_manual_ignores_enabled_locales(
+    member, locale_a, openai_api_key, settings
+):
+    """The AI dropdown keeps working everywhere; only automatic requests are
+    restricted by locale."""
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+    settings.OPENAI_AUTO_SUGGESTION_LOCALES = []
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "formal"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        response = member.client.post(
+            url, _gpt_params(locale_a, characteristic="formal")
+        )
+
+        assert response.status_code == 200
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "references",
+    ['{"source": "x"}', "[{}]", '[{"source": "x"}]', '[{"text": 1}]', "not json"],
+)
+def test_view_gpt_transform_invalid_references(
+    member, locale_a, openai_api_key, references
+):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        response = member.client.post(url, _gpt_params(locale_a, references=references))
+
+        assert response.status_code == 400
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 0
+
+
+@pytest.mark.django_db
+def test_view_gpt_transform_single_reference_prompt_unchanged(
+    member, locale_a, openai_api_key
+):
+    """Automatic suggestions deliberately reuse today's prompt, so refining a
+    single machine translation must keep producing the wording it always has."""
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(url, _gpt_params(locale_a))
+
+    call_args = MockOpenAI.return_value.chat.completions.create.call_args
+    system_message = call_args.kwargs["messages"][0]["content"]
+    assert system_message.startswith(
+        f"You are an expert {locale_a.name} ({locale_a.code}) localization specialist.\n"
+        "\n"
+        f"Your task: produce a rephrased {locale_a.name} ({locale_a.code}) translation of a UI string.\n"
+        "Use the provided machine translation as a reference, but you are not bound "
+        "by it — rewrite freely to achieve the best result.\n"
+    )
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "references, expected, unexpected",
+    [
+        (
+            [{"source": "google-translate", "text": "Hola"}],
+            "MACHINE TRANSLATION (for reference):\nHola",
+            "EXISTING SUGGESTIONS",
+        ),
+        (
+            [
+                {"source": "google-translate", "text": "Hola"},
+                {"source": "translation-memory", "text": "Buenos días"},
+            ],
+            "EXISTING SUGGESTIONS (for reference):\n"
+            "- google-translate: Hola\n"
+            "- translation-memory: Buenos días",
+            "MACHINE TRANSLATION",
+        ),
+        ([], "ENGLISH SOURCE:\nHello", "for reference"),
+    ],
+)
+def test_view_gpt_transform_references_in_prompt(
+    member, locale_a, openai_api_key, references, expected, unexpected
+):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(
+            url, _gpt_params(locale_a, references=json.dumps(references))
+        )
+
+    call_args = MockOpenAI.return_value.chat.completions.create.call_args
+    user_message = call_args.kwargs["messages"][1]["content"]
+    assert expected in user_message
+    assert unexpected not in user_message
+
+
+@pytest.mark.django_db
+def test_view_gpt_transform_logs_metrics(member, locale_a, openai_api_key, caplog):
+    """Adoption and spend are measured from this log line, so it needs to carry
+    the trigger, locale and cache status, and to report a cache hit as such."""
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "rephrased"
+    mock_response.usage.prompt_tokens = 123
+    mock_response.usage.completion_tokens = 45
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        with caplog.at_level("INFO", logger="pontoon.machinery.views"):
+            member.client.post(url, _gpt_params(locale_a, trigger="manual"))
+            first = caplog.messages[-1]
+
+            # A cache hit is free, so it must not be counted towards spend.
+            member.client.post(url, _gpt_params(locale_a, trigger="manual"))
+            second = caplog.messages[-1]
+
+    assert "llm_suggestion" in first
+    assert "trigger=manual" in first
+    assert f"locale={locale_a.code}" in first
+    assert "characteristic=rephrased" in first
+    assert "cache_hit=false" in first
+    assert "prompt_tokens=123" in first
+    assert "completion_tokens=45" in first
+
+    assert "cache_hit=true" in second
+    assert "prompt_tokens=" in second
 
 
 @pytest.mark.django_db

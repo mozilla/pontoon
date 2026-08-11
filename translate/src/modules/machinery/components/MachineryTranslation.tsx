@@ -74,9 +74,14 @@ export function MachineryTranslationComponent({
           action: 'Copy LLM Translation',
           localeCode: locale.code,
         });
+      } else {
+        logUXAction('Machinery Translation Copied', 'Machinery Adoption', {
+          sources: sources.join(','),
+          localeCode: locale.code,
+        });
       }
     }
-  }, [index, setEditorFromHelpers, translation, llmTranslation]);
+  }, [index, locale, setEditorFromHelpers, translation, llmTranslation]);
 
   const className = classNames(
     'translation',
@@ -177,6 +182,7 @@ export function ComposedTranslationComponent({
   const { setEditorFromComposed } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
+  const locale = useContext(Locale);
 
   const copyIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
@@ -187,8 +193,12 @@ export function ComposedTranslationComponent({
         translation.sources,
         true,
       );
+      logUXAction('Machinery Translation Copied', 'Machinery Adoption', {
+        sources: translation.sources.join(','),
+        localeCode: locale.code,
+      });
     }
-  }, [index, setEditorFromComposed, setElement, translation]);
+  }, [index, locale, setEditorFromComposed, setElement, translation]);
 
   const className = classNames(
     'translation',

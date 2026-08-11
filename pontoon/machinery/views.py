@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 import xml.etree.ElementTree as ET
 
 from urllib.parse import quote
@@ -9,6 +10,7 @@ import requests
 from moz.l10n.message import message_to_json
 from sacremoses import MosesDetokenizer
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
@@ -263,6 +265,21 @@ def google_translate(request):
         return _machinery_error_response("Google Translate", e)
 
 
+def _parse_references(raw):
+    """Parse the `references` POST parameter, raising ValueError if malformed."""
+    references = json.loads(raw or "[]")
+    if not isinstance(references, list):
+        raise ValueError("references must be a list")
+    for reference in references:
+        if (
+            not isinstance(reference, dict)
+            or not isinstance(reference.get("source"), str)
+            or not isinstance(reference.get("text"), str)
+        ):
+            raise ValueError("each reference must have a string `source` and `text`")
+    return references
+
+
 @require_POST
 @login_required(redirect_field_name="", login_url="/403")
 def gpt_transform(request):
@@ -270,13 +287,42 @@ def gpt_transform(request):
     Transforms and returns text using GPT based on specified characteristics
     like rephrasing or changing formality. Fetches all entity context (comments,
     terminology) from the database using the entity PK.
+
+    `references` is a JSON list of `{"source": …, "text": …}` objects to pass to
+    the model as reference. A list rather than a single machine translation, so
+    that other suggestions can be added, or the reference dropped entirely,
+    without changing the request shape.
+
+    `trigger` is `auto` for suggestions generated automatically by the Machinery
+    panel, and `manual` for those requested from the AI dropdown. Automatic
+    requests are restricted to `settings.OPENAI_AUTO_SUGGESTION_LOCALES`, so that
+    spend stays bounded by the locales they were enabled for.
     """
     try:
         english_text = request.POST.get("english_text")
-        translated_text = request.POST.get("translated_text")
         characteristic = request.POST.get("characteristic")
         locale_code = request.POST.get("locale")
         entity_pk = request.POST.get("entity_pk")
+        trigger = request.POST.get("trigger", "manual")
+
+        try:
+            references = _parse_references(request.POST.get("references"))
+        except ValueError as e:
+            return JsonResponse(
+                {"status": False, "message": f"Bad Request: {e}"}, status=400
+            )
+
+        if (
+            trigger == "auto"
+            and locale_code not in settings.OPENAI_AUTO_SUGGESTION_LOCALES
+        ):
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Automatic LLM suggestions are not enabled for this locale",
+                },
+                status=403,
+            )
 
         locale = Locale.objects.get(code=locale_code)
 
@@ -316,9 +362,10 @@ def gpt_transform(request):
             terms = terms_list if terms_list else None
 
         service = OpenAIService()
-        transformed_text = service.get_translation(
+        started = time.monotonic()
+        result = service.get_translation(
             english_text,
-            translated_text,
+            references,
             characteristic,
             locale,
             entity_key=entity_key,
@@ -328,7 +375,21 @@ def gpt_transform(request):
             pinned_comments=pinned_comments,
             terms=terms,
         )
-        return JsonResponse({"translation": transformed_text})
+        # Logged as a single flat line rather than through `extra`, because the
+        # console handler uses the default formatter, which would drop the extra
+        # fields. Parsed into a log-based metric in Cloud Logging.
+        log.info(
+            "llm_suggestion trigger=%s locale=%s characteristic=%s cache_hit=%s "
+            "duration_ms=%d prompt_tokens=%s completion_tokens=%s",
+            trigger,
+            locale.code,
+            characteristic,
+            "true" if result.cache_hit else "false",
+            round((time.monotonic() - started) * 1000),
+            result.prompt_tokens if result.prompt_tokens is not None else "",
+            result.completion_tokens if result.completion_tokens is not None else "",
+        )
+        return JsonResponse({"translation": result.text})
 
     except Exception as e:
         return _machinery_error_response("GPT Transform", e)

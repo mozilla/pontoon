@@ -586,6 +586,11 @@ machinery-GoogleTranslation--option-informal = INFORMAL
 machinery-GoogleTranslation--option-show-original = SHOW ORIGINAL
 
 
+## Machinery LLM Translation
+## Shows the translation source for an LLM-generated suggestion.
+machinery-LLMTranslation--translation-source = AI SUGGESTION
+
+
 ## Machinery Microsoft Translation
 ## Shows the translation source from Microsoft Translation.
 machinery-MicrosoftTranslation--translation-source = MICROSOFT TRANSLATOR

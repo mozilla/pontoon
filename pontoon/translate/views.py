@@ -70,6 +70,8 @@ def translate(request, locale, project, resource):
             settings.MICROSOFT_TRANSLATOR_API_KEY
         ),
         "is_openai_chatgpt_supported": bool(settings.OPENAI_API_KEY),
+        "is_llm_auto_suggestion_locale": bool(settings.OPENAI_API_KEY)
+        and locale.code in settings.OPENAI_AUTO_SUGGESTION_LOCALES,
         "locale": get_preferred_locale(request),
         "notifications": [],
     }

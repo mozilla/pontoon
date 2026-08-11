@@ -185,6 +185,17 @@ MICROSOFT_TRANSLATOR_API_KEY = os.environ.get("MICROSOFT_TRANSLATOR_API_KEY", ""
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4.1-2025-04-14")
 
+# Locales in which Machinery generates an LLM suggestion automatically, rather
+# than only on request from the AI dropdown.
+OPENAI_AUTO_SUGGESTION_LOCALES = [
+    code
+    for code in (
+        c.strip()
+        for c in os.environ.get("OPENAI_AUTO_SUGGESTION_LOCALES", "").split(",")
+    )
+    if code
+]
+
 # Google Analytics Key
 GOOGLE_ANALYTICS_KEY = os.environ.get("GOOGLE_ANALYTICS_KEY", "")
 

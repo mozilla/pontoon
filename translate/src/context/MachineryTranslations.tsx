@@ -7,6 +7,7 @@ import {
   fetchCaighdeanTranslation,
   fetchComposedMachinery,
   fetchGoogleTranslation,
+  fetchGPTTransform,
   fetchMicrosoftTranslation,
   fetchTranslationMemory,
   MachineryTranslation,
@@ -183,7 +184,7 @@ export function MachineryProvider({
       const promises: Promise<void>[] = [];
 
       const wantsComposed =
-        !query &&
+        !query && // Exclude Concordance search
         hasMultipleFields(
           entity.value,
           entity.properties,
@@ -213,8 +214,36 @@ export function MachineryProvider({
         const isMicrosoftTranslatorSupported =
           root?.dataset.isMicrosoftTranslatorSupported === 'true';
 
+        const wantsLLMSuggestion =
+          !query && // Exclude Concordance search
+          root?.dataset.isLlmAutoSuggestionLocale === 'true' &&
+          entity.translation?.status !== 'approved';
+
         if (isGoogleTranslateSupported && locale.googleTranslateCode) {
-          promises.push(fetchGoogleTranslation(plain, locale).then(addResults));
+          promises.push(
+            fetchGoogleTranslation(plain, locale).then(async (results) => {
+              addResults(results);
+              // LLM suggestion refines the Google Translate output, so it can
+              // only be requested once that has resolved.
+              if (wantsLLMSuggestion && results.length > 0) {
+                addResults(
+                  await fetchGPTTransform(
+                    plain,
+                    [
+                      {
+                        source: 'google-translate',
+                        text: results[0].translation,
+                      },
+                    ],
+                    'rephrased',
+                    locale.code,
+                    pk,
+                    'auto',
+                  ),
+                );
+              }
+            }),
+          );
           if (wantsComposed) {
             promises.push(
               fetchComposedMachinery(pk!, locale, 'google-translate').then(
