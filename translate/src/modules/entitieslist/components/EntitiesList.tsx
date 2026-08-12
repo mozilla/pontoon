@@ -244,7 +244,9 @@ export function EntitiesList(): React.ReactElement<'div'> {
   //    is possible that going for another possible solutions will make
   //    testing easier, which would be very desirable.
   //
-  // `listKey` holds all of these parameters, explicitly not selected entity
+  // `listKey` covers the same location fields as the dependency list it
+  // replaced, deliberately not the selected entity. It is unused in the body:
+  // it is a dependency so that changing any of those fields triggers the reset.
   useEffect(() => {
     if (mounted.current) {
       dispatch(resetEntities());
