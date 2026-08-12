@@ -179,16 +179,11 @@ describe('<EntitiesList>', () => {
 
     mountComponentWithStore(EntitiesList, store, {}, history);
 
-    const spy = vi.fn();
-    history.listen(spy);
-
     act(() => {
       history.push('/kg/firefox/all-resources/?status=missing');
     });
 
-    const redirected = spy.mock.calls.some(
-      ([, action]) => action === 'REPLACE',
-    );
+    expect(history.location.search).toBe('?status=missing');
     expect(redirected).toBe(false);
   });
 
