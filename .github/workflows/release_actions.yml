@@ -9,8 +9,7 @@ jobs:
     name: New release
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: read
+      contents: read
     steps:
       - name: Clone repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -59,10 +58,12 @@ jobs:
           echo "release=true" >> "$GITHUB_OUTPUT"
       - name: Create GitHub Release
         if: steps.check.outputs.release == 'true'
-        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
-        with:
-          tag_name: "${{ steps.check.outputs.version }}"
-          target_commitish: "${{ steps.revision.outputs.sha }}"
-          name: "Release ${{ steps.check.outputs.version }}"
-          generate_release_notes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+          VERSION: ${{ steps.check.outputs.version }}
+          SHA: ${{ steps.revision.outputs.sha }}
+        run: |
+          gh release create "$VERSION" \
+            --target "$SHA" \
+            --title "Release $VERSION" \
+            --generate-notes
