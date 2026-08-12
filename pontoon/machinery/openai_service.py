@@ -99,29 +99,27 @@ class OpenAIService:
         flat_references = [
             (source, text) for source, texts in references.items() for text in texts
         ]
-        # A single reference is rendered exactly as the machine translation was
-        # before references became a mapping, so that refining one machine
-        # translation keeps producing the prompt it always has.
-        if len(flat_references) == 1:
-            context_parts.append(
-                f"MACHINE TRANSLATION (for reference):\n{flat_references[0][1]}"
-            )
-        elif flat_references:
-            reference_block = "\n".join(
-                f"- {source}: {text}" for source, text in flat_references
-            )
-            context_parts.append(
-                f"EXISTING SUGGESTIONS (for reference):\n{reference_block}"
-            )
-        user_prompt = "\n\n".join(context_parts)
-
         match len(flat_references):
             case 0:
                 reference_instruction = ""
+            # A single reference is rendered exactly as the machine translation
+            # was before references became a mapping, so that refining one
+            # machine translation keeps producing the prompt it always has.
             case 1:
+                context_parts.append(
+                    f"MACHINE TRANSLATION (for reference):\n{flat_references[0][1]}"
+                )
                 reference_instruction = "Use the provided machine translation as a reference, but you are not bound by it — rewrite freely to achieve the best result.\n"
             case _:
+                reference_block = "\n".join(
+                    f"- {source}: {text}" for source, text in flat_references
+                )
+                context_parts.append(
+                    f"EXISTING SUGGESTIONS (for reference):\n{reference_block}"
+                )
                 reference_instruction = "Use the provided suggestions as references, but you are not bound by them — rewrite freely to achieve the best result.\n"
+
+        user_prompt = "\n\n".join(context_parts)
 
         system_header = (
             textwrap.dedent(

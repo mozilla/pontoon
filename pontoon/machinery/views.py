@@ -310,8 +310,6 @@ def openai_chatgpt(request):
                 {"status": False, "message": f"Bad Request: {e}"}, status=400
             )
 
-        # Rejected rather than treated as `manual`, because an unrecognized
-        # value would otherwise skip the locale restriction below.
         if trigger not in ("auto", "manual"):
             return JsonResponse(
                 {
@@ -386,10 +384,8 @@ def openai_chatgpt(request):
         )
         duration_ms = round((time.monotonic() - started) * 1000)
         cache_hit = "true" if result.cache_hit else "false"
-        prompt_tokens = result.prompt_tokens if result.prompt_tokens is not None else ""
-        completion_tokens = (
-            result.completion_tokens if result.completion_tokens is not None else ""
-        )
+        prompt_tokens = result.prompt_tokens or ""
+        completion_tokens = result.completion_tokens or ""
         # Logged as a single flat line rather than through `extra`, because the
         # console handler uses the default formatter, which would drop the extra
         # fields. Parsed into a log-based metric in Cloud Logging, so the
