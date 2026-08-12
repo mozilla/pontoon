@@ -1,13 +1,16 @@
 name: SSDLC SBOM
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Automated Release"]
+    types:
+      - completed
 
 permissions: {}
 
 jobs:
   sbom:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       actions: read
       contents: write

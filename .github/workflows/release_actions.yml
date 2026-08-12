@@ -1,4 +1,4 @@
-name: Automated Releases
+name: Automated Release
 on:
   # schedule:
   #   - cron: "0 6 * * *" european evening 23:00 UTC
@@ -50,7 +50,7 @@ jobs:
           if [ -n "$COMMIT_EXISTS" ]; then
             echo "Already released as ${COMMIT_EXISTS}."
             echo "release=false" >> "$GITHUB_OUTPUT"
-            exit 0
+            exit 1
           fi
 
           VERSION="v$(date -u +%Y.%m.%d)"
