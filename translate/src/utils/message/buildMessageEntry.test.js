@@ -191,7 +191,7 @@ describe('buildMessageEntry', () => {
     });
   });
 
-  it('properly replaces HTML in xliff via escapeHTML option', () => {
+  it('parses HTML as text in Xliff with escapeHTML option', () => {
     const result = buildMessageEntry(
       parseEntry('xliff', 'Hello, World!'),
       [
@@ -210,7 +210,7 @@ describe('buildMessageEntry', () => {
     });
   });
 
-  it('properly replaces HTML in android via escapeHTML option', () => {
+  it('parses HTML as expressions in Android with escapeHTML option', () => {
     const result = buildMessageEntry(
       parseEntry('android', 'Hello, World!'),
       [
@@ -236,7 +236,7 @@ describe('buildMessageEntry', () => {
   });
 
   it.each(['xliff', 'android'])(
-    'replaces HTML in %s without escapeHTML option',
+    'parses XML as markup in %s without escapeHTML option',
     (format) => {
       const result = buildMessageEntry(parseEntry(format, 'Hello, World!'), [
         {
