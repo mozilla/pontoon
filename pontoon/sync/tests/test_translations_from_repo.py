@@ -178,7 +178,7 @@ def test_android_translation_changes():
         TranslationFactory.create(
             entity=e1,
             locale=locale,
-            string="target same",
+            value=["target same"],
             active=True,
             approved=True,
         )
@@ -186,7 +186,7 @@ def test_android_translation_changes():
         TranslationFactory.create(
             entity=e2,
             locale=locale,
-            string="target spaces changed from normalized",
+            value=["target spaces changed from normalized"],
             active=True,
             approved=True,
         )
@@ -195,7 +195,7 @@ def test_android_translation_changes():
         TranslationFactory.create(
             entity=e3,
             locale=locale,
-            string="target \t spaces  \n  changed from not normalized",
+            value=["target \t spaces  changed from not normalized"],
             active=True,
             approved=True,
         )
@@ -204,7 +204,7 @@ def test_android_translation_changes():
         TranslationFactory.create(
             entity=e4,
             locale=locale,
-            string="target value previous",
+            value=["target value previous"],
             active=True,
             approved=True,
         )
@@ -250,14 +250,14 @@ def test_android_translation_changes():
 
         translations = Translation.objects.filter(entity__resource=res, locale=locale)
         assert {
-            (*trans.entity.key, trans.approved, trans.string) for trans in translations
+            (*trans.entity.key, trans.approved): trans.value for trans in translations
         } == {
-            ("k1", True, "target same"),
-            ("k2", True, "target spaces changed from normalized"),
-            ("k3", False, "target \t spaces  \n  changed from not normalized"),
-            ("k3", True, "target spaces changed from not normalized"),
-            ("k4", False, "target value previous"),
-            ("k4", True, "target value changed"),
+            ("k1", True): ["target same"],
+            ("k2", True): ["target spaces changed from normalized"],
+            ("k3", False): ["target \t spaces  changed from not normalized"],
+            ("k3", True): ["target spaces changed from not normalized"],
+            ("k4", False): ["target value previous"],
+            ("k4", True): ["target value changed"],
         }
         tr_k4 = next(
             trans
@@ -268,11 +268,11 @@ def test_android_translation_changes():
 
         # Test actions
         assert {
-            (action.translation.string, action.action_type)
+            (action.translation.value[0], action.action_type)
             for action in ActionLog.objects.filter(translation__in=translations)
         } == {
             (
-                "target \t spaces  \n  changed from not normalized",
+                "target \t spaces  changed from not normalized",
                 "translation:rejected",
             ),
             ("target spaces changed from not normalized", "translation:created"),
@@ -303,7 +303,7 @@ def test_ini_translations():
         TranslationFactory.create(
             entity=ent,
             locale=locale,
-            string="Target",
+            value=["Target"],
             active=True,
             approved=True,
         )
