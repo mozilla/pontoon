@@ -216,22 +216,19 @@ export async function fetchGoogleTranslation(
 }
 
 /**
- * An existing translation passed to the LLM as reference.
+ * Existing translations passed to the LLM as reference.
  *
- * Sent as a list so that references can be dropped entirely, or extended
- * with other Machinery results, without changing the request shape.
+ * A mapping so that references can be dropped entirely, or extended with other
+ * Machinery results, without changing the request shape.
  */
-export type LLMReference = {
-  source: SourceType;
-  text: string;
-};
+export type LLMReferences = Partial<Record<SourceType, string[]>>;
 
 /**
  * Return refined translation by GPT.
  */
 export async function fetchGPTTransform(
   englishText: string,
-  references: LLMReference[],
+  references: LLMReferences,
   characteristic: string,
   localeCode: string,
   entityPk?: number,

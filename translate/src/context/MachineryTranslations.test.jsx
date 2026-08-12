@@ -95,7 +95,7 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
     const [source, references, characteristic, code, pk, trigger] =
       api.fetchGPTTransform.mock.calls[0];
     expect(source).toBe('Hello');
-    expect(references).toEqual([{ source: 'google-translate', text: 'Hola' }]);
+    expect(references).toEqual({ 'google-translate': ['Hola'] });
     expect(characteristic).toBe('rephrased');
     expect(code).toBe('es');
     expect(pk).toBe(42);

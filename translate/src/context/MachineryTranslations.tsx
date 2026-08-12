@@ -229,12 +229,7 @@ export function MachineryProvider({
                 addResults(
                   await fetchGPTTransform(
                     plain,
-                    [
-                      {
-                        source: 'google-translate',
-                        text: results[0].translation,
-                      },
-                    ],
+                    { 'google-translate': [results[0].translation] },
                     'rephrased',
                     locale.code,
                     pk,

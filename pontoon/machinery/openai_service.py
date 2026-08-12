@@ -49,9 +49,9 @@ class OpenAIService:
     ) -> LLMTranslation:
         """
         :param references: Existing translations to give the model as reference,
-            as a list of ``{"source": …, "text": …}`` dicts, in the order they
-            should be presented. May be empty, in which case the model translates
-            from the English source alone.
+            as a ``{source: [text, …]}`` mapping, in the order they should be
+            presented. May be empty, in which case the model translates from the
+            English source alone.
         """
         style_goals = {
             "informal": f"Use simple, everyday {locale.name} ({locale.code}) — avoid jargon, technical terms, and formal constructions.",
@@ -94,23 +94,28 @@ class OpenAIService:
                 f"TERMINOLOGY:\nThese are terminology matches in the source text that you should consider:\n{terms_block}"
             )
         context_parts.append(f"ENGLISH SOURCE:\n{english_text}")
+        # Flattened, because a source may contribute more than one text and the
+        # prompt presents them as a flat list.
+        flat_references = [
+            (source, text) for source, texts in references.items() for text in texts
+        ]
         # A single reference is rendered exactly as the machine translation was
-        # before references became a list, so that refining one machine
+        # before references became a mapping, so that refining one machine
         # translation keeps producing the prompt it always has.
-        if len(references) == 1:
+        if len(flat_references) == 1:
             context_parts.append(
-                f"MACHINE TRANSLATION (for reference):\n{references[0]['text']}"
+                f"MACHINE TRANSLATION (for reference):\n{flat_references[0][1]}"
             )
-        elif references:
+        elif flat_references:
             reference_block = "\n".join(
-                f"- {r['source']}: {r['text']}" for r in references
+                f"- {source}: {text}" for source, text in flat_references
             )
             context_parts.append(
                 f"EXISTING SUGGESTIONS (for reference):\n{reference_block}"
             )
         user_prompt = "\n\n".join(context_parts)
 
-        match len(references):
+        match len(flat_references):
             case 0:
                 reference_instruction = ""
             case 1:

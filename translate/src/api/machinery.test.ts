@@ -14,7 +14,7 @@ vi.mock('./utils/csrfToken', () => ({
 
 describe('fetchGPTTransform', () => {
   const POST = vi.mocked(base.POST);
-  const references = [{ source: 'google-translate' as const, text: 'hola' }];
+  const references = { 'google-translate': ['hola'] };
 
   it('sends required params', async () => {
     await fetchGPTTransform('hello', references, 'informal', 'es');
@@ -41,11 +41,11 @@ describe('fetchGPTTransform', () => {
     expect(params.get('trigger')).toBe('auto');
   });
 
-  it('serializes an empty reference list', async () => {
-    await fetchGPTTransform('hello', [], 'informal', 'es');
+  it('serializes an empty reference set', async () => {
+    await fetchGPTTransform('hello', {}, 'informal', 'es');
 
     const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
-    expect(params.get('references')).toBe('[]');
+    expect(params.get('references')).toBe('{}');
   });
 
   it('omits entity_pk when not provided', async () => {

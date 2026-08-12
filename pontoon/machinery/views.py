@@ -268,17 +268,13 @@ def google_translate(request):
 def _parse_references(raw):
     """Parse the `references` POST parameter, raising ValueError if malformed."""
     if not raw:
-        return []
+        return {}
     references = json.loads(raw)
-    if not isinstance(references, list):
-        raise ValueError("references must be a list")
-    for reference in references:
-        if (
-            not isinstance(reference, dict)
-            or not isinstance(reference.get("source"), str)
-            or not isinstance(reference.get("text"), str)
-        ):
-            raise ValueError("each reference must have a string `source` and `text`")
+    if not isinstance(references, dict):
+        raise ValueError("references must be an object")
+    for source, texts in references.items():
+        if not isinstance(texts, list) or not all(isinstance(t, str) for t in texts):
+            raise ValueError(f"references for `{source}` must be a list of strings")
     return references
 
 
@@ -290,10 +286,10 @@ def gpt_transform(request):
     like rephrasing or changing formality. Fetches all entity context (comments,
     terminology) from the database using the entity PK.
 
-    `references` is a JSON list of `{"source": …, "text": …}` objects to pass to
-    the model as reference. A list rather than a single machine translation, so
-    that other suggestions can be added, or the reference dropped entirely,
-    without changing the request shape.
+    `references` is a JSON object mapping a Machinery source to the texts it
+    contributes, e.g. `{"google-translate": ["…"]}`. A mapping rather than a
+    single machine translation, so that other suggestions can be added, or the
+    reference dropped entirely, without changing the request shape.
 
     `trigger` is `auto` for suggestions generated automatically by the Machinery
     panel, and `manual` for those requested from the AI dropdown. Automatic

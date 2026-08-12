@@ -296,7 +296,7 @@ def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
 
         params = {
             "english_text": "Hello",
-            "references": json.dumps([{"source": "google-translate", "text": "Hola"}]),
+            "references": json.dumps({"google-translate": ["Hola"]}),
             "characteristic": "formal",
             "locale": locale_a.code,
         }
@@ -358,7 +358,7 @@ def test_view_gpt_transform_context(member, locale_a, openai_api_key):
             {
                 "english_text": "Open browser",
                 "references": json.dumps(
-                    [{"source": "google-translate", "text": "Ouvrir le navigateur"}]
+                    {"google-translate": ["Ouvrir le navigateur"]}
                 ),
                 "characteristic": "formal",
                 "locale": locale_a.code,
@@ -420,7 +420,7 @@ def test_view_gpt_transform_string_id(
             {
                 "english_text": "Open browser",
                 "references": json.dumps(
-                    [{"source": "google-translate", "text": "Ouvrir le navigateur"}]
+                    {"google-translate": ["Ouvrir le navigateur"]}
                 ),
                 "characteristic": "formal",
                 "locale": locale_a.code,
@@ -442,7 +442,7 @@ def test_view_gpt_transform_string_id(
 def _gpt_params(locale, **kwargs):
     params = {
         "english_text": "Hello",
-        "references": json.dumps([{"source": "google-translate", "text": "Hola"}]),
+        "references": json.dumps({"google-translate": ["Hola"]}),
         "characteristic": "rephrased",
         "locale": locale.code,
     }
@@ -543,7 +543,13 @@ def test_view_gpt_transform_manual_ignores_enabled_locales(
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "references",
-    ['{"source": "x"}', "[{}]", '[{"source": "x"}]', '[{"text": 1}]', "not json"],
+    [
+        '[{"source": "x", "text": "y"}]',  # a list, not an object
+        '{"google-translate": "Hola"}',  # texts must be a list
+        '{"google-translate": [1]}',  # texts must be strings
+        '"Hola"',
+        "not json",
+    ],
 )
 def test_view_gpt_transform_invalid_references(
     member, locale_a, openai_api_key, references
@@ -591,21 +597,30 @@ def test_view_gpt_transform_single_reference_prompt_unchanged(
     "references, expected, unexpected",
     [
         (
-            [{"source": "google-translate", "text": "Hola"}],
+            {"google-translate": ["Hola"]},
             "MACHINE TRANSLATION (for reference):\nHola",
             "EXISTING SUGGESTIONS",
         ),
         (
-            [
-                {"source": "google-translate", "text": "Hola"},
-                {"source": "translation-memory", "text": "Buenos días"},
-            ],
+            {
+                "google-translate": ["Hola"],
+                "translation-memory": ["Buenos días"],
+            },
             "EXISTING SUGGESTIONS (for reference):\n"
             "- google-translate: Hola\n"
             "- translation-memory: Buenos días",
             "MACHINE TRANSLATION",
         ),
-        ([], "ENGLISH SOURCE:\nHello", "for reference"),
+        # A single source may contribute several texts, which are flattened
+        # into the same list.
+        (
+            {"translation-memory": ["Buenos días", "Hola amigo"]},
+            "EXISTING SUGGESTIONS (for reference):\n"
+            "- translation-memory: Buenos días\n"
+            "- translation-memory: Hola amigo",
+            "MACHINE TRANSLATION",
+        ),
+        ({}, "ENGLISH SOURCE:\nHello", "for reference"),
     ],
 )
 def test_view_gpt_transform_references_in_prompt(
