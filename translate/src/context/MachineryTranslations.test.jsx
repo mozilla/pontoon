@@ -52,7 +52,11 @@ const entityOf = (translation) => ({
 
 function Consumer() {
   const { translations } = useContext(MachineryTranslations);
-  return <span data-testid='count'>{translations.length}</span>;
+  return (
+    <span data-testid='order'>
+      {translations.map((t) => t.sources.join('+')).join(',')}
+    </span>
+  );
 }
 
 const mount = (entity) =>
@@ -156,5 +160,44 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
 
     await waitFor(() => expect(api.fetchGoogleTranslation).toHaveBeenCalled());
     expect(api.fetchOpenAITranslation).not.toHaveBeenCalled();
+  });
+
+  it('lists the suggestion last, below the result it refines', async () => {
+    setRootFlags({ enabled: true });
+    api.fetchOpenAITranslation.mockResolvedValue([
+      {
+        sources: ['openai-chatgpt'],
+        original: 'Hello',
+        translation: 'Saludos',
+      },
+    ]);
+    // Resolves last, to show that a scored match still sorts to the top while
+    // the scoreless ones keep the order they arrived in.
+    let resolveMemory;
+    api.fetchTranslationMemory.mockReturnValue(
+      new Promise((resolve) => {
+        resolveMemory = resolve;
+      }),
+    );
+
+    const { getByTestId } = mount(entityOf(undefined));
+
+    await waitFor(() =>
+      expect(getByTestId('order').textContent).toContain('openai-chatgpt'),
+    );
+    resolveMemory([
+      {
+        sources: ['translation-memory'],
+        original: 'Hello',
+        translation: 'Buenos días',
+        quality: 90,
+      },
+    ]);
+
+    await waitFor(() =>
+      expect(getByTestId('order').textContent).toBe(
+        'translation-memory,google-translate,openai-chatgpt',
+      ),
+    );
   });
 });

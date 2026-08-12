@@ -38,11 +38,16 @@ const initTranslations: MachineryTranslations = {
 export const MachineryTranslations =
   createContext<MachineryTranslations>(initTranslations);
 
-/** Sort by descending quality; entries without a quality score sort last. */
+/**
+ * Sort by descending quality; entries without a quality score keep the order
+ * they arrived in, which puts the LLM suggestion last: it is only requested
+ * once Google Translate has resolved, and takes seconds longer than any of the
+ * other services.
+ */
 const sortByQuality = (a: { quality?: number }, b: { quality?: number }) => {
   const { quality: qa } = a;
   const { quality: qb } = b;
-  return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
+  return !qa && !qb ? 0 : !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
 /**
