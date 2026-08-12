@@ -166,6 +166,7 @@ class OpenAIService:
             ],
             temperature=0,  # Set temperature to 0 for deterministic output
             top_p=1,  # Set top_p to 1 to consider the full distribution
+            reasoning_effort="none",  # Disable reasoning for faster responses
         )
 
         result = response.choices[0].message.content.strip()
