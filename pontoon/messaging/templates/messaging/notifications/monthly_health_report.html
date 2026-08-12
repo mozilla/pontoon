@@ -1,11 +1,13 @@
 <h2>Monthly Locale Health Report: {{ month }} {{ year }}</h2>
 
-<p>The monthly health snapshot for {{ month }} {{ year }} is now available.</p>
+<p>
+  The monthly locale health report for {{ month }} {{ year }} is now available.
+</p>
 
 {% if locale_rows %}
   <p>
-    Below are the locales that have experienced a Community Health Score (CHS)
-    fluctuation of at least {{ threshold }}% compared to last month.
+    Below are the locales whose Community Health Score (CHS) changed by at least
+    {{ threshold }}% compared to the previous month.
   </p>
 
   <table>
@@ -14,7 +16,7 @@
         <th>Locale</th>
         <th>Last month CHS</th>
         <th>Current CHS</th>
-        <th>Delta (%)</th>
+        <th>Change (%)</th>
       </tr>
     </thead>
 
@@ -34,19 +36,17 @@
     {% endfor %}
   </table>
 
-  <i
-    >Note: This list represents the locales that have at least one key project
-    enabled which meet the {{ threshold }}% threshold for change.</i
-  >
+  <i>Only locales with at least one key project enabled are included.</i>
+
 {% else %}
   <p>
-    However, it seems no locales have experienced a Community Health Score (CHS)
-    fluctuation of at least {{ threshold }}% compared to last month.
+    However, no locale's Community Health Score (CHS) changed by at least
+    {{ threshold }}% compared to the previous month.
   </p>
 {% endif %}
 
 <p>
   You can view the full breakdown, including individual contributor, translator
-  & manager activity metrics, via the
-  <a href="{{ full_url('pontoon.insights') }}">Insights Dashboard</a>.
+  and manager activity metrics, on the
+  <a href="{{ full_url('pontoon.insights') }}">Insights dashboard</a>.
 </p>

@@ -60,9 +60,9 @@
       <thead>
         <tr>
           <th>Locale</th>
-          <th>Previous CHS</th>
+          <th>Last month CHS</th>
           <th>Current CHS</th>
-          <th>Change</th>
+          <th>Change (%)</th>
         </tr>
       </thead>
       <tbody>
@@ -79,7 +79,7 @@
             <td
               class="{{ 'positive' if locale_row.delta > 0 else 'negative' }}"
             >
-              {{ locale_row.percentage }}%
+              {{ locale_row.percentage }}
             </td>
           </tr>
         {% endfor %}
@@ -91,8 +91,8 @@
     </p>
   {% else %}
     <p>
-      However, it seems no locales have experienced a Community Health Score
-      (CHS) fluctuation of at least {{ threshold }}% compared to last month.
+      However, no locale's Community Health Score (CHS) changed by at least
+      {{ threshold }}% compared to the previous month.
     </p>
   {% endif %}
 
@@ -105,6 +105,6 @@
 
 {% block footer %}
   If you no longer want to receive these health reports, you can turn off the
-  “Monthly health report” feature in your
+  “Monthly locale health report” feature in your
   <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 {% endblock %}

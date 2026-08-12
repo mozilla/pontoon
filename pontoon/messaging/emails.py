@@ -654,7 +654,7 @@ def send_verification_email(user, link):
 
 def send_monthly_health_report_emails(report):
     """
-    Sends community health report emails to filtered users.
+    Sends monthly locale health report emails to filtered users.
     """
     log.info("Start sending report emails.")
 

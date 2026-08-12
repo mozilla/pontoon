@@ -1,7 +1,7 @@
 # Insights
 
 Pontoon provides 2 major systems for admins to monitor locale & project health. The tools
-available are the `Insights` dashboard and the `Monthly Health Report`, which both provide
+available are the `Insights` dashboard and the `Monthly locale health report`, which both provide
 information on locale growth & decline in easily ingestible formats.
 
 ## Insights dashboard
@@ -30,7 +30,7 @@ Two of the metrics above â€” number of enabled projects and project completion â
 
 Marking a project as a key project is available in the Django admin (`/a/base/project/`) using the `Is chs project` flag. A team then counts as enabled for that project as soon as the team is added to it, the same way as for any other project (see [Adding a new project](adding-new-project.md)).
 
-If no project is marked as a key project, both metrics are zero for every team, the `Community health score` loses the points they carry, and no team qualifies for the [monthly health report](#monthly-health-report).
+If no project is marked as a key project, both metrics are zero for every team, the `Community health score` loses the points they carry, and no team qualifies for the [monthly locale health report](#monthly-locale-health-report).
 
 #### Community health score chart
 
@@ -48,10 +48,10 @@ Plots the approval rate of pretranslations for each team, making it possible to 
 
 Plots the approval rate of pretranslations for each project, highlighting which projects produce the most and least reliable pretranslations.
 
-## Monthly health report
+## Monthly locale health report
 
 Once a month, after new locale health snapshots are collected, Pontoon compares the two most recent `Community health scores` of each team and reports the ones that moved the most. The report lists every affected team with its score from the previous month, its current score, and the change between them, expressed as a percentage of the previous score. Teams are ordered by the size of that change, largest first, regardless of whether they went up or down.
 
 A team is included when it is enabled for at least one [key project](#key-projects), has a snapshot in both months, and its score changed by at least 2%. The threshold can be changed through the `MONTHLY_HEALTH_REPORT_CHS_THRESHOLD` environment variable.
 
-Staff users receive the report as a notification in Pontoon. To also receive it by email, enable `Monthly health report` in the `Email` section of your [settings](../localizer/users.md).
+Staff users receive the report as a notification in Pontoon. To also receive it by email, enable `Monthly locale health report` in the `Email` section of your [settings](../localizer/users.md).

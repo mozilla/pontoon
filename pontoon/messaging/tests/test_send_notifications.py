@@ -207,7 +207,7 @@ def test_send_deadline_notifications_excludes_system_users(
 def test_send_monthly_health_report_notifications_notifies_admins(
     mock_notify, admin, user_a, locale_a
 ):
-    """Only admins can get monthly health reports."""
+    """Only admins can get monthly locale health reports."""
     another_admin = UserFactory.create(username="admin_b", is_staff=True)
     report = health_report(locale_a)
     with patch(
@@ -237,7 +237,7 @@ def test_monthly_health_report_notification_no_locales(locale_a):
         "messaging/notifications/monthly_health_report.html", report
     )
 
-    assert "no locales have experienced" in description
+    assert "However, no locale" in description
     assert f"{report['month']} {report['year']}" in description
     assert full_url("pontoon.insights") in description
 
