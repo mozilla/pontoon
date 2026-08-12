@@ -189,11 +189,8 @@ OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4.1-2025-04-14")
 # than only on request from the AI dropdown.
 OPENAI_AUTO_SUGGESTION_LOCALES = [
     code
-    for code in (
-        c.strip()
-        for c in os.environ.get("OPENAI_AUTO_SUGGESTION_LOCALES", "").split(",")
-    )
-    if code
+    for c in os.environ.get("OPENAI_AUTO_SUGGESTION_LOCALES", "").split(",")
+    if (code := c.strip())
 ]
 
 # Google Analytics Key

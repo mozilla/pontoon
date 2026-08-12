@@ -267,7 +267,9 @@ def google_translate(request):
 
 def _parse_references(raw):
     """Parse the `references` POST parameter, raising ValueError if malformed."""
-    references = json.loads(raw or "[]")
+    if not raw:
+        return []
+    references = json.loads(raw)
     if not isinstance(references, list):
         raise ValueError("references must be a list")
     for reference in references:
@@ -386,19 +388,21 @@ def gpt_transform(request):
             pinned_comments=pinned_comments,
             terms=terms,
         )
+        duration_ms = round((time.monotonic() - started) * 1000)
+        cache_hit = "true" if result.cache_hit else "false"
+        prompt_tokens = result.prompt_tokens if result.prompt_tokens is not None else ""
+        completion_tokens = (
+            result.completion_tokens if result.completion_tokens is not None else ""
+        )
         # Logged as a single flat line rather than through `extra`, because the
         # console handler uses the default formatter, which would drop the extra
-        # fields. Parsed into a log-based metric in Cloud Logging.
+        # fields. Parsed into a log-based metric in Cloud Logging, so the
+        # `key=value` shape matters.
         log.info(
-            "llm_suggestion trigger=%s locale=%s characteristic=%s cache_hit=%s "
-            "duration_ms=%d prompt_tokens=%s completion_tokens=%s",
-            trigger,
-            locale.code,
-            characteristic,
-            "true" if result.cache_hit else "false",
-            round((time.monotonic() - started) * 1000),
-            result.prompt_tokens if result.prompt_tokens is not None else "",
-            result.completion_tokens if result.completion_tokens is not None else "",
+            f"llm_suggestion trigger={trigger} locale={locale.code} "
+            f"characteristic={characteristic} cache_hit={cache_hit} "
+            f"duration_ms={duration_ms} prompt_tokens={prompt_tokens} "
+            f"completion_tokens={completion_tokens}"
         )
         return JsonResponse({"translation": result.text})
 
