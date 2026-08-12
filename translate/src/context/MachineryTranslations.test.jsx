@@ -130,6 +130,23 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
     expect(api.fetchGPTTransform).not.toHaveBeenCalled();
   });
 
+  it('skips when the user moved on before Google Translate resolved', async () => {
+    setRootFlags({ enabled: true });
+    let resolveGoogle;
+    api.fetchGoogleTranslation.mockReturnValue(
+      new Promise((resolve) => {
+        resolveGoogle = resolve;
+      }),
+    );
+
+    const { unmount } = mount(entityOf(undefined));
+    unmount();
+    resolveGoogle(GT_RESULT);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(api.fetchGPTTransform).not.toHaveBeenCalled();
+  });
+
   it('skips when Google Translate returns nothing to refine', async () => {
     setRootFlags({ enabled: true });
     api.fetchGoogleTranslation.mockResolvedValue([]);

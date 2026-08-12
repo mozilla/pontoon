@@ -451,11 +451,43 @@ def _gpt_params(locale, **kwargs):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("trigger", ["Auto", "", "bogus"])
+def test_view_gpt_transform_invalid_trigger(member, locale_a, openai_api_key, trigger):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        response = member.client.post(url, _gpt_params(locale_a, trigger=trigger))
+
+        assert response.status_code == 400
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 0
+
+
+@pytest.mark.django_db
+def test_view_gpt_transform_cache_key_includes_model(
+    member, locale_a, openai_api_key, settings
+):
+    url = reverse("pontoon.gpt_transform")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(url, _gpt_params(locale_a))
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 1
+
+        settings.OPENAI_MODEL = "gpt-nonexistent-test-model"
+        member.client.post(url, _gpt_params(locale_a))
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 2
+
+
+@pytest.mark.django_db
 def test_view_gpt_transform_auto_requires_enabled_locale(
     member, locale_a, openai_api_key, settings
 ):
-    """An automatic request for a locale it is not enabled for is refused, so
-    that spend stays bounded by the locales it was enabled for."""
     url = reverse("pontoon.gpt_transform")
     cache.clear()
     settings.OPENAI_AUTO_SUGGESTION_LOCALES = ["some-other-locale"]
@@ -491,8 +523,6 @@ def test_view_gpt_transform_auto_allowed_for_enabled_locale(
 def test_view_gpt_transform_manual_ignores_enabled_locales(
     member, locale_a, openai_api_key, settings
 ):
-    """The AI dropdown keeps working everywhere; only automatic requests are
-    restricted by locale."""
     url = reverse("pontoon.gpt_transform")
     cache.clear()
     settings.OPENAI_AUTO_SUGGESTION_LOCALES = []
@@ -602,8 +632,6 @@ def test_view_gpt_transform_references_in_prompt(
 
 @pytest.mark.django_db
 def test_view_gpt_transform_logs_metrics(member, locale_a, openai_api_key, caplog):
-    """Adoption and spend are measured from this log line, so it needs to carry
-    the trigger, locale and cache status, and to report a cache hit as such."""
     url = reverse("pontoon.gpt_transform")
     cache.clear()
 

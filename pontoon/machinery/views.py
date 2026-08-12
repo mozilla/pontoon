@@ -312,6 +312,17 @@ def gpt_transform(request):
                 {"status": False, "message": f"Bad Request: {e}"}, status=400
             )
 
+        # Rejected rather than treated as `manual`, because an unrecognized
+        # value would otherwise skip the locale restriction below.
+        if trigger not in ("auto", "manual"):
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": f"Bad Request: unknown trigger `{trigger}`",
+                },
+                status=400,
+            )
+
         if (
             trigger == "auto"
             and locale_code not in settings.OPENAI_AUTO_SUGGESTION_LOCALES

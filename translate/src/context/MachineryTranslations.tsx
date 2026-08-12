@@ -127,7 +127,7 @@ export function MachineryProvider({
     let cancelled = false;
 
     const addResults = (newTranslations: MachineryTranslation[]) => {
-      if (newTranslations.length > 0) {
+      if (!cancelled && newTranslations.length > 0) {
         setTranslations((prev) => {
           const translations = [...prev.translations];
           for (const tx of newTranslations) {
@@ -154,7 +154,7 @@ export function MachineryProvider({
     // The TM-only and MT-backed requests can yield the same composition, in
     // which case we merge their source badges rather than list it twice.
     const addComposed = (newComposed: ComposedMachineryTranslation[]) => {
-      if (newComposed.length > 0) {
+      if (!cancelled && newComposed.length > 0) {
         setTranslations((prev) => {
           const composed = [...prev.composed];
           for (const tx of newComposed) {
@@ -225,7 +225,7 @@ export function MachineryProvider({
               addResults(results);
               // LLM suggestion refines the Google Translate output, so it can
               // only be requested once that has resolved.
-              if (wantsLLMSuggestion && results.length > 0) {
+              if (!cancelled && wantsLLMSuggestion && results.length > 0) {
                 addResults(
                   await fetchGPTTransform(
                     plain,
