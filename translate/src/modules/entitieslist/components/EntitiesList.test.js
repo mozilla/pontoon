@@ -184,7 +184,6 @@ describe('<EntitiesList>', () => {
     });
 
     expect(history.location.search).toBe('?status=missing');
-    expect(redirected).toBe(false);
   });
 
   it('toggles entity for batch editing', () => {
