@@ -21,7 +21,11 @@ urlpatterns = [
         name="pontoon.concordance_search",
     ),
     path("google-translate/", views.google_translate, name="pontoon.google_translate"),
-    path("gpt-transform/", views.gpt_transform, name="pontoon.gpt_transform"),
+    path(
+        "openai-chatgpt/",
+        views.openai_chatgpt,
+        name="pontoon.openai_chatgpt",
+    ),
     path(
         "microsoft-translator/",
         views.microsoft_translator,

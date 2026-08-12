@@ -66,7 +66,7 @@ export function MachineryTranslationComponent({
       // CodeMirror will throw an error if we leave any CR in the value.
       content = content.replaceAll('\r', '\\r');
       const sources: SourceType[] = llmTranslation
-        ? ['gpt-transform']
+        ? ['openai-chatgpt']
         : translation.sources;
       setEditorFromHelpers(content, sources, true);
       if (llmTranslation) {

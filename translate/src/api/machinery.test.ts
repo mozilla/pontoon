@@ -1,6 +1,6 @@
 import type { Locale } from '~/context/Locale';
 
-import { fetchComposedMachinery, fetchGPTTransform } from './machinery';
+import { fetchComposedMachinery, fetchOpenAITranslation } from './machinery';
 import * as base from './utils/base';
 
 vi.mock('./utils/base', () => ({
@@ -12,15 +12,15 @@ vi.mock('./utils/csrfToken', () => ({
   getCSRFToken: vi.fn(() => 'test-csrf-token'),
 }));
 
-describe('fetchGPTTransform', () => {
+describe('fetchOpenAITranslation', () => {
   const POST = vi.mocked(base.POST);
   const references = { 'google-translate': ['hola'] };
 
   it('sends required params', async () => {
-    await fetchGPTTransform('hello', references, 'informal', 'es');
+    await fetchOpenAITranslation('hello', references, 'informal', 'es');
 
     const [url, params] = POST.mock.calls[0] as [string, URLSearchParams];
-    expect(url).toBe('/gpt-transform/');
+    expect(url).toBe('/openai-chatgpt/');
     expect(params.get('english_text')).toBe('hello');
     expect(params.get('references')).toBe(JSON.stringify(references));
     expect(params.get('characteristic')).toBe('informal');
@@ -28,42 +28,49 @@ describe('fetchGPTTransform', () => {
   });
 
   it('defaults to the manual trigger', async () => {
-    await fetchGPTTransform('hello', references, 'informal', 'es');
+    await fetchOpenAITranslation('hello', references, 'informal', 'es');
 
     const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('trigger')).toBe('manual');
   });
 
   it('sends the auto trigger when given', async () => {
-    await fetchGPTTransform('hello', references, 'rephrased', 'es', 42, 'auto');
+    await fetchOpenAITranslation(
+      'hello',
+      references,
+      'rephrased',
+      'es',
+      42,
+      'auto',
+    );
 
     const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('trigger')).toBe('auto');
   });
 
   it('serializes an empty reference set', async () => {
-    await fetchGPTTransform('hello', {}, 'informal', 'es');
+    await fetchOpenAITranslation('hello', {}, 'informal', 'es');
 
     const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('references')).toBe('{}');
   });
 
   it('omits entity_pk when not provided', async () => {
-    await fetchGPTTransform('hello', references, 'informal', 'es');
+    await fetchOpenAITranslation('hello', references, 'informal', 'es');
 
     const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('entity_pk')).toBeNull();
   });
 
   it('includes entity_pk when provided', async () => {
-    await fetchGPTTransform('hello', references, 'informal', 'es', 42);
+    await fetchOpenAITranslation('hello', references, 'informal', 'es', 42);
 
     const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
     expect(params.get('entity_pk')).toBe('42');
   });
 
   it('returns the translation from the response', async () => {
-    const result = await fetchGPTTransform(
+    const result = await fetchOpenAITranslation(
       'hello',
       references,
       'informal',
@@ -72,7 +79,7 @@ describe('fetchGPTTransform', () => {
 
     expect(result).toEqual([
       {
-        sources: ['gpt-transform'],
+        sources: ['openai-chatgpt'],
         original: 'hello',
         translation: 'resultado',
       },
@@ -81,7 +88,7 @@ describe('fetchGPTTransform', () => {
 
   it('returns empty array when response has no translation', async () => {
     POST.mockResolvedValueOnce({});
-    const result = await fetchGPTTransform(
+    const result = await fetchOpenAITranslation(
       'hello',
       references,
       'informal',

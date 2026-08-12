@@ -7,7 +7,7 @@ import {
   fetchCaighdeanTranslation,
   fetchComposedMachinery,
   fetchGoogleTranslation,
-  fetchGPTTransform,
+  fetchOpenAITranslation,
   fetchMicrosoftTranslation,
   fetchTranslationMemory,
   MachineryTranslation,
@@ -227,7 +227,7 @@ export function MachineryProvider({
               // only be requested once that has resolved.
               if (!cancelled && wantsLLMSuggestion && results.length > 0) {
                 addResults(
-                  await fetchGPTTransform(
+                  await fetchOpenAITranslation(
                     plain,
                     { 'google-translate': [results[0].translation] },
                     'rephrased',

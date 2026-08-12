@@ -17,7 +17,7 @@ vi.mock('~/api/machinery', () => ({
   fetchCaighdeanTranslation: vi.fn(() => Promise.resolve([])),
   fetchComposedMachinery: vi.fn(() => Promise.resolve([])),
   fetchGoogleTranslation: vi.fn(() => Promise.resolve([])),
-  fetchGPTTransform: vi.fn(() => Promise.resolve([])),
+  fetchOpenAITranslation: vi.fn(() => Promise.resolve([])),
   fetchMicrosoftTranslation: vi.fn(() => Promise.resolve([])),
   fetchTranslationMemory: vi.fn(() => Promise.resolve([])),
 }));
@@ -90,10 +90,10 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
     setRootFlags({ enabled: true });
     mount(entityOf(undefined));
 
-    await waitFor(() => expect(api.fetchGPTTransform).toHaveBeenCalled());
+    await waitFor(() => expect(api.fetchOpenAITranslation).toHaveBeenCalled());
 
     const [source, references, characteristic, code, pk, trigger] =
-      api.fetchGPTTransform.mock.calls[0];
+      api.fetchOpenAITranslation.mock.calls[0];
     expect(source).toBe('Hello');
     expect(references).toEqual({ 'google-translate': ['Hola'] });
     expect(characteristic).toBe('rephrased');
@@ -108,7 +108,9 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
       setRootFlags({ enabled: true });
       mount(entityOf({ pk: 1, status, string: 'Hola', value: ['Hola'] }));
 
-      await waitFor(() => expect(api.fetchGPTTransform).toHaveBeenCalled());
+      await waitFor(() =>
+        expect(api.fetchOpenAITranslation).toHaveBeenCalled(),
+      );
     },
   );
 
@@ -119,7 +121,7 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
     );
 
     await waitFor(() => expect(api.fetchGoogleTranslation).toHaveBeenCalled());
-    expect(api.fetchGPTTransform).not.toHaveBeenCalled();
+    expect(api.fetchOpenAITranslation).not.toHaveBeenCalled();
   });
 
   it('skips locales it is not enabled for', async () => {
@@ -127,7 +129,7 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
     mount(entityOf(undefined));
 
     await waitFor(() => expect(api.fetchGoogleTranslation).toHaveBeenCalled());
-    expect(api.fetchGPTTransform).not.toHaveBeenCalled();
+    expect(api.fetchOpenAITranslation).not.toHaveBeenCalled();
   });
 
   it('skips when the user moved on before Google Translate resolved', async () => {
@@ -144,7 +146,7 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
     resolveGoogle(GT_RESULT);
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(api.fetchGPTTransform).not.toHaveBeenCalled();
+    expect(api.fetchOpenAITranslation).not.toHaveBeenCalled();
   });
 
   it('skips when Google Translate returns nothing to refine', async () => {
@@ -153,6 +155,6 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
     mount(entityOf(undefined));
 
     await waitFor(() => expect(api.fetchGoogleTranslation).toHaveBeenCalled());
-    expect(api.fetchGPTTransform).not.toHaveBeenCalled();
+    expect(api.fetchOpenAITranslation).not.toHaveBeenCalled();
   });
 });

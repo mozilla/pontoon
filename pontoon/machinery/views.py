@@ -280,7 +280,7 @@ def _parse_references(raw):
 
 @require_POST
 @login_required(redirect_field_name="", login_url="/403")
-def gpt_transform(request):
+def openai_chatgpt(request):
     """
     Transforms and returns text using GPT based on specified characteristics
     like rephrasing or changing formality. Fetches all entity context (comments,
@@ -403,7 +403,7 @@ def gpt_transform(request):
         return JsonResponse({"translation": result.text})
 
     except Exception as e:
-        return _machinery_error_response("GPT Transform", e)
+        return _machinery_error_response("OpenAI ChatGPT", e)
 
 
 def caighdean(request):

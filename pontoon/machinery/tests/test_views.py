@@ -284,8 +284,8 @@ def test_view_google_translate_cache(
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
-    url = reverse("pontoon.gpt_transform")
+def test_view_openai_chatgpt_cache(member, locale_a, openai_api_key):
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()
@@ -312,8 +312,8 @@ def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_context(member, locale_a, openai_api_key):
-    url = reverse("pontoon.gpt_transform")
+def test_view_openai_chatgpt_context(member, locale_a, openai_api_key):
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()
@@ -394,10 +394,10 @@ def test_view_gpt_transform_context(member, locale_a, openai_api_key):
         (Resource.Format.GETTEXT, [], ["Open browser"], None),
     ],
 )
-def test_view_gpt_transform_string_id(
+def test_view_openai_chatgpt_string_id(
     member, locale_a, openai_api_key, format, section_key, entity_key, expected
 ):
-    url = reverse("pontoon.gpt_transform")
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()
@@ -452,8 +452,8 @@ def _gpt_params(locale, **kwargs):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("trigger", ["Auto", "", "bogus"])
-def test_view_gpt_transform_invalid_trigger(member, locale_a, openai_api_key, trigger):
-    url = reverse("pontoon.gpt_transform")
+def test_view_openai_chatgpt_invalid_trigger(member, locale_a, openai_api_key, trigger):
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
@@ -464,10 +464,10 @@ def test_view_gpt_transform_invalid_trigger(member, locale_a, openai_api_key, tr
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_cache_key_includes_model(
+def test_view_openai_chatgpt_cache_key_includes_model(
     member, locale_a, openai_api_key, settings
 ):
-    url = reverse("pontoon.gpt_transform")
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()
@@ -485,10 +485,10 @@ def test_view_gpt_transform_cache_key_includes_model(
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_auto_requires_enabled_locale(
+def test_view_openai_chatgpt_auto_requires_enabled_locale(
     member, locale_a, openai_api_key, settings
 ):
-    url = reverse("pontoon.gpt_transform")
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
     settings.OPENAI_AUTO_SUGGESTION_LOCALES = ["some-other-locale"]
 
@@ -500,10 +500,10 @@ def test_view_gpt_transform_auto_requires_enabled_locale(
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_auto_allowed_for_enabled_locale(
+def test_view_openai_chatgpt_auto_allowed_for_enabled_locale(
     member, locale_a, openai_api_key, settings
 ):
-    url = reverse("pontoon.gpt_transform")
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
     settings.OPENAI_AUTO_SUGGESTION_LOCALES = [locale_a.code]
 
@@ -520,10 +520,10 @@ def test_view_gpt_transform_auto_allowed_for_enabled_locale(
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_manual_ignores_enabled_locales(
+def test_view_openai_chatgpt_manual_ignores_enabled_locales(
     member, locale_a, openai_api_key, settings
 ):
-    url = reverse("pontoon.gpt_transform")
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
     settings.OPENAI_AUTO_SUGGESTION_LOCALES = []
 
@@ -551,10 +551,10 @@ def test_view_gpt_transform_manual_ignores_enabled_locales(
         "not json",
     ],
 )
-def test_view_gpt_transform_invalid_references(
+def test_view_openai_chatgpt_invalid_references(
     member, locale_a, openai_api_key, references
 ):
-    url = reverse("pontoon.gpt_transform")
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
@@ -565,12 +565,12 @@ def test_view_gpt_transform_invalid_references(
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_single_reference_prompt_unchanged(
+def test_view_openai_chatgpt_single_reference_prompt_unchanged(
     member, locale_a, openai_api_key
 ):
     """Automatic suggestions deliberately reuse today's prompt, so refining a
     single machine translation must keep producing the wording it always has."""
-    url = reverse("pontoon.gpt_transform")
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()
@@ -623,10 +623,10 @@ def test_view_gpt_transform_single_reference_prompt_unchanged(
         ({}, "ENGLISH SOURCE:\nHello", "for reference"),
     ],
 )
-def test_view_gpt_transform_references_in_prompt(
+def test_view_openai_chatgpt_references_in_prompt(
     member, locale_a, openai_api_key, references, expected, unexpected
 ):
-    url = reverse("pontoon.gpt_transform")
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()
@@ -646,8 +646,8 @@ def test_view_gpt_transform_references_in_prompt(
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_logs_metrics(member, locale_a, openai_api_key, caplog):
-    url = reverse("pontoon.gpt_transform")
+def test_view_openai_chatgpt_logs_metrics(member, locale_a, openai_api_key, caplog):
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()

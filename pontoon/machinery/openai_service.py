@@ -14,7 +14,7 @@ from pontoon.machinery.utils import (
 
 
 @dataclass
-class LLMTranslation:
+class OpenAITranslation:
     """Result of a single `OpenAIService.get_translation()` call.
 
     A cache hit costs nothing, so it counts towards how often a suggestion was
@@ -46,7 +46,7 @@ class OpenAIService:
         resource_comment=None,
         pinned_comments=None,
         terms=None,
-    ) -> LLMTranslation:
+    ) -> OpenAITranslation:
         """
         :param references: Existing translations to give the model as reference,
             as a ``{source: [text, …]}`` mapping, in the order they should be
@@ -195,7 +195,7 @@ class OpenAIService:
         )
         cached = cache.get(cache_key)
         if cached is not None:
-            return LLMTranslation(text=cached, cache_hit=True)
+            return OpenAITranslation(text=cached, cache_hit=True)
 
         # Call the OpenAI API with the constructed prompt
         response = self.client.chat.completions.create(
@@ -211,7 +211,7 @@ class OpenAIService:
         result = response.choices[0].message.content.strip()
         set_machinery_service_cache_key(cache_key, result)
         usage = getattr(response, "usage", None)
-        return LLMTranslation(
+        return OpenAITranslation(
             text=result,
             cache_hit=False,
             prompt_tokens=getattr(usage, "prompt_tokens", None),
