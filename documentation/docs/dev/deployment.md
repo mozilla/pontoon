@@ -221,6 +221,12 @@ sending the 3rd onboarding email. The default value is 7.
 Optional. Set your `OpenAI API` key to add
 the ability to refine machine translations using ChatGPT.
 
+`OPENAI_AUTO_SUGGESTION_LOCALES`
+Optional. A comma-separated list of locale codes. In these locales,
+Machinery generates an LLM suggestion automatically, rather than only
+on request from the AI dropdown. Default value is an empty string,
+which disables automatic suggestions everywhere.
+
 `PERSONAL_ACCESS_TOKEN_MAX_COUNT`  
 Optional. The maximum number of personal access tokens a user can
 create. The default value is 10.
