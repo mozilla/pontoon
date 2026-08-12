@@ -167,6 +167,10 @@ export function EntitiesList(): React.ReactElement<'div'> {
    *
    * Exception: a `string` that is valid and viewable but doesn't match the
    * current query is handled by the "string not found" page
+   *
+   * Skipped while the list is stale, i.e. the query params just changed and the
+   * entities are about to be reset. Selecting from the previous result set
+   * would write its first entity into the new URL. See #4371.
    */
   useEffect(() => {
     if (entitiesAreStale) {
@@ -239,23 +243,15 @@ export function EntitiesList(): React.ReactElement<'div'> {
   //  * I haven't been able to figure out how to test this feature. It
   //    is possible that going for another possible solutions will make
   //    testing easier, which would be very desirable.
+  //
+  // `listKey` covers the same location fields as the dependency list it
+  // replaced, deliberately not the selected entity. It is unused in the body:
+  // it is a dependency so that changing any of those fields triggers the reset.
   useEffect(() => {
     if (mounted.current) {
       dispatch(resetEntities());
     }
-  }, [
-    dispatch,
-    // Note: location.entity is explicitly not included here
-    location.locale,
-    location.project,
-    location.resource,
-    location.search,
-    location.status,
-    location.extra,
-    location.tag,
-    location.author,
-    location.time,
-  ]);
+  }, [dispatch, listKey]);
 
   const scrollToSelected = useCallback(() => {
     if (!mounted.current) {
