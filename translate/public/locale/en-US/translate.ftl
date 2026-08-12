@@ -588,7 +588,7 @@ machinery-GoogleTranslation--option-show-original = SHOW ORIGINAL
 
 ## Machinery LLM Translation
 ## Shows the translation source for an LLM-generated suggestion.
-machinery-LLMTranslation--translation-source = AI SUGGESTION
+machinery-LLMTranslation--translation-source = OPENAI CHATGPT
 
 
 ## Machinery Microsoft Translation
