@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -220,6 +221,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const { resetFailedChecks } = useContext(FailedChecksData);
 
   const [state, setState] = useState(initEditorData);
+  const pendingValues = useRef<Array<[string, string]> | null>(null);
   const [result, setResult] = useState<MessageEntry | null>(null);
 
   const actions = useMemo<EditorActions>(() => {
@@ -231,17 +233,11 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       trim: !hasOuterWhitespace(sourceEntry),
     };
 
-    // HACK: Without this code, re-applying a composed Machinery suggestion
-    // (or restoring history) after editing a field takes two clicks:
-    // the first does nothing.
-    // Changing the `fields` changes the `defaultValue` of each field,
-    // but then for some reason the `fields` changes a second time,
-    // and we end up re-rendering the `TranslationForm` with the old field values.
-    const resetFields = (prev: EditorData, next: EditorData): EditorData => {
-      for (const field of next.fields) {
-        const live = prev.fields.find((f) => f.id === field.id);
-        live?.handle.current.setValue(field.handle.current.value);
-      }
+    const resetFields = (next: EditorData): EditorData => {
+      pendingValues.current = next.fields.map(({ id, handle }) => [
+        id,
+        handle.current.value,
+      ]);
       next.focusField.current = next.fields[0];
       setResult(buildMessageEntry(next.base, next.fields, buildOpts));
       return next;
@@ -300,7 +296,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               : editMessageEntry(sourceEntry, entry);
           }
           return {
-            ...resetFields(prev, next),
+            ...resetFields(next),
             machinery: {
               manual,
               translation: getPlainMessage(entry),
@@ -331,7 +327,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             next.fields = editMessageEntry(sourceEntry, prev.initial);
             next.fields[0].handle.current.setValue(str);
           }
-          return resetFields(prev, next);
+          return resetFields(next);
         }),
 
       setEditorSelection: (content) =>
@@ -398,6 +394,20 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     }));
     setResult(base);
   }, [locale, entity, activeTranslation]);
+
+  // Write the values recorded by `resetFields` into the fields that are now
+  // on screen. After the commit, so that the editor changes this dispatches
+  // don't land in React's render phase.
+  useEffect(() => {
+    const pending = pendingValues.current;
+    if (pending) {
+      pendingValues.current = null;
+      for (const [id, value] of pending) {
+        const field = state.fields.find((f) => f.id === id);
+        field?.handle.current.setValue(value);
+      }
+    }
+  }, [state.fields]);
 
   // For missing entries, fill editor initially with a perfect match from
   // translation memory, if available.

@@ -582,9 +582,7 @@ describe('<EditorProvider>', () => {
       cldrPlurals: [1, 3, 4],
     });
 
-    // The fields already rendered, i.e. what the translator is looking at
-    const live = editor.fields;
-    expect(live.map((f) => f.id)).toEqual(['|one', '|few', '|*']);
+    expect(editor.fields.map((f) => f.id)).toEqual(['|one', '|few', '|*']);
 
     act(() =>
       actions.setEditorFromHistory(ftl`
@@ -597,17 +595,16 @@ describe('<EditorProvider>', () => {
         `),
     );
 
-    expect(live.map(({ id, handle }) => [id, handle.current.value])).toEqual([
-      ['|one', 'ОДИН'],
-      ['|few', 'КІЛЬКА'],
-      ['|*', 'БАГАТО'],
-    ]);
-
-    // The entry is still adopted with its own catchall name
-    expect(editor.fields.map((f) => f.labels.at(-1).label)).toEqual([
-      'one',
-      'few',
-      'other',
+    expect(
+      editor.fields.map(({ id, labels, handle }) => [
+        id,
+        labels.at(-1).label,
+        handle.current.value,
+      ]),
+    ).toEqual([
+      ['|one', 'one', 'ОДИН'],
+      ['|few', 'few', 'КІЛЬКА'],
+      ['|*', 'other', 'БАГАТО'],
     ]);
   });
 

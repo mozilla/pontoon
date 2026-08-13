@@ -26,7 +26,7 @@ const DEFAULT_LOCALE = {
   cldrPlurals: [1, 5],
 };
 
-function mountForm(source, target = null) {
+function mountForm(source, target = null, locale = DEFAULT_LOCALE) {
   target ??= source;
   const store = createReduxStore();
   createDefaultUser(store);
@@ -56,7 +56,7 @@ function mountForm(source, target = null) {
 
   const wrapper = mountComponentWithStore(
     () => (
-      <Locale.Provider value={DEFAULT_LOCALE}>
+      <Locale.Provider value={locale}>
         <MockLocalizationProvider>
           <EntityView.Provider value={{ entity }}>
             <EditorProvider>
@@ -432,5 +432,54 @@ describe('<TranslationForm> with multiple fields', () => {
     // Same suggestion, same values: the edited field must still be reset.
     applyComposed();
     expect(docs()).toEqual(['COMPOSED', 'COMPOSED_LABEL']);
+  });
+
+  it('copies a translation naming its catchall after the source, on one click', () => {
+    const source = ftl`
+      key =
+          { $count ->
+              [one] ONE
+             *[other] OTHER
+          }
+      `;
+    const inLocale = ftl`
+      key =
+          { $count ->
+              [one] ОДИН
+              [few] КІЛЬКА
+             *[many] БАГАТО
+          }
+      `;
+    const fromSource = ftl`
+      key =
+          { $count ->
+              [one] ОДИН2
+              [few] КІЛЬКА2
+             *[other] БАГАТО2
+          }
+      `;
+    const { actions, views, wrapper } = mountForm(source, inLocale, {
+      direction: 'ltr',
+      code: 'uk',
+      script: 'Cyrillic',
+      cldrPlurals: [1, 3, 4],
+    });
+    const labels = () =>
+      Array.from(
+        wrapper.container.querySelectorAll('.translationform label'),
+      ).map((el) => el.textContent.trim());
+    const docs = () => views.map((view) => view.state.doc.toString());
+
+    expect(labels()).toEqual(['one', 'few', 'many']);
+
+    act(() => actions.setEditorFromHistory(fromSource));
+
+    expect(docs()).toEqual(['ОДИН2', 'КІЛЬКА2', 'БАГАТО2']);
+    expect(labels()).toEqual(['one', 'few', 'other']);
+
+    act(() => actions.setEditorFromHistory(inLocale));
+
+    expect(docs()).toEqual(['ОДИН', 'КІЛЬКА', 'БАГАТО']);
+    expect(labels()).toEqual(['one', 'few', 'many']);
   });
 });
