@@ -113,10 +113,14 @@ def pretranslate(project: Project, paths: set[str] | None):
             if locale_entity in translated_entities or locale_resource not in tr_pairs:
                 continue
 
+            entity_desc = (
+                f"entity {entity.pk} ({entity.resource.path}) in {locale.code}"
+            )
+
             try:
                 pretranslation = get_pretranslation(entity, locale)
             except ValueError as e:
-                log.info(f"Pretranslation error: {e}")
+                log.info(f"Pretranslation error for {entity_desc}: {e}")
                 continue
 
             failed_checks = run_checks(
@@ -132,13 +136,19 @@ def pretranslate(project: Project, paths: set[str] | None):
                         entity, locale, preserve_placeables=True
                     )
                 except ValueError as e:
-                    log.info(f"Pretranslation error: {e}")
+                    log.info(f"Pretranslation error for {entity_desc}: {e}")
                     continue
 
             string, author_key = pretranslation
-            _, value, properties = parse_source_string_to_json(
-                entity.resource.format, string
-            )
+            try:
+                _, value, properties = parse_source_string_to_json(
+                    entity.resource.format, string
+                )
+            except ValueError as e:
+                log.error(
+                    f"Unparsable pretranslation for {entity_desc}: {e}: {string!r}"
+                )
+                continue
 
             t = Translation(
                 entity=entity,
