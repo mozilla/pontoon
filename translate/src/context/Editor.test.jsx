@@ -19,7 +19,13 @@ import { Location, LocationProvider } from './Location';
 import { UnsavedChanges, UnsavedChangesProvider } from './UnsavedChanges';
 import { fluentParseEntry, mf2ParseMessage } from '@mozilla/l10n';
 
-function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
+function mountSpy(
+  Spy,
+  format,
+  formatTranslation,
+  formatSource = 'key = test',
+  locale = { code: 'sl', cldrPlurals: [1, 2, 3, 5] },
+) {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
   });
@@ -102,7 +108,7 @@ function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
 
   const Wrapper = () => (
     <LocationProvider history={history}>
-      <Locale.Provider value={{ code: 'sl', cldrPlurals: [1, 2, 3, 5] }}>
+      <Locale.Provider value={locale}>
         <EntityViewProvider>
           <UnsavedChangesProvider>
             <EditorProvider>
@@ -511,7 +517,7 @@ describe('<EditorProvider>', () => {
         },
         {
           handle: { current: { value: '' } },
-          id: '|other',
+          id: '|*',
           keys: [{ '*': 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
@@ -557,6 +563,54 @@ describe('<EditorProvider>', () => {
     });
   });
 
+  it('sets editor from a history entry whose catchall is named for the source', () => {
+    let editor, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source = ftl`
+      key =
+          { $count ->
+              [one] ONE
+             *[other] OTHER
+          }
+      `;
+    mountSpy(Spy, 'fluent', undefined, source, {
+      code: 'uk',
+      cldrPlurals: [1, 3, 4],
+    });
+
+    // The fields already rendered, i.e. what the translator is looking at
+    const live = editor.fields;
+    expect(live.map((f) => f.id)).toEqual(['|one', '|few', '|*']);
+
+    act(() =>
+      actions.setEditorFromHistory(ftl`
+        key =
+            { $count ->
+                [one] ОДИН
+                [few] КІЛЬКА
+               *[other] БАГАТО
+            }
+        `),
+    );
+
+    expect(live.map(({ id, handle }) => [id, handle.current.value])).toEqual([
+      ['|one', 'ОДИН'],
+      ['|few', 'КІЛЬКА'],
+      ['|*', 'БАГАТО'],
+    ]);
+
+    // The entry is still adopted with its own catchall name
+    expect(editor.fields.map((f) => f.labels.at(-1).label)).toEqual([
+      'one',
+      'few',
+      'other',
+    ]);
+  });
+
   it('sets editor from history', () => {
     let editor, result, actions;
     const Spy = () => {
@@ -588,7 +642,7 @@ describe('<EditorProvider>', () => {
         },
         {
           handle: { current: { value: 'OTHER' } },
-          id: '|other',
+          id: '|*',
           keys: [{ '*': 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
