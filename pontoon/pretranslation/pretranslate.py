@@ -182,7 +182,17 @@ class Pretranslation:
         pretranslation behavior (unlike sync, which escapes them).
         """
         entry = Entry(id=tuple(self.entity.key), value=value, properties=properties)
-        return as_string(self.format, entry, fluent_escape_syntax=False)
+        res = as_string(self.format, entry, fluent_escape_syntax=False)
+        if self.format == Format.fluent:
+            try:
+                fluent_parse_entry(res, with_linepos=False)
+            except ValueError:
+                # MT returns plain text, which can hold a brace that isn't Fluent
+                # syntax, e.g. `Rhowch { yma`. Raw, that serializes to something
+                # unparseable. Escaping is the fallback rather than the default
+                # because it would also turn a verbatim placeable into literal text.
+                res = as_string(self.format, entry, fluent_escape_syntax=True)
+        return res
 
     def message(self, msg: Message) -> None:
         """Modifies `msg`."""
