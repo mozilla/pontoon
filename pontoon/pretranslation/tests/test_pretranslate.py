@@ -683,6 +683,45 @@ def test_get_pretranslations_fluent_plural(
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
+def test_get_pretranslations_fluent_plural_catchall_named_for_locale(
+    gt_mock, fluent_resource, google_translate_locale
+):
+    gt_mock.return_value = "GT"
+
+    # one, few, many — as in uk, ru, pl, be
+    google_translate_locale.cldr_plurals = "1,3,4"
+
+    input_string = dedent(
+        """
+        plural =
+            { $count ->
+                [one] One match found.
+                *[other] { $count } matches found.
+            }
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
+
+    expected = dedent(
+        """
+        plural =
+            { $count ->
+                [one] GT
+                [few] GT
+                *[many] GT
+            }
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslation(fluent_entity, google_translate_locale)
+    assert response == (pretranslated_string, "gt")
+
+
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
 def test_get_pretranslations_fluent_complex(
     gt_mock, entity_a, fluent_resource, google_translate_locale
 ):

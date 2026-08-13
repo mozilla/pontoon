@@ -257,6 +257,45 @@ def test_composed_expands_source_plural_for_target_locale(
 
 
 @pytest.mark.django_db
+def test_composed_names_catchall_for_target_locale(client, fluent_resource, entity_a):
+    """The catchall is named after the target locale's own last category.
+
+    en-US declares `*[other]`, but a locale with one/few/many needs `*[many]`.
+    """
+    locale = LocaleFactory(code="uk-test", name="Plural many", cldr_plurals="1,3,4")
+
+    fluent_string = dedent(
+        """\
+        popup =
+            { $count ->
+               *[other] Many popups.
+            }
+        """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+
+    TranslationMemoryFactory.create(
+        entity=entity_a, source="Many popups.", target="TM_popups", locale=locale
+    )
+
+    url = reverse("pontoon.machinery_composed")
+    response = client.get(
+        url,
+        {
+            "entity": str(fluent_entity.pk),
+            "locale": locale.code,
+            "service": "translation-memory",
+        },
+    )
+    assert response.status_code == 200
+    assert json.loads(response.content)["value"]["alt"] == [
+        {"keys": ["one"], "pat": ["TM_popups"]},
+        {"keys": ["few"], "pat": ["TM_popups"]},
+        {"keys": [{"*": "many"}], "pat": ["TM_popups"]},
+    ]
+
+
+@pytest.mark.django_db
 def test_composed_tm_only_partial_returns_empty(
     client, fluent_resource, entity_a, locale_a
 ):
