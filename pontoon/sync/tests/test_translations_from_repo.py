@@ -178,6 +178,7 @@ def test_android_translation_changes():
         TranslationFactory.create(
             entity=e1,
             locale=locale,
+            string="the string value is ignored",
             value=["target same"],
             active=True,
             approved=True,
