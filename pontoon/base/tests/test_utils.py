@@ -13,6 +13,7 @@ from pontoon.test.factories import (
     ProjectLocaleFactory,
     ProjectSlugHistoryFactory,
     ResourceFactory,
+    TranslatedResourceFactory,
 )
 
 
@@ -255,8 +256,11 @@ def project_d():
     project = ProjectFactory.create(
         name="Project D", slug="project-d", disabled=False, system_project=False
     )
-    ResourceFactory.create(project=project, path="resource_d.po", format="gettext")
+    resource = ResourceFactory.create(
+        project=project, path="resource_d.po", format="gettext"
+    )
     ProjectLocaleFactory.create(project=project, locale=locale)
+    TranslatedResourceFactory.create(resource=resource, locale=locale)
     return project
 
 
