@@ -418,12 +418,14 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const status = useTranslationStatus(entity);
   useEffect(() => {
     if (
-      status === 'missing' &&
-      state.machinery === null &&
-      !state.sourceView &&
-      state.fields.length === 1 &&
-      state.fields[0].handle.current.value === ''
+      status !== 'missing' ||
+      state.machinery !== null ||
+      state.sourceView ||
+      state.fields.some((field) => field.handle.current.value !== '')
     ) {
+      return;
+    }
+    if (state.fields.length === 1) {
       const perfect = machinery.translations.find((tx) => tx.quality === 100);
       if (perfect) {
         actions.setEditorFromHelpers(
@@ -432,8 +434,18 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           false,
         );
       }
+    } else if (state.fields.length > 1) {
+      const perfect = machinery.composed.find((tx) => tx.quality === 100);
+      if (perfect) {
+        actions.setEditorFromComposed(
+          perfect.value,
+          perfect.properties,
+          perfect.sources,
+          false,
+        );
+      }
     }
-  }, [state, actions, status, machinery.translations]);
+  }, [state, actions, status, machinery.translations, machinery.composed]);
 
   useEffect(() => {
     // Changes in `result` need to be reflected in `UnsavedChanges`,
