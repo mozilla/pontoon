@@ -236,7 +236,8 @@ editor-KeyboardShortcuts--copy-from-next-helper-shortcut = <mod1>Ctrl</mod1> + <
 ## Editor machinery source indicator
 ## Shown when a perfect match is provided automatically from translation memory
 
-editor-MachinerySourceIndicator--text = <stress>100%</stress> MATCH FROM TRANSLATION MEMORY
+editor-MachinerySourceIndicator--match = <stress>100%</stress> MATCH
+    .title = 100% Translation Memory match
 
 
 ## Editor New Contributor Tooltip
