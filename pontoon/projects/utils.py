@@ -11,6 +11,7 @@ from django.utils import timezone
 from pontoon.translations.utils import parse_db_string_to_json
 
 from pontoon.base.models import Project, Translation
+from pontoon.base.user_utils import can_translate
 
 
 def generate_translation_stats_csv(project: Project, user: User) -> HttpResponse:
@@ -190,7 +191,7 @@ def upload_translations(csv_file, project: Project, user: User):
                 continue
 
             activate_new_translation = False
-            if user.can_translate(project=project, locale=locale):
+            if can_translate(user=user, project=project, locale=locale):
                 activate_new_translation = True
 
             # Create new translation for the entity
