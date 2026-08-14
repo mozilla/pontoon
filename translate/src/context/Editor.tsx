@@ -443,13 +443,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     // Content set by autofill (100% TM match) should not trigger a warning,
     // as it would be autofilled again on the next visit.
     const { autofilled, initial } = state;
-    const hasChanges =
-      !pojoEquals(initial, result) &&
-      !(autofilled && pojoEquals(autofilled, result));
+    const hasChanges = !pojoEquals(initial, result);
     if (hasChanges) {
       resetFailedChecks();
     }
-    setUnsavedChanges(() => hasChanges);
+    const isAutofilled = !!autofilled && pojoEquals(autofilled, result);
+    setUnsavedChanges(() => hasChanges && !isAutofilled);
   }, [result, state.autofilled]);
 
   return (
