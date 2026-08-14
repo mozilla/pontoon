@@ -148,7 +148,7 @@ def upload_translations(csv_file, project: Project, user: User):
     locales = project.locales.filter(
         name__in=set(project_locale_names) & set(locale_names)
     )
-    translations = [row for row in reader if any(cell for cell in row)]
+    translations = [row for row in reader if any(row.values())]
     for tr in translations:
         if qs := project.resources.filter(path=tr["Resource"]):
             resource = qs.first()

@@ -499,6 +499,26 @@ class TestUploadTranslations:
         assert Translation.objects.filter(entity=entity, locale=locale).exists()
 
     @pytest.mark.django_db
+    def test_all_blank_row_is_skipped(self, project, locale, resource, entity, user):
+        """A trailing all-empty row must be skipped, not treated as a real row.
+
+        Regression: the blank-row filter used `any(cell for cell in row)`, which
+        iterates a dict's *keys* (always truthy), so blank rows were never
+        filtered and reached the resource lookup with an empty path, failing the
+        whole upload with 'Resource not found: '.
+        """
+        csv_file = make_csv_file(
+            self._csv(
+                locale.name,
+                [["test.po", "Hello", "Hello", "Hola"], ["", "", "", ""]],
+            )
+        )
+        result = upload_translations(csv_file=csv_file, project=project, user=user)
+
+        assert result is None, getattr(result, "content", result)
+        assert Translation.objects.filter(entity=entity, locale=locale).exists()
+
+    @pytest.mark.django_db
     def test_xliff_multi_part_key_lookup(self, project, locale, user):
         """xliff keys exported with \\x04 separator are correctly resolved on import."""
         resource = ResourceFactory(
