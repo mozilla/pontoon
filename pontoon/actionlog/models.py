@@ -1,11 +1,17 @@
+from typing import TYPE_CHECKING
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
 
+if TYPE_CHECKING:
+    from pontoon.base.models.user import User
+
+
 class ActionLogQuerySet(models.QuerySet):
-    def visible_for(self, user):
+    def visible_for(self, user: "User"):
         """
         The visibility of actionlogs is determined by the role of the user:
         * Administrators can access all logs related to public and private projects

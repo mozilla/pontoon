@@ -11,9 +11,9 @@ const ENTITIES = [
   { pk: 3 },
 ];
 
-describe('<EntityViewProvider', () => {
-  vi.mock('~/hooks', () => ({ useAppSelector: vi.fn(() => ENTITIES) }));
+vi.mock('~/hooks', () => ({ useAppSelector: vi.fn(() => ENTITIES) }));
 
+describe('<EntityViewProvider', () => {
   it('returns the current entity', () => {
     let view;
     const Spy = () => {

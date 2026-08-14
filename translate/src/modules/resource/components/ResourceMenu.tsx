@@ -232,6 +232,7 @@ export function ResourceMenu({
       <div
         className='selector unselectable'
         onClick={toggleVisible}
+        role='button'
         title={resource}
       >
         <span>{resourceName}</span>

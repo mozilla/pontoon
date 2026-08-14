@@ -6,15 +6,11 @@ import { ProjectItem } from './ProjectItem';
 import { ProjectMenu, ProjectMenuDialog } from './ProjectMenu';
 import { vi } from 'vitest';
 
-beforeAll(() => {
-  vi.mock('react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useContext: vi.fn(),
-    };
-  });
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useContext: vi.fn() };
 });
+
 afterAll(() => vi.restoreAllMocks());
 
 function createShallowProjectMenuDialog({

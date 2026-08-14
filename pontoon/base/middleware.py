@@ -109,7 +109,10 @@ class ThrottleIpMiddleware:
                 user = request.user
 
                 # Do not block IPs of legitimate users
-                if user.is_authenticated and user.has_approved_translations:
+                if (
+                    user.is_authenticated
+                    and user.translation_set.filter(approved=True).exists()
+                ):
                     log.info(f"Not blocking IP {ip} of user {user.username}")
                     return response
 

@@ -1,10 +1,14 @@
+from typing import Any, cast
+
+from moz.l10n.message import message_from_json
+from moz.l10n.model import Message
+
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 
-from pontoon.base.models import (
-    Entity,
-    Locale,
-)
+from pontoon.base.models import Entity, Locale, Resource
+
+from .utils import JsonMessage, serialize_for_db
 
 
 class CreateTranslationForm(forms.Form):
@@ -14,9 +18,8 @@ class CreateTranslationForm(forms.Form):
 
     entity = forms.IntegerField()
     locale = forms.CharField()
-
-    # Some file formats allow empty translations.
-    translation = forms.CharField(required=False)
+    value = forms.JSONField(required=False)
+    properties = forms.JSONField(required=False)
 
     ignore_warnings = forms.BooleanField(required=False)
     approve = forms.BooleanField(required=False)
@@ -40,5 +43,36 @@ class CreateTranslationForm(forms.Form):
         except Locale.DoesNotExist:
             raise forms.ValidationError(f"Locale `{code}` could not be found")
 
-    def clean_translation(self):
-        return self.data.get("translation", "")
+    def clean_value(self) -> Message:
+        value = cast(JsonMessage, self.cleaned_data["value"])
+        if not value and not isinstance(value, list):
+            raise forms.ValidationError("This field is required.")
+        return message_from_json(value).normalize()
+
+    def clean_properties(self) -> dict[str, Message]:
+        properties = cast(dict[str, JsonMessage], self.cleaned_data["properties"])
+        return (
+            {k: message_from_json(v).normalize() for k, v in properties.items()}
+            if properties
+            else {}
+        )
+
+    def clean(self):
+        cleaned_data = cast(dict[str, Any], super().clean())
+        entity = cast(Entity, cleaned_data.get("entity", None))
+        value = cast(Message, cleaned_data.get("value", None))
+        properties = cast(dict[str, Message], cleaned_data.get("properties", None))
+        if entity is None or value is None or properties is None:
+            return
+        format = entity.resource.format
+
+        if properties and format != Resource.Format.FLUENT:
+            raise forms.ValidationError(f"Properties are not supported for {format}")
+
+        try:
+            cleaned_data["string"] = serialize_for_db(entity, value, properties)
+        except Exception as err:
+            value_is = "Value is" if not properties else "Value and properties are"
+            raise forms.ValidationError(
+                f"{value_is} not serializable as {format}"
+            ) from err

@@ -38,5 +38,6 @@
 }
 
 .tags-string {
+  color: var(--tags-string-color);
   white-space: pre-wrap;
 }

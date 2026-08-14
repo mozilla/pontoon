@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import type { Entity } from '~/api/entity';
 import { EntityView } from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
-import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { useAppSelector } from '~/hooks';
 
@@ -41,7 +40,6 @@ export function usePreviousEntity(): Entity | null {
 
 export function usePushNextTranslatable() {
   const { push } = useContext(Location);
-  const { cldrPlurals } = useContext(Locale);
   const { updateHistory } = useContext(HistoryData);
   const nextEntity = useNextEntity();
   const { entity } = useContext(EntityView);

@@ -82,7 +82,7 @@ const getTransform = (
       return (
         prefix +
         part.replace(/[a-z]/gi, (ch) => {
-          let cc = ch.charCodeAt(0);
+          const cc = ch.charCodeAt(0);
           if (cc >= 97 && cc <= 122) {
             const newChar = String.fromCodePoint(map.small[cc - 97]);
             // duplicate "a", "e", "o" and "u" to emulate ~30% longer text

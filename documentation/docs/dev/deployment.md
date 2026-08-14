@@ -297,9 +297,6 @@ cache is cleared and the subsequent task can run. The value should
 exceed the longest sync task of the instance. The default value is 3600
 seconds (1 hour).
 
-`SYSTRAN_TRANSLATE_API_KEY`  
-Optional. Set your [Systran Translate](https://auth.systran.net/oidc/interaction/OcxBMUAbEIkN6tIg1yIcp) API key to use machine translation by Systran.
-
 `TBX_DESCRIPTION`  
 Optional. Description to be used in the header of the Terminology (`.TBX`)
 files.

@@ -64,13 +64,21 @@ These are the available data fields:
 
 ### Appearance
 
-The user can chose between a light and dark combination of colors for Pontoon. There are three theme options available:
+The user can choose between a light and dark combination of colors for Pontoon. The appearance can be set separately for the main interface and the editor.
+
+**Main interface** controls the overall appearance of Pontoon. Three options are available:
 
 * Light.
 * Dark.
 * Match system (aligns with the theme used by the operating system).
 
-To change the theme, select the button corresponding to your preferred theme. The change will take effect immediately.
+**Editor** controls the appearance of the translation editor. Three options are available:
+
+* Light.
+* Dark.
+* Match main interface (aligns with the main interface theme).
+
+To change a theme, select the button corresponding to your preferred option. The change will take effect immediately.
 
 ### Editor
 
@@ -102,6 +110,20 @@ It’s possible to set the default homepage displayed when visiting Pontoon as a
 `Preferred locales` can be used to display a specific group of locales before others in the `LOCALES` tab when translating strings. In the image below, the user chose to display `fr` and `es-ES` before other translations — ordered alphabetically based on the locale name. Since they’re both available the tab displays 2+118, meaning 2 preferred locales plus all others.
 
 ![LOCALES tab in translation tools](../assets/localizer/users/translation_locales.png "LOCALES tab in translation tools")
+
+### Personal Access Tokens
+
+Users can create Personal Access Tokens (PAT) which are required for accessing some endpoints of the Pontoon [REST API](https://github.com/mozilla/pontoon/blob/main/pontoon/api/README.md).
+
+To create a PAT, the user must enter a suitable token name no longer than 32 characters. The generated token can be used with the REST API as follows:
+
+```bash
+curl \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  https://example.com/api/v2/resource/
+```
+
+PATs can be manually deleted at any time and automatically expire after one year.
 
 ### Account removal
 

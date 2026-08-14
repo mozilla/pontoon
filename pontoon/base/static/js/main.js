@@ -1,3 +1,5 @@
+/* global ga, NProgress */
+
 /* Must be available immediately */
 // Add case insensitive :contains-like selector to jQuery (search)
 $.expr[':'].containsi = function (a, i, m) {
@@ -372,7 +374,7 @@ $(function () {
     });
 
   // General keyboard shortcuts
-  generalShortcutsHandler = function (e) {
+  function generalShortcutsHandler(e) {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     function moveMenu(type) {
@@ -381,8 +383,8 @@ $(function () {
       const items = menu.find(
         'li:visible:not(.horizontal-separator, :has(li))',
       );
-      let element = null;
 
+      let element;
       if (
         hovered.length === 0 ||
         menu.find('li:not(:has(li)):visible:' + options[0]).is('.hover')
@@ -448,6 +450,6 @@ $(function () {
         return false;
       }
     }
-  };
+  }
   $('html').on('keydown', generalShortcutsHandler);
 });

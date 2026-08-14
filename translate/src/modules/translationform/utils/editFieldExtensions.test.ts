@@ -2,6 +2,7 @@ import { EditorView } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 
 import { getExtensions } from './editFieldExtensions';
+import { parseEntry } from '~/utils/message';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -17,7 +18,8 @@ function tempView(format: string, doc = ''): EditorView {
     currentTempView = null;
   }
 
-  const extensions = getExtensions(format, `key = ${doc}`, {} as any);
+  const entry = parseEntry(format, `key = ${doc}`)!;
+  const extensions = getExtensions(entry, {} as any);
   currentTempView = new EditorView({
     state: EditorState.create({ doc, extensions }),
   });
@@ -45,7 +47,7 @@ describe('spellcheck', () => {
   });
 
   test('common mode', () => {
-    const view = tempView('plain', '%1$s foo');
+    const view = tempView('android', '%1$s foo');
 
     const text = getAncestorWith(view.domAtPos(7).node, 'spellcheck');
     expect(text?.getAttribute('spellcheck')).toBe('true');

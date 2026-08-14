@@ -26,6 +26,7 @@ from django.utils.safestring import mark_safe
 
 from pontoon.base.placeables import get_placeables
 from pontoon.base.simple_preview import get_simple_preview
+from pontoon.base.utils import format_datetime
 
 
 register = template.Library()
@@ -74,6 +75,20 @@ def theme_class(request):
         theme = request.COOKIES.get("system_theme", "system")
 
     return f"{theme}-theme"
+
+
+@library.global_function
+def user_editor_theme(user):
+    """Resolve the editor theme to apply.
+
+    Falls back to the default theme when the user is anonymous or has not yet
+    made an explicit choice (``editor_theme`` is NULL).
+    """
+    from pontoon.base.models import UserProfile
+
+    if user.is_authenticated and user.profile.editor_theme:
+        return user.profile.editor_theme
+    return UserProfile.DEFAULT_EDITOR_THEME
 
 
 @library.global_function
@@ -180,20 +195,7 @@ def date_status(value, complete):
     return "normal"
 
 
-@library.filter
-def format_datetime(value, format="full", default="---"):
-    if value is not None:
-        if format == "full":
-            format = "%A, %B %d, %Y at %H:%M %Z"
-        elif format == "date":
-            format = "%B %-d, %Y"
-        elif format == "short_date":
-            format = "%b %-d, %Y"
-        elif format == "time":
-            format = "%H:%M %Z"
-        return value.strftime(format)
-    else:
-        return default
+library.filter(format_datetime)
 
 
 @library.filter

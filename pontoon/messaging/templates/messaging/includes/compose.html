@@ -1,5 +1,4 @@
 {% import "widgets/checkbox.html" as Checkbox %}
-{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 
 {% macro collapsible(label, filter_classname, attribute, is_enabled, form_field) %}
@@ -95,7 +94,7 @@
         {% call collapsible("Filter by locale", "locale", "locale", form.locale_toggle.value(), form.locale_toggle) %}
           <div class="multi-selector locale-selector">
             <div class="clearfix">
-              {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales') }}
+              {{ multiple_item_selector.render(available_locales, selected_locales, form_field='locales') }}
             </div>
           </div>
           <div class="errors">

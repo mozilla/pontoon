@@ -5,19 +5,18 @@ import re
 from collections import defaultdict
 from datetime import datetime
 from os.path import basename
+from typing import Any, cast
 from urllib.parse import urlparse
-
-from notifications.signals import notify
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, F, Prefetch, Q, QuerySet
 from django.http import (
     Http404,
+    HttpRequest,
     HttpResponse,
     HttpResponseForbidden,
     JsonResponse,
@@ -34,6 +33,8 @@ from django.views.generic.edit import FormView
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
+from pontoon.base.get_entities import get_entities_for_project_locale
+from pontoon.base.map_entities import map_entities_to_json
 from pontoon.base.models import (
     Comment,
     Entity,
@@ -44,12 +45,28 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
+    User,
     UserProfile,
 )
+from pontoon.base.models.translation import TranslationQuerySet
+from pontoon.base.notification_utils import serialized_notifications
 from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
+from pontoon.base.user_utils import (
+    can_manage_locales,
+    can_translate,
+    can_translate_locales,
+    gravatar_url,
+    manager_for_locales,
+    profile_url,
+    translated_projects,
+    translator_for_locales,
+    user_banner,
+)
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
+from pontoon.contributors.utils import users_with_translations_counts
+from pontoon.messaging.notifications import send_notification
 
 
 log = logging.getLogger(__name__)
@@ -163,73 +180,102 @@ def authors_and_time_range(request, locale, slug, part):
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )
-    paths = [part] if part != "all-resources" else None
 
-    translations = Translation.for_locale_project_paths(locale, project, paths)
+    translations = cast(TranslationQuerySet, Translation.objects).filter(
+        entity__obsolete=False, entity__resource__project=project, locale=locale
+    )
+    if part != "all-resources":
+        translations = translations.filter(entity__resource__path__in=[part])
+
+    authors = [
+        {
+            "email": user.email,
+            "display_name": user.name_or_email,
+            "id": user.id,
+            "gravatar_url": gravatar_url(user),
+            "translation_count": user.translations_count,
+            "role": user.user_role,
+        }
+        for user in users_with_translations_counts(None, Q(id__in=translations))
+    ]
+
+    counts_per_minute = [
+        (utils.convert_to_unix_time(period["minute"]), period["count"])
+        for period in translations.extra({"minute": "date_trunc('minute', date)"})
+        .order_by("minute")
+        .values("minute")
+        .annotate(count=Count("id"))
+    ]
 
     return JsonResponse(
-        {
-            "authors": translations.authors(),
-            "counts_per_minute": translations.counts_per_minute(),
-        },
+        {"authors": authors, "counts_per_minute": counts_per_minute},
         safe=False,
     )
 
 
-def _get_entities_list(locale, preferred_source_locale, project, form):
+def _get_entities_list(
+    locale: Locale,
+    preferred_source_locale: str | None,
+    project: Project,
+    cleaned_data: dict[str, Any],
+):
     """Return entities from a specified list, optionally filtered by search term.
 
     Used for batch editing and list-based entity filtering (e.g. from notifications).
     """
-    entity_ids = form.cleaned_data["entity_ids"]
+    entity_ids = cleaned_data["entity_ids"]
     entities = Entity.objects.filter(pk__in=entity_ids)
 
-    if form.cleaned_data.get("search"):
-        search_term = form.cleaned_data["search"]
+    if search_term := cleaned_data.get("search"):
         entities = entities.filter(string__icontains=search_term)
 
     entities = entities.distinct().order_by("order")
 
     return JsonResponse(
         {
-            "entities": Entity.map_entities(locale, preferred_source_locale, entities),
+            "entities": map_entities_to_json(locale, preferred_source_locale, entities),
             "stats": TranslatedResource.objects.query_stats(
-                project, form.cleaned_data["paths"], locale
+                project, cleaned_data["paths"], locale
             ),
         },
         safe=False,
     )
 
 
-def _get_paginated_entities(locale, preferred_source_locale, project, form, entities):
+def _get_paginated_entities(
+    locale: Locale,
+    preferred_source_locale: str | None,
+    project: Project,
+    cleaned_data: dict[str, Any],
+    entities: QuerySet[Entity],
+):
     """Return a paginated list of entities.
 
     This is used by the regular mode of the Translate page.
     """
-    paginator = Paginator(entities, form.cleaned_data["limit"])
-    page = form.cleaned_data["page"]
+    paginator = Paginator(entities, cleaned_data["limit"])
+    page_idx = cleaned_data["page"]
 
     try:
-        entities_page = paginator.page(page)
+        entities_page = paginator.page(page_idx)
     except EmptyPage:
         return JsonResponse({"has_next": False, "stats": {}})
 
-    entities_to_map = entities_page.object_list
-    requested_entity = form.cleaned_data["entity"] if page == 1 else None
-
+    requested_entity = cleaned_data["entity"] if page_idx == 1 else None
     if requested_entity and not entities.filter(pk=requested_entity).exists():
         requested_entity = None
+
     return JsonResponse(
         {
-            "entities": Entity.map_entities(
+            "entities": map_entities_to_json(
                 locale,
                 preferred_source_locale,
-                entities_to_map,
+                cast(QuerySet[Entity], entities_page.object_list),
                 requested_entity=requested_entity,
             ),
             "has_next": entities_page.has_next(),
             "stats": TranslatedResource.objects.query_stats(
-                project, form.cleaned_data["paths"], locale
+                project, cleaned_data["paths"], locale
             ),
         },
         safe=False,
@@ -239,7 +285,7 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
 @csrf_exempt
 @require_POST
 @utils.require_AJAX
-def entities(request):
+def entities(request: HttpRequest):
     """Get entities for the specified project, locale and paths."""
     form = forms.GetEntitiesForm(request.POST)
     if not form.is_valid():
@@ -250,25 +296,29 @@ def entities(request):
             },
             status=400,
         )
+    cleaned_data = form.cleaned_data
 
-    locale = get_object_or_404(Locale, code=form.cleaned_data["locale"])
+    user = cast(User, request.user)
+    locale = get_object_or_404(Locale, code=cleaned_data["locale"])
 
-    preferred_source_locale = ""
-    if request.user.is_authenticated:
-        preferred_source_locale = request.user.profile.preferred_source_locale
+    preferred_source_locale: str | None = None
+    if user.is_authenticated:
+        preferred_source_locale = user.profile.preferred_source_locale
 
-    project_slug = form.cleaned_data["project"]
+    project_slug = cleaned_data["project"]
     if project_slug == "all-projects":
         project = Project(slug=project_slug)
     else:
         project = get_object_or_404(Project, slug=project_slug)
 
     # Only return entities with provided IDs (batch editing)
-    if form.cleaned_data["entity_ids"]:
-        return _get_entities_list(locale, preferred_source_locale, project, form)
+    if cleaned_data["entity_ids"]:
+        return _get_entities_list(
+            locale, preferred_source_locale, project, cleaned_data
+        )
 
-    # `Entity.for_project_locale` only requires a subset of the fields the form contains. We thus
-    # make a new dict with only the keys we want to pass to that function.
+    # `get_entities_for_project_locale` only requires a subset of the fields the form contains.
+    # We thus make a new dict with only the keys we want to pass to that function.
     restrict_to_keys = (
         "paths",
         "status",
@@ -280,6 +330,7 @@ def entities(request):
         "search_match_case",
         "search_match_whole_word",
         "time",
+        "created_time",
         "author",
         "review_time",
         "reviewer",
@@ -303,7 +354,7 @@ def entities(request):
             form_data[name] = UserProfile._meta.get_field(name).get_default()
 
     try:
-        entities = Entity.for_project_locale(request.user, project, locale, **form_data)
+        entities = get_entities_for_project_locale(user, project, locale, **form_data)
     except ValueError as error:
         return JsonResponse({"status": False, "message": f"{error}"}, status=500)
 
@@ -313,7 +364,7 @@ def entities(request):
 
     # Out-of-context view: paginate entities
     return _get_paginated_entities(
-        locale, preferred_source_locale, project, form, entities
+        locale, preferred_source_locale, project, form.cleaned_data, entities
     )
 
 
@@ -409,13 +460,13 @@ def get_sibling_entities(request):
 
     return JsonResponse(
         {
-            "succeeding": Entity.map_entities(
+            "succeeding": map_entities_to_json(
                 locale,
                 preferred_source_locale,
                 succeeding_entities,
                 is_sibling=True,
             ),
-            "preceding": Entity.map_entities(
+            "preceding": map_entities_to_json(
                 locale,
                 preferred_source_locale,
                 preceding_entities,
@@ -468,24 +519,33 @@ def get_translation_history(request):
 
     for t in translations:
         u = t.user or User(username="Imported", first_name="Imported", email="imported")
-        translation_dict = t.serialize()
-        translation_dict.update(
+        td = t.serialize()
+        td.update(
             {
-                "user": u.name_or_email,
-                "uid": u.id,
-                "username": u.username,
-                "user_gravatar_url_small": u.gravatar_url(88),
-                "user_banner": u.banner(locale, project_contact),
                 "date": t.date,
-                "approved_user": User.display_name_or_blank(t.approved_user),
-                "approved_date": t.approved_date,
-                "rejected_user": User.display_name_or_blank(t.rejected_user),
-                "rejected_date": t.rejected_date,
-                "comments": [c.serialize(project_contact) for c in t.comments.all()],
-                "machinery_sources": t.machinery_sources_values,
+                "uid": u.pk,
+                "user": u.name_or_email,
+                "username": u.username,
+                "user_gravatar_url_small": gravatar_url(u),
             }
         )
-        payload.append(translation_dict)
+        banner = user_banner(u, locale, project_contact)
+        if banner != ("", ""):
+            td["user_banner"] = banner
+        if t.approved_user:
+            td["approved_user"] = t.approved_user.name_or_email
+        if t.approved_date:
+            td["approved_date"] = t.approved_date
+        if t.rejected_user:
+            td["rejected_user"] = t.rejected_user.name_or_email
+        if t.rejected_date:
+            td["rejected_date"] = t.rejected_date
+        if comments := [c.serialize(project_contact) for c in t.comments.all()]:
+            td["comments"] = comments
+        if t.machinery_sources_values:
+            td["machinery_sources"] = t.machinery_sources_values
+
+        payload.append(td)
 
     return JsonResponse(payload, safe=False)
 
@@ -608,7 +668,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         pk__in=recipients,
         profile__comment_notifications=True,
     ).exclude(pk=user.pk):
-        notify.send(
+        send_notification(
             user,
             recipient=recipient,
             verb="has added a comment in",
@@ -643,7 +703,7 @@ def _send_pin_comment_notifications(user, comment):
     ):
         # Send separate notification for each locale (which results in links to corresponding translate views)
         for locale in Locale.objects.filter(pk__in=recipient_data[recipient.pk]):
-            notify.send(
+            send_notification(
                 user,
                 recipient=recipient,
                 verb="has pinned a comment in",
@@ -834,9 +894,9 @@ def get_users(request):
     for u in users:
         payload.append(
             {
-                "gravatar": u.gravatar_url(44),
+                "gravatar": gravatar_url(u, 44),
                 "name": u.name_or_email,
-                "url": u.profile_url,
+                "url": profile_url(u),
                 "username": u.profile.username,
             }
         )
@@ -922,9 +982,9 @@ def upload(request):
 
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
-    if not request.user.can_translate(
-        project=project, locale=locale
-    ) or readonly_exists(project, locale):
+    if not can_translate(request.user, project, locale) or readonly_exists(
+        project, locale
+    ):
         return HttpResponseForbidden("You don't have permission to upload files.")
     get_object_or_404(Resource, project=project, path=res_path)
 
@@ -1032,16 +1092,14 @@ def user_data(request):
             "contributor_for_locales": list(
                 user.translation_set.values_list("locale__code", flat=True).distinct()
             ),
-            "can_manage_locales": list(
-                user.can_manage_locales.values_list("code", flat=True)
-            ),
-            "can_translate_locales": list(
-                user.can_translate_locales.values_list("code", flat=True)
-            ),
-            "manager_for_locales": [loc.code for loc in user.manager_for_locales],
-            "translator_for_locales": [loc.code for loc in user.translator_for_locales],
+            "can_manage_locales": list(can_manage_locales(user)),
+            "can_translate_locales": list(can_translate_locales(user)),
+            "manager_for_locales": [loc.code for loc in manager_for_locales(user)],
+            "translator_for_locales": [
+                loc.code for loc in translator_for_locales(user)
+            ],
             "pm_for_projects": list(user.contact_for.values_list("slug", flat=True)),
-            "translator_for_projects": user.translated_projects,
+            "translator_for_projects": translated_projects(user),
             "settings": {
                 "quality_checks": user.profile.quality_checks,
                 "force_suggestions": user.profile.force_suggestions,
@@ -1054,10 +1112,11 @@ def user_data(request):
             "tour_status": user.profile.tour_status,
             "has_dismissed_addon_promotion": user.profile.has_dismissed_addon_promotion,
             "logout_url": logout_url,
-            "gravatar_url_small": user.gravatar_url(88),
-            "gravatar_url_big": user.gravatar_url(176),
-            "notifications": user.serialized_notifications,
+            "gravatar_url_small": gravatar_url(user, 88),
+            "gravatar_url_big": gravatar_url(user, 176),
+            "notifications": serialized_notifications(user),
             "theme": user.profile.theme,
+            "editor_theme": user.profile.editor_theme,
         }
     )
 

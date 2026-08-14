@@ -22,6 +22,7 @@
       background: transparent;
       border-bottom: 1px solid var(--main-border-1);
       bottom: auto;
+      box-sizing: border-box;
       display: inline-block;
       margin: 2px 0 -4px -1px;
       overflow: auto;
@@ -29,12 +30,20 @@
       position: relative;
       width: 295px;
 
+      input[type='search'] {
+        border: none;
+        box-sizing: border-box;
+        width: 100%;
+      }
+
       ul {
         height: 170px;
         margin-bottom: 0;
 
         li span.code {
+          color: var(--status-translated-alt);
           float: right;
+          text-align: left;
           width: auto;
         }
       }

@@ -16,21 +16,19 @@ const DEFAULT_BATCH_ACTIONS = {
   response: null,
 };
 
+vi.mock('~/hooks', () => ({
+  useAppDispatch: vi.fn(() => vi.fn()),
+  useAppSelector: vi.fn((selector) =>
+    selector({ [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS }),
+  ),
+}));
+
+vi.mock('../actions', () => ({
+  resetSelection: vi.fn(() => ({ type: 'whatever' })),
+  selectAll: vi.fn(() => ({ type: 'whatever' })),
+}));
+
 describe('<BatchActions>', () => {
-  beforeAll(() => {
-    vi.mock('~/hooks', () => ({
-      useAppDispatch: vi.fn(() => vi.fn()),
-      useAppSelector: vi.fn((selector) =>
-        selector({ [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS }),
-      ),
-    }));
-
-    vi.mock('../actions', () => ({
-      resetSelection: vi.fn(() => ({ type: 'whatever' })),
-      selectAll: vi.fn(() => ({ type: 'whatever' })),
-    }));
-  });
-
   afterAll(() => {
     Hooks.useAppDispatch.mockRestore();
     Hooks.useAppSelector.mockRestore();

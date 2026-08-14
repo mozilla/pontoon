@@ -29,3 +29,4 @@ export { editMessageEntry, editSource } from './editMessageEntry';
 export { parseEntry } from './parseEntry';
 export { requiresSourceView } from './requiresSourceView';
 export { serializeEntry } from './serializeEntry';
+export { specialFormats } from './specialFormats';

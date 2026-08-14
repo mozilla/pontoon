@@ -83,8 +83,12 @@ export const fetchUsersList = (
   projectId: number,
 ): Promise<MentionUser[]> => {
   const params = new URLSearchParams();
-  if (locale) params.append('locale', locale);
-  if (projectId) params.append('project', String(projectId));
+  if (locale) {
+    params.append('locale', locale);
+  }
+  if (projectId) {
+    params.append('project', String(projectId));
+  }
 
   return GET(`/get-users/?${params}`);
 };
@@ -129,6 +133,16 @@ export function updateUserTheme(
   });
   const headers = new Headers({ 'X-CSRFToken': csrfToken });
   return POST('/user/theme/', payload, { headers });
+}
+
+export function updateUserEditorTheme(editorTheme: string): Promise<void> {
+  const csrfToken = getCSRFToken();
+  const payload = new URLSearchParams({
+    editor_theme: editorTheme,
+    csrfmiddlewaretoken: csrfToken,
+  });
+  const headers = new Headers({ 'X-CSRFToken': csrfToken });
+  return POST('/user/editor-theme/', payload, { headers });
 }
 
 /** Update Interactive Tour status to a given step. */

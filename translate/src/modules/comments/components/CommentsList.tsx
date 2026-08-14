@@ -29,7 +29,7 @@ export function CommentsList({
     <div className='comments-list'>
       <section className='all-comments'>
         <ul>
-          {translation.comments.map((comment) => (
+          {translation.comments?.map((comment) => (
             <Comment
               comment={comment}
               key={comment.id}

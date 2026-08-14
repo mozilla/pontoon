@@ -1,10 +1,10 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { MockLocalizationProvider } from '~/test/utils';
 import { Highlight } from './Highlight';
+import { render } from '@testing-library/react';
 
 const mountMarker = (content, terms = [], search = null) =>
-  mount(
+  render(
     <MockLocalizationProvider>
       <Highlight search={search} terms={terms}>
         {content}
@@ -15,10 +15,9 @@ const mountMarker = (content, terms = [], search = null) =>
 describe('Test parser order', () => {
   it('matches webext placeholder', () => {
     const content = 'You have created $COUNT$ aliases';
-    const wrapper = mountMarker(content);
+    const { getByText } = mountMarker(content);
 
-    expect(wrapper.find('mark')).toHaveLength(1);
-    expect(wrapper.find('mark').text()).toContain('$COUNT$');
+    expect(getByText('$COUNT$').tagName).toBe('MARK');
   });
 });
 
@@ -29,11 +28,11 @@ describe('mark terms', () => {
       terms: [{ text: 'bar' }, { text: 'baz' }],
     };
 
-    const wrapper = mountMarker(string, terms);
+    const { container, getByText } = mountMarker(string, terms);
+    expect(container.querySelectorAll('mark')).toHaveLength(2);
 
-    expect(wrapper.find('mark')).toHaveLength(2);
-    expect(wrapper.find('mark').at(0).text()).toEqual('bar');
-    expect(wrapper.find('mark').at(1).text()).toEqual('baz');
+    expect(getByText('bar').tagName).toBe('MARK');
+    expect(getByText('baz').tagName).toBe('MARK');
   });
 
   it('marks entire words on partial match', () => {
@@ -42,12 +41,12 @@ describe('mark terms', () => {
       terms: [{ text: 'add-on' }],
     };
 
-    const wrapper = mountMarker(string, terms);
+    const { container, getByText } = mountMarker(string, terms);
+    expect(container.querySelectorAll('mark')).toHaveLength(1);
 
-    const mark = wrapper.find('mark');
-    expect(mark).toHaveLength(1);
-    expect(mark.text()).toEqual('Add-Ons');
-    expect(mark.prop('data-match')).toEqual('add-on');
+    const mark = getByText('Add-Ons');
+    expect(mark.tagName).toBe('MARK');
+    expect(mark).toHaveAttribute('data-match', 'add-on');
   });
 
   it('only marks terms at the beginning of the word', () => {
@@ -56,9 +55,9 @@ describe('mark terms', () => {
       terms: [{ text: 'native' }],
     };
 
-    const wrapper = mountMarker(string, terms);
+    const { container } = mountMarker(string, terms);
 
-    expect(wrapper.find('mark')).toHaveLength(0);
+    expect(container.querySelector('mark')).toBeNull();
   });
 
   it('marks longer terms first', () => {
@@ -67,10 +66,10 @@ describe('mark terms', () => {
       terms: [{ text: 'translation' }, { text: 'translation tool' }],
     };
 
-    const wrapper = mountMarker(string, terms);
+    const { getByText, container } = mountMarker(string, terms);
+    expect(container.querySelectorAll('mark')).toHaveLength(1);
 
-    expect(wrapper.find('mark')).toHaveLength(1);
-    expect(wrapper.find('mark').text()).toEqual('translation tool');
+    expect(getByText('translation tool').tagName).toBe('MARK');
   });
 
   it('does not mark terms within placeables', () => {
@@ -80,67 +79,68 @@ describe('mark terms', () => {
       terms: [{ text: 'browser' }, { text: 'version' }],
     };
 
-    const wrapper = mountMarker(string, terms);
+    const { container } = mountMarker(string, terms);
 
-    expect(wrapper.find('mark')).toHaveLength(3);
-    expect(wrapper.find('mark').at(0).text()).toEqual('browser');
-    expect(wrapper.find('mark').at(0).hasClass('term'));
-    expect(wrapper.find('mark').at(1).text()).toEqual('{ $version }');
-    expect(wrapper.find('mark').at(1).hasClass('placeable'));
-    expect(wrapper.find('mark').at(2).text()).toEqual('{ $bits }');
-    expect(wrapper.find('mark').at(2).hasClass('placeable'));
+    const marks = container.querySelectorAll('mark');
+    expect(marks).toHaveLength(3);
+    expect(marks[0]).toHaveTextContent('browser');
+    expect(marks[0]).toHaveClass('term');
+    expect(marks[1]).toHaveTextContent('{ $version }');
+    expect(marks[1]).toHaveClass('placeable');
+    expect(marks[2]).toHaveTextContent('{ $bits }');
+    expect(marks[2]).toHaveClass('placeable');
   });
 });
 
 describe('<Highlight search>', () => {
   it('does not break on regexp special characters', () => {
-    const wrapper = mountMarker('foo (bar)', [], '(bar');
-    expect(wrapper.find('mark.search').text()).toEqual('(bar');
+    const { container } = mountMarker('foo (bar)', [], '(bar');
+    expect(container.querySelector('mark.search')).toHaveTextContent('(bar');
   });
 
   it('does not mark search if empty', () => {
-    const wrapper = mountMarker('123456', [], '');
-    const marks = wrapper.find('mark');
+    const { container } = mountMarker('123456', [], '');
+    const marks = container.querySelectorAll('mark');
     expect(marks).toHaveLength(1);
-    expect(marks.at(0).hasClass('placeable'));
-    expect(marks.at(0).text()).toEqual('123456');
+    expect(marks[0]).toHaveClass('placeable');
+    expect(marks[0]).toHaveTextContent('123456');
   });
 
   it('prefers search marks over placeholders at start of mark', () => {
-    const wrapper = mountMarker('123456', [], '123');
-    const marks = wrapper.find('mark');
+    const { container } = mountMarker('123456', [], '123');
+    const marks = container.querySelectorAll('mark');
     expect(marks).toHaveLength(1);
-    expect(marks.at(0).hasClass('search'));
-    expect(marks.at(0).text()).toEqual('123');
+    expect(marks[0]).toHaveClass('search');
+    expect(marks[0]).toHaveTextContent('123');
   });
 
   it('prefers search marks over placeholders at end of mark', () => {
-    const wrapper = mountMarker('123456', [], '456');
-    const marks = wrapper.find('mark');
+    const { container } = mountMarker('123456', [], '456');
+    const marks = container.querySelectorAll('mark');
     expect(marks).toHaveLength(1);
-    expect(marks.at(0).hasClass('search'));
-    expect(marks.at(0).text()).toEqual('456');
+    expect(marks[0]).toHaveClass('search');
+    expect(marks[0]).toHaveTextContent('456');
   });
 
   it('does not break for lone " quotes', () => {
-    const wrapper = mountMarker('123456"', [], '"');
-    const marks = wrapper.find('mark');
+    const { container } = mountMarker('123456"', [], '"');
+    const marks = container.querySelectorAll('mark');
     expect(marks).toHaveLength(2);
-    expect(marks.at(1).text()).toEqual('"');
+    expect(marks[1]).toHaveTextContent('"');
   });
 
   it('does not break for doubled "" quotes', () => {
-    const wrapper = mountMarker('123456""', [], '""');
-    const marks = wrapper.find('mark');
+    const { container } = mountMarker('123456""', [], '""');
+    const marks = container.querySelectorAll('mark');
     expect(marks).toHaveLength(2);
-    expect(marks.at(1).text()).toEqual('""');
+    expect(marks[1]).toHaveTextContent('""');
   });
 
   it("does not alter source text's capitalization", () => {
-    const wrapper = mountMarker('hello world', [], 'HELLO');
-    const marks = wrapper.find('mark');
+    const { container } = mountMarker('hello world', [], 'HELLO');
+    const marks = container.querySelectorAll('mark');
     expect(marks).toHaveLength(1);
-    expect(marks.at(0).text()).toEqual('hello');
+    expect(marks[0]).toHaveTextContent('hello');
   });
 });
 
@@ -296,12 +296,12 @@ describe('specific marker', () => {
   ];
   for (const [source, ...exp] of tests) {
     test(source, () => {
-      const wrapper = mountMarker(source);
-      const marks = wrapper.find('mark');
+      const { container } = mountMarker(source);
+      const marks = container.querySelectorAll('mark');
       expect(marks).toHaveLength(exp.length);
       for (let i = 0; i < exp.length; ++i) {
-        expect(marks.at(i).hasClass('placeable'));
-        expect(marks.at(i).text()).toEqual(exp[i]);
+        expect(marks[i]).toHaveClass('placeable');
+        expect(marks[i].textContent).toEqual(exp[i]);
       }
     });
   }

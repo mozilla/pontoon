@@ -310,10 +310,7 @@ export function InteractiveTour(): React.ReactElement | null {
           <Localized
             id='interactivetour-InteractiveTour--end-content'
             elems={{
-              a: (
-                // eslint-disable-next-line
-                <a href='/docs/localizer/' />
-              ),
+              a: <a href='/docs/localizer/' />,
             }}
           >
             <p>{`There’s a wide variety of tools to help you with translations,

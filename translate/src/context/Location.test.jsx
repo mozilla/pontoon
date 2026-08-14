@@ -60,6 +60,32 @@ describe('LocationProvider', () => {
     });
   });
 
+  it('correctly parses the created_time query parameter', () => {
+    let view;
+    const Spy = () => {
+      view = useContext(Location);
+      return null;
+    };
+    const history = {
+      location: {
+        pathname: '/kg/waterwolf/all-resources/',
+        search: '?created_time=202605240444-202605240444',
+      },
+      listen: vi.fn(),
+    };
+    render(
+      <LocationProvider history={history}>
+        <Spy />
+      </LocationProvider>,
+    );
+    expect(view).toMatchObject({
+      locale: 'kg',
+      project: 'waterwolf',
+      resource: 'all-resources',
+      created_time: '202605240444-202605240444',
+    });
+  });
+
   it('correctly parses a query string with a list', () => {
     let view;
     const Spy = () => {

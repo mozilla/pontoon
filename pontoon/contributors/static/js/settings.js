@@ -73,7 +73,7 @@ $(function () {
   });
 
   function saveLocalesOrder() {
-    const selectedLocales = $('.multiple-team-selector .locale.selected')
+    const selectedLocales = $('.multiple-item-selector .item.selected')
       .find('input[type=hidden]')
       .val();
 
@@ -100,11 +100,11 @@ $(function () {
 
   $('body').on(
     'click',
-    '.multiple-team-selector .locale.select li',
+    '.multiple-item-selector .item.select li',
     saveLocalesOrder,
   );
 
-  $('body').on('click', '.multiple-team-selector .move-all', saveLocalesOrder);
+  $('body').on('click', '.multiple-item-selector .move-all', saveLocalesOrder);
 
   // Handle toggle buttons
   $('.toggle-button button').click(function (e) {

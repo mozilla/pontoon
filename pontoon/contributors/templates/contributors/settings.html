@@ -3,7 +3,7 @@
 {% import "widgets/toggle.html" as Toggle %}
 {% import 'widgets/field.html' as Field %}
 {% import "widgets/theme_toggle.html" as ThemeToggle %}
-{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
+{% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 {% import 'teams/widgets/team_selector.html' as team_selector %}
 
 {% block title %}Settings{% endblock %}
@@ -330,7 +330,14 @@
             settings
           </p>
         </div>
-        {{ ThemeToggle.button(user) }}
+        <div class="field theme-field">
+          <p class="theme-label">Main interface</p>
+          {{ ThemeToggle.button(user) }}
+        </div>
+        <div class="field theme-field editor-theme-field">
+          <p class="theme-label">Editor</p>
+          {{ ThemeToggle.button(user, editor=True) }}
+        </div>
       </section>
 
       <section>
@@ -345,7 +352,7 @@
             title='Run Translate Toolkit checks before submitting translations')
           }}
 
-          {% if user.can_translate_locales.exists() %}
+          {% if user.can_translate_locales() %}
             {{
               Checkbox.checkbox(
               'Make suggestions',
@@ -426,17 +433,9 @@
         <h3>Preferred locales to get suggestions from</h3>
         <div>
           {{
-            multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order',
+            multiple_item_selector.render(available_locales, selected_locales, form_field='locales_order',
             sortable=True)
           }}
-        </div>
-      </section>
-
-      <section>
-        <h3>Account Management</h3>
-        <div id="account-settings" class="clearfix">
-          <span class="label">Delete account</span>
-          <button class="delete-user-btn">Delete my account</button>
         </div>
       </section>
 
@@ -509,6 +508,14 @@
           <button class="generate-token-btn" disabled>Generate Token</button>
         </div>
         <div class="error-message"></div>
+      </section>
+
+      <section>
+        <h3>Account Management</h3>
+        <div id="account-settings" class="clearfix">
+          <span class="label">Delete account</span>
+          <button class="delete-user-btn">Delete my account</button>
+        </div>
       </section>
     </form>
   </section>

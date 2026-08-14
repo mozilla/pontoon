@@ -1,0 +1,43 @@
+import random
+import string
+
+from django.db import migrations
+
+
+def dedup_userprofile_usernames(apps, _):
+
+    UserProfile = apps.get_model("base", "UserProfile")
+    seen = {}
+    conflicts = []
+
+    for profile in (
+        UserProfile.objects.exclude(username=None)
+        .exclude(username="")
+        .order_by("user_id")
+    ):
+        key = profile.username.lower()
+        if key in seen:
+            # Renamed conflicting usernames before enforcing case-insensitive uniqueness.
+            # Random Suffix reduces but does not eliminate collisions.
+            random_key = "".join(
+                random.choices(string.ascii_letters + string.digits, k=7)
+            )
+            profile.username = f"{profile.username}_{random_key}"
+            conflicts.append(profile)
+        else:
+            seen[key] = profile.user_id
+
+    UserProfile.objects.bulk_update(conflicts, ["username"])
+
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ("base", "0113_userbanlog"),
+    ]
+
+    operations = [
+        migrations.RunPython(
+            code=dedup_userprofile_usernames,
+            reverse_code=migrations.RunPython.noop,
+        ),
+    ]

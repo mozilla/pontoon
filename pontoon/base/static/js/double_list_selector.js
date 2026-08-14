@@ -51,7 +51,7 @@ $(function () {
 
     const target = getTarget(this);
     const ul = target.find('ul');
-    let clone = null;
+    let clone;
 
     // Move selected item
     if ($(this).is('li')) {

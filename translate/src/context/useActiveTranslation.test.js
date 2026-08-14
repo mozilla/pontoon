@@ -1,19 +1,13 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { vi } from 'vitest';
 import { useActiveTranslation } from './EntityView';
 
-describe('useActiveTranslation', () => {
-  beforeAll(() => {
-    vi.mock('react', async (importOriginal) => {
-      const actual = await importOriginal();
-      return {
-        ...actual,
-        useContext: vi.fn(),
-        useMemo: (cb) => cb(),
-      };
-    });
-  });
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useContext: vi.fn(), useMemo: (cb) => cb() };
+});
 
+describe('useActiveTranslation', () => {
   afterAll(() => {
     vi.restoreAllMocks();
   });
@@ -28,7 +22,7 @@ describe('useActiveTranslation', () => {
 
   it('does not return rejected translations', () => {
     vi.mocked(useContext).mockReturnValue({
-      entity: { translation: { string: 'world', rejected: true } },
+      entity: { translation: { string: 'world', status: 'rejected' } },
     });
     const res = useActiveTranslation();
     expect(res).toBeNull();

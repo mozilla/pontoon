@@ -67,7 +67,6 @@ async function wrapFetch(
           return {};
 
         case 'SyntaxError':
-          /* eslint-disable no-console */
           if (response?.ok) {
             console.error('The response content is not JSON-compatible');
             console.error(`URL: ${url} - Method: ${init.method}`);

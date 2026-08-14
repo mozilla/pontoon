@@ -69,12 +69,19 @@ export function FailedChecksProvider({
     // pretranslated or fuzzy, i.e. when their status icon is colored as
     // error/warning in the string list
     if (translation) {
-      const { approved, errors, fuzzy, pretranslated, warnings } = translation;
+      const { status, errors, warnings } = translation;
       if (
-        (errors.length || warnings.length) &&
-        (approved || pretranslated || fuzzy)
+        (errors?.length || warnings?.length) &&
+        (status === 'approved' ||
+          status === 'pretranslated' ||
+          status === 'fuzzy')
       ) {
-        setState((prev) => ({ ...prev, errors, warnings, source: 'stored' }));
+        setState((prev) => ({
+          ...prev,
+          errors: errors ?? [],
+          warnings: warnings ?? [],
+          source: 'stored',
+        }));
         return;
       }
     }

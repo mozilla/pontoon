@@ -31,6 +31,7 @@ export type Location = {
   tag: string | null;
   author: string | null;
   time: string | null;
+  created_time: string | null;
   reviewer: string | null;
   review_time: string | null;
   exclude_self_reviewed: boolean;
@@ -49,6 +50,7 @@ const emptyParams = {
   tag: null,
   author: null,
   time: null,
+  created_time: null,
   reviewer: null,
   review_time: null,
   exclude_self_reviewed: false,
@@ -135,6 +137,7 @@ function parse(
         tag: params.get('tag'),
         author: params.get('author'),
         time: params.get('time'),
+        created_time: params.get('created_time'),
         reviewer: params.get('reviewer'),
         review_time: params.get('review_time'),
         exclude_self_reviewed: params.has('exclude_self_reviewed'),
@@ -173,6 +176,7 @@ function stringify(prev: Location, next: string | Partial<Location>) {
     'tag',
     'author',
     'time',
+    'created_time',
     'reviewer',
     'review_time',
     'exclude_self_reviewed',

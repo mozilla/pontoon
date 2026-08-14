@@ -112,7 +112,6 @@ class LocaleSerializer(DynamicFieldsModelSerializer):
             "google_translate_code",
             "ms_terminology_code",
             "ms_translator_code",
-            "systran_translate_code",
             "team_description",
         ] + TRANSLATION_STATS_FIELDS
 
@@ -384,3 +383,45 @@ class EntitySearchSerializer(EntitySerializer):
         translation = obj.active_translations[0] if obj.active_translations else None
 
         return TranslationSerializer(translation, context=self.context).data
+
+
+class TranslationSubmitSerializer(serializers.Serializer):
+    """Input for creating/suggesting a translation via the write API.
+
+    A source string is identified by stable coordinates
+    (``project`` slug + ``resource`` path + entity ``key``) plus ``locale``.
+    Content is the structured moz.l10n ``value`` (+ optional ``properties``),
+    mirroring the web editor.
+    """
+
+    project = serializers.CharField()
+    resource = serializers.CharField()
+    key = serializers.ListField(child=serializers.CharField(allow_blank=True))
+    locale = serializers.CharField()
+    value = serializers.JSONField()
+    properties = serializers.JSONField(required=False, default=None)
+    ignore_warnings = serializers.BooleanField(required=False, default=False)
+    approve = serializers.BooleanField(required=False, default=False)
+    force_suggestions = serializers.BooleanField(required=False, default=False)
+    machinery_sources = serializers.ListField(
+        child=serializers.CharField(max_length=30), required=False, default=list
+    )
+
+
+class TranslationReviewSerializer(serializers.Serializer):
+    """Input for a review action (approve/reject/unapprove/delete).
+
+    Target a translation either by ``translation_id`` (precise) or by
+    coordinates (``project`` + ``resource`` + ``key`` + ``locale``) plus
+    ``value`` to disambiguate among suggestions.
+    """
+
+    translation_id = serializers.IntegerField(required=False, default=None)
+    project = serializers.CharField(required=False, default=None)
+    resource = serializers.CharField(required=False, default=None)
+    key = serializers.ListField(
+        child=serializers.CharField(allow_blank=True), required=False, default=None
+    )
+    locale = serializers.CharField(required=False, default=None)
+    value = serializers.JSONField(required=False, default=None)
+    ignore_warnings = serializers.BooleanField(required=False, default=False)

@@ -10,7 +10,7 @@ def mock_entity(
     allows_empty_translations: bool = False,
 ):
     match format:
-        case "android":
+        case "android" | "xcode":
             ext = "xml"
         case "fluent":
             ext = "ftl"
@@ -246,7 +246,8 @@ def test_android_mistyped_placeholder():
     translation = "Translation %1"
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
-        "pErrors": ["Placeholder %1$s not found in translation"]
+        "pErrors": ["Placeholder %1 not found in reference"],
+        "pndbWarnings": ["Placeholder %1$s not found in translation"],
     }
 
 
@@ -310,8 +311,8 @@ def test_android_bad_html():
     translation = "Translation with a <a>tag mismatch{|</b>| :html}"
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
-        "pErrors": ["Placeholder <a> not found in reference"],
-        "pndbWarnings": ["Placeholder <b> not found in translation"],
+        "pErrors": ["Element <a> not found in reference"],
+        "pndbWarnings": ["Element <b> not found in translation"],
     }
 
 
@@ -385,4 +386,39 @@ def test_webext_extra_named_placeholder_as_placeholder():
     entity = mock_entity("webext", string=original)
     assert run_custom_checks(entity, translation) == {
         "pErrors": ["Placeholder $FOO$ not found in reference"]
+    }
+
+
+def test_xcode_same_placeholder():
+    original = "Source string with a {$arg1 :string @source=|%1$@|}"
+    translation = "Translation with a {$arg1 :string @source=|%1$@|}"
+    entity = mock_entity("xcode", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_xcode_missing_placeholder():
+    original = "Source string with a {$arg :string @source=|%@|}"
+    translation = "Translation"
+    entity = mock_entity("xcode", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pndbWarnings": ["Placeholder %@ not found in translation"]
+    }
+
+
+def test_xcode_mistyped_placeholder():
+    original = "Source string with a {$arg :string @source=|%@|}"
+    translation = "Translation % @"
+    entity = mock_entity("xcode", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ["Placeholder % @ not found in reference"],
+        "pndbWarnings": ["Placeholder %@ not found in translation"],
+    }
+
+
+def test_xcode_extra_placeholder():
+    original = "Source string"
+    translation = "Translation with a {$arg :string @source=|%@|}"
+    entity = mock_entity("xcode", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ["Placeholder %@ not found in reference"]
     }

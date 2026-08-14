@@ -2,6 +2,9 @@ from unittest.mock import patch
 
 import pytest
 
+from django.contrib.auth.models import AnonymousUser
+
+from pontoon.base.models import UserProfile
 from pontoon.base.templatetags.helpers import (
     format_datetime,
     full_static,
@@ -9,6 +12,7 @@ from pontoon.base.templatetags.helpers import (
     metric_prefix,
     nospam,
     to_json,
+    user_editor_theme,
 )
 from pontoon.base.utils import aware_datetime
 
@@ -75,3 +79,24 @@ def test_helper_base_nospam_unicode(settings):
 
 def test_helper_base_nospam_escape(settings):
     assert str(nospam("<>'\"@&")) == "&lt;&gt;&#x27;&quot;&#64;&amp;"
+
+
+@pytest.mark.django_db
+def test_user_editor_theme_unset_resolves_to_default(member):
+    """An unset (NULL) editor theme resolves to the default theme."""
+    assert member.user.profile.editor_theme is None
+    assert user_editor_theme(member.user) == UserProfile.DEFAULT_EDITOR_THEME
+
+
+@pytest.mark.django_db
+def test_user_editor_theme_explicit_choice_is_kept(member):
+    """An explicit editor theme choice is returned as-is."""
+    member.user.profile.editor_theme = "dark"
+    member.user.profile.save()
+    assert user_editor_theme(member.user) == "dark"
+
+
+def test_user_editor_theme_anonymous_resolves_to_default():
+    """Anonymous users get the default editor theme."""
+    anon = AnonymousUser()
+    assert user_editor_theme(anon) == UserProfile.DEFAULT_EDITOR_THEME

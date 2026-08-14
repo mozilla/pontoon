@@ -71,7 +71,7 @@ export function SearchProvider({ children }: { children: React.ReactElement }) {
     },
   }));
 
-  const { setInput, query, page, fetching } = search;
+  const { query, page, fetching } = search;
 
   useEffect(() => {
     setSearch((prev) => ({

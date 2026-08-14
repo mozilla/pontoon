@@ -260,6 +260,43 @@ def test_get_contribution_graph_data_with_actions(user_a, action_user_a, user_b)
 
 
 @pytest.mark.django_db
+def test_get_contribution_graph_data_for_year(user_a, user_b, translation_a):
+    # Action in 2025
+    action_2025 = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+    action_2025.created_at = timezone.make_aware(datetime(2025, 6, 15))
+    action_2025.save()
+
+    # Action in 2026, which must be excluded when filtering by 2025
+    action_2026 = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+    action_2026.created_at = timezone.make_aware(datetime(2026, 1, 1))
+    action_2026.save()
+
+    date = action_2025.created_at.replace(hour=0, minute=0, second=0, microsecond=0)
+    assert utils.get_contribution_graph_data(user_a, user_b, year=2025) == (
+        {
+            convert_to_unix_time(date): 1,
+        },
+        "1 contribution in 2025",
+    )
+
+
+@pytest.mark.django_db
+def test_get_contribution_years(user_a):
+    user_a.date_joined = timezone.make_aware(datetime(2021, 3, 1))
+    user_a.save()
+    current_year = timezone.now().year
+    assert utils.get_contribution_years(user_a) == list(range(current_year, 2020, -1))
+
+
+@pytest.mark.django_db
 def test_get_contribution_timeline_data_without_actions(user_a, user_b):
     assert utils.get_contribution_timeline_data(user_a, user_b) == ({})
 
@@ -303,6 +340,44 @@ def test_get_contribution_timeline_data_with_actions(
                 }
             }
         }
+    )
+
+
+@pytest.mark.django_db
+def test_get_contribution_timeline_data_for_year(user_a, user_b, translation_a):
+    # Reviews in two different months of 2025
+    for review_date in [datetime(2025, 6, 15), datetime(2025, 12, 10)]:
+        action = ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            performed_by=user_a,
+            translation=translation_a,
+        )
+        action.created_at = timezone.make_aware(review_date)
+        action.save()
+
+    # Review in 2026, which must be excluded when filtering by 2025
+    action_2026 = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+    action_2026.created_at = timezone.make_aware(datetime(2026, 6, 15))
+    action_2026.save()
+
+    # The full year shows all months of the selected year, most recent first
+    full_year = utils.get_contribution_timeline_data(
+        user_a, user_b, full_year=True, contribution_type="user_reviews", year=2025
+    )
+    assert list(full_year.keys()) == ["December 2025", "June 2025"]
+
+    # Collapsed view shows only the most recent month within the year
+    collapsed = utils.get_contribution_timeline_data(
+        user_a, user_b, contribution_type="user_reviews", year=2025
+    )
+    assert list(collapsed.keys()) == ["December 2025"]
+    assert (
+        collapsed["December 2025"]["user_reviews"]["title"]
+        == "Reviewed 1 suggestion in 1 project"
     )
 
 

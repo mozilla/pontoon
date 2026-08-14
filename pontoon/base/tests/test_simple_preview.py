@@ -2,6 +2,7 @@ from textwrap import dedent
 
 import pytest
 
+from pontoon.base.models import Resource
 from pontoon.base.simple_preview import get_simple_preview
 
 
@@ -101,10 +102,10 @@ GETTEXT_TRANSLATION_TESTS = {
 @pytest.mark.parametrize("name", FLUENT_TRANSLATION_TESTS)
 def test_fluent_simple_preview(name):
     string, expected = FLUENT_TRANSLATION_TESTS[name]
-    assert get_simple_preview("fluent", string) == expected
+    assert get_simple_preview(Resource.Format.FLUENT, string) == expected
 
 
 @pytest.mark.parametrize("name", GETTEXT_TRANSLATION_TESTS)
 def test_gettext_simple_preview(name):
     string, expected = GETTEXT_TRANSLATION_TESTS[name]
-    assert get_simple_preview("gettext", string) == expected
+    assert get_simple_preview(Resource.Format.GETTEXT, string) == expected

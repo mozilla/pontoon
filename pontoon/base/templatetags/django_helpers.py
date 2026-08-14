@@ -28,3 +28,17 @@ def theme_class(request):
         theme = request.COOKIES.get("system_theme", "system")
 
     return f"{theme}-theme"
+
+
+@register.filter
+def user_editor_theme(user):
+    """Resolve the editor theme to apply.
+
+    Falls back to the default theme when the user is anonymous or has not yet
+    made an explicit choice (``editor_theme`` is NULL).
+    """
+    from pontoon.base.models import UserProfile
+
+    if user.is_authenticated and user.profile.editor_theme:
+        return user.profile.editor_theme
+    return UserProfile.DEFAULT_EDITOR_THEME

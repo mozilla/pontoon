@@ -2,9 +2,7 @@ import logging
 
 from os import walk
 from os.path import join, normpath, relpath
-from typing import NamedTuple, cast
-
-from django.db.models.manager import BaseManager
+from typing import NamedTuple
 
 from pontoon.base.models import Project, Repository
 from pontoon.sync.repositories import get_repo
@@ -99,7 +97,7 @@ def checkout_repos(
     """
     source: Checkout | None = None
     target: Checkout | None = None
-    for repo in cast(BaseManager[Repository], project.repositories).all():
+    for repo in project.repositories.all():
         if repo.source_repo:
             if source:
                 raise Exception("Multiple source repositories")

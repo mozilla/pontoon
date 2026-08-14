@@ -1,5 +1,7 @@
 import pytest
 
+from pontoon.base.get_entities import get_entities_for_project_locale
+from pontoon.base.map_entities import map_entities_to_json
 from pontoon.base.models import ChangedEntityLocale, Entity, Project
 from pontoon.test.factories import (
     EntityFactory,
@@ -250,9 +252,9 @@ def test_entity_project_locale_filter(admin, entity_test_models, locale_b, proje
         resource=resource0,
         string="Obsolete String",
     )
-    assert len(Entity.for_project_locale(admin, project_a, locale_b)) == 0
-    assert len(Entity.for_project_locale(admin, project_b, locale_a)) == 0
-    assert len(Entity.for_project_locale(admin, project_a, locale_a)) == 2
+    assert len(get_entities_for_project_locale(admin, project_a, locale_b)) == 0
+    assert len(get_entities_for_project_locale(admin, project_b, locale_a)) == 0
+    assert len(get_entities_for_project_locale(admin, project_a, locale_a)) == 2
 
 
 @pytest.mark.django_db
@@ -272,37 +274,27 @@ def test_entity_project_locale_no_paths(
     entity_a = tr0.entity
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
-    e0, e1 = Entity.map_entities(
+    e0, e1 = map_entities_to_json(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(admin, project_a, locale_a),
+        get_entities_for_project_locale(admin, project_a, locale_a),
     )
 
     assert e0 == {
         "comment": "",
-        "group_comment": "",
-        "resource_comment": "",
         "format": "gettext",
-        "obsolete": False,
         "key": ["Entity zero"],
         "path": resource0.path,
         "project": project_a.serialize(),
         "translation": {
             "pk": tr0.pk,
-            "pretranslated": False,
-            "fuzzy": False,
+            "status": "unreviewed",
             "string": tr0.string,
-            "approved": False,
-            "rejected": False,
-            "warnings": [],
-            "errors": [],
+            "value": tr0.value,
         },
-        "meta": [],
         "pk": entity_a.pk,
         "original": entity_a.string,
-        "machinery_original": str(entity_a.string),
-        "readonly": False,
-        "is_sibling": False,
+        "value": [],
         "date_created": entity_a.date_created,
     }
     assert e1["path"] == trX.entity.resource.path
@@ -321,10 +313,10 @@ def test_entity_project_locale_paths(admin, entity_test_models):
     preferred_source_locale = ""
     project_a = tr0.entity.resource.project
     paths = ["resourceX.po"]
-    entities = Entity.map_entities(
+    entities = map_entities_to_json(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(
+        get_entities_for_project_locale(
             admin,
             project_a,
             locale_a,
@@ -349,14 +341,10 @@ def test_entity_project_locale_multiple_translations(
     preferred_source_locale = ""
     entity_a = tr0.entity
     project_a = tr0.entity.resource.project
-    entities = Entity.map_entities(
+    entities = map_entities_to_json(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(
-            admin,
-            project_a,
-            locale_a,
-        ),
+        get_entities_for_project_locale(admin, project_a, locale_a),
     )
     assert entities[0]["original"] == entity_a.string
     assert entities[0]["translation"]["string"] == tr0.string
@@ -381,14 +369,10 @@ def test_entity_project_locale_order(admin, entity_test_models):
         resource=resource0,
         string="First String",
     )
-    entities = Entity.map_entities(
+    entities = map_entities_to_json(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(
-            admin,
-            project_a,
-            locale_a,
-        ),
+        get_entities_for_project_locale(admin, project_a, locale_a),
     )
     assert entities[1]["original"] == "First String"
     assert entities[2]["original"] == "Second String"
@@ -400,14 +384,10 @@ def test_entity_project_locale_key(admin, entity_test_models):
     locale_a = entity_test_models[0].locale
     preferred_source_locale = ""
     project_a = resource0.project
-    entities = Entity.map_entities(
+    entities = map_entities_to_json(
         locale_a,
         preferred_source_locale,
-        Entity.for_project_locale(
-            admin,
-            project_a,
-            locale_a,
-        ),
+        get_entities_for_project_locale(admin, project_a, locale_a),
     )
     assert entities[0]["key"] == ["Entity zero"]
     assert entities[1]["key"] == ["Key", "entity_b"]
@@ -415,26 +395,16 @@ def test_entity_project_locale_key(admin, entity_test_models):
 
 @pytest.mark.django_db
 def test_entity_project_locale_tags(admin, entity_a, locale_a, tag_a):
-    """Test filtering of tags in for_project_locale"""
+    """Test filtering of tags in get_entities_for_project_locale"""
     resource = entity_a.resource
     project = resource.project
-    entities = Entity.for_project_locale(
-        admin,
-        project,
-        locale_a,
-        tag=tag_a.slug,
-    )
+    entities = get_entities_for_project_locale(admin, project, locale_a, tag=tag_a.slug)
     assert entity_a in entities
 
     # remove the resource <> tag association
     resource.tag_set.remove(tag_a)
 
-    entities = Entity.for_project_locale(
-        admin,
-        project,
-        locale_a,
-        tag=tag_a.slug,
-    )
+    entities = get_entities_for_project_locale(admin, project, locale_a, tag=tag_a.slug)
     assert entity_a not in entities
 
 
@@ -453,16 +423,16 @@ def test_entity_project_comments(admin, resource_a, locale_a):
     EntityFactory(resource=resource_a, section=None, string="e4")
 
     assert {
-        (e["original"], e["group_comment"], e["resource_comment"])
-        for e in Entity.map_entities(
+        (e["original"], e.get("group_comment"), e.get("resource_comment"))
+        for e in map_entities_to_json(
             locale_a, "", Entity.objects.filter(resource=resource_a)
         )
     } == {
         ("e0", "s0 comment", "rc"),
         ("e1", "s0 comment", "rc"),
         ("e2", "s1 comment", "rc"),
-        ("e3", "", "rc"),
-        ("e4", "", "rc"),
+        ("e3", None, "rc"),
+        ("e4", None, "rc"),
     }
 
 

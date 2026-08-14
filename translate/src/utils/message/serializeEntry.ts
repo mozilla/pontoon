@@ -18,7 +18,9 @@ export function serializeEntry(entry: MessageEntry | null): string {
       let msg = entry.value;
       // Ensure that an entry with a non-null value serializes with a non-empty pattern,
       // even if the entry has attributes and would be valid with an empty value.
-      if (Array.isArray(msg) && msg.every((p) => p === '')) msg = [{ _: '' }];
+      if (Array.isArray(msg) && msg.every((p) => p === '')) {
+        msg = [{ _: '' }];
+      }
       return fluentSerializeEntry(
         entry.id,
         { '=': msg!, '+': attr },

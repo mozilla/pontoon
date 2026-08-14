@@ -22,10 +22,12 @@ import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
+import { editorThemeClass } from '~/context/Theme';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
-import { MessageEntry, parseEntry } from '~/utils/message';
-import { editablePattern } from '~/utils/message/placeholders';
+import type { MessageEntry } from '~/utils/message';
+import { editablePattern } from '~/utils/message/editablePattern';
+import { entryPatterns } from '~/utils/message/entryPatterns';
 import { decoratorPlugin } from './decoratorPlugin';
 import {
   useHandleCtrlShiftArrow,
@@ -33,7 +35,6 @@ import {
   useHandleEscape,
 } from './editFieldShortcuts';
 import { fluentMode, commonMode, webextMode } from './editFieldModes';
-import { Message } from '@mozilla/l10n';
 import './editFieldExtensions.css';
 
 /**
@@ -80,8 +81,7 @@ const style = HighlightStyle.define([
 ]);
 
 export const getExtensions = (
-  format: string,
-  orig: string,
+  entry: MessageEntry,
   ref: ReturnType<typeof useKeyHandlers>,
 ): Extension[] => [
   history(),
@@ -90,12 +90,12 @@ export const getExtensions = (
   // horizontal scrolling if it overflows the right edge of .main-column.
   // We avoid this by placing tooltips in its parent container.
   tooltips({ parent: document.querySelector('.panel-content') as HTMLElement }),
-  autocompletePlaceholders(format, orig) ?? closeBrackets(),
+  autocompletePlaceholders(entry) ?? closeBrackets(),
   EditorView.lineWrapping,
   StreamLanguage.define<any>(
-    format === 'fluent'
+    entry.format === 'fluent'
       ? fluentMode
-      : format === 'webext'
+      : entry.format === 'webext'
         ? webextMode
         : commonMode,
   ),
@@ -146,44 +146,35 @@ export const getExtensions = (
  *
  * If no autocompletions are found, bracket auto-closing is enabled.
  */
-function autocompletePlaceholders(format: string, source: string) {
+function autocompletePlaceholders(entry: MessageEntry) {
   const override: CompletionSource[] = [];
-  for (const pattern of entryPatterns(format, source)) {
+  for (const pattern of entryPatterns(entry)) {
+    const edit = editablePattern(entry.format, pattern);
     const highlights: [start: number, ends: number[]][] = [];
-    for (const match of pattern.matchAll(placeholder)) {
+    for (const match of edit.matchAll(placeholder)) {
       const label = match[0].trimEnd();
       if (label.length > 1) {
         const start = match.index;
         const end = start + label.length;
         for (const hl of highlights) {
-          if (hl[1].includes(start)) hl[1].push(end);
+          if (hl[1].includes(start)) {
+            hl[1].push(end);
+          }
         }
         highlights.push([start, [end]]);
       }
     }
     for (const hl of highlights) {
-      override.push(completePlaceholder(pattern, ...hl));
+      override.push(completePlaceholder(edit, ...hl));
     }
   }
-  return override.length ? autocompletion({ override }) : null;
-}
-
-function* entryPatterns(format: string, source: string) {
-  const entry = parseEntry(format, source);
-  if (entry) {
-    if (entry.value) yield* msgPatterns(entry.format, entry.value);
-    if (entry.attributes) {
-      for (const msg of entry.attributes.values()) {
-        yield* msgPatterns(entry.format, msg);
-      }
-    }
-  }
-}
-
-function* msgPatterns(format: MessageEntry['format'], msg: Message) {
-  if (Array.isArray(msg)) yield editablePattern(msg);
-  else if (msg.msg) yield editablePattern(msg.msg);
-  else for (const v of msg.alt) yield editablePattern(v.pat);
+  return override.length
+    ? autocompletion({
+        override,
+        tooltipClass: () =>
+          editorThemeClass(document.body.getAttribute('data-editor-theme')),
+      })
+    : null;
 }
 
 function completePlaceholder(
@@ -203,7 +194,10 @@ function completePlaceholder(
   }));
   return (context) => {
     const token = context.matchBefore(match);
-    if (token) return { from: token.from, options };
-    else return context.explicit ? { from: context.pos, options } : null;
+    if (token) {
+      return { from: token.from, options };
+    } else {
+      return context.explicit ? { from: context.pos, options } : null;
+    }
   };
 }

@@ -8,7 +8,7 @@ import { useAppSelector } from '~/hooks';
 /**
  * Return the user's status banner within the given locale, to display on the user banner
  */
-export function useUserBanner(): Array<string> {
+export function useUserBanner(): [string, string] {
   const { code } = useContext(Locale);
   const { project } = useContext(Location);
   const {
@@ -42,7 +42,7 @@ export function useUserBanner(): Array<string> {
   }
 
   const dateJoinedObj = new Date(dateJoined);
-  let threeMonthsAgo = new Date();
+  const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
   if (dateJoinedObj > threeMonthsAgo) {
     return ['NEW', 'New User'];

@@ -6,6 +6,7 @@ from os import makedirs, remove
 from os.path import commonpath, dirname, isfile, join, normpath
 
 from moz.l10n.formats import Format
+from moz.l10n.formats.xliff import xliff_is_xcode
 from moz.l10n.message import parse_message
 from moz.l10n.model import (
     CatchallKey,
@@ -283,6 +284,9 @@ def set_translations(
             if rm:
                 section.entries = [e for e in section.entries if e not in rm]
     else:
+        # The iOS locale remapping is a hacky workaround for Xcode projects only,
+        # so don't apply it to other XLIFF projects.
+        is_xcode = res.format == Format.xliff and xliff_is_xcode(res)
         for section in res.sections:
             if (
                 res.format == Format.xliff
@@ -291,7 +295,11 @@ def set_translations(
                 prev_tgt = next(
                     (m for m in section.meta if m.key == "@target-language"), None
                 )
-                lc = ios_locale_map.get(locale.code, locale.code)
+                lc = (
+                    ios_locale_map.get(locale.code, locale.code)
+                    if is_xcode
+                    else locale.code
+                )
                 if prev_tgt is None:
                     res.meta.append(Metadata("@target-language", lc))
                 else:

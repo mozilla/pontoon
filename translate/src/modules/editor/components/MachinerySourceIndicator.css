@@ -5,8 +5,18 @@
   border-top: 1px solid var(--main-border-1);
   width: 100%;
   text-align: center;
-  background: var(--translation-background);
+  background: var(--editor-menu-background);
   color: var(--light-grey-6);
+}
+
+.translationform + .tm-source {
+  background: var(--editor-form-background);
+}
+
+.dark-theme[data-editor-theme='dark'] .singlefield ~ .tm-source,
+.light-theme[data-editor-theme='light'] .singlefield ~ .tm-source,
+[data-editor-theme='match'] .singlefield ~ .tm-source {
+  background: var(--editor-background);
 }
 
 .tm-source .stress {

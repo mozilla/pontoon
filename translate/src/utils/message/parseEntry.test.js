@@ -46,7 +46,7 @@ describe('parseEntry:fluent', () => {
     expect(res).toEqual({
       format: 'fluent',
       id: 'title',
-      value: ['My { $awesome } Title'],
+      value: ['My ', { $: 'awesome' }, ' Title'],
     });
   });
 
@@ -56,7 +56,9 @@ describe('parseEntry:fluent', () => {
       format: 'fluent',
       id: 'title',
       value: null,
-      attributes: new Map([['foo', ['Bar { -foo } Baz']]]),
+      attributes: new Map([
+        ['foo', ['Bar ', { _: '-foo', fn: 'message' }, ' Baz']],
+      ]),
     });
   });
 
@@ -70,10 +72,19 @@ describe('parseEntry:fluent', () => {
     expect(res).toEqual({
       format: 'fluent',
       id: 'batman',
-      value: ['The { $dark } Knight'],
+      value: ['The ', { $: 'dark' }, ' Knight'],
       attributes: new Map([
-        ['weapon', ['Brain and { -wayne-enterprise }']],
-        ['history', ['Lost { 2 } parents, has { 1 } "$alfred"']],
+        ['weapon', ['Brain and ', { _: '-wayne-enterprise', fn: 'message' }]],
+        [
+          'history',
+          [
+            'Lost ',
+            { _: '2', fn: 'number' },
+            ' parents, has ',
+            { _: '1', fn: 'number' },
+            ' "$alfred"',
+          ],
+        ],
       ]),
     });
   });
@@ -86,8 +97,8 @@ describe('parseEntry:fluent', () => {
     expect(res).toEqual({
       format: 'fluent',
       id: '-term',
-      value: ['My { $awesome } term'],
-      attributes: new Map([['attr', ['']]]),
+      value: ['My ', { $: 'awesome' }, ' term'],
+      attributes: new Map([['attr', []]]),
     });
   });
 
@@ -115,19 +126,31 @@ describe('parseEntry:fluent', () => {
         alt: [
           {
             keys: ['one', { '*': 'masculine' }],
-            pat: ['There is one email for { $awesome } him'],
+            pat: ['There is one email for ', { $: 'awesome' }, ' him'],
           },
           {
             keys: ['one', 'feminine'],
-            pat: ['There is one email for { $awesome } her'],
+            pat: ['There is one email for ', { $: 'awesome' }, ' her'],
           },
           {
             keys: [{ '*': 'other' }, { '*': 'masculine' }],
-            pat: ['There are { $num } emails for { $awesome } him'],
+            pat: [
+              'There are ',
+              { $: 'num' },
+              ' emails for ',
+              { $: 'awesome' },
+              ' him',
+            ],
           },
           {
             keys: [{ '*': 'other' }, 'feminine'],
-            pat: ['There are { $num } emails for { $awesome } her'],
+            pat: [
+              'There are ',
+              { $: 'num' },
+              ' emails for ',
+              { $: 'awesome' },
+              ' her',
+            ],
           },
         ],
       },

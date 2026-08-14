@@ -1,3 +1,4 @@
+from json import dumps
 from unittest.mock import patch
 
 import pytest
@@ -9,12 +10,10 @@ from pontoon.checks.models import FailedCheck, Warning
 from pontoon.test.factories import EntityFactory, ResourceFactory, TranslationFactory
 
 
-def request_create_translation(client, **args):
-    update_params = {"ignore_warnings": "true"}
-    update_params.update(args)
+def request_create_translation(client, value, **args):
     return client.post(
         reverse("pontoon.translations.create"),
-        update_params,
+        {"value": dumps(value), "ignore_warnings": "true", **args},
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 
@@ -26,7 +25,7 @@ def test_create_translation_success(member, entity_a, locale_a, project_locale_a
         member.client,
         entity=entity_a.pk,
         locale=locale_a.code,
-        translation=content,
+        value=[content],
     )
     assert response.status_code == 200
     assert response.json()["status"]
@@ -48,6 +47,7 @@ def test_create_translation_success_fluent(
         entity=entity.pk,
         locale=locale_a.code,
         translation=string,
+        value=["Bonjour !"],
     )
     assert response.status_code == 200
     assert response.json()["status"]
@@ -68,6 +68,11 @@ def test_create_translation_success_mf2(member, project_a, locale_a, project_loc
         entity=entity.pk,
         locale=locale_a.code,
         translation=string,
+        value=[
+            "le ",
+            {"$": "arg", "fn": "string", "attr": {"source": "%s"}},
+            " message",
+        ],
     )
     assert response.status_code == 200
     assert response.json()["status"]
@@ -86,7 +91,7 @@ def test_create_translation_not_logged_in(client, entity_a, locale_a):
         client,
         entity=entity_a.pk,
         locale=locale_a.code,
-        translation="",
+        value=[],
     )
     assert response.status_code == 302
 
@@ -107,7 +112,7 @@ def test_create_translation_force_suggestions(
         member.client,
         entity=translation_a.entity.pk,
         locale=locale_a.code,
-        translation="approved 0",
+        value=["approved 0"],
     )
     assert response.status_code == 200
     assert Translation.objects.last().approved is True
@@ -116,7 +121,7 @@ def test_create_translation_force_suggestions(
         member.client,
         entity=translation_a.entity.pk,
         locale=locale_a.code,
-        translation="approved translation 0",
+        value=["approved translation 0"],
         force_suggestions="false",
     )
     assert response.status_code == 200
@@ -126,7 +131,7 @@ def test_create_translation_force_suggestions(
         member.client,
         entity=translation_a.entity.pk,
         locale=locale_a.code,
-        translation="unapproved translation 0",
+        value=["unapproved translation 0"],
         force_suggestions="true",
     )
     assert response.status_code == 200
@@ -171,7 +176,7 @@ def test_run_checks_during_translation_update(
         member.client,
         locale=locale_a.code,
         entity=properties_entity.pk,
-        translation="bad  suggestion",
+        value=["bad  suggestion"],
         ignore_warnings="false",
     )
 
@@ -189,7 +194,7 @@ def test_run_checks_during_translation_update(
         member.client,
         entity=properties_entity.pk,
         locale=locale_a.code,
-        translation="bad suggestion \\q %q",
+        value=["bad suggestion \\q %q"],
         ignore_warnings="true",
     )
 
@@ -207,7 +212,7 @@ def test_run_checks_during_translation_update(
         member.client,
         entity=properties_entity.pk,
         locale=locale_a.code,
-        translation="bad suggestion",
+        value=["bad suggestion"],
         ignore_warnings="true",
     )
 
@@ -258,7 +263,7 @@ def test_notify_managers_on_first_contribution(
         member.client,
         entity=translation.entity.pk,
         locale=translation.locale.code,
-        translation="First translation",
+        value=["First translation"],
     )
 
     assert response.status_code == 200
@@ -285,7 +290,7 @@ def test_notify_managers_on_first_contribution(
         member.client,
         entity=second_translation.entity.pk,
         locale=second_translation.locale.code,
-        translation="Second translation",
+        value=["Second translation"],
     )
 
     mock_notify.assert_not_called()

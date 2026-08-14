@@ -107,7 +107,6 @@ export function TranslationForm(): React.ReactElement<'div'> | null {
         ref={fieldValues[0].ref}
         key={sourceView ? 's!' + pk : pk}
         defaultValue={fields[0].handle.current.value}
-        index={0}
         singleField
       />
     </div>
@@ -132,7 +131,6 @@ export function TranslationForm(): React.ReactElement<'div'> | null {
                     key={pk + id}
                     ref={ref}
                     defaultValue={value}
-                    index={i}
                     name={name}
                     onFocus={onFocus}
                   />

@@ -22,7 +22,8 @@ class Command(BaseCommand):
         locales = Locale.objects.exclude(google_automl_model="").order_by("code")
 
         for locale in locales:
-            get_google_automl_translation("t", locale)
+            # Bypass the cache so the request actually reaches the external API.
+            get_google_automl_translation("t", locale, use_cache=False)
             warmed_locales.append(locale.code)
 
         elapsed = time.monotonic() - start_time

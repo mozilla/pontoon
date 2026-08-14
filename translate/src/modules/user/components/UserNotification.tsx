@@ -17,30 +17,32 @@ interface DateDisplayProps {
 }
 
 const DateDisplay: React.FC<DateDisplayProps> = ({ date, date_iso }) => {
-  const formattedDate: string = new Date(date).toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  const parsedDate = new Date(date_iso);
   const isOld: boolean =
-    new Date(date_iso).getTime() <
-    new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+    parsedDate.getTime() < Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  if (isOld) {
+    const formattedDate: string = parsedDate.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    });
+    return (
+      <div className='date-display'>
+        <time dateTime={date_iso} title={date}>
+          {formattedDate}
+        </time>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {isOld ? (
-        <div className='date-display'>
-          <time dateTime={date_iso} title={`${date} UTC`}>
-            {formattedDate}
-          </time>
-        </div>
-      ) : (
-        <ReactTimeAgo
-          className='timeago'
-          date={new Date(date_iso)}
-          title={`${date} UTC`}
-        />
-      )}
-    </>
+    <ReactTimeAgo
+      className='timeago'
+      date={parsedDate}
+      formatVerboseDate={() => date}
+    />
   );
 };
 

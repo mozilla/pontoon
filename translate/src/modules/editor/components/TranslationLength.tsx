@@ -1,22 +1,23 @@
 import React, { useContext } from 'react';
 import { EditorData, EditorResult } from '~/context/Editor';
-import { EntityView } from '~/context/EntityView';
+import { useEntityEntry } from '~/context/EntityView';
 import { getPlainMessage } from '~/utils/message';
 
 import './TranslationLength.css';
 
 /** Shows translation length vs. original string length.  */
 export function TranslationLength(): React.ReactElement<'div'> | null {
-  const { entity } = useContext(EntityView);
-  const { sourceView } = useContext(EditorData);
-  const edit = useContext(EditorResult);
+  const entry = useEntityEntry();
+  const { fields, sourceView } = useContext(EditorData);
+  // Included to re-render on input changes
+  const result = useContext(EditorResult);
 
-  if (sourceView || edit.length !== 1) {
+  if (sourceView || fields.length !== 1) {
     return null;
   }
 
-  const text = edit[0].value;
-  const srcText = getPlainMessage(entity.original, entity.format);
+  const text = result ? getPlainMessage(result) : '';
+  const srcText = getPlainMessage(entry);
 
   return (
     <div className='translation-length'>

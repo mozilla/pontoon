@@ -70,6 +70,15 @@ class ProjectForm(forms.ModelForm):
             groups__name="project_managers"
         ).order_by("email")
 
+        # locales_pretranslate is not a model field, so its initial value isn't
+        # populated automatically. Pre-select the locales that have pretranslation
+        # enabled (see #4207).
+        if not self.is_bound and self.instance.pk:
+            self.fields["locales_pretranslate"].initial = Locale.objects.filter(
+                project_locale__pretranslation_enabled=True,
+                project_locale__project=self.instance,
+            )
+
 
 class RepositoryForm(forms.ModelForm):
     website = forms.URLField(required=False, assume_scheme="https")

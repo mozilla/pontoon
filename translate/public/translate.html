@@ -34,6 +34,7 @@
 <body
   class="{% block class %}{% endblock %} {{ theme_class(request) }}"
   data-theme="{{ user_theme(request.user) }}"
+  data-editor-theme="{{ user_editor_theme(request.user) }}"
 >
   <noscript> You need to enable JavaScript to run this app. </noscript>
   <div
@@ -42,7 +43,6 @@
     data-is-google-translate-supported="{{ is_google_translate_supported | to_json() }}"
     data-is-microsoft-translator-supported="{{ is_microsoft_translator_supported | to_json() }}"
     data-is-openai-chatgpt-supported="{{ is_openai_chatgpt_supported | to_json() }}"
-    data-is-systran-translate-supported="{{ is_systran_translate_supported | to_json() }}"
     data-notifications="{{ notifications | to_json }}"
     translate="no"
   ></div>

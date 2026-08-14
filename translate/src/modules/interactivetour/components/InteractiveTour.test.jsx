@@ -4,15 +4,11 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { InteractiveTour } from './InteractiveTour';
 import { vi } from 'vitest';
 
-beforeAll(() => {
-  vi.mock('~/hooks/useTranslator', () => ({
-    useTranslator: vi.fn(() => false),
-  }));
+vi.mock('~/hooks/useTranslator', () => ({ useTranslator: vi.fn(() => false) }));
+vi.mock('reactour', () => ({
+  default: ({ isOpen }) => (isOpen ? <div data-testid='mock-tour' /> : null),
+}));
 
-  vi.mock('reactour', () => ({
-    default: ({ isOpen }) => (isOpen ? <div data-testid='mock-tour' /> : null),
-  }));
-});
 afterAll(() => hookModule.useTranslator.mockRestore());
 
 describe('<InteractiveTour>', () => {

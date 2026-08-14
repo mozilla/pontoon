@@ -1,3 +1,5 @@
+/* global showdown */
+
 $(function () {
   const container = $('#main .container');
   const converter = new showdown.Converter({
@@ -190,7 +192,7 @@ $(function () {
 
     // Locales
     updateMultipleItemSelector(
-      '.locale',
+      '.locale .item',
       '.locales',
       '.code',
       '[name="locale_toggle"]',

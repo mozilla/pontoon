@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
@@ -5,7 +7,13 @@ from django.utils import timezone
 from pontoon.base.models.project import Project
 
 
-class ResourceQuerySet(models.QuerySet):
+if TYPE_CHECKING:
+    from pontoon.base.models.entity import Entity
+    from pontoon.base.models.section import Section
+    from pontoon.base.models.translated_resource import TranslatedResourceQuerySet
+
+
+class ResourceQuerySet(models.QuerySet["Resource"]):
     def mark_as_obsolete(self, now=None):
         from pontoon.base.models.entity import Entity
 
@@ -69,6 +77,13 @@ class Resource(models.Model):
     deadline = models.DateField(blank=True, null=True)
 
     objects = ResourceQuerySet.as_manager()
+
+    entities: models.QuerySet["Entity"]
+    """Actually a RelatedManager"""
+    sections: models.QuerySet["Section"]
+    """Actually a RelatedManager"""
+    translatedresources: "TranslatedResourceQuerySet"
+    """Actually a RelatedManager"""
 
     # Formats that allow empty translations
     EMPTY_TRANSLATION_FORMATS = {

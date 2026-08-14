@@ -8,7 +8,6 @@ import requests
 
 from sacremoses import MosesDetokenizer
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
@@ -226,62 +225,6 @@ def gpt_transform(request):
 
     except Exception as e:
         return _machinery_error_response("GPT Transform", e)
-
-
-@login_required(redirect_field_name="", login_url="/403")
-def systran_translate(request):
-    """Get translations from SYSTRAN machine translation service."""
-    try:
-        text = request.GET["text"]
-        locale_code = request.GET["locale"]
-
-        if not locale_code:
-            raise ValueError("Locale code is empty")
-
-        locale = Locale.objects.filter(systran_translate_code=locale_code).first()
-
-        api_key = settings.SYSTRAN_TRANSLATE_API_KEY
-        if not api_key:
-            raise ValueError("Missing api key")
-
-    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
-        return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"},
-            status=400,
-        )
-
-    url = "https://api-translate.systran.net/translation/text/translate"
-
-    payload = {
-        "key": api_key,
-        "input": text,
-        "source": "en",
-        "target": locale_code,
-        "profile": locale.systran_translate_profile,
-        "format": "text",
-    }
-
-    r = None
-    try:
-        r = requests.post(url, params=payload)
-        r.raise_for_status()
-
-        root = json.loads(r.content)
-
-        if "error" in root:
-            log.error(f"SYSTRAN error: {root}")
-            return JsonResponse(
-                {"status": False, "message": f"Bad Request: {root}"},
-                status=400,
-            )
-
-        return JsonResponse({"translation": root["outputs"][0]["output"]})
-
-    except requests.exceptions.RequestException as e:
-        return JsonResponse(
-            {"status": False, "message": f"{e}"},
-            status=r.status_code if r is not None else 500,
-        )
 
 
 def caighdean(request):

@@ -1,19 +1,19 @@
 import { Localized } from '@fluent/react';
+import type { Pattern } from '@mozilla/l10n';
 import parse from 'html-react-parser';
 import React, { Fragment, useContext, useLayoutEffect } from 'react';
 // @ts-expect-error Working types are unavailable for react-linkify 0.2.2
 import Linkify from 'react-linkify';
 
 import type { Entity } from '~/api/entity';
-import type { TeamCommentState } from '~/modules/teamcomments';
-
 import { Locale } from '~/context/Locale';
+import type { TeamCommentState } from '~/modules/teamcomments';
+import { type MessageEntry, parseEntry } from '~/utils/message';
+
 import { FluentAttribute } from './FluentAttribute';
 import { Property } from './Property';
 
 import './Metadata.css';
-import { MessageEntry, parseEntry } from '~/utils/message';
-import { getPlaceholderMap } from '~/utils/message/placeholders';
 
 type Props = {
   entity: Entity;
@@ -70,8 +70,8 @@ function EntityComment({ comment }: { comment: string }) {
   );
 }
 
-function GroupComment({ comment }: { comment: string }) {
-  return (
+function GroupComment({ comment }: { comment: string | undefined }) {
+  return !comment ? null : (
     <Datum id='group-comment' title='GROUP COMMENT'>
       {comment}
     </Datum>
@@ -108,7 +108,7 @@ function EntityCreatedDate({ dateCreated }: { dateCreated: string }) {
   );
 }
 
-function ResourceComment({ comment }: { comment: string }) {
+function ResourceComment({ comment }: { comment: string | undefined }) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = React.useState(false);
   const [expand, setExpand] = React.useState(false);
@@ -139,34 +139,55 @@ function ResourceComment({ comment }: { comment: string }) {
 }
 
 function SourceReferences({ meta }: { meta: Entity['meta'] }) {
-  const refs = [];
-  for (let [key, value] of meta) {
-    if (key === 'reference') {
-      refs.push(
-        <li key={value}>
-          <span className='title'>#:</span>
-          {value}
-        </li>,
-      );
-    }
+  if (!meta) {
+    return null;
   }
+  const refs = meta
+    .filter((m) => m[0] === 'reference')
+    .map((m) => (
+      <li key={m[1]}>
+        <span className='title'>#:</span>
+        {m[1]}
+      </li>
+    ));
   return refs.length > 0 ? <ul>{refs}</ul> : null;
 }
 
 function SourceExamples({ entry }: { readonly entry: MessageEntry | null }) {
-  if (!entry?.value || Array.isArray(entry.value)) return null;
-  const phMap = getPlaceholderMap(entry.value);
-  if (!phMap) return null;
-  const placeholders = Array.from(phMap.values());
-  const examples: string[] = [];
-  for (const [name, exp] of Object.entries(entry.value.decl)) {
-    const example = exp.attr?.example;
-    if (typeof example === 'string') {
-      const ph = placeholders.find((ph) => ph.$ === name);
-      const source = ph?.attr?.source;
-      if (typeof source === 'string') {
-        examples.push(`${source}: ${example}`);
+  const msg = entry?.value;
+  if (!msg || Array.isArray(msg)) {
+    return null;
+  }
+
+  const sources = new Map<string, string>();
+  const add = (pattern: Pattern): void => {
+    for (const ph of pattern) {
+      if (typeof ph !== 'string' && ph.$) {
+        const source = ph.attr?.source;
+        if (source && typeof source === 'string') {
+          sources.set(ph.$, source);
+        }
       }
+    }
+  };
+
+  if (msg.msg) {
+    add(msg.msg);
+  } else {
+    for (const v of msg.alt) {
+      add(v.pat);
+    }
+  }
+  if (!sources.size) {
+    return null;
+  }
+
+  const examples: string[] = [];
+  for (const [name, exp] of Object.entries(msg.decl)) {
+    const example = exp.attr?.example;
+    const source = sources.get(name);
+    if (typeof example === 'string' && source) {
+      examples.push(`${source}: ${example}`);
     }
   }
 

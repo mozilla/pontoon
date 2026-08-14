@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 
+import { EditorData, EditorResult } from '~/context/Editor';
 import * as Hooks from '~/hooks';
 import * as Translator from '~/hooks/useTranslator';
 
@@ -11,23 +12,20 @@ import { EditorMainAction } from './EditorMainAction';
 import { vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useContext: vi.fn() };
+});
+
+vi.mock('@fluent/react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useLocalization: () => ({ l10n: { getString: (id) => id } }),
+  };
+});
+
 beforeAll(() => {
-  vi.mock('react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useContext: vi.fn(),
-    };
-  });
-
-  vi.mock('@fluent/react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      Localized: ({ children }) => children,
-    };
-  });
-
   vi.spyOn(Hooks, 'useAppSelector').mockImplementation(() => ({}));
   vi.spyOn(Translator, 'useTranslator').mockReturnValue({});
   vi.spyOn(ExistingTranslation, 'useExistingTranslationGetter').mockReturnValue(
@@ -121,5 +119,28 @@ describe('<EditorMainAction>', () => {
     expect(button.querySelector('.fa-spin')).toBeInTheDocument();
     fireEvent.click(button);
     expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('does not show a spinner on syntax error', () => {
+    const spy = vi.fn();
+    SendTranslation.useSendTranslation.mockReturnValue(spy);
+    Hooks.useAppSelector.mockReturnValue(true); // user.settings.forceSuggestions
+    vi.mocked(useContext).mockImplementation((context) => {
+      if (context === EditorData) {
+        return { busy: true };
+      }
+      if (context === EditorResult) {
+        return null;
+      }
+      return {};
+    });
+
+    const { getByRole } = render(<EditorMainAction />);
+    const button = getByRole('button');
+
+    expect(button.querySelector('.fa-spin')).not.toBeInTheDocument();
+
+    fireEvent.click(button);
+    expect(spy).toHaveBeenCalled();
   });
 });

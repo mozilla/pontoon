@@ -14,6 +14,7 @@ import { render } from '@testing-library/react';
 
 const SELECTED_ENTITY = {
   pk: 1,
+  key: ['id'],
   original: 'le test',
   translation: { string: 'test' },
 };

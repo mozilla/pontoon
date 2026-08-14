@@ -8,22 +8,17 @@ const ENTITIES = [
   { pk: 3 },
 ];
 
-beforeAll(() => {
-  vi.mock('react', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useContext: vi.fn(),
-    };
-  });
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useContext: vi.fn() };
+});
 
-  vi.mock('~/hooks', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-      ...actual,
-      useAppSelector: (cb) => cb({ entities: { entities: ENTITIES } }),
-    };
-  });
+vi.mock('~/hooks', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useAppSelector: (cb) => cb({ entities: { entities: ENTITIES } }),
+  };
 });
 
 afterAll(() => {

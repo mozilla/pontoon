@@ -168,6 +168,8 @@
     label {
       display: block;
       margin-bottom: 5px;
+      padding-bottom: 3px;
+      text-align: left;
     }
 
     input[type='text'],

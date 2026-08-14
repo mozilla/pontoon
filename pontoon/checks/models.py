@@ -25,9 +25,9 @@ class FailedCheck(models.Model):
         abstract = True
 
     def __repr__(self):
-        return "[{}] {}: {}".format(
-            self.__class__.__name__, self.get_library_display(), self.message
-        )
+        name = self.__class__.__name__
+        lib = self.Library(self.library).label
+        return f"[{name}] {lib}: {self.message}"
 
 
 class Warning(FailedCheck):

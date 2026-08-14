@@ -126,6 +126,35 @@ def test_term_entity_comment(_):
     )
     assert term_b.entity_comment() == "Noun. Definition. E.g. Usage."
 
+    # Capitalization within definition and usage is preserved (e.g. acronyms)
+    term_c = TermFactory.create(
+        text="term",
+        part_of_speech=Term.PartOfSpeech.NOUN,
+        definition="describes Firefox URL handling",
+        usage="open a URL in Firefox",
+    )
+    assert (
+        term_c.entity_comment()
+        == "Noun. Describes Firefox URL handling. E.g. Open a URL in Firefox."
+    )
+
+
+@pytest.mark.django_db
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+def test_create_entity_sets_value(_):
+    """
+    create_entity() populates the message data model `value` from `string`.
+    """
+    term = TermFactory.create(text="My term")
+    assert term.entity.string == "My term"
+    assert term.entity.value == ["My term"]
+
+    term.text = "My updated term"
+    term.save()
+    term.refresh_from_db()
+    assert term.entity.string == "My updated term"
+    assert term.entity.value == ["My updated term"]
+
 
 @pytest.mark.django_db
 @patch("pontoon.terminology.models.Term.handle_term_create")

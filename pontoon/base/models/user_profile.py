@@ -1,10 +1,11 @@
 import uuid
 
-from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.db.models.functions import Lower
 
 from pontoon.base.models.locale import Locale
+from pontoon.base.models.user import User
 
 
 class UserProfile(models.Model):
@@ -16,7 +17,7 @@ class UserProfile(models.Model):
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
     # Personal information
-    username = models.SlugField(unique=True, blank=True, null=True)
+    username = models.SlugField(blank=True, null=True)
     bio = models.TextField(max_length=160, blank=True, null=True)
 
     # Email communications
@@ -36,6 +37,21 @@ class UserProfile(models.Model):
         choices=Themes.choices,
         max_length=20,
         default=Themes.SYSTEM,
+    )
+
+    class EditorThemes(models.TextChoices):
+        DARK = "dark", "Dark"
+        LIGHT = "light", "Light"
+        MATCH = "match", "Match main"
+
+    DEFAULT_EDITOR_THEME = EditorThemes.LIGHT
+
+    editor_theme = models.CharField(
+        choices=EditorThemes.choices,
+        max_length=20,
+        null=True,
+        blank=True,
+        default=None,
     )
 
     # External accounts
@@ -150,6 +166,15 @@ class UserProfile(models.Model):
     @property
     def preferred_locales(self):
         return Locale.objects.filter(pk__in=self.locales_order)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                Lower("username"),
+                name="base_userprofile_username_lower_uniq",
+                condition=models.Q(username__isnull=False),
+            )
+        ]
 
     @property
     def sorted_locales(self):

@@ -6,15 +6,16 @@ import { EditorData, EditorResult } from '~/context/Editor';
 import './MachinerySourceIndicator.css';
 
 export function MachinerySourceIndicator() {
-  const { machinery, sourceView } = useContext(EditorData);
-  const edit = useContext(EditorResult);
+  const { fields, machinery, sourceView } = useContext(EditorData);
+  // Included to re-render on input changes
+  useContext(EditorResult);
 
   if (
     !machinery ||
     machinery.manual ||
     sourceView ||
-    edit.length !== 1 ||
-    machinery.translation !== edit[0].value
+    fields.length !== 1 ||
+    machinery.translation !== fields[0].handle.current.value
   ) {
     return null;
   }

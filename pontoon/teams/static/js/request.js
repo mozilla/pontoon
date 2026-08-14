@@ -247,8 +247,6 @@ $(function () {
     e.preventDefault();
     e.stopPropagation();
 
-    let locale = '';
-
     if ($(this).is('.confirmed')) {
       // Requesting from team page
       if ($('body').hasClass('locale')) {
@@ -257,7 +255,8 @@ $(function () {
             return $(element).siblings('.name').data('slug');
           })
           .get();
-        locale = $('#server').data('locale') || Pontoon.getSelectedLocale();
+        const locale =
+          $('#server').data('locale') || Pontoon.getSelectedLocale();
 
         if ($('.items').is('.request')) {
           $(this).html('Request new projects');
@@ -273,13 +272,15 @@ $(function () {
       // Requesting from project page
       else if (type === 'locale-projects' && $('body').hasClass('project')) {
         const project = $('#server').data('project');
-        locale = $('.items td.radio.enabled').siblings('.name').data('slug');
+        const locale = $('.items td.radio.enabled')
+          .siblings('.name')
+          .data('slug');
 
         Pontoon.requestItem.requestProjects(locale, [project], 'language');
 
         $(this).removeClass('confirmed').html('Request new language');
       } else if (type === 'team') {
-        locale = $.trim($('#request-team-form #id_name').val());
+        const locale = $.trim($('#request-team-form #id_name').val());
         const code = $.trim($('#request-team-form #id_code').val());
 
         Pontoon.requestItem.requestTeam(locale, code);

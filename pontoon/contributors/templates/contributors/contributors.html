@@ -50,7 +50,7 @@
             HeadingInfo.details_item(
             title='Latest activity',
             class='latest-activity',
-            value=top_contributor.contributed_translations.latest('date').date|naturaltime)
+            value=top_contributor.translation_set.all().latest('date').date|naturaltime)
           }}
         </ul>
 

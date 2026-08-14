@@ -13,10 +13,6 @@ $(function () {
         selector: '.admin-team-selector .locale.readonly',
         input: $('#id_locales_readonly'),
       },
-      {
-        selector: '.multiple-team-selector .locale.selected',
-        input: $('#id_locales_pretranslate'),
-      },
     ];
 
     locales.forEach(function (type) {
@@ -190,8 +186,7 @@ $(function () {
 
   // Copy locales from another project
   $('#copy-locales option').on('click', function () {
-    let projectLocales = [];
-
+    let projectLocales;
     try {
       projectLocales = JSON.parse($(this).val());
     } catch {

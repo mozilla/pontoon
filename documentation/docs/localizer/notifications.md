@@ -24,7 +24,7 @@ Pontoon includes several types of notifications and most of them can be [manuall
 
 ### New strings
 
-This notification informs users when new strings are added to a project. The notification is sent to all users who contributed translations to that project, as soon as new strings are available.
+This notification informs users when new strings are added to a project. The notification is sent to all users who contributed translations to that project, as soon as new strings are available. Clicking the notification opens the list of strings added in that sync cycle, including strings already translated (e.g. as part of a Fluent migration).
 
 ### Project target dates
 

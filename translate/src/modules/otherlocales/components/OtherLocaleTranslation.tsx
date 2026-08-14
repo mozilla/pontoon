@@ -7,9 +7,9 @@ import type { OtherLocaleTranslation } from '~/api/other-locales';
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
-import { Translation } from '~/modules/translation';
+import { GenericTranslation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { getPlainMessage } from '~/utils/message';
+import { getPlainMessage, parseEntry } from '~/utils/message';
 
 import './OtherLocaleTranslation.css';
 
@@ -36,13 +36,15 @@ export function OtherLocaleTranslationComponent({
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
 
+  const entry = parseEntry(format, translation.translation);
+  const plain = entry ? getPlainMessage(entry) : translation.translation;
+
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      const value = getPlainMessage(translation.translation, format);
-      setEditorFromHelpers(value, [], true);
+      setEditorFromHelpers(plain, [], true);
     }
-  }, [format, index, setEditorFromHelpers, translation]);
+  }, [index, setEditorFromHelpers, plain]);
 
   const className = classNames(
     'translation',
@@ -102,7 +104,7 @@ export function OtherLocaleTranslationComponent({
           dir={translation.locale.direction}
           data-script={translation.locale.script}
         >
-          <Translation content={translation.translation} format={format} />
+          <GenericTranslation content={plain} />
         </p>
       </li>
     </Localized>

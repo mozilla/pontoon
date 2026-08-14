@@ -1,11 +1,11 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 
 import { ResourceItem } from './ResourceItem';
-import { ResourcePercent } from './ResourcePercent';
+import { render } from '@testing-library/react';
+import { expect } from 'vitest';
 
-function createShallowResourceItem({ path = 'path' } = {}) {
-  return shallow(
+function renderResourceItem({ path = 'path', ...otherResourceProps } = {}) {
+  return render(
     <ResourceItem
       location={{
         locale: 'locale',
@@ -14,6 +14,7 @@ function createShallowResourceItem({ path = 'path' } = {}) {
       }}
       resource={{
         path: path,
+        ...otherResourceProps,
       }}
     />,
   );
@@ -21,19 +22,27 @@ function createShallowResourceItem({ path = 'path' } = {}) {
 
 describe('<ResourceItem>', () => {
   it('renders correctly', () => {
-    const wrapper = createShallowResourceItem();
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('a')).toHaveLength(1);
-    expect(wrapper.find('span')).toHaveLength(1);
-    expect(wrapper.find(ResourcePercent)).toHaveLength(1);
-    expect(wrapper.find('a').prop('href')).toEqual('/locale/project/path/');
+    const path = 'test-path';
+    const { getByRole, getByText } = renderResourceItem({
+      path,
+      approvedStrings: 2,
+      stringsWithWarnings: 2,
+      totalStrings: 10,
+    });
+    getByRole('listitem');
+    expect(getByRole('link')).toHaveAttribute(
+      'href',
+      `/locale/project/${path}/`,
+    );
+    expect(getByText(path)).toHaveClass('path');
+    expect(getByText('40%')).toHaveClass('percent');
   });
 
   it('sets the className correctly', () => {
-    let wrapper = createShallowResourceItem();
-    expect(wrapper.find('li.current')).toHaveLength(0);
+    let { container } = renderResourceItem();
+    expect(container.querySelector('li.current')).toBeNull();
 
-    wrapper = createShallowResourceItem({ path: 'resource' });
-    expect(wrapper.find('li.current')).toHaveLength(1);
+    container = renderResourceItem({ path: 'resource' }).container;
+    expect(container.querySelector('li.current')).toBeInTheDocument();
   });
 });

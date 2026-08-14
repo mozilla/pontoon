@@ -14,13 +14,14 @@ import React, {
 
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
+import { editorThemeClass, ThemeContext } from '~/context/Theme';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { getExtensions, useKeyHandlers } from '../utils/editFieldExtensions';
 import { EntityView } from '~/context/EntityView';
+import { messageEntryFromEntity } from '~/utils/message/fromEntity';
 
 export type EditFieldProps = {
-  index: number;
   onFocus?: () => void;
   singleField?: boolean;
   defaultValue: string;
@@ -35,9 +36,10 @@ export type EditFieldProps = {
  */
 export const EditField = memo(
   forwardRef<EditFieldHandle, EditFieldProps>(
-    ({ defaultValue, index, onFocus, singleField }, ref) => {
+    ({ defaultValue, onFocus, singleField }, ref) => {
       const { l10n } = useLocalization();
       const locale = useContext(Locale);
+      const { editorTheme } = useContext(ThemeContext);
       const readOnly = useReadonlyEditor();
       const { entity } = useContext(EntityView);
       const { setResultFromInput } = useContext(EditorActions);
@@ -48,8 +50,7 @@ export const EditField = memo(
         (parent: HTMLDivElement | null) => {
           if (parent) {
             const extensions = getExtensions(
-              entity.format,
-              entity.original,
+              messageEntryFromEntity(entity),
               keyHandlers,
             );
             if (readOnly) {
@@ -68,7 +69,7 @@ export const EditField = memo(
                     onFocus();
                   }
                   if (update.docChanged) {
-                    setResultFromInput(index, update.state.doc.toString());
+                    setResultFromInput();
                   }
                 }),
               );
@@ -128,7 +129,11 @@ export const EditField = memo(
 
       return (
         <div
-          className={readOnly ? 'readonly' : undefined}
+          className={
+            [readOnly && 'readonly', editorThemeClass(editorTheme)]
+              .filter(Boolean)
+              .join(' ') || undefined
+          }
           ref={initView}
           data-script={locale.script}
           dir={locale.direction}

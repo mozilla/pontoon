@@ -300,6 +300,15 @@ export function SearchBoxBase({
           status,
           tag: tags.join(','),
           time: timeRange ? `${timeRange.from}-${timeRange.to}` : null,
+          // Clear URL-only filters that have no representation in the panel, so
+          // applying a filter from the UI doesn't silently keep them active
+          // (e.g. the created_time filter from new-string notification links).
+          //
+          // TODO: Remove once search/filter state is redesigned (#3511).
+          created_time: null,
+          reviewer: null,
+          review_time: null,
+          exclude_self_reviewed: false,
           entity: 0, // With the new results, the current entity might not be available anymore.
           list: parameters.list ?? null,
           ...getSearchUpdates(searchOptions),

@@ -112,18 +112,21 @@ editor-EditorMenu--button-copy = KOPIERA
     .title = Kopiera från källa (Ctrl + Shift + C)
 editor-EditorMenu--button-clear = TÖM
     .title = Töm översättning (Ctrl + Shift + Backspace)
+
 editor-EditorMenu--button-approve = GODKÄNN
-    .title = Godkänn översättning (Enter)
-editor-EditorMenu--button-approving = <glyph></glyph>GODKÄNNER
-    .title = Godkänner översättning…
+editor-EditorMenu--button-approving = GODKÄNNER
 editor-EditorMenu--button-save = SPARA
-    .title = Spara översättning (Enter)
-editor-EditorMenu--button-saving = <glyph></glyph>SPARAR
-    .title = Sparar översättning…
+editor-EditorMenu--button-saving = SPARAR
 editor-EditorMenu--button-suggest = FÖRESLÅ
-    .title = Föreslå översättning (Enter)
-editor-EditorMenu--button-suggesting = <glyph></glyph>FÖRESLÅR
-    .title = Föreslår översättning…
+editor-EditorMenu--button-suggesting = FÖRESLÅR
+
+editor-EditorMenu--title-approve = Godkänn översättning (Enter)
+editor-EditorMenu--title-approving = Godkänner översättning…
+editor-EditorMenu--title-save = Spara översättning (Enter)
+editor-EditorMenu--title-saving = Sparar översättning…
+editor-EditorMenu--title-suggest = Föreslå översättning (Enter)
+editor-EditorMenu--title-suggesting = Föreslår översättning…
+editor-EditorMenu--title-same-translation = Samma översättning finns redan
 
 
 ## Editor Settings
@@ -532,11 +535,6 @@ machinery-GoogleTranslation--option-show-original = VISA ORIGINAL
 ## Machinery Microsoft Translation
 ## Shows the translation source from Microsoft Translation.
 machinery-MicrosoftTranslation--translation-source = MICROSOFT TRANSLATOR
-
-
-## Machinery Systran Translate
-## Shows the translation source from Systran Translate.
-machinery-SystranTranslate--translation-source = SYSTRAN TRANSLATE
 
 
 ## Machinery Microsoft Terminology

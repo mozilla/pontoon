@@ -1,4 +1,3 @@
-/* eslint-env node */
 /* global global */
 
 import { createMemoryHistory } from 'history';
@@ -12,11 +11,10 @@ import { EntityDetails } from './EntityDetails';
 const ENTITY = (pk) => ({
   pk,
   key: [],
-  original: 'le test',
+  value: ['le test'],
   translation: { string: 'test', errors: [], warnings: [] },
   project: { contact: '' },
   comment: '',
-  meta: [],
   date_created: new Date().toISOString(),
 });
 
@@ -55,6 +53,7 @@ describe('<EntityDetails>', () => {
     urls = [];
     const { container, getAllByRole } = mockEntityDetails(42);
     expect(urls).toMatchObject([
+      'http://localhost/terminology/get-terms/?source_string=le+test&locale=kg',
       'http://localhost/other-locales/?entity=42&locale=kg',
       'http://localhost/get-team-comments/?entity=42&locale=kg',
     ]);
@@ -65,10 +64,12 @@ describe('<EntityDetails>', () => {
     expect(getAllByRole('tablist')).toHaveLength(2);
   });
 
-  it('does not load anything for entity 0', () => {
+  it('loads only terminology for entity 0', () => {
     urls = [];
     const { container, queryByRole } = mockEntityDetails(0);
-    expect(urls).toMatchObject([]);
+    expect(urls).toMatchObject([
+      'http://localhost/terminology/get-terms/?source_string=le+test&locale=kg',
+    ]);
 
     expect(
       container.querySelector('.entity-navigation'),

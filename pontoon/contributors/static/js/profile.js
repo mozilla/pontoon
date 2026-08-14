@@ -160,13 +160,23 @@ var Pontoon = (function (my) {
       renderContributionGraph: function () {
         const graph = $('#contribution-graph');
         const contributions = graph.data('contributions');
+        const year = graph.data('year');
 
-        // Set start date to 365 days before now
         const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - 12);
-        startDate.setUTCDate(startDate.getUTCDate() + 1);
-        startDate.setUTCHours(0, 0, 0, 0);
         const endDate = new Date();
+
+        if (year) {
+          // Show the entire selected calendar year, including the still-empty
+          // days of an unfinished current year
+          startDate.setFullYear(year, 0, 1);
+          endDate.setFullYear(year, 11, 31);
+          endDate.setUTCHours(23, 59, 59, 999);
+        } else {
+          // Set start date to 365 days before now
+          startDate.setMonth(startDate.getMonth() - 12);
+          startDate.setUTCDate(startDate.getUTCDate() + 1);
+        }
+        startDate.setUTCHours(0, 0, 0, 0);
 
         let graphHTML = '';
         const step = 13;
@@ -193,24 +203,25 @@ var Pontoon = (function (my) {
 
           const count = contributions[currentDate.getTime()] || 0;
 
-          // Pick color based on count range
-          let color;
+          // Pick color based on count range (empty → most active)
+          let level;
           switch (true) {
             case count === 0:
-              color = style.getPropertyValue('--dark-grey-1');
+              level = 0;
               break;
             case count < 10:
-              color = style.getPropertyValue('--forest-green-1');
+              level = 1;
               break;
             case count < 25:
-              color = style.getPropertyValue('--green');
+              level = 2;
               break;
             case count < 50:
-              color = style.getPropertyValue('--green-2');
+              level = 3;
               break;
             default:
-              color = style.getPropertyValue('--status-translated');
+              level = 4;
           }
+          const color = style.getPropertyValue(`--contribution-graph-${level}`);
 
           const y = currentDate.getDay() * step;
           const date = currentDate.getTime();
@@ -296,11 +307,9 @@ var Pontoon = (function (my) {
             .find('.selector .value')
             .html($(this).html());
 
-          // Rerender the show more button in case it was hidden
-          $('#show-more').show();
-
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
+          const year = $('#contribution-graph').data('year');
 
           // Update contribution graph
           $.ajax({
@@ -308,6 +317,7 @@ var Pontoon = (function (my) {
             data: {
               contribution_type: type,
               user: user,
+              year: year,
             },
             success: function ({ contributions, title }) {
               $('#contribution-graph').data('contributions', contributions);
@@ -325,9 +335,61 @@ var Pontoon = (function (my) {
             data: {
               contribution_type: type,
               user: user,
+              year: year,
             },
             success: function (data) {
               $('#timeline').html(data);
+              $('#show-more').show();
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+        });
+      },
+      handleContributionYearSelector: function () {
+        $('#contributions .year-selector').on('click', '.year', function () {
+          const button = $(this);
+
+          // Mark the selected year as active
+          $('#contributions .year-selector .year').removeClass('active');
+          button.addClass('active');
+
+          const year = button.data('year');
+          const type = $('#contributions .type-selector span').data('type');
+          const user = $('#server').data('user');
+
+          // Update contribution graph
+          $.ajax({
+            url: '/update-contribution-graph/',
+            data: {
+              contribution_type: type,
+              user: user,
+              year: year,
+            },
+            success: function ({ contributions, title }) {
+              $('#contribution-graph')
+                .data('contributions', contributions)
+                .data('year', year);
+              $('#contributions .title').html(title);
+              Pontoon.profile.renderContributionGraph();
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+
+          // Update contribution timeline
+          $.ajax({
+            url: '/update-contribution-timeline/',
+            data: {
+              contribution_type: type,
+              user: user,
+              year: year,
+            },
+            success: function (data) {
+              $('#timeline').html(data);
+              $('#show-more').show();
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
@@ -367,6 +429,7 @@ var Pontoon = (function (my) {
         $('#show-more').click(function () {
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
+          const year = $('#contribution-graph').data('year');
 
           // Update contribution timeline
           $.ajax({
@@ -375,6 +438,7 @@ var Pontoon = (function (my) {
               full_year: true,
               contribution_type: type,
               user: user,
+              year: year,
             },
             success: function (data) {
               $('#timeline').html(data);
@@ -397,8 +461,14 @@ Pontoon.insights.renderCharts();
 
 Pontoon.profile.renderContributionGraph();
 Pontoon.profile.handleContributionTypeSelector();
+Pontoon.profile.handleContributionYearSelector();
 Pontoon.profile.handleContributionGraphClick();
 Pontoon.profile.handleShowMoreClick();
+
+// The graph embeds theme colors into the SVG, so re-render it on theme change
+document.addEventListener('themechange', function () {
+  Pontoon.profile.renderContributionGraph();
+});
 
 // Set up chart group navigation
 $('body').on('click', '#insights .chart-group-navigation li', function () {

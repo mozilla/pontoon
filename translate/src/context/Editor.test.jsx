@@ -2,6 +2,7 @@ import ftl from '@fluent/dedent';
 import { createMemoryHistory } from 'history';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
+import { describe, expect, it } from 'vitest';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { editMessageEntry, parseEntry } from '~/utils/message';
@@ -16,11 +17,47 @@ import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
 import { UnsavedChanges, UnsavedChangesProvider } from './UnsavedChanges';
+import { fluentParseEntry, mf2ParseMessage } from '@mozilla/l10n';
 
-function mountSpy(Spy, format, translation, original) {
+function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
   });
+
+  let key = ['key'];
+  let value;
+  let translation = undefined;
+  switch (format) {
+    case 'fluent': {
+      const [id, entry] = fluentParseEntry(formatSource);
+      key = [id];
+      value = entry['='];
+      if (formatTranslation) {
+        const [, entry] = fluentParseEntry(formatTranslation);
+        translation = { string: formatTranslation, value: entry['='] };
+      }
+      break;
+    }
+    case 'android':
+      value = mf2ParseMessage(formatSource);
+      if (formatTranslation) {
+        translation = {
+          string: formatTranslation,
+          value: mf2ParseMessage(formatTranslation),
+        };
+      }
+      break;
+    default:
+      value = [formatSource];
+      if (formatTranslation) {
+        translation = { string: formatTranslation, value: [formatTranslation] };
+      }
+  }
+
+  const gettextSource =
+    '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}';
+  const gettextTranslation =
+    '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}';
 
   const initialState = {
     entities: {
@@ -28,28 +65,23 @@ function mountSpy(Spy, format, translation, original) {
         {
           pk: 42,
           format,
-          key: ['key'],
-          original: original ?? 'key = test',
-          translation: translation
-            ? { string: translation, errors: [], warnings: [] }
-            : undefined,
+          key,
+          original: formatSource,
+          value,
+          translation,
           project: { contact: '' },
-          comment: '',
         },
         {
           pk: 13,
           format: 'gettext',
           key: ['plural'],
-          original:
-            '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}',
+          original: gettextSource,
+          value: mf2ParseMessage(gettextSource),
           translation: {
-            string:
-              '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}',
-            errors: [],
-            warnings: [],
+            string: gettextTranslation,
+            value: mf2ParseMessage(gettextTranslation),
           },
           project: { contact: '' },
-          comment: '',
         },
       ],
     },
@@ -100,7 +132,7 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'message' }]);
+    expect(result).toEqual({ format: 'plain', id: 'key', value: ['message'] });
   });
 
   it('provides a simple Fluent value', () => {
@@ -124,7 +156,11 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'message' }]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: ['message'],
+    });
   });
 
   it('provides a rich Fluent value', () => {
@@ -150,10 +186,18 @@ describe('<EditorProvider>', () => {
       handle: { current: { value: field.handle.current.value } },
     }));
     expect(editor).toMatchObject({ sourceView: false, initial: entry, fields });
-    expect(result).toMatchObject([
-      { name: '', keys: ['one'], value: 'ONE' },
-      { name: '', keys: [{ '*': 'other' }], value: 'OTHER' },
-    ]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { var: { $: 'var', fn: 'number' } },
+        sel: ['var'],
+        alt: [
+          { keys: ['one'], pat: ['ONE'] },
+          { keys: [{ '*': 'other' }], pat: ['OTHER'] },
+        ],
+      },
+    });
   });
 
   it('provides a forced source Fluent value', () => {
@@ -163,15 +207,35 @@ describe('<EditorProvider>', () => {
       result = useContext(EditorResult);
       return null;
     };
-    const source = '## comment\n';
-    mountSpy(Spy, 'fluent', source);
+    const source = ftl`
+      key =
+          { $var ->
+              [a] A
+              [b] B
+              [c] C
+              [d] D
+              [e] E
+              [f] F
+              [g] G
+              [h] H
+              [i] I
+              [j] J
+              [k] K
+              [l] L
+              [m] M
+              [n] N
+              [o] O
+              [p] P
+             *[q] Q
+          }
+      `;
+    mountSpy(Spy, 'fluent', source, source);
 
     expect(editor).toMatchObject({
       sourceView: true,
-      initial: { id: 'key', value: ['## comment\n'] },
       fields: [
         {
-          handle: { current: { value: '## comment' } },
+          handle: { current: { value: source } },
           id: '',
           keys: [],
           labels: [],
@@ -179,7 +243,11 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: fluentParseEntry(source)[1]['='],
+    });
   });
 
   it('provides a simple Android value with no translation', () => {
@@ -195,11 +263,9 @@ describe('<EditorProvider>', () => {
       undefined,
       'Hello, {$arg1 :string @source=|%1$s|}!',
     );
-    const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: { id: '', value: [] },
-      placeholders: new Map([['%1$s', arg1]]),
+      initial: { id: 'key', value: [] },
       fields: [
         {
           id: '',
@@ -210,8 +276,7 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(editor.placeholders).toBeInstanceOf(Map);
-    expect(result).toMatchObject([{ name: '', keys: [], value: '' }]);
+    expect(result).toEqual({ format: 'android', id: 'key', value: [] });
   });
 
   it('provides a simple Android value', () => {
@@ -230,8 +295,7 @@ describe('<EditorProvider>', () => {
     const arg1 = { $: 'arg1', fn: 'string', attr: { source: '%1$s' } };
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: { id: '', value: ['Hei, ', arg1, '!'] },
-      placeholders: new Map([['%1$s', arg1]]),
+      initial: { id: 'key', value: ['Hei, ', arg1, '!'] },
       fields: [
         {
           id: '',
@@ -242,8 +306,15 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(editor.placeholders).toBeInstanceOf(Map);
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'Hei, %1$s!' }]);
+    expect(result).toEqual({
+      format: 'android',
+      id: 'key',
+      value: [
+        'Hei, ',
+        { $: 'arg1', fn: 'string', opt: undefined, attr: { source: '%1$s' } },
+        '!',
+      ],
+    });
   });
 
   it('provides a rich Android value', () => {
@@ -274,14 +345,28 @@ describe('<EditorProvider>', () => {
     }));
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: entry,
-      placeholders: null,
+      initial: { ...entry, id: 'key' },
       fields,
     });
-    expect(result).toMatchObject([
-      { name: '', keys: ['one'], value: 'trans:ONE' },
-      { name: '', keys: [{ '*': '' }], value: 'trans:OTHER' },
-    ]);
+    expect(result).toEqual({
+      format: 'android',
+      id: 'key',
+      value: {
+        decl: {
+          quantity: {
+            $: 'quantity',
+            fn: 'number',
+            opt: undefined,
+            attr: undefined,
+          },
+        },
+        sel: ['quantity'],
+        alt: [
+          { keys: ['one'], pat: ['trans:ONE'] },
+          { keys: [{ '*': '' }], pat: ['trans:OTHER'] },
+        ],
+      },
+    });
   });
 
   it('updates state on entity change', () => {
@@ -293,21 +378,32 @@ describe('<EditorProvider>', () => {
       entity = useContext(EntityView).entity;
       return null;
     };
-    mountSpy(Spy, 'simple', 'translated');
+    mountSpy(Spy, 'plain', 'translated');
 
     act(() => location.push({ entity: 13 }));
 
     expect(editor).toMatchObject({
-      initial: parseEntry('gettext', entity.translation.string),
+      initial: {
+        ...parseEntry('gettext', entity.translation.string),
+        id: 'plural',
+      },
       fields: [
         { handle: { current: { value: 'trans one' } } },
         { handle: { current: { value: 'trans other' } } },
       ],
     });
-    expect(result).toMatchObject([
-      { value: 'trans one' },
-      { value: 'trans other' },
-    ]);
+    expect(result).toEqual({
+      format: 'gettext',
+      id: 'plural',
+      value: {
+        decl: { n: { $: 'n', attr: undefined, fn: 'number', opt: undefined } },
+        sel: ['n'],
+        alt: [
+          { keys: ['one'], pat: ['trans one'] },
+          { keys: [{ '*': '' }], pat: ['trans other'] },
+        ],
+      },
+    });
   });
 
   it('clears a rich Fluent value', () => {
@@ -423,10 +519,18 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([
-      { keys: ['one'], name: '', value: 'ONE' },
-      { keys: [{ '*': 'other' }], name: '', value: 'OTHER' },
-    ]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { var: { $: 'var', fn: 'number' } },
+        sel: ['var'],
+        alt: [
+          { keys: ['one'], pat: ['ONE'] },
+          { keys: [{ '*': 'other' }], pat: ['OTHER'] },
+        ],
+      },
+    });
   });
 
   it('toggles Fluent source view', () => {
@@ -459,18 +563,37 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ keys: [], name: '', value: source }]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { var: { $: 'var', fn: 'number' } },
+        sel: ['var'],
+        alt: [
+          { keys: ['one'], pat: ['ONE'] },
+          { keys: [{ '*': 'other' }], pat: ['OTHER'] },
+        ],
+      },
+    });
 
     act(() => actions.toggleSourceView());
 
     expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
-    expect(result).toMatchObject([
-      { keys: ['one'], name: '', value: 'ONE' },
-      { keys: [{ '*': 'other' }], name: '', value: 'OTHER' },
-    ]);
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { var: { $: 'var', fn: 'number' } },
+        sel: ['var'],
+        alt: [
+          { keys: ['one'], pat: ['ONE'] },
+          { keys: [{ '*': 'other' }], pat: ['OTHER'] },
+        ],
+      },
+    });
   });
 
-  it('reports no pending changes for empty android entry with placeholders', () => {
+  it('reports no pending changes for empty android entry', () => {
     let unsaved;
     const Spy = () => {
       unsaved = useContext(UnsavedChanges);

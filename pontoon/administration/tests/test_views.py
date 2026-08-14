@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from pontoon.administration.forms import ProjectForm
 from pontoon.administration.views import _create_or_update_translated_resources
+from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Entity,
     Project,
@@ -87,7 +88,7 @@ def test_manage_project_strings_new(admin, client_superuser, locale_a):
     assert resources[0].path == "database"
 
     # Verify all strings have been created as entities.
-    entities = Entity.for_project_locale(admin, project, locale_a)
+    entities = get_entities_for_project_locale(admin, project, locale_a)
     assert len(entities) == 4
 
     expected_strings = [
@@ -462,3 +463,81 @@ def test_project_add_locale(client_superuser):
     resource = Resource.objects.get(project=project, path="database")
     tr = TranslatedResource.objects.filter(resource=resource)
     assert len(tr) == 2
+
+
+@pytest.mark.django_db
+def test_project_form_preselects_pretranslate_locales():
+    """ProjectForm must pre-select the pretranslation-enabled locales for an
+    existing project, so the (CSS-hidden) locales_pretranslate <select> renders
+    with them selected and a save that doesn't touch the pretranslate selector
+    doesn't submit an empty value and wipe the flags.
+    """
+    locale_kl = LocaleFactory.create(code="kl", name="Klingon")
+    locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
+    project = ProjectFactory.create(
+        data_source=Project.DataSource.DATABASE,
+        locales=[locale_kl, locale_gs],
+        repositories=[],
+    )
+    ProjectLocale.objects.filter(project=project, locale=locale_kl).update(
+        pretranslation_enabled=True
+    )
+
+    form = ProjectForm(instance=project)
+    # Only the pretranslation-enabled locale must be preselected.
+    assert list(form["locales_pretranslate"].value()) == [locale_kl.pk]
+
+
+@pytest.mark.django_db
+def test_manage_project_save_preserves_pretranslate_locales(client_superuser):
+    """Saving the project form without resubmitting locales_pretranslate (e.g.
+    when only other fields are edited) must not wipe the pretranslation_enabled
+    flags of existing ProjectLocales.
+    """
+    locale_kl = LocaleFactory.create(code="kl", name="Klingon")
+    locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
+    project = ProjectFactory.create(
+        data_source=Project.DataSource.DATABASE,
+        locales=[locale_kl, locale_gs],
+        repositories=[],
+    )
+    ProjectLocale.objects.filter(project=project, locale=locale_kl).update(
+        pretranslation_enabled=True
+    )
+
+    url = reverse("pontoon.admin.project", args=(project.slug,))
+
+    form = ProjectForm(instance=project)
+    form_data = dict(form.initial)
+    del form_data["deadline"]
+    del form_data["contact"]
+    form_data.update(
+        {
+            "externalresource_set-TOTAL_FORMS": "1",
+            "externalresource_set-MAX_NUM_FORMS": "1000",
+            "externalresource_set-MIN_NUM_FORMS": "0",
+            "externalresource_set-INITIAL_FORMS": "0",
+            "tags-TOTAL_FORMS": "1",
+            "tags-INITIAL_FORMS": "0",
+            "tags-MAX_NUM_FORMS": "1000",
+            "tags-MIN_NUM_FORMS": "0",
+            "repositories-INITIAL_FORMS": "0",
+            "repositories-MIN_NUM_FORMS": "0",
+            "repositories-MAX_NUM_FORMS": "1000",
+            "repositories-TOTAL_FORMS": "0",
+            "pk": project.pk,
+            "locales": [locale_kl.id, locale_gs.id],
+            "configuration_file": "",
+            # locales_pretranslate is the form value submitted by the (hidden)
+            # <select>, which is preselected from the project's enabled locales.
+            "locales_pretranslate": [locale_kl.id],
+        }
+    )
+
+    response = client_superuser.post(url, form_data)
+    assert response.status_code == 200
+    assert b". Error." not in response.content
+
+    # The pretranslation_enabled flag must still be set for locale_kl.
+    pl = ProjectLocale.objects.get(project=project, locale=locale_kl)
+    assert pl.pretranslation_enabled is True

@@ -1,10 +1,12 @@
 from typing import cast
 
-from notifications.signals import notify
+from moz.l10n.message import message_to_json
+from moz.l10n.model import Message
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -15,6 +17,7 @@ from django.views.decorators.http import require_POST
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
+from pontoon.base.badge_utils import badges_review_count, badges_translation_count
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -23,12 +26,12 @@ from pontoon.base.models import (
     Translation,
 )
 from pontoon.base.services import readonly_exists
+from pontoon.base.user_utils import can_translate
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
-from pontoon.messaging.notifications import send_badge_notification
+from pontoon.messaging.notifications import send_badge_notification, send_notification
 
 from .forms import CreateTranslationForm
-from .utils import parse_db_string_to_json
 
 
 def _add_stats(response_data, resource: Resource, locale: Locale, stats):
@@ -60,22 +63,22 @@ def create_translation(request):
     Create a new translation.
     """
     form = CreateTranslationForm(request.POST)
-
     if not form.is_valid():
-        problems = []
-        for field, errors in form.errors.items():
-            problems.append(f'Error validating field `{field}`: "{" ".join(errors)}"')
+        problems = [
+            f'Error validating field `{field}`: "{error}"'
+            for field, errors in form.errors.items()
+            for error in errors
+        ]
         return JsonResponse(
             {"status": False, "message": "\n".join(problems)}, status=400
         )
+    req_data = form.cleaned_data
 
-    entity = cast(Entity, form.cleaned_data["entity"])
-    string = form.cleaned_data["translation"]
-    locale = cast(Locale, form.cleaned_data["locale"])
-    ignore_warnings = form.cleaned_data["ignore_warnings"]
-    approve = form.cleaned_data["approve"]
-    force_suggestions = form.cleaned_data["force_suggestions"]
-    stats = form.cleaned_data["stats"]
+    entity = cast(Entity, req_data["entity"])
+    locale = cast(Locale, req_data["locale"])
+    value = cast(Message, req_data["value"])
+    properties = cast(dict[str, Message], req_data["properties"])
+    string = cast(str, req_data["string"])
 
     resource = entity.resource
     project = resource.project
@@ -96,12 +99,15 @@ def create_translation(request):
             status=403,
         )
 
-    translations = Translation.objects.filter(entity=entity, locale=locale)
-
-    same_translations = translations.filter(string=string)
+    json_value = message_to_json(value)
+    json_properties = {k: message_to_json(v) for k, v in properties.items()} or None
 
     # If same translation exists in the DB, don't save it again.
-    if same_translations:
+    if (
+        Translation.objects.filter(entity=entity, locale=locale)
+        .filter(Q(value=json_value, properties=json_properties) | Q(string=string))
+        .exists()
+    ):
         return JsonResponse({"status": False, "same": True})
 
     # Look for failed checks.
@@ -117,29 +123,27 @@ def create_translation(request):
             string,
             user.profile.quality_checks,
         )
-        if are_blocking_checks(failed_checks, ignore_warnings):
+        if are_blocking_checks(failed_checks, req_data["ignore_warnings"]):
             return JsonResponse({"status": False, "failedChecks": failed_checks})
 
-    value, properties = parse_db_string_to_json(resource.format, string)
-
     now = timezone.now()
-    can_translate = user.can_translate(project=project, locale=locale) and (
-        not force_suggestions or approve
+    approved = can_translate(user, project, locale) and (
+        not req_data["force_suggestions"] or req_data["approve"]
     )
 
     translation = Translation(
         entity=entity,
         locale=locale,
         string=string,
-        value=value,
-        properties=properties,
+        value=json_value,
+        properties=json_properties,
         user=user,
         date=now,
-        approved=can_translate,
-        machinery_sources=form.cleaned_data["machinery_sources"],
+        approved=approved,
+        machinery_sources=req_data["machinery_sources"],
     )
 
-    if can_translate:
+    if approved:
         translation.approved_user = user
         translation.approved_date = now
 
@@ -147,14 +151,18 @@ def create_translation(request):
 
     log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
-    if translations:
-        translation = entity.reset_active_translation(locale=locale)
+    translation = entity.reset_active_translation(locale=locale)
 
     # When user makes their first contribution to the team, notify team managers
     first_contribution = (
         not project.system_project
         and user != project.contact
-        and user.has_one_contribution(locale)
+        and (
+            Translation.objects.filter(user=user, locale=locale)
+            .exclude(entity__resource__project__system_project=True)
+            .count()
+            == 1
+        )
     )
     if first_contribution:
         description = render_to_string(
@@ -168,9 +176,9 @@ def create_translation(request):
         )
 
         for manager in locale.managers_group.user_set.filter(
-            profile__new_contributor_notifications=True
+            profile__new_contributor_notifications=True,
         ):
-            notify.send(
+            send_notification(
                 sender=manager,
                 recipient=manager,
                 verb="has reviewed suggestions",  # Triggers render of description only
@@ -179,10 +187,10 @@ def create_translation(request):
             )
 
     response_data = {"status": True, "translation": translation.serialize()}
-    _add_stats(response_data, resource, locale, stats)
+    _add_stats(response_data, resource, locale, req_data["stats"])
 
     # Send Translation Champion Badge notification information
-    translation_count = user.badges_translation_count
+    translation_count = badges_translation_count(user)
     if translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
         badge_name = "Translation Champion"
         badge_level = (
@@ -223,7 +231,7 @@ def delete_translation(request):
 
     # Only privileged users or authors can delete translations
     if not translation.rejected or not (
-        request.user.can_translate(locale, project) or request.user == translation.user
+        can_translate(request.user, project, locale) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -287,7 +295,7 @@ def approve_translation(request):
         )
 
     # Only privileged users can approve translations
-    if not user.can_translate(locale, project):
+    if not can_translate(user, project, locale):
         return JsonResponse(
             {
                 "status": False,
@@ -323,7 +331,7 @@ def approve_translation(request):
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
-    review_count = user.badges_review_count
+    review_count = badges_review_count(user)
     if review_count in settings.BADGES_REVIEW_THRESHOLDS:
         badge_name = "Review Master"
         badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
@@ -364,7 +372,7 @@ def unapprove_translation(request):
 
     # Only privileged users or authors can un-approve translations
     if not translation.approved or not (
-        request.user.can_translate(locale, project) or request.user == translation.user
+        can_translate(request.user, project, locale) or request.user == translation.user
     ):
         return JsonResponse(
             {
@@ -420,7 +428,7 @@ def reject_translation(request):
         )
 
     # Non-privileged users can only reject own unapproved translations
-    if not request.user.can_translate(locale, project):
+    if not can_translate(request.user, project, locale):
         if translation.user == request.user:
             if translation.approved is True:
                 return JsonResponse(
@@ -451,7 +459,7 @@ def reject_translation(request):
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
-    review_count = request.user.badges_review_count
+    review_count = badges_review_count(request.user)
     if review_count in settings.BADGES_REVIEW_THRESHOLDS:
         badge_name = "Review Master"
         badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
@@ -492,7 +500,7 @@ def unreject_translation(request):
 
     # Only privileged users or authors can un-reject translations
     if not translation.rejected or not (
-        request.user.can_translate(locale, project) or request.user == translation.user
+        can_translate(request.user, project, locale) or request.user == translation.user
     ):
         return JsonResponse(
             {

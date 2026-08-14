@@ -1,11 +1,12 @@
 import ftl from '@fluent/dedent';
+import { fluentParseEntry } from '@mozilla/l10n';
 import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
+import { describe, expect, it } from 'vitest';
 
-import * as TranslationAPI from '~/api/translation';
 import { EditorActions, EditorProvider } from '~/context/Editor';
 import { EntityViewProvider } from '~/context/EntityView';
 import { LocationProvider } from '~/context/Location';
@@ -16,7 +17,6 @@ import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { Editor } from './Editor';
-import { vi } from 'vitest';
 
 const NESTED_SELECTORS_STRING = ftl`
   my-message =
@@ -29,14 +29,14 @@ const NESTED_SELECTORS_STRING = ftl`
       }
 
   `;
+const [, nested_selectors_entry] = fluentParseEntry(NESTED_SELECTORS_STRING);
 
 const RICH_MESSAGE_STRING = ftl`
   my-message =
     Why so serious?
     .reason = Because
   `;
-
-const BROKEN_STRING = `my-message = Why so {} serious?\n`;
+const [, rich_message_entry] = fluentParseEntry(RICH_MESSAGE_STRING);
 
 const ENTITIES = [
   {
@@ -44,15 +44,20 @@ const ENTITIES = [
     format: 'fluent',
     key: ['my-message'],
     original: 'my-message = Hello',
-    translation: { string: 'my-message = Salut' },
+    value: ['Hello'],
+    translation: { string: 'my-message = Salut', value: ['Salut'] },
   },
   {
     pk: 2,
     format: 'fluent',
     key: ['my-message'],
     original: 'my-message =\n    .my-attr = Something guud',
+    value: [],
+    properties: { 'my-attr': ['Something guud'] },
     translation: {
       string: 'my-message =\n    .my-attr = Quelque chose de bien',
+      value: [],
+      properties: { 'my-attr': ['Quelque chose de bien'] },
     },
   },
   {
@@ -60,13 +65,16 @@ const ENTITIES = [
     format: 'fluent',
     key: ['my-message'],
     original: RICH_MESSAGE_STRING,
+    value: rich_message_entry['='],
+    properties: { reason: ['Because'] },
     translation: undefined,
   },
   {
     pk: 4,
     format: 'fluent',
     key: ['my-message'],
-    original: 'my-message = Hello',
+    original: 'my-message = Hello\n',
+    value: ['Hello'],
     translation: { string: '' },
   },
   {
@@ -74,14 +82,11 @@ const ENTITIES = [
     format: 'fluent',
     key: ['my-message'],
     original: NESTED_SELECTORS_STRING,
-    translation: { string: NESTED_SELECTORS_STRING },
-  },
-  {
-    pk: 6,
-    format: 'fluent',
-    key: ['my-message'],
-    original: BROKEN_STRING,
-    translation: { string: BROKEN_STRING },
+    value: nested_selectors_entry['='],
+    translation: {
+      string: NESTED_SELECTORS_STRING,
+      value: nested_selectors_entry['='],
+    },
   },
 ];
 
@@ -154,16 +159,6 @@ describe('<Editor>', () => {
     expect(wrapper.find(EditField)).toHaveLength(4);
   });
 
-  it('renders the source form when passing a broken string', () => {
-    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const [wrapper] = mountEditor(6);
-    expect(spy).toHaveBeenCalledWith(expect.stringContaining('E0028'));
-
-    const input = wrapper.find(EditField);
-    expect(input).toHaveLength(1);
-    expect(input.prop('defaultValue')).toBe(BROKEN_STRING.trim());
-  });
-
   it('converts translation when switching source mode', () => {
     const [wrapper] = mountEditor(1);
 
@@ -210,22 +205,5 @@ describe('<Editor>', () => {
 
     // The translation has been updated to a simplified preview.
     expect(wrapper.find(EditField).text()).toEqual('Coucou');
-  });
-
-  it('passes a reconstructed translation to sendTranslation', async () => {
-    const createSpy = vi
-      .spyOn(TranslationAPI, 'createTranslation')
-      .mockReturnValue({});
-
-    const [wrapper, actions] = mountEditor(1);
-
-    // Update the content with new input
-    act(() => actions.setResultFromInput(0, 'Coucou'));
-    wrapper.update();
-    await act(() => wrapper.find('.action-suggest').prop('onClick')());
-
-    expect(createSpy.mock.calls.length).toBe(1);
-    const args = createSpy.mock.calls[0];
-    expect(args[1]).toBe('my-message = Coucou\n');
   });
 });

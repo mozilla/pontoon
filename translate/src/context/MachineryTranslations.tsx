@@ -5,7 +5,6 @@ import {
   fetchCaighdeanTranslation,
   fetchGoogleTranslation,
   fetchMicrosoftTranslation,
-  fetchSystranTranslation,
   fetchTranslationMemory,
   MachineryTranslation,
 } from '~/api/machinery';
@@ -13,7 +12,7 @@ import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
 import { getPlainMessage } from '~/utils/message';
 
-import { EntityView } from './EntityView';
+import { EntityView, useMachineryEntry } from './EntityView';
 import { Locale } from './Locale';
 import { SearchData } from './SearchData';
 
@@ -45,20 +44,9 @@ export function MachineryProvider({
   const locale = useContext(Locale);
   const { isAuthenticated } = useAppSelector((state) => state[USER]);
   const { entity } = useContext(EntityView);
+  const { pk } = entity;
+  const entry = useMachineryEntry();
   const { query } = useContext(SearchData);
-
-  let source: string;
-  let pk: number | null;
-  let format: string;
-  if (query) {
-    source = query;
-    pk = null;
-    format = '';
-  } else {
-    source = entity.machinery_original;
-    pk = entity.pk;
-    format = entity.format;
-  }
 
   const [fetching, setFetching] = useState(false);
   const [translations, setTranslations] = useState({
@@ -94,7 +82,7 @@ export function MachineryProvider({
       }
     };
 
-    const plain = getPlainMessage(source, format);
+    const plain = query || getPlainMessage(entry);
 
     abortMachineryRequests();
     setTranslations({ source: plain, translations: [] });
@@ -103,7 +91,7 @@ export function MachineryProvider({
       setFetching(true);
       const promises: Promise<void>[] = [];
 
-      if (pk) {
+      if (!query) {
         promises.push(
           fetchTranslationMemory(plain, locale, pk).then(addResults),
         );
@@ -117,8 +105,6 @@ export function MachineryProvider({
           root?.dataset.isGoogleTranslateSupported === 'true';
         const isMicrosoftTranslatorSupported =
           root?.dataset.isMicrosoftTranslatorSupported === 'true';
-        const isSystranTranslateSupported =
-          root?.dataset.isSystranTranslateSupported === 'true';
 
         if (isGoogleTranslateSupported && locale.googleTranslateCode) {
           promises.push(fetchGoogleTranslation(plain, locale).then(addResults));
@@ -129,15 +115,9 @@ export function MachineryProvider({
             fetchMicrosoftTranslation(plain, locale).then(addResults),
           );
         }
-
-        if (isSystranTranslateSupported && locale.systranTranslateCode) {
-          promises.push(
-            fetchSystranTranslation(plain, locale).then(addResults),
-          );
-        }
       }
 
-      if (locale.code === 'ga-IE' && pk) {
+      if (locale.code === 'ga-IE' && !query) {
         promises.push(fetchCaighdeanTranslation(pk).then(addResults));
       }
 
@@ -151,7 +131,7 @@ export function MachineryProvider({
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, locale, source, pk, format]);
+  }, [isAuthenticated, locale, pk, query || entry]);
 
   return (
     <MachineryTranslations.Provider value={{ ...translations, fetching }}>

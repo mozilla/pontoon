@@ -28,25 +28,10 @@ vi.mock('react-redux', () => ({
     }),
 }));
 
-function createEditorSettingsDialogForNonTranslator() {
-  vi.mock('~/hooks/useTranslator', () => ({
-    useTranslator: () => false,
-  }));
-
-  const toggleSettingMock = vi.fn();
-  const wrapper = render(
-    <MockLocalizationProvider>
-      <EditorSettingsDialog
-        settings={{
-          runQualityChecks: false,
-          forceSuggestions: false,
-        }}
-        toggleSetting={toggleSettingMock}
-      />
-    </MockLocalizationProvider>,
-  );
-  return [wrapper, toggleSettingMock];
-}
+let isTranslator = true;
+vi.mock('~/hooks/useTranslator', () => ({
+  useTranslator: () => isTranslator,
+}));
 
 function createEditorSettingsDialog() {
   const toggleSettingMock = vi.fn();
@@ -69,11 +54,24 @@ describe('<EditorSettingsDialog>', () => {
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
   });
   beforeEach(() => {
-    vi.unmock('~/hooks/useTranslator');
+    isTranslator = true;
   });
 
   it('does not show the forceSuggestions setting if user is not a translator', () => {
-    const [{ getAllByRole }] = createEditorSettingsDialogForNonTranslator();
+    isTranslator = false;
+
+    const toggleSettingMock = vi.fn();
+    const { getAllByRole } = render(
+      <MockLocalizationProvider>
+        <EditorSettingsDialog
+          settings={{
+            runQualityChecks: false,
+            forceSuggestions: false,
+          }}
+          toggleSetting={toggleSettingMock}
+        />
+      </MockLocalizationProvider>,
+    );
 
     expect(getAllByRole('listitem')[1].textContent).not.toContain(
       'Force suggestions',

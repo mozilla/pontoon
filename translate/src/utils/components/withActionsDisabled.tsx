@@ -12,7 +12,7 @@ type State = {
   isActionDisabled: boolean;
 };
 
-export function withActionsDisabled<Config extends {}>(
+export function withActionsDisabled<Config>(
   WrappedComponent: React.ComponentType<Config>,
 ): React.ComponentType<$Diff<Config, Props>> {
   class WithActionsDisabled extends React.Component<

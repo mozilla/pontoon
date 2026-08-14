@@ -1,10 +1,14 @@
+import warnings
+
 from unittest.mock import patch
 
 import pytest
 
+from django.core.paginator import UnorderedObjectListWarning
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from pontoon.base.models import TranslationMemoryEntry
 from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
@@ -265,3 +269,36 @@ def test_ajax_projects_request_more_projects_button_visibility(
 
     assert response.status_code == 200
     assert b"request-projects" in response.content
+
+
+@pytest.mark.django_db
+def test_ajax_translation_memory_entries_are_ordered(member, locale_a):
+    """
+    Regression test: the TM tab queryset must be ordered before pagination,
+    otherwise Paginator emits UnorderedObjectListWarning.
+    """
+    locale_a.translators_group.user_set.add(member.user)
+
+    TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Source B",
+        target="Target B",
+    )
+    TranslationMemoryEntry.objects.create(
+        locale=locale_a,
+        source="Source A",
+        target="Target A",
+    )
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+
+        response = member.client.get(
+            f"/{locale_a.code}/ajax/translation-memory/",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+    assert response.status_code == 200
+    assert not any(
+        issubclass(warning.category, UnorderedObjectListWarning) for warning in caught
+    )

@@ -76,6 +76,32 @@ api_v2_patterns = [
         name="entity-translation-search",
     ),
     path(
+        # Create / suggest translations (single or bulk)
+        "translations/",
+        views.TranslationSubmitView.as_view(),
+        name="translation-submit",
+    ),
+    path(
+        "translations/approve/",
+        views.TranslationApproveView.as_view(),
+        name="translation-approve",
+    ),
+    path(
+        "translations/reject/",
+        views.TranslationRejectView.as_view(),
+        name="translation-reject",
+    ),
+    path(
+        "translations/unapprove/",
+        views.TranslationUnapproveView.as_view(),
+        name="translation-unapprove",
+    ),
+    path(
+        "translations/delete/",
+        views.TranslationDeleteView.as_view(),
+        name="translation-delete",
+    ),
+    path(
         # ProjectLocale
         "<str:code>/<str:slug>/",
         views.ProjectLocaleIndividualView.as_view(),

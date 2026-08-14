@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 
 from pontoon.api.models import PersonalAccessToken
 from pontoon.base import utils
+from pontoon.base.badge_utils import badges_promotion_count
 from pontoon.base.models import (
     Locale,
     ProjectLocale,
@@ -129,12 +130,12 @@ class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
         translators = self.cleaned_data.get("translators", User.objects.none())
         managers = self.cleaned_data.get("managers", User.objects.none())
 
-        before_count = self.user.badges_promotion_count
+        before_count = badges_promotion_count(self.user)
 
         self.assign_users_to_groups("translators", translators)
         self.assign_users_to_groups("managers", managers)
 
-        after_count = self.user.badges_promotion_count
+        after_count = badges_promotion_count(self.user)
 
         # Award Community Builder badge
         if (
@@ -351,6 +352,7 @@ class GetEntitiesForm(forms.Form):
     search_match_whole_word = forms.BooleanField(required=False)
     tag = forms.CharField(required=False)
     time = forms.CharField(required=False)
+    created_time = forms.CharField(required=False)
     author = forms.CharField(required=False)
     review_time = forms.CharField(required=False)
     reviewer = forms.CharField(required=False)
