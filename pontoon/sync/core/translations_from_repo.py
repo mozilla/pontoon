@@ -4,11 +4,11 @@ from collections import defaultdict
 from collections.abc import Iterable, Sized
 from datetime import datetime
 from os.path import join, relpath, splitext
+from typing import Any
 
-from fluent.syntax import FluentParser
 from moz.l10n.formats import l10n_extensions
-from moz.l10n.message import message_to_json
-from moz.l10n.model import Id as L10nId
+from moz.l10n.message import message_from_json, message_to_json
+from moz.l10n.model import Id as L10nId, Message
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
 from moz.l10n.resource import parse_resource
 
@@ -213,7 +213,8 @@ def find_db_updates(
                 "entity__resource__format",
                 "entity__key",
                 "locale_id",
-                "string",
+                "value",
+                "properties",
             )
         )
         paginator = Paginator(trans_query, per_page=10000, allow_empty_first_page=True)
@@ -228,11 +229,10 @@ def find_db_updates(
                 if key in translations:
                     rt = translations[key]
                     if rt is not None and translations_equal(
-                        project,
-                        key[0],
-                        trans_values["entity__resource__format"],
-                        rt.string,
-                        trans_values["string"],
+                        rt.value,
+                        rt.properties,
+                        trans_values["value"],
+                        trans_values["properties"],
                     ):
                         del translations[key]
                 else:
@@ -278,21 +278,20 @@ def find_db_updates(
 
 
 def translations_equal(
-    project: Project, db_path: str, format: str, a: object, b: object
+    value: Message,
+    properties: dict[str, Message] | None,
+    json_value: Any,
+    json_properties: dict[str, Any] | None,
 ) -> bool:
-    if a == b:
-        return True
-    if not isinstance(a, str) or not isinstance(b, str):
+    if value != message_from_json(json_value):
         return False
-    if format == Resource.Format.FLUENT:
-        parser = FluentParser(with_spans=False)
-        try:
-            fa = parser.parse(a)
-            fb = parser.parse(b)
-            return fa.equals(fb)
-        except Exception as error:
-            log.debug(f"[{project.slug}:{db_path}] Parse error: {error}")
-    return False
+    if not properties:
+        return not json_properties
+    if not json_properties or set(properties.keys()) != set(json_properties.keys()):
+        return False
+    return properties == {
+        name: message_from_json(json) for name, json in json_properties.items()
+    }
 
 
 def update_db_translations(
