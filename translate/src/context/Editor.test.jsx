@@ -16,10 +16,17 @@ import {
 import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
+import { MachineryTranslations } from './MachineryTranslations';
 import { UnsavedChanges, UnsavedChangesProvider } from './UnsavedChanges';
 import { fluentParseEntry, mf2ParseMessage } from '@mozilla/l10n';
 
-function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
+function mountSpy(
+  Spy,
+  format,
+  formatTranslation,
+  formatSource = 'key = test',
+  machinery = null,
+) {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
   });
@@ -100,15 +107,24 @@ function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
   };
   const store = createReduxStore(initialState);
 
+  const machineryValue = {
+    fetching: false,
+    source: '',
+    composed: [],
+    translations: machinery ?? [],
+  };
+
   const Wrapper = () => (
     <LocationProvider history={history}>
       <Locale.Provider value={{ code: 'sl', cldrPlurals: [1, 2, 3, 5] }}>
         <EntityViewProvider>
-          <UnsavedChangesProvider>
-            <EditorProvider>
-              <Spy />
-            </EditorProvider>
-          </UnsavedChangesProvider>
+          <MachineryTranslations.Provider value={machineryValue}>
+            <UnsavedChangesProvider>
+              <EditorProvider>
+                <Spy />
+              </EditorProvider>
+            </UnsavedChangesProvider>
+          </MachineryTranslations.Provider>
         </EntityViewProvider>
       </Locale.Provider>
     </LocationProvider>
@@ -819,5 +835,35 @@ describe('<EditorProvider>', () => {
       'Hello, {$arg1 :string @source=|%1$s|}!',
     );
     expect(unsaved.check()).toBe(false);
+  });
+
+  it('reports no pending changes for an autofilled translation (100% TM match)', () => {
+    let editor, actions, unsaved;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      unsaved = useContext(UnsavedChanges);
+      return null;
+    };
+    mountSpy(Spy, 'simple', undefined, 'message', [
+      {
+        original: 'message',
+        translation: 'messaggio_it',
+        quality: 100,
+        sources: ['translation-memory'],
+      },
+    ]);
+
+    expect(editor).toMatchObject({
+      machinery: { manual: false, translation: 'messaggio_it' },
+      fields: [{ handle: { current: { value: 'messaggio_it' } } }],
+    });
+
+    act(() => actions.setResultFromInput());
+    expect(unsaved.check()).toBe(false);
+
+    act(() => editor.fields[0].handle.current.setValue('manual_change'));
+    act(() => actions.setResultFromInput());
+    expect(unsaved.check()).toBe(true);
   });
 });
