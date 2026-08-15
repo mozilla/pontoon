@@ -190,7 +190,8 @@ class Pretranslation:
             msg.pattern = self.pattern(msg.pattern)
         else:
             # catchall category is always last, and is always included
-            plurals = self.locale.cldr_plurals_list()[:-1]
+            locale_plurals = self.locale.cldr_plurals_list()
+            plurals = locale_plurals[:-1]
 
             # Plural selectors need special attention
             plural_selectors = [
@@ -225,6 +226,16 @@ class Pretranslation:
                                     tgt_variants[pc_keys] = deepcopy(pattern)
                         tgt_variants[keys] = pattern
                     msg.variants = tgt_variants
+
+            # The catchall carries the source's category name, e.g. `other` from
+            # en-US. Name it after the target locale's own catchall category.
+            catchall = locale_plurals[-1] if locale_plurals else None
+            if catchall:
+                for idx in plural_selectors:
+                    for keys in msg.variants:
+                        key = keys[idx]
+                        if isinstance(key, CatchallKey):
+                            key.value = catchall
 
     def pattern(self, pattern: Pattern) -> Pattern:
         # First try to get a 100% match from Translation Memory
