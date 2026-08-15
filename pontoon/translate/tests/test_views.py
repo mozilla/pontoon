@@ -160,3 +160,20 @@ def test_translate_obsolete_resource(
         f"/{project_locale_a.locale.code}/{project_locale_a.project.slug}/{resource_a.path}/"
     )
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translate_all_projects_path(client, project_locale_a, resource_a):
+    """
+    In the All Projects view, only `all-resources` is allowed.
+    """
+    locale = project_locale_a.locale.code
+
+    response = client.get(f"/{locale}/all-projects/all-resources/")
+    assert response.status_code == 200
+
+    response = client.get(f"/{locale}/all-projects/{resource_a.path}/")
+    assert response.status_code == 404
+
+    response = client.get(f"/{locale}/all-projects/no/such/path.ftl/")
+    assert response.status_code == 404

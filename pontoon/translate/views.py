@@ -74,6 +74,11 @@ def translate(request, locale, project, resource):
         ):
             raise Http404
 
+    # The All Projects view does not support single resource paths,
+    # because path names are not unique across projects.
+    elif resource.lower() != "all-resources":
+        raise Http404
+
     context = {
         "is_google_translate_supported": bool(settings.GOOGLE_TRANSLATE_API_KEY),
         "is_microsoft_translator_supported": bool(
