@@ -7,10 +7,10 @@ import { pojoEquals } from '~/utils/pojo';
 import './MachinerySourceIndicator.css';
 
 export function MachinerySourceIndicator() {
-  const { autofilled, sourceView } = useContext(EditorData);
+  const { autofilled } = useContext(EditorData);
   const result = useContext(EditorResult);
 
-  if (sourceView || !autofilled || !pojoEquals(autofilled, result)) {
+  if (!autofilled || !pojoEquals(autofilled, result)) {
     return null;
   }
 

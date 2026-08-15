@@ -9,7 +9,11 @@ import { MachinerySourceIndicator } from './MachinerySourceIndicator';
 
 const entry = (value) => ({ format: 'plain', id: 'key', value: [value] });
 
-const mount = ({ autofilled = entry('Bonjour'), result = entry('Bonjour') }) =>
+const mount = ({
+  autofilled = entry('Bonjour'),
+  result = entry('Bonjour'),
+  sourceView = false,
+}) =>
   render(
     <MockLocalizationProvider
       resources={[
@@ -17,7 +21,7 @@ const mount = ({ autofilled = entry('Bonjour'), result = entry('Bonjour') }) =>
     .title = 100% Translation Memory match`,
       ]}
     >
-      <EditorData.Provider value={{ autofilled, sourceView: false }}>
+      <EditorData.Provider value={{ autofilled, sourceView }}>
         <EditorResult.Provider value={result}>
           <MachinerySourceIndicator />
         </EditorResult.Provider>
@@ -43,6 +47,12 @@ describe('<MachinerySourceIndicator>', () => {
       attributes: new Map([['label', ['Étiquette']]]),
     };
     const { container } = mount({ autofilled: composed, result: composed });
+
+    expect(container.querySelector('.tm-source')).not.toBeNull();
+  });
+
+  it('shows in the source view as well', () => {
+    const { container } = mount({ sourceView: true });
 
     expect(container.querySelector('.tm-source')).not.toBeNull();
   });
