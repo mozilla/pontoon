@@ -1,22 +1,13 @@
 .tm-source {
+  background-color: var(--background-1);
+  border: 1px solid var(--main-border-1);
+  border-radius: 3px;
+  color: var(--editor-menu-color);
+  float: left;
   font-size: 11px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--main-border-1);
-  border-top: 1px solid var(--main-border-1);
-  width: 100%;
-  text-align: center;
-  background: var(--editor-menu-background);
-  color: var(--light-grey-6);
-}
-
-.translationform + .tm-source {
-  background: var(--editor-form-background);
-}
-
-.dark-theme[data-editor-theme='dark'] .singlefield ~ .tm-source,
-.light-theme[data-editor-theme='light'] .singlefield ~ .tm-source,
-[data-editor-theme='match'] .singlefield ~ .tm-source {
-  background: var(--editor-background);
+  line-height: 20px;
+  margin-left: 5px;
+  padding: 9px;
 }
 
 .tm-source .stress {

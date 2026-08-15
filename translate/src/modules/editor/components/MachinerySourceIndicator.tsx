@@ -22,11 +22,12 @@ export function MachinerySourceIndicator() {
 
   return (
     <Localized
-      id='editor-MachinerySourceIndicator--text'
+      id='editor-MachinerySourceIndicator--match'
+      attrs={{ title: true }}
       elems={{ stress: <span className='stress' /> }}
     >
-      <div className='tm-source'>
-        {'<stress>100%</stress> MATCH FROM TRANSLATION MEMORY'}
+      <div className='tm-source' title='100% Translation Memory match'>
+        {'<stress>100%</stress> MATCH'}
       </div>
     </Localized>
   );
