@@ -111,7 +111,8 @@ function mountSpy(
     fetching: false,
     source: '',
     composed: [],
-    translations: machinery ?? [],
+    translations: [],
+    ...(Array.isArray(machinery) ? { translations: machinery } : machinery),
   };
 
   const Wrapper = () => (
@@ -865,5 +866,93 @@ describe('<EditorProvider>', () => {
     act(() => editor.fields[0].handle.current.setValue('manual_change'));
     act(() => actions.setResultFromInput());
     expect(unsaved.check()).toBe(true);
+  });
+
+  it('reports pending changes for a manually copied translation', () => {
+    let editor, actions, unsaved;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      unsaved = useContext(UnsavedChanges);
+      return null;
+    };
+    mountSpy(Spy, 'simple', undefined, 'message');
+
+    act(() =>
+      actions.setEditorFromHelpers(
+        'messaggio_it',
+        ['translation-memory'],
+        true,
+      ),
+    );
+
+    expect(editor.autofilled).toBeNull();
+    act(() => actions.setResultFromInput());
+    expect(unsaved.check()).toBe(true);
+  });
+
+  it('autofills a multi-field entry from a composed 100% match', () => {
+    let editor, actions, unsaved;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      unsaved = useContext(UnsavedChanges);
+      return null;
+    };
+    mountSpy(
+      Spy,
+      'fluent',
+      undefined,
+      ftl`
+      key = Value
+          .label = Label
+      `,
+      {
+        composed: [
+          {
+            sources: ['translation-memory'],
+            quality: 100,
+            value: ['Valeur'],
+            properties: { label: ['Étiquette'] },
+          },
+        ],
+      },
+    );
+
+    expect(editor.fields.map((f) => f.handle.current.value)).toEqual([
+      'Valeur',
+      'Étiquette',
+    ]);
+
+    act(() => actions.setResultFromInput());
+    expect(unsaved.check()).toBe(false);
+  });
+
+  it('does not autofill a multi-field entry without a perfect composed match', () => {
+    let editor;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      return null;
+    };
+    mountSpy(
+      Spy,
+      'fluent',
+      undefined,
+      ftl`
+      key = Value
+          .label = Label
+      `,
+      {
+        composed: [
+          {
+            sources: ['google-translate'],
+            value: ['Valeur'],
+            properties: { label: ['Étiquette'] },
+          },
+        ],
+      },
+    );
+
+    expect(editor.fields.map((f) => f.handle.current.value)).toEqual(['', '']);
   });
 });
