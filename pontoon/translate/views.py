@@ -9,6 +9,7 @@ from django.views.decorators.csrf import (
     ensure_csrf_cookie,
 )
 
+from pontoon.base.models import TranslatedResource
 from pontoon.base.services import get_locale_or_redirect, get_project_or_redirect
 
 
@@ -63,6 +64,20 @@ def translate(request, locale, project, resource):
         # Validate ProjectLocale
         if locale not in project.locales.all():
             raise Http404
+
+        # Validate TranslatedResource
+        if (
+            resource.lower() != "all-resources"
+            and not TranslatedResource.objects.filter(
+                locale=locale, resource__project=project, resource__path=resource
+            ).exists()
+        ):
+            raise Http404
+
+    # The All Projects view does not support single resource paths,
+    # because path names are not unique across projects.
+    elif resource.lower() != "all-resources":
+        raise Http404
 
     context = {
         "is_google_translate_supported": bool(settings.GOOGLE_TRANSLATE_API_KEY),

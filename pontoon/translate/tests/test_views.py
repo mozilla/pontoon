@@ -2,7 +2,14 @@ import pytest
 
 from django.urls import reverse
 
+from pontoon.base.models import Resource
+from pontoon.test.factories import TranslatedResourceFactory
 from pontoon.translate.views import get_preferred_locale
+
+
+@pytest.fixture
+def translated_resource_a(resource_a, locale_a):
+    return TranslatedResourceFactory.create(resource=resource_a, locale=locale_a)
 
 
 @pytest.fixture
@@ -28,7 +35,9 @@ def test_translate_template(client, project_locale_a, resource_a):
 
 
 @pytest.mark.django_db
-def test_translate_validate_parameters(client, project_locale_a, resource_a):
+def test_translate_validate_parameters(
+    client, project_locale_a, resource_a, translated_resource_a
+):
     url_invalid = reverse(
         "pontoon.translate",
         kwargs={"locale": "locale", "project": "project", "resource": "resource"},
@@ -39,7 +48,7 @@ def test_translate_validate_parameters(client, project_locale_a, resource_a):
         kwargs={
             "locale": project_locale_a.locale.code,
             "project": project_locale_a.project.slug,
-            "resource": "resource",
+            "resource": resource_a.path,
         },
     )
 
@@ -111,4 +120,60 @@ def test_translate_invalid_pl(
     """
     # this doesnt seem to redirect as the comment suggests
     response = client.get(f"/{locale_a.code}/{project_b.slug}/path/")
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translate_invalid_resource(client, project_locale_a, resource_a):
+    """
+    A path that is not a resource of the project is a 404.
+    """
+    response = client.get(
+        f"/{project_locale_a.locale.code}/{project_locale_a.project.slug}/no/such/path.ftl/"
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translate_resource_not_translated_for_locale(
+    client, project_locale_a, resource_a
+):
+    """
+    A resource the locale has no TranslatedResource for is a 404 too.
+    """
+    response = client.get(
+        f"/{project_locale_a.locale.code}/{project_locale_a.project.slug}/{resource_a.path}/"
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translate_obsolete_resource(
+    client, project_locale_a, resource_a, translated_resource_a
+):
+    """
+    A resource that is gone from the repository is a 404 as well.
+    """
+    Resource.objects.filter(pk=resource_a.pk).mark_as_obsolete()
+
+    response = client.get(
+        f"/{project_locale_a.locale.code}/{project_locale_a.project.slug}/{resource_a.path}/"
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translate_all_projects_path(client, project_locale_a, resource_a):
+    """
+    In the All Projects view, only `all-resources` is allowed.
+    """
+    locale = project_locale_a.locale.code
+
+    response = client.get(f"/{locale}/all-projects/all-resources/")
+    assert response.status_code == 200
+
+    response = client.get(f"/{locale}/all-projects/{resource_a.path}/")
+    assert response.status_code == 404
+
+    response = client.get(f"/{locale}/all-projects/no/such/path.ftl/")
     assert response.status_code == 404
