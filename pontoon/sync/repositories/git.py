@@ -1,10 +1,6 @@
 import logging
 import re
 import shutil
-import tempfile
-
-from os import makedirs
-from os.path import dirname
 
 from django.conf import settings
 
@@ -56,30 +52,21 @@ def update(source: str, target: str, branch: str | None, shallow: bool) -> None:
                 log.debug(output)
             log.warning(f"Git: {error}")
         log.debug("Git: Cloning repo...")
-        # Clone into a temp directory next to the target and move it into
-        # place only once the clone succeeds. This avoids leaving a
-        # broken, partially-cloned `target` behind if the clone fails or is
-        # interrupted.
-        makedirs(dirname(target), exist_ok=True)
-        tmp_target = tempfile.mkdtemp(dir=dirname(target))
-        try:
-            command = ["git", "clone"]
-            if branch:
-                command.extend(["--branch", branch])
-            if shallow:
-                command.extend(["--depth", "1"])
-            command.extend([source, tmp_target])
-            code, output, error = execute(command)
-            if code != 0:
-                if output:
-                    log.debug(output)
-                raise PullFromRepositoryException(error)
-            # Replace a stale/broken target left over from a previous
-            # failed clone, if any.
-            shutil.rmtree(target, ignore_errors=True)
-            shutil.move(tmp_target, target)
-        finally:
-            shutil.rmtree(tmp_target, ignore_errors=True)
+        # Remove any stale/broken checkout left over from a previous failed
+        # clone, so `git clone` doesn't refuse to write into a non-empty
+        # directory.
+        shutil.rmtree(target, ignore_errors=True)
+        command = ["git", "clone"]
+        if branch:
+            command.extend(["--branch", branch])
+        if shallow:
+            command.extend(["--depth", "1"])
+        command.extend([source, target])
+        code, output, error = execute(command)
+        if code != 0:
+            if output:
+                log.debug(output)
+            raise PullFromRepositoryException(error)
         log.debug("Git: Repo cloned.")
 
 

@@ -60,10 +60,10 @@ def test_sync_prev_busy():
 
 
 @pytest.mark.django_db
-def test_sync_stale_lock_is_ignored():
+def test_sync_stale_lock_is_reclaimed():
     """
-    A sync should not be blocked by an IN_PROGRESS sync older than
-    SYNC_TASK_TIMEOUT.
+    An IN_PROGRESS sync older than SYNC_TASK_TIMEOUT is marked INCOMPLETE
+    and does not block a new sync.
     """
     project = ProjectFactory.create()
     stale_sync = SyncFactory.create(project=project, status=Sync.Status.IN_PROGRESS)
