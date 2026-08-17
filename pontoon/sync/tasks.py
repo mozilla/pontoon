@@ -5,7 +5,6 @@ from datetime import timedelta
 from celery import shared_task
 
 from django.conf import settings
-from django.db import transaction
 from django.utils import timezone
 
 from pontoon.base.models import Project
@@ -41,29 +40,22 @@ def sync_project_task(
         except Sync.DoesNotExist:
             pass
 
-    # Lock the project row so that two concurrent sync tasks for the same
-    # project can't both observe "no active sync" and proceed. Once this
-    # transaction is complete, newer tasks can rely on the Sync row.
-    # The error is raised outside the atomic transaction to avoid rolling back
-    # the PREV_BUSY sync row creation.
-    prev_busy = False
-    with transaction.atomic():
-        locked_project = Project.objects.select_for_update().get(pk=project_pk)
-        stale_cutoff = timezone.now() - timedelta(seconds=settings.SYNC_TASK_TIMEOUT)
-        in_progress = Sync.objects.filter(
-            project=locked_project, status=Sync.Status.IN_PROGRESS
-        )
-        prev_busy = in_progress.filter(start_time__gt=stale_cutoff).exists()
-        if prev_busy:
-            sync = Sync.objects.create(project=locked_project)
-            sync.done(Sync.Status.PREV_BUSY)
-        else:
-            # Any remaining IN_PROGRESS syncs are older than the timeout, so
-            # the worker that ran them likely died without reporting back.
-            in_progress.update(status=Sync.Status.INCOMPLETE)
-            sync = Sync.objects.create(project=locked_project)
+    # Mark stale syncs as incomplete, so that they don't block new syncs
+    # from starting.
+    stale_cutoff = timezone.now() - timedelta(seconds=settings.SYNC_TASK_TIMEOUT)
+    Sync.objects.filter(
+        project=project, status=Sync.Status.IN_PROGRESS, start_time__lte=stale_cutoff
+    ).update(status=Sync.Status.INCOMPLETE)
 
-    if prev_busy:
+    sync = Sync.objects.create(project=project)
+
+    # Check for another sync that's already running, or that was started
+    # concurrently.
+    busy = Sync.objects.filter(
+        project=project, status=Sync.Status.IN_PROGRESS, pk__lt=sync.pk
+    ).exists()
+    if busy:
+        sync.done(Sync.Status.PREV_BUSY)
         raise RuntimeError(
             f"[{project.slug}] Sync aborted: Previous sync still running."
         )

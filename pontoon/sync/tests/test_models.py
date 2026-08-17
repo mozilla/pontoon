@@ -60,7 +60,7 @@ def test_sync_prev_busy():
 
 
 @pytest.mark.django_db
-def test_sync_stale_lock_is_reclaimed():
+def test_sync_stale_lock_is_marked_incomplete():
     """
     An IN_PROGRESS sync older than SYNC_TASK_TIMEOUT is marked INCOMPLETE
     and does not block a new sync.
