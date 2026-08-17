@@ -1,9 +1,12 @@
 import logging
 
+from datetime import timedelta
+
 from celery import shared_task
 
 from django.conf import settings
-from django.core.cache import cache
+from django.db import transaction
+from django.utils import timezone
 
 from pontoon.base.models import Project
 from pontoon.base.tasks import PontoonTask
@@ -38,13 +41,33 @@ def sync_project_task(
         except Sync.DoesNotExist:
             pass
 
-    sync = Sync.objects.create(project=project)
-    lock_name = f"sync_{project_pk}"
-    if not cache.add(lock_name, True, timeout=settings.SYNC_TASK_TIMEOUT):
-        sync.done(Sync.Status.PREV_BUSY)
+    # Lock the project row so that two concurrent sync tasks for the same
+    # project can't both observe "no active sync" and proceed. Once this
+    # transaction is complete, newer tasks can rely on the Sync row.
+    # The error is raised outside the atomic transaction to avoid rolling back
+    # the PREV_BUSY sync row creation.
+    prev_busy = False
+    with transaction.atomic():
+        locked_project = Project.objects.select_for_update().get(pk=project_pk)
+        stale_cutoff = timezone.now() - timedelta(seconds=settings.SYNC_TASK_TIMEOUT)
+        in_progress = Sync.objects.filter(
+            project=locked_project, status=Sync.Status.IN_PROGRESS
+        )
+        prev_busy = in_progress.filter(start_time__gt=stale_cutoff).exists()
+        if prev_busy:
+            sync = Sync.objects.create(project=locked_project)
+            sync.done(Sync.Status.PREV_BUSY)
+        else:
+            # Any remaining IN_PROGRESS syncs are older than the timeout, so
+            # the worker that ran them likely died without reporting back.
+            in_progress.update(status=Sync.Status.INCOMPLETE)
+            sync = Sync.objects.create(project=locked_project)
+
+    if prev_busy:
         raise RuntimeError(
             f"[{project.slug}] Sync aborted: Previous sync still running."
         )
+
     try:
         db_changed, repo_changed = sync_project(
             project, pull=pull, commit=commit, force=force
@@ -56,13 +79,6 @@ def sync_project_task(
         else:
             status = Sync.Status.DONE
         sync.done(status)
-        # Set status on any previously started and never completed syncs
-        Sync.objects.filter(project=project, status=Sync.Status.IN_PROGRESS).update(
-            status=Sync.Status.INCOMPLETE
-        )
     except Exception as err:
         log.error(f"[{project.slug}] Sync failed: {err}")
         sync.fail(str(err))
-    finally:
-        # release the lock
-        cache.delete(lock_name)
