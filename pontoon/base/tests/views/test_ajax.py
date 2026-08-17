@@ -302,3 +302,32 @@ def test_get_team_comments_authentication(rf, user_a, admin):
     response = get_team_comments(request_b)
 
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "view",
+    [
+        get_translations_from_other_locales,
+        get_sibling_entities,
+        get_translation_history,
+        get_team_comments,
+    ],
+)
+def test_translate_view_endpoints_reach_system_projects(rf, user_a, view):
+    """The tutorial is a system project: kept off the dashboards, but translated
+    in the same UI as any other project, so these endpoints have to serve it."""
+    project = ProjectFactory(
+        name="System Project", slug="system-project", system_project=True
+    )
+    resource = ResourceFactory(project=project)
+    entity = EntityFactory(string="Entity", resource=resource)
+    locale = LocaleFactory(code="gs", name="Geonosian")
+
+    request = rf.get(
+        f"/?entity={entity.id}&locale={locale.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    assert view(request).status_code == 200
