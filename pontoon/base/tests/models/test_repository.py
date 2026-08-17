@@ -38,6 +38,18 @@ def test_repo_checkout_path_source_repo(settings, repo_git):
     )
 
 
+@pytest.mark.django_db
+def test_repo_checkout_path_scp_url(settings, repo_git):
+    """
+    checkout_path should not include `:` or `@` for SCP-like git URLs.
+    """
+    repo_git.url = "git@github.com:mozilla-l10n/repo-l10n.git"
+    repo_git.save()
+    assert repo_git.checkout_path == (
+        f"{settings.MEDIA_ROOT}/projects/{repo_git.project.slug}/mozilla-l10n/repo-l10n.git"
+    )
+
+
 def test_repository_url_validator():
     """
     The validity of the Repository URL.
