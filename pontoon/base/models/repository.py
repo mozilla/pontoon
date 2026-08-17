@@ -17,18 +17,17 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
-# Git SCP-like URL, e.g. git@github.com:mozilla-l10n/repo.git.
-SCP_LIKE_GIT_URL = re.compile(r"git@[\w\.@]+[/:](?P<path>[\w-]+/[\w-]+(.git)?/?)")
-
-
 def repository_url_validator(url):
     # Regular URLs
     validator = URLValidator(["http", "https", "ftp", "ftps", "ssh"])
 
+    # Git SCP-like URL
+    pattern = r"git@[\w\.@]+[/:][\w-]+/[\w-]+(.git)?/?"
+
     try:
         validator(url)
     except ValidationError:
-        if not SCP_LIKE_GIT_URL.match(url):
+        if not re.match(pattern, url):
             raise ValidationError("Invalid URL")
 
 
@@ -84,12 +83,9 @@ class Repository(models.Model):
         # information, like https://hg.mozilla.org/gaia-l10n/fr/.
         # No worry about overlap between repos, any overlap of locale
         # directories is an error already.
-        scp_match = SCP_LIKE_GIT_URL.match(self.url)
-        url_path = scp_match.group("path") if scp_match else urlparse(self.url).path
-
         path_components = [
             self.project.checkout_path,
-            *url_path.split("/"),
+            *urlparse(self.url).path.split("/"),
         ]
 
         # Normalize path for consistency.

@@ -1,6 +1,5 @@
 import logging
 import re
-import shutil
 
 from django.conf import settings
 
@@ -52,10 +51,6 @@ def update(source: str, target: str, branch: str | None, shallow: bool) -> None:
                 log.debug(output)
             log.warning(f"Git: {error}")
         log.debug("Git: Cloning repo...")
-        # Remove any stale/broken checkout left over from a previous failed
-        # clone, so `git clone` doesn't refuse to write into a non-empty
-        # directory.
-        shutil.rmtree(target, ignore_errors=True)
         command = ["git", "clone"]
         if branch:
             command.extend(["--branch", branch])
