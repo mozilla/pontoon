@@ -26,6 +26,7 @@ function mountSpy(
   formatTranslation,
   formatSource = 'key = test',
   machinery = null,
+  locale = { code: 'sl', cldrPlurals: [1, 2, 3, 5] },
 ) {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
@@ -117,7 +118,7 @@ function mountSpy(
 
   const Wrapper = () => (
     <LocationProvider history={history}>
-      <Locale.Provider value={{ code: 'sl', cldrPlurals: [1, 2, 3, 5] }}>
+      <Locale.Provider value={locale}>
         <EntityViewProvider>
           <MachineryTranslations.Provider value={machineryValue}>
             <UnsavedChangesProvider>
@@ -528,7 +529,7 @@ describe('<EditorProvider>', () => {
         },
         {
           handle: { current: { value: '' } },
-          id: '|other',
+          id: '|*',
           keys: [{ '*': 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
@@ -574,6 +575,51 @@ describe('<EditorProvider>', () => {
     });
   });
 
+  it('sets editor from a history entry whose catchall is named for the source', () => {
+    let editor, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source = ftl`
+      key =
+          { $count ->
+              [one] ONE
+             *[other] OTHER
+          }
+      `;
+    mountSpy(Spy, 'fluent', undefined, source, null, {
+      code: 'uk',
+      cldrPlurals: [1, 3, 4],
+    });
+
+    expect(editor.fields.map((f) => f.id)).toEqual(['|one', '|few', '|*']);
+
+    act(() =>
+      actions.setEditorFromHistory(ftl`
+        key =
+            { $count ->
+                [one] ОДИН
+                [few] КІЛЬКА
+               *[other] БАГАТО
+            }
+        `),
+    );
+
+    expect(
+      editor.fields.map(({ id, labels, handle }) => [
+        id,
+        labels.at(-1).label,
+        handle.current.value,
+      ]),
+    ).toEqual([
+      ['|one', 'one', 'ОДИН'],
+      ['|few', 'few', 'КІЛЬКА'],
+      ['|*', 'other', 'БАГАТО'],
+    ]);
+  });
+
   it('sets editor from history', () => {
     let editor, result, actions;
     const Spy = () => {
@@ -605,7 +651,7 @@ describe('<EditorProvider>', () => {
         },
         {
           handle: { current: { value: 'OTHER' } },
-          id: '|other',
+          id: '|*',
           keys: [{ '*': 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',

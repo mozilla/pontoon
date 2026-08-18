@@ -106,6 +106,6 @@ function* genPatterns(
 function getId(name: string, keys: (string | CatchallKey)[]) {
   return [
     name,
-    ...keys.map((key) => (typeof key === 'string' ? key : key['*'] || '*')),
+    ...keys.map((key) => (typeof key === 'string' ? key : '*')),
   ].join('|');
 }
