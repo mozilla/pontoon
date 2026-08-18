@@ -5,7 +5,7 @@ on:
     paths:
       - ".bumpversion.cfg"
     branches:
-      - master
+      - main
 
   workflow_dispatch:
     inputs:
