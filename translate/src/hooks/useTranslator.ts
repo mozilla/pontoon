@@ -16,7 +16,7 @@ import { useAppSelector } from '~/hooks';
 export function useTranslator(entity?: Entity): boolean {
   const { code } = useContext(Locale);
   const { slug } = useProject();
-  const selected = useContext(EntityView)?.entity;
+  const selected = useContext(EntityView).entity;
   const {
     isAuthenticated,
     canManageLocales,
@@ -33,7 +33,7 @@ export function useTranslator(entity?: Entity): boolean {
   }
 
   const projectSlug =
-    slug === 'all-projects' ? (entity ?? selected)?.project?.slug : slug;
+    slug === 'all-projects' ? (entity ?? selected).project.slug : slug;
 
   const localeProject = `${code}-${projectSlug}`;
   if (Object.hasOwnProperty.call(translatorForProjects, localeProject)) {
