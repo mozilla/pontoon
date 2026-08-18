@@ -1009,9 +1009,6 @@ def perform_checks(request):
 def download_translations(request):
     """Download translated resource."""
 
-    from io import BytesIO
-    from zipfile import ZIP_DEFLATED, ZipFile
-
     from pontoon.sync.utils import serialize_translated_resource
 
     try:
@@ -1025,17 +1022,13 @@ def download_translations(request):
     resource = get_object_or_404(Resource, project=project, path=res_path)
     locale = get_object_or_404(Locale, code=code)
 
+    str_res = serialize_translated_resource(resource, locale)
     filename = re.sub(r"[/\\]", "_", f"{locale.code}_{slug}_{res_path}")
-    bytes_io = BytesIO()
-    zipfile = ZipFile(bytes_io, "w", compression=ZIP_DEFLATED)
-    zipfile.writestr(filename, serialize_translated_resource(resource, locale))
-    zipfile.close()
 
     response = HttpResponse()
-    response.content = bytes_io.getvalue()
-    response["Content-Type"] = "application/zip"
-    zip_name = re.sub(r"[^.]+$", "zip", filename)
-    response["Content-Disposition"] = f"attachment; filename={zip_name}"
+    response.content = str_res.encode("utf-8")
+    response["Content-Type"] = "text/plain"
+    response["Content-Disposition"] = f"attachment; filename={filename}"
     return response
 
 

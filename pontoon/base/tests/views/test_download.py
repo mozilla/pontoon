@@ -1,6 +1,4 @@
-from io import BytesIO
 from textwrap import dedent
-from zipfile import ZipFile
 
 import pytest
 
@@ -60,16 +58,12 @@ def test_download_fluent():
     request.user = UserFactory()
     response = download_translations(request)
     assert response.status_code == 200
-    assert response["Content-Type"] == "application/zip"
+    assert response["Content-Type"] == "text/plain"
     assert (
         response["Content-Disposition"]
-        == "attachment; filename=de-Test_test-dl_path_to_file.zip"
+        == "attachment; filename=de-Test_test-dl_path_to_file.ftl"
     )
-    bytes_io = BytesIO(response.content)
-    with ZipFile(bytes_io, "r") as zipfile:
-        assert zipfile.namelist() == ["de-Test_test-dl_path_to_file.ftl"]
-        raw = zipfile.read("de-Test_test-dl_path_to_file.ftl")
-    assert raw.decode("utf-8") == dedent("""\
+    assert response.content.decode("utf-8") == dedent("""\
         ## Group
 
         e1 = T1
@@ -111,16 +105,12 @@ def test_download_xliff():
     request.user = UserFactory()
     response = download_translations(request)
     assert response.status_code == 200
-    assert response["Content-Type"] == "application/zip"
+    assert response["Content-Type"] == "text/plain"
     assert (
         response["Content-Disposition"]
-        == "attachment; filename=de-Test_test-dlx_file.zip"
+        == "attachment; filename=de-Test_test-dlx_file.xlf"
     )
-    bytes_io = BytesIO(response.content)
-    with ZipFile(bytes_io, "r") as zipfile:
-        assert zipfile.namelist() == ["de-Test_test-dlx_file.xlf"]
-        raw = zipfile.read("de-Test_test-dlx_file.xlf")
-    assert raw.decode("utf-8") == dedent("""\
+    assert response.content.decode("utf-8") == dedent("""\
         <?xml version="1.0" encoding="utf-8"?>
         <xliff>
           <file original="file.foo">
