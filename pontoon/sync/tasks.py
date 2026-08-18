@@ -1,9 +1,11 @@
 import logging
 
+from datetime import timedelta
+
 from celery import shared_task
 
 from django.conf import settings
-from django.core.cache import cache
+from django.utils import timezone
 
 from pontoon.base.models import Project
 from pontoon.base.tasks import PontoonTask
@@ -38,13 +40,22 @@ def sync_project_task(
         except Sync.DoesNotExist:
             pass
 
+    stale_cutoff = timezone.now() - timedelta(seconds=settings.SYNC_TASK_TIMEOUT)
+    Sync.objects.filter(
+        project=project, status=Sync.Status.IN_PROGRESS, start_time__lte=stale_cutoff
+    ).update(status=Sync.Status.INCOMPLETE)
+
     sync = Sync.objects.create(project=project)
-    lock_name = f"sync_{project_pk}"
-    if not cache.add(lock_name, True, timeout=settings.SYNC_TASK_TIMEOUT):
+
+    busy = Sync.objects.filter(
+        project=project, status=Sync.Status.IN_PROGRESS, pk__lt=sync.pk
+    ).exists()
+    if busy:
         sync.done(Sync.Status.PREV_BUSY)
         raise RuntimeError(
             f"[{project.slug}] Sync aborted: Previous sync still running."
         )
+
     try:
         db_changed, repo_changed = sync_project(
             project, pull=pull, commit=commit, force=force
@@ -56,13 +67,6 @@ def sync_project_task(
         else:
             status = Sync.Status.DONE
         sync.done(status)
-        # Set status on any previously started and never completed syncs
-        Sync.objects.filter(project=project, status=Sync.Status.IN_PROGRESS).update(
-            status=Sync.Status.INCOMPLETE
-        )
     except Exception as err:
         log.error(f"[{project.slug}] Sync failed: {err}")
         sync.fail(str(err))
-    finally:
-        # release the lock
-        cache.delete(lock_name)

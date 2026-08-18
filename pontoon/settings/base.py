@@ -1074,12 +1074,10 @@ ALLOWED_ATTRIBUTES = {
 }
 
 # Multiple sync tasks for the same project cannot run concurrently to prevent
-# potential DB and VCS inconsistencies. We store the information about the
-# running task in cache and clear it after the task completes. In case of an
-# error, we might never clear the cache, so we use SYNC_TASK_TIMEOUT as the
-# longest possible period (in seconds) after which the cache is cleared and
-# the subsequent task can run. The value should exceed the longest sync task
-# of the instance.
+# potential DB and VCS inconsistencies. We track this via IN_PROGRESS Sync
+# rows in the DB. If a worker dies mid-sync without updating its Sync row, we
+# treat it as stale after SYNC_TASK_TIMEOUT seconds and allow the next task to
+# run. The value should exceed the longest sync task of the instance.
 try:
     SYNC_TASK_TIMEOUT = int(os.environ.get("SYNC_TASK_TIMEOUT", ""))
 except ValueError:
