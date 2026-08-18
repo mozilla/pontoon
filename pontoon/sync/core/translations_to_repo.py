@@ -185,7 +185,7 @@ def update_changed_resources(
             changed_resources[db_res.path] = (db_res, {change.locale})
         else:
             prev = changed_resources[db_res.path]
-            if prev:
+            if prev[1]:
                 prev[1].add(change.locale)
     changed_entities = {change.entity for change in db_changes}
     if changed_resources:
