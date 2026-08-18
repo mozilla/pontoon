@@ -40,8 +40,6 @@ def sync_project_task(
         except Sync.DoesNotExist:
             pass
 
-    # Mark stale syncs as incomplete, so that they don't block new syncs
-    # from starting.
     stale_cutoff = timezone.now() - timedelta(seconds=settings.SYNC_TASK_TIMEOUT)
     Sync.objects.filter(
         project=project, status=Sync.Status.IN_PROGRESS, start_time__lte=stale_cutoff
@@ -49,8 +47,6 @@ def sync_project_task(
 
     sync = Sync.objects.create(project=project)
 
-    # Check for another sync that's already running, or that was started
-    # concurrently.
     busy = Sync.objects.filter(
         project=project, status=Sync.Status.IN_PROGRESS, pk__lt=sync.pk
     ).exists()
