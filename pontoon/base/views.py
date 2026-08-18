@@ -1018,9 +1018,17 @@ def download_translations(request):
     except MultiValueDictKeyError:
         raise Http404
 
-    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
-    resource = get_object_or_404(Resource, project=project, path=res_path)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user), slug=slug, disabled=False
+    )
+    resource = get_object_or_404(
+        Resource, project=project, path=res_path, obsolete=False
+    )
     locale = get_object_or_404(Locale, code=code)
+    if not TranslatedResource.objects.filter(locale=locale, resource=resource).exists():
+        raise Http404(
+            f"{resource.path} of {project.slug} not available for locale {locale.code}"
+        )
 
     str_res = serialize_translated_resource(resource, locale)
     filename = re.sub(r"[/\\]", "_", f"{locale.code}_{slug}_{res_path}")
