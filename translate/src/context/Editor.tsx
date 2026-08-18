@@ -227,7 +227,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const { resetFailedChecks } = useContext(FailedChecksData);
 
   const [state, setState] = useState(initEditorData);
-  const pendingValues = useRef<Array<[string, string]> | null>(null);
+  const pendingFieldValues = useRef<Array<[string, string]> | null>(null);
   const [result, setResult] = useState<MessageEntry | null>(null);
 
   const actions = useMemo<EditorActions>(() => {
@@ -240,7 +240,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     };
 
     const resetFields = (next: EditorData): EditorData => {
-      pendingValues.current = next.fields.map(({ id, handle }) => [
+      pendingFieldValues.current = next.fields.map(({ id, handle }) => [
         id,
         handle.current.value,
       ]);
@@ -413,9 +413,9 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   // on screen. After the commit, so that the editor changes this dispatches
   // don't land in React's render phase.
   useEffect(() => {
-    const pending = pendingValues.current;
+    const pending = pendingFieldValues.current;
     if (pending) {
-      pendingValues.current = null;
+      pendingFieldValues.current = null;
       for (const [id, value] of pending) {
         const field = state.fields.find((f) => f.id === id);
         field?.handle.current.setValue(value);
