@@ -54,7 +54,7 @@ export function Entity({
   selectEntity,
   toggleForBatchEditing,
 }: Props): React.ReactElement<'li'> {
-  const isTranslator = useTranslator();
+  const isTranslator = useTranslator(entity);
   const [areSiblingsActive, setSiblingsActive] = useState(false);
   const entitiesList = useContext(EntitiesList);
 
