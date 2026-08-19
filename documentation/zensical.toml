@@ -22,6 +22,7 @@ nav = [
     { "User Accounts & Settings" = "localizer/users.md" },
     { "Notifications" = "localizer/notifications.md" },
     { "Profile Page" = "localizer/profile.md" },
+    { "Community Health Score" = "localizer/community-health-score.md" },
     { "Glossary" = "localizer/glossary.md" }
   ]},
 
