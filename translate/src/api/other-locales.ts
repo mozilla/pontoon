@@ -32,9 +32,19 @@ export async function fetchOtherLocales(
 export async function fetchAllLocales(): Promise<LocaleOption[]> {
   const search = new URLSearchParams({
     fields: 'code,name',
-    page_size: '1000',
     ordering: 'name',
   });
-  const result = await GET('/api/v2/locales/', search);
-  return Array.isArray(result?.results) ? result.results : [];
+
+  const locales: LocaleOption[] = [];
+  let url: string | null = `/api/v2/locales/?${search}`;
+
+  while (url) {
+    const result = await GET(url);
+    if (Array.isArray(result?.results)) {
+      locales.push(...result.results);
+    }
+    url = result?.next ?? null;
+  }
+
+  return locales;
 }
