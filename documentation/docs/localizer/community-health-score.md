@@ -1,6 +1,6 @@
 # Community Health Score
 
-The Community Health Score (CHS) is a heuristic score, represented as a single number between 0 and 100, intended to provide insight into a localization team's health. The result is generated from a combination of the current number of community members actively contributing to a locale and the localization status of key projects.
+The Community Health Score (CHS) is a heuristic score, represented as a single number between 0 and 100, intended to provide insight into a localization team’s health. The result is generated from a combination of the current number of community members actively contributing to a locale and the localization status of key projects.
 
 ## What the score is for
 
@@ -13,7 +13,7 @@ While communities can and do ensure projects are translated to a high-level of c
 * Is the team keeping up with high-priority projects they have enabled?
 * How is the team’s situation changing compared to previous months?
 
-The score helps project managers identify opportunities to improve community health. It's a tool, not a judgment on the team's effort or quality of work: a low score doesn’t mean a team is doing poorly, and a high score doesn’t mean there’s no room for improvement.
+The score helps project managers identify opportunities to improve community health. It’s a tool, not a judgment on the team’s effort or quality of work: a low score doesn’t mean a team is doing poorly, and a high score doesn’t mean there’s no room for improvement.
 
 ## How the score is calculated
 
@@ -56,7 +56,7 @@ Unlike the criteria for other roles, one qualifying manager is enough for the fu
 
 A translator qualifies when the number of their **review actions plus their own approved translations exceeds 400** for the analyzed team. As with managers, automatic self-approvals are only counted once. Two or more qualifying translators earn the full 15 points, one earns 7.5.
 
-Having a number of active translators is vital for a community's health, ensuring that other contributor's submissions are reviewed in a timely fashion means that new contributors are more inclined to remain part of the community.
+Having a number of active translators is vital for a community’s health, ensuring that other contributors’ submissions are reviewed in a timely fashion means that new contributors are more inclined to remain part of the community.
 
 ### Active contributors
 
@@ -70,7 +70,7 @@ Having several active contributors who receive positive feedback is a good sign 
 
 Contributors without review rights who are submitting a substantial volume of work, regardless of whether it has been reviewed yet.
 
-A contributor qualifies when they have submitted **at least 200 translations** for the team within the measured window, in any state — approved, pending review or rejected. Two or more qualifying contributors earn the full 4 points, one earns 2. Note, this will also include individuals falling in the active contributors category.
+A contributor qualifies when they have submitted **at least 200 translations** for the team within the measured window, in any state — approved, pending review or rejected. Two or more qualifying contributors earn the full 4 points, one earns 2. Note: this will also include individuals falling in the active contributors category.
 
 Having a strong contributor base is important for the sustainability of the community. This criterion also provides insight into whether contributors are receiving reviews of their submissions, which is important for encouraging continued participation.
 
