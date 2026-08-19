@@ -507,6 +507,62 @@ describe('<EditorProvider>', () => {
     });
   });
 
+  it('allows editing an approved webext translation with no placeholder', () => {
+    let actions, editor, result, location;
+    const Spy = () => {
+      actions = useContext(EditorActions);
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      location = useContext(Location);
+      return null;
+    };
+
+    const sourceStr =
+      '.local $ph = {$arg1 @source=|$1|}\n' +
+      '{{source with {$ph @source=|$ph$|}}}';
+    const targetStr = 'target with $ph$';
+
+    mountSpy(Spy, 'plain', 'translated', 'source', {
+      entity: {
+        pk: 13,
+        format: 'webext',
+        key: ['foo'],
+        original: sourceStr,
+        value: mf2ParseMessage(sourceStr),
+        translation: { string: targetStr, value: mf2ParseMessage(targetStr) },
+        project: { contact: '' },
+      },
+    });
+
+    act(() => location.push({ entity: 13 }));
+
+    const targetWithDecl = {
+      format: 'webext',
+      id: 'foo',
+      value: {
+        decl: { ph: { $: 'arg1', attr: { source: '$1' } } },
+        msg: ['target with $ph$'],
+      },
+    };
+
+    expect(editor).toMatchObject({
+      initial: targetWithDecl,
+      fields: [{ handle: { current: { value: 'target with $ph$' } } }],
+    });
+    expect(result).toEqual(targetWithDecl);
+
+    // String value is re-parsed on input
+    act(() => actions.setResultFromInput());
+    expect(result).toEqual({
+      format: 'webext',
+      id: 'foo',
+      value: {
+        decl: { ph: { $: 'arg1', attr: { source: '$1' } } },
+        msg: ['target with ', { $: 'ph', attr: { source: '$ph$' } }],
+      },
+    });
+  });
+
   it('clears a rich Fluent value', () => {
     let editor, actions;
     const Spy = () => {
