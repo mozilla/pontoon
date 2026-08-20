@@ -22,20 +22,6 @@ from pontoon.insights.utils import (
     get_global_locale_health_insights,
     get_global_pretranslation_quality,
 )
-from pontoon.settings.base import (
-    ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD,
-    ACTIVE_CONTRIBUTOR_POINTS,
-    ALL_CONTRIBUTOR_PEOPLE_THRESHOLD,
-    ALL_CONTRIBUTOR_POINTS,
-    COMPLETION_POINTS,
-    ENABLED_PROJECT_POINTS,
-    MANAGER_PEOPLE_THRESHOLD,
-    MANAGER_POINTS,
-    NEW_SIGNUP_PEOPLE_THRESHOLD,
-    NEW_SIGNUP_POINTS,
-    TRANSLATOR_PEOPLE_THRESHOLD,
-    TRANSLATOR_POINTS,
-)
 
 
 log = logging.getLogger(__name__)
@@ -67,33 +53,33 @@ CHS_SCORE_METRICS = [
 def get_chs_columns():
     return {
         "active_managers": {
-            "base_threshold": MANAGER_PEOPLE_THRESHOLD,
-            "score_threshold": MANAGER_POINTS,
+            "base_threshold": settings.MANAGER_PEOPLE_THRESHOLD,
+            "score_threshold": settings.MANAGER_POINTS,
         },
         "active_translators": {
-            "base_threshold": TRANSLATOR_PEOPLE_THRESHOLD,
-            "score_threshold": TRANSLATOR_POINTS,
+            "base_threshold": settings.TRANSLATOR_PEOPLE_THRESHOLD,
+            "score_threshold": settings.TRANSLATOR_POINTS,
         },
         "active_contributors": {
-            "base_threshold": ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD,
-            "score_threshold": ACTIVE_CONTRIBUTOR_POINTS,
+            "base_threshold": settings.ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD,
+            "score_threshold": settings.ACTIVE_CONTRIBUTOR_POINTS,
         },
         "all_contributors": {
-            "base_threshold": ALL_CONTRIBUTOR_PEOPLE_THRESHOLD,
-            "score_threshold": ALL_CONTRIBUTOR_POINTS,
+            "base_threshold": settings.ALL_CONTRIBUTOR_PEOPLE_THRESHOLD,
+            "score_threshold": settings.ALL_CONTRIBUTOR_POINTS,
         },
         "new_signups": {
-            "base_threshold": NEW_SIGNUP_PEOPLE_THRESHOLD,
-            "score_threshold": NEW_SIGNUP_POINTS,
+            "base_threshold": settings.NEW_SIGNUP_PEOPLE_THRESHOLD,
+            "score_threshold": settings.NEW_SIGNUP_POINTS,
         },
         "key_projects_enabled": {
             "base_threshold": Project.objects.filter(is_chs_project=True).count(),
-            "score_threshold": ENABLED_PROJECT_POINTS,
+            "score_threshold": settings.ENABLED_PROJECT_POINTS,
         },
         "completion": {
             "base_threshold": 100,
             "percent": True,
-            "score_threshold": COMPLETION_POINTS,
+            "score_threshold": settings.COMPLETION_POINTS,
         },
         "chs": {"base_threshold": 100},
     }
