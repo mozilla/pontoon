@@ -107,6 +107,7 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
                 # which are already counted via the authored approved translations.
                 is_implicit_action=False,
                 translation__locale__in=locales,
+                performed_by__is_active=True,
                 performed_by__profile__system_user=False,
             )
             .values("performed_by", locale_pk=F("translation__locale"))
@@ -146,7 +147,26 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
         for locale in locales
     }
 
-    for row in contributor_translations:
+    contributor_stats = {
+        (row["locale_id"], row["user_id"]): row for row in contributor_translations
+    }
+
+    # Add managers and translators who only reviewed translations.
+    for (user_id, locale_id), action_count in action_counts.items():
+        key = (locale_id, user_id)
+        if key not in contributor_stats and (
+            user_id in managers[locale_id] or user_id in translators[locale_id]
+        ):
+            contributor_stats[key] = {
+                "locale_id": locale_id,
+                "user_id": user_id,
+                "joined": None,
+                "is_superuser": False,
+                "total_count": 0,
+                "approved_count": 0,
+            }
+
+    for row in contributor_stats.values():
         locale_id = row["locale_id"]
         user_id = row["user_id"]
         joined = row["joined"]
@@ -156,9 +176,6 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
 
         action_count = action_counts.get((user_id, locale_id), 0)
 
-        if not total:
-            continue
-
         if user_id in managers[locale_id]:
             if action_count + approved > MANAGER_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_managers"] += 1
@@ -166,7 +183,7 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
             if action_count + approved > TRANSLATOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_translators"] += 1
         else:
-            if is_superuser:
+            if is_superuser or not total:
                 continue
             if approved >= ACTIVE_CONTRIBUTOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_contributors"] += 1
