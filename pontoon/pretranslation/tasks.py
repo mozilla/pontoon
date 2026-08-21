@@ -120,7 +120,7 @@ def pretranslate(project: Project, paths: set[str] | None):
             try:
                 pretranslation = get_pretranslation(entity, locale)
             except ValueError as e:
-                log.info(f"Pretranslation error for {entity_desc}: {e}")
+                log.info(f"Pretranslation error for {entity_desc}: {e!r}")
                 continue
 
             failed_checks = run_checks(
@@ -136,7 +136,7 @@ def pretranslate(project: Project, paths: set[str] | None):
                         entity, locale, preserve_placeables=True
                     )
                 except ValueError as e:
-                    log.info(f"Pretranslation error for {entity_desc}: {e}")
+                    log.info(f"Pretranslation error for {entity_desc}: {e!r}")
                     continue
 
             string, author_key = pretranslation
@@ -146,7 +146,7 @@ def pretranslate(project: Project, paths: set[str] | None):
                 )
             except ValueError as e:
                 log.error(
-                    f"Unparsable pretranslation for {entity_desc}: {e}: {string!r}"
+                    f"Unparsable pretranslation for {entity_desc}: {e!r}: {string!r}"
                 )
                 continue
 
