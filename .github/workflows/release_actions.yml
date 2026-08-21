@@ -9,7 +9,8 @@ jobs:
     name: New release
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+      pull-requests: read
     steps:
       - name: Clone repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -59,7 +60,7 @@ jobs:
       - name: Create GitHub Release
         if: steps.check.outputs.release == 'true'
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.check.outputs.version }}
           SHA: ${{ steps.revision.outputs.sha }}
         run: |
