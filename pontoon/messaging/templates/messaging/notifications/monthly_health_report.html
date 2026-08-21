@@ -1,13 +1,10 @@
 <h2>Monthly Locale Health Report: {{ month }} {{ year }}</h2>
 
-<p>
-  The monthly locale health report for {{ month }} {{ year }} is now available.
-</p>
-
 {% if locale_rows %}
   <p>
-    Below are the locales whose Community Health Score (CHS) changed by at least
-    {{ threshold }}% compared to the previous month.
+    Locales whose Community Health Score (CHS) changed by at least
+    {{ threshold }}% compared to the previous month and have at least one key
+    project enabled:
   </p>
 
   <table>
@@ -35,11 +32,9 @@
       </tr>
     {% endfor %}
   </table>
-
-  <i>Only locales with at least one key project enabled are included.</i>
 {% else %}
   <p>
-    However, no locale's Community Health Score (CHS) changed by at least
+    There were no locales whose Community Health Score (CHS) changed by at least
     {{ threshold }}% compared to the previous month.
   </p>
 {% endif %}

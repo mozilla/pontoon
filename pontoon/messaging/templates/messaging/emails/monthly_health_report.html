@@ -48,8 +48,8 @@
   {% if locale_rows %}
     <p>
       Locales whose Community Health Score (CHS) changed by at least
-      {{ threshold }}% compared to the previous month and have at least
-      one key project enabled:
+      {{ threshold }}% compared to the previous month and have at least one key
+      project enabled:
     </p>
 
     <table class="report">
@@ -81,11 +81,10 @@
         {% endfor %}
       </tbody>
     </table>
-
   {% else %}
     <p>
-      There were no locales whose Community Health Score (CHS) changed by at least
-      {{ threshold }}% compared to the previous month.
+      There were no locales whose Community Health Score (CHS) changed by at
+      least {{ threshold }}% compared to the previous month.
     </p>
   {% endif %}
 
