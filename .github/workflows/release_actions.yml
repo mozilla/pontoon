@@ -1,0 +1,70 @@
+name: Automated Release
+on:
+  schedule:
+    - cron: "0 23 * * *"
+permissions: {}
+
+jobs:
+  release:
+    name: New release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Fetch deployed revision
+        id: revision
+        run: |
+          SHA=$(curl -fsS --max-time 10 \
+            https://pontoon.mozilla.org/static/revision.txt | tr -d '[:space:]')
+          
+          if ! printf '%s' "$SHA" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::Expected a 40-character commit hash, got: ${SHA:-<empty>}"
+            exit 1
+          fi
+
+          echo "Deployed revision: $SHA"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+      - name: Check for an existing release tag
+        id: check
+        env:
+          SHA: ${{ steps.revision.outputs.sha }}
+        run: |
+          if ! git cat-file -e "${SHA}^{commit}" 2>/dev/null; then
+            echo "::error::Commit $SHA is not in this repository."
+            exit 1
+          fi
+
+          TAG_EXISTS=$(git tag --points-at "$SHA" | grep '^v202' || true)
+
+          if [ -n "$TAG_EXISTS" ]; then
+            echo "Already released as ${TAG_EXISTS}."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          VERSION="$(date -u +v%Y.%m.%d)"
+
+          if [ -n "$(git tag -l "$VERSION")" ]; then
+            echo "::error::Tag $VERSION already exists."
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "release=true" >> "$GITHUB_OUTPUT"
+      - name: Create GitHub Release
+        if: steps.check.outputs.release == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.check.outputs.version }}
+          SHA: ${{ steps.revision.outputs.sha }}
+        run: |
+          gh release create "$VERSION" \
+            --target "$SHA" \
+            --title "Release $VERSION" \
+            --generate-notes
