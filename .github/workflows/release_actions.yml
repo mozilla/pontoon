@@ -48,7 +48,7 @@ jobs:
             exit 0
           fi
 
-          VERSION="v$(date -u +%Y.%m.%d)"
+          VERSION="$(date -u +v%Y.%m.%d)"
 
           if [ -n "$(git tag -l "$VERSION")" ]; then
             echo "::error::Tag $VERSION already exists."
