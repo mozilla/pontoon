@@ -237,7 +237,7 @@ def test_monthly_health_report_notification_no_locales(locale_a):
         "messaging/notifications/monthly_health_report.html", report
     )
 
-    assert "However, no locale" in description
+    assert "There were no locales" in description
     assert f"{report['month']} {report['year']}" in description
     assert full_url("pontoon.insights") in description
 

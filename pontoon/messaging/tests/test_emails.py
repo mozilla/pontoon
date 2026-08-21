@@ -275,7 +275,7 @@ def test_send_monthly_health_report_emails_no_locales(locale_a):
 
     assert [message.to for message in sent] == [[subscribed_admin.contact_email]]
     assert sent[0].subject == "Monthly locale health report for June 2025"
-    assert "However, no locale" in sent[0].body
+    assert "There were no locales" in sent[0].body
     assert full_url("pontoon.insights") in sent[0].body
 
     assert "Last month CHS" not in sent[0].body
