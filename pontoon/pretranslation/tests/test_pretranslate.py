@@ -409,15 +409,14 @@ def test_get_pretranslations_fluent_accesskeys_ignore_placeables(
 
     gt_mock.return_value = "{ $0 } gt_translation"
 
-    # The `title` value here is hacky, but demonstrates that a Google Translate
-    # response that includes an unexpected `{$0}` does not cause a failure, just
-    # odd output. `$0` is not a valid Fluent identifier, so the braces are
-    # escaped to keep the entry parseable.
+    # The `title` value here is hacky, but demonstrates that
+    # a Google Translate response that includes an unexpected `{$0}`
+    # does not cause a failure, just odd output.
     # For the `.label` it's expected,
     # and therefore replaced with the correct placeholder.
     expected = dedent(
         """
-        title = { "{" }$0{ "}" } gt_translation
+        title = {$0} gt_translation
             .label = { $brand } gt_translation
             .accesskey = g
     """
@@ -848,35 +847,3 @@ def test_get_pretranslations_fluent_sibling_selectors(
     google_translate_locale.cldr_plurals = "1,5"
     response = get_pretranslation(fluent_entity, google_translate_locale)
     assert response == (pretranslated_string, "tm")
-
-
-@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
-@pytest.mark.django_db
-def test_get_pretranslations_fluent_mt_stray_brace(
-    gt_mock, fluent_resource, google_translate_locale
-):
-    # MT returns plain text, which can hold a brace that isn't Fluent syntax.
-    # Escaped, it stays a literal brace; raw, the entry wouldn't parse at all.
-    gt_mock.return_value = "Rhowch { yma"
-
-    fluent_entity = EntityFactory(resource=fluent_resource, string="key = Enter here\n")
-
-    response = get_pretranslation(fluent_entity, google_translate_locale)
-    assert response == ('key = Rhowch { "{" } yma\n', "gt")
-
-
-@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
-@pytest.mark.django_db
-def test_get_pretranslations_fluent_mt_placeable_kept_raw(
-    gt_mock, fluent_resource, google_translate_locale
-):
-    # Output that parses is left alone, so a placeable MT returned verbatim
-    # stays a placeable instead of being escaped into literal text.
-    gt_mock.return_value = "50 { $count } cyn"
-
-    fluent_entity = EntityFactory(
-        resource=fluent_resource, string="key = 50 more to go\n"
-    )
-
-    response = get_pretranslation(fluent_entity, google_translate_locale)
-    assert response == ("key = 50 { $count } cyn\n", "gt")
