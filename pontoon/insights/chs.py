@@ -3,6 +3,7 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
+from django.conf import settings
 from django.db.models import Count, F, Q, Sum
 from django.utils import timezone
 
@@ -11,20 +12,6 @@ from pontoon.base.models import Locale, TranslatedResource, Translation
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.insights.models import LocaleHealthSnapshot
-from pontoon.settings.base import (
-    ACTIVE_CONTRIBUTOR_POINTS,
-    ACTIVE_CONTRIBUTOR_STRING_THRESHOLD,
-    ALL_CONTRIBUTOR_POINTS,
-    ALL_CONTRIBUTOR_STRING_THRESHOLD,
-    COMPLETION_POINTS,
-    ENABLED_PROJECT_POINTS,
-    MANAGER_POINTS,
-    MANAGER_STRING_THRESHOLD,
-    NEW_SIGNUP_POINTS,
-    NEW_SIGNUP_STRING_THRESHOLD,
-    TRANSLATOR_POINTS,
-    TRANSLATOR_STRING_THRESHOLD,
-)
 
 
 def get_completion_by_locale(locales, key_projects) -> dict[int, float]:
@@ -160,29 +147,35 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
             continue
 
         if user_id in managers[locale_id]:
-            if action_count + approved > MANAGER_STRING_THRESHOLD:
+            if action_count + approved > settings.MANAGER_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_managers"] += 1
         elif user_id in translators[locale_id]:
-            if action_count + approved > TRANSLATOR_STRING_THRESHOLD:
+            if action_count + approved > settings.TRANSLATOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_translators"] += 1
         else:
             if is_superuser:
                 continue
-            if approved >= ACTIVE_CONTRIBUTOR_STRING_THRESHOLD:
+            if approved >= settings.ACTIVE_CONTRIBUTOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["active_contributors"] += 1
-            if total >= ALL_CONTRIBUTOR_STRING_THRESHOLD:
+            if total >= settings.ALL_CONTRIBUTOR_STRING_THRESHOLD:
                 locale_contributors[locale_id]["all_contributors"] += 1
-            if approved >= NEW_SIGNUP_STRING_THRESHOLD and joined >= start_date:
+            if (
+                approved >= settings.NEW_SIGNUP_STRING_THRESHOLD
+                and joined >= start_date
+            ):
                 locale_contributors[locale_id]["new_signups"] += 1
 
     return locale_contributors
 
 
-def scaled_points(count, points) -> float:
-    """Award full points for 2+ people, half for exactly 1, none otherwise."""
-    if count >= 2:
+def scaled_points(count, points, threshold) -> float:
+    """
+    Award full points when the people threshold is met, half points when half
+    of it is met, none otherwise.
+    """
+    if count >= threshold:
         return points
-    if count >= 1:
+    if count >= threshold / 2:
         return points / 2
     return 0
 
@@ -196,23 +189,43 @@ def compute_chs(args: dict, key_projects_count: int) -> float:
     key_projects_enabled = args.get("key_projects_enabled", 0)
     completion = args.get("completion", 0.00)
 
-    total_manager_points = MANAGER_POINTS if active_managers >= 1 else 0
+    total_manager_points = scaled_points(
+        active_managers,
+        settings.MANAGER_POINTS,
+        settings.MANAGER_PEOPLE_THRESHOLD,
+    )
 
-    total_translator_points = scaled_points(active_translators, TRANSLATOR_POINTS)
+    total_translator_points = scaled_points(
+        active_translators,
+        settings.TRANSLATOR_POINTS,
+        settings.TRANSLATOR_PEOPLE_THRESHOLD,
+    )
     total_active_contributor_points = scaled_points(
-        active_contributors, ACTIVE_CONTRIBUTOR_POINTS
+        active_contributors,
+        settings.ACTIVE_CONTRIBUTOR_POINTS,
+        settings.ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD,
     )
     total_all_contributor_points = scaled_points(
-        all_contributors, ALL_CONTRIBUTOR_POINTS
+        all_contributors,
+        settings.ALL_CONTRIBUTOR_POINTS,
+        settings.ALL_CONTRIBUTOR_PEOPLE_THRESHOLD,
     )
-    total_new_signup_points = scaled_points(new_signups, NEW_SIGNUP_POINTS)
+    total_new_signup_points = scaled_points(
+        new_signups,
+        settings.NEW_SIGNUP_POINTS,
+        settings.NEW_SIGNUP_PEOPLE_THRESHOLD,
+    )
 
     total_enabled_project_points = (
-        round((key_projects_enabled / key_projects_count) * ENABLED_PROJECT_POINTS, 2)
+        round(
+            (key_projects_enabled / key_projects_count)
+            * settings.ENABLED_PROJECT_POINTS,
+            2,
+        )
         if key_projects_count
         else 0.0
     )
-    total_completion_points = round((completion / 100) * COMPLETION_POINTS, 2)
+    total_completion_points = round((completion / 100) * settings.COMPLETION_POINTS, 2)
 
     chs = round(
         total_manager_points
