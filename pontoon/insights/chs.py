@@ -189,10 +189,10 @@ def compute_chs(args: dict, key_projects_count: int) -> float:
     key_projects_enabled = args.get("key_projects_enabled", 0)
     completion = args.get("completion", 0.00)
 
-    total_manager_points = (
-        settings.MANAGER_POINTS
-        if active_managers >= settings.MANAGER_PEOPLE_THRESHOLD
-        else 0
+    total_manager_points = scaled_points(
+        active_managers,
+        settings.MANAGER_POINTS,
+        settings.MANAGER_PEOPLE_THRESHOLD,
     )
 
     total_translator_points = scaled_points(
