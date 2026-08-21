@@ -51,10 +51,10 @@ export function BatchActions(): React.ReactElement<'div'> {
   }, []);
 
   useEffect(() => {
-    fetchAllLocales().then((all) => {
+    fetchAllLocales(location.project).then((all) => {
       setLocales(all);
     });
-  }, []);
+  }, [location.project]);
 
   const selectAllEntities = useCallback(
     () => dispatch(selectAll(location)),
