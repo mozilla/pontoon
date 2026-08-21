@@ -126,7 +126,7 @@ class LocaleAdmin(admin.ModelAdmin):
         "pk",
         "name",
         "code",
-        "script",
+        "script_name",
         "direction",
         "population",
         "cldr_plurals",
@@ -137,6 +137,10 @@ class LocaleAdmin(admin.ModelAdmin):
     readonly_fields = AGGREGATED_STATS_FIELDS + ("latest_translation",)
     inlines = (ExternalLocaleResourceInline,)
     form = LocaleAdminForm
+
+    @admin.display(description="Script", ordering="script")
+    def script_name(self, obj):
+        return obj.get_script_display() or "N/D"
 
 
 class ExternalProjectResourceInline(ExternalResourceInline):

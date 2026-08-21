@@ -18,7 +18,7 @@ import { TranslationForm } from './TranslationForm';
 const DEFAULT_LOCALE = {
   direction: 'ltr',
   code: 'kg',
-  script: 'Latin',
+  script: 'Latn',
   cldrPlurals: [1, 5],
 };
 

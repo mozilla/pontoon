@@ -1,11 +1,11 @@
 /* COMMON */
 
 /* Bug 1351813 */
-[data-script='Arabic'] {
+[data-script='Arab'] {
   font-size: 1.1em;
 }
 
-[data-script='Arabic'] .placeable {
+[data-script='Arab'] .placeable {
   font-size: 0.9em;
 }
 
