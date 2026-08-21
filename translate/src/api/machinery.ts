@@ -15,7 +15,7 @@ export type SourceType =
   | 'google-translate'
   | 'microsoft-translator'
   | 'microsoft-terminology'
-  | 'gpt-transform'
+  | 'openai-chatgpt'
   | 'caighdean';
 
 export type MachineryTranslation = {
@@ -216,23 +216,32 @@ export async function fetchGoogleTranslation(
 }
 
 /**
- * Return refined translation by GPT.
+ * Existing translations passed to the LLM as reference.
+ *
+ * A mapping so that references can be dropped entirely, or extended with other
+ * Machinery results, without changing the request shape.
  */
+export type LLMReferences = Partial<Record<SourceType, string[]>>;
 
-export async function fetchGPTTransform(
+/**
+ * Return refined translation by OpenAI ChatGPT.
+ */
+export async function fetchOpenAITranslation(
   englishText: string,
-  translatedText: string,
+  references: LLMReferences,
   characteristic: string,
   localeCode: string,
   entityPk?: number,
+  trigger: 'auto' | 'manual' = 'manual',
 ): Promise<MachineryTranslation[]> {
-  const url = '/gpt-transform/';
+  const url = '/openai-chatgpt/';
   const payload = new URLSearchParams({
     csrfmiddlewaretoken: getCSRFToken(),
     english_text: englishText,
-    translated_text: translatedText,
+    references: JSON.stringify(references),
     characteristic: characteristic,
     locale: localeCode,
+    trigger: trigger,
   });
   if (entityPk !== undefined) {
     payload.append('entity_pk', String(entityPk));
@@ -248,7 +257,7 @@ export async function fetchGPTTransform(
       const cleanedTranslation = translation.replace(/^['"](.*)['"]$/, '$1');
       return [
         {
-          sources: ['gpt-transform'],
+          sources: ['openai-chatgpt'],
           original: englishText,
           translation: cleanedTranslation,
         },
@@ -256,7 +265,7 @@ export async function fetchGPTTransform(
     }
     return [];
   } catch (error) {
-    console.error('Error fetching GPT transformation:', error);
+    console.error('Error fetching OpenAI ChatGPT translation:', error);
     return [];
   }
 }

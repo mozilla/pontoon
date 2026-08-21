@@ -15,19 +15,21 @@ import type { MessageEntry } from '.';
 export function buildMessageEntry(
   base: MessageEntry,
   fields: EditorField[],
-  options: { escapeHTML: RegExp | null; trim: boolean } = {
-    escapeHTML: null,
-    trim: false,
-  },
+  options: {
+    escapeHTML: RegExp | null;
+    trim: boolean;
+  } = { escapeHTML: null, trim: false },
 ): MessageEntry | null {
   const res = structuredClone(base);
   let format: FormatKey;
+  let xliffIsXcode: boolean = false;
   switch (res.format) {
     case 'gettext':
       format = 'plain';
       break;
     case 'xcode':
       format = 'xliff';
+      xliffIsXcode = true;
       break;
     default:
       format = res.format ?? 'plain';
@@ -40,7 +42,10 @@ export function buildMessageEntry(
     if (options.trim) {
       src = src.trim();
     }
-    return parsePattern(format, src, msg);
+    return parsePattern(format, src, {
+      webextBaseMsg: msg,
+      xliffIsXcode: xliffIsXcode,
+    });
   };
 
   try {

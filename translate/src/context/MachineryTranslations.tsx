@@ -7,6 +7,7 @@ import {
   fetchCaighdeanTranslation,
   fetchComposedMachinery,
   fetchGoogleTranslation,
+  fetchOpenAITranslation,
   fetchMicrosoftTranslation,
   fetchTranslationMemory,
   MachineryTranslation,
@@ -37,11 +38,14 @@ const initTranslations: MachineryTranslations = {
 export const MachineryTranslations =
   createContext<MachineryTranslations>(initTranslations);
 
-/** Sort by descending quality; entries without a quality score sort last. */
+/**
+ * Sort by descending quality; entries without a quality score
+ * sort last, keeping their previous order.
+ */
 const sortByQuality = (a: { quality?: number }, b: { quality?: number }) => {
   const { quality: qa } = a;
   const { quality: qb } = b;
-  return !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
+  return !qa && !qb ? 0 : !qa ? 1 : !qb ? -1 : qa > qb ? -1 : qa < qb ? 1 : 0;
 };
 
 /**
@@ -126,7 +130,7 @@ export function MachineryProvider({
     let cancelled = false;
 
     const addResults = (newTranslations: MachineryTranslation[]) => {
-      if (newTranslations.length > 0) {
+      if (!cancelled && newTranslations.length > 0) {
         setTranslations((prev) => {
           const translations = [...prev.translations];
           for (const tx of newTranslations) {
@@ -153,7 +157,7 @@ export function MachineryProvider({
     // The TM-only and MT-backed requests can yield the same composition, in
     // which case we merge their source badges rather than list it twice.
     const addComposed = (newComposed: ComposedMachineryTranslation[]) => {
-      if (newComposed.length > 0) {
+      if (!cancelled && newComposed.length > 0) {
         setTranslations((prev) => {
           const composed = [...prev.composed];
           for (const tx of newComposed) {
@@ -183,7 +187,7 @@ export function MachineryProvider({
       const promises: Promise<void>[] = [];
 
       const wantsComposed =
-        !query &&
+        !query && // Exclude Concordance search
         hasMultipleFields(
           entity.value,
           entity.properties,
@@ -213,8 +217,31 @@ export function MachineryProvider({
         const isMicrosoftTranslatorSupported =
           root?.dataset.isMicrosoftTranslatorSupported === 'true';
 
+        const wantsLLMSuggestion =
+          !query && // Exclude Concordance search
+          root?.dataset.isLlmAutoSuggestionLocale === 'true' &&
+          entity.translation?.status !== 'approved';
+
         if (isGoogleTranslateSupported && locale.googleTranslateCode) {
-          promises.push(fetchGoogleTranslation(plain, locale).then(addResults));
+          promises.push(
+            fetchGoogleTranslation(plain, locale).then(async (results) => {
+              addResults(results);
+              // LLM suggestion refines the Google Translate output, so it can
+              // only be requested once that has resolved.
+              if (!cancelled && wantsLLMSuggestion && results.length > 0) {
+                addResults(
+                  await fetchOpenAITranslation(
+                    plain,
+                    { 'google-translate': [results[0].translation] },
+                    'rephrased',
+                    locale.code,
+                    pk,
+                    'auto',
+                  ),
+                );
+              }
+            }),
+          );
           if (wantsComposed) {
             promises.push(
               fetchComposedMachinery(pk!, locale, 'google-translate').then(

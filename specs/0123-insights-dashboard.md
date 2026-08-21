@@ -1,0 +1,69 @@
+- Feature Name: Community health score (CHS) panel
+- Created: 2026-08-04
+- Associated PR: [#4189](https://github.com/mozilla/pontoon/pull/4189)
+
+# Summary
+
+Introduce an admin-only Community health score panel within the global Insights dashboard that provides a monthly breakdown of the Community health score and its underlying metrics, along with historical score tracking. Also make the historical tracking available on locale Insights dashboards.
+
+# Motivation
+
+Currently, the Community health score is calculated via a series of moz-l10n scripts and Google Sheets formulas, collected manually on a monthly basis. Other than the tedious nature of needing to do this manually, PMs need better options to analyze CHS data directly from Pontoon.
+
+# Feature explanation
+
+## Community health score aggregation
+
+On the first day of each month, a scheduled job collects telemetry on the state of each locale for the **previous month**. The data collected for **each locale** is compiled into the following metrics:
+- `active_managers`: Managers whose combined total of performed reviews and approved translations during the past 12 months exceeds `MANAGER_STRING_THRESHOLD` (default: 500).
+- `active_translators`: Translators whose combined total of performed reviews and approved translations during the past 12 months exceeds `TRANSLATOR_STRING_THRESHOLD` (default: 400).
+- `active_contributors`: Contributors whose approved translations during the past 12 months meets or exceeds `ACTIVE_CONTRIBUTOR_STRING_THRESHOLD` (default: 200).
+- `all_contributors`: Contributors whose combined total of approved translations, rejected translations and pending suggestions during the past 12 months meets or exceeds `ALL_CONTRIBUTOR_STRING_THRESHOLD` (default: 200).
+- `new_signups`: New signups whose approved translations during the past 12 months meets or exceeds `NEW_SIGNUP_STRING_THRESHOLD` (default: 100).
+- `key_projects_enabled`: Number of key projects - classified via the `is_chs_project` flag, that are enabled for the locale.
+- `completion`: Completion across the key projects enabled for the locale, expressed as a percentage of **approved strings** + **strings with warnings** out of **total strings**.
+
+The data used is then computed into scores based on predetermined metric thresholds, which are set as environment variables for admin customization. The default thresholds are as follows:
+
+- `MANAGER_PEOPLE_THRESHOLD`: 1
+- `TRANSLATOR_PEOPLE_THRESHOLD`: 2
+- `ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD`: 2
+- `ALL_CONTRIBUTOR_PEOPLE_THRESHOLD`: 2
+- `NEW_SIGNUP_PEOPLE_THRESHOLD`: 2
+
+These thresholds determine the points a locale earns for each score category. The scoring logic is as follows:
+
+- **Manager Points**: If `active_managers` meets or exceeds `MANAGER_PEOPLE_THRESHOLD`, the locale earns `MANAGER_POINTS` (default: 20.0) points; otherwise, it earns 0 points.
+- **Translator Points**: If `active_translators` meets or exceeds `TRANSLATOR_PEOPLE_THRESHOLD`, the locale earns `TRANSLATOR_POINTS` (default: 15.0) points. If it reaches half the threshold, half of the points are awarded. Otherwise, it earns 0 points.
+- **Active Contributor Points**: If `active_contributors` meets or exceeds `ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD`, the locale earns `ACTIVE_CONTRIBUTOR_POINTS` (default: 6.0) points. If it reaches half the threshold, half of the points are awarded. Otherwise, it earns 0 points.
+- **All Contributor Points**: If `all_contributors` meets or exceeds `ALL_CONTRIBUTOR_PEOPLE_THRESHOLD`, the locale earns `ALL_CONTRIBUTOR_POINTS` (default: 4.0) points. If it reaches half the threshold, half of the points are awarded. Otherwise, it earns 0 points.
+- **New Signup Points**: If `new_signups` meets or exceeds `NEW_SIGNUP_PEOPLE_THRESHOLD`, the locale earns `NEW_SIGNUP_POINTS` (default: 5.0) points. If it reaches half the threshold, half of the points are awarded. Otherwise, it earns 0 points.
+- **Key Projects Points**: The locale earns points proportional to its `key_projects_enabled` percentage, calculated with `ENABLED_PROJECT_POINTS` (default: 4.0) as `(key_projects_enabled / all_key_projects) * ENABLED_PROJECT_POINTS`.
+- **Completion Points**: The locale earns points proportional to its `completion` percentage, calculated with `COMPLETION_POINTS` (default: 46.0) as `(completion / 100) * COMPLETION_POINTS`.
+
+The total score for a locale is the sum of all points earned across these categories. This score is then used to calculate the **Community Health Score** for the locale for that month.
+
+## Community health score panel
+
+The new **Community health score** panel located at `/insights` consists of a widget, a table of locales and a graph.
+
+The widget at the top of the panel contains **locale search** and buttons titled `Edit Locales` and `Show scores`. `Edit Locales` swaps the panel contents for a selector that enables admins to change locale availability on the CHS panel. `Show scores` toggles default and score view of components that make up the CHS.
+
+The table of locales represents the locales the admin wishes to observe based on the most recent month's CHS data. Each table row contains the following information:
+- **Locale code** linking to individual locale pages
+- Number of **active managers**
+- Number of **active translators**
+- Number of **active contributors**
+- Number of **all contributors**
+- Number of **new signups**
+- Number of **enabled key projects**
+- Overall locale **completion** (%)
+- CHS
+
+Beside each statistic, an up or down arrow and a number indicate the change from the previous month. If there is no change, no delta is shown. Counts (e.g., contributors, translators, and managers) are displayed as integers, while scores and percentages are displayed to two decimal places.
+
+The chart is a line chart that displays Community Health Score (CHS) values for the selected locales over the past 12 months. Hovering over any data point displays a tooltip with the exact CHS value for that month for all selected locales. The legend lists individual locales along with `Average (all locales)` and allows each line to be shown or hidden.
+
+## Locale Insights changes
+
+A new graph called `Community health score` is added to the [locale insights page](https://github.com/mozilla/pontoon/blob/main/specs/0108-community-health-dashboard.md), which shows the CHS values for the locale over the past 12 months.

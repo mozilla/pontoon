@@ -66,7 +66,7 @@ export function MachineryTranslationComponent({
       // CodeMirror will throw an error if we leave any CR in the value.
       content = content.replaceAll('\r', '\\r');
       const sources: SourceType[] = llmTranslation
-        ? ['gpt-transform']
+        ? ['openai-chatgpt']
         : translation.sources;
       setEditorFromHelpers(content, sources, true);
       if (llmTranslation) {
@@ -74,9 +74,14 @@ export function MachineryTranslationComponent({
           action: 'Copy LLM Translation',
           localeCode: locale.code,
         });
+      } else {
+        logUXAction('Machinery Translation Copied', 'Machinery Adoption', {
+          sources: sources.join(','),
+          localeCode: locale.code,
+        });
       }
     }
-  }, [index, setEditorFromHelpers, translation, llmTranslation]);
+  }, [index, locale, setEditorFromHelpers, translation, llmTranslation]);
 
   const className = classNames(
     'translation',
@@ -177,6 +182,7 @@ export function ComposedTranslationComponent({
   const { setEditorFromComposed } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
+  const locale = useContext(Locale);
 
   const copyIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
@@ -187,8 +193,12 @@ export function ComposedTranslationComponent({
         translation.sources,
         true,
       );
+      logUXAction('Machinery Translation Copied', 'Machinery Adoption', {
+        sources: translation.sources.join(','),
+        localeCode: locale.code,
+      });
     }
-  }, [index, setEditorFromComposed, setElement, translation]);
+  }, [index, locale, setEditorFromComposed, setElement, translation]);
 
   const className = classNames(
     'translation',

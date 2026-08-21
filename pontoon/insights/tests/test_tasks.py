@@ -8,7 +8,7 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Entity, Locale, Project, Translation
 from pontoon.insights.chs import (
     build_chs_snapshots,
     compute_chs,
@@ -453,47 +453,71 @@ def test_get_contributor_metrics_by_locale(locale_a, locale_b, resource_a):
     locale_a.translators_group = translators_group
     locale_a.save()
 
-    manager = UserFactory.create(username="manager")
-    translator = UserFactory.create(username="translator")
     contributor_a = UserFactory.create(username="contributor_a")
     contributor_b = UserFactory.create(username="contributor_b")
-    managers_group.user_set.add(manager)
-    translators_group.user_set.add(translator)
 
-    # Managers and translators need one authored translation to appear in the
-    # results, and cross their thresholds through review actions
-    manager_translation = TranslationFactory.create(
+    reviewed = TranslationFactory.create(
         entity__resource=resource_a,
         locale=locale_a,
-        user=manager,
+        user=contributor_b,
         date=in_12_month_window,
     )
-    translator_translation = TranslationFactory.create(
-        entity__resource=resource_a,
-        locale=locale_a,
-        user=translator,
-        date=in_12_month_window,
-    )
-    ActionLog.objects.bulk_create(
-        [
-            ActionLog(
-                action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
-                created_at=in_12_month_window,
-                performed_by=manager,
-                translation=manager_translation,
-            )
-            for _ in range(501)
-        ]
-        + [
-            ActionLog(
-                action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
-                created_at=in_12_month_window,
-                performed_by=translator,
-                translation=translator_translation,
-            )
-            for _ in range(401)
-        ]
-    )
+
+    def add_reviews(user, count):
+        ActionLog.objects.bulk_create(
+            [
+                ActionLog(
+                    action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+                    created_at=in_12_month_window,
+                    performed_by=user,
+                    translation=reviewed,
+                )
+                for _ in range(count)
+            ]
+        )
+
+    def add_approved_translations(user, count):
+        entities = Entity.objects.bulk_create(
+            [
+                Entity(resource=resource_a, string=f"{user.username} {i}")
+                for i in range(count)
+            ]
+        )
+        Translation.objects.bulk_create(
+            [
+                Translation(
+                    entity=entity,
+                    locale=locale_a,
+                    user=user,
+                    string=entity.string,
+                    value=[],
+                    date=in_12_month_window,
+                    approved=True,
+                )
+                for entity in entities
+            ]
+        )
+
+    # Managers and translators cross their thresholds (500 and 400 strings)
+    # through reviews alone, authored approved translations alone, or a
+    # combination of both. The fourth user of each group stays below the
+    # threshold and isn't counted.
+    for group, threshold in (
+        (managers_group, 500),
+        (translators_group, 400),
+    ):
+        for index, (reviews, translations) in enumerate(
+            [
+                (threshold + 1, 0),
+                (0, threshold + 1),
+                (threshold, 1),
+                (threshold // 2, 1),
+            ]
+        ):
+            user = UserFactory.create(username=f"{group.name}_{index}")
+            group.user_set.add(user)
+            add_reviews(user, reviews)
+            add_approved_translations(user, translations)
 
     # An active contributor crosses the active, all-contributor, and new-signup
     # thresholds at once
@@ -529,8 +553,8 @@ def test_get_contributor_metrics_by_locale(locale_a, locale_b, resource_a):
     locales = Locale.objects.filter(pk__in=[locale_a.pk, locale_b.pk])
     assert get_contributor_metrics_by_locale(locales, now) == {
         locale_a.pk: {
-            "active_managers": 1,
-            "active_translators": 1,
+            "active_managers": 3,
+            "active_translators": 3,
             "active_contributors": 1,
             "all_contributors": 1,
             "new_signups": 1,

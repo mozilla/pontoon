@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -82,6 +83,11 @@ export type EditorData = Readonly<{
 
   /** Used for detecting unsaved changes */
   initial: MessageEntry;
+
+  /**
+   * Content filled in automatically rather than by the user.
+   */
+  autofilled: MessageEntry | null;
 
   machinery: {
     manual: boolean;
@@ -188,6 +194,7 @@ const initEditorData: EditorData = {
   base: { format: 'plain', id: '', value: [] },
   focusField: { current: null },
   initial: { format: 'plain', id: '', value: [] },
+  autofilled: null,
   machinery: null,
   fields: [],
   sourceView: false,
@@ -220,6 +227,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const { resetFailedChecks } = useContext(FailedChecksData);
 
   const [state, setState] = useState(initEditorData);
+  const pendingFieldValues = useRef<Array<[string, string]> | null>(null);
   const [result, setResult] = useState<MessageEntry | null>(null);
 
   const actions = useMemo<EditorActions>(() => {
@@ -231,17 +239,11 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       trim: !hasOuterWhitespace(sourceEntry),
     };
 
-    // HACK: Without this code, re-applying a composed Machinery suggestion
-    // (or restoring history) after editing a field takes two clicks:
-    // the first does nothing.
-    // Changing the `fields` changes the `defaultValue` of each field,
-    // but then for some reason the `fields` changes a second time,
-    // and we end up re-rendering the `TranslationForm` with the old field values.
-    const resetFields = (prev: EditorData, next: EditorData): EditorData => {
-      for (const field of next.fields) {
-        const live = prev.fields.find((f) => f.id === field.id);
-        live?.handle.current.setValue(field.handle.current.value);
-      }
+    const resetFields = (next: EditorData): EditorData => {
+      pendingFieldValues.current = next.fields.map(({ id, handle }) => [
+        id,
+        handle.current.value,
+      ]);
       next.focusField.current = next.fields[0];
       setResult(buildMessageEntry(next.base, next.fields, buildOpts));
       return next;
@@ -276,6 +278,9 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             field = focusField.current = next.fields[0];
             setResult(result);
           }
+          next.autofilled = manual
+            ? null
+            : buildMessageEntry(next.base, next.fields, buildOpts);
           if (manual) {
             field.handle.current.focus();
           }
@@ -299,8 +304,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               ? editSource(entry)
               : editMessageEntry(sourceEntry, entry);
           }
+          const state = resetFields(next);
           return {
-            ...resetFields(prev, next),
+            ...state,
+            autofilled: manual
+              ? null
+              : buildMessageEntry(state.base, state.fields, buildOpts),
             machinery: {
               manual,
               translation: getPlainMessage(entry),
@@ -311,7 +320,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromHistory: (str) =>
         setState((prev) => {
-          const next = { ...prev };
+          const next = { ...prev, autofilled: null };
           if (specialFormats.has(format)) {
             const entry = parseEntry(format, str);
             if (entry) {
@@ -331,7 +340,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             next.fields = editMessageEntry(sourceEntry, prev.initial);
             next.fields[0].handle.current.setValue(str);
           }
-          return resetFields(prev, next);
+          return resetFields(next);
         }),
 
       setEditorSelection: (content) =>
@@ -393,23 +402,40 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       fields,
       focusField: { current: fields[0] },
       initial: base,
+      autofilled: null,
       machinery: null,
       sourceView,
     }));
     setResult(base);
   }, [locale, entity, activeTranslation]);
 
+  // Write the values recorded by `resetFields` into the fields that are now
+  // on screen. After the commit, so that the editor changes this dispatches
+  // don't land in React's render phase.
+  useEffect(() => {
+    const pending = pendingFieldValues.current;
+    if (pending) {
+      pendingFieldValues.current = null;
+      for (const [id, value] of pending) {
+        const field = state.fields.find((f) => f.id === id);
+        field?.handle.current.setValue(value);
+      }
+    }
+  }, [state.fields]);
+
   // For missing entries, fill editor initially with a perfect match from
   // translation memory, if available.
   const status = useTranslationStatus(entity);
   useEffect(() => {
     if (
-      status === 'missing' &&
-      state.machinery === null &&
-      !state.sourceView &&
-      state.fields.length === 1 &&
-      state.fields[0].handle.current.value === ''
+      status !== 'missing' ||
+      state.machinery !== null ||
+      state.sourceView ||
+      state.fields.some((field) => field.handle.current.value !== '')
     ) {
+      return;
+    }
+    if (state.fields.length === 1) {
       const perfect = machinery.translations.find((tx) => tx.quality === 100);
       if (perfect) {
         actions.setEditorFromHelpers(
@@ -418,20 +444,34 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           false,
         );
       }
+    } else if (state.fields.length > 1) {
+      const perfect = machinery.composed.find((tx) => tx.quality === 100);
+      if (perfect) {
+        actions.setEditorFromComposed(
+          perfect.value,
+          perfect.properties,
+          perfect.sources,
+          false,
+        );
+      }
     }
-  }, [state, actions, status, machinery.translations]);
+  }, [state, actions, status, machinery.translations, machinery.composed]);
 
   useEffect(() => {
     // Changes in `result` need to be reflected in `UnsavedChanges`,
     // but the latter needs to be defined at a higher level to make it
     // available in `EntitiesList`. Therefore, that state is managed here.
     // Let's also avoid the calculation, unless it's actually required.
-    const hasChanges = !pojoEquals(state.initial, result);
+    // Content set by autofill (100% TM match) should not trigger a warning,
+    // as it would be autofilled again on the next visit.
+    const { autofilled, initial } = state;
+    const hasChanges = !pojoEquals(initial, result);
     if (hasChanges) {
       resetFailedChecks();
     }
-    setUnsavedChanges(() => hasChanges);
-  }, [result]);
+    const isAutofilled = !!autofilled && pojoEquals(autofilled, result);
+    setUnsavedChanges(() => hasChanges && !isAutofilled);
+  }, [result, state.autofilled]);
 
   return (
     <EditorData.Provider value={state}>

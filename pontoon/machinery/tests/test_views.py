@@ -13,10 +13,12 @@ from django.urls import reverse
 from pontoon.base.models import (
     Entity,
     Locale,
+    Resource,
 )
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
+    ResourceFactory,
     SectionFactory,
     TeamCommentFactory,
     TermFactory,
@@ -282,8 +284,8 @@ def test_view_google_translate_cache(
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
-    url = reverse("pontoon.gpt_transform")
+def test_view_openai_chatgpt_cache(member, locale_a, openai_api_key):
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()
@@ -294,7 +296,7 @@ def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
 
         params = {
             "english_text": "Hello",
-            "translated_text": "Hola",
+            "references": json.dumps({"google-translate": ["Hola"]}),
             "characteristic": "formal",
             "locale": locale_a.code,
         }
@@ -310,8 +312,8 @@ def test_view_gpt_transform_cache(member, locale_a, openai_api_key):
 
 
 @pytest.mark.django_db
-def test_view_gpt_transform_context(member, locale_a, openai_api_key):
-    url = reverse("pontoon.gpt_transform")
+def test_view_openai_chatgpt_context(member, locale_a, openai_api_key):
+    url = reverse("pontoon.openai_chatgpt")
     cache.clear()
 
     mock_response = MagicMock()
@@ -319,12 +321,13 @@ def test_view_gpt_transform_context(member, locale_a, openai_api_key):
 
     # Create entity with full context: key, comment, group (section) comment,
     # resource comment
-    section = SectionFactory(key=["nav"], comment="Navigation section")
+    resource = ResourceFactory(path="ui.properties", format=Resource.Format.PROPERTIES)
+    section = SectionFactory(key=[], comment="Navigation section", resource=resource)
     entity = EntityFactory(
         key=["open-browser"],
         string="Open browser",
         comment="Button label",
-        resource=section.resource,
+        resource=resource,
         section=section,
     )
     entity.resource.comment = "Main UI file"
@@ -354,7 +357,9 @@ def test_view_gpt_transform_context(member, locale_a, openai_api_key):
             url,
             {
                 "english_text": "Open browser",
-                "translated_text": "Ouvrir le navigateur",
+                "references": json.dumps(
+                    {"google-translate": ["Ouvrir le navigateur"]}
+                ),
                 "characteristic": "formal",
                 "locale": locale_a.code,
                 "entity_pk": entity.pk,
@@ -372,6 +377,305 @@ def test_view_gpt_transform_context(member, locale_a, openai_api_key):
     assert "Keep it short" in user_message
     assert "TERMINOLOGY:" in user_message
     assert '"browser" (noun) → "navigateur"' in user_message
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "format, section_key, entity_key, expected",
+    [
+        # For XLIFF (e.g. iOS projects), the section key is the file name
+        (
+            Resource.Format.XLIFF,
+            ["Client/Client.strings"],
+            ["Client/Client.strings", "Settings.Title"],
+            "STRING ID:\nSettings.Title",
+        ),
+        # For gettext, the message id is the source string itself
+        (Resource.Format.GETTEXT, [], ["Open browser"], None),
+    ],
+)
+def test_view_openai_chatgpt_string_id(
+    member, locale_a, openai_api_key, format, section_key, entity_key, expected
+):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    resource = ResourceFactory(format=format)
+    section = SectionFactory(key=section_key, resource=resource)
+    entity = EntityFactory(
+        key=entity_key,
+        string="Open browser",
+        resource=resource,
+        section=section,
+    )
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(
+            url,
+            {
+                "english_text": "Open browser",
+                "references": json.dumps(
+                    {"google-translate": ["Ouvrir le navigateur"]}
+                ),
+                "characteristic": "formal",
+                "locale": locale_a.code,
+                "entity_pk": entity.pk,
+            },
+        )
+
+    call_args = MockOpenAI.return_value.chat.completions.create.call_args
+    system_message = call_args.kwargs["messages"][0]["content"]
+    user_message = call_args.kwargs["messages"][1]["content"]
+    if expected is None:
+        assert "STRING ID" not in user_message
+        assert "STRING ID" not in system_message
+    else:
+        assert expected in user_message
+        assert "STRING ID:" in system_message
+
+
+def _gpt_params(locale, **kwargs):
+    params = {
+        "english_text": "Hello",
+        "references": json.dumps({"google-translate": ["Hola"]}),
+        "characteristic": "rephrased",
+        "locale": locale.code,
+    }
+    params.update(kwargs)
+    return params
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("trigger", ["Auto", "", "bogus"])
+def test_view_openai_chatgpt_invalid_trigger(member, locale_a, openai_api_key, trigger):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        response = member.client.post(url, _gpt_params(locale_a, trigger=trigger))
+
+        assert response.status_code == 400
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 0
+
+
+@pytest.mark.django_db
+def test_view_openai_chatgpt_cache_key_includes_model(
+    member, locale_a, openai_api_key, settings
+):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(url, _gpt_params(locale_a))
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 1
+
+        settings.OPENAI_MODEL = "gpt-nonexistent-test-model"
+        member.client.post(url, _gpt_params(locale_a))
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 2
+
+
+@pytest.mark.django_db
+def test_view_openai_chatgpt_auto_requires_enabled_locale(
+    member, locale_a, openai_api_key, settings
+):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+    settings.OPENAI_AUTO_SUGGESTION_LOCALES = ["some-other-locale"]
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        response = member.client.post(url, _gpt_params(locale_a, trigger="auto"))
+
+        assert response.status_code == 403
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 0
+
+
+@pytest.mark.django_db
+def test_view_openai_chatgpt_auto_allowed_for_enabled_locale(
+    member, locale_a, openai_api_key, settings
+):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+    settings.OPENAI_AUTO_SUGGESTION_LOCALES = [locale_a.code]
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "rephrased"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        response = member.client.post(url, _gpt_params(locale_a, trigger="auto"))
+
+        assert response.status_code == 200
+        assert json.loads(response.content) == {"translation": "rephrased"}
+
+
+@pytest.mark.django_db
+def test_view_openai_chatgpt_manual_ignores_enabled_locales(
+    member, locale_a, openai_api_key, settings
+):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+    settings.OPENAI_AUTO_SUGGESTION_LOCALES = []
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "formal"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        response = member.client.post(
+            url, _gpt_params(locale_a, characteristic="formal")
+        )
+
+        assert response.status_code == 200
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "references",
+    [
+        '[{"source": "x", "text": "y"}]',  # a list, not an object
+        '{"google-translate": "Hola"}',  # texts must be a list
+        '{"google-translate": [1]}',  # texts must be strings
+        '"Hola"',
+        "not json",
+    ],
+)
+def test_view_openai_chatgpt_invalid_references(
+    member, locale_a, openai_api_key, references
+):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        response = member.client.post(url, _gpt_params(locale_a, references=references))
+
+        assert response.status_code == 400
+        assert MockOpenAI.return_value.chat.completions.create.call_count == 0
+
+
+@pytest.mark.django_db
+def test_view_openai_chatgpt_single_reference_prompt_unchanged(
+    member, locale_a, openai_api_key
+):
+    """Automatic suggestions deliberately reuse today's prompt, so refining a
+    single machine translation must keep producing the wording it always has."""
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(url, _gpt_params(locale_a))
+
+    call_args = MockOpenAI.return_value.chat.completions.create.call_args
+    system_message = call_args.kwargs["messages"][0]["content"]
+    assert system_message.startswith(
+        f"You are an expert {locale_a.name} ({locale_a.code}) localization specialist.\n"
+        "\n"
+        f"Your task: produce a rephrased {locale_a.name} ({locale_a.code}) translation of a UI string.\n"
+        "Use the provided machine translation as a reference, but you are not bound "
+        "by it — rewrite freely to achieve the best result.\n"
+    )
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "references, expected, unexpected",
+    [
+        (
+            {"google-translate": ["Hola"]},
+            "MACHINE TRANSLATION (for reference):\nHola",
+            "EXISTING SUGGESTIONS",
+        ),
+        (
+            {
+                "google-translate": ["Hola"],
+                "translation-memory": ["Buenos días"],
+            },
+            "EXISTING SUGGESTIONS (for reference):\n"
+            "- google-translate: Hola\n"
+            "- translation-memory: Buenos días",
+            "MACHINE TRANSLATION",
+        ),
+        # A single source may contribute several texts, which are flattened
+        # into the same list.
+        (
+            {"translation-memory": ["Buenos días", "Hola amigo"]},
+            "EXISTING SUGGESTIONS (for reference):\n"
+            "- translation-memory: Buenos días\n"
+            "- translation-memory: Hola amigo",
+            "MACHINE TRANSLATION",
+        ),
+        ({}, "ENGLISH SOURCE:\nHello", "for reference"),
+    ],
+)
+def test_view_openai_chatgpt_references_in_prompt(
+    member, locale_a, openai_api_key, references, expected, unexpected
+):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "translated"
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        member.client.post(
+            url, _gpt_params(locale_a, references=json.dumps(references))
+        )
+
+    call_args = MockOpenAI.return_value.chat.completions.create.call_args
+    user_message = call_args.kwargs["messages"][1]["content"]
+    assert expected in user_message
+    assert unexpected not in user_message
+
+
+@pytest.mark.django_db
+def test_view_openai_chatgpt_logs_metrics(member, locale_a, openai_api_key, caplog):
+    url = reverse("pontoon.openai_chatgpt")
+    cache.clear()
+
+    mock_response = MagicMock()
+    mock_response.choices[0].message.content = "rephrased"
+    mock_response.usage.prompt_tokens = 123
+    mock_response.usage.completion_tokens = 45
+
+    with patch("pontoon.machinery.openai_service.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = mock_response
+
+        with caplog.at_level("INFO", logger="pontoon.machinery.views"):
+            member.client.post(url, _gpt_params(locale_a, trigger="manual"))
+            first = caplog.messages[-1]
+
+            # A cache hit is free, so it must not be counted towards spend.
+            member.client.post(url, _gpt_params(locale_a, trigger="manual"))
+            second = caplog.messages[-1]
+
+    assert "llm_suggestion" in first
+    assert "trigger=manual" in first
+    assert f"locale={locale_a.code}" in first
+    assert "characteristic=rephrased" in first
+    assert "cache_hit=false" in first
+    assert "prompt_tokens=123" in first
+    assert "completion_tokens=45" in first
+
+    assert "cache_hit=true" in second
+    assert "prompt_tokens=" in second
 
 
 @pytest.mark.django_db

@@ -56,7 +56,7 @@ For source strings comments, the recipients are:
 
 ### New suggestions ready for review
 
-This notification is sent once a week to inform reviewers about new suggestions needing a review. It includes information about suggestions that were submitted, unapproved or unrejected over the last 7 days. Recipients include users with permissions to review these suggestions — translator and team managers — as well as the authors of previous translations or comments in the same string.
+This notification is sent once a week to inform reviewers about new suggestions needing a review. It includes information about suggestions that were submitted, unapproved or unrejected over the last 7 days. Recipients include users with permissions to review these suggestions — translators and team managers — as well as the authors of previous translations or comments in the same string.
 
 ### Review actions on own suggestions
 

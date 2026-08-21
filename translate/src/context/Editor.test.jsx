@@ -16,10 +16,18 @@ import {
 import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
+import { MachineryTranslations } from './MachineryTranslations';
 import { UnsavedChanges, UnsavedChangesProvider } from './UnsavedChanges';
 import { fluentParseEntry, mf2ParseMessage } from '@mozilla/l10n';
 
-function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
+function mountSpy(
+  Spy,
+  format,
+  formatTranslation,
+  formatSource = 'key = test',
+  machinery = null,
+  locale = { code: 'sl', cldrPlurals: [1, 2, 3, 5] },
+) {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
   });
@@ -100,15 +108,25 @@ function mountSpy(Spy, format, formatTranslation, formatSource = 'key = test') {
   };
   const store = createReduxStore(initialState);
 
+  const machineryValue = {
+    fetching: false,
+    source: '',
+    composed: [],
+    translations: [],
+    ...(Array.isArray(machinery) ? { translations: machinery } : machinery),
+  };
+
   const Wrapper = () => (
     <LocationProvider history={history}>
-      <Locale.Provider value={{ code: 'sl', cldrPlurals: [1, 2, 3, 5] }}>
+      <Locale.Provider value={locale}>
         <EntityViewProvider>
-          <UnsavedChangesProvider>
-            <EditorProvider>
-              <Spy />
-            </EditorProvider>
-          </UnsavedChangesProvider>
+          <MachineryTranslations.Provider value={machineryValue}>
+            <UnsavedChangesProvider>
+              <EditorProvider>
+                <Spy />
+              </EditorProvider>
+            </UnsavedChangesProvider>
+          </MachineryTranslations.Provider>
         </EntityViewProvider>
       </Locale.Provider>
     </LocationProvider>
@@ -511,7 +529,7 @@ describe('<EditorProvider>', () => {
         },
         {
           handle: { current: { value: '' } },
-          id: '|other',
+          id: '|*',
           keys: [{ '*': 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
@@ -557,6 +575,51 @@ describe('<EditorProvider>', () => {
     });
   });
 
+  it('sets editor from a history entry whose catchall is named for the source', () => {
+    let editor, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source = ftl`
+      key =
+          { $count ->
+              [one] ONE
+             *[other] OTHER
+          }
+      `;
+    mountSpy(Spy, 'fluent', undefined, source, null, {
+      code: 'uk',
+      cldrPlurals: [1, 3, 4],
+    });
+
+    expect(editor.fields.map((f) => f.id)).toEqual(['|one', '|few', '|*']);
+
+    act(() =>
+      actions.setEditorFromHistory(ftl`
+        key =
+            { $count ->
+                [one] ОДИН
+                [few] КІЛЬКА
+               *[other] БАГАТО
+            }
+        `),
+    );
+
+    expect(
+      editor.fields.map(({ id, labels, handle }) => [
+        id,
+        labels.at(-1).label,
+        handle.current.value,
+      ]),
+    ).toEqual([
+      ['|one', 'one', 'ОДИН'],
+      ['|few', 'few', 'КІЛЬКА'],
+      ['|*', 'other', 'БАГАТО'],
+    ]);
+  });
+
   it('sets editor from history', () => {
     let editor, result, actions;
     const Spy = () => {
@@ -588,7 +651,7 @@ describe('<EditorProvider>', () => {
         },
         {
           handle: { current: { value: 'OTHER' } },
-          id: '|other',
+          id: '|*',
           keys: [{ '*': 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
@@ -819,5 +882,123 @@ describe('<EditorProvider>', () => {
       'Hello, {$arg1 :string @source=|%1$s|}!',
     );
     expect(unsaved.check()).toBe(false);
+  });
+
+  it('reports no pending changes for an autofilled translation (100% TM match)', () => {
+    let editor, actions, unsaved;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      unsaved = useContext(UnsavedChanges);
+      return null;
+    };
+    mountSpy(Spy, 'simple', undefined, 'message', [
+      {
+        original: 'message',
+        translation: 'messaggio_it',
+        quality: 100,
+        sources: ['translation-memory'],
+      },
+    ]);
+
+    expect(editor).toMatchObject({
+      machinery: { manual: false, translation: 'messaggio_it' },
+      fields: [{ handle: { current: { value: 'messaggio_it' } } }],
+    });
+
+    act(() => actions.setResultFromInput());
+    expect(unsaved.check()).toBe(false);
+
+    act(() => editor.fields[0].handle.current.setValue('manual_change'));
+    act(() => actions.setResultFromInput());
+    expect(unsaved.check()).toBe(true);
+  });
+
+  it('reports pending changes for a manually copied translation', () => {
+    let editor, actions, unsaved;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      unsaved = useContext(UnsavedChanges);
+      return null;
+    };
+    mountSpy(Spy, 'simple', undefined, 'message');
+
+    act(() =>
+      actions.setEditorFromHelpers(
+        'messaggio_it',
+        ['translation-memory'],
+        true,
+      ),
+    );
+
+    expect(editor.autofilled).toBeNull();
+    act(() => actions.setResultFromInput());
+    expect(unsaved.check()).toBe(true);
+  });
+
+  it('autofills a multi-field entry from a composed 100% match', () => {
+    let editor, actions, unsaved;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      unsaved = useContext(UnsavedChanges);
+      return null;
+    };
+    mountSpy(
+      Spy,
+      'fluent',
+      undefined,
+      ftl`
+      key = Value
+          .label = Label
+      `,
+      {
+        composed: [
+          {
+            sources: ['translation-memory'],
+            quality: 100,
+            value: ['Valeur'],
+            properties: { label: ['Étiquette'] },
+          },
+        ],
+      },
+    );
+
+    expect(editor.fields.map((f) => f.handle.current.value)).toEqual([
+      'Valeur',
+      'Étiquette',
+    ]);
+
+    act(() => actions.setResultFromInput());
+    expect(unsaved.check()).toBe(false);
+  });
+
+  it('does not autofill a multi-field entry without a perfect composed match', () => {
+    let editor;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      return null;
+    };
+    mountSpy(
+      Spy,
+      'fluent',
+      undefined,
+      ftl`
+      key = Value
+          .label = Label
+      `,
+      {
+        composed: [
+          {
+            sources: ['google-translate'],
+            value: ['Valeur'],
+            properties: { label: ['Étiquette'] },
+          },
+        ],
+      },
+    );
+
+    expect(editor.fields.map((f) => f.handle.current.value)).toEqual(['', '']);
   });
 });

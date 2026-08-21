@@ -178,4 +178,84 @@ describe('buildMessageEntry', () => {
       value: ['Bonjour Monde'],
     });
   });
+
+  it('updates standard xliff entry without Xcode printf variables', () => {
+    const base = parseEntry('xliff', 'Hello %@');
+    const result = buildMessageEntry(base, [
+      { name: '', keys: [], handle: { current: { value: 'Bonjour %@' } } },
+    ]);
+    expect(result).toEqual({
+      format: 'xliff',
+      id: '',
+      value: ['Bonjour %@'],
+    });
+  });
+
+  it('parses HTML as text in Xliff with escapeHTML option', () => {
+    const result = buildMessageEntry(
+      parseEntry('xliff', 'Hello, World!'),
+      [
+        {
+          name: '',
+          keys: [],
+          handle: { current: { value: 'Hello, <b>World</b>!' } },
+        },
+      ],
+      { escapeHTML: /<(\/?b)/g },
+    );
+    expect(result).toEqual({
+      format: 'xliff',
+      id: '',
+      value: ['Hello, <b>World</b>!'],
+    });
+  });
+
+  it('parses HTML as expressions in Android with escapeHTML option', () => {
+    const result = buildMessageEntry(
+      parseEntry('android', 'Hello, World!'),
+      [
+        {
+          name: '',
+          keys: [],
+          handle: { current: { value: 'Hello, <b>World</b>!' } },
+        },
+      ],
+      { escapeHTML: /<(\/?b)/g },
+    );
+    expect(result).toEqual({
+      format: 'android',
+      id: '',
+      value: [
+        'Hello, ',
+        { _: '<b>', fn: 'html' },
+        'World',
+        { _: '</b>', fn: 'html' },
+        '!',
+      ],
+    });
+  });
+
+  it.each(['xliff', 'android'])(
+    'parses XML as markup in %s without escapeHTML option',
+    (format) => {
+      const result = buildMessageEntry(parseEntry(format, 'Hello, World!'), [
+        {
+          name: '',
+          keys: [],
+          handle: { current: { value: 'Hello, <b>World</b>!' } },
+        },
+      ]);
+      expect(result).toEqual({
+        format: format,
+        id: '',
+        value: [
+          'Hello, ',
+          { open: 'b', opt: undefined },
+          'World',
+          { close: 'b' },
+          '!',
+        ],
+      });
+    },
+  );
 });

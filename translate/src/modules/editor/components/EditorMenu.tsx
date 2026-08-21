@@ -16,6 +16,7 @@ import { EditorSettings } from './EditorSettings';
 import { FailedChecks } from './FailedChecks';
 import { FtlSwitch } from './FtlSwitch';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
+import { MachinerySourceIndicator } from './MachinerySourceIndicator';
 import { TranslationLength } from './TranslationLength';
 
 /**
@@ -79,6 +80,7 @@ function MenuContent() {
       <EditorSettings settings={settings} updateSetting={updateSetting} />
       <KeyboardShortcuts />
       <TranslationLength />
+      <MachinerySourceIndicator />
       <div className='actions'>
         <Localized id='editor-EditorMenu--button-copy' attrs={{ title: true }}>
           <button

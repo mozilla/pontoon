@@ -32,7 +32,10 @@ class Command(BaseCommand):
         language_name = options["language_name"]
 
         translator = OpenAIService()
-        translation = translator.get_translation(
-            english_text, target_text, characteristic, language_name
+        result = translator.get_translation(
+            english_text,
+            [{"source": "machine-translation", "text": target_text}],
+            characteristic,
+            language_name,
         )
-        self.stdout.write(self.style.SUCCESS(translation))
+        self.stdout.write(self.style.SUCCESS(result.text))

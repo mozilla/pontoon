@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useRef } from 'react';
-import { type MachineryTranslation, fetchGPTTransform } from '~/api/machinery';
+import {
+  type MachineryTranslation,
+  fetchOpenAITranslation,
+} from '~/api/machinery';
 
 type SelState = {
   loading: boolean;
@@ -51,9 +54,9 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
     });
     setVersion((v) => v + 1); // Trigger re-render
 
-    const machineryTranslations = await fetchGPTTransform(
+    const machineryTranslations = await fetchOpenAITranslation(
       mt.original,
-      mt.translation,
+      { [mt.sources[0]]: [mt.translation] },
       characteristic,
       localeCode,
       entityPk,

@@ -1,5 +1,7 @@
 import textwrap
 
+from dataclasses import dataclass
+
 from openai import OpenAI
 
 from django.conf import settings
@@ -11,6 +13,21 @@ from pontoon.machinery.utils import (
 )
 
 
+@dataclass
+class OpenAITranslation:
+    """Result of a single `OpenAIService.get_translation()` call.
+
+    A cache hit costs nothing, so it counts towards how often a suggestion was
+    shown but not towards spend; token counts are only set when the API was
+    actually called.
+    """
+
+    text: str
+    cache_hit: bool
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+
+
 class OpenAIService:
     def __init__(self):
         if not settings.OPENAI_API_KEY:
@@ -20,7 +37,7 @@ class OpenAIService:
     def get_translation(
         self,
         english_text,
-        translated_text,
+        references,
         characteristic,
         locale,
         entity_key=None,
@@ -29,28 +46,13 @@ class OpenAIService:
         resource_comment=None,
         pinned_comments=None,
         terms=None,
-    ):
-        terms_cache_key = str(sorted(t.get("text", "") for t in terms)) if terms else ""
-        pinned_comments_cache_key = (
-            str(sorted(pinned_comments)) if pinned_comments else ""
-        )
-        cache_key = get_machinery_service_cache_key(
-            "openai_chatgpt",
-            english_text,
-            translated_text,
-            characteristic,
-            locale.code,
-            entity_key or "",
-            entity_comment or "",
-            group_comment or "",
-            resource_comment or "",
-            pinned_comments_cache_key,
-            terms_cache_key,
-        )
-        cached = cache.get(cache_key)
-        if cached is not None:
-            return cached
-
+    ) -> OpenAITranslation:
+        """
+        :param references: Existing translations to give the model as reference,
+            as a ``{source: [text, …]}`` mapping, in the order they should be
+            presented. May be empty, in which case the model translates from the
+            English source alone.
+        """
         style_goals = {
             "informal": f"Use simple, everyday {locale.name} ({locale.code}) — avoid jargon, technical terms, and formal constructions.",
             "formal": f"Use formal {locale.name} ({locale.code}) throughout; maintain a consistent register and do not mix formal and informal modes.",
@@ -92,16 +94,42 @@ class OpenAIService:
                 f"TERMINOLOGY:\nThese are terminology matches in the source text that you should consider:\n{terms_block}"
             )
         context_parts.append(f"ENGLISH SOURCE:\n{english_text}")
-        context_parts.append(f"MACHINE TRANSLATION (for reference):\n{translated_text}")
+        # Flattened, because a source may contribute more than one text and the
+        # prompt presents them as a flat list.
+        flat_references = [
+            (source, text) for source, texts in references.items() for text in texts
+        ]
+        match len(flat_references):
+            case 0:
+                reference_instruction = ""
+            # A single reference is rendered exactly as the machine translation
+            # was before references became a mapping, so that refining one
+            # machine translation keeps producing the prompt it always has.
+            case 1:
+                context_parts.append(
+                    f"MACHINE TRANSLATION (for reference):\n{flat_references[0][1]}"
+                )
+                reference_instruction = "Use the provided machine translation as a reference, but you are not bound by it — rewrite freely to achieve the best result.\n"
+            case _:
+                reference_block = "\n".join(
+                    f"- {source}: {text}" for source, text in flat_references
+                )
+                context_parts.append(
+                    f"EXISTING SUGGESTIONS (for reference):\n{reference_block}"
+                )
+                reference_instruction = "Use the provided suggestions as references, but you are not bound by them — rewrite freely to achieve the best result.\n"
+
         user_prompt = "\n\n".join(context_parts)
 
-        system_header = textwrap.dedent(
-            f"""\
+        system_header = (
+            textwrap.dedent(
+                f"""\
             You are an expert {locale.name} ({locale.code}) localization specialist.
 
             Your task: produce a {characteristic} {locale.name} ({locale.code}) translation of a UI string.
-            Use the provided machine translation as a reference, but you are not bound by it — rewrite freely to achieve the best result.
             """
+            )
+            + reference_instruction
         )
 
         context_instructions = []
@@ -157,6 +185,16 @@ class OpenAIService:
 
         system_message = system_header + context_block + system_rules
 
+        cache_key = get_machinery_service_cache_key(
+            "openai_chatgpt",
+            settings.OPENAI_MODEL,
+            system_message,
+            user_prompt,
+        )
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return OpenAITranslation(text=cached, cache_hit=True)
+
         # Call the OpenAI API with the constructed prompt
         response = self.client.chat.completions.create(
             model=settings.OPENAI_MODEL,
@@ -166,8 +204,15 @@ class OpenAIService:
             ],
             temperature=0,  # Set temperature to 0 for deterministic output
             top_p=1,  # Set top_p to 1 to consider the full distribution
+            reasoning_effort="none",  # Disable reasoning for faster responses
         )
 
         result = response.choices[0].message.content.strip()
         set_machinery_service_cache_key(cache_key, result)
-        return result
+        usage = getattr(response, "usage", None)
+        return OpenAITranslation(
+            text=result,
+            cache_hit=False,
+            prompt_tokens=getattr(usage, "prompt_tokens", None),
+            completion_tokens=getattr(usage, "completion_tokens", None),
+        )

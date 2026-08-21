@@ -2,31 +2,26 @@ import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
 import { EditorData, EditorResult } from '~/context/Editor';
+import { pojoEquals } from '~/utils/pojo';
 
 import './MachinerySourceIndicator.css';
 
 export function MachinerySourceIndicator() {
-  const { fields, machinery, sourceView } = useContext(EditorData);
-  // Included to re-render on input changes
-  useContext(EditorResult);
+  const { autofilled } = useContext(EditorData);
+  const result = useContext(EditorResult);
 
-  if (
-    !machinery ||
-    machinery.manual ||
-    sourceView ||
-    fields.length !== 1 ||
-    machinery.translation !== fields[0].handle.current.value
-  ) {
+  if (!autofilled || !pojoEquals(autofilled, result)) {
     return null;
   }
 
   return (
     <Localized
-      id='editor-MachinerySourceIndicator--text'
+      id='editor-MachinerySourceIndicator--match'
+      attrs={{ title: true }}
       elems={{ stress: <span className='stress' /> }}
     >
-      <div className='tm-source'>
-        {'<stress>100%</stress> MATCH FROM TRANSLATION MEMORY'}
+      <div className='tm-source' title='100% Translation Memory match'>
+        {'<stress>100%</stress> MATCH'}
       </div>
     </Localized>
   );

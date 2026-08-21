@@ -171,10 +171,10 @@ def test_kitchen_sink():
                 r"""
                 Pontoon/test-project: Update Test (German|French) \((de|fr)-Test\), Test (German|French) \((de|fr)-Test\)
 
-                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
-                Co-authored-by: user\d+ <user\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: user\d+ \((de|fr)-Test\) <user\d+@example.com>
+                Co-authored-by: user\d+ \((de|fr)-Test\) <user\d+@example.com>
+                Co-authored-by: user\d+ \((de|fr)-Test\) <user\d+@example.com>
+                Co-authored-by: user\d+ \((de|fr)-Test\) <user\d+@example.com>
                 """
             ).strip(),
             commit_msg,
