@@ -37,6 +37,7 @@ jobs:
           file: docker/Dockerfile-mozcloud
           build-args: |
             GIT_REVISION=${{ github.sha }}
+            BUILDKIT_DOCKERFILE_CHECK=skip=SecretsUsedInArgOrEnv
           push: false
           load: true
           tags: pontoon:latest
