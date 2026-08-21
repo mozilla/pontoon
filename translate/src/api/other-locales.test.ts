@@ -51,7 +51,7 @@ describe('fetchAllLocales', () => {
     it('does not paginate for a single project (only calls GET once)', async () => {
       vi.mocked(GET).mockResolvedValueOnce({
         localizations: [{ locale: { code: 'de', name: 'German' } }],
-        next: '/api/v2/projects/terminology/?page=2', 
+        next: '/api/v2/projects/terminology/?page=2',
       });
 
       await fetchAllLocales('terminology');
@@ -103,4 +103,3 @@ describe('fetchAllLocales', () => {
     });
   });
 });
-
