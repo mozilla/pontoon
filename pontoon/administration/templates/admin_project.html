@@ -33,6 +33,16 @@
 
     {% csrf_token %}
 
+    {% if form_errors %}
+      <div class="errors form-errors">
+        <ul class="errorlist">
+          {% for error in form_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
     {% if pk %}
       <input type="hidden" value="{{ pk }}" name="pk" />
     {% endif %}

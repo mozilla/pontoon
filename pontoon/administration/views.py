@@ -112,6 +112,32 @@ def get_project_locales(request):
     return JsonResponse(data, safe=False)
 
 
+def _collect_errors(form=None, formsets=()):
+    """
+    Flatten all errors of a form and its formsets into a list of readable strings.
+
+    Some fields are rendered inside collapsed sections of the project form, so their
+    errors would otherwise never be shown in the admin panel.
+    """
+    errors = []
+
+    def add_form_errors(f):
+        for field in f:
+            errors.extend(f"{field.label}: {error}" for error in field.errors)
+        errors.extend(f.non_field_errors())
+
+    if form is not None:
+        add_form_errors(form)
+    for formset in formsets:
+        if formset is None:
+            continue
+        errors.extend(formset.non_form_errors())
+        for f in formset:
+            add_form_errors(f)
+
+    return errors
+
+
 @transaction.atomic
 def manage_project(request, slug=None, template="admin_project.html"):
     """Admin project."""
@@ -310,6 +336,9 @@ def manage_project(request, slug=None, template="admin_project.html"):
         "locales_pretranslate": locales_pretranslate,
         "locales_pretranslate_available": locales_pretranslate_available,
         "subtitle": subtitle,
+        "form_errors": _collect_errors(
+            form, (repo_formset, external_resource_formset, tag_formset)
+        ),
         "pk": pk,
         "project": project,
         "projects": projects,
