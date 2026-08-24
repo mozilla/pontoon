@@ -56,6 +56,11 @@ def sync_resources_from_repo(
                     xliff_source_entries=True,
                 )
                 assert res.format
+                # XLIFF templates _should_ not contain <target> elements,
+                # but if they do, we strip them out.
+                if res.format == L10nFormat.xliff:
+                    for entry in res.all_entries():
+                        entry.del_meta("target")
                 try:
                     Resource.Format(res.format.name)
                     updates[db_path] = res

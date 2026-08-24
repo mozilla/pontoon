@@ -15,6 +15,7 @@ class Section(models.Model):
     resource: models.ForeignKey[Resource] = models.ForeignKey(
         Resource, models.CASCADE, related_name="sections"
     )
+    resource_id: int
     key = ArrayField(models.TextField())
     meta = ArrayField(ArrayField(models.TextField(), size=2), default=list)
     comment = models.TextField(blank=True)

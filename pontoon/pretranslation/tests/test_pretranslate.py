@@ -228,8 +228,8 @@ def test_get_pretranslations_fluent_accesskeys_label_attribute(
     expected = dedent(
         """
         title = gt_translation
-            .label = gt_translation
             .aria-label = gt_translation
+            .label = gt_translation
             .value = gt_translation
             .accesskey = g
     """
@@ -799,8 +799,8 @@ def test_get_pretranslations_fluent_placeholders(
     expected = dedent(
         """
         batman = GT: The { $dark } Knight
-            .weapon = GT: Brain and { -wayne-enterprise }
             .history = GT: Lost { 2 } parents, has { 1 } "$alfred"
+            .weapon = GT: Brain and { -wayne-enterprise }
     """
     )
 

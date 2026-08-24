@@ -7,13 +7,19 @@ from unittest.mock import Mock
 
 import pytest
 
+from moz.l10n.formats import Format
+from moz.l10n.model import Entry, Metadata, PatternMessage, Resource, Section
+
 from django.conf import settings
 from django.utils import timezone
 
-from pontoon.base.models import ChangedEntityLocale
+from pontoon.base.models import ChangedEntityLocale, Resource as DbResource
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import find_paths
-from pontoon.sync.core.translations_to_repo import sync_translations_to_repo
+from pontoon.sync.core.translations_to_repo import (
+    build_moz_l10n_resource,
+    sync_translations_to_repo,
+)
 from pontoon.sync.tests.utils import build_file_tree
 from pontoon.test.factories import (
     EntityFactory,
@@ -21,6 +27,7 @@ from pontoon.test.factories import (
     ProjectFactory,
     RepositoryFactory,
     ResourceFactory,
+    SectionFactory,
     TranslatedResourceFactory,
     TranslationFactory,
 )
@@ -104,17 +111,19 @@ def test_remove_entity():
         TranslatedResourceFactory.create(locale=locale, resource=res_a)
         TranslatedResourceFactory.create(locale=locale, resource=res_b)
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
+        section = SectionFactory.create(resource=res_c, key=[])
         for i in range(3):
             if i != 1:
                 entity = EntityFactory.create(
                     resource=res_c,
+                    section=section,
                     key=[f"key-{i}"],
-                    string=f"key-{i} = Message {i}\n",
+                    value=[f"Message {i}"],
                 )
                 TranslationFactory.create(
                     entity=entity,
                     locale=locale,
-                    string=f"key-{i} = Translation {i}\n",
+                    value=[f"Translation {i}"],
                     active=True,
                     approved=True,
                 )
@@ -192,51 +201,59 @@ def test_add_translation():
         TranslatedResourceFactory.create(locale=locale, resource=res_a)
         TranslatedResourceFactory.create(locale=locale, resource=res_b)
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
+        section = SectionFactory.create(resource=res_c, key=[])
         ent_0 = EntityFactory.create(
             resource=res_c,
+            section=section,
             key=["key-0"],
-            string="key-0 = Message 0\n",
+            value=["Message 0"],
         )
         TranslationFactory.create(
             entity=ent_0,
             locale=locale,
-            string="key-0 = Translation 0\n",
+            value=["Translation 0"],
             active=True,
             approved=True,
         )
         ent_1 = EntityFactory.create(
             resource=res_c,
+            section=section,
             key=["key-1"],
-            string="key-1 = Message 1\n",
+            value=["Message 1"],
         )
         TranslationFactory.create(
             entity=ent_1,
             locale=locale,
-            string="key-1 = Translation 1\n",
+            value=["Translation 1"],
             active=True,
             approved=True,
         )
         ent_2 = EntityFactory.create(
             resource=res_c,
+            section=section,
             key=["key-2"],
-            string="key-2 =\n    .attr = Message 2\n",
+            value=[],
+            properties={"attr": ["Message 2"]},
         )
         TranslationFactory.create(
             entity=ent_2,
             locale=locale,
-            string="key-2 =\n    .attr = Translation 2\n",
+            value=[],
+            properties={"attr": ["Translation 2"]},
             active=True,
             approved=True,
         )
         ent_3 = EntityFactory.create(
             resource=res_c,
+            section=section,
             key=["-term-3"],
-            string="-term-3 = Term 3\n",
+            value=["Term 3"],
         )
         TranslationFactory.create(
             entity=ent_3,
             locale=locale,
-            string="-term-3 = Translation 3\n    .attr = Term attribute\n",
+            value=["Translation 3"],
+            properties={"attr": ["Term attribute"]},
             active=True,
             approved=True,
         )
@@ -316,12 +333,12 @@ def test_directory_creation_on_translation_update():
         entity = EntityFactory.create(
             resource=res_c,
             key=["key-0"],
-            string="key-0 = Message 0\n",
+            value=["Message 0"],
         )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="key-0 = Translation 0\n",
+            value=["Translation 0"],
             active=True,
             approved=True,
         )
@@ -369,3 +386,93 @@ def test_directory_creation_on_translation_update():
         assert exists(target_path), (
             "Expected translated file to be created in nested directories."
         )
+
+
+@pytest.mark.django_db
+def test_build_fluent_resource():
+    res = ResourceFactory(
+        format=DbResource.Format.FLUENT, path="path/to/file.ftl", comment="R"
+    )
+    s0 = SectionFactory(resource=res, key=[])
+    EntityFactory(resource=res, section=s0, order=0, key=["e0"], value=["E0"])
+    s1 = SectionFactory(resource=res, key=[], comment="S1")
+    e1 = EntityFactory(resource=res, section=s1, order=1, key=["e1"], value=["E1"])
+    s2 = SectionFactory(resource=res, key=[])
+    EntityFactory(resource=res, section=s2, order=2, key=["e2"], value=["E2"])
+
+    assert build_moz_l10n_resource(res) == Resource(
+        format=Format.fluent,
+        comment="R",
+        sections=[
+            Section(id=(), entries=[Entry(id=("e0",), value=PatternMessage(["E0"]))]),
+            Section(
+                id=(),
+                comment="S1",
+                entries=[Entry(id=("e1",), value=PatternMessage(["E1"]))],
+            ),
+            Section(id=(), entries=[Entry(id=("e2",), value=PatternMessage(["E2"]))]),
+        ],
+    )
+
+    e1.order = 3
+    e1.save()
+    assert build_moz_l10n_resource(res) == Resource(
+        format=Format.fluent,
+        comment="R",
+        sections=[
+            Section(id=(), entries=[Entry(id=("e0",), value=PatternMessage(["E0"]))]),
+            Section(id=(), entries=[Entry(id=("e2",), value=PatternMessage(["E2"]))]),
+            Section(
+                id=(),
+                comment="S1",
+                entries=[Entry(id=("e1",), value=PatternMessage(["E1"]))],
+            ),
+        ],
+    )
+
+
+@pytest.mark.django_db
+def test_build_xliff_resource():
+    res = ResourceFactory(format=DbResource.Format.XCODE, path="file.xliff")
+    s1 = SectionFactory(resource=res, key=["path/to/f2"])
+    EntityFactory(
+        resource=res, section=s1, order=1, key=["path/to/f2", "e1"], value=["E1"]
+    )
+    s0 = SectionFactory(resource=res, key=["path/to/f1"])
+    EntityFactory(
+        resource=res, section=s0, order=2, key=["path/to/f1", "e2"], value=["E2"]
+    )
+    EntityFactory(
+        resource=res, section=s0, order=0, key=["path/to/f1", "e0"], value=["E0"]
+    )
+
+    assert build_moz_l10n_resource(res) == Resource(
+        format=Format.xliff,
+        sections=[
+            Section(
+                id=("path/to/f1",),
+                entries=[
+                    Entry(
+                        id=("e0",),
+                        meta=[Metadata("source", "E0")],
+                        value=PatternMessage(["E0"]),
+                    ),
+                    Entry(
+                        id=("e2",),
+                        meta=[Metadata("source", "E2")],
+                        value=PatternMessage(["E2"]),
+                    ),
+                ],
+            ),
+            Section(
+                id=("path/to/f2",),
+                entries=[
+                    Entry(
+                        id=("e1",),
+                        meta=[Metadata("source", "E1")],
+                        value=PatternMessage(["E1"]),
+                    ),
+                ],
+            ),
+        ],
+    )
