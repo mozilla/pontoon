@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        Sends the monthly Community Health Report to all admins as a notification.
+        Sends the monthly locale health report as a notification and email.
 
         Compares the two most recent monthly CHS snapshots and reports the locales
         whose score changed by at least MONTHLY_HEALTH_REPORT_CHS_THRESHOLD.
