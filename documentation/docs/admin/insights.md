@@ -30,7 +30,7 @@ Two of the metrics above — the number of enabled projects and project completi
 
 Administrators can mark a project as a key project in the Django admin (`/a/base/project/`) using the `Is chs project` flag. A team counts as enabled for a key project as soon as it is added to that project, just as it would for any other project (see [Adding a new project](adding-new-project.md)).
 
-If no project is marked as a key project, both metrics are zero for every team, the `Community health score` loses the points they carry, and no team qualifies for the [monthly locale health report](#monthly-locale-health-report).
+If no projects are marked as key projects, both metrics are zero for every team. Consequently, the Community health score excludes the points associated with these metrics, and no team qualifies for the [monthly locale health report](#monthly-locale-health-report).
 
 #### Community health score chart
 
