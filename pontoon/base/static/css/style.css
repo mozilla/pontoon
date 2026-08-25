@@ -814,15 +814,11 @@ header .right .select .menu {
   padding: 0;
 }
 
-.notifications .menu li.notification-item .description {
-  color: var(--translation-color);
-}
-
-.notifications .menu li.notification-item .description .positive {
+.notifications .menu li.notification-item .message .positive {
   color: var(--status-translated);
 }
 
-.notifications .menu li.notification-item .description .negative {
+.notifications .menu li.notification-item .message .negative {
   color: var(--status-error);
 }
 
@@ -832,13 +828,7 @@ header .right .select .menu {
 .notifications .menu li.notification-item .message h3,
 .notifications .menu li.notification-item .message h4,
 .notifications .menu li.notification-item .message h5,
-.notifications .menu li.notification-item .message h6,
-.notifications .menu li.notification-item .description h1,
-.notifications .menu li.notification-item .description h2,
-.notifications .menu li.notification-item .description h3,
-.notifications .menu li.notification-item .description h4,
-.notifications .menu li.notification-item .description h5,
-.notifications .menu li.notification-item .description h6 {
+.notifications .menu li.notification-item .message h6 {
   color: var(--white-1);
   font-size: 14px;
   font-style: normal;
@@ -847,28 +837,23 @@ header .right .select .menu {
   text-transform: none;
 }
 
-.notifications .menu li.notification-item .message h1,
-.notifications .menu li.notification-item .description h1 {
+.notifications .menu li.notification-item .message h1 {
   font-size: 18px;
 }
 
-.notifications .menu li.notification-item .message h2,
-.notifications .menu li.notification-item .description h2 {
+.notifications .menu li.notification-item .message h2 {
   font-size: 16px;
 }
 
-.notifications .menu li.notification-item .message p,
-.notifications .menu li.notification-item .description p {
+.notifications .menu li.notification-item .message p {
   padding: 10px 0;
 }
 
-.notifications .menu li.notification-item .message ol,
-.notifications .menu li.notification-item .description ol {
+.notifications .menu li.notification-item .message ol {
   padding-left: 20px;
 }
 
-.notifications .menu li.notification-item .message ul,
-.notifications .menu li.notification-item .description ul {
+.notifications .menu li.notification-item .message ul {
   list-style: disc;
   padding: 10px 0 10px 20px;
 }

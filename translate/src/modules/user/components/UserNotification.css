@@ -51,56 +51,11 @@
   padding: 0 3px;
 }
 
-.user-notification .description {
-  color: var(--translation-color);
-}
-
-.user-notification .description ul {
-  list-style: disc;
-  margin: 0;
-  padding: 10px 0 10px 20px;
-}
-
-.user-notification .description ul li {
-  padding: 2px 4px;
-}
-
-.user-notification .description ol {
-  padding-left: 20px;
-}
-
-.user-notification .description h1,
-.user-notification .description h2,
-.user-notification .description h3,
-.user-notification .description h4,
-.user-notification .description h5,
-.user-notification .description h6 {
-  color: var(--white-1);
-  font-size: 14px;
-  font-style: normal;
-  font-weight: bold;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.user-notification .description h1 {
-  font-size: 18px;
-}
-
-.user-notification .description h2 {
-  font-size: 16px;
-  padding-bottom: 2px;
-}
-
-.user-notification .description p {
-  padding: 10px 0;
-}
-
-.user-notification .description .positive {
+.user-notification .message .positive {
   color: var(--status-translated);
 }
 
-.user-notification .description .negative {
+.user-notification .message .negative {
   color: var(--status-error);
 }
 
