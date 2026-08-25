@@ -50,7 +50,7 @@ Plots the approval rate of pretranslations for each project, highlighting which 
 
 ## Monthly locale health report
 
-Once a month, after new locale health snapshots are collected, Pontoon compares the two most recent `Community health scores` of each team and reports the ones that moved the most. The report lists every affected team with its score from the previous month, its current score, and the change between them, expressed as a percentage of the previous score. Teams are ordered by the size of that change, largest first, regardless of whether they went up or down.
+Once a month, after new locale health snapshots are collected, Pontoon compares each team’s two most recent Community Health Scores and reports the teams with the largest changes. The report lists each affected team’s score from the previous month, its current score, and the percentage change relative to the previous score. Teams are ordered by the absolute size of the change, largest first, regardless of whether their scores increased or decreased.
 
 A team is included when it is enabled for at least one [key project](#key-projects), has a snapshot in both months, and its score changed by at least 2%. The threshold can be changed through the `MONTHLY_HEALTH_REPORT_CHS_THRESHOLD` environment variable.
 
