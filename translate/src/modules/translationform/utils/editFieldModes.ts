@@ -1,10 +1,15 @@
 import { StreamParser } from '@codemirror/language';
 
+// Avoids saving {} for snapshots.
+// https://github.com/mozilla/pontoon/issues/4438
+const copyStack = <T>(state: T[]): T[] => state.slice();
+
 export const fluentMode: StreamParser<Array<'expression' | 'literal' | 'tag'>> =
   {
     name: 'fluent',
     languageData: { closeBrackets: { brackets: ['(', '[', '{', '"', '<'] } },
     startState: () => [],
+    copyState: copyStack,
     token(stream, state) {
       const ch = stream.next();
       switch (state.at(-1)) {
@@ -95,6 +100,7 @@ export const commonMode: StreamParser<Array<'literal' | 'tag'>> = {
   name: 'common',
   languageData: { closeBrackets: { brackets: ['(', '[', '{', '"', '<'] } },
   startState: () => [],
+  copyState: copyStack,
   token(stream, state) {
     if (
       stream.match(printf) ||
