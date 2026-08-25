@@ -133,7 +133,7 @@ def get_monthly_snapshot_deltas(current_snapshots, previous_snapshots, metrics):
 
 def get_monthly_health_report():
     """
-    Build the monthly locale health report.
+    Build the monthly health report.
 
     Returns the locales that run at least one key project (per their current
     snapshot) and whose CHS moved by at least

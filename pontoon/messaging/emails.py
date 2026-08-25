@@ -654,7 +654,7 @@ def send_verification_email(user, link):
 
 def send_monthly_health_report_emails(report):
     """
-    Sends monthly locale health report emails to filtered users.
+    Sends monthly health report emails to filtered users.
     """
     log.info("Start sending report emails.")
 
@@ -662,7 +662,7 @@ def send_monthly_health_report_emails(report):
         is_active=True, is_staff=True, profile__monthly_health_report=True
     )
 
-    subject = f"Monthly locale health report for {report['month']} {report['year']}"
+    subject = f"Monthly health report for {report['month']} {report['year']}"
     template = get_template("messaging/emails/monthly_health_report.html")
 
     body_html = template.render(

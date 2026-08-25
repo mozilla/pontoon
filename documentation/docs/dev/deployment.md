@@ -467,14 +467,14 @@ at any time using the `--force` option.
 ./manage.py send_monthly_activity_emails
 ```
 
-### Send Monthly Locale Health Report Notifications & Emails
+### Send Monthly Health Report Notifications & Emails
 
-This job sends the monthly locale health report to admin users via
+This job sends the monthly health report to admin users via
 notifications & email. It is designed to run on a specific day of the
 month but can be forced to run at any time using the `--force` option.
 
 Note: this command should only be run after the `collect_chs_snapshots`
-command, as monthly locale health reports depend on the most recent
+command, as monthly health reports depend on the most recent
 locale health snapshots available.
 
 ``` bash

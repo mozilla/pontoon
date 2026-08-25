@@ -10,7 +10,7 @@ from pontoon.settings.base import MONTHLY_CHS_SNAPSHOTS_DAY
 
 
 class Command(BaseCommand):
-    help = "Compiles and sends the monthly locale health report to all admins."
+    help = "Compiles and sends the monthly health report to all admins."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        Sends the monthly locale health report as a notification and email.
+        Sends the monthly health report as a notification and email.
 
         Compares the two most recent monthly CHS snapshots and reports the locales
         whose score changed by at least MONTHLY_HEALTH_REPORT_CHS_THRESHOLD.

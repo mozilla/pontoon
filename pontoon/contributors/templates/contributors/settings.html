@@ -114,11 +114,11 @@
           {% if user.is_staff %}
             {{
               Checkbox.checkbox(
-              'Monthly locale health report',
+              'Monthly health report',
               class='field monthly-health-report',
               attribute='monthly_health_report',
               is_enabled=user.profile.monthly_health_report,
-              title='Receive monthly locale health report email',
+              title='Receive monthly health report email',
               help="Get an email report of community health score metrics in the last month.")
             }}
           {% endif %}
