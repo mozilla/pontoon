@@ -28,7 +28,7 @@ By default the table shows the raw value of each metric. Click the `Show scores`
 
 Two of the metrics above — the number of enabled projects and project completion — are calculated only across projects marked as key projects, rather than across all projects a team works on. The enabled projects metric is the share of all key projects enabled for the team. The project completion metric is the share of translated strings across the key projects for which the team is enabled. Disabled projects do not count toward either metric, while project completion also excludes system projects and projects that are not visible.
 
-Marking a project as a key project is available in the Django admin (`/a/base/project/`) using the `Is chs project` flag. A team then counts as enabled for that project as soon as the team is added to it, the same way as for any other project (see [Adding a new project](adding-new-project.md)).
+Administrators can mark a project as a key project in the Django admin (`/a/base/project/`) using the `Is chs project` flag. A team counts as enabled for a key project as soon as it is added to that project, just as it would for any other project (see [Adding a new project](adding-new-project.md)).
 
 If no project is marked as a key project, both metrics are zero for every team, the `Community health score` loses the points they carry, and no team qualifies for the [monthly locale health report](#monthly-locale-health-report).
 
