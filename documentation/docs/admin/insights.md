@@ -52,6 +52,6 @@ Plots the approval rate of pretranslations for each project, highlighting which 
 
 Once a month, after new locale health snapshots are collected, Pontoon compares each team’s two most recent Community Health Scores and reports the teams with the largest changes. The report lists each affected team’s score from the previous month, its current score, and the percentage change relative to the previous score. Teams are ordered by the absolute size of the change, largest first, regardless of whether their scores increased or decreased.
 
-A team is included when it is enabled for at least one [key project](#key-projects), has a snapshot in both months, and its score changed by at least 2%. The threshold can be changed through the `MONTHLY_HEALTH_REPORT_CHS_THRESHOLD` environment variable.
+A team is included if it is enabled for at least one [key project](#key-projects), has a snapshot for both months, and its score changed by at least 2%. The threshold can be configured using the `MONTHLY_HEALTH_REPORT_CHS_THRESHOLD` environment variable.
 
 Staff users receive the report as a notification in Pontoon. To also receive it by email, enable `Monthly locale health report` in the `Email` section of your [settings](../localizer/users.md).
