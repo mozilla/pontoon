@@ -88,6 +88,10 @@
   padding: 10px;
 }
 
+.user-notification .message.report {
+  padding: 0;
+}
+
 .user-notification .message.trim,
 .user-notification .message.trim p {
   pointer-events: none;
