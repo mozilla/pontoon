@@ -87,7 +87,7 @@
           {% endif %}
 
           {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
-            <div class="message">{{ description|safe }}</div>
+            <div class="message report">{{ description|safe }}</div>
 
             {{ notification_time(notification) }}
           {% elif target and target.resource %}
