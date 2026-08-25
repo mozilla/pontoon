@@ -499,22 +499,6 @@ textarea.strings-source {
   width: 100%;
 }
 
-.form-errors {
-  text-align: left;
-}
-
-.form-errors .errorlist {
-  display: block;
-  line-height: 18px;
-  margin-bottom: 10px;
-}
-
-.form-errors .errorlist li {
-  display: list-item;
-  list-style: disc;
-  margin-left: 20px;
-}
-
 .notification {
   display: block;
   margin-left: auto;
