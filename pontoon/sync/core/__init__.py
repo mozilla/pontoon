@@ -84,7 +84,7 @@ def sync_project(
         or updated_trans_count
     )
     if added_entities_count > 0:
-        notify_users(project, added_entities_count)
+        notify_users(project, now)
     if readonly:
         log.info(f"{log_prefix} Skipping commit to read-only repo")
         repo_changed = False

@@ -226,6 +226,7 @@ def test_add_resources():
 
         # Sync with no translations
         sync_project_task(project.pk)
+        assert Sync.objects.get(project=project).status == Sync.Status.DONE
 
         # Test that entities are generated, translations are not, and FTL & XLIFF are localizable
         assert {
