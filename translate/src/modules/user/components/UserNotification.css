@@ -51,18 +51,45 @@
   padding: 0 3px;
 }
 
-.user-notification .description ul {
-  list-style: disc;
-  margin: 0;
-  padding: 10px 0 10px 20px;
+.user-notification .message .positive {
+  color: var(--status-translated);
 }
 
-.user-notification .description ul li {
-  padding: 2px 4px;
+.user-notification .message .negative {
+  color: var(--status-error);
+}
+
+.user-notification table {
+  color: var(--light-grey-7);
+  font-size: 13px;
+  text-align: left;
+  width: 100%;
+}
+
+.user-notification tbody {
+  font-weight: 300;
+}
+
+.user-notification thead tr {
+  border-bottom: 1px solid var(--main-border-1);
+}
+
+.user-notification th {
+  color: var(--light-grey-7);
+  padding: 10px;
+  text-transform: uppercase;
+}
+
+.user-notification td {
+  padding: 15px 10px;
 }
 
 .user-notification .message {
   padding: 10px;
+}
+
+.user-notification .message.report {
+  padding: 0;
 }
 
 .user-notification .message.trim,

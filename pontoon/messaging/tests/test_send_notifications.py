@@ -3,10 +3,15 @@ from unittest.mock import patch
 
 import pytest
 
+from django.template.loader import render_to_string
 from django.utils import timezone
 
+from pontoon.base.templatetags.helpers import full_url
 from pontoon.messaging.management.commands.send_deadline_notifications import (
     Command as DeadlineCommand,
+)
+from pontoon.messaging.management.commands.send_monthly_health_report_notifications_and_emails import (
+    Command as HealthReportCommand,
 )
 from pontoon.messaging.management.commands.send_review_notifications import (
     Command as ReviewCommand,
@@ -20,7 +25,25 @@ from pontoon.test.factories import (
     ProjectLocaleFactory,
     ResourceFactory,
     TranslationFactory,
+    UserFactory,
 )
+
+
+def health_report(locale):
+    return {
+        "locale_rows": [
+            {
+                "locale": locale,
+                "previous_chs": 50,
+                "current_chs": 60,
+                "delta": 10,
+                "percentage": 20,
+            }
+        ],
+        "month": "June",
+        "year": 2025,
+        "threshold": 2,
+    }
 
 
 @pytest.mark.django_db
@@ -177,6 +200,49 @@ def test_send_deadline_notifications_excludes_system_users(
 
     recipients = {call.kwargs["recipient"] for call in mock_notify.call_args_list}
     assert tm_user not in recipients
+
+
+@patch("pontoon.messaging.notifications.notify.send")
+@pytest.mark.django_db
+def test_send_monthly_health_report_notifications_notifies_admins(
+    mock_notify, admin, user_a, locale_a
+):
+    """Only admins can get monthly health reports."""
+    another_admin = UserFactory.create(username="admin_b", is_staff=True)
+    report = health_report(locale_a)
+    with patch(
+        "pontoon.messaging.management.commands.send_monthly_health_report_notifications_and_emails.get_monthly_health_report",
+        return_value=report,
+    ):
+        HealthReportCommand().handle(force=True)
+
+    recipients = {call.kwargs["recipient"] for call in mock_notify.call_args_list}
+    assert recipients == {admin, another_admin}
+
+    kwargs = mock_notify.call_args.kwargs
+    assert kwargs["category"] == "monthly_health_report"
+    assert kwargs["verb"] == "ignore"
+    assert f"{report['month']} {report['year']}" in kwargs["description"]
+    assert f"{locale_a.name} ({locale_a.code})" in kwargs["description"]
+    assert full_url("pontoon.teams.team", locale_a.code) in kwargs["description"]
+
+
+@pytest.mark.django_db
+def test_monthly_health_report_notification_no_locales(locale_a):
+    """No locales crossed the threshold for notification."""
+    report = health_report(locale_a)
+    report["locale_rows"] = []
+
+    description = render_to_string(
+        "messaging/notifications/monthly_health_report.html", report
+    )
+
+    assert "There were no locales" in description
+    assert f"{report['month']} {report['year']}" in description
+    assert full_url("pontoon.insights") in description
+
+    assert "Last month CHS" not in description
+    assert f"{locale_a.name} ({locale_a.code})" not in description
 
 
 @patch("pontoon.messaging.notifications.notify.send")

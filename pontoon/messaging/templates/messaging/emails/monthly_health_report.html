@@ -1,0 +1,102 @@
+{% extends 'messaging/emails/base.html' %}
+
+{% block title %}{{ subject }}{% endblock %}
+<!-- prettier-ignore-start -->
+{% block extend_css %}
+  table.report {
+    margin: 0 0 15px;
+  }
+
+  table.report th {
+    border-bottom: 1px solid #cccccc;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 10px 5px 0;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  table.report td {
+    border-bottom: 1px solid #eeeeee;
+    font-size: 15px;
+    padding: 8px 10px 8px 0;
+  }
+
+  table.report td.positive {
+    color: #7bc876;
+  }
+
+  table.report td.negative {
+    color: #f36;
+  }
+
+  p.note {
+    color: #888888;
+    font-size: 13px;
+  }
+{% endblock %}
+<!-- prettier-ignore-end -->
+
+{% block header %}Hello.{% endblock %}
+
+{% block subheader %}
+{% endblock %}
+
+{% block content_class %}monthly-health-report{% endblock %}
+
+{% block content %}
+  {% if locale_rows %}
+    <p>
+      Locales whose Community Health Score (CHS) changed by at least
+      {{ threshold }}% compared to the previous month and have at least one key
+      project enabled:
+    </p>
+
+    <table class="report">
+      <thead>
+        <tr>
+          <th>Locale</th>
+          <th>Last month CHS</th>
+          <th>Current CHS</th>
+          <th>Change (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for locale_row in locale_rows %}
+          <tr>
+            <td>
+              <a
+                href="{{ full_url('pontoon.teams.team', locale_row.locale.code) }}"
+                >{{ locale_row.locale.name }} ({{ locale_row.locale.code }})</a
+              >
+            </td>
+            <td>{{ locale_row.previous_chs }}</td>
+            <td>{{ locale_row.current_chs }}</td>
+            <td
+              class="{{ 'positive' if locale_row.delta > 0 else 'negative' }}"
+            >
+              {{ locale_row.percentage }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>
+      There were no locales whose Community Health Score (CHS) changed by at
+      least {{ threshold }}% compared to the previous month.
+    </p>
+  {% endif %}
+
+  <p>
+    You can view the full breakdown, including individual contributor,
+    translator and manager activity metrics, on the
+    <a href="{{ full_url('pontoon.insights') }}">Insights dashboard</a>.
+  </p>
+{% endblock %}
+
+{% block footer %}
+  If you no longer want to receive these health reports, you can turn off the
+  “Monthly health report” feature in your
+  <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
+{% endblock %}

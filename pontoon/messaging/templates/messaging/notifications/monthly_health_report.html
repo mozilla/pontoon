@@ -1,0 +1,46 @@
+<h2>Monthly Health Report: {{ month }} {{ year }}</h2>
+
+{% if locale_rows %}
+  <p>
+    Locales whose Community Health Score (CHS) changed by at least
+    {{ threshold }}% compared to the previous month and have at least one key
+    project enabled:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Locale</th>
+        <th>Last month CHS</th>
+        <th>Current CHS</th>
+        <th>Change (%)</th>
+      </tr>
+    </thead>
+
+    {% for locale_row in locale_rows %}
+      <tr>
+        <td>
+          <a href="{{ full_url('pontoon.teams.team', locale_row.locale.code) }}"
+            >{{ locale_row.locale.name }} ({{ locale_row.locale.code }})</a
+          >
+        </td>
+        <td>{{ locale_row.previous_chs }}</td>
+        <td>{{ locale_row.current_chs }}</td>
+        <td class="{{ 'positive' if locale_row.delta > 0 else 'negative' }}">
+          {{ locale_row.percentage }}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>
+    There were no locales whose Community Health Score (CHS) changed by at least
+    {{ threshold }}% compared to the previous month.
+  </p>
+{% endif %}
+
+<p>
+  You can view the full breakdown, including individual contributor, translator
+  and manager activity metrics, on the
+  <a href="{{ full_url('pontoon.insights') }}">Insights dashboard</a>.
+</p>
