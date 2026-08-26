@@ -101,13 +101,30 @@ def serialize_locale(
 def import_uploaded_file(
     project: Project, locale: Locale, res_path: str, upload: File, user: User
 ):
-    """Update translations in the database from an uploaded file."""
+    """
+    Update translations in the database from an uploaded file.
+
+    Raises an Exception describing why nothing was imported when the upload
+    yields no database updates. `find_db_updates()` only logs parse errors and
+    returns `None` for both "nothing parsed" and "nothing new", so the file is
+    parsed here first to be able to tell the three cases apart.
+    """
 
     with TemporaryDirectory() as root:
         file_path = join(root, basename(res_path))
         with open(file_path, "wb") as file:
             for chunk in upload.chunks():
                 file.write(chunk)
+        try:
+            parse_resource(
+                file_path,
+                gettext_plurals=locale.cldr_plurals_list(),
+                gettext_skip_obsolete=True,
+            )
+        except Exception as error:
+            raise Exception(
+                f"Upload failed. Could not parse {basename(res_path)}: {error}"
+            )
         paths = UploadPaths(res_path, locale.code, file_path)
         updates = find_db_updates(
             project, {locale.code: locale}, [file_path], paths, []
@@ -137,5 +154,17 @@ def import_uploaded_file(
             badge_level = badges_review_level(user)
             send_badge_notification(user, badge_name, badge_level)
         return badge_name, badge_level
+    elif updates is None:
+        raise Exception(
+            "Upload failed. No new translations found: every translation in the "
+            "uploaded file is already in Pontoon."
+        )
     else:
-        raise Exception("Upload failed.")
+        # The file parsed and holds translations, but none of its keys match a
+        # source string of this resource. Source strings come from the project
+        # repository, so they cannot be added by uploading a translation file.
+        raise Exception(
+            f"Upload failed. None of the translations in the uploaded file match a "
+            f"source string of {res_path}. New source strings have to be added to "
+            f"the project repository first."
+        )

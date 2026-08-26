@@ -11,11 +11,12 @@ list used for Entity.key exact-match lookups.
 
 import csv
 import io
+
 from unittest.mock import patch
 
 import pytest
 
-from pontoon.base.models import Resource, Translation
+from pontoon.base.models import Translation
 from pontoon.projects.utils import (
     generate_translation_stats_csv,
     get_translation_key,
@@ -25,7 +26,6 @@ from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
-    ProjectLocaleFactory,
     ResourceFactory,
     TranslationFactory,
     UserFactory,
@@ -183,11 +183,26 @@ class TestGenerateTranslationStatsCsv:
         assert rows[0]["Translation Key"] == "section.greeting"
 
     @pytest.mark.django_db
+    def test_key_encoding_follows_format_not_path(self, project, locale, user):
+        """A .json path with a non-JSON format must still use the \\x04 separator,
+        otherwise export and import disagree on the key encoding."""
+        resource = ResourceFactory(project=project, path="strings.json", format="xliff")
+        EntityFactory(resource=resource, string="Hello", key=["file.xliff", "greeting"])
+
+        rows = parse_csv_response(
+            generate_translation_stats_csv(project=project, user=user)
+        )
+
+        assert rows[0]["Translation Key"] == "file.xliff\x04greeting"
+        assert get_translation_key(key=rows[0]["Translation Key"], format="xliff") == [
+            "file.xliff",
+            "greeting",
+        ]
+
+    @pytest.mark.django_db
     def test_xliff_multi_part_key_uses_separator(self, project, locale, user):
         """Multi-element xliff keys are joined with \\x04 to preserve all parts."""
-        resource = ResourceFactory(
-            project=project, path="test.xliff", format="xliff"
-        )
+        resource = ResourceFactory(project=project, path="test.xliff", format="xliff")
         EntityFactory(
             resource=resource,
             string="Submit",
@@ -206,9 +221,7 @@ class TestGenerateTranslationStatsCsv:
     def test_approved_translation_in_locale_column(self, project, locale, user):
         resource = ResourceFactory(project=project, path="test.po", format="gettext")
         entity = EntityFactory(resource=resource, string="Hello", key=["Hello"])
-        TranslationFactory(
-            entity=entity, locale=locale, string="Hola", approved=True
-        )
+        TranslationFactory(entity=entity, locale=locale, string="Hola", approved=True)
 
         rows = parse_csv_response(
             generate_translation_stats_csv(project=project, user=user)
@@ -221,9 +234,7 @@ class TestGenerateTranslationStatsCsv:
         """Only approved translations appear in locale columns; others are blank."""
         resource = ResourceFactory(project=project, path="test.po", format="gettext")
         entity = EntityFactory(resource=resource, string="Hello", key=["Hello"])
-        TranslationFactory(
-            entity=entity, locale=locale, string="Hola", approved=False
-        )
+        TranslationFactory(entity=entity, locale=locale, string="Hola", approved=False)
 
         rows = parse_csv_response(
             generate_translation_stats_csv(project=project, user=user)
@@ -269,12 +280,8 @@ class TestGenerateTranslationStatsCsv:
         )
         resource = ResourceFactory(project=project, path="test.po", format="gettext")
         entity = EntityFactory(resource=resource, string="Hello", key=["Hello"])
-        TranslationFactory(
-            entity=entity, locale=locale1, string="Hola", approved=True
-        )
-        TranslationFactory(
-            entity=entity, locale=locale2, string="Bona", approved=True
-        )
+        TranslationFactory(entity=entity, locale=locale1, string="Hola", approved=True)
+        TranslationFactory(entity=entity, locale=locale2, string="Bona", approved=True)
 
         rows = parse_csv_response(
             generate_translation_stats_csv(project=project, user=user)
@@ -319,7 +326,12 @@ class TestUploadTranslations:
         return user
 
     def _csv(self, locale_name, rows, *, extra_headers=None):
-        headers = ["Resource", "Translation Key", "Translation Source String", locale_name]
+        headers = [
+            "Resource",
+            "Translation Key",
+            "Translation Source String",
+            locale_name,
+        ]
         if extra_headers:
             headers += extra_headers
         return build_csv(headers, rows)
@@ -349,33 +361,139 @@ class TestUploadTranslations:
         assert response.status_code == 400
         assert "Not recognizable locale names" in response.content.decode()
 
-    @pytest.mark.django_db
-    def test_unknown_resource_path_returns_400(self, project, locale, entity, user):
-        csv_file = make_csv_file(
-            self._csv(
-                locale.name,
-                [["nonexistent.po", "Hello", "Hello", "Hola"]],
-            )
-        )
-        response = upload_translations(csv_file=csv_file, project=project, user=user)
-
-        assert response.status_code == 400
-        assert "Resource not found" in response.content.decode()
+    # ── Row-level problems are skipped, not fatal ────────────────────────────
+    #
+    # Regression for the combined import issue: a full CSV export legitimately
+    # contains rows the importer cannot map (resources with no format set,
+    # entities that were removed since the export). Aborting the whole upload on
+    # the first such row made import unusable — nothing was ever created.
 
     @pytest.mark.django_db
-    def test_unknown_translation_key_returns_400(
+    def test_unknown_resource_path_is_skipped(
         self, project, locale, resource, entity, user
     ):
         csv_file = make_csv_file(
             self._csv(
                 locale.name,
-                [["test.po", "NonExistentKey", "Hello", "Hola"]],
+                [
+                    ["nonexistent.po", "Hello", "Hello", "Hola"],
+                    ["test.po", "Hello", "Hello", "Hola"],
+                ],
             )
         )
         response = upload_translations(csv_file=csv_file, project=project, user=user)
 
-        assert response.status_code == 400
-        assert "does not exist" in response.content.decode()
+        assert response is None
+        assert Translation.objects.filter(entity=entity, locale=locale).exists()
+
+    @pytest.mark.django_db
+    def test_unknown_translation_key_is_skipped(
+        self, project, locale, resource, entity, user
+    ):
+        csv_file = make_csv_file(
+            self._csv(
+                locale.name,
+                [
+                    ["test.po", "NonExistentKey", "Hello", "Nope"],
+                    ["test.po", "Hello", "Hello", "Hola"],
+                ],
+            )
+        )
+        response = upload_translations(csv_file=csv_file, project=project, user=user)
+
+        assert response is None
+        assert Translation.objects.filter(
+            entity=entity, locale=locale, string="Hola"
+        ).exists()
+        assert not Translation.objects.filter(string="Nope").exists()
+
+    @pytest.mark.django_db
+    def test_unset_resource_format_is_skipped(self, project, locale, user):
+        """Resources with no format set are exported but cannot be imported; such
+        rows must not abort the rest of the file."""
+        no_format = ResourceFactory(project=project, path="common", format="")
+        EntityFactory(resource=no_format, string="Hello", key=["Hello"])
+        good = ResourceFactory(project=project, path="ok.po", format="gettext")
+        entity = EntityFactory(resource=good, string="Bye", key=["Bye"])
+
+        csv_file = make_csv_file(
+            self._csv(
+                locale.name,
+                [
+                    ["common", "Hello", "Hello", "Hola"],
+                    ["ok.po", "Bye", "Bye", "Adios"],
+                ],
+            )
+        )
+        response = upload_translations(csv_file=csv_file, project=project, user=user)
+
+        assert response is None
+        assert Translation.objects.filter(
+            entity=entity, locale=locale, string="Adios"
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_skipped_rows_are_reported_through_messages(
+        self, project, locale, resource, entity, user, rf
+    ):
+        """Skipping silently would hide bad rows from the importing user."""
+        request = rf.post("/")
+        collected = []
+        with patch(
+            "pontoon.projects.utils.messages.warning",
+            side_effect=lambda req, msg: collected.append(msg),
+        ):
+            upload_translations(
+                csv_file=make_csv_file(
+                    self._csv(
+                        locale.name,
+                        [
+                            ["gone.po", "Hello", "Hello", "Hola"],
+                            ["test.po", "Hello", "Hello", "Hola"],
+                        ],
+                    )
+                ),
+                project=project,
+                user=user,
+                request=request,
+            )
+
+        assert len(collected) == 1
+        assert "1 translation(s) created" in collected[0]
+        assert "unknown resource: gone.po" in collected[0]
+
+    @pytest.mark.django_db
+    def test_utf8_bom_header_is_tolerated(
+        self, project, locale, resource, entity, user
+    ):
+        """Excel writes a UTF-8 BOM when saving as "CSV UTF-8"; the BOM used to
+        end up in the first header name, so every row lookup raised KeyError."""
+        csv_file = io.BytesIO(
+            self._csv(locale.name, [["test.po", "Hello", "Hello", "Hola"]]).encode(
+                "utf-8-sig"
+            )
+        )
+        response = upload_translations(csv_file=csv_file, project=project, user=user)
+
+        assert response is None
+        assert Translation.objects.filter(entity=entity, locale=locale).exists()
+
+    @pytest.mark.django_db
+    def test_short_row_without_locale_cell_is_skipped(
+        self, project, locale, resource, entity, user
+    ):
+        """A hand-edited row missing its locale column yields None from
+        DictReader; it must be skipped instead of raising AttributeError."""
+        csv_data = (
+            '"Resource","Translation Key","Translation Source String","%s"\r\n'
+            '"test.po","Hello","Hello"\r\n' % locale.name
+        )
+        response = upload_translations(
+            csv_file=make_csv_file(csv_data), project=project, user=user
+        )
+
+        assert response is None
+        assert not Translation.objects.filter(entity=entity, locale=locale).exists()
 
     # ── Skipped rows ─────────────────────────────────────────────────────────
 
@@ -390,7 +508,9 @@ class TestUploadTranslations:
 
         assert not Translation.objects.filter(entity=entity, locale=locale).exists()
 
-    @pytest.mark.parametrize("mark", ["MISSING", "PRETRANSLATED", "REJECTED", "FUZZY", "UNREVIEWED"])
+    @pytest.mark.parametrize(
+        "mark", ["MISSING", "PRETRANSLATED", "REJECTED", "FUZZY", "UNREVIEWED"]
+    )
     @pytest.mark.django_db
     def test_untranslated_marks_are_skipped(
         self, project, locale, resource, entity, user, mark
@@ -459,8 +579,11 @@ class TestUploadTranslations:
         """When a translator imports a new string the existing active translation is
         deactivated atomically before the new one is saved."""
         old = TranslationFactory(
-            entity=entity, locale=locale, string="Old Translation",
-            approved=True, active=True,
+            entity=entity,
+            locale=locale,
+            string="Old Translation",
+            approved=True,
+            active=True,
         )
 
         csv_file = make_csv_file(
@@ -471,7 +594,9 @@ class TestUploadTranslations:
         old.refresh_from_db()
         assert old.active is False
 
-        new = Translation.objects.get(entity=entity, locale=locale, string="New Translation")
+        new = Translation.objects.get(
+            entity=entity, locale=locale, string="New Translation"
+        )
         assert new.approved is True
         assert new.active is True
 
@@ -489,7 +614,12 @@ class TestUploadTranslations:
 
         csv_file = make_csv_file(
             build_csv(
-                ["Resource", "Translation Key", "Translation Source String", locale.name],
+                [
+                    "Resource",
+                    "Translation Key",
+                    "Translation Source String",
+                    locale.name,
+                ],
                 [["strings.json", "ns.greeting", "Hello", "Hola"]],
             )
         )
@@ -521,17 +651,29 @@ class TestUploadTranslations:
     @pytest.mark.django_db
     def test_xliff_multi_part_key_lookup(self, project, locale, user):
         """xliff keys exported with \\x04 separator are correctly resolved on import."""
-        resource = ResourceFactory(
-            project=project, path="test.xliff", format="xliff"
-        )
+        resource = ResourceFactory(project=project, path="test.xliff", format="xliff")
         entity = EntityFactory(
-            resource=resource, string="Submit", key=["Localizable.strings", "btn_submit"]
+            resource=resource,
+            string="Submit",
+            key=["Localizable.strings", "btn_submit"],
         )
 
         csv_file = make_csv_file(
             build_csv(
-                ["Resource", "Translation Key", "Translation Source String", locale.name],
-                [["test.xliff", "Localizable.strings\x04btn_submit", "Submit", "Abschicken"]],
+                [
+                    "Resource",
+                    "Translation Key",
+                    "Translation Source String",
+                    locale.name,
+                ],
+                [
+                    [
+                        "test.xliff",
+                        "Localizable.strings\x04btn_submit",
+                        "Submit",
+                        "Abschicken",
+                    ]
+                ],
             )
         )
         result = upload_translations(csv_file=csv_file, project=project, user=user)

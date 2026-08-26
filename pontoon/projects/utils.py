@@ -1,17 +1,23 @@
 import csv
 
+from collections import defaultdict
 from io import StringIO
 from typing import Iterable
 
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db import connection, transaction
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 
-from pontoon.translations.utils import parse_db_string_to_json
-
 from pontoon.base.models import Project, Translation
 from pontoon.base.user_utils import can_translate
+from pontoon.translations.utils import parse_db_string_to_json
+
+
+# Formats whose Entity.key is a JSON path, encoded in the CSV as a dot-joined
+# string. All other formats join key elements with \x04 (see get_translation_key).
+JSON_KEY_FORMATS = {"plain_json", "webext"}
 
 
 def generate_translation_stats_csv(project: Project, user: User) -> HttpResponse:
@@ -50,6 +56,7 @@ def generate_translation_stats_csv(project: Project, user: User) -> HttpResponse
             """
             SELECT
                 r.path AS resource_path,
+                r.format AS resource_format,
                 e.key AS entity_key,
                 e.string AS entity_string,
                 json_agg(json_build_object(
@@ -69,7 +76,7 @@ def generate_translation_stats_csv(project: Project, user: User) -> HttpResponse
             WHERE
                 r.project_id = %s AND e.obsolete = FALSE
             GROUP BY
-                r.path, e.key, e.string
+                r.path, r.format, e.key, e.string
             ORDER BY
                 r.path ASC,
                 e.key ASC
@@ -80,8 +87,8 @@ def generate_translation_stats_csv(project: Project, user: User) -> HttpResponse
         rows = cursor.fetchall()
 
     for row in rows:
-        (resource_path, entity_key, entity_string, translations) = row
-        if resource_path.endswith("json"):
+        (resource_path, resource_format, entity_key, entity_string, translations) = row
+        if resource_format in JSON_KEY_FORMATS:
             entity_key = ".".join(entity_key)
         else:
             entity_key = "\x04".join(entity_key)
@@ -102,12 +109,21 @@ def generate_translation_stats_csv(project: Project, user: User) -> HttpResponse
     return response
 
 
-def upload_translations(csv_file, project: Project, user: User):
+def upload_translations(csv_file, project: Project, user: User, request=None):
     """
     Import translations from a CSV file produced by generate_translation_stats_csv.
 
-    Returns a JsonResponse with an error message (status 400) on any validation
-    failure, or None on success (the view then issues a redirect).
+    Returns a JsonResponse with an error message (status 400) when the file as a
+    whole is unusable (missing columns, locale names that don't belong to the
+    project), or None otherwise (the view then issues a redirect).
+
+    Problems with an individual row never abort the import: unknown resource
+    paths, unsupported/unset resource formats and keys that don't match an
+    existing entity are counted and reported back through `request` (Django
+    messages) once the rest of the file has been imported. A full CSV export
+    legitimately contains such rows — e.g. resources with no format set — and
+    rejecting the whole upload because of them made import unusable on real
+    projects.
 
     Rows are skipped — not rejected — when a locale cell is blank or contains
     one of UNTRANSLATED_MARKS, or when the same translation string already
@@ -124,7 +140,7 @@ def upload_translations(csv_file, project: Project, user: User):
     # and must be skipped rather than saved as translation strings.
     UNTRANSLATED_MARKS = ["MISSING", "PRETRANSLATED", "REJECTED", "FUZZY", "UNREVIEWED"]
 
-    csv_data = csv_file.read().decode("utf-8")
+    csv_data = csv_file.read().decode("utf-8-sig")
     reader = csv.DictReader(StringIO(csv_data))
     headers = reader.fieldnames
     if not isinstance(headers, Iterable) or len(headers) < 4:
@@ -149,44 +165,35 @@ def upload_translations(csv_file, project: Project, user: User):
         name__in=set(project_locale_names) & set(locale_names)
     )
     translations = [row for row in reader if any(row.values())]
+    created = 0
+    skipped: dict[str, int] = defaultdict(int)
     for tr in translations:
         if qs := project.resources.filter(path=tr["Resource"]):
             resource = qs.first()
         else:
-            return JsonResponse(
-                data={"error": f"Resource not found: {tr['Resource']}"},
-                status=400,
-            )
+            skipped[f"unknown resource: {tr['Resource']}"] += 1
+            continue
 
         if (
             key := get_translation_key(
                 key=tr["Translation Key"], format=resource.format
             )
         ) is None:
-            return JsonResponse(
-                data={
-                    "error": f'"{resource.format}" formated strings are not supported for '
-                    "translation uploading via CSV file."
-                },
-                status=400,
-            )
+            skipped[f'unsupported format "{resource.format}" in {resource.path}'] += 1
+            continue
 
         if not (qs := resource.entities.filter(key=key, obsolete=False)):
-            return JsonResponse(
-                data={
-                    "error": f"Wrong data: translation key {key} does not exist in "
-                    f"{resource.path} of project {project.name}"
-                },
-                status=400,
-            )
+            skipped[f"unknown translation key in {resource.path}"] += 1
+            continue
 
         entity = qs.first()
 
         for locale in locales:
-            if tr[locale.name].strip() == "" or tr[locale.name] in UNTRANSLATED_MARKS:
+            # DictReader yields None for columns missing from a short row.
+            tr_string = tr.get(locale.name) or ""
+            if tr_string.strip() == "" or tr_string in UNTRANSLATED_MARKS:
                 continue
             # if same translation exists for the entity, skip creating translation
-            tr_string = tr[locale.name]
             if entity.translation_set.filter(locale=locale, string=tr_string):
                 continue
 
@@ -229,6 +236,21 @@ def upload_translations(csv_file, project: Project, user: User):
                     new_trans.save()
             else:
                 new_trans.save()
+            created += 1
+
+    if request is not None:
+        summary = f"CSV import: {created} translation(s) created."
+        if skipped:
+            reasons = sorted(skipped.items(), key=lambda kv: -kv[1])
+            details = ", ".join(
+                f"{reason} ({count} row(s))" for reason, count in reasons[:5]
+            )
+            if len(reasons) > 5:
+                details += f" and {len(reasons) - 5} other reason(s)"
+            summary += f" Skipped rows — {details}."
+            messages.warning(request, summary)
+        else:
+            messages.success(request, summary)
 
 
 def get_translation_key(key: str, format: str) -> list | None:
@@ -246,7 +268,16 @@ def get_translation_key(key: str, format: str) -> list | None:
     match format:
         case "plain_json" | "webext":
             return key.split(".")
-        case "gettext" | "android" | "dtd" | "properties" | "ini" | "fluent" | "xcode" | "xliff":
+        case (
+            "gettext"
+            | "android"
+            | "dtd"
+            | "properties"
+            | "ini"
+            | "fluent"
+            | "xcode"
+            | "xliff"
+        ):
             # \x04 (ASCII Unit Separator) is used as a delimiter because it
             # never appears in source strings, making the split unambiguous.
             return key.split("\x04")

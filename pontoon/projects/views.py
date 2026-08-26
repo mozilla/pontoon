@@ -219,7 +219,7 @@ def import_csv(request, slug=None):
     project = get_object_or_404(Project, slug=slug)
     if project and user:
         if response := utils.upload_translations(
-            csv_file=csv_file, project=project, user=user
+            csv_file=csv_file, project=project, user=user, request=request
         ):
             return response
         return redirect("pontoon.projects.project", slug=project.slug)

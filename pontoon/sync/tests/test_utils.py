@@ -185,3 +185,81 @@ def test_serialize_locale_rejects_path_traversal():
         # The escaping resource is skipped; its contents never leak.
         assert all("TOP-SECRET" not in content for content in files.values())
         assert all("secret.ftl" not in path for path in files)
+
+
+# import_uploaded_file used to raise a bare "Upload failed." for three very
+# different situations: an unparseable file, a file whose keys match no source
+# string, and a file that is simply already in sync. The message has to say
+# which one it is, or the upload looks broken for no reason.
+
+
+def _upload(project, locale, res_path, body):
+    from django.core.files.base import ContentFile
+
+    from pontoon.base.tests import UserFactory
+    from pontoon.sync.utils import import_uploaded_file
+
+    return import_uploaded_file(
+        project,
+        locale,
+        res_path,
+        ContentFile(body.encode("utf-8"), name=res_path),
+        UserFactory.create(),
+    )
+
+
+@pytest.fixture
+def upload_project():
+    locale = LocaleFactory.create(code="fr-Upload")
+    project = ProjectFactory.create(
+        name="test-upload", locales=[locale], repositories=[]
+    )
+    resource = ResourceFactory.create(
+        project=project, path="messages.json", format="plain_json"
+    )
+    entity = EntityFactory.create(resource=resource, string="Hello", key=["greeting"])
+    return project, locale, entity
+
+
+@pytest.mark.django_db
+def test_import_uploaded_file_creates_translation(upload_project):
+    project, locale, entity = upload_project
+
+    _upload(project, locale, "messages.json", '{"greeting": "Bonjour"}')
+
+    assert entity.translation_set.filter(locale=locale, string="Bonjour").exists()
+
+
+@pytest.mark.django_db
+def test_import_uploaded_file_reports_parse_error(upload_project):
+    project, locale, _ = upload_project
+
+    with pytest.raises(Exception) as error:
+        _upload(project, locale, "messages.json", "{ not json")
+
+    assert "Could not parse messages.json" in str(error.value)
+
+
+@pytest.mark.django_db
+def test_import_uploaded_file_reports_unmatched_keys(upload_project):
+    """Source strings come from the repository; uploading new keys cannot add
+    them, and the old message never said so."""
+    project, locale, _ = upload_project
+
+    with pytest.raises(Exception) as error:
+        _upload(project, locale, "messages.json", '{"brand_new_key": "Nouveau"}')
+
+    assert "None of the translations in the uploaded file match" in str(error.value)
+
+
+@pytest.mark.django_db
+def test_import_uploaded_file_reports_nothing_new(upload_project):
+    project, locale, entity = upload_project
+    TranslationFactory.create(
+        entity=entity, locale=locale, string="Bonjour", approved=True, active=True
+    )
+
+    with pytest.raises(Exception) as error:
+        _upload(project, locale, "messages.json", '{"greeting": "Bonjour"}')
+
+    assert "No new translations found" in str(error.value)
