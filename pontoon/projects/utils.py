@@ -143,7 +143,14 @@ def upload_translations(csv_file, project: Project, user: User, request=None):
     csv_data = csv_file.read().decode("utf-8-sig")
     reader = csv.DictReader(StringIO(csv_data))
     headers = reader.fieldnames
-    if not isinstance(headers, Iterable) or len(headers) < 4:
+    # The first two columns are dereferenced by name below, so their names have
+    # to be checked, not just the column count.
+    if (
+        not isinstance(headers, Iterable)
+        or len(headers) < 4
+        or headers[0] != "Resource"
+        or headers[1] != "Translation Key"
+    ):
         return JsonResponse(
             data={
                 "error": "Wrong CSV headers: should at least have 4 columns: Resource, Translation Key,"

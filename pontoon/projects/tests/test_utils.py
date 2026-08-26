@@ -349,6 +349,21 @@ class TestUploadTranslations:
         assert "Wrong CSV headers" in response.content.decode()
 
     @pytest.mark.django_db
+    def test_renamed_first_columns_return_400(self, project, user):
+        """The first two columns are looked up by name; a renamed header used to
+        raise KeyError (HTTP 500) instead of a readable error."""
+        csv_file = make_csv_file(
+            build_csv(
+                ["resource", "key", "Source", "Klingon"],
+                [["test.po", "Hello", "Hello", "Hola"]],
+            )
+        )
+        response = upload_translations(csv_file=csv_file, project=project, user=user)
+
+        assert response.status_code == 400
+        assert "Wrong CSV headers" in response.content.decode()
+
+    @pytest.mark.django_db
     def test_unknown_locale_returns_400(self, project, user):
         csv_file = make_csv_file(
             build_csv(
