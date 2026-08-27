@@ -1,12 +1,20 @@
 import { Localized, useLocalization } from '@fluent/react';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import type { RequestedEntityLocation } from '~/api/entity';
+import { logUXAction } from '~/api/uxaction';
 import { Locale } from '~/context/Locale';
 import { emptyParams, Location } from '~/context/Location';
+import { useAppSelector } from '~/hooks';
 import { useProject } from '~/modules/project';
+import { USER } from '~/modules/user';
 
 import './StringNotFound.css';
+
+const UX_EXPERIMENT = 'String Not Found 1.0';
+const UX_RENDER = 'Render: String not found';
+const UX_GO_TO_STRING = 'Click: String not found, go to string';
+const UX_SHOW_MATCHING = 'Click: String not found, show matching';
 
 function Detail({
   labelId,
@@ -38,19 +46,35 @@ export function StringNotFound({
   const locale = useContext(Locale);
   const { name: viewProjectName } = useProject();
   const { l10n } = useLocalization();
+  const isAuthUser = useAppSelector((state) => state[USER].isAuthenticated);
+
+  const allProjects = location.project === 'all-projects';
+  const allResources =
+    !location.resource || location.resource === 'all-resources';
+  const sameProject = entityLocation?.project === location.project;
+  const sameResource =
+    allResources || entityLocation?.resource === location.resource;
+  const filteredOut = allProjects || (sameProject && sameResource);
+
+  const uxData = {
+    all_projects: allProjects,
+    same_project: sameProject,
+    same_resource: sameResource,
+    filtered_out: filteredOut,
+  };
+
+  const requestedPk = entityLocation?.pk;
+  useEffect(() => {
+    if (isAuthUser && requestedPk) {
+      logUXAction(UX_RENDER, UX_EXPERIMENT, uxData);
+    }
+  }, [isAuthUser, requestedPk]);
 
   if (!entityLocation) {
     return null;
   }
 
   const { push } = location;
-  const allProjects = location.project === 'all-projects';
-  const allResources =
-    !location.resource || location.resource === 'all-resources';
-  const sameProject = entityLocation.project === location.project;
-  const sameResource =
-    allResources || entityLocation.resource === location.resource;
-  const filteredOut = allProjects || (sameProject && sameResource);
 
   const goToString = () =>
     push({
@@ -67,10 +91,14 @@ export function StringNotFound({
   showMatchingUrl.searchParams.delete('string');
   const showMatchingHref = showMatchingUrl.pathname + showMatchingUrl.search;
 
-  const onClick = (navigate: () => void) => (ev: React.MouseEvent) => {
-    ev.preventDefault();
-    navigate();
-  };
+  const onClick =
+    (actionType: string, navigate: () => void) => (ev: React.MouseEvent) => {
+      ev.preventDefault();
+      if (isAuthUser) {
+        logUXAction(actionType, UX_EXPERIMENT, uxData);
+      }
+      navigate();
+    };
 
   const requestProject = allProjects
     ? l10n.getString(
@@ -114,7 +142,7 @@ export function StringNotFound({
               className='primary'
               href={goToStringHref}
               title={goToStringHref}
-              onClick={onClick(goToString)}
+              onClick={onClick(UX_GO_TO_STRING, goToString)}
             />
           </Localized>
           <Localized id='entities-StringNotFound--show-matching'>
@@ -122,7 +150,7 @@ export function StringNotFound({
               className='secondary'
               href={showMatchingHref}
               title={showMatchingHref}
-              onClick={onClick(showMatching)}
+              onClick={onClick(UX_SHOW_MATCHING, showMatching)}
             />
           </Localized>
         </div>
