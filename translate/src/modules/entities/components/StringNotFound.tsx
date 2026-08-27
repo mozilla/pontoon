@@ -11,11 +11,6 @@ import { USER } from '~/modules/user';
 
 import './StringNotFound.css';
 
-const UX_EXPERIMENT = 'String Not Found 1.0';
-const UX_RENDER = 'Render: String not found';
-const UX_GO_TO_STRING = 'Click: String not found, go to string';
-const UX_SHOW_MATCHING = 'Click: String not found, show matching';
-
 function Detail({
   labelId,
   children,
@@ -56,19 +51,21 @@ export function StringNotFound({
     allResources || entityLocation?.resource === location.resource;
   const filteredOut = allProjects || (sameProject && sameResource);
 
-  const uxData = {
-    all_projects: allProjects,
-    same_project: sameProject,
-    same_resource: sameResource,
-    filtered_out: filteredOut,
+  const logAction = (action: string) => {
+    if (isAuthUser) {
+      logUXAction(action, 'String Not Found 1.0', {
+        all_projects: allProjects,
+        same_project: sameProject,
+        same_resource: sameResource,
+      });
+    }
   };
 
-  const requestedPk = entityLocation?.pk;
   useEffect(() => {
-    if (isAuthUser && requestedPk) {
-      logUXAction(UX_RENDER, UX_EXPERIMENT, uxData);
+    if (entityLocation) {
+      logAction('Render: String not found');
     }
-  }, [isAuthUser, requestedPk]);
+  }, [isAuthUser, entityLocation?.pk]);
 
   if (!entityLocation) {
     return null;
@@ -76,29 +73,27 @@ export function StringNotFound({
 
   const { push } = location;
 
-  const goToString = () =>
+  const goToString = (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    logAction('Click: String not found, go to string');
     push({
       ...emptyParams,
       project: entityLocation.project,
       resource: entityLocation.resource,
       entity: entityLocation.pk,
     });
+  };
 
-  const showMatching = () => push({ entity: 0 });
+  const showMatching = (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    logAction('Click: String not found, show matching');
+    push({ entity: 0 });
+  };
 
   const goToStringHref = `/${location.locale}/${entityLocation.project}/${entityLocation.resource}/?string=${entityLocation.pk}`;
   const showMatchingUrl = new URL(window.location.href);
   showMatchingUrl.searchParams.delete('string');
   const showMatchingHref = showMatchingUrl.pathname + showMatchingUrl.search;
-
-  const onClick =
-    (actionType: string, navigate: () => void) => (ev: React.MouseEvent) => {
-      ev.preventDefault();
-      if (isAuthUser) {
-        logUXAction(actionType, UX_EXPERIMENT, uxData);
-      }
-      navigate();
-    };
 
   const requestProject = allProjects
     ? l10n.getString(
@@ -142,7 +137,7 @@ export function StringNotFound({
               className='primary'
               href={goToStringHref}
               title={goToStringHref}
-              onClick={onClick(UX_GO_TO_STRING, goToString)}
+              onClick={goToString}
             />
           </Localized>
           <Localized id='entities-StringNotFound--show-matching'>
@@ -150,7 +145,7 @@ export function StringNotFound({
               className='secondary'
               href={showMatchingHref}
               title={showMatchingHref}
-              onClick={onClick(UX_SHOW_MATCHING, showMatching)}
+              onClick={showMatching}
             />
           </Localized>
         </div>

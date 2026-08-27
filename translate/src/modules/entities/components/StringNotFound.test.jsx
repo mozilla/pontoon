@@ -19,6 +19,12 @@ const ENTITY_LOCATION = {
   filters: [],
 };
 
+const UX_DATA = {
+  all_projects: false,
+  same_project: false,
+  same_resource: true,
+};
+
 const FTL = `
 entities-StringNotFound--title = String not found
 entities-StringNotFound--description = doesn’t match
@@ -145,36 +151,31 @@ describe('<StringNotFound>', () => {
     expect(mockLogUXAction).toHaveBeenCalledWith(
       'Render: String not found',
       'String Not Found 1.0',
-      {
-        all_projects: false,
-        same_project: false,
-        same_resource: true,
-        filtered_out: false,
-      },
+      UX_DATA,
     );
   });
 
-  it('logs a UX action for each of the two panel actions', () => {
-    const { getByRole } = mount(ENTITY_LOCATION, undefined, {
-      authenticated: true,
-    });
+  it.each([
+    ['Show the string', 'Click: String not found, go to string'],
+    ['Keep the parameters', 'Click: String not found, show matching'],
+  ])(
+    'logs %s with the dimensions of the panel it was shown on',
+    (label, action) => {
+      const { getByRole } = mount(ENTITY_LOCATION, undefined, {
+        authenticated: true,
+      });
 
-    fireEvent.click(getByRole('link', { name: 'Show the string' }));
-    expect(mockLogUXAction).toHaveBeenLastCalledWith(
-      'Click: String not found, go to string',
-      'String Not Found 1.0',
-      expect.anything(),
-    );
+      fireEvent.click(getByRole('link', { name: label }));
 
-    fireEvent.click(getByRole('link', { name: 'Keep the parameters' }));
-    expect(mockLogUXAction).toHaveBeenLastCalledWith(
-      'Click: String not found, show matching',
-      'String Not Found 1.0',
-      expect.anything(),
-    );
-  });
+      expect(mockLogUXAction).toHaveBeenLastCalledWith(
+        action,
+        'String Not Found 1.0',
+        UX_DATA,
+      );
+    },
+  );
 
-  it('logs why the string was filtered out', () => {
+  it('logs a string hidden by filters as living in the current view', () => {
     mount(
       {
         pk: 99,
@@ -190,12 +191,7 @@ describe('<StringNotFound>', () => {
     expect(mockLogUXAction).toHaveBeenCalledWith(
       'Render: String not found',
       'String Not Found 1.0',
-      {
-        all_projects: false,
-        same_project: true,
-        same_resource: true,
-        filtered_out: true,
-      },
+      { all_projects: false, same_project: true, same_resource: true },
     );
   });
 
