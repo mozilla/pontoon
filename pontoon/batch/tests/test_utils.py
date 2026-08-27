@@ -1,9 +1,14 @@
+from unittest.mock import patch
+
 import pytest
 
 from fluent.syntax import FluentParser, FluentSerializer
 
-from pontoon.base.models import Locale, Translation
-from pontoon.batch.actions import copy_translation_from_locale
+from pontoon.base.models import Entity, Locale, Translation
+from pontoon.batch.actions import (
+    copy_translation_from_locale,
+    pretranslate_translations,
+)
 from pontoon.batch.utils import (
     find_and_replace,
     ftl_find_and_replace,
@@ -172,3 +177,71 @@ def test_copy_from_another_locale_copies_all_strings():
         ).count()
         == 1
     )
+
+
+@pytest.mark.django_db
+@patch("pontoon.batch.actions.get_pretranslation")
+def test_pretranslate_translations_skips_approved_includes_suggestions(
+    get_pretranslation_mock,
+):
+    """
+    Pretranslation is skipped for entities with an approved translation,
+    but generated for entities with only a pending suggestion or no
+    translation at all.
+    """
+
+    get_pretranslation_mock.return_value = ("key = pretranslated value", "gt")
+
+    project = ProjectFactory(slug="project4", name="Project4")
+    resource = ResourceFactory(project=project, path="resource.ftl", format="fluent")
+    entity_approved = EntityFactory(resource=resource, string="key1 = value1")
+    entity_suggestion = EntityFactory(resource=resource, string="key2 = value2")
+    entity_untranslated = EntityFactory(resource=resource, string="key3 = value3")
+    locale = Locale.objects.get(code="en-ZA")
+    user = UserFactory()
+
+    TranslationFactory(
+        entity=entity_approved,
+        locale=locale,
+        string="already approved",
+        approved=True,
+        active=True,
+    )
+
+    TranslationFactory(
+        entity=entity_suggestion,
+        locale=locale,
+        string="pending suggestion",
+        approved=False,
+        active=True,
+    )
+
+    entities = Entity.objects.filter(
+        pk__in=[entity_approved.pk, entity_suggestion.pk, entity_untranslated.pk]
+    )
+
+    result = pretranslate_translations(user, locale, entities)
+
+    # entity_approved: skipped entirely, no new translation created
+    assert not Translation.objects.filter(
+        entity=entity_approved, string="key = pretranslated value"
+    ).exists()
+
+    # entity_suggestion: pretranslated even though a suggestion already exists;
+    # existing suggestion is still active, so the new one is not
+    assert Translation.objects.filter(
+        entity=entity_suggestion,
+        string="key = pretranslated value",
+        pretranslated=True,
+        active=False,
+    ).exists()
+
+    # entity_untranslated: pretranslated and active, since nothing existed before
+    assert Translation.objects.filter(
+        entity=entity_untranslated,
+        string="key = pretranslated value",
+        pretranslated=True,
+        active=True,
+    ).exists()
+
+    assert result["count"] == 2
