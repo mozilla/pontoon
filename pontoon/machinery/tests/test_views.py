@@ -587,8 +587,8 @@ def test_view_openai_chatgpt_single_reference_prompt_unchanged(
         f"You are an expert {locale_a.name} ({locale_a.code}) localization specialist.\n"
         "\n"
         f"Your task: produce a rephrased {locale_a.name} ({locale_a.code}) translation of a UI string.\n"
-        "Use the provided machine translation as a reference, but you are not bound "
-        "by it — rewrite freely to achieve the best result.\n"
+        "Use the provided reference as a guide, but rewrite freely if it can be "
+        "improved.\n"
     )
 
 
