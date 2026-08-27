@@ -18,13 +18,15 @@ import { FtlSwitch } from './FtlSwitch';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
 import { MachinerySourceIndicator } from './MachinerySourceIndicator';
 import { TranslationLength } from './TranslationLength';
+import { useBatchactions } from '~/modules/batchactions/hooks';
 
 /**
  * Shows a menu bar used to control the Editor.
  *
  * If the user is not authenticated, shows a login button.
  * If the entity is read-only, shows a read-only notification.
- * Otherise, shows the various tools to control the editor.
+ * If the entity is pretranslating, shows a pretranslation notification.
+ * Otherwise, shows the various tools to control the editor.
  */
 export function EditorMenu(): React.ReactElement<'menu'> {
   return (
@@ -46,6 +48,10 @@ function MenuContent() {
   const { isAuthenticated, settings, signInURL, username } = useAppSelector(
     (state) => state.user,
   );
+  const batchactions = useBatchactions();
+  const isPretranslating =
+    batchactions.requestInProgress === 'pretranslate' &&
+    batchactions.entities.includes(entity.pk);
 
   if (isAuthenticated === null) {
     // No content while loading user data
@@ -67,6 +73,14 @@ function MenuContent() {
     return (
       <Localized id='editor-EditorMenu--read-only-localization'>
         <div className='banner'>This is a read-only localization.</div>
+      </Localized>
+    );
+  }
+
+  if (isPretranslating) {
+    return (
+      <Localized id='editor-EditorMenu--pretranslation-in-progress'>
+        <div className='banner'>Pretranslation in progress.</div>
       </Localized>
     );
   }
