@@ -9,7 +9,7 @@ export const fluentMode: StreamParser<Array<'expression' | 'literal' | 'tag'>> =
     name: 'fluent',
     languageData: { closeBrackets: { brackets: ['(', '[', '{', '"', '<'] } },
     startState: () => [],
-    copyState: copyStack,
+    copyState: (state) => [...state],
     token(stream, state) {
       const ch = stream.next();
       switch (state.at(-1)) {
