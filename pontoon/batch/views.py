@@ -23,6 +23,7 @@ from pontoon.batch import forms
 from pontoon.batch.actions import (
     approve_translations,
     copy_translation_from_locale,
+    pretranslate_translations,
     reject_translations,
     replace_translations,
 )
@@ -110,6 +111,8 @@ def batch_edit_translations(request):
             action_status = copy_translation_from_locale(
                 user, locale, entities, form.cleaned_data["other_locale"]
             )
+        case "pretranslate":
+            action_status = pretranslate_translations(user, locale, entities)
         case "reject":
             action_status = reject_translations(user, locale, entities)
         case "replace":
