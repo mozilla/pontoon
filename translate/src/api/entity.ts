@@ -54,12 +54,18 @@ type BatchEditResponse =
   | { error: true };
 
 export async function batchEditEntities(
-  action: 'approve' | 'reject' | 'replace' | 'copy_from_locale',
+  action:
+    | 'approve'
+    | 'reject'
+    | 'replace'
+    | 'copy_from_locale'
+    | 'pretranslate',
   locale: string,
   entityIds: number[],
   find: string | undefined,
   replace: string | undefined,
   otherLocale?: string,
+  pretranslate?: string,
 ): Promise<BatchEditResponse> {
   const csrfToken = getCSRFToken();
   const payload = new FormData();
@@ -75,6 +81,8 @@ export async function batchEditEntities(
   }
 
   payload.append('other_locale', otherLocale ?? '');
+
+  payload.append('pretranslate', pretranslate ?? '');
 
   return await POST('/batch-edit-translations/', payload);
 }
