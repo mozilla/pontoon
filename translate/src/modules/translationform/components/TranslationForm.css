@@ -57,7 +57,7 @@
 
 .translationform .accesskeys {
   float: right;
-  margin: 2px 0;
+  margin: 2px 0 -1px;
   width: calc(100% - 27px);
 }
 
@@ -68,6 +68,7 @@
   cursor: pointer;
   display: inline-block;
   line-height: 24px;
+  margin-bottom: 3px;
   margin-right: 3px;
   padding: 0;
   text-align: center;
