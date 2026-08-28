@@ -71,7 +71,7 @@ Click on `REQUEST PRETRANSLATION`, select the projects to add and then click `RE
 An email will be sent to Pontoon’s administrators, and they will act on the request. Please note that:
 
 * If a locale doesn’t have pretranslation enabled for any projects yet, it’s necessary to set up and train a new custom model, and this operation requires several hours.
-* For `pontoon.mozilla.org`, each request will be evaluated against specific [opt-in guidelines](https://mozilla-l10n.github.io/documentation/tools/pontoon/managing_pretranslation.html#opt-in-guidelines-to-enable-new-locales).
+* For `pontoon.mozilla.org`, each request will be evaluated against specific [opt-in guidelines](https://mozilla-l10n.github.io/localizer-documentation/tools/pretranslation.html#opt-in-guidelines).
 
 ### Translation memory management
 
