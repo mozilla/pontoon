@@ -79,6 +79,7 @@ def test_locale_managers_group(locale_a, locale_b, user_a):
         ("1,5", "other"),
         ("", "other"),  # no plurals recorded
         ("nonsense", "other"),  # cldr_plurals_list() logs and skips
+        ("1,3", "other"),  # last category is not a catchall, so logged and coerced
     ],
 )
 def test_locale_plural_catchall(cldr_plurals, expected):
