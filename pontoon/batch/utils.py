@@ -127,7 +127,11 @@ def find_and_replace(
         errors = False
         try:
             _, new_translation.value, new_translation.properties = (
-                parse_source_string_to_json(res_format, new_translation.string)
+                parse_source_string_to_json(
+                    res_format,
+                    new_translation.string,
+                    new_translation.locale.cldr_plurals_list(),
+                )
             )
         except ValueError:
             errors = True

@@ -316,7 +316,7 @@ def copy_translation_from_locale(
         # Copy from other locale (entity.string directly)
         for entity in entities:
             _, value, properties = parse_source_string_to_json(
-                entity.resource.format, entity.string
+                entity.resource.format, entity.string, locale.cldr_plurals_list()
             )
             translations_to_create.append(
                 Translation(
@@ -335,7 +335,7 @@ def copy_translation_from_locale(
     else:
         for t in other_locale_translations:
             _, value, properties = parse_source_string_to_json(
-                t.entity.resource.format, t.string
+                t.entity.resource.format, t.string, locale.cldr_plurals_list()
             )
             translations_to_create.append(
                 Translation(
