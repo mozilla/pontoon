@@ -2,13 +2,13 @@ import React from 'react';
 
 import * as Hooks from '~/hooks';
 import * as Actions from '../actions';
-import * as OtherLocales from '~/api/other-locales';
 import { BATCHACTIONS } from '../reducer';
 
 import { BatchActions } from './BatchActions';
 import { vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { MockLocalizationProvider } from '~/test/utils';
+import { PROJECT } from '~/modules/project';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -29,8 +29,23 @@ vi.mock('../actions', () => ({
   selectAll: vi.fn(() => ({ type: 'whatever' })),
 }));
 
-vi.mock('~/api/other-locales', () => ({
-  fetchAllLocales: vi.fn(() => Promise.resolve([])),
+const DEFAULT_PROJECT_STATE = {
+  fetching: false,
+  slug: '',
+  name: '',
+  info: '',
+  tags: [],
+  locales: [],
+};
+
+vi.mock('~/hooks', () => ({
+  useAppDispatch: vi.fn(() => vi.fn()),
+  useAppSelector: vi.fn((selector) =>
+    selector({
+      [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS,
+      [PROJECT]: DEFAULT_PROJECT_STATE,
+    }),
+  ),
 }));
 
 describe('<BatchActions>', () => {
@@ -39,7 +54,6 @@ describe('<BatchActions>', () => {
     Hooks.useAppSelector.mockRestore();
     Actions.resetSelection.mockRestore();
     Actions.selectAll.mockRestore();
-    OtherLocales.fetchAllLocales.mockClear();
   });
 
   const WrapBatchAction = () => {
