@@ -159,8 +159,8 @@ def test_view_google_translate(
         "source": ["en"],
         "target": ["google-translate"],
         "format": ["text"],
-        "key": ["2fffff"],
     }
+    assert req.headers["X-Goog-Api-Key"] == "2fffff"
 
 
 @pytest.mark.django_db

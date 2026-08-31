@@ -97,10 +97,11 @@ def get_google_generic_translation(text, locale_code, format="text"):
         "source": "en",
         "target": locale_code,
         "format": format,
-        "key": api_key,
     }
 
-    r = requests.post(url, params=payload)
+    headers = {"X-Goog-Api-Key": api_key}
+
+    r = requests.post(url, params=payload, headers=headers)
     r.raise_for_status()
     root = json.loads(r.content)
 
