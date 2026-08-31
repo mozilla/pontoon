@@ -5,6 +5,7 @@ export const fluentMode: StreamParser<Array<'expression' | 'literal' | 'tag'>> =
     name: 'fluent',
     languageData: { closeBrackets: { brackets: ['(', '[', '{', '"', '<'] } },
     startState: () => [],
+    copyState: (state) => [...state],
     token(stream, state) {
       const ch = stream.next();
       switch (state.at(-1)) {
@@ -95,6 +96,7 @@ export const commonMode: StreamParser<Array<'literal' | 'tag'>> = {
   name: 'common',
   languageData: { closeBrackets: { brackets: ['(', '[', '{', '"', '<'] } },
   startState: () => [],
+  copyState: (state) => [...state],
   token(stream, state) {
     if (
       stream.match(printf) ||
