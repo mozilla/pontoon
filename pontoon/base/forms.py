@@ -42,32 +42,52 @@ class DownloadFileForm(forms.Form):
     part = NoTabStopCharField()
 
 
+def validate_uploaded_file(uploadfile, target_path):
+    """Check the size of an uploaded file and its compatibility with the target resource."""
+    if not uploadfile:
+        return
+
+    limit = 5000
+    if uploadfile.size > limit * 1000:
+        current = round(uploadfile.size / 1000)
+        message = (
+            f"Upload failed. Keep filesize under {limit} kB. Your upload: {current} kB."
+        )
+        raise forms.ValidationError(message)
+
+    if target_path:
+        uploadfile_name = Path(uploadfile.name).name.lower()
+        targetfile_name = Path(target_path).name.lower()
+        if not are_compatible_files(uploadfile_name, targetfile_name):
+            message = (
+                f"Upload failed. File format not supported. Use {targetfile_name}."
+            )
+            raise forms.ValidationError(message)
+
+
 class UploadFileForm(DownloadFileForm):
     uploadfile = NoTabStopFileField()
 
     def clean(self):
         cleaned_data = super().clean()
-        part = cleaned_data.get("part")
-        uploadfile = cleaned_data.get("uploadfile")
+        validate_uploaded_file(cleaned_data.get("uploadfile"), cleaned_data.get("part"))
+        return cleaned_data
 
-        if uploadfile:
-            limit = 5000
 
-            # File size validation
-            if uploadfile.size > limit * 1000:
-                current = round(uploadfile.size / 1000)
-                message = f"Upload failed. Keep filesize under {limit} kB. Your upload: {current} kB."
-                raise forms.ValidationError(message)
+class UploadTranslationsAPIForm(forms.Form):
+    """Same as `UploadFileForm`, with field names matching the rest of the API."""
 
-            # File format validation
-            if part:
-                uploadfile_name = Path(uploadfile.name).name.lower()
-                targetfile_name = Path(part).name.lower()
+    slug = forms.CharField()
+    locale = forms.CharField()
+    resource = forms.CharField()
+    uploadfile = forms.FileField()
 
-                # Fail if upload and target file are incompatible
-                if not are_compatible_files(uploadfile_name, targetfile_name):
-                    message = f"Upload failed. File format not supported. Use {targetfile_name}."
-                    raise forms.ValidationError(message)
+    def clean(self):
+        cleaned_data = super().clean()
+        validate_uploaded_file(
+            cleaned_data.get("uploadfile"), cleaned_data.get("resource")
+        )
+        return cleaned_data
 
 
 class UserPermissionLogFormMixin:

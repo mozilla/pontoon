@@ -1,3 +1,4 @@
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import BasePermission
@@ -50,3 +51,17 @@ class PersonalAccessTokenAuthentication(BaseAuthentication):
 
         user = pat.user
         return (user, None)
+
+
+class PersonalAccessTokenScheme(OpenApiAuthenticationExtension):
+    """Describes PAT authentication in the OpenAPI schema, so Swagger UI can send it."""
+
+    target_class = "pontoon.api.authentication.PersonalAccessTokenAuthentication"
+    name = "personalAccessToken"
+
+    def get_security_definition(self, auto_schema):
+        return {
+            "type": "http",
+            "scheme": "bearer",
+            "description": "Personal Access Token, created from your user settings.",
+        }

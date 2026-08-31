@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from os.path import basename, join
 from tempfile import TemporaryDirectory
 
@@ -55,18 +55,27 @@ def serialize_translated_resource(db_res: DbResource, locale: Locale) -> str:
     return "".join(serialize_resource(tr_res, gettext_plurals=lc_plurals))
 
 
+class UploadError(Exception):
+    """The uploaded file could not be imported; nothing was written to the database."""
+
+
 @dataclass
 class UploadResult:
     """
     Summary of an uploaded file import:
     - `updated`: translations added or replaced
-    - `unchanged`: translations identical to the current approved or pretranslated one
-    - `undefined`: translations with no matching entity in Pontoon
+    - `unchanged`: translations identical to the current approved, pretranslated or
+      fuzzy one
+    - `undefined_keys`: keys of translations with no matching entity in Pontoon
     """
 
     updated: int = 0
     unchanged: int = 0
-    undefined: int = 0
+    undefined_keys: list[L10nId] = field(default_factory=list)
+
+    @property
+    def undefined(self) -> int:
+        return len(self.undefined_keys)
 
 
 def import_uploaded_file(
@@ -89,10 +98,10 @@ def import_uploaded_file(
                 gettext_skip_obsolete=True,
             )
         except Exception as error:
-            raise Exception(f"Could not parse uploaded file: {error}") from error
+            raise UploadError(f"Could not parse uploaded file: {error}") from error
     upload_translations = {rt.key: rt for rt in as_repo_translations(l10n_res)}
     if not upload_translations:
-        raise Exception("No translations found in uploaded file.")
+        raise UploadError("No translations found in uploaded file.")
 
     result = UploadResult()
     entities: dict[L10nId, int] = {
@@ -101,23 +110,24 @@ def import_uploaded_file(
         .values_list("id", "key")
         .iterator()
     }
-    undefined_keys = [key for key in upload_translations if key not in entities]
-    for key in undefined_keys:
+    result.undefined_keys = [key for key in upload_translations if key not in entities]
+    for key in result.undefined_keys:
         del upload_translations[key]
-    result.undefined = len(undefined_keys)
 
     current_translations = (
         Translation.objects.filter(
             entity__resource=db_res, entity__obsolete=False, locale=locale
         )
-        .filter(Q(approved=True) | Q(pretranslated=True))
-        .values_list("entity__key", "value", "properties")
+        .filter(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+        .values_list("entity__key", "value", "properties", "fuzzy")
         .iterator()
     )
-    for key, value, properties in current_translations:
+    for key, value, properties, fuzzy in current_translations:
         rt = upload_translations.get(tuple(key), None)
-        if rt is not None and translations_equal(
-            rt.value, rt.properties, value, properties
+        if (
+            rt is not None
+            and (rt.fuzzy or not fuzzy)
+            and translations_equal(rt.value, rt.properties, value, properties)
         ):
             del upload_translations[rt.key]
             result.unchanged += 1
