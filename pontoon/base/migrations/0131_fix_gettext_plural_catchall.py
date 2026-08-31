@@ -42,7 +42,7 @@ def fix_plural_catchall(apps, schema_editor):
         locale_id__in=catchalls,
         entity__resource__format="gettext",
         value__has_key="alt",
-    )
+    ).iterator()
 
     for tx in translations:
         catchall = catchalls[tx.locale_id]
