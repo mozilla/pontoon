@@ -2,7 +2,7 @@ import { EditorView } from '@codemirror/view';
 import ftl from '@fluent/dedent';
 import { fluentParseEntry } from '@mozilla/l10n';
 import { fireEvent } from '@testing-library/react';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { act } from 'react-dom/test-utils';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -47,18 +47,20 @@ function mountForm(source, target = null, locale = DEFAULT_LOCALE) {
     },
   };
 
-  let actions, result;
+  let actions, result, setCurrentEntity;
   const Spy = () => {
     actions = useContext(EditorActions);
     result = useContext(EditorResult);
     return null;
   };
 
-  const wrapper = mountComponentWithStore(
-    () => (
+  const wrapper = mountComponentWithStore(() => {
+    const [currentEntity, updateCurrentEntity] = useState(entity);
+    setCurrentEntity = updateCurrentEntity;
+    return (
       <Locale.Provider value={locale}>
         <MockLocalizationProvider>
-          <EntityView.Provider value={{ entity }}>
+          <EntityView.Provider value={{ entity: currentEntity }}>
             <EditorProvider>
               <Spy />
               <TranslationForm />
@@ -66,9 +68,8 @@ function mountForm(source, target = null, locale = DEFAULT_LOCALE) {
           </EntityView.Provider>
         </MockLocalizationProvider>
       </Locale.Provider>
-    ),
-    store,
-  );
+    );
+  }, store);
   vi.runAllTimers();
 
   // TODO:Replace the querySelector with testing-library-ish approaches
@@ -77,7 +78,7 @@ function mountForm(source, target = null, locale = DEFAULT_LOCALE) {
     EditorView.findFromDOM(el),
   );
 
-  return { actions, getResult: () => result, views, wrapper };
+  return { actions, getResult: () => result, setCurrentEntity, views, wrapper };
 }
 
 describe('<TranslationForm> with multiple fields', () => {
@@ -432,6 +433,39 @@ describe('<TranslationForm> with multiple fields', () => {
     // Same suggestion, same values: the edited field must still be reset.
     applyComposed();
     expect(docs()).toEqual(['COMPOSED', 'COMPOSED_LABEL']);
+  });
+
+  it('inserts a placeable into the focused field after a rejection', () => {
+    const source = ftl`
+      key =
+          { $num ->
+              [one] ONE
+             *[other] OTHER
+          }
+      `;
+    const { actions, getResult, setCurrentEntity, views } = mountForm(source);
+
+    act(() =>
+      setCurrentEntity((entity) => ({
+        ...entity,
+        translation: { ...entity.translation, status: 'rejected' },
+      })),
+    );
+    vi.runAllTimers();
+
+    act(() => views[1].contentDOM.focus());
+    vi.runAllTimers();
+
+    act(() => actions.setEditorSelection('{ $num }'));
+
+    expect(views.map((view) => view.state.doc.toString())).toEqual([
+      '',
+      '{ $num }',
+    ]);
+    expect(getResult().value.alt).toMatchObject([
+      { keys: ['one'], pat: [] },
+      { keys: [{ '*': 'other' }], pat: [{ $: 'num' }] },
+    ]);
   });
 
   it('copies a translation naming its catchall after the source, on one click', () => {
