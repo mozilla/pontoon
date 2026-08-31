@@ -130,7 +130,7 @@ def find_and_replace(
                 parse_source_string_to_json(
                     res_format,
                     new_translation.string,
-                    new_translation.locale.cldr_plurals_list(),
+                    new_translation.locale.plural_catchall,
                 )
             )
         except ValueError:

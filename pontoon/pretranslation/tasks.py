@@ -142,7 +142,7 @@ def pretranslate(project: Project, paths: set[str] | None):
             string, author_key = pretranslation
             try:
                 _, value, properties = parse_source_string_to_json(
-                    entity.resource.format, string, locale.cldr_plurals_list()
+                    entity.resource.format, string, locale.plural_catchall
                 )
             except ValueError as e:
                 log.error(

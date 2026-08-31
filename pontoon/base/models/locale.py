@@ -349,6 +349,11 @@ class Locale(models.Model, AggregatedStats):
         return res
 
     @property
+    def plural_catchall(self) -> str:
+        categories = self.cldr_plurals_list()
+        return categories[-1] if categories else "other"
+
+    @property
     def nplurals(self) -> int:
         return self.cldr_plurals.count(",") + 1
 

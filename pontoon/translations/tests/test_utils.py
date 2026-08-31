@@ -21,23 +21,23 @@ def catchall_keys(value):
 
 
 def test_plural_catchall_uses_locale_category():
-    """For a locale whose plural categories are `one, few, many` the catchall
-    must be labelled `many` (#4453).
+    """For a locale whose last plural category is `many`, the catchall must be
+    labelled `many` (#4453).
     """
     _, value, _ = parse_source_string_to_json(
-        Resource.Format.GETTEXT, PLURAL_MF2, ["one", "few", "many"]
+        Resource.Format.GETTEXT, PLURAL_MF2, "many"
     )
     assert catchall_keys(value) == [{"*": "many"}]
 
 
 def test_plural_catchall_defaults_to_other():
-    """Without a locale, the catchall keeps the source locale's category."""
+    """Without a catchall name, the catchall keeps the source locale's category."""
     _, value, _ = parse_source_string_to_json(Resource.Format.GETTEXT, PLURAL_MF2)
     assert catchall_keys(value) == [{"*": "other"}]
 
 
 def test_plural_catchall_for_locale_ending_in_other():
     _, value, _ = parse_source_string_to_json(
-        Resource.Format.GETTEXT, PLURAL_MF2, ["one", "other"]
+        Resource.Format.GETTEXT, PLURAL_MF2, "other"
     )
     assert catchall_keys(value) == [{"*": "other"}]
