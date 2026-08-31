@@ -7,7 +7,7 @@ import pontoon.base.models.locale
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0130_normalize_locale_script"),
+        ("base", "0132_normalize_locale_script"),
     ]
 
     operations = [

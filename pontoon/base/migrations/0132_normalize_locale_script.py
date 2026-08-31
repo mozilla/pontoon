@@ -83,7 +83,7 @@ def normalize_script(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("base", "0129_rename_gpt_transform_machinery_source"),
+        ("base", "0131_fix_gettext_plural_catchall"),
     ]
 
     operations = [
