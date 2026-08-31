@@ -19,9 +19,8 @@ import './BatchActions.css';
 import { RejectAll } from './RejectAll';
 import { ReplaceAll } from './ReplaceAll';
 import { CopyFromLocale } from './CopyFromLocale';
-import { fetchAllLocales } from '~/api/other-locales';
-import type { LocaleOption } from '~/api/other-locales';
 import LocaleMenu from '~/modules/locale/components/LocaleMenu';
+import { useProject } from '~/modules/project';
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
@@ -35,7 +34,8 @@ export function BatchActions(): React.ReactElement<'div'> {
   const replace = useRef<HTMLInputElement>(null);
 
   const [otherLocale, setOtherLocale] = useState('');
-  const [locales, setLocales] = useState<LocaleOption[]>([]);
+
+  const { locales } = useProject();
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
@@ -49,12 +49,6 @@ export function BatchActions(): React.ReactElement<'div'> {
     document.addEventListener('keydown', handleShortcuts);
     return () => document.removeEventListener('keydown', handleShortcuts);
   }, []);
-
-  useEffect(() => {
-    fetchAllLocales(location.project).then((all) => {
-      setLocales(all);
-    });
-  }, [location.project]);
 
   const selectAllEntities = useCallback(
     () => dispatch(selectAll(location)),

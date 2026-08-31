@@ -1,6 +1,7 @@
 import type { Tag } from '~/api/project';
 
 import { Action, RECEIVE, REQUEST } from './actions';
+import { LocaleOption } from '~/api/other-locales';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
@@ -12,6 +13,7 @@ export type ProjectState = {
   readonly name: string;
   readonly info: string;
   readonly tags: Tag[];
+  readonly locales: LocaleOption[];
 };
 
 const initial: ProjectState = {
@@ -20,6 +22,7 @@ const initial: ProjectState = {
   name: '',
   info: '',
   tags: [],
+  locales: [],
 };
 
 export function reducer(
@@ -40,6 +43,7 @@ export function reducer(
         name: action.name,
         info: action.info,
         tags: action.tags,
+        locales: action.locales,
       };
     default:
       return state;

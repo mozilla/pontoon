@@ -29,25 +29,16 @@ export async function fetchOtherLocales(
   return Array.isArray(results) ? results : [];
 }
 
-export async function fetchAllLocales(slug: string): Promise<LocaleOption[]> {
-  if (slug === 'all-projects') {
-    const locales: LocaleOption[] = [];
-    let url: string | null = '/api/v2/locales/?fields=code,name&ordering=name';
-    while (url) {
-      const result = await GET(url);
-      if (Array.isArray(result?.results)) {
-        locales.push(...result.results);
-      }
-      url = result?.next ?? null;
+export async function fetchAllLocales(): Promise<LocaleOption[]> {
+  const search = new URLSearchParams({ fields: 'code,name', ordering: 'name' });
+  const locales: LocaleOption[] = [];
+  let url: string | null = `/api/v2/locales/?${search}`;
+  while (url) {
+    const result = await GET(url);
+    if (Array.isArray(result?.results)) {
+      locales.push(...result.results);
     }
-    return locales;
+    url = result?.next ?? null;
   }
-
-  const search = new URLSearchParams({ fields: 'localizations' });
-  const url = `/api/v2/projects/${slug}/?${search}`;
-  const result = await GET(url);
-  const locales: LocaleOption[] = (result?.localizations ?? []).map(
-    (l: { locale: LocaleOption }) => l.locale,
-  );
   return locales;
 }
