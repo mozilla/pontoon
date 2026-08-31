@@ -1,6 +1,6 @@
 import logging
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -346,7 +346,17 @@ class Locale(models.Model, AggregatedStats):
                 log.error(
                     f"Invalid cldr_plurals for locale {self.code}: {self.cldr_plurals}"
                 )
+        if res and res[-1] not in ("many", "other"):
+            log.error(
+                f"cldr_plurals for locale {self.code} does not end in a catchall"
+                f" category: {self.cldr_plurals}"
+            )
         return res
+
+    @property
+    def plural_catchall(self) -> Literal["many", "other"]:
+        categories = self.cldr_plurals_list()
+        return "many" if categories and categories[-1] == "many" else "other"
 
     @property
     def nplurals(self) -> int:

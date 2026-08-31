@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 
 from moz.l10n.formats.fluent import fluent_parse_entry, fluent_serialize_entry
 from moz.l10n.formats.mf2 import mf2_parse_message, mf2_serialize_message
@@ -18,11 +18,16 @@ JsonMessage = list[Any] | dict[str, Any]
 def parse_source_string_to_json(
     res_format: str,
     source: str,
+    catchall_name: Literal["many", "other"] = "other",
 ) -> tuple[list[str], JsonMessage, dict[str, JsonMessage] | None]:
     """Parse an entity's `source` string into its `(key, value, properties)` JSON.
 
     Used to build entities that aren't backed by a synced row, i.e. in the
     pretranslate API and in test factories.
+
+    `catchall_name` is the category a catchall plural variant is labelled with,
+    i.e. `Locale.plural_catchall`. Pass it when parsing a translation, leave it
+    unset for source strings.
     """
     match res_format:
         case Resource.Format.FLUENT:
@@ -45,7 +50,7 @@ def parse_source_string_to_json(
                 for keys in msg.variants:
                     for key in keys:
                         if isinstance(key, CatchallKey):
-                            key.value = "other"
+                            key.value = catchall_name
             return [], message_to_json(msg), None
         case Resource.Format.PROPERTIES:
             msg = properties_parse_message(source)

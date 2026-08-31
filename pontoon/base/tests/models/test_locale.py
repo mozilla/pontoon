@@ -1,5 +1,7 @@
 import pytest
 
+from pontoon.base.models import Locale
+
 
 @pytest.mark.django_db
 def test_locale_latest_activity_with_latest(translation_a):
@@ -68,3 +70,17 @@ def test_locale_managers_group(locale_a, locale_b, user_a):
     assert user_a.has_perm("base.can_manage_locale") is False
     assert user_a.has_perm("base.can_manage_locale", locale_a) is True
     assert user_a.has_perm("base.can_manage_locale", locale_b) is True
+
+
+@pytest.mark.parametrize(
+    "cldr_plurals, expected",
+    [
+        ("1,3,4", "many"),  # be, pl, ru, szl, uk
+        ("1,5", "other"),
+        ("", "other"),  # no plurals recorded
+        ("nonsense", "other"),  # cldr_plurals_list() logs and skips
+        ("1,3", "other"),  # last category is not a catchall, so logged and coerced
+    ],
+)
+def test_locale_plural_catchall(cldr_plurals, expected):
+    assert Locale(code="kl", cldr_plurals=cldr_plurals).plural_catchall == expected
