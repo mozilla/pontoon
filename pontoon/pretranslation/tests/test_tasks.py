@@ -110,3 +110,44 @@ def test_which_strings_to_pretranslate(
     assert len(non_rejected.translation_set.filter(string="pretranslation")) == 0
     assert len(rejected_by_human.translation_set.filter(string="pretranslation")) == 1
     assert len(rejected_by_machine.translation_set.filter(string="pretranslation")) == 0
+
+
+@patch("pontoon.pretranslation.tasks.run_checks")
+@patch("pontoon.pretranslation.tasks.get_pretranslation")
+@pytest.mark.django_db
+def test_pretranslate_skips_unparsable_pretranslation(
+    gt_mock, checks_mock, project_a, locale_a, gt_user, caplog
+):
+    """
+    An entity whose pretranslation doesn't parse must not abort the pretranslation
+    of other entities.
+    """
+    project_a.pretranslation_enabled = True
+    project_a.save()
+
+    resource = ResourceFactory.create(
+        project=project_a, path="resource.ftl", format="fluent"
+    )
+    TranslatedResourceFactory.create(resource=resource, locale=locale_a)
+    ProjectLocaleFactory.create(
+        project=project_a,
+        locale=locale_a,
+        pretranslation_enabled=True,
+    )
+
+    EntityFactory.create(resource=resource, string="key-a = A\n", order=0)
+    EntityFactory.create(resource=resource, string="key-b = B\n", order=1)
+
+    checks_mock.return_value = {}
+    gt_mock.side_effect = [
+        ("key-a = unescaped { brace\n", "gt"),
+        ("key-b = GT\n", "gt"),
+    ]
+
+    with caplog.at_level("ERROR", logger="pontoon.pretranslation.tasks"):
+        pretranslate_task(project_a.pk)
+
+    assert "Unparsable pretranslation" in caplog.text
+    assert [t.string for t in Translation.objects.filter(user=gt_user)] == [
+        "key-b = GT\n"
+    ]

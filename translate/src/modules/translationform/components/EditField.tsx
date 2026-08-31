@@ -9,6 +9,7 @@ import React, {
   useContext,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react';
 
@@ -30,9 +31,9 @@ export type EditFieldProps = {
 /**
  * The CodeMirror initialization is only run once,
  * so changes in props or context are not reflected in the editor unless handled separately,
- * as is done e.g. for `defaultValue`.
+ * as with `defaultValue` and the callbacks below.
  *
- * Make sure apply an appropriate `key` prop to keep old instances from being reused.
+ * Use an appropriate `key` prop when a change requires a new instance.
  */
 export const EditField = memo(
   forwardRef<EditFieldHandle, EditFieldProps>(
@@ -45,6 +46,11 @@ export const EditField = memo(
       const { setResultFromInput } = useContext(EditorActions);
       const keyHandlers = useKeyHandlers();
       const [view, setView] = useState<EditorView | null>(null);
+
+      const callbacks = useRef({ onFocus, setResultFromInput });
+      useEffect(() => {
+        callbacks.current = { onFocus, setResultFromInput };
+      }, [onFocus, setResultFromInput]);
 
       const initView = useCallback(
         (parent: HTMLDivElement | null) => {
@@ -66,6 +72,7 @@ export const EditField = memo(
               }
               extensions.push(
                 EditorView.updateListener.of((update) => {
+                  const { onFocus, setResultFromInput } = callbacks.current;
                   if (onFocus && update.focusChanged && update.view.hasFocus) {
                     onFocus();
                   }

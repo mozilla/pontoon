@@ -1,17 +1,20 @@
+import html
 import logging
 
 from collections import defaultdict
+from copy import deepcopy
 from datetime import datetime
 from os import makedirs, remove
-from os.path import commonpath, dirname, isfile, join, normpath
+from os.path import commonpath, dirname, isfile
 
 from moz.l10n.formats import Format
 from moz.l10n.formats.xliff import xliff_is_xcode
-from moz.l10n.message import parse_message
+from moz.l10n.message import message_from_json, serialize_message
 from moz.l10n.model import (
     CatchallKey,
     Entry,
     Id,
+    Message,
     Metadata,
     PatternMessage,
     Resource,
@@ -19,13 +22,20 @@ from moz.l10n.model import (
     SelectMessage,
 )
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
-from moz.l10n.resource import parse_resource, serialize_resource
+from moz.l10n.resource import serialize_resource
 
 from django.conf import settings
 from django.db.models import Q
 from django.db.models.query import QuerySet
 
-from pontoon.base.models import Locale, Project, Translation, User
+from pontoon.base.models import (
+    Entity,
+    Locale,
+    Project,
+    Resource as DbResource,
+    Translation,
+    User,
+)
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.sync.core.checkout import Checkouts
 from pontoon.sync.repositories import CommitToRepositoryException, get_repo
@@ -159,20 +169,24 @@ def update_changed_resources(
     now: datetime,
 ) -> tuple[int, set[Locale], dict[User, set[str]]]:
     count = 0
-    # db_path -> {Locale}, empty set stands for "all locales"
-    changed_resources: dict[str, set[Locale]] = {
-        path: set() for path in changed_source_paths
+    # db_path -> (db_res, {Locale})
+    # Where an empty set stands for "all locales"
+    changed_resources: dict[str, tuple[DbResource, set[Locale]]] = {
+        db_res.path: (db_res, set())
+        for db_res in DbResource.objects.filter(
+            project=project, path__in=changed_source_paths
+        )
     }
     for change in db_changes:
         if change.locale in readonly_locales:
             continue
-        path = str(change.entity.resource.path)
-        if path not in changed_resources:
-            changed_resources[path] = {change.locale}
+        db_res = change.entity.resource
+        if db_res.path not in changed_resources:
+            changed_resources[db_res.path] = (db_res, {change.locale})
         else:
-            prev = changed_resources[path]
-            if prev:
-                prev.add(change.locale)
+            prev = changed_resources[db_res.path]
+            if prev[1]:
+                prev[1].add(change.locale)
     changed_entities = {change.entity for change in db_changes}
     if changed_resources:
         n = len(changed_resources)
@@ -181,7 +195,7 @@ def update_changed_resources(
 
     updated_locales: set[Locale] = set()
     translators: dict[User, set[str]] = defaultdict(set)
-    for path, locales_ in changed_resources.items():
+    for path, (db_res, locales_) in changed_resources.items():
         log_scope = f"[{project.slug}:{path}]"
         target, locale_codes = paths.target(path)
         if target is None:
@@ -197,12 +211,6 @@ def update_changed_resources(
             if locale not in readonly_locales
         }
         if not locales:
-            continue
-        ref_path = normpath(join(paths.ref_root, path))
-        if ref_path.endswith(".po"):
-            ref_path += "t"
-        if not isfile(ref_path):
-            log.error(f"{log_scope} Missing source file")
             continue
         if locales_:
             lc_str = ", ".join(locale.code for locale in locales_)
@@ -226,93 +234,121 @@ def update_changed_resources(
             .exclude(approved_date__gt=now)  # includes approved_date = None
             .select_related("entity")
         )
+        res = build_moz_l10n_resource(db_res)
         for locale in locales:
-            lc_scope = f"[{project.slug}:{path}, {locale.code}]"
-            lc_translations = [tx for tx in translations if tx.locale_id == locale.pk]
+            lc_translations = {
+                tuple(tx.entity.key): tx
+                for tx in translations
+                if tx.locale_id == locale.pk
+            }
             target_path = paths.format_target_path(target, locale.code)
             if not lc_translations and not isfile(target_path):
                 continue
             try:
                 lc_plurals = locale.cldr_plurals_list()
-                res = parse_resource(ref_path)
-                set_translations(locale, lc_translations, res)
+                tr_res = build_translated_resource(locale, lc_translations, res)
                 makedirs(dirname(target_path), exist_ok=True)
                 with open(target_path, "w", encoding="utf-8") as file:
-                    for line in serialize_resource(res, gettext_plurals=lc_plurals):
+                    for line in serialize_resource(tr_res, gettext_plurals=lc_plurals):
                         file.write(line)
                 updated_locales.add(locale)
-                for tx in lc_translations:
+                for tx in lc_translations.values():
                     if tx.approved and tx.entity in changed_entities and tx.user:
                         translators[tx.user].add(locale.code)
                 count += 1
             except Exception as error:
-                log.error(f"{lc_scope} Update failed: {error}")
+                log.error(
+                    f"[{project.slug}:{path}, {locale.code}] Update failed: {error}"
+                )
                 continue
     return count, updated_locales, translators
 
 
-def set_translations(
-    locale: Locale, translations: list[Translation], res: Resource
-) -> None:
-    if res.format == Format.fluent:
-        trans_res = parse_resource(
-            Format.fluent, "".join(tx.string for tx in translations)
-        )
-        trans_entries: dict[Id, Entry | None] = {
-            entry.id: entry
-            for section in trans_res.sections
-            for entry in section.entries
-            if isinstance(entry, Entry)
-        }
-        for section in res.sections:
-            rm: list[Entry] = []
-            for entry in section.entries:
-                if isinstance(entry, Entry):
-                    te = trans_entries.get(entry.id, None)
-                    if te is None:
-                        rm.append(entry)
-                    else:
-                        entry.value = te.value
-                        entry.properties = (
-                            te.properties
-                            if entry.id[0].startswith("-")
-                            else {
-                                name: tp
-                                for name, tp in te.properties.items()
-                                if name in entry.properties
-                            }
-                        )
-            if rm:
-                section.entries = [e for e in section.entries if e not in rm]
+def build_moz_l10n_resource(db_res: DbResource) -> Resource:
+    if db_res.format == DbResource.Format.XCODE:
+        format = Format.xliff
     else:
-        # The iOS locale remapping is a hacky workaround for Xcode projects only,
-        # so don't apply it to other XLIFF projects.
-        is_xcode = res.format == Format.xliff and xliff_is_xcode(res)
-        for section in res.sections:
-            if (
-                res.format == Format.xliff
-                and section.get_meta("@source-language") is not None
-            ):
-                prev_tgt = next(
-                    (m for m in section.meta if m.key == "@target-language"), None
-                )
-                lc = (
-                    ios_locale_map.get(locale.code, locale.code)
-                    if is_xcode
-                    else locale.code
-                )
-                if prev_tgt is None:
-                    section.meta.append(Metadata("@target-language", lc))
-                else:
-                    prev_tgt.value = lc
+        try:
+            format = Format[db_res.format]
+        except KeyError:
+            raise ValueError(f"Unsupported format: {db_res.format}")
+    db_sections = {s.pk: s for s in db_res.sections.iterator()}
+    sections: list[Section[Message]] = []
+    prev_s_pk = -1
+    for e in db_res.entities.filter(obsolete=False).order_by("order").iterator():
+        entry = _entry_from_entity(format, e)
+        s_pk = e.section_id
+        assert s_pk is not None
+        if s_pk == prev_s_pk:
+            sections[-1].entries.append(entry)
+            continue
 
-            rm: list[Entry] = []
-            for entry in section.entries:
-                if isinstance(entry, Entry):
-                    if not set_translation(translations, res.format, section, entry):
+        # Comment-based sections (as in Fluent) can be non-contiguous,
+        # and should remain that way.
+        # Sections with a non-empty key should stay together,
+        # even if the Entity.order values are not in the right order.
+        db_section = db_sections[s_pk]
+        prev_s_pk = s_pk
+        s_id = tuple(db_section.key)
+        if s_id:
+            section = next((s for s in sections if s.id == s_id), None)
+            if section is not None:
+                section.entries.append(entry)
+                continue
+
+        section = Section(
+            id=s_id,
+            comment=db_section.comment,
+            meta=[Metadata(k, v) for k, v in db_section.meta],
+            entries=[entry],
+        )
+        sections.append(section)
+    return Resource(
+        format=format,
+        comment=db_res.comment,
+        meta=[Metadata(k, v) for k, v in db_res.meta],
+        sections=sections,
+    )
+
+
+def _entry_from_entity(format: Format, e: Entity) -> Entry[Message]:
+    key = e.key[1:] if format in {Format.ini, Format.xliff} else e.key
+    entry = Entry(
+        id=tuple(key),
+        comment=e.comment,
+        meta=[Metadata(k, v) for k, v in e.meta],
+        value=message_from_json(e.value),
+        properties={k: message_from_json(v) for k, v in e.properties.items()}
+        if e.properties
+        else {},
+    )
+    if format == Format.xliff:
+        source = serialize_message(Format.xliff, entry.value)
+        entry.set_meta("source", html.unescape(source))
+    return entry
+
+
+def build_translated_resource(
+    locale: Locale, translations: dict[Id, Translation], res: Resource[Message]
+) -> Resource[Message]:
+    res = deepcopy(res)
+    for section in res.sections:
+        rm = []
+        for entry in section.entries:
+            assert isinstance(entry, Entry)
+            tx = translations.get(section.id + entry.id, None)
+            if tx is not None:
+                _set_translation(res.format, entry, tx)
+            else:
+                match res.format:
+                    case Format.gettext if isinstance(entry.value, SelectMessage):
+                        entry.value.variants = {(CatchallKey(),): []}
+                    case Format.gettext | Format.xliff:
+                        entry.value = PatternMessage([])
+                    case _:
                         rm.append(entry)
-            if rm and res.format not in (Format.gettext, Format.xliff):
-                section.entries = [e for e in section.entries if e not in rm]
+        if rm:
+            section.entries = [e for e in section.entries if e not in rm]
 
     match res.format:
         case Format.gettext:
@@ -327,37 +363,40 @@ def set_translations(
                 for key, value in header.items()
                 if key not in gettext_trim_headers
             ]
+
         case Format.xliff:
-            pass
+            lc = str(locale.code)
+            if xliff_is_xcode(res):
+                lc = ios_locale_map.get(lc, lc)
+            for section in res.sections:
+                if section.get_meta("@source-language") is not None:
+                    section.set_meta("@target-language", lc)
+
         case _:
             res.sections = [
                 section
                 for section in res.sections
                 if any(isinstance(entry, Entry) for entry in section.entries)
             ]
+    return res
 
 
-def set_translation(
-    translations: list[Translation],
-    format: Format | None,
-    section: Section,
-    entry: Entry,
-) -> bool:
-    key = list(section.id + entry.id)
-    tx = next((tx for tx in translations if tx.entity.key == key), None)
-    if tx is None:
-        if format == Format.gettext:
-            if isinstance(entry.value, SelectMessage):
-                entry.value.variants = {(CatchallKey(),): []}
-            else:
-                entry.value = PatternMessage([])
-            return True
-        else:
-            return False
-
+def _set_translation(format: Format | None, entry: Entry, tx: Translation) -> None:
     match format:
+        case Format.fluent:
+            entry.value = message_from_json(tx.value)
+            is_term = entry.id[0].startswith("-")
+            entry.properties = (
+                {
+                    name: message_from_json(pv)
+                    for name, pv in tx.properties.items()
+                    if is_term or name in entry.properties
+                }
+                if tx.properties
+                else {}
+            )
         case Format.android | Format.gettext | Format.webext | Format.xliff:
-            msg = parse_message(Format.mf2, tx.string)
+            msg = message_from_json(tx.value)
             if isinstance(entry.value, SelectMessage):
                 entry.value.variants = (
                     {(CatchallKey(),): msg.pattern}
@@ -377,6 +416,4 @@ def set_translation(
                     entry.meta = [m for m in entry.meta if m != fuzzy_flag]
 
         case _:
-            entry.value = tx.string
-
-    return True
+            entry.value = message_from_json(tx.value)

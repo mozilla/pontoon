@@ -14,109 +14,20 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from pontoon.base.models.locale import Locale
-from pontoon.base.models.project import Project
 from pontoon.base.utils import require_AJAX
 from pontoon.insights.forms import CommunityHealthLocalesForm
-from pontoon.insights.models import LocaleHealthSnapshot
 from pontoon.insights.utils import (
+    CHS_BASE_METRICS,
+    CHS_SCORE_METRICS,
+    get_chs_columns,
     get_global_locale_health_insights,
     get_global_pretranslation_quality,
+    get_monthly_snapshot_deltas,
+    get_monthly_snapshots,
 )
 
 
 log = logging.getLogger(__name__)
-
-
-CHS_BASE_METRICS = [
-    "active_managers",
-    "active_translators",
-    "active_contributors",
-    "all_contributors",
-    "new_signups",
-    "key_projects_enabled",
-    "completion",
-    "chs",
-]
-
-CHS_SCORE_METRICS = [
-    "key_projects_enabled_score",
-    "active_managers_score",
-    "active_translators_score",
-    "active_contributors_score",
-    "all_contributors_score",
-    "new_signups_score",
-    "completion_score",
-    "chs",
-]
-
-
-def get_chs_columns():
-    return {
-        "active_managers": {
-            "base_threshold": settings.MANAGER_PEOPLE_THRESHOLD,
-            "score_threshold": settings.MANAGER_POINTS,
-        },
-        "active_translators": {
-            "base_threshold": settings.TRANSLATOR_PEOPLE_THRESHOLD,
-            "score_threshold": settings.TRANSLATOR_POINTS,
-        },
-        "active_contributors": {
-            "base_threshold": settings.ACTIVE_CONTRIBUTOR_PEOPLE_THRESHOLD,
-            "score_threshold": settings.ACTIVE_CONTRIBUTOR_POINTS,
-        },
-        "all_contributors": {
-            "base_threshold": settings.ALL_CONTRIBUTOR_PEOPLE_THRESHOLD,
-            "score_threshold": settings.ALL_CONTRIBUTOR_POINTS,
-        },
-        "new_signups": {
-            "base_threshold": settings.NEW_SIGNUP_PEOPLE_THRESHOLD,
-            "score_threshold": settings.NEW_SIGNUP_POINTS,
-        },
-        "key_projects_enabled": {
-            "base_threshold": Project.objects.filter(is_chs_project=True).count(),
-            "score_threshold": settings.ENABLED_PROJECT_POINTS,
-        },
-        "completion": {
-            "base_threshold": 100,
-            "percent": True,
-            "score_threshold": settings.COMPLETION_POINTS,
-        },
-        "chs": {"base_threshold": 100},
-    }
-
-
-def get_monthly_snapshots(locales, date):
-    month_start = date.replace(day=1)
-    next_month_start = month_start + relativedelta(months=1)
-
-    snapshots = LocaleHealthSnapshot.objects.filter(
-        locale__in=locales,
-        created_at__gte=month_start,
-        created_at__lt=next_month_start,
-    ).order_by("locale_id", "-created_at")
-
-    latest = {}
-    for snapshot in snapshots:
-        latest.setdefault(snapshot.locale_id, snapshot)
-
-    return latest
-
-
-def get_monthly_snapshot_deltas(current_snapshots, previous_snapshots, metrics):
-    deltas = {}
-    for locale_id, curr_snapshot in current_snapshots.items():
-        prev_snapshot = previous_snapshots.get(locale_id)
-        locale_deltas = {}
-        for column_key in metrics:
-            if prev_snapshot is None:
-                locale_deltas[column_key] = None
-                continue
-            curr_value = getattr(curr_snapshot, column_key)
-            prev_value = getattr(prev_snapshot, column_key)
-            locale_deltas[column_key] = curr_value - prev_value
-        deltas[locale_id] = locale_deltas
-
-    return deltas
 
 
 def _community_health_context(profile):

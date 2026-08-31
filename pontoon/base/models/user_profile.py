@@ -26,6 +26,7 @@ class UserProfile(models.Model):
     email_communications_enabled = models.BooleanField(default=False)
     email_consent_dismissed_at = models.DateTimeField(null=True, blank=True)
     monthly_activity_summary = models.BooleanField(default=False)
+    monthly_health_report = models.BooleanField(default=False)
 
     # Theme
     class Themes(models.TextChoices):

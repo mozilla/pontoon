@@ -20,7 +20,6 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseForbidden,
-    HttpResponseRedirect,
     JsonResponse,
     StreamingHttpResponse,
 )
@@ -1008,9 +1007,9 @@ def perform_checks(request):
 
 @transaction.atomic
 def download_translations(request):
-    """Download translated resource from its backing repository."""
+    """Download translated resource."""
 
-    from pontoon.sync.utils import translations_target_url
+    from pontoon.sync.utils import serialize_translated_resource
 
     try:
         slug = request.GET["slug"]
@@ -1019,17 +1018,26 @@ def download_translations(request):
     except MultiValueDictKeyError:
         raise Http404
 
-    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user), slug=slug, disabled=False
+    )
+    resource = get_object_or_404(
+        Resource, project=project, path=res_path, obsolete=False
+    )
     locale = get_object_or_404(Locale, code=code)
+    if not TranslatedResource.objects.filter(locale=locale, resource=resource).exists():
+        raise Http404(
+            f"{resource.path} of {project.slug} not available for locale {locale.code}"
+        )
 
-    # FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
-    # Once fixed, we should remove SSH credentials from the web pod
-    # https://github.com/mozilla/webservices-infra/pull/9295
-    url = translations_target_url(project, locale, res_path)
-    if url and url.startswith("https://"):
-        return HttpResponseRedirect(url)
-    else:
-        raise Http404
+    str_res = serialize_translated_resource(resource, locale)
+    filename = re.sub(r"[/\\]", "_", f"{locale.code}_{slug}_{res_path}")
+
+    response = HttpResponse()
+    response.content = str_res.encode("utf-8")
+    response["Content-Type"] = "text/plain"
+    response["Content-Disposition"] = f"attachment; filename={filename}"
+    return response
 
 
 @login_required(redirect_field_name="", login_url="/403")

@@ -37,6 +37,7 @@ class ProjectForm(forms.ModelForm):
     )
     set_translated_resources_from_repo = forms.ChoiceField(
         widget=forms.RadioSelect,
+        initial=False,
         choices=(
             (
                 False,

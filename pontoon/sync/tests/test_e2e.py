@@ -33,6 +33,7 @@ from pontoon.test.factories import (
     ProjectLocaleFactory,
     RepositoryFactory,
     ResourceFactory,
+    SectionFactory,
     TranslatedResourceFactory,
     TranslationFactory,
 )
@@ -71,17 +72,19 @@ def test_kitchen_sink():
         ResourceFactory.create(project=project, path="a.ftl", format="fluent")
         ResourceFactory.create(project=project, path="b.po", format="gettext")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
+        section = SectionFactory.create(resource=res_c, key=[])
         for i in range(3):
             entity = EntityFactory.create(
                 resource=res_c,
+                section=section,
                 key=[f"key-{i}"],
-                string=f"key-{i} = Message {i}\n",
+                value=[f"Message {i}"],
             )
             for locale in [locale_de, locale_fr]:
                 TranslationFactory.create(
                     entity=entity,
                     locale=locale,
-                    string=f"key-{i} = New translation {locale.code[:2]} {i}\n",
+                    value=[f"New translation {locale.code[:2]} {i}"],
                     active=True,
                     approved=True,
                 )
@@ -255,7 +258,7 @@ def test_add_resources():
                 resource__project=project, resource__path="file.xliff"
             ),
             locale=locale,
-            string="xliff translation",
+            value=["xliff translation"],
             active=True,
             approved=True,
         )
@@ -343,7 +346,7 @@ def test_xliff_html_translation():
         TranslationFactory.create(
             entity=Entity.objects.get(resource__project=project),
             locale=locale,
-            string="translation: Hello <b>world</b>!",
+            value=["translation: Hello <b>world</b>!"],
             active=True,
             approved=True,
         )
@@ -430,7 +433,7 @@ def test_xliff_target_language():
                     resource__project=project, resource__path=path
                 ),
                 locale=locale,
-                string="translation",
+                value=["translation"],
                 active=True,
                 approved=True,
             )
@@ -456,10 +459,10 @@ def test_translation_before_source():
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
         TranslationFactory.create(
             entity=EntityFactory.create(
-                resource=res_a, key=["a0"], string="a0 = Message 0\n"
+                resource=res_a, key=["a0"], value=["Message 0"]
             ),
             locale=locale,
-            string="a0 = Translation 0\n",
+            value=["Translation 0"],
             active=True,
             approved=True,
         )
@@ -467,10 +470,10 @@ def test_translation_before_source():
         res_b = ResourceFactory.create(project=project, path="b.ftl", format="fluent")
         TranslationFactory.create(
             entity=EntityFactory.create(
-                resource=res_b, key=["b0"], string="b0 = Message 0\n"
+                resource=res_b, key=["b0"], value=["Message 0"]
             ),
             locale=locale,
-            string="b0 = Translation 0\n",
+            value=["Translation 0"],
             active=True,
             approved=True,
         )
@@ -512,23 +515,23 @@ def test_android():
         )
 
         entity = EntityFactory.create(
-            resource=res, key=["quotes"], string="Prev quotes"
+            resource=res, key=["quotes"], value=["Prev quotes"]
         )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="'Hello' \"translation\"",
+            value=["'Hello' \"translation\""],
             active=True,
             approved=True,
         )
 
         entity = EntityFactory.create(
-            resource=res, key=["newline"], string="Prev newline"
+            resource=res, key=["newline"], value=["Prev newline"]
         )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="translated escaped \n newlines",
+            value=["translated escaped \n newlines"],
             active=True,
             approved=True,
         )
@@ -576,11 +579,13 @@ def test_gettext_fuzzy():
         for i in range(5):
             string = f"Message {i}\n"
             fuzzy = i < 3
-            entity = EntityFactory.create(resource=res, key=[f"key-{i}"], string=string)
+            entity = EntityFactory.create(
+                resource=res, key=[f"key-{i}"], value=[string]
+            )
             TranslationFactory.create(
                 entity=entity,
                 locale=locale,
-                string=string.replace("Message", "Fuzzy" if fuzzy else "Translation"),
+                value=[string.replace("Message", "Fuzzy" if fuzzy else "Translation")],
                 active=True,
                 approved=not fuzzy,
                 fuzzy=fuzzy,
@@ -696,12 +701,14 @@ def test_plain_json(caplog):
         res = ResourceFactory.create(
             project=project, path="old-file.json", format="plain_json"
         )
-
-        entity = EntityFactory.create(resource=res, key=["o1"], string="Entity 1")
+        section = SectionFactory.create(resource=res, key=[])
+        entity = EntityFactory.create(
+            resource=res, section=section, key=["o1"], value=["Entity 1"]
+        )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="Translation 1",
+            value=["Translation 1"],
             active=True,
             approved=True,
         )
@@ -791,22 +798,24 @@ def test_webext():
             project=project, path="messages.json", format="android"
         )
 
-        entity = EntityFactory.create(resource=res, key=["plain"], string="Entity")
+        entity = EntityFactory.create(resource=res, key=["plain"], value=["Entity"])
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="Translation",
+            value=["Translation"],
             active=True,
             approved=True,
         )
 
         entity = EntityFactory.create(
-            resource=res, key=["number"], string="Entity for {$arg1 @source=|$1|}"
+            resource=res,
+            key=["number"],
+            value=["Entity for ", {"$": "arg1", "attr": {"source": "$1"}}],
         )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string="Translation for {$arg1 @source=|$1|}",
+            value=["Translation for ", {"$": "arg1", "attr": {"source": "$1"}}],
             active=True,
             approved=True,
         )
@@ -814,14 +823,31 @@ def test_webext():
         entity = EntityFactory.create(
             resource=res,
             key=["name"],
-            string=".local $ORIGIN = {$arg1 @source=|$1| @example=developer.mozilla.org}\n"
-            + "{{Entity for {$ORIGIN @source=|$ORIGIN$|}}}",
+            value={
+                "decl": {
+                    "ORIGIN": {
+                        "$": "arg1",
+                        "attr": {"source": "$1", "example": "developer.mozilla.org"},
+                    }
+                },
+                "msg": ["Entity for ", {"$": "ORIGIN", "attr": {"source": "ORIGIN"}}],
+            },
         )
         TranslationFactory.create(
             entity=entity,
             locale=locale,
-            string=".local $ORIGIN = {$arg1 @source=|$1| @example=developer.mozilla.org}\n"
-            + "{{Translation for {$ORIGIN @source=|$ORIGIN$|}}}",
+            value={
+                "decl": {
+                    "ORIGIN": {
+                        "$": "arg1",
+                        "attr": {"source": "$1", "example": "developer.mozilla.org"},
+                    }
+                },
+                "msg": [
+                    "Translation for ",
+                    {"$": "ORIGIN", "attr": {"source": "ORIGIN"}},
+                ],
+            },
             active=True,
             approved=True,
         )

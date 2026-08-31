@@ -109,7 +109,7 @@ class OpenAIService:
                 context_parts.append(
                     f"MACHINE TRANSLATION (for reference):\n{flat_references[0][1]}"
                 )
-                reference_instruction = "Use the provided machine translation as a reference, but you are not bound by it — rewrite freely to achieve the best result.\n"
+                reference_instruction = "Use the provided reference as a guide, but rewrite freely if it can be improved.\n"
             case _:
                 reference_block = "\n".join(
                     f"- {source}: {text}" for source, text in flat_references
@@ -117,7 +117,7 @@ class OpenAIService:
                 context_parts.append(
                     f"EXISTING SUGGESTIONS (for reference):\n{reference_block}"
                 )
-                reference_instruction = "Use the provided suggestions as references, but you are not bound by them — rewrite freely to achieve the best result.\n"
+                reference_instruction = "Use the provided references as a guide, but rewrite freely if they can be improved.\n"
 
         user_prompt = "\n\n".join(context_parts)
 
@@ -135,27 +135,27 @@ class OpenAIService:
         context_instructions = []
         if entity_key:
             context_instructions.append(
-                "STRING ID: use it to infer the UI context (e.g., button, menu item, page title, tooltip) and adapt length and phrasing accordingly."
+                "STRING ID: infer the UI context (e.g. button, menu item, title, tooltip) and adapt length and phrasing accordingly."
             )
         if resource_comment:
             context_instructions.append(
-                "RESOURCE COMMENT: general notes about the file — use it as additional context."
+                "RESOURCE COMMENT: background context about the file."
             )
         if group_comment:
             context_instructions.append(
-                "GROUP COMMENT: notes about the group of messages this string belongs to — use it as additional context."
+                "GROUP COMMENT: background context about the group of strings this one belongs to."
             )
         if entity_comment:
             context_instructions.append(
-                "STRING COMMENT: treat it as authoritative translator notes — it may specify placeholders to preserve exactly, terms that must not be translated, or other constraints. STRING COMMENT requirements take precedence over all stylistic choices."
+                "STRING COMMENT: authoritative translator notes (e.g. placeholders or terms to preserve) — takes precedence over stylistic choices."
             )
         if pinned_comments:
             context_instructions.append(
-                "PINNED COMMENTS: this is a comment added by a project manager — treat them as high-priority guidance from the localization team."
+                "PINNED COMMENTS: high-priority guidance from the localization team's project manager."
             )
         if terms:
             context_instructions.append(
-                "TERMINOLOGY: use the given translations for those terms consistently in your output, unless you believe the existing translation to be incorrect for the context."
+                "TERMINOLOGY: use the given translations consistently, unless incorrect for this context."
             )
         context_block = (
             "\n".join(context_instructions) + "\n\n" if context_instructions else ""
@@ -163,21 +163,9 @@ class OpenAIService:
 
         system_rules = textwrap.dedent(
             f"""\
-            Your goal is to produce a natural, grammatically correct translation. Follow these rules strictly; if rules conflict, earlier rules take priority.
-            1) ENDING PUNCTUATION — PRESERVE SEMANTICS
-                - Determine the ending punctuation of the English source text (ignore trailing spaces and HTML tags).
-                - The translation MUST end with the equivalent punctuation. Both directions are hard constraints:
-                    • English ends with "." → translation MUST end with "." (or target-language equivalent)
-                    • English ends with "?" → translation MUST end with a question mark
-                    • English ends with "!" → translation MUST end with an exclamation mark
-                    • English ends with "…" → translation MUST end with an ellipsis
-                    • English has NO ending punctuation → translation MUST NOT end with ".", "?", "!", or "…"
-                - Apply correct punctuation conventions for the target language (e.g. Spanish "¿ ¡", French non-breaking space before "?", "!", ":").
-            2) HTML TAGS
-                - Preserve all HTML tags exactly as in the source:
-                    - Do not add, remove, reorder, or modify tags or attributes
-                - Translate only the text content between tags, or the attributes if they contain translatable text (e.g., "alt", "title").
-                - Keep punctuation placement consistent with the source structure (do not move punctuation across tag boundaries unless required by the target language grammar).
+            Rules, in priority order if they conflict:
+            1) Match the English source's ending punctuation exactly (including having none), using correct target-language conventions (e.g. Spanish ¿¡, French non-breaking space before ?!:).
+            2) Preserve all HTML tags and attributes exactly as in the source; translate only text content and translatable attributes (e.g. alt, title).
             3) {style_goal}
 
             Output only the translation, with no explanation."""
