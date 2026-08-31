@@ -1,8 +1,6 @@
 from django.db import migrations
 
 
-batch_size = 1000
-
 CLDR_PLURALS = ("zero", "one", "two", "few", "many", "other")
 
 
@@ -31,9 +29,7 @@ def fix_plural_catchall(apps, schema_editor):
 
     catchalls = {}
 
-    for pk, code, cldr_plurals in Locale.objects.values_list(
-        "pk", "code", "cldr_plurals"
-    ):
+    for pk, cldr_plurals in Locale.objects.values_list("pk", "cldr_plurals"):
         categories = plural_categories(cldr_plurals)
         if len(categories) > 1 and categories[-1] != "other":
             catchalls[pk] = categories[-1]
@@ -42,12 +38,11 @@ def fix_plural_catchall(apps, schema_editor):
         return
 
     updates = []
-    fixed = 0
     translations = Translation.objects.filter(
         locale_id__in=catchalls,
         entity__resource__format="gettext",
         value__has_key="alt",
-    ).iterator()
+    )
 
     for tx in translations:
         catchall = catchalls[tx.locale_id]
@@ -61,14 +56,14 @@ def fix_plural_catchall(apps, schema_editor):
 
         if changed:
             updates.append(tx)
-            fixed += 1
 
-        if len(updates) == batch_size:
-            Translation.objects.bulk_update(updates, ["value"])
-            updates.clear()
-
-    if updates:
-        Translation.objects.bulk_update(updates, ["value"])
+    print(
+        f"\n    Re-labelling plural catchalls in {len(updates)} translations"
+        f" across {len(catchalls)} locales...\n   ",
+        end="",
+        flush=True,
+    )
+    Translation.objects.bulk_update(updates, ["value"], batch_size=10_000)
 
 
 class Migration(migrations.Migration):
