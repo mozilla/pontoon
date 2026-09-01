@@ -214,4 +214,29 @@ describe('getEmptyMessage', () => {
 
       `);
   });
+
+  for (const code of ['cs', 'lt', 'sk']) {
+    it(`handles plural messages for locales with a decimal-only many (${code})`, () => {
+      const source = parseEntry(
+        'fluent',
+        ftl`
+      selector-multi =
+        { $num ->
+            [one] ONE
+           *[other] OTHER
+        }
+      `,
+      );
+      const entry = getEmptyMessageEntry(source, { code });
+      expect(serializeEntry(entry)).toBe(ftl`
+      selector-multi =
+          { $num ->
+              [one] { "" }
+              [few] { "" }
+             *[other] { "" }
+          }
+
+      `);
+    });
+  }
 });
