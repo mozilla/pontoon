@@ -2,7 +2,12 @@ import { createMemoryHistory } from 'history';
 import { fireEvent } from '@testing-library/react';
 import { expect, vi } from 'vitest';
 
-import { createReduxStore, mountComponentWithStore } from '~/test/store';
+import * as uxaction from '~/api/uxaction';
+import {
+  createDefaultUser,
+  createReduxStore,
+  mountComponentWithStore,
+} from '~/test/store';
 
 import { StringNotFound } from './StringNotFound';
 
@@ -33,11 +38,15 @@ entities-StringNotFound--all-resources = All Resources
 function mount(
   entityLocation,
   url = '/kg/firefox/all-resources/?status=missing&string=99',
+  { authenticated = false } = {},
 ) {
   const history = createMemoryHistory({ initialEntries: [url] });
   const spy = vi.fn();
   history.listen(spy);
   const store = createReduxStore();
+  if (authenticated) {
+    createDefaultUser(store);
+  }
   const result = mountComponentWithStore(
     StringNotFound,
     store,
@@ -49,6 +58,18 @@ function mount(
 }
 
 describe('<StringNotFound>', () => {
+  let mockLogUXAction;
+
+  beforeAll(() => {
+    mockLogUXAction = vi
+      .spyOn(uxaction, 'logUXAction')
+      .mockImplementation(() => {});
+  });
+
+  beforeEach(() => mockLogUXAction.mockClear());
+
+  afterAll(() => vi.restoreAllMocks());
+
   it('lays out where the requested string lives', () => {
     const { getByText } = mount(ENTITY_LOCATION);
 
@@ -115,5 +136,84 @@ describe('<StringNotFound>', () => {
   it('renders nothing without a string location', () => {
     const { container } = mount(null);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('logs a UX action when an authenticated user is shown the panel', () => {
+    mount(ENTITY_LOCATION, undefined, { authenticated: true });
+
+    expect(mockLogUXAction).toHaveBeenCalledTimes(1);
+    expect(mockLogUXAction).toHaveBeenCalledWith(
+      'Render: String not found',
+      'String Not Found 1.0',
+      { panel: 'project' },
+    );
+  });
+
+  it.each([
+    ['Show the string', 'Click: String not found, go to string'],
+    ['Keep the parameters', 'Click: String not found, show matching'],
+  ])('logs %s against the panel it was shown on', (label, action) => {
+    const { getByRole } = mount(ENTITY_LOCATION, undefined, {
+      authenticated: true,
+    });
+
+    fireEvent.click(getByRole('link', { name: label }));
+
+    expect(mockLogUXAction).toHaveBeenLastCalledWith(
+      action,
+      'String Not Found 1.0',
+      { panel: 'project' },
+    );
+  });
+
+  it('logs the filters panel when it names the filters that hid the string', () => {
+    const { getByText } = mount(
+      {
+        pk: 99,
+        project: 'firefox',
+        project_name: 'Firefox',
+        resource: 'foo.ftl',
+        filters: ['missing'],
+      },
+      '/kg/firefox/all-resources/?status=warnings&string=99',
+      { authenticated: true },
+    );
+
+    getByText('missing');
+    expect(mockLogUXAction).toHaveBeenCalledWith(
+      'Render: String not found',
+      'String Not Found 1.0',
+      { panel: 'filters' },
+    );
+  });
+
+  it('logs the resource panel when no filter can be named', () => {
+    const { getByText, queryByText } = mount(
+      {
+        pk: 99,
+        project: 'firefox',
+        project_name: 'Firefox',
+        resource: 'foo.ftl',
+        filters: [],
+      },
+      '/kg/firefox/all-resources/?tag=ui&string=99',
+      { authenticated: true },
+    );
+
+    getByText('foo.ftl');
+    expect(queryByText('Firefox')).not.toBeInTheDocument();
+    expect(mockLogUXAction).toHaveBeenCalledWith(
+      'Render: String not found',
+      'String Not Found 1.0',
+      { panel: 'resource' },
+    );
+  });
+
+  it('logs nothing for anonymous users', () => {
+    const { getByRole } = mount(ENTITY_LOCATION);
+
+    fireEvent.click(getByRole('link', { name: 'Show the string' }));
+
+    expect(mockLogUXAction).not.toHaveBeenCalled();
   });
 });

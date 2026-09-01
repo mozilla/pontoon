@@ -1,10 +1,13 @@
 import { Localized, useLocalization } from '@fluent/react';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import type { RequestedEntityLocation } from '~/api/entity';
+import { logUXAction } from '~/api/uxaction';
 import { Locale } from '~/context/Locale';
 import { emptyParams, Location } from '~/context/Location';
+import { useAppSelector } from '~/hooks';
 import { useProject } from '~/modules/project';
+import { USER } from '~/modules/user';
 
 import './StringNotFound.css';
 
@@ -38,39 +41,59 @@ export function StringNotFound({
   const locale = useContext(Locale);
   const { name: viewProjectName } = useProject();
   const { l10n } = useLocalization();
+  const isAuthUser = useAppSelector((state) => state[USER].isAuthenticated);
+
+  const allProjects = location.project === 'all-projects';
+  const allResources =
+    !location.resource || location.resource === 'all-resources';
+  const sameProject = entityLocation?.project === location.project;
+  const sameResource =
+    allResources || entityLocation?.resource === location.resource;
+  const stringFilters = entityLocation?.filters ?? [];
+  const filteredOut =
+    (allProjects || (sameProject && sameResource)) && stringFilters.length > 0;
+
+  const panel = filteredOut ? 'filters' : !sameProject ? 'project' : 'resource';
+
+  const logAction = (action: string) => {
+    if (isAuthUser) {
+      logUXAction(action, 'String Not Found 1.0', { panel });
+    }
+  };
+
+  useEffect(() => {
+    if (entityLocation) {
+      logAction('Render: String not found');
+    }
+  }, [isAuthUser, entityLocation?.pk]);
 
   if (!entityLocation) {
     return null;
   }
 
   const { push } = location;
-  const allProjects = location.project === 'all-projects';
-  const allResources =
-    !location.resource || location.resource === 'all-resources';
-  const sameProject = entityLocation.project === location.project;
-  const sameResource =
-    allResources || entityLocation.resource === location.resource;
-  const filteredOut = allProjects || (sameProject && sameResource);
 
-  const goToString = () =>
+  const goToString = (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    logAction('Click: String not found, go to string');
     push({
       ...emptyParams,
       project: entityLocation.project,
       resource: entityLocation.resource,
       entity: entityLocation.pk,
     });
+  };
 
-  const showMatching = () => push({ entity: 0 });
+  const showMatching = (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    logAction('Click: String not found, show matching');
+    push({ entity: 0 });
+  };
 
   const goToStringHref = `/${location.locale}/${entityLocation.project}/${entityLocation.resource}/?string=${entityLocation.pk}`;
   const showMatchingUrl = new URL(window.location.href);
   showMatchingUrl.searchParams.delete('string');
   const showMatchingHref = showMatchingUrl.pathname + showMatchingUrl.search;
-
-  const onClick = (navigate: () => void) => (ev: React.MouseEvent) => {
-    ev.preventDefault();
-    navigate();
-  };
 
   const requestProject = allProjects
     ? l10n.getString(
@@ -96,7 +119,7 @@ export function StringNotFound({
   ).flatMap((key) => location[key]?.split(',') ?? []);
   const filterList = formatFilters(filters);
 
-  const stringFilterList = formatFilters(entityLocation.filters);
+  const stringFilterList = formatFilters(stringFilters);
 
   return (
     <section id='string-not-found'>
@@ -114,7 +137,7 @@ export function StringNotFound({
               className='primary'
               href={goToStringHref}
               title={goToStringHref}
-              onClick={onClick(goToString)}
+              onClick={goToString}
             />
           </Localized>
           <Localized id='entities-StringNotFound--show-matching'>
@@ -122,7 +145,7 @@ export function StringNotFound({
               className='secondary'
               href={showMatchingHref}
               title={showMatchingHref}
-              onClick={onClick(showMatching)}
+              onClick={showMatching}
             />
           </Localized>
         </div>
@@ -161,13 +184,13 @@ export function StringNotFound({
               <h3 />
             </Localized>
             <div className='fields'>
-              {filteredOut && entityLocation.filters.length > 0 ? (
+              {panel === 'filters' ? (
                 <Detail labelId='entities-StringNotFound--label-filters'>
                   {stringFilterList}
                 </Detail>
               ) : (
                 <>
-                  {!sameProject && (
+                  {panel === 'project' && (
                     <Detail labelId='entities-StringNotFound--label-project'>
                       {entityLocation.project_name}
                     </Detail>
