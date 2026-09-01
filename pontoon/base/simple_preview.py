@@ -1,4 +1,3 @@
-from collections.abc import Iterator
 from json import dumps
 
 from moz.l10n.formats.fluent import fluent_parse_entry, fluent_serialize_message
@@ -62,13 +61,6 @@ def get_simple_preview(format: Resource.Format, msg: str | Message | Pattern) ->
     for part in as_simple_pattern(msg):
         preview += preview_placeholder(part)
     return preview
-
-
-def message_patterns(msg: Message) -> Iterator[Pattern]:
-    if isinstance(msg, PatternMessage):
-        yield msg.pattern
-    else:
-        yield from msg.variants.values()
 
 
 def as_simple_pattern(msg: Message | Pattern) -> Pattern:

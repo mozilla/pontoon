@@ -1,10 +1,16 @@
+from collections.abc import Iterator
 from xml.sax.saxutils import escape, quoteattr
 
-from moz.l10n.model import Message
+from moz.l10n.model import Message, Pattern, PatternMessage
 
 from django.conf import settings
 
-from pontoon.base.simple_preview import message_patterns
+
+def get_message_patterns(msg: Message) -> Iterator[Pattern]:
+    if isinstance(msg, PatternMessage):
+        yield msg.pattern
+    else:
+        yield from msg.variants.values()
 
 
 def get_all_message_text(messages: list[Message]) -> str:
@@ -17,7 +23,7 @@ def get_all_message_text(messages: list[Message]) -> str:
     text_parts = dict.fromkeys(
         part
         for message in messages
-        for pattern in message_patterns(message)
+        for pattern in get_message_patterns(message)
         for part in pattern
         if isinstance(part, str)
     )
