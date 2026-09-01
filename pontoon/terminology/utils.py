@@ -1,6 +1,33 @@
+from collections.abc import Iterator
 from xml.sax.saxutils import escape, quoteattr
 
+from moz.l10n.model import Message, Pattern, PatternMessage
+
 from django.conf import settings
+
+
+def get_message_patterns(msg: Message) -> Iterator[Pattern]:
+    if isinstance(msg, PatternMessage):
+        yield msg.pattern
+    else:
+        yield from msg.variants.values()
+
+
+def get_all_message_text(messages: list[Message]) -> str:
+    """
+    Return the text of every unique pattern in a collection of messages.
+
+    Placeholders are left out, and patterns are joined by newlines so that
+    terms are not matched across pattern boundaries.
+    """
+    text_parts = dict.fromkeys(
+        part
+        for message in messages
+        for pattern in get_message_patterns(message)
+        for part in pattern
+        if isinstance(part, str)
+    )
+    return "\n".join(text_parts)
 
 
 def build_tbx_v2_file(term_translations, locale):

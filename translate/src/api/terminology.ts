@@ -14,10 +14,10 @@ export type TermType = {
 };
 
 export async function fetchTerms(
-  sourceString: string,
+  entity: number,
   locale: string,
 ): Promise<TermType[]> {
-  const search = new URLSearchParams({ source_string: sourceString, locale });
+  const search = new URLSearchParams({ entity: String(entity), locale });
   const results = await GET('/terminology/get-terms/', search, {
     singleton: true,
   });

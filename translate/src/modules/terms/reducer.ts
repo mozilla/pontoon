@@ -8,13 +8,13 @@ export const TERM = 'term';
 
 export type TermState = {
   readonly fetching: boolean;
-  readonly sourceString: string;
+  readonly entity: number;
   readonly terms: Array<TermType>;
 };
 
 const initialState: TermState = {
   fetching: false,
-  sourceString: '',
+  entity: 0,
   terms: [],
 };
 
@@ -27,7 +27,7 @@ export function reducer(
       return {
         ...state,
         fetching: true,
-        sourceString: action.sourceString,
+        entity: action.entity,
         terms: [],
       };
     case RECEIVE:
