@@ -4,8 +4,9 @@ import type { AppDispatch } from '~/store';
 
 export const RECEIVE = 'project/RECEIVE';
 export const REQUEST = 'project/REQUEST';
+export const RESET = 'project/RESET';
 
-export type Action = ReceiveAction | RequestAction;
+export type Action = ReceiveAction | RequestAction | ResetAction;
 
 /** Notify that project data is being fetched.  */
 type RequestAction = {
@@ -20,6 +21,11 @@ type ReceiveAction = {
   readonly info: string;
   readonly tags: Tag[];
   readonly locales: LocaleOption[];
+};
+
+/** Reset project data.  */
+type ResetAction = {
+  readonly type: typeof RESET;
 };
 
 /**
@@ -38,5 +44,11 @@ export const getProject = (slug: string) => async (dispatch: AppDispatch) => {
       tags: tags.sort((a, b) => b.priority - a.priority),
       locales: locales,
     });
+  } else {
+    dispatch(resetProject());
   }
 };
+
+export const resetProject = () => ({
+  type: RESET,
+});
