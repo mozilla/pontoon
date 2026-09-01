@@ -54,9 +54,23 @@ def test_send_monthly_activity_summary_excludes_system_users(member, sync_user):
         user.profile.monthly_activity_summary = True
         user.profile.save()
 
+    # Create snapshots required by send_monthly_activity_summary() and
+    # pin the current date.
+    locale = LocaleFactory(code="x-test", name="Test Language")
+    for created_at in (date(2025, 10, 1), date(2025, 11, 1)):
+        LocaleInsightsSnapshot.objects.create(
+            locale=locale,
+            created_at=created_at,
+            total_strings=100,
+            approved_strings=100,
+            completion=100.0,
+        )
+
     # Discard the onboarding email sent when the member fixture is created
     mail.outbox.clear()
-    send_monthly_activity_summary()
+    with patch("pontoon.messaging.emails.timezone") as mock_tz:
+        mock_tz.now.return_value = datetime(2025, 11, 1, 6, 30, 0, tzinfo=UTC)
+        send_monthly_activity_summary()
 
     recipients = [address for message in mail.outbox for address in message.to]
     assert recipients == [member.user.contact_email]
