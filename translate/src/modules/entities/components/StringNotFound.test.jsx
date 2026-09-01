@@ -19,12 +19,6 @@ const ENTITY_LOCATION = {
   filters: [],
 };
 
-const UX_DATA = {
-  all_projects: false,
-  same_project: false,
-  same_resource: true,
-};
-
 const FTL = `
 entities-StringNotFound--title = String not found
 entities-StringNotFound--description = doesn’t match
@@ -151,32 +145,29 @@ describe('<StringNotFound>', () => {
     expect(mockLogUXAction).toHaveBeenCalledWith(
       'Render: String not found',
       'String Not Found 1.0',
-      UX_DATA,
+      { panel: 'project' },
     );
   });
 
   it.each([
     ['Show the string', 'Click: String not found, go to string'],
     ['Keep the parameters', 'Click: String not found, show matching'],
-  ])(
-    'logs %s with the dimensions of the panel it was shown on',
-    (label, action) => {
-      const { getByRole } = mount(ENTITY_LOCATION, undefined, {
-        authenticated: true,
-      });
+  ])('logs %s against the panel it was shown on', (label, action) => {
+    const { getByRole } = mount(ENTITY_LOCATION, undefined, {
+      authenticated: true,
+    });
 
-      fireEvent.click(getByRole('link', { name: label }));
+    fireEvent.click(getByRole('link', { name: label }));
 
-      expect(mockLogUXAction).toHaveBeenLastCalledWith(
-        action,
-        'String Not Found 1.0',
-        UX_DATA,
-      );
-    },
-  );
+    expect(mockLogUXAction).toHaveBeenLastCalledWith(
+      action,
+      'String Not Found 1.0',
+      { panel: 'project' },
+    );
+  });
 
-  it('logs a string hidden by filters as living in the current view', () => {
-    mount(
+  it('logs the filters panel when it names the filters that hid the string', () => {
+    const { getByText } = mount(
       {
         pk: 99,
         project: 'firefox',
@@ -188,10 +179,33 @@ describe('<StringNotFound>', () => {
       { authenticated: true },
     );
 
+    getByText('missing');
     expect(mockLogUXAction).toHaveBeenCalledWith(
       'Render: String not found',
       'String Not Found 1.0',
-      { all_projects: false, same_project: true, same_resource: true },
+      { panel: 'filters' },
+    );
+  });
+
+  it('logs the resource panel when no filter can be named', () => {
+    const { getByText, queryByText } = mount(
+      {
+        pk: 99,
+        project: 'firefox',
+        project_name: 'Firefox',
+        resource: 'foo.ftl',
+        filters: [],
+      },
+      '/kg/firefox/all-resources/?tag=ui&string=99',
+      { authenticated: true },
+    );
+
+    getByText('foo.ftl');
+    expect(queryByText('Firefox')).not.toBeInTheDocument();
+    expect(mockLogUXAction).toHaveBeenCalledWith(
+      'Render: String not found',
+      'String Not Found 1.0',
+      { panel: 'resource' },
     );
   });
 

@@ -49,15 +49,15 @@ export function StringNotFound({
   const sameProject = entityLocation?.project === location.project;
   const sameResource =
     allResources || entityLocation?.resource === location.resource;
-  const filteredOut = allProjects || (sameProject && sameResource);
+  const stringFilters = entityLocation?.filters ?? [];
+  const filteredOut =
+    (allProjects || (sameProject && sameResource)) && stringFilters.length > 0;
+
+  const panel = filteredOut ? 'filters' : !sameProject ? 'project' : 'resource';
 
   const logAction = (action: string) => {
     if (isAuthUser) {
-      logUXAction(action, 'String Not Found 1.0', {
-        all_projects: allProjects,
-        same_project: sameProject,
-        same_resource: sameResource,
-      });
+      logUXAction(action, 'String Not Found 1.0', { panel });
     }
   };
 
@@ -119,7 +119,7 @@ export function StringNotFound({
   ).flatMap((key) => location[key]?.split(',') ?? []);
   const filterList = formatFilters(filters);
 
-  const stringFilterList = formatFilters(entityLocation.filters);
+  const stringFilterList = formatFilters(stringFilters);
 
   return (
     <section id='string-not-found'>
@@ -184,13 +184,13 @@ export function StringNotFound({
               <h3 />
             </Localized>
             <div className='fields'>
-              {filteredOut && entityLocation.filters.length > 0 ? (
+              {panel === 'filters' ? (
                 <Detail labelId='entities-StringNotFound--label-filters'>
                   {stringFilterList}
                 </Detail>
               ) : (
                 <>
-                  {!sameProject && (
+                  {panel === 'project' && (
                     <Detail labelId='entities-StringNotFound--label-project'>
                       {entityLocation.project_name}
                     </Detail>
