@@ -22,6 +22,12 @@ export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
     case 'uk': // Ukrainian
       return ['one', 'few', 'many'];
 
+    // For the following, deliberately ignore the `many` rule for decimals.
+    case 'cs': // Czech
+    case 'lt': // Lithuanian
+    case 'sk': // Slovak
+      return ['one', 'few', 'other'];
+
     // For the following Romance languages,
     // deliberately ignore the `many` rule for millions.
     case 'ca': // Catalan
