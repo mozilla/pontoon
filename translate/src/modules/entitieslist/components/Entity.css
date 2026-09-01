@@ -47,10 +47,9 @@
   text-align: start;
 }
 
-.entity .translation-string[data-script='Latin'],
-.entity .translation-string[data-script='Greek'],
-.entity .translation-string[data-script='Cyrillic'],
-.entity .translation-string[data-script='Vietnamese'] {
+.entity .translation-string[data-script='Latn'],
+.entity .translation-string[data-script='Grek'],
+.entity .translation-string[data-script='Cyrl'] {
   font-style: italic;
 }
 

@@ -99,6 +99,12 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class LocaleSerializer(DynamicFieldsModelSerializer):
+    script_name = serializers.SerializerMethodField()
+
+    def get_script_name(self, obj) -> str:
+        """English name of the script, e.g. "Latin" for "Latn". Empty if unset."""
+        return obj.get_script_display()
+
     class Meta:
         model = Locale
         fields = [
@@ -109,6 +115,7 @@ class LocaleSerializer(DynamicFieldsModelSerializer):
             "cldr_plurals",
             "plural_rule",
             "script",
+            "script_name",
             "google_translate_code",
             "ms_terminology_code",
             "ms_translator_code",

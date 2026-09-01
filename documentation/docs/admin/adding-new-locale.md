@@ -69,7 +69,9 @@ Irish (ga-IE), for example, has all of them except for 0, so it will be `1,2,3,4
 
 ### Script
 
-The script used by this locale. Find it in [CLDR Languages and Scripts](http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html).
+The script used by this locale, picked from a dropdown of [ISO 15924](https://www.unicode.org/iso15924/iso15924-codes.html) codes. Look up the script of a language in [CLDR Languages and Scripts](http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html), then select the matching entry (e.g. `Devanagari` for Hindi). Leave it empty if unknown: the team page will show `N/D`.
+
+The dropdown only lists scripts that CLDR marks as in modern use (`idUsage` of `RECOMMENDED` or `LIMITED_USE`), so historic scripts are excluded. If a locale needs a script that is missing, add it to `Locale.SCRIPTS` in `pontoon/base/models/locale.py`.
 
 ### Direction
 

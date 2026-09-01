@@ -20,6 +20,10 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
+def get_script_choices():
+    return Locale.SCRIPTS
+
+
 def validate_cldr(value):
     for item in value.split(","):
         try:
@@ -239,11 +243,91 @@ class Locale(models.Model, AggregatedStats):
         """,
     )
 
+    # Subset of ISO 15924 script codes, covering scripts marked as RECOMMENDED
+    # or LIMITED_USE in https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/scriptMetadata.json
+    #
+    # Several names have been shortened, e.g. Kore is "Korean" rather than
+    # "Korean (alias for Hangul + Han)".
+    SCRIPTS = [
+        ("Adlm", "Adlam"),
+        ("Arab", "Arabic"),
+        ("Armn", "Armenian"),
+        ("Bali", "Balinese"),
+        ("Bamu", "Bamum"),
+        ("Batk", "Batak"),
+        ("Beng", "Bengali"),
+        ("Bopo", "Bopomofo"),
+        ("Cans", "Canadian Aboriginal Syllabics"),
+        ("Cakm", "Chakma"),
+        ("Cham", "Cham"),
+        ("Cher", "Cherokee"),
+        ("Cyrl", "Cyrillic"),
+        ("Deva", "Devanagari"),
+        ("Ethi", "Ethiopic"),
+        ("Geor", "Georgian"),
+        ("Grek", "Greek"),
+        ("Gujr", "Gujarati"),
+        ("Guru", "Gurmukhi"),
+        ("Hani", "Han"),
+        ("Hans", "Han (Simplified)"),
+        ("Hant", "Han (Traditional)"),
+        ("Hanb", "Han with Bopomofo"),
+        ("Hang", "Hangul"),
+        ("Rohg", "Hanifi Rohingya"),
+        ("Hebr", "Hebrew"),
+        ("Hira", "Hiragana"),
+        ("Jamo", "Jamo"),
+        ("Jpan", "Japanese"),
+        ("Java", "Javanese"),
+        ("Knda", "Kannada"),
+        ("Kana", "Katakana"),
+        ("Kali", "Kayah Li"),
+        ("Khmr", "Khmer"),
+        ("Kore", "Korean"),
+        ("Laoo", "Lao"),
+        ("Latn", "Latin"),
+        ("Lepc", "Lepcha"),
+        ("Limb", "Limbu"),
+        ("Lisu", "Lisu"),
+        ("Mlym", "Malayalam"),
+        ("Mand", "Mandaic"),
+        ("Mtei", "Meitei Mayek"),
+        ("Plrd", "Miao"),
+        ("Mymr", "Myanmar"),
+        ("Talu", "New Tai Lue"),
+        ("Newa", "Newa"),
+        ("Hmnp", "Nyiakeng Puachue Hmong"),
+        ("Nkoo", "N’Ko"),
+        ("Orya", "Odia"),
+        ("Olck", "Ol Chiki"),
+        ("Osge", "Osage"),
+        ("Saur", "Saurashtra"),
+        ("Sinh", "Sinhala"),
+        ("Sund", "Sundanese"),
+        ("Sylo", "Syloti Nagri"),
+        ("Syrc", "Syriac"),
+        ("Tale", "Tai Le"),
+        ("Lana", "Tai Tham"),
+        ("Tavt", "Tai Viet"),
+        ("Taml", "Tamil"),
+        ("Telu", "Telugu"),
+        ("Thaa", "Thaana"),
+        ("Thai", "Thai"),
+        ("Tibt", "Tibetan"),
+        ("Tfng", "Tifinagh"),
+        ("Vaii", "Vai"),
+        ("Wcho", "Wancho"),
+        ("Yiii", "Yi"),
+    ]
+
     script = models.CharField(
-        max_length=128,
-        default="Latin",
+        max_length=4,
+        blank=True,
+        default="Latn",
+        choices=get_script_choices,
         help_text="""
-        The script used by this locale. Find it in
+        The <a href="https://www.unicode.org/iso15924/iso15924-codes.html">ISO 15924</a>
+        script code used by this locale. Look up the script of a language in
         <a
         href="http://www.unicode.org/cldr/charts/latest/supplemental/languages_and_scripts.html">
         CLDR Languages and Scripts</a>.

@@ -22,7 +22,7 @@ import { TranslationForm } from './TranslationForm';
 const DEFAULT_LOCALE = {
   direction: 'ltr',
   code: 'kg',
-  script: 'Latin',
+  script: 'Latn',
   cldrPlurals: [1, 5],
 };
 
@@ -495,7 +495,7 @@ describe('<TranslationForm> with multiple fields', () => {
     const { actions, views, wrapper } = mountForm(source, inLocale, {
       direction: 'ltr',
       code: 'uk',
-      script: 'Cyrillic',
+      script: 'Cyrl',
       cldrPlurals: [1, 3, 4],
     });
     const labels = () =>
