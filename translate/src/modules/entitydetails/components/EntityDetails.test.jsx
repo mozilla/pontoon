@@ -53,7 +53,7 @@ describe('<EntityDetails>', () => {
     urls = [];
     const { container, getAllByRole } = mockEntityDetails(42);
     expect(urls).toMatchObject([
-      'http://localhost/terminology/get-terms/?source_string=le+test&locale=kg',
+      'http://localhost/terminology/get-terms/?entity=42&locale=kg',
       'http://localhost/other-locales/?entity=42&locale=kg',
       'http://localhost/get-team-comments/?entity=42&locale=kg',
     ]);
@@ -64,12 +64,10 @@ describe('<EntityDetails>', () => {
     expect(getAllByRole('tablist')).toHaveLength(2);
   });
 
-  it('loads only terminology for entity 0', () => {
+  it('loads nothing for entity 0', () => {
     urls = [];
     const { container, queryByRole } = mockEntityDetails(0);
-    expect(urls).toMatchObject([
-      'http://localhost/terminology/get-terms/?source_string=le+test&locale=kg',
-    ]);
+    expect(urls).toEqual([]);
 
     expect(
       container.querySelector('.entity-navigation'),

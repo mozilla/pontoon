@@ -13,19 +13,21 @@ export type ReceiveAction = {
 
 export type RequestAction = {
   readonly type: typeof REQUEST;
-  readonly sourceString: string;
+  readonly entity: number;
+  readonly locale: string;
 };
-export function request(sourceString: string): RequestAction {
+export function request(entity: number, locale: string): RequestAction {
   return {
     type: REQUEST,
-    sourceString,
+    entity,
+    locale,
   };
 }
 
-export function get(sourceString: string, locale: string) {
+export function get(entity: number, locale: string) {
   return async (dispatch: AppDispatch) => {
-    dispatch(request(sourceString));
-    const terms = await fetchTerms(sourceString, locale);
+    dispatch(request(entity, locale));
+    const terms = await fetchTerms(entity, locale);
     dispatch({ type: RECEIVE, terms });
   };
 }

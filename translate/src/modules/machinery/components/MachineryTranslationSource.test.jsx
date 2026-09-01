@@ -6,7 +6,7 @@ import { render } from '@testing-library/react';
 vi.mock('~/hooks', () => ({
   useAppSelector: (selector) =>
     selector({
-      term: { terms: [], fetching: false, sourceString: '' },
+      term: { terms: [], fetching: false, entity: 0, locale: '' },
       teamcomments: { comments: [], fetching: false, entity: null },
     }),
 }));

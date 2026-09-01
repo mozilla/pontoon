@@ -63,6 +63,25 @@ def get_simple_preview(format: Resource.Format, msg: str | Message | Pattern) ->
     return preview
 
 
+def get_all_message_text(format: Resource.Format, messages: list[Message]) -> str:
+    """Return the text of every unique pattern in a collection of messages."""
+    previews = dict.fromkeys(
+        preview
+        for message in messages
+        for pattern in message_patterns(message)
+        if (preview := get_simple_preview(format, pattern))
+    )
+    return "\n".join(previews)
+
+
+def message_patterns(msg: Message) -> list[Pattern]:
+    if isinstance(msg, list):
+        return [msg]
+    if isinstance(msg, PatternMessage):
+        return [msg.pattern]
+    return list(msg.variants.values())
+
+
 def as_simple_pattern(msg: Message | Pattern) -> Pattern:
     if isinstance(msg, list):
         return msg

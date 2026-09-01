@@ -6,11 +6,7 @@ import React, {
   useState,
 } from 'react';
 
-import {
-  EntityView,
-  useActiveTranslation,
-  useMachineryEntry,
-} from '~/context/EntityView';
+import { EntityView, useActiveTranslation } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
@@ -29,7 +25,6 @@ import {
   request as requestTeamComments,
   togglePinnedStatus as togglePinnedTeamCommentStatus,
 } from '~/modules/teamcomments/actions';
-import { getPlainMessage } from '~/utils/message';
 
 import { ContextIssueButton } from './ContextIssueButton';
 import { EntityNavigation } from './EntityNavigation';
@@ -55,7 +50,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
 
   const activeTranslation = useActiveTranslation();
   const { entity: selectedEntity } = useContext(EntityView);
-  const machineryEntry = useMachineryEntry();
 
   const commentTabRef = useRef<{ _reactInternalFiber: { index: number } }>(
     null,
@@ -69,10 +63,13 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
 
   useEffect(() => {
     const { pk } = selectedEntity;
-    const source = getPlainMessage(machineryEntry);
 
-    if (source !== terms.sourceString && project !== 'terminology') {
-      dispatch(getTerms(source, lc));
+    if (
+      pk > 0 &&
+      (pk !== terms.entity || lc !== terms.locale) &&
+      project !== 'terminology'
+    ) {
+      dispatch(getTerms(pk, lc));
     }
 
     if (entity > 0) {
@@ -85,7 +82,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
         dispatch(getTeamComments(entity, lc));
       }
     }
-  }, [activeTranslation, selectedEntity]);
+  }, [activeTranslation, selectedEntity, lc]);
 
   const navigateToPath = useCallback(
     (path: string) => checkUnsavedChanges(() => location.push(path)),

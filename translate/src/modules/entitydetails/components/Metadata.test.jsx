@@ -32,7 +32,8 @@ const LOCALE = {
 
 const TERMS = {
   fetching: false,
-  sourceString: '',
+  entity: 0,
+  locale: '',
   terms: [],
 };
 
