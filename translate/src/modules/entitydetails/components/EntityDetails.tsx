@@ -64,11 +64,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   useEffect(() => {
     const { pk } = selectedEntity;
 
-    if (
-      pk > 0 &&
-      (pk !== terms.entity || lc !== terms.locale) &&
-      project !== 'terminology'
-    ) {
+    if (pk > 0 && pk !== terms.entity && project !== 'terminology') {
       dispatch(getTerms(pk, lc));
     }
 

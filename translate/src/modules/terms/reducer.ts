@@ -9,14 +9,12 @@ export const TERM = 'term';
 export type TermState = {
   readonly fetching: boolean;
   readonly entity: number;
-  readonly locale: string;
   readonly terms: Array<TermType>;
 };
 
 const initialState: TermState = {
   fetching: false,
   entity: 0,
-  locale: '',
   terms: [],
 };
 
@@ -30,7 +28,6 @@ export function reducer(
         ...state,
         fetching: true,
         entity: action.entity,
-        locale: action.locale,
         terms: [],
       };
     case RECEIVE:

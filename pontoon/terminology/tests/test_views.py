@@ -35,6 +35,18 @@ def test_get_terms_from_all_entity_patterns(_, client, locale_a):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("params", [{}, {"entity": "not-a-number"}])
+def test_get_terms_bad_request(client, locale_a, params):
+    response = client.get(
+        "/terminology/get-terms/",
+        {"locale": locale_a.code, **params},
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
 def test_get_terms_respects_project_visibility(client, admin, locale_a):
     project = ProjectFactory(visibility=Project.Visibility.PRIVATE)
     resource = ResourceFactory(project=project)

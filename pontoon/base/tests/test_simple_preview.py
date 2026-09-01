@@ -2,10 +2,8 @@ from textwrap import dedent
 
 import pytest
 
-from moz.l10n.formats.fluent import fluent_parse_entry
-
 from pontoon.base.models import Resource
-from pontoon.base.simple_preview import get_all_message_text, get_simple_preview
+from pontoon.base.simple_preview import get_simple_preview
 
 
 FLUENT_TRANSLATION_TESTS = {
@@ -105,34 +103,6 @@ GETTEXT_TRANSLATION_TESTS = {
 def test_fluent_simple_preview(name):
     string, expected = FLUENT_TRANSLATION_TESTS[name]
     assert get_simple_preview(Resource.Format.FLUENT, string) == expected
-
-
-def test_fluent_all_message_text():
-    entry = fluent_parse_entry(
-        dedent("""\
-            warning =
-                .heading = Heads up!
-                .message = { $count ->
-                    [one] One tracker blocked
-                   *[other] Trackers blocked
-                }
-                .duplicate = Trackers blocked
-            """),
-        with_linepos=False,
-    )
-
-    messages = [entry.value, *entry.properties.values()]
-    assert get_all_message_text(Resource.Format.FLUENT, messages) == (
-        "Heads up!\nOne tracker blocked\nTrackers blocked"
-    )
-
-
-def test_fluent_all_message_text_simple():
-    entry = fluent_parse_entry("message = Simple string", with_linepos=False)
-
-    assert get_all_message_text(Resource.Format.FLUENT, [entry.value]) == (
-        "Simple string"
-    )
 
 
 @pytest.mark.parametrize("name", GETTEXT_TRANSLATION_TESTS)
