@@ -1,4 +1,4 @@
-import { CatchallKey, type Message } from '@mozilla/l10n';
+import type { CatchallKey, Message } from '@mozilla/l10n';
 import React, {
   createContext,
   useContext,
@@ -21,12 +21,12 @@ import {
   requiresSourceView,
   serializeEntry,
 } from '~/utils/message';
+import { createMessageEntry } from '~/utils/message/createMessageEntry';
 import {
   hasOuterWhitespace,
   htmlElementEscapes,
 } from '~/utils/message/entryInformation';
 import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
-import { createMessageEntry } from '~/utils/message/createMessageEntry';
 import { getMessageEntryFormat } from '~/utils/message/getMessageEntryFormat';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
@@ -188,6 +188,40 @@ function parseEntryFromFluentSource(
   return entry;
 }
 
+/**
+ * Modifies `base` in-place, ensuring that it contains
+ * the attributes and declarations present on `sourceEntry`.
+ */
+function includeSourceAttributesAndDeclarations(
+  base: MessageEntry,
+  sourceEntry: MessageEntry,
+) {
+  const apply = (source: Message, target: Message): Message => {
+    if (Array.isArray(source)) {
+      return target;
+    }
+    if (Array.isArray(target)) {
+      return { decl: structuredClone(source.decl), msg: target };
+    }
+    for (const [name, expression] of Object.entries(source.decl)) {
+      target.decl[name] ??= structuredClone(expression);
+    }
+    return target;
+  };
+
+  if (sourceEntry.value) {
+    base.value = apply(sourceEntry.value, base.value ?? []);
+  }
+
+  if (sourceEntry.attributes) {
+    base.attributes ??= new Map();
+    for (const [name, message] of sourceEntry.attributes) {
+      const prev = base.attributes.get(name) ?? [];
+      base.attributes.set(name, apply(message, prev));
+    }
+  }
+}
+
 const initEditorData: EditorData = {
   pk: 0,
   busy: false,
@@ -324,6 +358,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (specialFormats.has(format)) {
             const entry = parseEntry(format, str);
             if (entry) {
+              includeSourceAttributesAndDeclarations(entry, sourceEntry);
               next.base = entry;
             } else if (format !== 'fluent') {
               return prev;
@@ -369,6 +404,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (sourceView) {
             const entry = parseEntryFromFluentSource(sourceEntry, fields);
             if (entry && !requiresSourceView(entry)) {
+              includeSourceAttributesAndDeclarations(entry, sourceEntry);
               const fields = editMessageEntry(sourceEntry, entry);
               state.focusField.current = fields[0];
               setResult(entry);
@@ -391,6 +427,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
   useEffect(() => {
     const base = messageEntryFromEntityTranslation(entity, locale);
+    includeSourceAttributesAndDeclarations(base, sourceEntry);
     const sourceView = requiresSourceView(base);
     const fields = sourceView
       ? editSource(serializeEntry(base))

@@ -23,10 +23,13 @@ import { fluentParseEntry, mf2ParseMessage } from '@mozilla/l10n';
 function mountSpy(
   Spy,
   format,
-  formatTranslation,
-  formatSource = 'key = test',
-  machinery = null,
-  locale = { code: 'sl', cldrPlurals: [1, 2, 3, 5] },
+  targetStr,
+  sourceStr = 'key = test',
+  {
+    entity = null,
+    locale = { code: 'sl', cldrPlurals: [1, 2, 3, 5] },
+    machinery = null,
+  } = {},
 ) {
   const history = createMemoryHistory({
     initialEntries: [`/sl/pro/all/?string=42`],
@@ -37,14 +40,14 @@ function mountSpy(
   let translation = undefined;
   switch (format) {
     case 'fluent': {
-      const [id, entry] = fluentParseEntry(formatSource);
+      const [id, entry] = fluentParseEntry(sourceStr);
       key = [id];
       value = entry['='];
       properties = entry['+'];
-      if (formatTranslation) {
-        const [, entry] = fluentParseEntry(formatTranslation);
+      if (targetStr) {
+        const [, entry] = fluentParseEntry(targetStr);
         translation = {
-          string: formatTranslation,
+          string: targetStr,
           value: entry['='],
           properties: entry['+'],
         };
@@ -52,53 +55,38 @@ function mountSpy(
       break;
     }
     case 'android':
-      value = mf2ParseMessage(formatSource);
-      if (formatTranslation) {
+      value = mf2ParseMessage(sourceStr);
+      if (targetStr) {
         translation = {
-          string: formatTranslation,
-          value: mf2ParseMessage(formatTranslation),
+          string: targetStr,
+          value: mf2ParseMessage(targetStr),
         };
       }
       break;
     default:
-      value = [formatSource];
-      if (formatTranslation) {
-        translation = { string: formatTranslation, value: [formatTranslation] };
+      value = [sourceStr];
+      if (targetStr) {
+        translation = { string: targetStr, value: [targetStr] };
       }
   }
 
-  const gettextSource =
-    '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}';
-  const gettextTranslation =
-    '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}';
-
-  const initialState = {
-    entities: {
-      entities: [
-        {
-          pk: 42,
-          format,
-          key,
-          original: formatSource,
-          value,
-          properties,
-          translation,
-          project: { contact: '' },
-        },
-        {
-          pk: 13,
-          format: 'gettext',
-          key: ['plural'],
-          original: gettextSource,
-          value: mf2ParseMessage(gettextSource),
-          translation: {
-            string: gettextTranslation,
-            value: mf2ParseMessage(gettextTranslation),
-          },
-          project: { contact: '' },
-        },
-      ],
+  const entities = [
+    {
+      pk: 42,
+      format,
+      key,
+      original: sourceStr,
+      value,
+      properties,
+      translation,
+      project: { contact: '' },
     },
+  ];
+  if (entity) {
+    entities.push(entity);
+  }
+  const initialState = {
+    entities: { entities },
     otherlocales: { translations: [] },
     user: {
       isAuthenticated: true,
@@ -472,7 +460,26 @@ describe('<EditorProvider>', () => {
       entity = useContext(EntityView).entity;
       return null;
     };
-    mountSpy(Spy, 'plain', 'translated');
+
+    const gettextSource =
+      '.input {$n :number}\n.match $n\none {{orig one}}\n* {{orig other}}';
+    const gettextTranslation =
+      '.input {$n :number}\n.match $n\none {{trans one}}\n* {{trans other}}';
+
+    mountSpy(Spy, 'plain', 'translated', 'source', {
+      entity: {
+        pk: 13,
+        format: 'gettext',
+        key: ['plural'],
+        original: gettextSource,
+        value: mf2ParseMessage(gettextSource),
+        translation: {
+          string: gettextTranslation,
+          value: mf2ParseMessage(gettextTranslation),
+        },
+        project: { contact: '' },
+      },
+    });
 
     act(() => location.push({ entity: 13 }));
 
@@ -496,6 +503,62 @@ describe('<EditorProvider>', () => {
           { keys: ['one'], pat: ['trans one'] },
           { keys: [{ '*': '' }], pat: ['trans other'] },
         ],
+      },
+    });
+  });
+
+  it('allows editing an approved webext translation with no placeholder', () => {
+    let actions, editor, result, location;
+    const Spy = () => {
+      actions = useContext(EditorActions);
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      location = useContext(Location);
+      return null;
+    };
+
+    const sourceStr =
+      '.local $ph = {$arg1 @source=|$1|}\n' +
+      '{{source with {$ph @source=|$ph$|}}}';
+    const targetStr = 'target with $ph$';
+
+    mountSpy(Spy, 'plain', 'translated', 'source', {
+      entity: {
+        pk: 13,
+        format: 'webext',
+        key: ['foo'],
+        original: sourceStr,
+        value: mf2ParseMessage(sourceStr),
+        translation: { string: targetStr, value: mf2ParseMessage(targetStr) },
+        project: { contact: '' },
+      },
+    });
+
+    act(() => location.push({ entity: 13 }));
+
+    const targetWithDecl = {
+      format: 'webext',
+      id: 'foo',
+      value: {
+        decl: { ph: { $: 'arg1', attr: { source: '$1' } } },
+        msg: ['target with $ph$'],
+      },
+    };
+
+    expect(editor).toMatchObject({
+      initial: targetWithDecl,
+      fields: [{ handle: { current: { value: 'target with $ph$' } } }],
+    });
+    expect(result).toEqual(targetWithDecl);
+
+    // String value is re-parsed on input
+    act(() => actions.setResultFromInput());
+    expect(result).toEqual({
+      format: 'webext',
+      id: 'foo',
+      value: {
+        decl: { ph: { $: 'arg1', attr: { source: '$1' } } },
+        msg: ['target with ', { $: 'ph', attr: { source: '$ph$' } }],
       },
     });
   });
@@ -589,9 +652,8 @@ describe('<EditorProvider>', () => {
              *[other] OTHER
           }
       `;
-    mountSpy(Spy, 'fluent', undefined, source, null, {
-      code: 'uk',
-      cldrPlurals: [1, 3, 4],
+    mountSpy(Spy, 'fluent', undefined, source, {
+      locale: { code: 'uk', cldrPlurals: [1, 3, 4] },
     });
 
     expect(editor.fields.map((f) => f.id)).toEqual(['|one', '|few', '|*']);
@@ -892,14 +954,16 @@ describe('<EditorProvider>', () => {
       unsaved = useContext(UnsavedChanges);
       return null;
     };
-    mountSpy(Spy, 'simple', undefined, 'message', [
-      {
-        original: 'message',
-        translation: 'messaggio_it',
-        quality: 100,
-        sources: ['translation-memory'],
-      },
-    ]);
+    mountSpy(Spy, 'simple', undefined, 'message', {
+      machinery: [
+        {
+          original: 'message',
+          translation: 'messaggio_it',
+          quality: 100,
+          sources: ['translation-memory'],
+        },
+      ],
+    });
 
     expect(editor).toMatchObject({
       machinery: { manual: false, translation: 'messaggio_it' },
@@ -954,14 +1018,16 @@ describe('<EditorProvider>', () => {
           .label = Label
       `,
       {
-        composed: [
-          {
-            sources: ['translation-memory'],
-            quality: 100,
-            value: ['Valeur'],
-            properties: { label: ['Étiquette'] },
-          },
-        ],
+        machinery: {
+          composed: [
+            {
+              sources: ['translation-memory'],
+              quality: 100,
+              value: ['Valeur'],
+              properties: { label: ['Étiquette'] },
+            },
+          ],
+        },
       },
     );
 
@@ -989,13 +1055,15 @@ describe('<EditorProvider>', () => {
           .label = Label
       `,
       {
-        composed: [
-          {
-            sources: ['google-translate'],
-            value: ['Valeur'],
-            properties: { label: ['Étiquette'] },
-          },
-        ],
+        machinery: {
+          composed: [
+            {
+              sources: ['google-translate'],
+              value: ['Valeur'],
+              properties: { label: ['Étiquette'] },
+            },
+          ],
+        },
       },
     );
 
