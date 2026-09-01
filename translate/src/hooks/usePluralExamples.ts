@@ -25,16 +25,23 @@ export function usePluralExamples(locale: Locale): Record<number, number> {
     const fnBody = `return Number(${pluralRule})`;
     const getRule = new Function('n', fnBody) as (n: number) => number;
 
+    // The CLDR `many` category of languages such as Breton only matches
+    // multiples of a million, which a 0..999 scan can never reach.
+    const candidates = [...Array(1000).keys(), 1_000_000];
+
     let found = 0;
     const examples: Record<number, number> = {};
-    for (let n = 0; n < 1000; ++n) {
-      if (found >= cldrPlurals.length) {
-        return examples;
-      }
+    for (const n of candidates) {
       const rule = cldrPlurals[getRule(n)];
-      if (!examples[rule]) {
+      // `rule in examples` rather than a truthiness check, as 0 is a valid
+      // example and would otherwise be treated as "not yet found".
+      if (!(rule in examples)) {
         examples[rule] = n;
-        found += 1;
+        // Checked here rather than at the top of the loop, so that a set
+        // completed by the last candidate is not reported as a failure.
+        if (++found >= cldrPlurals.length) {
+          return examples;
+        }
       }
     }
 
