@@ -4,13 +4,13 @@ import type { AppDispatch } from '~/store';
 
 export const RECEIVE = 'project/RECEIVE';
 export const REQUEST = 'project/REQUEST';
-export const RESET = 'project/RESET';
 
-export type Action = ReceiveAction | RequestAction | ResetAction;
+export type Action = ReceiveAction | RequestAction;
 
 /** Notify that project data is being fetched.  */
 type RequestAction = {
   readonly type: typeof REQUEST;
+  readonly slug: string;
 };
 
 /** Receive project data.  */
@@ -23,18 +23,13 @@ type ReceiveAction = {
   readonly locales: LocaleOption[];
 };
 
-/** Reset project data.  */
-type ResetAction = {
-  readonly type: typeof RESET;
-};
-
 /**
  * Get data about the current project.
  */
 export const getProject = (slug: string) => async (dispatch: AppDispatch) => {
   // When 'all-projects' are selected, we do not fetch data.
+  dispatch({ type: REQUEST, slug });
   if (slug !== 'all-projects') {
-    dispatch({ type: REQUEST });
     const { info, name, slug: slug_, tags, locales } = await fetchProject(slug);
     dispatch({
       type: RECEIVE,
@@ -44,11 +39,5 @@ export const getProject = (slug: string) => async (dispatch: AppDispatch) => {
       tags: tags.sort((a, b) => b.priority - a.priority),
       locales: locales,
     });
-  } else {
-    dispatch(resetProject());
   }
 };
-
-export const resetProject = () => ({
-  type: RESET,
-});

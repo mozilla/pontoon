@@ -1,6 +1,6 @@
 import type { Tag } from '~/api/project';
 
-import { Action, RECEIVE, REQUEST, RESET } from './actions';
+import { Action, RECEIVE, REQUEST } from './actions';
 import { LocaleOption } from '~/api/other-locales';
 
 // Name of this module.
@@ -34,6 +34,7 @@ export function reducer(
       return {
         ...state,
         fetching: true,
+        slug: action.slug,
         locales: [],
       };
     case RECEIVE:
@@ -46,8 +47,6 @@ export function reducer(
         tags: action.tags,
         locales: action.locales,
       };
-    case RESET:
-      return initial;
     default:
       return state;
   }

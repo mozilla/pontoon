@@ -21,6 +21,8 @@ import { ReplaceAll } from './ReplaceAll';
 import { CopyFromLocale } from './CopyFromLocale';
 import LocaleMenu from '~/modules/locale/components/LocaleMenu';
 import { useProject } from '~/modules/project';
+import { fetchAllLocales, LocaleOption } from '~/api/other-locales';
+
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
@@ -35,7 +37,16 @@ export function BatchActions(): React.ReactElement<'div'> {
 
   const [otherLocale, setOtherLocale] = useState('');
 
-  const { locales } = useProject();
+  const { slug, locales: projectLocales } = useProject();
+  const [locales, setLocales] = useState<LocaleOption[]>([]);
+
+  useEffect(() => {
+    if (slug === 'all-projects') {
+      fetchAllLocales().then(setLocales);
+    } else {
+      setLocales(projectLocales);
+    }
+  }, [slug, projectLocales]);
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
