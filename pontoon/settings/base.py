@@ -36,8 +36,6 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "False") != "False"
 
 DJANGO_DEBUG_TOOLBAR = os.environ.get("DJANGO_DEBUG_TOOLBAR", "False") != "False"
 
-HEROKU_DEMO = os.environ.get("HEROKU_DEMO", "False") != "False"
-
 LOGOUT_REDIRECT_URL = "/"
 
 ADMINS = MANAGERS = (
@@ -1007,7 +1005,7 @@ CSP_STYLE_SRC = (
 )
 
 # Needed if site not hosted on HTTPS domains (like local setup)
-if not (HEROKU_DEMO or SITE_URL.startswith("https")):
+if not SITE_URL.startswith("https"):
     CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
     CSP_WORKER_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
 

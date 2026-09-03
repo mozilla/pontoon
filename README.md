@@ -9,22 +9,15 @@ uses version control systems for storing translations.
 
 ## Installing Pontoon
 
-If you are looking to host your own instance of Pontoon, there are several ways to do so.
-To deploy Pontoon to Heroku without leaving your web browser, click the **Deploy to
-Heroku** button below.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/mozilla/pontoon)
-
-Alternatively, you can deploy to Heroku manually by following our
-[Deployment Documentation](https://pontoon.mozilla.org/docs/dev/deployment/).
-
-We don't have documentation for deploying to other platforms yet, so we recommend that
-you read the previously linked documentation and adapt it for your needs.
+If you are looking to host your own instance of Pontoon, follow our
+[Deployment Documentation](https://pontoon.mozilla.org/docs/dev/deployment/). It
+describes how Mozilla deploys Pontoon — as a Docker image running on Google
+Cloud Platform — so you may need to adapt it for your own platform.
 
 If you only want to deploy a **local instance of Pontoon**, for development or
 testing for example, see our
-[Developer Setup using Docker](https://pontoon.mozilla.org/docs/dev/developer-setup/).
-Please note that you should **not** deploy a production instance with Docker.
+[Developer Setup](https://pontoon.mozilla.org/docs/dev/developer-setup/). Please
+note that the development setup is **not** suitable for production use.
 
 ## Contributing to Pontoon
 
