@@ -11,8 +11,8 @@ uses version control systems for storing translations.
 
 If you are looking to host your own instance of Pontoon, follow our
 [Deployment Documentation](https://pontoon.mozilla.org/docs/dev/deployment/). It
-describes how Mozilla deploys Pontoon &mdash; as a Docker image running on Google
-Cloud Platform &mdash; so you may need to adapt it for your own platform.
+describes how Mozilla deploys Pontoon — as a Docker image running on Google
+Cloud Platform — so you may need to adapt it for your own platform.
 
 If you only want to deploy a **local instance of Pontoon**, for development or
 testing for example, see our
