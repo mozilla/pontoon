@@ -1,7 +1,7 @@
 import logging
 
-from os import sep, walk
-from os.path import join, normpath, realpath, relpath
+from os import walk
+from os.path import commonpath, join, normpath, realpath, relpath
 from typing import NamedTuple
 
 from pontoon.base.models import Project, Repository
