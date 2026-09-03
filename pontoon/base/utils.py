@@ -5,6 +5,9 @@ import time
 from datetime import datetime
 from xml.sax.saxutils import escape, quoteattr
 
+from justhtml import JustHTML, SanitizationPolicy, UrlPolicy, UrlRule
+
+from django.conf import settings
 from django.http import HttpResponseBadRequest
 from django.utils.text import slugify
 from django.utils.timezone import make_aware
@@ -213,3 +216,25 @@ def get_search_phrases(search):
 
 def parse_bool(value) -> bool:
     return str(value).lower() in ("1", "true", "yes", "on")
+
+
+@functools.cache
+def _html_sanitization_policy():
+    return SanitizationPolicy(
+        allowed_tags=frozenset(settings.ALLOWED_TAGS),
+        allowed_attributes=settings.ALLOWED_ATTRIBUTES,
+        url_policy=UrlPolicy(
+            allow_rules={
+                ("a", "href"): UrlRule(allowed_schemes={"http", "https", "mailto"}),
+            }
+        ),
+        # Strip disallowed tags but keep their text content
+        disallowed_tag_handling="unwrap",
+    )
+
+
+def sanitize_html(text):
+    """Strip HTML tags and attributes not in ALLOWED_TAGS and ALLOWED_ATTRIBUTES."""
+    return JustHTML(text, fragment=True, policy=_html_sanitization_policy()).to_html(
+        pretty=False
+    )

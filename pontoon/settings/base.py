@@ -1047,7 +1047,7 @@ ENABLE_BUGS_TAB = os.environ.get("ENABLE_BUGS_TAB", "False") != "False"
 # See docs/admin/deployment.rst for more information.
 ENABLE_INSIGHTS = os.environ.get("ENABLE_INSIGHTS", "False") != "False"
 
-# Bleach tags and attributes
+# Tags and attributes allowed in user-submitted HTML
 ALLOWED_TAGS = [
     "a",
     "abbr",

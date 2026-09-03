@@ -10,8 +10,8 @@ import markupsafe
 
 from allauth.socialaccount.adapter import get_adapter
 from allauth.utils import get_request_param
-from bleach.linkifier import Linker
 from django_jinja import library
+from justhtml import JustHTML, Linkify, SetAttrs
 
 from django import template
 from django.conf import settings
@@ -297,15 +297,15 @@ def as_plain_message(translation):
 def linkify(source):
     """Render URLs in the string as links."""
 
-    def set_attrs(attrs, new=False):
-        attrs[(None, "target")] = "_blank"
-        attrs[(None, "rel")] = "noopener noreferrer"
-        return attrs
-
-    # Escape all tags
-    linker = Linker(callbacks=[set_attrs])
-
-    return linker.linkify(source)
+    return JustHTML(
+        source,
+        fragment=True,
+        sanitize=False,
+        transforms=[
+            Linkify(),
+            SetAttrs("a", target="_blank", rel="noopener noreferrer"),
+        ],
+    ).to_html(pretty=False)
 
 
 @library.filter

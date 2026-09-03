@@ -2,8 +2,6 @@ import re
 
 from pathlib import Path
 
-import bleach
-
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -27,13 +25,7 @@ class HtmlField(forms.CharField):
 
     def clean(self, value):
         value = super().clean(value)
-        value = bleach.clean(
-            value,
-            strip=True,
-            tags=settings.ALLOWED_TAGS,
-            attributes=settings.ALLOWED_ATTRIBUTES,
-        )
-        return value
+        return utils.sanitize_html(value)
 
 
 class NoTabStopCharField(forms.CharField):

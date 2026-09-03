@@ -32,7 +32,7 @@ def test_add_comment(member, translation_a):
 def test_add_comment_sanitizes_html(member, entity_a, locale_a, project_locale_a):
     url = reverse("pontoon.add_comment")
 
-    payload = "<svg><script>alert(1)</script>safe"
+    payload = "<svg><script>alert(1)</script></svg>safe"
 
     response = member.client.post(
         url,
