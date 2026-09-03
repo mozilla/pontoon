@@ -9,8 +9,8 @@ import './NotificationPanel.css';
  * Show a status notification for a short period of time.
  *
  * This supports showing 'info' (in green) or 'error' (in red) notifications,
- * once at a time. The notification will hide after a 2s timeout, or when
- * clicked.
+ * once at a time. The notification will hide after a timeout (default 2 seconds,
+ * if not defined explicitly by the message), or when clicked.
  */
 export function NotificationPanel(): React.ReactElement<'div'> {
   const message = useContext(NotificationMessage);
@@ -25,7 +25,7 @@ export function NotificationPanel(): React.ReactElement<'div'> {
   useEffect(() => {
     window.clearTimeout(timeout.current);
     if (message) {
-      timeout.current = window.setTimeout(hide, 2000);
+      timeout.current = window.setTimeout(hide, message.duration ?? 2000);
     }
   }, [message]);
 
