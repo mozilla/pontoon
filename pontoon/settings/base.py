@@ -11,6 +11,8 @@ from ipaddress import ip_address, ip_network
 
 import dj_database_url
 
+from csp.constants import SELF, UNSAFE_EVAL, UNSAFE_INLINE
+
 from django.utils.functional import lazy
 
 
@@ -280,6 +282,7 @@ INSTALLED_APPS = (
     "pipeline",
     "guardian",
     "corsheaders",
+    "csp",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -953,29 +956,15 @@ SECURE_SSL_REDIRECT = (
     os.environ.get("SECURE_SSL_REDIRECT", "True") != "False" and not DEV
 )
 
-# Content-Security-Policy headers
-CSP_DEFAULT_SRC = (
-    # Needed for Docs
-    "'self'",
-)
-CSP_FRAME_SRC = ("https:",)
-CSP_WORKER_SRC = (
+# Content-Security-Policy header
+csp_frame_src = ("https:",)
+csp_worker_src = (
     "https:",
     # Needed for confetti.browser.js
     "blob:",
 )
-CSP_CONNECT_SRC = (
-    "'self'",
-    "https://bugzilla.mozilla.org/rest/bug",
-    "https://region1.google-analytics.com/g/collect",
-)
-CSP_FONT_SRC = (
-    "'self'",
-    # Needed for Docs
-    "https://fonts.gstatic.com",
-)
-CSP_IMG_SRC = (
-    "'self'",
+csp_img_src = (
+    SELF,
     "https:",
     # Needed for ACE editor images
     "data:",
@@ -983,31 +972,52 @@ CSP_IMG_SRC = (
     "https://www.google-analytics.com",
     "https://www.gravatar.com/avatar/",
 )
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "'unsafe-eval'",
-    "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
-    # Needed for Google Analytics
-    "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
-    "https://www.googletagmanager.com/gtag/js",
-    # Needed for Docs
-    "'sha256-DrEMJJ29sL7vIloQzly+VUGMxKcBTMII+OfW7Y8AkG4='",
-    "'sha256-/8wPdzX9q0NNJXyA5lzsLojXFpkeaXVxhbfkUOQaWy8='",
-    "'sha256-i0DgL2uLiE/Q2kHCFRPZIfz/mN3ZA/Sq08UynK9ZACY='",
-    "'sha256-9WmRqHphu0WtjGBriIQP5bBdmiqiG3tY04gCxNSST40='",
-    "'sha256-cgPnO/p6B0QlYcCUC4Ur5FXogQxKDNDgWWH3Q010y7A='",
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "'unsafe-inline'",
-    # Needed for Docs
-    "https://fonts.googleapis.com",
-)
 
 # Needed if site not hosted on HTTPS domains (like local setup)
 if not SITE_URL.startswith("https"):
-    CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
-    CSP_WORKER_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
+    csp_img_src += ("http://www.gravatar.com/avatar/",)
+    csp_frame_src += ("http:",)
+    csp_worker_src += ("http:",)
+
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        # Needed for Docs
+        "default-src": (SELF,),
+        "frame-src": csp_frame_src,
+        "worker-src": csp_worker_src,
+        "connect-src": (
+            SELF,
+            "https://bugzilla.mozilla.org/rest/bug",
+            "https://region1.google-analytics.com/g/collect",
+        ),
+        "font-src": (
+            SELF,
+            # Needed for Docs
+            "https://fonts.gstatic.com",
+        ),
+        "img-src": csp_img_src,
+        "script-src": (
+            SELF,
+            UNSAFE_EVAL,
+            "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
+            # Needed for Google Analytics
+            "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
+            "https://www.googletagmanager.com/gtag/js",
+            # Needed for Docs
+            "'sha256-DrEMJJ29sL7vIloQzly+VUGMxKcBTMII+OfW7Y8AkG4='",
+            "'sha256-/8wPdzX9q0NNJXyA5lzsLojXFpkeaXVxhbfkUOQaWy8='",
+            "'sha256-i0DgL2uLiE/Q2kHCFRPZIfz/mN3ZA/Sq08UynK9ZACY='",
+            "'sha256-9WmRqHphu0WtjGBriIQP5bBdmiqiG3tY04gCxNSST40='",
+            "'sha256-cgPnO/p6B0QlYcCUC4Ur5FXogQxKDNDgWWH3Q010y7A='",
+        ),
+        "style-src": (
+            SELF,
+            UNSAFE_INLINE,
+            # Needed for Docs
+            "https://fonts.googleapis.com",
+        ),
+    }
+}
 
 # For absolute urls
 try:
