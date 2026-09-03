@@ -31,6 +31,13 @@ export function reducer(
 ): ProjectState {
   switch (action.type) {
     case REQUEST:
+      if (action.slug === 'all-projects') {
+        return {
+          ...initial,
+          slug: action.slug,
+        };
+      }
+
       return {
         ...state,
         fetching: true,

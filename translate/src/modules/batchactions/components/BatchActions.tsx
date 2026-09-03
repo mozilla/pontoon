@@ -41,11 +41,20 @@ export function BatchActions(): React.ReactElement<'div'> {
   const [locales, setLocales] = useState<LocaleOption[]>([]);
 
   useEffect(() => {
+    let cancelled = false;
+
     if (slug === 'all-projects') {
-      fetchAllLocales().then(setLocales);
+      fetchAllLocales().then((result) => {
+        if (!cancelled) {
+          setLocales(result);
+        }
+      });
     } else {
       setLocales(projectLocales);
     }
+    return () => {
+      cancelled = true;
+    };
   }, [slug, projectLocales]);
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
