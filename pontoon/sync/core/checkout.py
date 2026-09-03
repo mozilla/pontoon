@@ -1,7 +1,7 @@
 import logging
 
 from os import walk
-from os.path import join, normpath, relpath
+from os.path import commonpath, join, normpath, realpath, relpath
 from typing import NamedTuple
 
 from pontoon.base.models import Project, Repository
@@ -9,6 +9,18 @@ from pontoon.sync.repositories import get_repo
 
 
 log = logging.getLogger(__name__)
+
+
+def is_inside(root: str, path: str) -> bool:
+    """
+    Is `path` inside `root`, once the two have been fully resolved?
+
+    Comparing paths as strings is not enough, because a path that looks
+    contained may still resolve to a file elsewhere on the filesystem.
+    """
+    root = realpath(root)
+    path = realpath(path)
+    return commonpath((root, path)) == root
 
 
 class Checkout:
@@ -76,6 +88,15 @@ class Checkout:
                 )
             self.removed = delta[1] if delta else []
             self.renamed = []
+
+        # A repo can commit a symlink pointing anywhere on the filesystem.
+        inside: list[str] = []
+        for co_path in self.changed:
+            if is_inside(self.path, join(self.path, co_path)):
+                inside.append(co_path)
+            else:
+                log.error(f"[{slug}:{co_path}] Skipping path outside the checkout")
+        self.changed = inside
 
 
 class Checkouts(NamedTuple):

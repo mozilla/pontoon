@@ -1,4 +1,4 @@
-from os import makedirs
+from os import makedirs, symlink
 from os.path import dirname, exists, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
@@ -19,6 +19,7 @@ from pontoon.sync.core.paths import find_paths
 from pontoon.sync.core.translations_to_repo import (
     build_moz_l10n_resource,
     sync_translations_to_repo,
+    update_changed_resources,
 )
 from pontoon.sync.tests.utils import build_file_tree
 from pontoon.test.factories import (
@@ -34,6 +35,56 @@ from pontoon.test.factories import (
 
 
 now = timezone.now()
+
+
+@pytest.mark.django_db
+def test_target_outside_checkout_is_not_written():
+    """An export only writes to paths that resolve inside the checkout."""
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-containment", locales=[locale], repositories=[repo]
+        )
+        res = ResourceFactory.create(
+            project=project, path="messages.properties", format="properties"
+        )
+        entity = EntityFactory.create(resource=res, string="key=Value")
+        TranslationFactory.create(
+            entity=entity, locale=locale, string="key=Valeur", approved=True
+        )
+
+        # Filesystem setup: the target file is a symlink out of the checkout
+        elsewhere = join(root, "elsewhere.properties")
+        with open(elsewhere, "w") as file:
+            file.write("key=Unchanged\n")
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {"en-US": {"messages.properties": "key=Value\n"}, "fr-Test": {}},
+        )
+        symlink(elsewhere, join(repo.checkout_path, "fr-Test", "messages.properties"))
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout, path=repo.checkout_path, changed=[], removed=[], renamed=[]
+        )
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
+
+        update_changed_resources(
+            project,
+            paths,
+            {locale.code: locale},
+            [],
+            ChangedEntityLocale.objects.filter(entity=entity),
+            set(),
+            now,
+        )
+
+        with open(elsewhere) as file:
+            assert file.read() == "key=Unchanged\n", "wrote outside the checkout"
 
 
 @pytest.mark.django_db

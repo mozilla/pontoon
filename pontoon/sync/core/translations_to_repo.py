@@ -37,7 +37,7 @@ from pontoon.base.models import (
     User,
 )
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
-from pontoon.sync.core.checkout import Checkouts
+from pontoon.sync.core.checkout import Checkouts, is_inside
 from pontoon.sync.repositories import CommitToRepositoryException, get_repo
 
 
@@ -247,6 +247,13 @@ def update_changed_resources(
             try:
                 lc_plurals = locale.cldr_plurals_list()
                 tr_res = build_translated_resource(locale, lc_translations, res)
+                # A symlinked target should not redirect the write out of the checkout
+                if paths.base and not is_inside(paths.base, target_path):
+                    log.error(
+                        f"[{project.slug}:{path}, {locale.code}] "
+                        "Resource path outside the checkout"
+                    )
+                    continue
                 makedirs(dirname(target_path), exist_ok=True)
                 with open(target_path, "w", encoding="utf-8") as file:
                     for line in serialize_resource(tr_res, gettext_plurals=lc_plurals):
