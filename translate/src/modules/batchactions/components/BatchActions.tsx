@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from 'react';
 
 import { Location } from '~/context/Location';
@@ -22,6 +23,9 @@ import { CopyFromLocale } from './CopyFromLocale';
 import { fetchAllLocales } from '~/api/other-locales';
 import type { LocaleOption } from '~/api/other-locales';
 import LocaleMenu from '~/modules/locale/components/LocaleMenu';
+import { Locale } from '~/context/Locale';
+import { Pretranslate } from './Pretranslate';
+
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
@@ -38,6 +42,7 @@ export function BatchActions(): React.ReactElement<'div'> {
   const [locales, setLocales] = useState<LocaleOption[]>([]);
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
+  const locale = useContext(Locale);
 
   useEffect(() => {
     const handleShortcuts = (ev: KeyboardEvent) => {
@@ -110,6 +115,28 @@ export function BatchActions(): React.ReactElement<'div'> {
     }
   }, [location, batchactions]);
 
+  const pretranslate = useCallback(() => {
+    if (!batchactions.requestInProgress) {
+      dispatch(
+        performAction(
+          location,
+          'pretranslate',
+          batchactions.entities,
+          showBadgeTooltip,
+          undefined,
+          undefined,
+        ),
+      );
+    }
+  }, [location, batchactions, showBadgeTooltip]);
+
+  const canPretranslate = useMemo(() => {
+    const root = document.getElementById('root');
+    const isGoogleTranslateSupported =
+      root?.dataset.isGoogleTranslateSupported === 'true';
+    return isGoogleTranslateSupported && !!locale.googleTranslateCode;
+  }, [locale.googleTranslateCode]);
+
   const copyFromLocale = useCallback(() => {
     if (!batchactions.requestInProgress) {
       dispatch(
@@ -140,6 +167,14 @@ export function BatchActions(): React.ReactElement<'div'> {
       copyFromLocale();
     },
     [copyFromLocale],
+  );
+
+  const submitPretranslateForm = useCallback(
+    (ev: React.SyntheticEvent<HTMLElement>) => {
+      ev.preventDefault();
+      pretranslate();
+    },
+    [pretranslate],
   );
 
   return (
@@ -256,6 +291,19 @@ export function BatchActions(): React.ReactElement<'div'> {
             />
           </form>
         </div>
+        {canPretranslate && (
+          <div className='pretranslate'>
+            <Localized id='batchactions-BatchActions--pretranslate-heading'>
+              <h2>PRETRANSLATE</h2>
+            </Localized>
+            <form id='pretranslate-form' onSubmit={submitPretranslateForm}>
+              <Pretranslate
+                pretranslate={pretranslate}
+                batchactions={batchactions}
+              />
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );
