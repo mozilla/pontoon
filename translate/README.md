@@ -100,7 +100,7 @@ In general, imports ought to be ordered first from the most general to the most 
 The only required step for the front-end is to build static files with `npm run build`.
 Django is configured to collect the `translate.html` and static files
 from the `build` folder and put them with other static files.
-All of that is automated for deployement to Heroku.
+All of that is automated for deployement.
 
 ### Development
 
