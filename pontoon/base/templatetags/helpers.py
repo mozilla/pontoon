@@ -11,7 +11,7 @@ import markupsafe
 from allauth.socialaccount.adapter import get_adapter
 from allauth.utils import get_request_param
 from django_jinja import library
-from justhtml import JustHTML, Linkify, SetAttrs
+from justhtml import JustHTML, Linkify, SetAttrs, Unwrap
 
 from django import template
 from django.conf import settings
@@ -303,6 +303,7 @@ def linkify(source):
         sanitize=False,
         transforms=[
             Linkify(),
+            Unwrap('a[href^="mailto:"]'),
             SetAttrs("a", target="_blank", rel="noopener noreferrer"),
         ],
     ).to_html(pretty=False)

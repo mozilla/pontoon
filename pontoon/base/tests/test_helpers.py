@@ -126,6 +126,13 @@ def test_user_editor_theme_anonymous_resolves_to_default():
             'rel="noopener noreferrer">Mozilla</a>',
         ),
         ("<b>bold</b> & <i>italic</i>", "<b>bold</b> &amp; <i>italic</i>"),
+        # Email addresses are not linkified
+        ("contact me@example.com", "contact me@example.com"),
+        (
+            "me@example.com or https://mozilla.org",
+            'me@example.com or <a href="https://mozilla.org" target="_blank" '
+            'rel="noopener noreferrer">https://mozilla.org</a>',
+        ),
     ),
 )
 def test_helper_linkify(source, expected):
