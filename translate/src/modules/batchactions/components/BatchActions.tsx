@@ -19,9 +19,10 @@ import './BatchActions.css';
 import { RejectAll } from './RejectAll';
 import { ReplaceAll } from './ReplaceAll';
 import { CopyFromLocale } from './CopyFromLocale';
-import { fetchAllLocales } from '~/api/other-locales';
-import type { LocaleOption } from '~/api/other-locales';
 import LocaleMenu from '~/modules/locale/components/LocaleMenu';
+import { useProject } from '~/modules/project';
+import { fetchAllLocales, LocaleOption } from '~/api/other-locales';
+
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
@@ -35,7 +36,26 @@ export function BatchActions(): React.ReactElement<'div'> {
   const replace = useRef<HTMLInputElement>(null);
 
   const [otherLocale, setOtherLocale] = useState('');
+
+  const { slug, locales: projectLocales } = useProject();
   const [locales, setLocales] = useState<LocaleOption[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (slug === 'all-projects') {
+      fetchAllLocales().then((result) => {
+        if (!cancelled) {
+          setLocales(result);
+        }
+      });
+    } else {
+      setLocales(projectLocales);
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, projectLocales]);
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
@@ -48,12 +68,6 @@ export function BatchActions(): React.ReactElement<'div'> {
 
     document.addEventListener('keydown', handleShortcuts);
     return () => document.removeEventListener('keydown', handleShortcuts);
-  }, []);
-
-  useEffect(() => {
-    fetchAllLocales().then((all) => {
-      setLocales(all);
-    });
   }, []);
 
   const selectAllEntities = useCallback(
