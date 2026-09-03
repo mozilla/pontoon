@@ -9,6 +9,7 @@ from pontoon.base.templatetags.helpers import (
     format_datetime,
     full_static,
     full_url,
+    linkify,
     metric_prefix,
     nospam,
     to_json,
@@ -100,3 +101,39 @@ def test_user_editor_theme_anonymous_resolves_to_default():
     """Anonymous users get the default editor theme."""
     anon = AnonymousUser()
     assert user_editor_theme(anon) == UserProfile.DEFAULT_EDITOR_THEME
+
+
+@pytest.mark.parametrize(
+    "source,expected",
+    (
+        ("no links here", "no links here"),
+        (
+            "See https://pontoon.mozilla.org/?a=1&b=2 now",
+            "See "
+            '<a href="https://pontoon.mozilla.org/?a=1&amp;b=2" target="_blank" '
+            'rel="noopener noreferrer">https://pontoon.mozilla.org/?a=1&amp;b=2</a>'
+            " now",
+        ),
+        (
+            "Go to www.mozilla.org.",
+            'Go to <a href="http://www.mozilla.org" target="_blank" '
+            'rel="noopener noreferrer">www.mozilla.org</a>.',
+        ),
+        # Existing links are left alone, but get the same attributes
+        (
+            '<a href="https://mozilla.org">Mozilla</a>',
+            '<a href="https://mozilla.org" target="_blank" '
+            'rel="noopener noreferrer">Mozilla</a>',
+        ),
+        ("<b>bold</b> & <i>italic</i>", "<b>bold</b> &amp; <i>italic</i>"),
+        # Email addresses are not linkified
+        ("contact me@example.com", "contact me@example.com"),
+        (
+            "me@example.com or https://mozilla.org",
+            'me@example.com or <a href="https://mozilla.org" target="_blank" '
+            'rel="noopener noreferrer">https://mozilla.org</a>',
+        ),
+    ),
+)
+def test_helper_linkify(source, expected):
+    assert linkify(source) == expected

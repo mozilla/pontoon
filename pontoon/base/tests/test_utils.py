@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 
-from pontoon.base.utils import get_m2m_changes, get_search_phrases
+from pontoon.base.utils import get_m2m_changes, get_search_phrases, sanitize_html
 from pontoon.test.factories import (
     LocaleCodeHistoryFactory,
     LocaleFactory,
@@ -585,3 +585,40 @@ def test_get_m2m_mixed(user_a, user_b, user_c):
 )
 def test_get_search_phrases(search_query, expected_results):
     assert get_search_phrases(search_query) == expected_results
+
+
+@pytest.mark.parametrize(
+    "html,expected",
+    (
+        ("", ""),
+        ("plain text", "plain text"),
+        # Allowed tags and attributes are kept
+        (
+            '<p>Hello <b>bold</b> <a href="https://mozilla.org" target="_blank" '
+            'title="t">link</a></p>',
+            '<p>Hello <b>bold</b> <a href="https://mozilla.org" target="_blank" '
+            'title="t">link</a></p>',
+        ),
+        ("<ul><li>one</li></ul><br>", "<ul><li>one</li></ul><br>"),
+        # Disallowed tags are stripped, but their content is kept
+        ('<div class="c">div <em>em</em></div>', "div <em>em</em>"),
+        ("<img src=x onerror=alert(1)>text", "text"),
+        # Dangerous content is dropped entirely
+        ("a<script>alert(1)</script>b", "ab"),
+        # Disallowed attributes and URL schemes are removed
+        (
+            '<a href="https://mozilla.org" onclick="x()">l</a>',
+            '<a href="https://mozilla.org">l</a>',
+        ),
+        ('<a href="javascript:alert(1)">l</a>', "<a>l</a>"),
+        (
+            '<a href="mailto:a@example.com">m</a>',
+            '<a href="mailto:a@example.com">m</a>',
+        ),
+        ('<p style="color:red">styled</p>', "<p>styled</p>"),
+        # Text is escaped
+        ("Tom & Jerry <3", "Tom &amp; Jerry &lt;3"),
+    ),
+)
+def test_sanitize_html(html, expected):
+    assert sanitize_html(html) == expected

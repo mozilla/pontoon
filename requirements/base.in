@@ -16,7 +16,6 @@
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
 beautifulsoup4==4.12.3
-bleach==6.4.0
 celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==3.1.2
@@ -36,6 +35,7 @@ django-pipeline==4.1.0
 drf-spectacular[sidecar]==0.29.0
 google-cloud-translate==3.16.0
 gunicorn==23.0.0
+justhtml==3.11.2
 markupsafe==2.0.1
 moz.l10n[xml]==0.14.1
 newrelic==9.6.0

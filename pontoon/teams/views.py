@@ -5,8 +5,6 @@ import xml.etree.ElementTree as ET
 
 from typing import cast
 
-import bleach
-
 from guardian.decorators import permission_required_or_403
 
 from django.conf import settings
@@ -53,7 +51,7 @@ from pontoon.base.user_utils import (
     user_locale_role,
     user_role,
 )
-from pontoon.base.utils import require_AJAX
+from pontoon.base.utils import require_AJAX, sanitize_html
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_health_insights, get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm
@@ -231,12 +229,7 @@ def ajax_info(request, locale):
 @transaction.atomic
 def ajax_update_info(request, locale):
     team_description = request.POST.get("team_info", None)
-    team_description = bleach.clean(
-        team_description,
-        strip=True,
-        tags=settings.ALLOWED_TAGS,
-        attributes=settings.ALLOWED_ATTRIBUTES,
-    )
+    team_description = sanitize_html(team_description)
     locale = get_object_or_404(Locale, code=locale)
     locale.team_description = team_description
     locale.save()
@@ -268,7 +261,7 @@ def ajax_permissions(request, locale):
         else:
             errors = locale_form.errors
             errors.update(project_locale_form.errors_dict)
-            error_msg = bleach.clean(json.dumps(errors))
+            error_msg = sanitize_html(json.dumps(errors))
             return HttpResponseBadRequest(error_msg)
 
     else:

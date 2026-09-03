@@ -16,7 +16,7 @@ function ProjectInfoDialog({
   const ref = useRef<HTMLElement>(null);
   useOnDiscard(ref, onDiscard);
 
-  // We can safely use project.info because it is validated by bleach
+  // We can safely use project.info because it is sanitized on the server
   // before being saved into the database.
   return (
     <aside ref={ref} className='panel'>
