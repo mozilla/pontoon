@@ -2,8 +2,25 @@ import time
 
 import pytest
 
+from csp.middleware import CSPMiddleware
+
+from django.http import HttpResponse
 from django.urls import reverse
 from django.utils import timezone
+
+
+def test_content_security_policy(rf):
+    response = CSPMiddleware(lambda request: HttpResponse())(rf.get("/"))
+
+    policy = response.headers["Content-Security-Policy"]
+    assert "default-src 'self'" in policy
+    assert "connect-src 'self'" in policy
+    assert "font-src 'self'" in policy
+    assert "frame-src https: http:" in policy
+    assert "img-src 'self'" in policy
+    assert "script-src 'self' 'unsafe-eval'" in policy
+    assert "style-src 'self' 'unsafe-inline'" in policy
+    assert "worker-src https: blob: http:" in policy
 
 
 @pytest.mark.django_db
