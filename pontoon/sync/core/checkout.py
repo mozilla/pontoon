@@ -20,7 +20,7 @@ def is_inside(root: str, path: str) -> bool:
     """
     root = realpath(root)
     path = realpath(path)
-    return path == root or path.startswith(root + sep)
+    return commonpath((root, path)) == root
 
 
 class Checkout:
