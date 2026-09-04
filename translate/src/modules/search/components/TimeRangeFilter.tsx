@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import date from 'date-and-time';
 import { Localized } from '@fluent/react';
@@ -8,7 +14,7 @@ import highchartsStock from 'highcharts/modules/stock';
 import HighchartsReact from 'highcharts-react-official';
 
 import type { TimeRangeType } from '..';
-import { CHART_OPTIONS } from './chart-options';
+import { getChartOptions } from './chart-options';
 
 import './TimeRangeFilter.css';
 import classNames from 'classnames';
@@ -52,14 +58,7 @@ export function TimeRangeFilter({
   const chart = useRef<HighchartsReact>(null);
   const [chartFrom, setChartFrom] = useState<number | null>(null);
   const [chartTo, setChartTo] = useState<number | null>(null);
-  const [chartOptions, setChartOptions] = useState<{
-    series: { data: unknown[] }[];
-    xAxis: {
-      events: {
-        setExtremes: ((arg0: { min: number; max: number }) => void) | null;
-      };
-    }[];
-  }>(CHART_OPTIONS);
+  const [themeVersion, setThemeVersion] = useState(0);
   const [inputFrom, setInputFrom] = useState('');
   const [inputTo, setInputTo] = useState('');
   const [visible, setVisible] = useState(false);
@@ -70,10 +69,18 @@ export function TimeRangeFilter({
 
     // Set global options
     Highcharts.setOptions({ lang: { rangeSelectorZoom: '' } });
+  }, []);
 
-    // Set the callback function that fires when the minimum and maximum is set for the axis,
-    // either by calling the .setExtremes() method or by selecting an area in the chart.
-    chartOptions.xAxis[0].events.setExtremes = ({ min, max }) => {
+  useEffect(() => {
+    const onThemeChange = () => setThemeVersion((prev) => prev + 1);
+    document.addEventListener('themechange', onThemeChange);
+    return () => document.removeEventListener('themechange', onThemeChange);
+  }, []);
+
+  // Fires when the minimum and maximum is set for the axis, either by calling
+  // the .setExtremes() method or by selecting an area in the chart.
+  const onSetExtremes = useCallback(
+    ({ min, max }: { min: number; max: number }) => {
       const chartFrom = getTimeForURL(min);
       const chartTo = getTimeForURL(max);
 
@@ -81,8 +88,16 @@ export function TimeRangeFilter({
       setChartTo(chartTo);
       setInputFrom(getTimeForInput(chartFrom));
       setInputTo(getTimeForInput(chartTo));
-    };
-  }, []);
+    },
+    [],
+  );
+
+  // Highcharts resolves CSS variables to fixed colors, so the options are
+  // rebuilt on each theme change.
+  const chartOptions = useMemo(
+    () => getChartOptions(timeRangeData, onSetExtremes),
+    [timeRangeData, onSetExtremes, themeVersion],
+  );
 
   useEffect(() => {
     // In case of no translations
@@ -101,11 +116,6 @@ export function TimeRangeFilter({
     setChartTo(chartTo);
     setInputFrom(getTimeForInput(chartFrom));
     setInputTo(getTimeForInput(chartTo));
-
-    setChartOptions({
-      ...chartOptions,
-      series: [{ data: timeRangeData }, ...chartOptions.series.slice(1)],
-    });
   }, [timeRangeData]);
 
   useEffect(() => {
@@ -115,7 +125,7 @@ export function TimeRangeFilter({
         asTime(chartTo),
       );
     }
-  }, [visible]);
+  }, [visible, themeVersion]);
 
   useEffect(() => {
     // When filters are toggled or applied, we update the filters state in the SearchBox
@@ -256,6 +266,7 @@ export function TimeRangeFilter({
 
         {visible ? (
           <HighchartsReact
+            key={themeVersion}
             highcharts={Highcharts}
             // @ts-expect-error
             options={chartOptions}
