@@ -28,5 +28,10 @@ export function useTheme() {
     }
     document.body.classList.remove('dark-theme', 'light-theme', 'system-theme');
     document.body.classList.add(`${newTheme}-theme`);
+
+    // Notify components that resolve theme CSS variables in JavaScript.
+    document.dispatchEvent(
+      new CustomEvent('themechange', { detail: { theme: newTheme } }),
+    );
   };
 }
