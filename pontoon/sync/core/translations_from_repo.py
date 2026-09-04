@@ -34,7 +34,6 @@ from pontoon.base.user_utils import get_system_user
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.core.checkout import Checkout, Checkouts
-from pontoon.sync.core.paths import UploadPaths
 from pontoon.sync.formats import RepoTranslation, as_repo_translations
 
 
@@ -136,7 +135,7 @@ def find_db_updates(
     project: Project,
     locale_map: dict[str, Locale],
     changed_target_paths: Iterable[str],
-    paths: L10nConfigPaths | L10nDiscoverPaths | UploadPaths,
+    paths: L10nConfigPaths | L10nDiscoverPaths,
     db_changes: Iterable[ChangedEntityLocale],
 ) -> Updates | None:
     """
@@ -178,9 +177,7 @@ def find_db_updates(
                 except Exception as error:
                     scope = f"[{project.slug}:{db_path}, {locale.code}]"
                     log.warning(f"{scope} Skipping resource with parse error: {error}")
-        elif splitext(target_path)[1] in l10n_extensions and not isinstance(
-            paths, UploadPaths
-        ):
+        elif splitext(target_path)[1] in l10n_extensions:
             log.debug(
                 f"[{project.slug}:{relpath(target_path, paths.base)}] Not an L10n target path"
             )

@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { NotificationMessage } from '~/context/Notification';
 import { BadgeTooltipMessage } from '~/context/BadgeTooltip';
 
+/** Display summaries for longer than standard (2s), since they carry
+ * more information than a status message. */
+const UPLOAD_MESSAGE_DURATION = 6000;
+
 export function useNotifications() {
   const [message, setMessage] = useState<NotificationMessage | null>(null);
   const [badgeMessage, setBadgeMessage] = useState<BadgeTooltipMessage | null>(
@@ -28,9 +32,13 @@ export function useNotifications() {
         );
 
         if (generalNotification) {
+          const tags: string[] = generalNotification.type.split(' ');
           setMessage({
-            type: generalNotification.type,
+            type: tags[tags.length - 1] as NotificationMessage['type'],
             content: generalNotification.content,
+            duration: tags.includes('upload')
+              ? UPLOAD_MESSAGE_DURATION
+              : undefined,
           });
         }
 

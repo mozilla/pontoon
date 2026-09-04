@@ -1058,7 +1058,7 @@ def upload(request):
         project, locale
     ):
         return HttpResponseForbidden("You don't have permission to upload files.")
-    get_object_or_404(Resource, project=project, path=res_path)
+    resource = get_object_or_404(Resource, project=project, path=res_path)
 
     form = forms.UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
@@ -1066,15 +1066,22 @@ def upload(request):
 
         upload = request.FILES["uploadfile"]
         try:
-            badge_name, badge_level = import_uploaded_file(
-                project, locale, res_path, upload, request.user
+            result = import_uploaded_file(
+                project, locale, resource, upload, request.user
             )
-            messages.success(request, "Translations updated from uploaded file.")
-            if badge_name:
+            summary = [f"{result.updated} updated", f"{result.unchanged} unchanged"]
+            if result.undefined_keys:
+                summary.append(f"{len(result.undefined_keys)} not found in Pontoon")
+            message = f"Translations from uploaded file: {', '.join(summary)}."
+            if result.updated:
+                messages.success(request, message, extra_tags="upload")
+            else:
+                messages.info(request, message, extra_tags="upload")
+            if result.badge_name:
                 message = json.dumps(
                     {
-                        "name": badge_name,
-                        "level": badge_level,
+                        "name": result.badge_name,
+                        "level": result.badge_level,
                     }
                 )
                 messages.info(request, message, extra_tags="badge")

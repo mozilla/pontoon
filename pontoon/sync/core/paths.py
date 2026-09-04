@@ -48,24 +48,3 @@ def find_paths(
     log.debug(f"[{project.slug}] Paths({name}): ref_root={rel_root} base={rel_base}")
 
     return paths
-
-
-class UploadPaths:
-    """
-    moz.l10n.paths -like interface for sync'ing content from a single file.
-    Implements minimal functionality required by `find_db_updates()`.
-    """
-
-    ref_root = ""
-
-    def __init__(self, ref_path: str, locale_code: str, file_path: str):
-        self._ref_path = ref_path
-        self._locale_code = locale_code
-        self._file_path = file_path
-
-    def find_reference(self, target_path: str):
-        return (
-            (self._ref_path, {"locale": self._locale_code})
-            if target_path == self._file_path
-            else None
-        )

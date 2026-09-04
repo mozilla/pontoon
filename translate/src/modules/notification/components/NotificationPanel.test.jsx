@@ -55,6 +55,19 @@ describe('<NotificationPanel>', () => {
     expect(container.querySelectorAll('.showing')).toHaveLength(0);
   });
 
+  it('honors a custom duration', () => {
+    vi.useFakeTimers();
+    const { container } = render(
+      <ComponentWithProvider initialMessage={{ ...NOTIF, duration: 5000 }} />,
+    );
+
+    vi.advanceTimersByTime(2500);
+    expect(container.querySelectorAll('.showing')).toHaveLength(1);
+
+    vi.advanceTimersByTime(2500);
+    expect(container.querySelectorAll('.showing')).toHaveLength(0);
+  });
+
   it('hides a message on click', () => {
     const { container } = render(
       <ComponentWithProvider initialMessage={NOTIF} />,
