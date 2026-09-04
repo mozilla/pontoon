@@ -27,7 +27,7 @@ $('body')
     const $element = $(this);
 
     timer = setTimeout(function () {
-      const translation = Pontoon.doNotRender($element.data('translation')),
+      const translation = $element.data('translation'),
         locale = $element.data('translation-locale'),
         direction = $element.data('translation-direction'),
         script = $element.data('translation-script'),
@@ -38,42 +38,34 @@ $('body')
         date = date_formatter.format(new Date($element.attr('datetime'))),
         time = time_formatter.format(new Date($element.attr('datetime')));
 
+      // These five values are contributor-supplied and reach us HTML-decoded,
+      // so the tooltip is assembled from nodes: each one is set as text or as
+      // an attribute, and none of them is ever parsed as markup.
+      const $wrapper = $('<div class="wrapper"></div>').append(
+        $('<div class="translation-details"></div>').append(
+          $('<p class="translation-action"></p>')
+            .text(action + ' ')
+            .append($('<a></a>').attr('href', link).text(name)),
+          $('<p class="translation-time"></p>').text(
+            'on ' + date + ' at ' + time,
+          ),
+        ),
+      );
+
+      if (avatar) {
+        $wrapper.append(
+          $('<img class="rounded" height="44" width="44">').attr('src', avatar),
+        );
+      }
+
       $element.after(
-        '<aside class="tooltip">' +
-          '<span class="quote fas fa-quote-right fa-2x"></span>' +
-          '<p class="translation" dir="' +
-          direction +
-          '" lang="' +
-          locale +
-          '" data-script="' +
-          script +
-          '">' +
-          translation +
-          '</p>' +
-          '<footer class="clearfix">' +
-          '<div class="wrapper">' +
-          '<div class="translation-details">' +
-          '<p class="translation-action">' +
-          action +
-          ' <a href="' +
-          link +
-          '">' +
-          name +
-          '</a></p>' +
-          '<p class="translation-time">on ' +
-          date +
-          ' at ' +
-          time +
-          '</p>' +
-          '</div>' +
-          (avatar
-            ? '<img class="rounded" height="44" width="44" src="' +
-              avatar +
-              '">'
-            : '') +
-          '</div>' +
-          '</footer>' +
-          '</aside>',
+        $('<aside class="tooltip"></aside>').append(
+          $('<span class="quote fas fa-quote-right fa-2x"></span>'),
+          $('<p class="translation"></p>')
+            .attr({ dir: direction, lang: locale, 'data-script': script })
+            .text(translation),
+          $('<footer class="clearfix"></footer>').append($wrapper),
+        ),
       );
     }, delay);
   })
@@ -83,7 +75,7 @@ $('body')
   });
 
 /* Public functions used across different files */
-// eslint-disable-next-line no-var
+// eslint-disable-next-line no-var, no-useless-assignment
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     table: {
