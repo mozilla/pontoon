@@ -177,6 +177,6 @@ def test_tt_xcode_checks():
         string="You can learn more",
         use_tt_checks=True,
     ) == {
-        "pndbWarnings": ["Placeholder %@ not found in translation"],
+        "pWarnings": ["Placeholder %@ not found in translation"],
         "ttWarnings": ["Ending punctuation", "Printf format string mismatch"],
     }

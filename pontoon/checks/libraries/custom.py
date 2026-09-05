@@ -49,7 +49,7 @@ class IsEmptyVisitor(Visitor):
 
 def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
     """
-    Group all checks related to the base UI that get stored in the DB
+    Group all checks related to the base UI
     """
     if not string:
         if entity.resource.allows_empty_translations:
@@ -61,6 +61,7 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
     format = cast(Resource.Format, entity.resource.format)
     errors: list[str] = []
     warnings: list[str] = []
+    ndb_warnings: list[str] = []
     match format:
         case Resource.Format.ANDROID | Resource.Format.XCODE:
             try:
@@ -124,13 +125,13 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
             elif entity_ast.id.name != translation_ast.id.name:
                 errors.append("Translation key needs to match source string key")
 
-            # Empty translation entry warning; set here rather than pontoon_non_db.py
-            # to avoid needing to parse the Fluent message twice.
+            # Empty translation entry warning; set here rather than with the other
+            # non-DB warnings to avoid needing to parse the Fluent message twice.
             else:
                 visitor = IsEmptyVisitor()
                 visitor.visit(translation_ast)
                 if visitor.is_empty:
-                    warnings.append("Empty translation")
+                    ndb_warnings.append("Empty translation")
 
         case Resource.Format.WEBEXT:
             try:
@@ -171,7 +172,9 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
     if errors:
         checks["pErrors"] = errors
     if warnings:
-        checks["pndbWarnings"] = warnings
+        checks["pWarnings"] = warnings
+    if ndb_warnings:
+        checks["pndbWarnings"] = ndb_warnings
     return checks
 
 
