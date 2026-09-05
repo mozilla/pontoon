@@ -60,6 +60,33 @@ describe('mark terms', () => {
     expect(container.querySelector('mark')).toBeNull();
   });
 
+  it('does not mark a term followed by _', () => {
+    const string = 'foo_bar text';
+    const terms = {
+      terms: [{ text: 'foo' }],
+    };
+
+    const { container } = mountMarker(string, terms);
+
+    expect(container.querySelector('mark')).toBeNull();
+  });
+
+  it.each(['[', '\\', ']', '^', '`'])(
+    'does not extend a term match past %s',
+    (char) => {
+      const string = `foo${char}bar text`;
+      const terms = {
+        terms: [{ text: 'foo' }],
+      };
+
+      const { container } = mountMarker(string, terms);
+      const marks = container.querySelectorAll('mark.term');
+
+      expect(marks).toHaveLength(1);
+      expect(marks[0].textContent).toBe('foo');
+    },
+  );
+
   it('marks longer terms first', () => {
     const string = 'This is a translation tool.';
     const terms = {

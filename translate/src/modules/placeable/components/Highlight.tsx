@@ -112,7 +112,7 @@ export function Highlight({
       .map((t) => t.text)
       .sort((a, b) => (a.length < b.length ? 1 : -1));
     for (const term of sourceTerms) {
-      const re = new RegExp(`\\b${escapeRegExp(term)}[a-zA-z]*\\b`, 'gi');
+      const re = new RegExp(`\\b${escapeRegExp(term)}[a-zA-Z]*\\b`, 'gi');
       for (const match of source.matchAll(re)) {
         marks.push({
           index: match.index ?? -1,
