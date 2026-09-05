@@ -237,7 +237,7 @@ def test_android_missing_placeholder():
     translation = "Translation"
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
-        "pndbWarnings": ["Placeholder %1$s not found in translation"]
+        "pWarnings": ["Placeholder %1$s not found in translation"]
     }
 
 
@@ -247,7 +247,7 @@ def test_android_mistyped_placeholder():
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
         "pErrors": ["Placeholder %1 not found in reference"],
-        "pndbWarnings": ["Placeholder %1$s not found in translation"],
+        "pWarnings": ["Placeholder %1$s not found in translation"],
     }
 
 
@@ -277,7 +277,7 @@ def test_android_changed_placeholder():
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
         "pErrors": ["Placeholder %@ not found in reference"],
-        "pndbWarnings": ["Placeholder %s not found in translation"],
+        "pWarnings": ["Placeholder %s not found in translation"],
     }
 
 
@@ -286,7 +286,7 @@ def test_android_protections():
     translation = "Translation String with %1$s"
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
-        "pndbWarnings": ["Placeholder String not found in translation"]
+        "pWarnings": ["Placeholder String not found in translation"]
     }
 
 
@@ -312,7 +312,7 @@ def test_android_bad_html():
     entity = mock_entity("android", string=original)
     assert run_custom_checks(entity, translation) == {
         "pErrors": ["Element <a> not found in reference"],
-        "pndbWarnings": ["Element <b> not found in translation"],
+        "pWarnings": ["Element <b> not found in translation"],
     }
 
 
@@ -401,7 +401,7 @@ def test_xcode_missing_placeholder():
     translation = "Translation"
     entity = mock_entity("xcode", string=original)
     assert run_custom_checks(entity, translation) == {
-        "pndbWarnings": ["Placeholder %@ not found in translation"]
+        "pWarnings": ["Placeholder %@ not found in translation"]
     }
 
 
@@ -411,7 +411,7 @@ def test_xcode_mistyped_placeholder():
     entity = mock_entity("xcode", string=original)
     assert run_custom_checks(entity, translation) == {
         "pErrors": ["Placeholder % @ not found in reference"],
-        "pndbWarnings": ["Placeholder %@ not found in translation"],
+        "pWarnings": ["Placeholder %@ not found in translation"],
     }
 
 

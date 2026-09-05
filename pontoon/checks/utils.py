@@ -1,4 +1,9 @@
-from pontoon.checks import DB_LIBRARIES
+import logging
+
+from pontoon.checks import DB_LIBRARIES, NON_DB_LIBRARIES
+
+
+log = logging.getLogger(__name__)
 
 
 def bulk_run_checks(translations):
@@ -53,6 +58,10 @@ def get_failed_checks_db_objects(translation, failed_checks):
     for check_group, messages in failed_checks.items():
         library = check_group.replace("Warnings", "").replace("Errors", "")
         if library not in DB_LIBRARIES:
+            if library not in NON_DB_LIBRARIES:
+                log.error(
+                    f"Discarding failed checks from unknown library {library!r}: {messages}"
+                )
             continue
 
         if check_group.endswith("Errors"):
