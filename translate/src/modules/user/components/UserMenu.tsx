@@ -75,6 +75,9 @@ export function UserMenuDialog({
 
   const handleThemeButtonClick = (selectedTheme: string) => {
     applyTheme(selectedTheme);
+    // ThemeProvider reads this attribute when the operating system appearance
+    // changes, to tell a "system" setting apart from an explicit one.
+    document.body.setAttribute('data-theme', selectedTheme);
     onThemeChange(selectedTheme); // Save theme to the database
   };
 

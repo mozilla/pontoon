@@ -32,6 +32,7 @@ describe('<UserMenuDialog>', () => {
     isTranslator = true,
     isAuthenticated = true,
     location = LOCATION,
+    onThemeChange = () => {},
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
     return mount(
@@ -40,7 +41,10 @@ describe('<UserMenuDialog>', () => {
           <EntityView.Provider
             value={{ entity: { pk: 42, readonly: isReadOnly } }}
           >
-            <UserMenuDialog user={{ isAuthenticated, isPM }} />
+            <UserMenuDialog
+              user={{ isAuthenticated, isPM }}
+              onThemeChange={onThemeChange}
+            />
           </EntityView.Provider>
         </MockLocalizationProvider>
       </Location.Provider>,
@@ -121,6 +125,18 @@ describe('<UserMenuDialog>', () => {
     const wrapper = createUserMenu({ isReadOnly: true });
 
     expect(wrapper.find(FileUpload)).toHaveLength(0);
+  });
+
+  it('writes the picked appearance to the data-theme attribute', () => {
+    document.body.setAttribute('data-theme', 'system');
+    const onThemeChange = vi.fn();
+    const wrapper = createUserMenu({ onThemeChange });
+
+    wrapper.find('.appearance button.dark').simulate('click');
+
+    expect(document.body).toHaveClass('dark-theme');
+    expect(document.body.getAttribute('data-theme')).toBe('dark');
+    expect(onThemeChange).toHaveBeenCalledWith('dark');
   });
 
   it('shows the admin menu items when the user is an admin', () => {
