@@ -186,7 +186,7 @@ def test_upload_file(upload_po, po_translation):
     """
     messages = upload_po('msgid "test_key"\nmsgstr "new translation"')
     assert messages == [
-        ("upload success", "Translations from uploaded file: 1 updated, 0 unchanged.")
+        ("upload success", "Translations uploaded: 1 updated, 0 unchanged.")
     ]
 
     translation = Translation.objects.get(string="new translation")
@@ -214,7 +214,7 @@ def test_upload_is_additive(upload_po, approved_po_translation, locale_a):
 
     messages = upload_po('msgid "test_key"\nmsgstr "new translation"')
     assert messages == [
-        ("upload success", "Translations from uploaded file: 1 updated, 0 unchanged.")
+        ("upload success", "Translations uploaded: 1 updated, 0 unchanged.")
     ]
 
     approved_po_translation.refresh_from_db()
@@ -243,7 +243,7 @@ def test_upload_approves_matching_suggestion(upload_po, po_translation, locale_a
 
     messages = upload_po(f'msgid "test_key"\nmsgstr "{po_translation.string}"')
     assert messages == [
-        ("upload success", "Translations from uploaded file: 1 updated, 0 unchanged.")
+        ("upload success", "Translations uploaded: 1 updated, 0 unchanged.")
     ]
 
     assert Translation.objects.filter(entity=po_translation.entity).count() == 1
@@ -265,7 +265,7 @@ def test_upload_approves_matching_fuzzy_translation(upload_po, po_translation):
 
     messages = upload_po(f'msgid "test_key"\nmsgstr "{po_translation.string}"')
     assert messages == [
-        ("upload success", "Translations from uploaded file: 1 updated, 0 unchanged.")
+        ("upload success", "Translations uploaded: 1 updated, 0 unchanged.")
     ]
 
     assert Translation.objects.filter(entity=po_translation.entity).count() == 1
@@ -278,7 +278,7 @@ def test_upload_approves_matching_fuzzy_translation(upload_po, po_translation):
 def test_upload_identical_translation_is_ignored(upload_po, approved_po_translation):
     messages = upload_po(f'msgid "test_key"\nmsgstr "{approved_po_translation.string}"')
     assert messages == [
-        ("upload info", "Translations from uploaded file: 0 updated, 1 unchanged.")
+        ("upload info", "Translations uploaded: 0 updated, 1 unchanged.")
     ]
 
     assert (
@@ -304,8 +304,7 @@ def test_upload_undefined_keys_are_reported(upload_po, po_translation):
     assert messages == [
         (
             "upload success",
-            "Translations from uploaded file: 1 updated, 0 unchanged, "
-            "2 not found in Pontoon.",
+            "Translations uploaded: 1 updated, 0 unchanged, 2 not found in Pontoon.",
         )
     ]
     assert set(
@@ -340,7 +339,7 @@ def test_upload_ignores_translations_of_obsolete_entities(
 
     messages = upload_po('msgid "test_key"\nmsgstr "new translation"')
     assert messages == [
-        ("upload success", "Translations from uploaded file: 1 updated, 0 unchanged.")
+        ("upload success", "Translations uploaded: 1 updated, 0 unchanged.")
     ]
     assert (
         Translation.objects.get(entity=po_translation.entity, approved=True).string
