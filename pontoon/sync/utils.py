@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from os.path import basename, join
 from tempfile import TemporaryDirectory
 
@@ -9,7 +9,6 @@ from django.core.files import File
 from django.db.models import Q
 from django.utils import timezone
 
-from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
@@ -19,7 +18,6 @@ from pontoon.base.models import (
     Translation,
     User,
 )
-from pontoon.messaging.notifications import send_badge_notification
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import (
     Updates,
@@ -63,14 +61,12 @@ class UploadResult:
     Summary of an uploaded file import:
     - `updated`: translations added or replaced
     - `unchanged`: translations identical to the current approved or pretranslated one
-    - `undefined_keys`: keys of translations with no matching entity in Pontoon
+    - `undefined`: translations with no matching entity in Pontoon
     """
 
     updated: int = 0
     unchanged: int = 0
-    undefined_keys: list[L10nId] = field(default_factory=list)
-    badge_name: str = ""
-    badge_level: int = 0
+    undefined: int = 0
 
 
 def import_uploaded_file(
@@ -105,9 +101,10 @@ def import_uploaded_file(
         .values_list("id", "key")
         .iterator()
     }
-    result.undefined_keys = [key for key in upload_translations if key not in entities]
-    for key in result.undefined_keys:
+    undefined_keys = [key for key in upload_translations if key not in entities]
+    for key in undefined_keys:
         del upload_translations[key]
+    result.undefined = len(undefined_keys)
 
     current_translations = (
         Translation.objects.filter(
@@ -131,8 +128,6 @@ def import_uploaded_file(
     result.updated = len(updates)
     if updates:
         now = timezone.now()
-        translation_before_level = badges_translation_level(user)
-        review_before_level = badges_review_level(user)
         # write_db_updates() removes entries from `updates` as it processes them
         update_keys = list(updates)
         write_db_updates(project, updates, user, now)
@@ -144,13 +139,4 @@ def import_uploaded_file(
             ),
             ignore_conflicts=True,
         )
-
-        if badges_translation_level(user) > translation_before_level:
-            result.badge_name = "Translation Champion"
-            result.badge_level = badges_translation_level(user)
-            send_badge_notification(user, result.badge_name, result.badge_level)
-        if badges_review_level(user) > review_before_level:
-            result.badge_name = "Review Master"
-            result.badge_level = badges_review_level(user)
-            send_badge_notification(user, result.badge_name, result.badge_level)
     return result

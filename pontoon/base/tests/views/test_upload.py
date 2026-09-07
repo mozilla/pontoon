@@ -255,6 +255,26 @@ def test_upload_approves_matching_suggestion(upload_po, po_translation, locale_a
 
 
 @pytest.mark.django_db
+def test_upload_approves_matching_fuzzy_translation(upload_po, po_translation):
+    """
+    An uploaded non-fuzzy translation matching an existing fuzzy one approves it.
+    """
+    po_translation.fuzzy = True
+    po_translation.active = True
+    po_translation.save()
+
+    messages = upload_po(f'msgid "test_key"\nmsgstr "{po_translation.string}"')
+    assert messages == [
+        ("upload success", "Translations from uploaded file: 1 updated, 0 unchanged.")
+    ]
+
+    assert Translation.objects.filter(entity=po_translation.entity).count() == 1
+    po_translation.refresh_from_db()
+    assert po_translation.approved
+    assert not po_translation.fuzzy
+
+
+@pytest.mark.django_db
 def test_upload_identical_translation_is_ignored(upload_po, approved_po_translation):
     messages = upload_po(f'msgid "test_key"\nmsgstr "{approved_po_translation.string}"')
     assert messages == [
