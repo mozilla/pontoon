@@ -147,7 +147,12 @@ export function BatchActions(): React.ReactElement<'div'> {
     const root = document.getElementById('root');
     const isGoogleTranslateSupported =
       root?.dataset.isGoogleTranslateSupported === 'true';
-    return isGoogleTranslateSupported && !!locale.googleTranslateCode;
+    const userCanPretranslate = root?.dataset.canPretranslate === 'true';
+    return (
+      isGoogleTranslateSupported &&
+      userCanPretranslate &&
+      !!locale.googleTranslateCode
+    );
   }, [locale.googleTranslateCode]);
 
   const copyFromLocale = useCallback(() => {
