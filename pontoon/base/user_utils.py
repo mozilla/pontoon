@@ -250,3 +250,8 @@ def can_translate(user: User, project: "Project", locale: "Locale") -> bool:
         return user.has_perm("base.can_translate_project_locale", project_locale)
 
     return user.has_perm("base.can_translate_locale", locale)
+
+
+def can_pretranslate(user: User) -> bool:
+    """Check if user has suitable permissions to manually trigger batch pretranslation."""
+    return user.is_superuser or user.groups.filter(name="pretranslators").exists()
