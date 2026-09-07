@@ -1075,7 +1075,7 @@ def upload(request):
             summary = [f"{result.updated} updated", f"{result.unchanged} unchanged"]
             if result.undefined:
                 summary.append(f"{result.undefined} not found in Pontoon")
-            message = f"Translations from uploaded file: {', '.join(summary)}."
+            message = f"Translations uploaded: {', '.join(summary)}."
             if result.updated:
                 messages.success(request, message, extra_tags="upload")
             else:
