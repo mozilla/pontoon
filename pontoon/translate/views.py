@@ -11,6 +11,7 @@ from django.views.decorators.csrf import (
 
 from pontoon.base.models import TranslatedResource
 from pontoon.base.services import get_locale_or_redirect, get_project_or_redirect
+from pontoon.base.user_utils import can_pretranslate
 
 
 @csrf_exempt
@@ -89,6 +90,7 @@ def translate(request, locale, project, resource):
         and locale.code in settings.OPENAI_AUTO_SUGGESTION_LOCALES,
         "locale": get_preferred_locale(request),
         "notifications": [],
+        "can_pretranslate": can_pretranslate(request.user),
     }
 
     # Get system notifications and pass them down. We need to transform the
