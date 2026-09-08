@@ -37,7 +37,7 @@ google-cloud-translate==3.16.0
 gunicorn==23.0.0
 justhtml==3.11.2
 markupsafe==2.0.1
-moz.l10n[xml]==0.14.1
+moz.l10n[xml]==0.14.2
 newrelic==9.6.0
 openai==3.0.0
 PyJWT==2.13.0
