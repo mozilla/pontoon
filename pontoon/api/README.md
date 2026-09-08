@@ -87,7 +87,7 @@ The request body is `multipart/form-data` with these fields:
 
 | Field        | Description                                                 |
 | ------------ | ----------------------------------------------------------- |
-| `slug`       | Project slug                                                |
+| `project`    | Project slug                                                |
 | `locale`     | Locale code                                                 |
 | `resource`   | Resource path within the project                            |
 | `uploadfile` | Translation file, in the same format as the target resource |
@@ -95,7 +95,7 @@ The request body is `multipart/form-data` with these fields:
 ```bash
 $ curl -X POST \
   -H "Authorization: Bearer <YOUR-TOKEN>" \
-  -F "slug=firefox" \
+  -F "project=firefox" \
   -F "locale=it" \
   -F "resource=browser/browser.ftl" \
   -F "uploadfile=@browser.ftl" \

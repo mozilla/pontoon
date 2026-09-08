@@ -2046,7 +2046,7 @@ def upload_po_translation(translation_a):
 def test_upload_api_requires_authentication(project_locale_a):
     response = _upload(
         APIClient(),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource="resource_a.po",
         uploadfile=_po_file(),
@@ -2063,7 +2063,7 @@ def test_upload_api_session_auth_rejected(upload_translator, project_locale_a):
 
     response = _upload(
         client,
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource="resource_a.po",
         uploadfile=_po_file(),
@@ -2076,7 +2076,7 @@ def test_upload_api_session_auth_rejected(upload_translator, project_locale_a):
 def test_upload_api_cannot_translate(member, project_locale_a, resource_a):
     response = _upload(
         _pat_client(member.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource="resource_a.po",
         uploadfile=_po_file(),
@@ -2094,7 +2094,7 @@ def test_upload_api_readonly_project_locale(
 
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource="resource_a.po",
         uploadfile=_po_file(),
@@ -2107,7 +2107,7 @@ def test_upload_api_readonly_project_locale(
 def test_upload_api_missing_file(upload_translator, project_locale_a):
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource="resource_a.po",
     )
@@ -2117,7 +2117,7 @@ def test_upload_api_missing_file(upload_translator, project_locale_a):
 
 
 @pytest.mark.django_db
-def test_upload_api_missing_slug(upload_translator, project_locale_a):
+def test_upload_api_missing_project(upload_translator, project_locale_a):
     response = _upload(
         _pat_client(upload_translator.user),
         locale=project_locale_a.locale.code,
@@ -2126,14 +2126,14 @@ def test_upload_api_missing_slug(upload_translator, project_locale_a):
     )
 
     assert response.status_code == 400
-    assert "slug" in response.json()
+    assert "project" in response.json()
 
 
 @pytest.mark.django_db
 def test_upload_api_incompatible_format(upload_translator, project_locale_a):
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource="resource_a.po",
         uploadfile=_po_file(contents="irrelevant", name="resource_a.ftl"),
@@ -2149,7 +2149,7 @@ def test_upload_api_unparseable_file(
     """Reject malformed files."""
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(contents="this is not valid gettext {{{ broken"),
@@ -2166,7 +2166,7 @@ def test_upload_api_unknown_keys_ignored(
     """Skip unknown keys and report them, importing the rest of the file."""
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(
@@ -2192,7 +2192,7 @@ def test_upload_api_file_without_translations(
     """Reject files with no translations, rather than reporting a no-op."""
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(contents="# Just a comment\n"),
@@ -2215,7 +2215,7 @@ def test_upload_api_disabled_project(
 
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project.slug,
+        project=project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(contents='msgid "test_key"\nmsgstr "into disabled"'),
@@ -2229,7 +2229,7 @@ def test_upload_api_disabled_project(
 def test_upload_api_oversized_file(upload_translator, project_locale_a):
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource="resource_a.po",
         uploadfile=_po_file(contents="#" * (5000 * 1000 + 1)),
@@ -2245,7 +2245,7 @@ def test_upload_api_resource_not_enabled_for_locale(
     """A resource with no TranslatedResource for the locale is not writable."""
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=resource_a.path,
         uploadfile=_po_file(),
@@ -2271,7 +2271,7 @@ def test_upload_api_concurrent_conflict(
 
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(),
@@ -2284,7 +2284,7 @@ def test_upload_api_concurrent_conflict(
 def test_upload_api_unknown_resource(upload_translator, project_locale_a):
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource="does_not_exist.po",
         uploadfile=_po_file(name="does_not_exist.po"),
@@ -2299,7 +2299,7 @@ def test_upload_api_locale_not_enabled_for_project(member, project_locale_a, loc
 
     response = _upload(
         _pat_client(member.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=locale_b.code,
         resource="resource_a.po",
         uploadfile=_po_file(),
@@ -2319,7 +2319,7 @@ def test_upload_api_admin_can_upload(member, project_locale_a, upload_po_transla
 
     response = _upload(
         _pat_client(member.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(),
@@ -2333,7 +2333,7 @@ def test_upload_api_admin_can_upload(member, project_locale_a, upload_po_transla
 def test_upload_api_unknown_locale(upload_translator, project_locale_a):
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale="does-not-exist",
         resource="resource_a.po",
         uploadfile=_po_file(),
@@ -2352,7 +2352,7 @@ def test_upload_api_private_project_not_visible(
 
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project.slug,
+        project=project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(),
@@ -2365,7 +2365,7 @@ def test_upload_api_private_project_not_visible(
 def test_upload_api_file(upload_translator, project_locale_a, upload_po_translation):
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(),
@@ -2389,7 +2389,7 @@ def test_upload_api_no_changes(
 ):
     client = _pat_client(upload_translator.user)
     kwargs = dict(
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
     )
@@ -2409,7 +2409,7 @@ def test_upload_api_logs_action(
 ):
     response = _upload(
         _pat_client(upload_translator.user),
-        slug=project_locale_a.project.slug,
+        project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
         resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(),
@@ -2442,7 +2442,7 @@ def test_upload_api_throttled(
     for expected_status in (200, 200, 429):
         response = _upload(
             client,
-            slug=project_locale_a.project.slug,
+            project=project_locale_a.project.slug,
             locale=project_locale_a.locale.code,
             resource=upload_po_translation.entity.resource.path,
             uploadfile=_po_file(),

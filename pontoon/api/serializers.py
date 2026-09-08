@@ -396,7 +396,7 @@ UPLOAD_REQUEST_SCHEMA = {
         "Translation file to import, with the project, locale and resource it targets."
     ),
     "properties": {
-        "slug": {"type": "string", "description": "Project slug."},
+        "project": {"type": "string", "description": "Project slug."},
         "locale": {"type": "string", "description": "Locale code."},
         "resource": {
             "type": "string",
@@ -410,7 +410,7 @@ UPLOAD_REQUEST_SCHEMA = {
             ),
         },
     },
-    "required": ["slug", "locale", "resource", "uploadfile"],
+    "required": ["project", "locale", "resource", "uploadfile"],
 }
 
 

@@ -675,12 +675,12 @@ class UploadTranslationsView(APIView):
             raise ValidationError(form.errors)
 
         code = form.cleaned_data["locale"]
-        slug = form.cleaned_data["slug"]
+        project_slug = form.cleaned_data["project"]
         res_path = form.cleaned_data["resource"]
 
         locale = get_object_or_404(Locale, code=code)
         project = get_object_or_404(
-            Project.objects.visible_for(request.user).available(), slug=slug
+            Project.objects.visible_for(request.user).available(), slug=project_slug
         )
 
         get_object_or_404(ProjectLocale, project=project, locale=locale)

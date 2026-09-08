@@ -77,7 +77,7 @@ class UploadFileForm(DownloadFileForm):
 class UploadTranslationsAPIForm(forms.Form):
     """Same as `UploadFileForm`, with field names matching the rest of the API."""
 
-    slug = forms.CharField()
+    project = forms.CharField()
     locale = forms.CharField()
     resource = forms.CharField()
     uploadfile = forms.FileField()
