@@ -43,6 +43,7 @@ export function buildMessageEntry(
       src = src.trim();
     }
     return parsePattern(format, src, {
+      editable: true,
       webextBaseMsg: msg,
       xliffIsXcode: xliffIsXcode,
     });

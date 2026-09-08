@@ -138,9 +138,29 @@ describe('buildMessageEntry', () => {
   it('returns null on Xcode parse error', () => {
     const base = parseEntry('xcode', 'Hello {$arg :string @source=|%@|}!');
     const result = buildMessageEntry(base, [
-      { name: '', keys: [], handle: { current: { value: 'Hello <' } } },
+      { name: '', keys: [], handle: { current: { value: 'Hello <>' } } },
     ]);
     expect(result).toBeNull();
+  });
+
+  it('parses Android as editable', () => {
+    const base = parseEntry('android', 'Hello {$arg :string @source=|%@|}!');
+    const result = buildMessageEntry(base, [
+      { name: '', keys: [], handle: { current: { value: ' \tHello & <' } } },
+    ]);
+    expect(result).toEqual({
+      format: 'android',
+      id: '',
+      value: [' \tHello & <'],
+    });
+  });
+
+  it('parses XLIFF as editable', () => {
+    const base = parseEntry('xcode', 'Hello {$arg :string @source=|%@|}!');
+    const result = buildMessageEntry(base, [
+      { name: '', keys: [], handle: { current: { value: 'Hello & <' } } },
+    ]);
+    expect(result).toEqual({ format: 'xcode', id: '', value: ['Hello & <'] });
   });
 
   it('keeps surrounding spaces by default', () => {
