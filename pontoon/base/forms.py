@@ -75,19 +75,15 @@ class UploadFileForm(DownloadFileForm):
 
 
 class UploadTranslationsAPIForm(forms.Form):
-    """Same as `UploadFileForm`, with field names matching the rest of the API."""
+    """Same as `UploadFileForm`, with field names matching the rest of the API.
+
+    The file is validated separately, after the API has authorized the caller.
+    """
 
     project = forms.CharField()
     locale = forms.CharField()
     resource = forms.CharField()
     uploadfile = forms.FileField()
-
-    def clean(self):
-        cleaned_data = super().clean()
-        validate_uploaded_file(
-            cleaned_data.get("uploadfile"), cleaned_data.get("resource")
-        )
-        return cleaned_data
 
 
 class UserPermissionLogFormMixin:

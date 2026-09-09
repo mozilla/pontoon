@@ -414,6 +414,11 @@ UPLOAD_REQUEST_SCHEMA = {
 }
 
 
+# For large files, only report the first undefined keys, alongside
+# their total number.
+UNDEFINED_KEYS_LIMIT = 100
+
+
 class UploadTranslationsResponseSerializer(serializers.Serializer):
     """Result of a translation file upload."""
 
@@ -425,5 +430,10 @@ class UploadTranslationsResponseSerializer(serializers.Serializer):
     )
     undefined_keys = serializers.ListField(
         child=serializers.ListField(child=serializers.CharField()),
-        help_text="Keys of translations with no matching entity in Pontoon, ignored.",
+        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
+        f"Truncated to the first {UNDEFINED_KEYS_LIMIT} keys.",
+    )
+    undefined_keys_count = serializers.IntegerField(
+        help_text="Total number of keys with no matching entity in Pontoon, "
+        "before truncation."
     )

@@ -105,7 +105,12 @@ $ curl -X POST \
 A successful request returns a summary of the import:
 
 ```json
-{ "updated": 12, "unchanged": 3, "undefined_keys": [["obsolete_key"]] }
+{
+  "updated": 12,
+  "unchanged": 3,
+  "undefined_keys": [["obsolete_key"]],
+  "undefined_keys_count": 1
+}
 ```
 
 - `updated`: translations added or replaced. Uploaded translations replace the
@@ -114,6 +119,9 @@ A successful request returns a summary of the import:
   one, ignored.
 - `undefined_keys`: keys of translations with no matching string in Pontoon, ignored.
   Each key is a list of strings, in the same format as the `key` field of entities.
+  Only the first 100 keys are listed.
+- `undefined_keys_count`: total number of keys with no matching string in Pontoon,
+  before truncation.
 
 The upload is additive: strings missing from the uploaded file are left untouched, so
 partial files can be used to update a subset of translations. Re-uploading an unchanged
@@ -131,7 +139,11 @@ Requirements and limits:
   resource.
 - The endpoint is rate limited per user, with a burst limit of 30 calls per minute and a
   sustained limit of 180 calls per hour by default (configurable via
-  `API_UPLOAD_THROTTLE_BURST` and `API_UPLOAD_THROTTLE_SUSTAINED`).
+  `API_UPLOAD_THROTTLE_BURST` and `API_UPLOAD_THROTTLE_SUSTAINED`). The two limits are
+  not independent: calls rejected by the burst limit still count against the sustained
+  limit, so a client that keeps calling after a `429` spends its hourly quota on
+  rejected calls. For example, 30 accepted uploads followed by 150 rejected ones exhaust
+  the hourly quota, locking the client out for one hour.
 
 Uploaded translations are written to the database immediately, and pushed to the
 project's VCS repository by the next sync.

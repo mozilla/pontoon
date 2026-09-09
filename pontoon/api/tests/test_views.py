@@ -12,6 +12,7 @@ from django.utils.timezone import now, timedelta
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.models import PersonalAccessToken
+from pontoon.api.serializers import UNDEFINED_KEYS_LIMIT
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
@@ -2130,12 +2131,14 @@ def test_upload_api_missing_project(upload_translator, project_locale_a):
 
 
 @pytest.mark.django_db
-def test_upload_api_incompatible_format(upload_translator, project_locale_a):
+def test_upload_api_incompatible_format(
+    upload_translator, project_locale_a, upload_po_translation
+):
     response = _upload(
         _pat_client(upload_translator.user),
         project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
-        resource="resource_a.po",
+        resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(contents="irrelevant", name="resource_a.ftl"),
     )
 
@@ -2181,8 +2184,33 @@ def test_upload_api_unknown_keys_ignored(
         "updated": 1,
         "unchanged": 0,
         "undefined_keys": [["no_such_key"], ["another_missing"]],
+        "undefined_keys_count": 2,
     }
     assert Translation.objects.filter(string="new translation").exists()
+
+
+@pytest.mark.django_db
+def test_upload_api_unknown_keys_truncated(
+    upload_translator, project_locale_a, upload_po_translation
+):
+    """Report at most UNDEFINED_KEYS_LIMIT unknown keys, alongside their total number."""
+    unknown = 2 * UNDEFINED_KEYS_LIMIT
+    response = _upload(
+        _pat_client(upload_translator.user),
+        project=project_locale_a.project.slug,
+        locale=project_locale_a.locale.code,
+        resource=upload_po_translation.entity.resource.path,
+        uploadfile=_po_file(
+            contents="\n\n".join(
+                f'msgid "missing_{i}"\nmsgstr "x"' for i in range(unknown)
+            )
+        ),
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["undefined_keys"]) == UNDEFINED_KEYS_LIMIT
+    assert body["undefined_keys_count"] == unknown
 
 
 @pytest.mark.django_db
@@ -2226,16 +2254,34 @@ def test_upload_api_disabled_project(
 
 
 @pytest.mark.django_db
-def test_upload_api_oversized_file(upload_translator, project_locale_a):
+def test_upload_api_oversized_file(
+    upload_translator, project_locale_a, upload_po_translation
+):
     response = _upload(
         _pat_client(upload_translator.user),
         project=project_locale_a.project.slug,
         locale=project_locale_a.locale.code,
-        resource="resource_a.po",
+        resource=upload_po_translation.entity.resource.path,
         uploadfile=_po_file(contents="#" * (5000 * 1000 + 1)),
     )
 
     assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_upload_api_file_validated_after_authorization(
+    member, project_locale_a, resource_a
+):
+    """An oversized file from a user without translator rights is a 403, not a 400."""
+    response = _upload(
+        _pat_client(member.user),
+        project=project_locale_a.project.slug,
+        locale=project_locale_a.locale.code,
+        resource=resource_a.path,
+        uploadfile=_po_file(contents="#" * (5000 * 1000 + 1)),
+    )
+
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db
@@ -2372,7 +2418,12 @@ def test_upload_api_file(upload_translator, project_locale_a, upload_po_translat
     )
 
     assert response.status_code == 200
-    assert response.json() == {"updated": 1, "unchanged": 0, "undefined_keys": []}
+    assert response.json() == {
+        "updated": 1,
+        "unchanged": 0,
+        "undefined_keys": [],
+        "undefined_keys_count": 0,
+    }
 
     translation = Translation.objects.get(string="new translation")
 
@@ -2400,7 +2451,12 @@ def test_upload_api_no_changes(
 
     second = _upload(client, uploadfile=_po_file(), **kwargs)
     assert second.status_code == 200
-    assert second.json() == {"updated": 0, "unchanged": 1, "undefined_keys": []}
+    assert second.json() == {
+        "updated": 0,
+        "unchanged": 1,
+        "undefined_keys": [],
+        "undefined_keys_count": 0,
+    }
 
 
 @pytest.mark.django_db

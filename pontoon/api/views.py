@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Prefetch, Q
 from django.http import Http404
@@ -48,6 +49,7 @@ from pontoon.translations.utils import parse_source_string_to_json
 
 from .serializers import (
     TRANSLATION_STATS_FIELDS,
+    UNDEFINED_KEYS_LIMIT,
     UPLOAD_REQUEST_SCHEMA,
     EntitySearchSerializer,
     EntitySerializer,
@@ -698,20 +700,30 @@ class UploadTranslationsView(APIView):
         ).exists():
             raise Http404(f"{res_path} is not available for locale {code}.")
 
+        uploadfile = form.cleaned_data["uploadfile"]
+        try:
+            forms.validate_uploaded_file(uploadfile, res_path)
+        except DjangoValidationError as error:
+            raise ValidationError({"uploadfile": error.messages})
+
         try:
             with transaction.atomic():
                 result = import_uploaded_file(
-                    project, locale, resource, request.FILES["uploadfile"], request.user
+                    project, locale, resource, uploadfile, request.user
                 )
         except UploadError as error:
             raise ValidationError({"uploadfile": [str(error)]})
         except IntegrityError:
             raise UploadConflict()
 
+        undefined_keys = [
+            list(key) for key in result.undefined_keys[:UNDEFINED_KEYS_LIMIT]
+        ]
         return Response(
             {
                 "updated": result.updated,
                 "unchanged": result.unchanged,
-                "undefined_keys": [list(key) for key in result.undefined_keys],
+                "undefined_keys": undefined_keys,
+                "undefined_keys_count": len(result.undefined_keys),
             }
         )
