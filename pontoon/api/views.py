@@ -24,6 +24,7 @@ from pontoon.api.authentication import (
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.api.throttling import UPLOAD_THROTTLE_CLASSES
 from pontoon.base import forms
+from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Entity,
@@ -39,6 +40,7 @@ from pontoon.base.models import (
 )
 from pontoon.base.services import readonly_exists
 from pontoon.base.user_utils import can_translate
+from pontoon.messaging.notifications import send_badge_notification
 from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
 from pontoon.terminology.models import (
@@ -706,6 +708,11 @@ class UploadTranslationsView(APIView):
         except DjangoValidationError as error:
             raise ValidationError({"uploadfile": error.messages})
 
+        badge_levels_before = (
+            badges_translation_level(request.user),
+            badges_review_level(request.user),
+        )
+
         try:
             with transaction.atomic():
                 result = import_uploaded_file(
@@ -715,6 +722,17 @@ class UploadTranslationsView(APIView):
             raise ValidationError({"uploadfile": [str(error)]})
         except IntegrityError:
             raise UploadConflict()
+
+        for (badge, get_level), before in zip(
+            (
+                ("Translation Champion", badges_translation_level),
+                ("Review Master", badges_review_level),
+            ),
+            badge_levels_before,
+        ):
+            after = get_level(request.user)
+            if after > before:
+                send_badge_notification(request.user, badge, after)
 
         undefined_keys = [
             list(key) for key in result.undefined_keys[:UNDEFINED_KEYS_LIMIT]

@@ -1,5 +1,6 @@
 import pytest
 
+from notifications.models import Notification
 from rest_framework.test import APIClient
 from rest_framework.throttling import SimpleRateThrottle
 
@@ -11,6 +12,7 @@ from django.db.models import Prefetch
 from django.utils.timezone import now, timedelta
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.api import views
 from pontoon.api.models import PersonalAccessToken
 from pontoon.api.serializers import UNDEFINED_KEYS_LIMIT
 from pontoon.base.models.locale import Locale
@@ -2211,6 +2213,52 @@ def test_upload_api_unknown_keys_truncated(
     body = response.json()
     assert len(body["undefined_keys"]) == UNDEFINED_KEYS_LIMIT
     assert body["undefined_keys_count"] == unknown
+
+
+@pytest.mark.django_db
+def test_upload_api_badge_notification(
+    monkeypatch, upload_translator, project_locale_a, upload_po_translation
+):
+    """Crossing a badge threshold through the API notifies the user."""
+    levels = iter([0, 1])
+    monkeypatch.setattr(views, "badges_translation_level", lambda user: next(levels))
+    monkeypatch.setattr(views, "badges_review_level", lambda user: 0)
+
+    response = _upload(
+        _pat_client(upload_translator.user),
+        project=project_locale_a.project.slug,
+        locale=project_locale_a.locale.code,
+        resource=upload_po_translation.entity.resource.path,
+        uploadfile=_po_file(),
+    )
+
+    assert response.status_code == 200
+    notification = Notification.objects.filter(
+        recipient=upload_translator.user, data__category="badge"
+    ).get()
+    assert "Translation Champion" in notification.description
+
+
+@pytest.mark.django_db
+def test_upload_api_no_badge_notification_below_threshold(
+    monkeypatch, upload_translator, project_locale_a, upload_po_translation
+):
+    """No notification when the upload doesn't move the user to a new badge level."""
+    monkeypatch.setattr(views, "badges_translation_level", lambda user: 1)
+    monkeypatch.setattr(views, "badges_review_level", lambda user: 0)
+
+    response = _upload(
+        _pat_client(upload_translator.user),
+        project=project_locale_a.project.slug,
+        locale=project_locale_a.locale.code,
+        resource=upload_po_translation.entity.resource.path,
+        uploadfile=_po_file(),
+    )
+
+    assert response.status_code == 200
+    assert not Notification.objects.filter(
+        recipient=upload_translator.user, data__category="badge"
+    ).exists()
 
 
 @pytest.mark.django_db
