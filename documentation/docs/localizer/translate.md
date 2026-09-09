@@ -98,7 +98,7 @@ When uploading translations to Pontoon:
 
 * Translations different from the ones in Pontoon will be imported and attributed to the user uploading the file.
 * Translations matching the ones in Pontoon will be ignored.
-* Keys that don’t exist in Pontoon will be ignored.
+* Strings that don’t exist in Pontoon will be ignored.
 * Strings missing from the uploaded file are left untouched, so partial files can be used to update a subset of translations.
 * Uploaded files must be under 5000 kB, and must match the format of the resource currently selected.
 
