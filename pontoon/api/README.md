@@ -75,8 +75,8 @@ $ curl --globoff "https://example.com/api/v2/locales/?page_size=50"
 
 ## Write Endpoints
 
-While most endpoints are read-only, the following can write data and always require
-authentication with a Personal Access Token. Session cookies are not accepted.
+The following endpoints can write data and always require authentication with a Personal
+Access Token. Session cookies are not accepted.
 
 ### `POST /api/v2/upload/translations/`
 

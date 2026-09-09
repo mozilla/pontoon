@@ -27,7 +27,9 @@ applied per authenticated user. Uses the Django REST Framework format
 Optional. Long-window rate limit for the upload API endpoints,
 applied per authenticated user, in the same format as
 `API_UPLOAD_THROTTLE_BURST` (default: `180/hour`).
-
+applied per authenticated user. Uses the Django REST Framework format
+`<number>/<period>`, where period is one of `second`, `minute`, `hour` or
+`day` (default: `180/hour`).
 `AUTHENTICATION_METHOD`  
 The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
 See [Authentication provider configuration](#authentication-provider-configuration) 
