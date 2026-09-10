@@ -22,7 +22,7 @@ def get_simple_preview(format: Resource.Format, msg: str | Message | Pattern) ->
     For multi-variant messages, selects the fallback variant.
 
     For Fluent, selects the value if it's not empty,
-    or the first non-empty attribute.
+    or the non-empty attribute that sorts first by name.
     """
     if format == Resource.Format.FLUENT:
         if isinstance(msg, str):
@@ -32,9 +32,9 @@ def get_simple_preview(format: Resource.Format, msg: str | Message | Pattern) ->
                     entry.value
                     if not entry.value.is_empty()
                     else next(
-                        prop
-                        for prop in entry.properties.values()
-                        if not prop.is_empty()
+                        entry.properties[name]
+                        for name in sorted(entry.properties)
+                        if not entry.properties[name].is_empty()
                     )
                 )
             except Exception:

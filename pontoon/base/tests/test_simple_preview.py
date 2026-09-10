@@ -109,3 +109,44 @@ def test_fluent_simple_preview(name):
 def test_gettext_simple_preview(name):
     string, expected = GETTEXT_TRANSLATION_TESTS[name]
     assert get_simple_preview(Resource.Format.GETTEXT, string) == expected
+
+
+def test_fluent_attribute_choice_ignores_stored_order():
+    ENTITY_STRING = dedent("""\
+        sync-signedin-login-failure2 =
+            .description = Sign back in to reconnect.
+            .label = You are signed out of { $email }
+        """)
+    TRANSLATION_STRING = dedent("""\
+        sync-signedin-login-failure2 =
+            .label = Ви вийшли з облікового запису { $email }
+            .description = Увійдіть знову.
+        """)
+    assert (
+        get_simple_preview(Resource.Format.FLUENT, ENTITY_STRING)
+        == "Sign back in to reconnect."
+    )
+    assert (
+        get_simple_preview(Resource.Format.FLUENT, TRANSLATION_STRING)
+        == "Увійдіть знову."
+    )
+
+
+def test_fluent_non_empty_value_wins_over_attributes():
+    string = dedent("""\
+        key = Some plain value
+            .attribute = Simple String
+        """)
+    assert get_simple_preview(Resource.Format.FLUENT, string) == "Some plain value"
+
+
+def test_fluent_attribute_choice_is_not_alphabetical_by_content():
+    string = dedent("""\
+        key =
+            .zzz = Aaa first alphabetically by content
+            .aaa = Zzz last alphabetically by content
+        """)
+    assert (
+        get_simple_preview(Resource.Format.FLUENT, string)
+        == "Zzz last alphabetically by content"
+    )
