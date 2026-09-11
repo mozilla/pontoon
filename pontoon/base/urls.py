@@ -106,4 +106,9 @@ urlpatterns = [
     path("upload/", views.upload, name="pontoon.upload"),
     path("user-data/", views.user_data, name="pontoon.user_data"),
     path("get-sibling-entities/", views.get_sibling_entities),
+    path(
+        "get-fluent-reference-variants/",
+        views.get_fluent_reference_variants,
+        name="pontoon.fluent.reference_variants",
+    ),
 ]

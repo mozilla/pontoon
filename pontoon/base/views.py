@@ -35,6 +35,11 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
+from pontoon.base.fluent_utils import (
+    SelectorField,
+    get_references,
+    get_selector_variants,
+)
 from pontoon.base.get_entities import (
     get_entities_for_project_locale,
     get_mismatched_filters,
@@ -519,6 +524,58 @@ def get_sibling_entities(request):
         },
         safe=False,
     )
+
+
+@utils.require_AJAX
+def get_fluent_reference_variants(request: HttpRequest) -> JsonResponse:
+    """Get the variant fields and their possible values for each message or term
+    referenced by a Fluent entity.
+    """
+    try:
+        entity_pk = int(request.GET["entity"])
+        locale_code = request.GET["locale"]
+    except (MultiValueDictKeyError, ValueError) as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    visible_projects = Project.objects.available().visible_for(request.user)
+    entities = Entity.objects.filter(resource__project__in=visible_projects)
+
+    entity = get_object_or_404(entities, pk=entity_pk)
+    locale = get_object_or_404(Locale, code=locale_code)
+
+    payload: dict[str, list[SelectorField]] = {}
+    if entity.resource.format != Resource.Format.FLUENT:
+        return JsonResponse(payload)
+
+    for key in get_references(entity.string):
+        ref_entities = Entity.objects.filter(
+            resource__project=entity.resource.project,
+            obsolete=False,
+            key=[key],
+        )
+        # Prioritize using the reference's entity defined in the same resource,
+        # and fall back to the first project occurrence.
+        ref_entity = (
+            ref_entities.filter(resource=entity.resource).first()
+            or ref_entities.first()
+        )
+        if ref_entity is None:
+            continue
+
+        translation = ref_entity.translation_set.filter(
+            locale=locale, active=True
+        ).first()
+        if translation is None:
+            continue
+
+        selector_variants = get_selector_variants(translation.string)
+        if selector_variants:
+            payload[key] = selector_variants
+
+    return JsonResponse(payload)
 
 
 @utils.require_AJAX
