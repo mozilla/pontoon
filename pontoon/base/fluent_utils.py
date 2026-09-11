@@ -1,6 +1,7 @@
 from collections.abc import Iterator
 from typing import TypedDict
 
+from moz.l10n.formats.fluent import fluent_parse_entry
 from moz.l10n.model import (
     CatchallKey,
     Entry,
@@ -10,6 +11,14 @@ from moz.l10n.model import (
     PatternMessage,
     SelectMessage,
 )
+
+
+def _parse_fluent_entry(source: str) -> Entry[Message] | None:
+    """Parse a Fluent entry; returns None if the source is invalid FTL."""
+    try:
+        return fluent_parse_entry(source, with_linepos=False)
+    except ValueError:
+        return None
 
 
 def _entry_messages(entry: Entry[Message]) -> Iterator[Message]:
