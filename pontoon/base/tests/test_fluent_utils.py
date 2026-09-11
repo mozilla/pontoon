@@ -8,95 +8,103 @@ from pontoon.base.fluent_utils import (
 )
 
 
-def test_get_references_no_placeholders():
-    entry = fluent_parse_entry("message = Simple string", with_linepos=False)
+def test_get_references_from_source_string():
+    """Test that a Fluent source string is parsed and its references collected."""
+    source = "message = Welcome to { -brand-name }, { $user }!"
 
-    assert get_references(entry) == set()
+    assert get_references(source) == {"-brand-name"}
 
 
-def test_get_references_from_value():
-    """Test message/term references are collected (and not variables)."""
-    entry = fluent_parse_entry(
-        "message = Welcome to { -brand-name }, { $user }!", with_linepos=False
-    )
+def test_get_references_invalid_source_string():
+    """Test unparseable Fluent source strings produce an empty set."""
+    source = "no valid fluent here ]["
+
+    assert get_references(source) == set()
+
+
+def test_get_references_from_entry():
+    """Test that references are collected from the parsed entry itself."""
+    source = "message = Welcome to { -brand-name }, { $user }!"
+    entry = fluent_parse_entry(source, with_linepos=False)
 
     assert get_references(entry) == {"-brand-name"}
+
+
+def test_get_references_no_placeholders():
+    """Test a string with no terms collects no references."""
+    source = "message = Simple string"
+
+    assert get_references(source) == set()
 
 
 def test_get_references_from_attributes():
     """Test terms can be extracted from attributes."""
-    entry = fluent_parse_entry(
-        dedent("""\
-            message =
-                .gender = { -brand-name(case: "genitive") }
-                .tooltip = { $count }
-            """),
-        with_linepos=False,
+    source = dedent(
+        """\
+        message =
+            .gender = { -brand-name(case: "genitive") }
+            .tooltip = { $count }
+        """
     )
 
-    assert get_references(entry) == {"-brand-name"}
+    assert get_references(source) == {"-brand-name"}
 
 
 def test_get_references_from_declarations_and_select_variants():
     """Test references from select variants are picked up."""
-    entry = fluent_parse_entry(
-        dedent("""\
-            message =
-                { $count ->
-                    [one] { -brand-short-name } blocked one tracker
-                    *[other] { -brand-short-name } blocked many trackers
-                }
-            """),
-        with_linepos=False,
+    source = dedent(
+        """\
+        message =
+            { $count ->
+                [one] { -brand-short-name } blocked one tracker
+                *[other] { -brand-short-name } blocked many trackers
+            }
+        """
     )
 
-    assert get_references(entry) == {"-brand-short-name"}
+    assert get_references(source) == {"-brand-short-name"}
 
 
 def test_get_selector_variants_no_selectors():
     """Test extracting variants from a term with no selector."""
-    entry = fluent_parse_entry(
-        "message = Welcome to { -brand-name }!", with_linepos=False
-    )
+    source = "message = Welcome to { -brand-name }!"
 
-    assert get_selector_variants(entry) == []
+    assert get_selector_variants(source) == []
 
 
 def test_get_selector_variants_from_value():
     """Test extracting variants from a selector."""
-    entry = fluent_parse_entry(
-        dedent("""\
-            message =
-                { $count ->
-                    [one] One tracker blocked
-                   *[other] Trackers blocked
-                }
-            """),
-        with_linepos=False,
+    source = dedent(
+        """\
+        message =
+            { $count ->
+                [one] One tracker blocked
+               *[other] Trackers blocked
+            }
+        """
     )
 
-    assert get_selector_variants(entry) == [
+    assert get_selector_variants(source) == [
         {"name": "count", "values": ["one", "other"]}
     ]
 
 
 def test_get_selector_variants_multiple_selectors():
     """Test extracting variants from nested selectors."""
-    entry = fluent_parse_entry(
-        dedent("""\
-            message =
-                { $gender ->
-                    [masculine] { $count ->
-                        [one] One
-                        *[other] Many
-                    }
-                   *[feminine] Feminine
+    source = dedent(
+        """\
+        message =
+            { $gender ->
+                [masculine] { $count ->
+                    [one] One
+                    *[other] Many
                 }
-            """),
-        with_linepos=False,
+               *[feminine] Feminine
+            }
+        """
     )
 
-    assert get_selector_variants(entry) == [
+    assert get_selector_variants(source) == [
         {"name": "gender", "values": ["masculine", "feminine"]},
         {"name": "count", "values": ["one", "other"]},
     ]
@@ -104,39 +112,43 @@ def test_get_selector_variants_multiple_selectors():
 
 def test_get_selector_variants_from_attributes():
     """Test extracting variants from attribute selectors."""
-    entry = fluent_parse_entry(
-        dedent("""\
-            message =
-                .accesskey = value with no selector
-                .tooltip =
-                    { $case ->
-                        [nominative] Nominative
-                        [genitive] Genitive
-                       *[other] Other
-                    }
-            """),
-        with_linepos=False,
+    source = dedent(
+        """\
+        message =
+            .accesskey = value with no selector
+            .tooltip =
+                { $case ->
+                    [nominative] Nominative
+                    [genitive] Genitive
+                   *[other] Other
+                }
+        """
     )
 
-    assert get_selector_variants(entry) == [
+    assert get_selector_variants(source) == [
         {"name": "case", "values": ["nominative", "genitive", "other"]}
     ]
 
 
 def test_get_selector_variants_sorting():
     """Test extracting variants from a selector keeps the default at the end."""
-    entry = fluent_parse_entry(
-        dedent(
-            """\
+    source = dedent(
+        """\
         message =
             { $count ->
                 *[other] Trackers blocked
                 [one] One tracker blocked
             }
         """
-        )
     )
 
-    assert get_selector_variants(entry) == [
+    assert get_selector_variants(source) == [
         {"name": "count", "values": ["one", "other"]}
     ]
+
+
+def test_get_selector_variants_invalid_source_string():
+    """Test unparseable Fluent source strings produce an empty list."""
+    source = "no valid fluent here ]["
+
+    assert get_selector_variants(source) == []

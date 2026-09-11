@@ -28,10 +28,21 @@ def _entry_messages(entry: Entry[Message]) -> Iterator[Message]:
     yield from entry.properties.values()
 
 
-def get_references(entry: Entry[Message]) -> set[str]:
-    """Collect the keys of the messages/terms referenced by a Fluent entry, e.g.
-    `-brand-name` in `msg = This is { -brand-name }`.
+def get_references(entry_or_str: Entry[Message] | str) -> set[str]:
+    """Collect the keys of the messages/terms referenced by a Fluent entry,
+    e.g. `-brand-name` in `msg = This is { -brand-name }`.
+
+    Accepts the entry itself or a Fluent source string;
+    a string that cannot be parsed yields an empty set.
     """
+    entry = (
+        _parse_fluent_entry(entry_or_str)
+        if isinstance(entry_or_str, str)
+        else entry_or_str
+    )
+    if entry is None:
+        return set()
+
     names: set[str] = set()
 
     def from_expression(expr: Expression) -> None:
@@ -66,13 +77,24 @@ class SelectorField(TypedDict):
     values: list[str]
 
 
-def get_selector_variants(entry: Entry[Message]) -> list[SelectorField]:
+def get_selector_variants(entry_or_str: Entry[Message] | str) -> list[SelectorField]:
     """Extract the selector fields and their variants from a Fluent entry's
     value and attributes.
+
+    Accepts the entry itself or a Fluent source string;
+    a string that cannot be parsed yields an empty list.
 
     Note default variants always come last, which is the same way as provided by
     moz.l10n.fluent.
     """
+    entry = (
+        _parse_fluent_entry(entry_or_str)
+        if isinstance(entry_or_str, str)
+        else entry_or_str
+    )
+    if entry is None:
+        return []
+
     fields: dict[str, list[str]] = {}
     for msg in _entry_messages(entry):
         # Only selectors contain variants, so we skip any other message type.
