@@ -181,15 +181,6 @@
   color: var(--input-color-1);
 }
 
-.locale-menu-trigger .locale-menu-arrow {
-  flex: none;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 6px solid currentColor;
-}
-
 /* Remove highlight in Chrome */
 .batch-actions .actions-panel input:focus {
   outline: none;
