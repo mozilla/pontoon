@@ -35,11 +35,6 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
-from pontoon.base.fluent_utils import (
-    SelectorField,
-    get_references,
-    get_selector_variants,
-)
 from pontoon.base.get_entities import (
     get_entities_for_project_locale,
     get_mismatched_filters,
