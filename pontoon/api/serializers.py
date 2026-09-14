@@ -417,9 +417,9 @@ UPLOAD_REQUEST_SCHEMA = {
 }
 
 
-# For large files, only report the first undefined keys, alongside
+# For large files, only report the first keys that could not be imported, alongside
 # their total number.
-UNDEFINED_KEYS_LIMIT = 100
+UPLOAD_KEYS_ERROR_LIMIT = 100
 
 
 class UploadTranslationsResponseSerializer(serializers.Serializer):
@@ -434,7 +434,68 @@ class UploadTranslationsResponseSerializer(serializers.Serializer):
     undefined_keys = serializers.ListField(
         child=serializers.ListField(child=serializers.CharField()),
         help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
-        f"Truncated to the first {UNDEFINED_KEYS_LIMIT} keys.",
+        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+    undefined_keys_count = serializers.IntegerField(
+        help_text="Total number of keys with no matching entity in Pontoon, "
+        "before truncation."
+    )
+
+
+class FailedCheckSerializer(serializers.Serializer):
+    """An uploaded translation left out because it fails quality checks."""
+
+    key = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="Key of the string, in the same format as the `key` field of "
+        "entities.",
+    )
+    errors = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="Errors reported by the quality checks.",
+    )
+    warnings = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="Warnings reported by the quality checks.",
+    )
+
+
+class UploadPretranslationsResponseSerializer(serializers.Serializer):
+    """Result of a pretranslation file upload."""
+
+    created = serializers.IntegerField(
+        help_text="Number of pretranslations added for strings with no pretranslation "
+        "or fuzzy translation."
+    )
+    replaced = serializers.IntegerField(
+        help_text="Number of pretranslations replacing a previous, different "
+        "pretranslation or fuzzy translation."
+    )
+    converted = serializers.IntegerField(
+        help_text="Number of existing translations made the active pretranslation, "
+        "because they match the uploaded translation."
+    )
+    unchanged = serializers.IntegerField(
+        help_text="Number of translations identical to the current pretranslation, "
+        "ignored."
+    )
+    skipped = serializers.IntegerField(
+        help_text="Number of strings left untouched, because they already have an "
+        "approved translation, or are marked as fuzzy in the uploaded file."
+    )
+    failed_checks = FailedCheckSerializer(
+        many=True,
+        help_text="Strings left untouched, because the uploaded translation fails "
+        f"quality checks. Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+    failed_checks_count = serializers.IntegerField(
+        help_text="Total number of strings left untouched because of failing checks, "
+        "before truncation."
+    )
+    undefined_keys = serializers.ListField(
+        child=serializers.ListField(child=serializers.CharField()),
+        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
+        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
     )
     undefined_keys_count = serializers.IntegerField(
         help_text="Total number of keys with no matching entity in Pontoon, "

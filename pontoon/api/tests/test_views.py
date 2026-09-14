@@ -16,11 +16,13 @@ from django.utils.timezone import now, timedelta
 from pontoon.actionlog.models import ActionLog
 from pontoon.api import views
 from pontoon.api.models import PersonalAccessToken
-from pontoon.api.serializers import UNDEFINED_KEYS_LIMIT
+from pontoon.api.serializers import UPLOAD_KEYS_ERROR_LIMIT
+from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
+from pontoon.base.models.translated_resource import TranslatedResource
 from pontoon.base.models.translation import Translation
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
 from pontoon.settings.base import TERMINOLOGY_API_MAX_CHARS
@@ -2369,8 +2371,8 @@ def test_upload_api_unknown_keys_ignored(
 def test_upload_api_unknown_keys_truncated(
     upload_translator, project_locale_a, upload_po_translation
 ):
-    """Report at most UNDEFINED_KEYS_LIMIT unknown keys, alongside their total number."""
-    unknown = 2 * UNDEFINED_KEYS_LIMIT
+    """Report at most UPLOAD_KEYS_ERROR_LIMIT unknown keys, alongside their total number."""
+    unknown = 2 * UPLOAD_KEYS_ERROR_LIMIT
     response = _upload(
         _pat_client(upload_translator.user),
         project=project_locale_a.project.slug,
@@ -2385,7 +2387,7 @@ def test_upload_api_unknown_keys_truncated(
 
     assert response.status_code == 200
     body = response.json()
-    assert len(body["undefined_keys"]) == UNDEFINED_KEYS_LIMIT
+    assert len(body["undefined_keys"]) == UPLOAD_KEYS_ERROR_LIMIT
     assert body["undefined_keys_count"] == unknown
 
 
@@ -2530,12 +2532,12 @@ def test_upload_api_concurrent_conflict(
     """A uniqueness clash with a concurrent upload is reported as a conflict."""
     from django.db import IntegrityError
 
-    from pontoon.sync import utils as sync_utils
+    from pontoon.sync import upload as sync_upload
 
     def raise_integrity_error(*args, **kwargs):
         raise IntegrityError("duplicate key value violates unique constraint")
 
-    monkeypatch.setattr(sync_utils, "import_uploaded_file", raise_integrity_error)
+    monkeypatch.setattr(sync_upload, "import_uploaded_file", raise_integrity_error)
 
     response = _upload(
         _pat_client(upload_translator.user),
@@ -2728,3 +2730,826 @@ def test_upload_api_throttled(
         assert response.status_code == expected_status
 
     cache.clear()
+
+
+def _upload_pretranslations(client, **data):
+    return client.post("/api/v2/upload/pretranslations/", data, format="multipart")
+
+
+@pytest.fixture
+def pretranslator(upload_translator):
+    upload_translator.user.groups.add(Group.objects.get(name="pretranslators"))
+    return upload_translator
+
+
+@pytest.fixture
+def untranslated_entity(upload_po_translation):
+    """An entity without translations, in the same resource as `upload_po_translation`."""
+    return EntityFactory.create(
+        resource=upload_po_translation.entity.resource,
+        string="Other entity",
+        key=["other_key"],
+    )
+
+
+def _upload_pretranslation(client, project_locale, resource_path, contents=None):
+    kwargs = {"contents": contents} if contents is not None else {}
+    return _upload_pretranslations(
+        client,
+        project=project_locale.project.slug,
+        locale=project_locale.locale.code,
+        resource=resource_path,
+        uploadfile=_po_file(**kwargs),
+    )
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_requires_authentication(
+    project_locale_a, upload_po_translation
+):
+    response = _upload_pretranslation(
+        APIClient(), project_locale_a, upload_po_translation.entity.resource.path
+    )
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_requires_pretranslators_group(
+    upload_translator, project_locale_a, upload_po_translation
+):
+    """Translator rights alone are not enough."""
+    response = _upload_pretranslation(
+        _pat_client(upload_translator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 403
+    assert not Translation.objects.filter(pretranslated=True).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_requires_translate_permission(
+    member, project_locale_a, upload_po_translation
+):
+    """Membership of the pretranslators group alone is not enough."""
+    member.user.groups.add(Group.objects.get(name="pretranslators"))
+
+    response = _upload_pretranslation(
+        _pat_client(member.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 403
+    assert not Translation.objects.filter(pretranslated=True).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_readonly_project_locale(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    project_locale_a.readonly = True
+    project_locale_a.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_creates_pretranslation(
+    pretranslator, project_locale_a, untranslated_entity
+):
+    """An untranslated string gets a new pretranslation, authored by the PAT user."""
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        untranslated_entity.resource.path,
+        contents='msgid "other_key"\nmsgstr "pretranslation"',
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "created": 1,
+        "replaced": 0,
+        "converted": 0,
+        "unchanged": 0,
+        "skipped": 0,
+        "failed_checks": [],
+        "failed_checks_count": 0,
+        "undefined_keys": [],
+        "undefined_keys_count": 0,
+    }
+
+    translation = Translation.objects.get(entity=untranslated_entity)
+
+    assert translation.string == "pretranslation"
+    assert translation.pretranslated
+    assert translation.active
+    assert not translation.approved
+    assert translation.user == pretranslator.user
+    assert ActionLog.objects.filter(
+        performed_by=pretranslator.user,
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        translation=translation,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_skips_fuzzy_uploads(
+    pretranslator, project_locale_a, untranslated_entity
+):
+    """A translation marked as fuzzy in the file is not stored as a pretranslation."""
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        untranslated_entity.resource.path,
+        contents='#, fuzzy\nmsgid "other_key"\nmsgstr "pretranslation"',
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "created": 0,
+        "replaced": 0,
+        "converted": 0,
+        "unchanged": 0,
+        "skipped": 1,
+        "failed_checks": [],
+        "failed_checks_count": 0,
+        "undefined_keys": [],
+        "undefined_keys_count": 0,
+    }
+    assert not Translation.objects.filter(entity=untranslated_entity).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_fuzzy_upload_keeps_existing_pretranslation(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """A fuzzy entry leaves a different, existing pretranslation in place."""
+    upload_po_translation.approved = False
+    upload_po_translation.pretranslated = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+        contents='#, fuzzy\nmsgid "test_key"\nmsgstr "fuzzy translation"',
+    )
+
+    assert response.status_code == 200
+    assert response.json()["skipped"] == 1
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.pretranslated
+    assert not upload_po_translation.rejected
+    assert upload_po_translation.active
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_drops_replacement_with_errors(
+    monkeypatch, pretranslator, project_locale_a, upload_po_translation
+):
+    """A replacement that fails checks is not stored, keeping the previous translation."""
+    from pontoon.sync import upload as sync_upload
+
+    def failing_checks(entity, locale_code, string, use_tt_checks):
+        return (
+            {"pErrors": ["Test error", "Other error"]}
+            if string == "new translation"
+            else {}
+        )
+
+    monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
+
+    upload_po_translation.pretranslated = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+    ChangedEntityLocale.objects.all().delete()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["replaced"] == 0
+    assert response.json()["failed_checks"] == [
+        {"key": ["test_key"], "errors": ["Test error", "Other error"], "warnings": []}
+    ]
+    assert response.json()["failed_checks_count"] == 1
+    assert not Translation.objects.filter(string="new translation").exists()
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.pretranslated
+    assert upload_po_translation.active
+    assert not upload_po_translation.rejected
+    assert not ChangedEntityLocale.objects.filter(
+        entity=upload_po_translation.entity
+    ).exists()
+    assert not ActionLog.objects.filter(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        performed_by=pretranslator.user,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_keeps_matching_fuzzy_with_warnings(
+    monkeypatch, pretranslator, project_locale_a, upload_po_translation
+):
+    """A matching fuzzy translation with warnings stays fuzzy and exported as it is."""
+    from pontoon.sync import upload as sync_upload
+
+    def failing_checks(entity, locale_code, string, use_tt_checks):
+        return {"pndbWarnings": ["Test warning"]} if string == "new translation" else {}
+
+    monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
+
+    upload_po_translation.fuzzy = True
+    upload_po_translation.active = True
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+    ChangedEntityLocale.objects.all().delete()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["converted"] == 0
+    assert response.json()["failed_checks_count"] == 1
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.fuzzy
+    assert not upload_po_translation.pretranslated
+    assert not ChangedEntityLocale.objects.filter(
+        entity=upload_po_translation.entity
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_reports_missing_placeholder(
+    pretranslator, project_locale_a
+):
+    """A dropped placeholder is caught, though it is not a check stored in the DB."""
+    resource = ResourceFactory.create(
+        project=project_locale_a.project,
+        path="values/strings.xml",
+        format=Resource.Format.ANDROID,
+    )
+    TranslatedResourceFactory.create(resource=resource, locale=project_locale_a.locale)
+    EntityFactory.create(
+        resource=resource, string="The page at {$arg1} says:", key=["page_at"]
+    )
+
+    response = _upload_pretranslations(
+        _pat_client(pretranslator.user),
+        project=project_locale_a.project.slug,
+        locale=project_locale_a.locale.code,
+        resource=resource.path,
+        uploadfile=SimpleUploadedFile(
+            "strings.xml",
+            b'<?xml version="1.0" encoding="utf-8"?>\n'
+            b"<resources>\n"
+            b'  <string name="page_at">La pagina sul server riporta:</string>\n'
+            b"</resources>\n",
+        ),
+    )
+
+    assert response.status_code == 200
+    assert response.json()["created"] == 0
+    assert response.json()["failed_checks"] == [
+        {
+            "key": ["page_at"],
+            "errors": [],
+            "warnings": ["Placeholder {$arg1} not found in translation"],
+        }
+    ]
+    assert not Translation.objects.filter(entity__resource=resource).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_skips_matching_translation_with_errors(
+    monkeypatch, pretranslator, project_locale_a, upload_po_translation
+):
+    """A matching translation that fails checks is not converted, and is not deleted."""
+    from pontoon.sync import upload as sync_upload
+
+    def failing_checks(entity, locale_code, string, use_tt_checks):
+        return {"pErrors": ["Test error"]} if string == "new translation" else {}
+
+    monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
+
+    upload_po_translation.fuzzy = True
+    upload_po_translation.active = True
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+    ChangedEntityLocale.objects.all().delete()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["converted"] == 0
+    assert response.json()["failed_checks"] == [
+        {"key": ["test_key"], "errors": ["Test error"], "warnings": []}
+    ]
+    assert response.json()["failed_checks_count"] == 1
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.fuzzy
+    assert not upload_po_translation.pretranslated
+    assert not upload_po_translation.rejected
+    assert upload_po_translation.active
+    assert not ChangedEntityLocale.objects.filter(
+        entity=upload_po_translation.entity
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_updates_stats_and_marks_changed(
+    pretranslator, project_locale_a, untranslated_entity
+):
+    """Stored pretranslations are counted in stats, and synced by the next sync."""
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        untranslated_entity.resource.path,
+        contents='msgid "other_key"\nmsgstr "pretranslation"',
+    )
+
+    assert response.status_code == 200
+    assert (
+        TranslatedResource.objects.get(
+            resource=untranslated_entity.resource, locale=project_locale_a.locale
+        ).pretranslated_strings
+        == 1
+    )
+    assert ChangedEntityLocale.objects.filter(
+        entity=untranslated_entity, locale=project_locale_a.locale
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_drops_replacement_with_warnings(
+    monkeypatch, pretranslator, project_locale_a, upload_po_translation
+):
+    """Warnings keep a pretranslation from being exported, so it is not stored either."""
+    from pontoon.sync import upload as sync_upload
+
+    def failing_checks(entity, locale_code, string, use_tt_checks):
+        return {"pndbWarnings": ["Test warning"]} if string == "new translation" else {}
+
+    monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
+
+    upload_po_translation.pretranslated = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+    ChangedEntityLocale.objects.all().delete()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["replaced"] == 0
+    assert response.json()["failed_checks"] == [
+        {"key": ["test_key"], "errors": [], "warnings": ["Test warning"]}
+    ]
+    assert not Translation.objects.filter(string="new translation").exists()
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.pretranslated
+    assert upload_po_translation.active
+    assert not upload_po_translation.rejected
+    assert not ChangedEntityLocale.objects.filter(
+        entity=upload_po_translation.entity
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_updates_latest_translation(
+    pretranslator, project_locale_a, untranslated_entity
+):
+    """Latest activity is updated, as it would be by Translation.save()."""
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        untranslated_entity.resource.path,
+        contents='msgid "other_key"\nmsgstr "pretranslation"',
+    )
+
+    assert response.status_code == 200
+
+    pretranslation = Translation.objects.get(entity=untranslated_entity)
+    project_locale_a.refresh_from_db()
+
+    assert (
+        TranslatedResource.objects.get(
+            resource=untranslated_entity.resource, locale=project_locale_a.locale
+        ).latest_translation
+        == pretranslation
+    )
+    assert project_locale_a.latest_translation == pretranslation
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_skips_approved(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """A string with an approved translation is left untouched."""
+    upload_po_translation.approved = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["skipped"] == 1
+    assert response.json()["created"] == 0
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.approved
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_replaces_fuzzy(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """A different fuzzy translation is rejected and replaced."""
+    upload_po_translation.fuzzy = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["replaced"] == 1
+    assert response.json()["skipped"] == 0
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.rejected
+    assert not upload_po_translation.fuzzy
+    assert not upload_po_translation.active
+
+    new_translation = Translation.objects.get(string="new translation")
+
+    assert new_translation.pretranslated
+    assert new_translation.active
+    assert not new_translation.fuzzy
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_converts_matching_fuzzy(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """A fuzzy translation matching the upload becomes a pretranslation."""
+    author = upload_po_translation.user
+    upload_po_translation.fuzzy = True
+    upload_po_translation.active = True
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["converted"] == 1
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.pretranslated
+    assert upload_po_translation.active
+    assert not upload_po_translation.fuzzy
+    assert not upload_po_translation.rejected
+    assert upload_po_translation.user == author
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_replaces_pretranslation(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """A different pretranslation is rejected and replaced."""
+    upload_po_translation.pretranslated = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["replaced"] == 1
+    assert response.json()["created"] == 0
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.rejected
+    assert not upload_po_translation.pretranslated
+    assert not upload_po_translation.active
+    assert upload_po_translation.rejected_user == pretranslator.user
+
+    new_translation = Translation.objects.get(string="new translation")
+
+    assert new_translation.pretranslated
+    assert new_translation.active
+    assert ActionLog.objects.filter(
+        performed_by=pretranslator.user,
+        action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+        translation=upload_po_translation,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_reactivates_matching_pretranslation(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """A matching pretranslation left inactive by a later suggestion is activated."""
+    upload_po_translation.approved = False
+    upload_po_translation.pretranslated = True
+    upload_po_translation.active = False
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+    suggestion = TranslationFactory.create(
+        entity=upload_po_translation.entity,
+        locale=project_locale_a.locale,
+        string="a suggestion",
+        value=["a suggestion"],
+        active=True,
+    )
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["unchanged"] == 0
+    assert response.json()["converted"] == 1
+
+    upload_po_translation.refresh_from_db()
+    suggestion.refresh_from_db()
+
+    assert upload_po_translation.pretranslated
+    assert upload_po_translation.active
+    assert not suggestion.active
+    assert not suggestion.rejected
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_unchanged(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """An identical pretranslation is reported as unchanged."""
+    upload_po_translation.pretranslated = True
+    upload_po_translation.active = True
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["unchanged"] == 1
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_flags_matching_suggestion(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """A suggestion matching the upload becomes a pretranslation, keeping its author."""
+    author = upload_po_translation.user
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["converted"] == 1
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+
+    upload_po_translation.refresh_from_db()
+
+    assert upload_po_translation.pretranslated
+    assert upload_po_translation.active
+    assert not upload_po_translation.approved
+    assert upload_po_translation.user == author
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_keeps_other_suggestions(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    """Suggestions that do not match the upload are kept as unreviewed suggestions."""
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["created"] == 1
+
+    upload_po_translation.refresh_from_db()
+
+    assert not upload_po_translation.rejected
+    assert not upload_po_translation.pretranslated
+    assert not upload_po_translation.active
+
+    new_translation = Translation.objects.get(string="new translation")
+
+    assert new_translation.pretranslated
+    assert new_translation.active
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_unknown_keys_ignored(
+    pretranslator, project_locale_a, upload_po_translation
+):
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+        contents='msgid "test_key"\nmsgstr "new translation"\n\n'
+        'msgid "no_such_key"\nmsgstr "x"\n',
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "created": 1,
+        "replaced": 0,
+        "converted": 0,
+        "unchanged": 0,
+        "skipped": 0,
+        "failed_checks": [],
+        "failed_checks_count": 0,
+        "undefined_keys": [["no_such_key"]],
+        "undefined_keys_count": 1,
+    }
+
+
+def _review_during_import(monkeypatch, review):
+    """Call `review` from inside a running pretranslation import.
+
+    `import_uploaded_pretranslations()` calls `timezone.now()` after reading the
+    current translations and before writing anything, so this reproduces a review
+    landing in the window the conflict check guards.
+    """
+    from pontoon.sync import upload as sync_upload
+
+    real_now = sync_upload.timezone.now
+    reviewed = False
+
+    def now_and_review():
+        nonlocal reviewed
+        if not reviewed:
+            reviewed = True
+            review()
+        return real_now()
+
+    monkeypatch.setattr(
+        sync_upload, "timezone", SimpleNamespace(now=now_and_review), raising=False
+    )
+
+
+def _approve_during_import(monkeypatch, translation, user):
+    _review_during_import(monkeypatch, lambda: translation.approve(user))
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_conflicts_with_concurrent_approval_of_pretranslation(
+    monkeypatch, pretranslator, project_locale_a, upload_po_translation, admin
+):
+    """A pretranslation approved mid-import is not rejected and replaced."""
+    upload_po_translation.pretranslated = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    _approve_during_import(monkeypatch, upload_po_translation, admin)
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 409
+
+    # The import is rolled back, which also undoes the approval made inside it.
+    upload_po_translation.refresh_from_db()
+
+    assert not upload_po_translation.rejected
+    assert upload_po_translation.pretranslated
+    assert upload_po_translation.active
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_conflicts_with_concurrent_approval_of_suggestion(
+    monkeypatch, pretranslator, project_locale_a, upload_po_translation, admin
+):
+    """A matching suggestion approved mid-import is not converted to a pretranslation."""
+    upload_po_translation.active = True
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+
+    _approve_during_import(monkeypatch, upload_po_translation, admin)
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 409
+
+    upload_po_translation.refresh_from_db()
+
+    assert not upload_po_translation.pretranslated
+    assert not upload_po_translation.approved
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_conflicts_with_concurrent_rejection_of_suggestion(
+    monkeypatch, pretranslator, project_locale_a, upload_po_translation, admin
+):
+    """A matching suggestion rejected mid-import is not converted to a pretranslation."""
+    upload_po_translation.active = True
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+
+    _review_during_import(monkeypatch, lambda: upload_po_translation.reject(admin))
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 409
+
+    upload_po_translation.refresh_from_db()
+
+    assert not upload_po_translation.rejected
+    assert not upload_po_translation.pretranslated
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1

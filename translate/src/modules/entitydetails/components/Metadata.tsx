@@ -203,7 +203,7 @@ function SourceExamples({ entry }: { readonly entry: MessageEntry | null }) {
 }
 
 const EntityContext = ({
-  entity: { format, key, path, project },
+  entity: { format, key, path, project, pk },
   localeCode,
   navigateToPath,
 }: {
@@ -223,10 +223,11 @@ const EntityContext = ({
           </Fragment>
         ))}
       <a
-        href={`/${localeCode}/${project.slug}/${path}/`}
+        href={`/${localeCode}/${project.slug}/${path}/?string=${pk}`}
         onClick={(ev) => {
           ev.preventDefault();
-          navigateToPath(ev.currentTarget.pathname);
+          const { pathname, search } = ev.currentTarget;
+          navigateToPath(pathname + search);
         }}
         className='resource-path'
       >

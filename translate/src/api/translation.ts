@@ -11,6 +11,7 @@ export type ApiFailedChecks = {
   readonly clErrors?: string[];
   readonly pErrors?: string[];
   readonly clWarnings?: string[];
+  readonly pWarnings?: string[];
   readonly pndbWarnings?: string[];
   readonly ttWarnings?: string[];
 };

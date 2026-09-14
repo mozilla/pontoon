@@ -57,6 +57,11 @@ api_v2_patterns = [
         name="upload-translations",
     ),
     path(
+        "upload/pretranslations/",
+        views.UploadPretranslationsView.as_view(),
+        name="upload-pretranslations",
+    ),
+    path(
         "terminology/extract-from-text/",
         views.TermExtractFromTextView.as_view(),
         name="term-extract-from-text",

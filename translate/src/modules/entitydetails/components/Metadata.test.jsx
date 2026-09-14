@@ -6,7 +6,8 @@ import { createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { Metadata } from './Metadata';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
+import { vi } from 'vitest';
 
 const SRC_LOC = 'file_source.rs:31';
 
@@ -41,13 +42,18 @@ const USER = {
 };
 const entityCommentTitle = 'COMMENT';
 
-function createMetadata(entity = ENTITY) {
+function createMetadata(entity = ENTITY, navigateToPath = () => {}) {
   const store = createReduxStore({ user: USER });
   return render(
     <Provider store={store}>
       <MockLocalizationProvider>
         <Locale.Provider value={LOCALE}>
-          <Metadata entity={entity} terms={TERMS} user={USER} />
+          <Metadata
+            entity={entity}
+            terms={TERMS}
+            user={USER}
+            navigateToPath={navigateToPath}
+          />
         </Locale.Provider>
       </MockLocalizationProvider>
     </Provider>,
@@ -78,6 +84,18 @@ describe('<Metadata>', () => {
     expect(queryByText(SRC_LOC)).toBeNull();
     getByText(entityCommentTitle);
     getByText(ENTITY.comment);
+  });
+
+  it('retains the string id in the resource path link', () => {
+    const navigateToPath = vi.fn();
+    const { container } = createMetadata(ENTITY, navigateToPath);
+
+    const link = container.querySelector('a.resource-path');
+    const target = `/${LOCALE.code}/${ENTITY.project.slug}/${ENTITY.path}/?string=${ENTITY.pk}`;
+    expect(link.getAttribute('href')).toBe(target);
+
+    fireEvent.click(link);
+    expect(navigateToPath).toHaveBeenCalledWith(target);
   });
 
   it('finds examples for placeholders with source', () => {

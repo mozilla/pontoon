@@ -212,5 +212,77 @@ Status codes:
 | `400` | Missing or invalid field, unsupported format, unparseable or empty file, or file too large                 |
 | `403` | Missing token, invalid or expired token, or insufficient permission                                        |
 | `404` | Unknown or disabled project, unknown locale or resource, or project or resource not enabled for the locale |
-| `409` | A concurrent upload changed the same translations; retry the request                                       |
+| `409` | A concurrent upload or review changed the same translations; retry the request                             |
 | `429` | Rate limit exceeded                                                                                        |
+
+### `POST /api/v2/upload/pretranslations/`
+
+Store translations from an uploaded translation file as pretranslations.
+This API requires the user to be a member of the `pretranslators` group,
+in addition to have translator rights for the target locale and project.
+
+The request body is the same `multipart/form-data` as
+[`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations):
+
+```bash
+$ curl -X POST \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  -F "project=firefox" \
+  -F "locale=it" \
+  -F "resource=browser/browser.ftl" \
+  -F "uploadfile=@browser.ftl" \
+  "https://example.com/api/v2/upload/pretranslations/"
+```
+
+A successful request returns a summary of the import:
+
+```json
+{
+  "created": 8,
+  "replaced": 2,
+  "converted": 1,
+  "unchanged": 3,
+  "skipped": 12,
+  "failed_checks": [
+    { "key": ["entity_key"], "errors": ["Double space"], "warnings": [] }
+  ],
+  "failed_checks_count": 1,
+  "undefined_keys": [["obsolete_key"]],
+  "undefined_keys_count": 1
+}
+```
+
+- `created`: number of pretranslations added for strings with no pretranslation
+  or fuzzy translation.
+- `replaced`: number of pretranslations replacing a previous, different
+  pretranslation or fuzzy translation. The replaced translation is rejected.
+- `converted`: number of existing translations made the active pretranslation,
+  because they match the uploaded translation. Their original author is preserved.
+- `unchanged`: number of translations identical to the current pretranslation, ignored.
+- `skipped`: number of strings left untouched, because they already have an
+  approved translation, or are marked as fuzzy in the uploaded file.
+- `failed_checks`: number of strings left untouched, because the
+  uploaded translation fails quality checks. Each entry has the `key`
+  of the string, in the same format as the `key` field of entities,
+  and the `errors` and `warnings` reported for it.
+  Only the first 100 keys are listed.
+- `failed_checks_count`: total number of strings left untouched because of failing
+  checks, before truncation.
+- `undefined_keys`: keys of translations with no matching string in Pontoon, ignored.
+  Each key is a list of strings, in the same format as the `key` field of entities.
+  Only the first 100 keys are listed.
+- `undefined_keys_count`: total number of keys with no matching string in Pontoon,
+  before truncation.
+
+Unlike the built-in pretranslation, strings with unreviewed suggestions are
+pretranslated. Suggestions that don't match the uploaded translation are kept as
+unreviewed suggestions. Fuzzy translations already in Pontoon are rejected and replaced
+by the pretranslation, while approved translations are never replaced. An uploaded
+translation that fails any quality check is neither stored nor converted, and the
+previous translation is left in place, so that a broken translation never replaces a
+good one.
+
+The requirements, limits and status codes of
+[`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations) also apply here,
+with one difference: the request is rejected with `403` unless the user is a member of
+the `pretranslators` group.
