@@ -3273,8 +3273,8 @@ def test_upload_pretranslations_unknown_keys_ignored(
     }
 
 
-def _approve_during_import(monkeypatch, translation, user):
-    """Approve `translation` from inside a running pretranslation import.
+def _review_during_import(monkeypatch, review):
+    """Call `review` from inside a running pretranslation import.
 
     `import_uploaded_pretranslations()` calls `timezone.now()` after reading the
     current translations and before writing anything, so this reproduces a review
@@ -3283,18 +3283,22 @@ def _approve_during_import(monkeypatch, translation, user):
     from pontoon.sync import upload as sync_upload
 
     real_now = sync_upload.timezone.now
-    approved = False
+    reviewed = False
 
-    def now_and_approve():
-        nonlocal approved
-        if not approved:
-            approved = True
-            translation.approve(user)
+    def now_and_review():
+        nonlocal reviewed
+        if not reviewed:
+            reviewed = True
+            review()
         return real_now()
 
     monkeypatch.setattr(
-        sync_upload, "timezone", SimpleNamespace(now=now_and_approve), raising=False
+        sync_upload, "timezone", SimpleNamespace(now=now_and_review), raising=False
     )
+
+
+def _approve_during_import(monkeypatch, translation, user):
+    _review_during_import(monkeypatch, lambda: translation.approve(user))
 
 
 @pytest.mark.django_db
@@ -3349,4 +3353,31 @@ def test_upload_pretranslations_conflicts_with_concurrent_approval_of_suggestion
 
     assert not upload_po_translation.pretranslated
     assert not upload_po_translation.approved
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_conflicts_with_concurrent_rejection_of_suggestion(
+    monkeypatch, pretranslator, project_locale_a, upload_po_translation, admin
+):
+    """A matching suggestion rejected mid-import is not converted to a pretranslation."""
+    upload_po_translation.active = True
+    upload_po_translation.string = "new translation"
+    upload_po_translation.value = ["new translation"]
+    upload_po_translation.save()
+
+    _review_during_import(monkeypatch, lambda: upload_po_translation.reject(admin))
+
+    response = _upload_pretranslation(
+        _pat_client(pretranslator.user),
+        project_locale_a,
+        upload_po_translation.entity.resource.path,
+    )
+
+    assert response.status_code == 409
+
+    upload_po_translation.refresh_from_db()
+
+    assert not upload_po_translation.rejected
+    assert not upload_po_translation.pretranslated
     assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1

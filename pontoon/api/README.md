@@ -224,8 +224,7 @@ unreviewed suggestions. Fuzzy translations already in Pontoon are rejected and r
 by the pretranslation, while approved translations are never replaced. An uploaded
 translation that fails any quality check is neither stored nor converted, and the
 previous translation is left in place, so that a broken translation never replaces a
-good one. The checks are the ones the editor runs, including those Pontoon does not
-store in the database.
+good one.
 
 The requirements, limits and status codes of
 [`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations) also apply here,

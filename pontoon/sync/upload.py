@@ -395,15 +395,17 @@ def import_uploaded_pretranslations(
     if new_translations:
         Translation.objects.bulk_create(new_translations)
 
-    # A review may approve one of these translations after `current` was loaded.
-    # Recheck the rows after updating them and abort if an approval happened first;
-    # the surrounding transaction will roll back the upload changes.
-    modified_ids = (
-        reject_ids + deactivate_ids + [tx.pk for tx in converted_translations]
-    )
+    # A review may approve or reject one of these translations after `current` was
+    # loaded; abort if it did, rolling back the upload. A rejection is only a conflict
+    # for converted translations, as the other rejected rows were rejected above.
+    converted_ids = [tx.pk for tx in converted_translations]
+    modified_ids = reject_ids + deactivate_ids + converted_ids
     if (
         modified_ids
-        and Translation.objects.filter(pk__in=modified_ids, approved=True).exists()
+        and Translation.objects.filter(
+            Q(pk__in=modified_ids, approved=True)
+            | Q(pk__in=converted_ids, rejected=True)
+        ).exists()
     ):
         raise UploadConflictError()
 
