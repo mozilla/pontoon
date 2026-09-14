@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.files.uploadedfile import UploadedFile
 from django.db import IntegrityError, transaction
 from django.db.models import Prefetch, Q
 from django.http import Http404
@@ -51,7 +52,7 @@ from pontoon.translations.utils import parse_source_string_to_json
 
 from .serializers import (
     TRANSLATION_STATS_FIELDS,
-    UNDEFINED_KEYS_LIMIT,
+    UPLOAD_KEYS_ERROR_LIMIT,
     UPLOAD_REQUEST_SCHEMA,
     EntitySearchSerializer,
     EntitySerializer,
@@ -63,6 +64,7 @@ from .serializers import (
     NestedProjectSerializer,
     TermSerializer,
     TranslationMemorySerializer,
+    UploadPretranslationsResponseSerializer,
     UploadTranslationsResponseSerializer,
 )
 
@@ -629,51 +631,22 @@ class PretranslationView(APIView):
 class UploadConflict(APIException):
     status_code = status.HTTP_409_CONFLICT
     default_detail = (
-        "A concurrent upload changed the same translations. Retry the request."
+        "A concurrent upload or review changed the same translations. "
+        "Retry the request."
     )
 
 
-class UploadTranslationsView(APIView):
+class UploadView(APIView):
+    """Shared behavior of endpoints writing translations from an uploaded file."""
+
     authentication_classes = [PersonalAccessTokenAuthentication]
     permission_classes = [IsAuthenticated]
     throttle_classes = UPLOAD_THROTTLE_CLASSES
+    # Endpoints share a single upload quota per user.
     throttle_scope = "upload"
 
-    @extend_schema(
-        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
-        responses={
-            200: OpenApiResponse(
-                response=UploadTranslationsResponseSerializer,
-                description="Upload accepted. Reports the number of translations "
-                "updated and unchanged, and the keys not found in Pontoon.",
-            ),
-            400: OpenApiResponse(
-                description="Invalid parameters, or a file that is too large, "
-                "cannot be parsed, or contains no translations."
-            ),
-            403: OpenApiResponse(
-                description="Missing translate permission, or read-only project locale."
-            ),
-            404: OpenApiResponse(
-                description="Unknown or disabled project, unknown locale or resource, "
-                "or a project or resource not enabled for the locale."
-            ),
-            409: OpenApiResponse(
-                description="A concurrent upload changed the same translations."
-            ),
-            429: OpenApiResponse(description="Rate limit exceeded."),
-        },
-        description=(
-            "Update translations from an uploaded file, as the authenticated user. "
-            "Requires translator rights for the target locale, and a project locale "
-            "that is not read-only. The upload is additive: translations missing from "
-            "the file are left untouched, and strings identical to the current "
-            "translations are ignored, as are keys not found in Pontoon."
-        ),
-    )
-    def post(self, request):
-        from pontoon.sync.utils import UploadError, import_uploaded_file
-
+    def upload_target(self, request) -> tuple[Project, Locale, Resource, UploadedFile]:
+        """The project, locale, resource and file of an upload request."""
         form = forms.UploadTranslationsAPIForm(request.data, request.FILES)
         if not form.is_valid():
             raise ValidationError(form.errors)
@@ -708,20 +681,77 @@ class UploadTranslationsView(APIView):
         except DjangoValidationError as error:
             raise ValidationError({"uploadfile": error.messages})
 
+        return project, locale, resource, uploadfile
+
+    def run_import(self, importer, *args):
+        """Run an import in a transaction, reporting its failures as API errors."""
+        from pontoon.sync.upload import UploadConflictError, UploadError
+
+        try:
+            with transaction.atomic():
+                return importer(*args)
+        except UploadError as error:
+            raise ValidationError({"uploadfile": [str(error)]})
+        except (IntegrityError, UploadConflictError):
+            raise UploadConflict()
+
+    def undefined_keys(self, result) -> dict:
+        """Response fields reporting the keys with no matching entity in Pontoon."""
+        return {
+            "undefined_keys": [
+                list(key) for key in result.undefined_keys[:UPLOAD_KEYS_ERROR_LIMIT]
+            ],
+            "undefined_keys_count": len(result.undefined_keys),
+        }
+
+
+class UploadTranslationsView(UploadView):
+    @extend_schema(
+        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
+        responses={
+            200: OpenApiResponse(
+                response=UploadTranslationsResponseSerializer,
+                description="Upload accepted. Reports the number of translations "
+                "updated and unchanged, and the keys not found in Pontoon.",
+            ),
+            400: OpenApiResponse(
+                description="Invalid parameters, or a file that is too large, "
+                "cannot be parsed, or contains no translations."
+            ),
+            403: OpenApiResponse(
+                description="Missing translate permission, or read-only project locale."
+            ),
+            404: OpenApiResponse(
+                description="Unknown or disabled project, unknown locale or resource, "
+                "or a project or resource not enabled for the locale."
+            ),
+            409: OpenApiResponse(
+                description="A concurrent upload or review changed the same "
+                "translations."
+            ),
+            429: OpenApiResponse(description="Rate limit exceeded."),
+        },
+        description=(
+            "Update translations from an uploaded file, as the authenticated user. "
+            "Requires translator rights for the target locale, and a project locale "
+            "that is not read-only. The upload is additive: translations missing from "
+            "the file are left untouched, and strings identical to the current "
+            "translations are ignored, as are keys not found in Pontoon."
+        ),
+    )
+    def post(self, request):
+        from pontoon.sync.upload import import_uploaded_file
+
+        project, locale, resource, uploadfile = self.upload_target(request)
+
         badge_levels_before = (
             badges_translation_level(request.user),
             badges_review_level(request.user),
         )
 
-        try:
-            with transaction.atomic():
-                result = import_uploaded_file(
-                    project, locale, resource, uploadfile, request.user
-                )
-        except UploadError as error:
-            raise ValidationError({"uploadfile": [str(error)]})
-        except IntegrityError:
-            raise UploadConflict()
+        result = self.run_import(
+            import_uploaded_file, project, locale, resource, uploadfile, request.user
+        )
 
         for (badge, get_level), before in zip(
             (
@@ -734,14 +764,85 @@ class UploadTranslationsView(APIView):
             if after > before:
                 send_badge_notification(request.user, badge, after)
 
-        undefined_keys = [
-            list(key) for key in result.undefined_keys[:UNDEFINED_KEYS_LIMIT]
-        ]
         return Response(
             {
                 "updated": result.updated,
                 "unchanged": result.unchanged,
-                "undefined_keys": undefined_keys,
-                "undefined_keys_count": len(result.undefined_keys),
+                **self.undefined_keys(result),
+            }
+        )
+
+
+class UploadPretranslationsView(UploadView):
+    permission_classes = [IsAuthenticated, IsPretranslator]
+
+    @extend_schema(
+        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
+        responses={
+            200: OpenApiResponse(
+                response=UploadPretranslationsResponseSerializer,
+                description="Upload accepted. Reports how the pretranslations were "
+                "stored, and the keys not found in Pontoon.",
+            ),
+            400: OpenApiResponse(
+                description="Invalid parameters, or a file that is too large, "
+                "cannot be parsed, or contains no translations."
+            ),
+            403: OpenApiResponse(
+                description="Missing membership of the pretranslators group, missing "
+                "translate permission, or read-only project locale."
+            ),
+            404: OpenApiResponse(
+                description="Unknown or disabled project, unknown locale or resource, "
+                "or a project or resource not enabled for the locale."
+            ),
+            409: OpenApiResponse(
+                description="A concurrent upload or review changed the same "
+                "translations."
+            ),
+            429: OpenApiResponse(description="Rate limit exceeded."),
+        },
+        description=(
+            "Store translations from an uploaded translation file as pretranslations. "
+            "This API requires the user to be a member of the `pretranslators` group, "
+            "in addition to have translator rights for the target locale and project. "
+            "The project locale should also not be set as read-only. "
+            "Strings with an approved translation are skipped, as are translations "
+            "marked as fuzzy in the uploaded file and keys "
+            "not found in Pontoon. A previous, different pretranslation or fuzzy "
+            "translation is rejected and replaced. Unreviewed suggestions are kept: "
+            "a suggestion matching the uploaded translation is converted to a "
+            "pretranslation, preserving its original author. An uploaded translation "
+            "that fails quality checks is left out, so that a broken translation does "
+            "not replace a good one."
+        ),
+    )
+    def post(self, request):
+        from pontoon.sync.upload import import_uploaded_pretranslations
+
+        project, locale, resource, uploadfile = self.upload_target(request)
+
+        result = self.run_import(
+            import_uploaded_pretranslations,
+            project,
+            locale,
+            resource,
+            uploadfile,
+            request.user,
+        )
+
+        return Response(
+            {
+                "created": result.created,
+                "replaced": result.replaced,
+                "converted": result.converted,
+                "unchanged": result.unchanged,
+                "skipped": result.skipped,
+                "failed_checks": [
+                    {"key": list(fc.key), "errors": fc.errors, "warnings": fc.warnings}
+                    for fc in result.failed_checks[:UPLOAD_KEYS_ERROR_LIMIT]
+                ],
+                "failed_checks_count": len(result.failed_checks),
+                **self.undefined_keys(result),
             }
         )

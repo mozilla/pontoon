@@ -1063,7 +1063,7 @@ def upload(request):
 
     form = forms.UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        from pontoon.sync.utils import import_uploaded_file
+        from pontoon.sync.upload import import_uploaded_file
 
         upload = request.FILES["uploadfile"]
         try:
