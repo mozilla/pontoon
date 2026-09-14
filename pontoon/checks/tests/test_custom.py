@@ -1,5 +1,7 @@
 from unittest.mock import MagicMock
 
+import pytest
+
 from pontoon.checks.libraries.custom import run_custom_checks
 
 
@@ -297,6 +299,44 @@ def test_android_changed_placeholder_in_element():
     }
 
 
+@pytest.mark.parametrize(
+    "original",
+    [
+        # Placeholders in Android tag attributes stay inside the markup token.
+        "Hi {$arg :string @source=|%s|} {#a href=|%s|}link{/a}",
+        "{#a href=|%s|}{$arg :string @source=|%s|}{/a}",
+    ],
+)
+def test_android_unnumbered_placeholder_in_markup_attribute(original):
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original) == {}
+
+
+def test_android_extra_unnumbered_placeholder_with_markup_attribute():
+    original = "Hi {$arg :string @source=|%s|} {#a href=|%s|}link{/a}"
+    translation = (
+        "Hi {$arg :string @source=|%s|} {$arg2 :string @source=|%s|} "
+        "{#a href=|%s|}link{/a}"
+    )
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": [
+            "Placeholder %s has more occurrences in translation (expected 2, found 3)"
+        ]
+    }
+
+
+def test_android_paired_element_in_text():
+    original = "Read the <b>policy</b>"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, "Leggi la <b>policy</b>") == {}
+    checks = run_custom_checks(entity, "Leggi la policy")
+    assert sorted(checks["pWarnings"]) == [
+        "Element </b> not found in translation",
+        "Element <b> not found in translation",
+    ]
+
+
 def test_android_protections_with_shared_substring():
     original = (
         "Hi {$a :xliff:g id=a @translate=no @source=Name} "
@@ -504,3 +544,197 @@ def test_xcode_changed_placeholder_in_element():
         "pErrors": ['Element <a href="https://example.com"> not found in reference'],
         "pWarnings": ['Element <a href="%1$@"> not found in translation'],
     }
+
+
+def test_xcode_placeholder_in_and_outside_element():
+    original = (
+        'Visit <a href="{$arg1 :string @source=|%@|}">'
+        "{$arg2 :string @source=|%@|}</a> for details"
+    )
+    translation = 'Click <a href="{$arg1 :string @source=|%@|}">here</a> for details'
+    entity = mock_entity("xcode", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pWarnings": ["Placeholder %@ not found in translation"]
+    }
+
+
+@pytest.mark.parametrize(
+    "format, placeholder",
+    [("xcode", "%@"), ("android", "%s"), ("android", "%02d"), ("xcode", "%#x")],
+)
+@pytest.mark.parametrize("count", [0, 1, 2])
+def test_repeated_unnumbered_placeholder(format, placeholder, count):
+    first = "{$arg1 :string @source=|" + placeholder + "|}"
+    second = "{$arg2 :string @source=|" + placeholder + "|}"
+    entity = mock_entity(format, string=f"Hello {first} and {second}")
+    translation = "Hello " + " and ".join([first, second][:count])
+    expected = {}
+    if count == 0:
+        expected = {
+            "pWarnings": [f"Placeholder {placeholder} not found in translation"]
+        }
+    elif count == 1:
+        expected = {
+            "pWarnings": [
+                f"Placeholder {placeholder} has fewer occurrences in translation "
+                "(expected 2, found 1)"
+            ]
+        }
+    assert run_custom_checks(entity, translation) == expected
+
+
+@pytest.mark.parametrize(
+    "format, placeholder",
+    [
+        ("xcode", "%1$@"),
+        ("android", "%1$s"),
+        ("android", "%<s"),
+        ("xcode", "%#@items@"),
+    ],
+)
+def test_repeated_reusable_placeholder(format, placeholder):
+    argument = "{$arg1 :string @source=|" + placeholder + "|}"
+    entity = mock_entity(format, string=f"Hello {argument} and {argument}")
+    assert run_custom_checks(entity, f"Hello {argument}") == {}
+
+
+def test_repeated_unnumbered_placeholder_outside_element():
+    element = '<a href="{$arg1 :string @source=|%@|}">'
+    first = "{$arg2 :string @source=|%@|}"
+    second = "{$arg3 :string @source=|%@|}"
+    entity = mock_entity("xcode", string=f"{element}{first} and {second}</a>")
+    assert run_custom_checks(entity, f"{element}{first}</a>") == {
+        "pWarnings": [
+            "Placeholder %@ has fewer occurrences in translation (expected 3, found 2)"
+        ]
+    }
+
+
+@pytest.mark.parametrize("missing", [False, True])
+def test_repeated_unnumbered_placeholder_plural_variants(missing):
+    first = "{$arg1 :string @source=|%s|}"
+    second = "{$arg2 :string @source=|%s|}"
+    original = (
+        ".input {$n :number} .match $n "
+        "one {{For " + first + " and " + second + "}} "
+        "* {{For " + first + " and " + second + "}}"
+    )
+    pattern = first if missing else first + " and " + second
+    translation = (
+        ".input {$n :number} .match $n "
+        "one {{For " + pattern + "}} "
+        "few {{For " + pattern + "}} "
+        "* {{For " + pattern + "}}"
+    )
+    entity = mock_entity("android", string=original)
+    expected = (
+        {
+            "pWarnings": [
+                "Placeholder %s has fewer occurrences in translation "
+                "(expected 2, found 1)"
+            ]
+        }
+        if missing
+        else {}
+    )
+    assert run_custom_checks(entity, translation) == expected
+
+
+def test_repeated_unnumbered_placeholder_extra_occurrence():
+    first = "{$arg1 :string @source=|%@|}"
+    second = "{$arg2 :string @source=|%@|}"
+    third = "{$arg3 :string @source=|%@|}"
+    entity = mock_entity("xcode", string=f"Hello {first} and {second}")
+    assert run_custom_checks(entity, f"Hello {first}, {second} and {third}") == {
+        "pErrors": [
+            "Placeholder %@ has more occurrences in translation (expected 2, found 3)"
+        ]
+    }
+
+
+def test_repeated_unnumbered_placeholder_fewer_source_variants():
+    """Translations can have fewer plural forms than the source."""
+    first = "{$arg1 :string @source=|%s|}"
+    second = "{$arg2 :string @source=|%s|}"
+    original = (
+        ".input {$n :number} .match $n "
+        "one {{" + first + " of " + second + "}} "
+        "* {{" + first + " items}}"
+    )
+    entity = mock_entity("android", string=original)
+    translation = ".input {$n :number} .match $n * {{" + first + " items}}"
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_unnumbered_placeholder_moved_outside_element():
+    first = "{$arg1 :string @source=|%@|}"
+    second = "{$arg2 :string @source=|%@|}"
+    entity = mock_entity("xcode", string=f'<a href="{first}">{second}</a>')
+    checks = run_custom_checks(entity, f"{first} {second}")
+    assert list(checks) == ["pWarnings"]
+    assert sorted(checks["pWarnings"]) == [
+        "Element </a> not found in translation",
+        'Element <a href="%@"> not found in translation',
+    ]
+
+
+@pytest.mark.parametrize("source_count, target_count", [(2, 1), (1, 2), (2, 2)])
+def test_repeated_element_with_unnumbered_placeholder(source_count, target_count):
+    element = '<a href="{$arg1 :string @source=|%@|}">link</a>'
+    entity = mock_entity("xcode", string=" ".join([element] * source_count))
+    expected = {}
+    if source_count != target_count:
+        fewer = target_count < source_count
+        direction = "fewer" if fewer else "more"
+        expected = {
+            "pWarnings" if fewer else "pErrors": [
+                f"Placeholder %@ has {direction} occurrences in translation "
+                f"(expected {source_count}, found {target_count})"
+            ]
+        }
+    assert run_custom_checks(entity, " ".join([element] * target_count)) == expected
+
+
+def test_missing_element_suppresses_unnumbered_placeholder_warning():
+    entity = mock_entity(
+        "xcode", string='Read <a href="{$arg1 :string @source=|%@|}">link</a>'
+    )
+    assert run_custom_checks(entity, "Read link</a>") == {
+        "pWarnings": ['Element <a href="%@"> not found in translation']
+    }
+
+
+@pytest.mark.parametrize("count", [1, 3])
+def test_unnumbered_placeholder_mismatch_in_one_plural_variant(count):
+    argument = "{$arg1 :string @source=|%@|}"
+    pair = argument + " " + argument
+    original = ".input {$n :number} .match $n one {{" + pair + "}} * {{" + pair + "}}"
+    changed = " ".join([argument] * count)
+    translation = (
+        ".input {$n :number} .match $n one {{" + changed + "}} * {{" + pair + "}}"
+    )
+    direction = "fewer" if count == 1 else "more"
+    assert run_custom_checks(mock_entity("xcode", string=original), translation) == {
+        "pWarnings" if count == 1 else "pErrors": [
+            f"Placeholder %@ has {direction} occurrences in translation "
+            f"(expected 2, found {count})"
+        ]
+    }
+
+
+def test_missing_elements_in_different_source_variants():
+    argument = "{$arg1 :string @source=|%@|}"
+    original = (
+        '.input {$n :number} .match $n one {{<a href="'
+        + argument
+        + '">link</a>}} * {{<a title="'
+        + argument
+        + '">link</a>}}'
+    )
+    translation = ".input {$n :number} .match $n * {{link</a>}}"
+    checks = run_custom_checks(mock_entity("xcode", string=original), translation)
+    assert list(checks) == ["pWarnings"]
+    assert sorted(checks["pWarnings"]) == [
+        'Element <a href="%@"> not found in translation',
+        'Element <a title="%@"> not found in translation',
+    ]
