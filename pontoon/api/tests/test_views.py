@@ -2360,12 +2360,12 @@ def test_upload_api_concurrent_conflict(
     """A uniqueness clash with a concurrent upload is reported as a conflict."""
     from django.db import IntegrityError
 
-    from pontoon.sync import utils as sync_utils
+    from pontoon.sync import upload as sync_upload
 
     def raise_integrity_error(*args, **kwargs):
         raise IntegrityError("duplicate key value violates unique constraint")
 
-    monkeypatch.setattr(sync_utils, "import_uploaded_file", raise_integrity_error)
+    monkeypatch.setattr(sync_upload, "import_uploaded_file", raise_integrity_error)
 
     response = _upload(
         _pat_client(upload_translator.user),
@@ -2749,7 +2749,7 @@ def test_upload_pretranslations_drops_replacement_with_errors(
     monkeypatch, pretranslator, project_locale_a, upload_po_translation
 ):
     """A replacement that fails checks is not stored, keeping the previous translation."""
-    from pontoon.sync import utils as sync_utils
+    from pontoon.sync import upload as sync_upload
 
     def failing_checks(entity, locale_code, string, use_tt_checks):
         return (
@@ -2758,7 +2758,7 @@ def test_upload_pretranslations_drops_replacement_with_errors(
             else {}
         )
 
-    monkeypatch.setattr(sync_utils, "run_checks", failing_checks)
+    monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
 
     upload_po_translation.pretranslated = True
     upload_po_translation.active = True
@@ -2798,12 +2798,12 @@ def test_upload_pretranslations_keeps_matching_fuzzy_with_warnings(
     monkeypatch, pretranslator, project_locale_a, upload_po_translation
 ):
     """A matching fuzzy translation with warnings stays fuzzy and exported as it is."""
-    from pontoon.sync import utils as sync_utils
+    from pontoon.sync import upload as sync_upload
 
     def failing_checks(entity, locale_code, string, use_tt_checks):
         return {"pndbWarnings": ["Test warning"]} if string == "new translation" else {}
 
-    monkeypatch.setattr(sync_utils, "run_checks", failing_checks)
+    monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
 
     upload_po_translation.fuzzy = True
     upload_po_translation.active = True
@@ -2877,12 +2877,12 @@ def test_upload_pretranslations_skips_matching_translation_with_errors(
     monkeypatch, pretranslator, project_locale_a, upload_po_translation
 ):
     """A matching translation that fails checks is not converted, and is not deleted."""
-    from pontoon.sync import utils as sync_utils
+    from pontoon.sync import upload as sync_upload
 
     def failing_checks(entity, locale_code, string, use_tt_checks):
         return {"pErrors": ["Test error"]} if string == "new translation" else {}
 
-    monkeypatch.setattr(sync_utils, "run_checks", failing_checks)
+    monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
 
     upload_po_translation.fuzzy = True
     upload_po_translation.active = True
@@ -2944,12 +2944,12 @@ def test_upload_pretranslations_drops_replacement_with_warnings(
     monkeypatch, pretranslator, project_locale_a, upload_po_translation
 ):
     """Warnings keep a pretranslation from being exported, so it is not stored either."""
-    from pontoon.sync import utils as sync_utils
+    from pontoon.sync import upload as sync_upload
 
     def failing_checks(entity, locale_code, string, use_tt_checks):
         return {"pndbWarnings": ["Test warning"]} if string == "new translation" else {}
 
-    monkeypatch.setattr(sync_utils, "run_checks", failing_checks)
+    monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
 
     upload_po_translation.pretranslated = True
     upload_po_translation.active = True
@@ -3280,9 +3280,9 @@ def _approve_during_import(monkeypatch, translation, user):
     current translations and before writing anything, so this reproduces a review
     landing in the window the conflict check guards.
     """
-    from pontoon.sync import utils as sync_utils
+    from pontoon.sync import upload as sync_upload
 
-    real_now = sync_utils.timezone.now
+    real_now = sync_upload.timezone.now
     approved = False
 
     def now_and_approve():
@@ -3293,7 +3293,7 @@ def _approve_during_import(monkeypatch, translation, user):
         return real_now()
 
     monkeypatch.setattr(
-        sync_utils, "timezone", SimpleNamespace(now=now_and_approve), raising=False
+        sync_upload, "timezone", SimpleNamespace(now=now_and_approve), raising=False
     )
 
 

@@ -685,7 +685,7 @@ class UploadView(APIView):
 
     def run_import(self, importer, *args):
         """Run an import in a transaction, reporting its failures as API errors."""
-        from pontoon.sync.utils import UploadConflictError, UploadError
+        from pontoon.sync.upload import UploadConflictError, UploadError
 
         try:
             with transaction.atomic():
@@ -740,7 +740,7 @@ class UploadTranslationsView(UploadView):
         ),
     )
     def post(self, request):
-        from pontoon.sync.utils import import_uploaded_file
+        from pontoon.sync.upload import import_uploaded_file
 
         project, locale, resource, uploadfile = self.upload_target(request)
 
@@ -818,7 +818,7 @@ class UploadPretranslationsView(UploadView):
         ),
     )
     def post(self, request):
-        from pontoon.sync.utils import import_uploaded_pretranslations
+        from pontoon.sync.upload import import_uploaded_pretranslations
 
         project, locale, resource, uploadfile = self.upload_target(request)
 
