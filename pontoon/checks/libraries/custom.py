@@ -180,7 +180,7 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
 
 # Matches all HTML/XML elements and Android & Xcode printf specifiers
 ph_re = compile(
-    r"<[^>]+>|%#@\w+@|%(?:[1-9]\$|<)?[-#+ 0,(]?[0-9.]*(?:hh?|ll?|[qztjLT])?.?"
+    r"<[^>]+>|%#@\w+@|%(?:[1-9][0-9]*\$|<)?[-#+ 0,(]?[0-9.]*(?:hh?|ll?|[qztjLT])?.?"
 )
 
 
@@ -192,20 +192,45 @@ def require_placeholders_match(
     warnings: list[str],
 ) -> None:
     src_ph_strings: set[str] = set()
+    # Track placeholders embedded in source elements, such as %1$s in
+    # `<a href="%1$s">`, so a missing element produces only one warning.
+    enclosed_ph: set[str] = set()
     if src:
         for pattern in get_patterns(src):
+            # Build the source preview and record each placeholder's start and end
+            # offsets to distinguish embedded placeholders from unrelated text.
+            preview = ""
+            ph_spans: list[tuple[int, int, str]] = []
             for el in pattern:
                 if isinstance(el, str):
                     if "%" in el:
                         # If the bare text includes a %, presumably the message is not going
                         # to be printf-formatted, and so we can exit early.
                         return
-                elif not (
+                    preview += el
+                    continue
+                ps = preview_placeholder(el)
+                if not (
                     isinstance(el, Expression)
                     and isinstance(el.arg, str)
                     and el.function is None
                 ):
-                    src_ph_strings.add(preview_placeholder(el))
+                    src_ph_strings.add(ps)
+                    ph_spans.append((len(preview), len(preview) + len(ps), ps))
+                preview += ps
+            # The translation scan treats each HTML element as a single token.
+            # Add complete source elements too, since parsing may split an element
+            # into text and placeholder expressions.
+            for pm in ph_re.finditer(preview):
+                if pm[0].startswith("<"):
+                    src_ph_strings.add(pm[0])
+                    enclosed_ph.update(
+                        ps
+                        for start, end, ps in ph_spans
+                        if pm.start() <= start
+                        and end <= pm.end()
+                        and pm.span() != (start, end)
+                    )
 
     found_ph: set[str] = set()
     for pattern in get_patterns(tgt):
@@ -224,7 +249,7 @@ def require_placeholders_match(
                     errors.append(f"{kind} {ph} not found in reference")
 
     for ph in src_ph_strings:
-        if ph not in found_ph:
+        if ph not in found_ph and ph not in enclosed_ph:
             kind = "Element" if ph.startswith("<") else "Placeholder"
             warnings.append(f"{kind} {ph} not found in translation")
 

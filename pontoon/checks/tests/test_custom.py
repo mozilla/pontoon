@@ -281,6 +281,64 @@ def test_android_changed_placeholder():
     }
 
 
+def test_android_placeholder_in_element():
+    original = 'Read the <a href="{$arg1 :string @source=|%1$s|}">policy{|</a>| :html}'
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original) == {}
+
+
+def test_android_changed_placeholder_in_element():
+    original = 'Read the <a href="{$arg1 :string @source=|%1$s|}">policy{|</a>| :html}'
+    translation = 'Leggi la <a href="https://example.com">policy{|</a>| :html}'
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ['Element <a href="https://example.com"> not found in reference'],
+        "pWarnings": ['Element <a href="%1$s"> not found in translation'],
+    }
+
+
+def test_android_protections_with_shared_substring():
+    original = (
+        "Hi {$a :xliff:g id=a @translate=no @source=Name} "
+        "and {$b :xliff:g id=b @translate=no @source=FullName}"
+    )
+    entity = mock_entity("android", string=original)
+    checks = run_custom_checks(entity, "Salve")
+    assert list(checks) == ["pWarnings"]
+    assert sorted(checks["pWarnings"]) == [
+        "Placeholder FullName not found in translation",
+        "Placeholder Name not found in translation",
+    ]
+
+
+def test_android_multi_digit_placeholder():
+    original = "Hi {$a :string @source=|%10$s|} and {$b :string @source=|%2$s|}"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, original) == {}
+
+
+def test_android_changed_multi_digit_placeholder():
+    original = "Hi {$a :string @source=|%10$s|} and {$b :string @source=|%2$s|}"
+    translation = "Ciao {$a :string @source=|%11$s|} e {$b :string @source=|%2$s|}"
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ["Placeholder %11$s not found in reference"],
+        "pWarnings": ["Placeholder %10$s not found in translation"],
+    }
+
+
+def test_android_protection_matching_element_text():
+    original = (
+        "Hi {$a :xliff:g id=a @translate=no @source=Name}, "
+        'see {|<a title="Name">| :html}link{|</a>| :html}'
+    )
+    translation = 'Ciao, vedi {|<a title="Name">| :html}link{|</a>| :html}'
+    entity = mock_entity("android", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pWarnings": ["Placeholder Name not found in translation"]
+    }
+
+
 def test_android_protections():
     original = "Source {$string :xliff:g id=string @translate=no @source=String} with {$variable :xliff:g id=variable example=5 @translate=no @source=|%1$s|}"
     translation = "Translation String with %1$s"
@@ -421,4 +479,28 @@ def test_xcode_extra_placeholder():
     entity = mock_entity("xcode", string=original)
     assert run_custom_checks(entity, translation) == {
         "pErrors": ["Placeholder %@ not found in reference"]
+    }
+
+
+def test_xcode_html():
+    original = "Read the <b>policy</b>"
+    translation = "Leggi la <b>policy</b>"
+    entity = mock_entity("xcode", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_xcode_placeholder_in_element():
+    original = 'Read the <a href="{$arg1 :string @source=|%1$@|}">policy</a>'
+    translation = 'Leggi la <a href="{$arg1 :string @source=|%1$@|}">policy</a>'
+    entity = mock_entity("xcode", string=original)
+    assert run_custom_checks(entity, translation) == {}
+
+
+def test_xcode_changed_placeholder_in_element():
+    original = 'Read the <a href="{$arg1 :string @source=|%1$@|}">policy</a>'
+    translation = 'Leggi la <a href="https://example.com">policy</a>'
+    entity = mock_entity("xcode", string=original)
+    assert run_custom_checks(entity, translation) == {
+        "pErrors": ['Element <a href="https://example.com"> not found in reference'],
+        "pWarnings": ['Element <a href="%1$@"> not found in translation'],
     }
