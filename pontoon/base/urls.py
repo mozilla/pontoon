@@ -107,11 +107,6 @@ urlpatterns = [
     path("user-data/", views.user_data, name="pontoon.user_data"),
     path("get-sibling-entities/", views.get_sibling_entities),
     path(
-        "get-fluent-reference-variants/",
-        views.get_fluent_reference_variants,
-        name="pontoon.fluent.reference_variants",
-    ),
-    path(
         "get-fluent-terms/",
         views.get_fluent_terms,
         name="pontoon.fluent.terms",
