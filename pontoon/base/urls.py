@@ -111,4 +111,9 @@ urlpatterns = [
         views.get_fluent_reference_variants,
         name="pontoon.fluent.reference_variants",
     ),
+    path(
+        "get-fluent-terms/",
+        views.get_fluent_terms,
+        name="pontoon.fluent.terms",
+    ),
 ]
