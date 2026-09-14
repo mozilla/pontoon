@@ -2665,7 +2665,7 @@ def test_upload_pretranslations_creates_pretranslation(
     assert response.status_code == 200
     assert response.json() == {
         "created": 1,
-        "updated": 0,
+        "replaced": 0,
         "converted": 0,
         "unchanged": 0,
         "skipped": 0,
@@ -2704,7 +2704,7 @@ def test_upload_pretranslations_skips_fuzzy_uploads(
     assert response.status_code == 200
     assert response.json() == {
         "created": 0,
-        "updated": 0,
+        "replaced": 0,
         "converted": 0,
         "unchanged": 0,
         "skipped": 1,
@@ -2772,7 +2772,7 @@ def test_upload_pretranslations_drops_replacement_with_errors(
     )
 
     assert response.status_code == 200
-    assert response.json()["updated"] == 0
+    assert response.json()["replaced"] == 0
     assert response.json()["failed_checks"] == [
         {"key": ["test_key"], "errors": ["Test error", "Other error"], "warnings": []}
     ]
@@ -2963,7 +2963,7 @@ def test_upload_pretranslations_drops_replacement_with_warnings(
     )
 
     assert response.status_code == 200
-    assert response.json()["updated"] == 0
+    assert response.json()["replaced"] == 0
     assert response.json()["failed_checks"] == [
         {"key": ["test_key"], "errors": [], "warnings": ["Test warning"]}
     ]
@@ -3046,7 +3046,7 @@ def test_upload_pretranslations_replaces_fuzzy(
     )
 
     assert response.status_code == 200
-    assert response.json()["updated"] == 1
+    assert response.json()["replaced"] == 1
     assert response.json()["skipped"] == 0
 
     upload_po_translation.refresh_from_db()
@@ -3109,7 +3109,7 @@ def test_upload_pretranslations_replaces_pretranslation(
     )
 
     assert response.status_code == 200
-    assert response.json()["updated"] == 1
+    assert response.json()["replaced"] == 1
     assert response.json()["created"] == 0
 
     upload_po_translation.refresh_from_db()
@@ -3262,7 +3262,7 @@ def test_upload_pretranslations_unknown_keys_ignored(
     assert response.status_code == 200
     assert response.json() == {
         "created": 1,
-        "updated": 0,
+        "replaced": 0,
         "converted": 0,
         "unchanged": 0,
         "skipped": 0,

@@ -183,7 +183,7 @@ A successful request returns a summary of the import:
 ```json
 {
   "created": 8,
-  "updated": 2,
+  "replaced": 2,
   "converted": 1,
   "unchanged": 3,
   "skipped": 12,
@@ -196,19 +196,20 @@ A successful request returns a summary of the import:
 }
 ```
 
-- `created`: pretranslations added for strings with no pretranslation or fuzzy
-  translation.
-- `updated`: pretranslations replacing a previous, different pretranslation or fuzzy
-  translation. The replaced translation is rejected.
-- `converted`: existing translations made the active pretranslation, because they match
-  the uploaded translation. Their original author is preserved.
-- `unchanged`: translations identical to the current pretranslation, ignored.
-- `skipped`: strings left untouched, because they already have an approved translation,
-  or are marked as fuzzy in the uploaded file.
-- `failed_checks`: strings left untouched, because the uploaded translation fails
-  quality checks. Each entry has the `key` of the string, in the same format as the
-  `key` field of entities, and the `errors` and `warnings` reported for it. Only the
-  first 100 keys are listed.
+- `created`: number of pretranslations added for strings with no pretranslation
+  or fuzzy translation.
+- `replaced`: number of pretranslations replacing a previous, different
+  pretranslation or fuzzy translation. The replaced translation is rejected.
+- `converted`: number of existing translations made the active pretranslation,
+  because they match the uploaded translation. Their original author is preserved.
+- `unchanged`: number of translations identical to the current pretranslation, ignored.
+- `skipped`: number of strings left untouched, because they already have an
+  approved translation, or are marked as fuzzy in the uploaded file.
+- `failed_checks`: number of strings left untouched, because the
+  uploaded translation fails quality checks. Each entry has the `key`
+  of the string, in the same format as the `key` field of entities,
+  and the `errors` and `warnings` reported for it.
+  Only the first 100 keys are listed.
 - `failed_checks_count`: total number of strings left untouched because of failing
   checks, before truncation.
 - `undefined_keys`: keys of translations with no matching string in Pontoon, ignored.

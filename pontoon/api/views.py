@@ -834,7 +834,7 @@ class UploadPretranslationsView(UploadView):
         return Response(
             {
                 "created": result.created,
-                "updated": result.updated,
+                "replaced": result.replaced,
                 "converted": result.converted,
                 "unchanged": result.unchanged,
                 "skipped": result.skipped,

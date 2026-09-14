@@ -7,7 +7,7 @@ from moz.l10n.model import Id as L10nId
 from moz.l10n.resource import parse_resource, serialize_resource
 
 from django.core.files import File
-from django.db.models import Q
+from django.db.models import Q, prefetch_related_objects
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
@@ -195,22 +195,22 @@ class FailedCheck:
 class PretranslationUploadResult:
     """
     Summary of an uploaded pretranslation file import:
-    - `created`: pretranslations added for strings with no pretranslation or fuzzy
-      translation
-    - `updated`: pretranslations replacing a previous, different pretranslation or
-      fuzzy translation
-    - `converted`: existing translations made the active pretranslation, as they match
-      the uploaded translation
-    - `unchanged`: translations identical to the current pretranslation
-    - `skipped`: strings left untouched, because they have an approved translation or
-      are marked as fuzzy in the uploaded file
+    - `created`: number of pretranslations added for strings with
+      no pretranslation or fuzzy translation
+    - `replaced`: number of pretranslations replacing a previous,
+      different pretranslation or fuzzy translation
+    - `converted`: number of existing translations made the
+      active pretranslation, as they match the uploaded translation
+    - `unchanged`: number of translations identical to the current pretranslation
+    - `skipped`: number of strings left untouched, because they have
+      an approved translation or are marked as fuzzy in the uploaded file
     - `failed_checks`: keys of the strings left untouched because the uploaded
       translation fails checks, with the errors and warnings reported for each of them
     - `undefined_keys`: keys of translations with no matching entity in Pontoon
     """
 
     created: int = 0
-    updated: int = 0
+    replaced: int = 0
     converted: int = 0
     unchanged: int = 0
     skipped: int = 0
@@ -351,6 +351,11 @@ def import_uploaded_pretranslations(
             pk__in={p.translation.entity_id for p in pending}
         )
     }
+    if db_res.format == DbResource.Format.DTD:
+        # compare-locales needs the other entities of the resource as a reference,
+        # and reloads them for each check unless they are cached on `db_res`.
+        prefetch_related_objects([db_res], "entities")
+
     applied: list[_PendingPretranslation] = []
     for p in pending:
         entity = entities_by_id[p.translation.entity_id]
@@ -376,7 +381,7 @@ def import_uploaded_pretranslations(
             p.match.fuzzy = False
             p.match.active = True
         elif p.replaces_translation:
-            result.updated += 1
+            result.replaced += 1
         else:
             result.created += 1
 

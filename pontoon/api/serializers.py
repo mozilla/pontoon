@@ -464,7 +464,7 @@ class UploadPretranslationsResponseSerializer(serializers.Serializer):
         help_text="Number of pretranslations added for strings with no pretranslation "
         "or fuzzy translation."
     )
-    updated = serializers.IntegerField(
+    replaced = serializers.IntegerField(
         help_text="Number of pretranslations replacing a previous, different "
         "pretranslation or fuzzy translation."
     )
