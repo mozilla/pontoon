@@ -7,12 +7,12 @@
 
 .locale-menu-dropdown {
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   left: 0;
   width: 100%;
   z-index: 100;
   background-color: var(--dark-grey-1);
-  padding: 0 12px 12px;
+  padding: 12px 12px 0px;
   box-sizing: border-box;
 }
 
@@ -53,6 +53,15 @@
 .locale-menu-trigger .locale-code {
   color: var(--status-translated);
   flex-shrink: 0;
+}
+
+.locale-menu-trigger .locale-menu-arrow {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 6px solid currentColor;
 }
 
 .locale-menu-dropdown ul {
