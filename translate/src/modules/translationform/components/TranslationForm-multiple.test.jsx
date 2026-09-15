@@ -9,6 +9,10 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { EditorActions, EditorProvider, EditorResult } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
+import { HelperSelection } from '~/context/HelperSelection';
+import { OtherLocaleTranslationComponent } from '~/modules/otherlocales/components/OtherLocaleTranslation';
+import { RECEIVE } from '~/modules/otherlocales/actions';
+import { useHandleCtrlShiftArrow } from '../utils/editFieldShortcuts';
 
 import {
   createDefaultUser,
@@ -26,10 +30,18 @@ const DEFAULT_LOCALE = {
   cldrPlurals: [1, 5],
 };
 
-function mountForm(source, target = null, locale = DEFAULT_LOCALE) {
+function mountForm(
+  source,
+  target = null,
+  locale = DEFAULT_LOCALE,
+  otherLocale,
+) {
   target ??= source;
   const store = createReduxStore();
   createDefaultUser(store);
+  if (otherLocale) {
+    store.dispatch({ type: RECEIVE, translations: [otherLocale] });
+  }
 
   const [id, sourceEntry] = fluentParseEntry(source);
   const [, targetEntry] = fluentParseEntry(target);
@@ -53,6 +65,20 @@ function mountForm(source, target = null, locale = DEFAULT_LOCALE) {
     result = useContext(EditorResult);
     return null;
   };
+  const LocaleHelpers = () => {
+    const handleArrow = useHandleCtrlShiftArrow();
+    return (
+      <>
+        <OtherLocaleTranslationComponent
+          entity={entity}
+          translation={otherLocale}
+          parameters={{ project: 'p', resource: 'r', entity: '1' }}
+          index={0}
+        />
+        <button onClick={() => handleArrow('ArrowDown')}>Next locale</button>
+      </>
+    );
+  };
 
   const wrapper = mountComponentWithStore(() => {
     const [currentEntity, updateCurrentEntity] = useState(entity);
@@ -64,6 +90,13 @@ function mountForm(source, target = null, locale = DEFAULT_LOCALE) {
             <EditorProvider>
               <Spy />
               <TranslationForm />
+              {otherLocale && (
+                <HelperSelection.Provider
+                  value={{ tab: 1, element: -1, setElement() {} }}
+                >
+                  <LocaleHelpers />
+                </HelperSelection.Provider>
+              )}
             </EditorProvider>
           </EntityView.Provider>
         </MockLocalizationProvider>
@@ -85,6 +118,81 @@ describe('<TranslationForm> with multiple fields', () => {
   beforeAll(() => {
     vi.useFakeTimers();
   });
+
+  it.each(['click', 'shortcut'])(
+    'copies all locale attributes via %s',
+    (method) => {
+      const source = 'title =\n    .label = Original\n    .accesskey = O';
+      const { getResult, wrapper } = mountForm(source, null, DEFAULT_LOCALE, {
+        translation: 'title =\n    .label = Traduction\n    .accesskey = T',
+        locale: {
+          code: 'fr',
+          name: 'French',
+          direction: 'ltr',
+          script: 'Latn',
+        },
+      });
+      fireEvent.click(
+        method === 'click'
+          ? wrapper.getByRole('listitem')
+          : wrapper.getByRole('button', { name: 'Next locale' }),
+      );
+      act(() => {
+        vi.runAllTimers();
+      });
+      expect(getResult().attributes).toEqual(
+        new Map([
+          ['label', ['Traduction']],
+          ['accesskey', ['T']],
+        ]),
+      );
+    },
+  );
+
+  it.each(['click', 'shortcut'])(
+    'copies every locale variant via %s',
+    (method) => {
+      const source = ftl`
+      title =
+          { $count ->
+              [one] One item
+             *[other] Many items
+          }
+      `;
+      const translation = ftl`
+      title =
+          { $count ->
+              [one] Un article
+             *[other] Plusieurs articles
+          }
+      `;
+      const { wrapper } = mountForm(source, null, DEFAULT_LOCALE, {
+        translation,
+        locale: {
+          code: 'fr',
+          name: 'French',
+          direction: 'ltr',
+          script: 'Latn',
+        },
+      });
+      fireEvent.click(
+        method === 'click'
+          ? wrapper.getByRole('listitem')
+          : wrapper.getByRole('button', { name: 'Next locale' }),
+      );
+      act(() => {
+        vi.runAllTimers();
+      });
+      const fields = wrapper.container.querySelectorAll(
+        '.translationform .cm-content',
+      );
+      expect(
+        Array.from(fields, (field) =>
+          EditorView.findFromDOM(field).state.doc.toString(),
+        ),
+      ).toEqual(['Un article', 'Plusieurs articles']);
+    },
+  );
 
   it('renders textarea for a value and each attribute', () => {
     const { views } = mountForm(ftl`
