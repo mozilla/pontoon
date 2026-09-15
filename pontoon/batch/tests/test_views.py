@@ -1,5 +1,8 @@
+from unittest.mock import patch
+
 import pytest
 
+from django.contrib.auth.models import Group
 from django.urls import reverse
 
 from pontoon.checks.utils import bulk_run_checks
@@ -234,3 +237,76 @@ def test_batch_find_and_replace_invalid_translations(
 
     assert translation.string == "Test Translation"
     assert not translation.approved
+
+
+@pytest.mark.django_db
+def test_batch_pretranslate_forbidden_without_pretranslators_group(
+    batch_action, member, user_a, locale_a, entity_a, project_locale_a
+):
+    """
+    A translator who is not in the pretranslators group cannot pretranslate.
+    """
+    locale_a.translators_group.user_set.add(user_a)
+
+    response = batch_action(
+        action="pretranslate",
+        locale=locale_a.code,
+        entities=entity_a.id,
+    )
+
+    assert response.status_code == 403
+    assert b"pretranslation" in response.content
+
+
+@pytest.mark.django_db
+@patch("pontoon.batch.actions.get_pretranslation")
+def test_batch_pretranslate_allowed_for_pretranslators_group(
+    get_pretranslation_mock,
+    batch_action,
+    member,
+    user_a,
+    locale_a,
+    entity_a,
+    project_locale_a,
+):
+    """
+    A translator who is also in the pretranslators group can pretranslate.
+    """
+    get_pretranslation_mock.return_value = ("key = pretranslated value", "gt")
+
+    locale_a.translators_group.user_set.add(user_a)
+    group, _ = Group.objects.get_or_create(name="pretranslators")
+    user_a.groups.add(group)
+
+    response = batch_action(
+        action="pretranslate",
+        locale=locale_a.code,
+        entities=entity_a.id,
+    )
+
+    assert response.status_code != 403
+
+
+@pytest.mark.django_db
+def test_batch_pretranslate_unsupported_locale(
+    batch_action, member, user_a, locale_a, entity_a, project_locale_a
+):
+    """
+    Pretranslation is rejected for a locale with no Google Translate support,
+    even for a pretranslators-group member.
+    """
+    locale_a.translators_group.user_set.add(user_a)
+    locale_a.google_translate_code = ""
+    locale_a.save()
+
+    group, _ = Group.objects.get_or_create(name="pretranslators")
+    user_a.groups.add(group)
+
+    response = batch_action(
+        action="pretranslate",
+        locale=locale_a.code,
+        entities=entity_a.id,
+    )
+
+    assert response.status_code == 400
+    assert b"not supported" in response.content
