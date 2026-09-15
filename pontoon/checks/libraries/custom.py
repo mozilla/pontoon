@@ -319,7 +319,7 @@ def require_placeholders_match(
         for pm in ph_re.finditer(pat_src):
             rest = pat_src[pm.start() :]
             for ph in src_ph_strings:
-                if rest.startswith(ph):
+                if pat_src.startswith(ph, pm.start()):
                     found_ph.add(ph)
                     break
             else:
