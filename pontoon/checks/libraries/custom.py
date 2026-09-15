@@ -1,6 +1,6 @@
 from collections import Counter
 from collections.abc import Iterable, Iterator
-from re import compile, fullmatch
+from re import DOTALL, compile, escape, fullmatch, search
 from typing import cast
 
 from fluent.syntax import FluentParser, ast
@@ -185,6 +185,54 @@ printf_re = compile(
 # Match whole HTML tags, but count printf placeholders inside their attributes too.
 ph_re = compile(r"<[^>]+>|" + printf_re.pattern)
 
+tag_re = compile(r"<\s*(/?)\s*([A-Za-z_][\w:.-]*)(.*?)(/?)\s*>", DOTALL)
+
+
+def is_element(tag: str, context: str) -> bool:
+    """
+    Tell markup apart from literal text such as "Press <Enter> to continue".
+
+    Strings read from a resource file are well-formed XML, so markup there always
+    carries attributes, is self-closing, or has its counterpart in the same pattern.
+    A bare angle-bracketed word can only have been escaped literal text.
+    """
+    tm = fullmatch(tag_re, tag)
+    if tm is None:
+        return False
+    closing, name, attributes, self_closing = tm.groups()
+    if self_closing or attributes.strip():
+        return True
+    pair = (
+        rf"<\s*{escape(name)}\s*(?:/?>|\s)" if closing else rf"</\s*{escape(name)}\s*>"
+    )
+    return search(pair, context) is not None
+
+
+def mismatched_tags(preview: str) -> set[tuple[int, int]]:
+    """
+    Find spans of tags whose nesting doesn't line up, as in "<a>text</b>".
+    """
+    open_tags: list[tuple[str, tuple[int, int]]] = []
+    mismatched: set[tuple[int, int]] = set()
+    for pm in ph_re.finditer(preview):
+        tm = fullmatch(tag_re, pm[0]) if pm[0].startswith("<") else None
+        if tm is None:
+            continue
+        closing, name, _, self_closing = tm.groups()
+        if self_closing:
+            continue
+        if not closing:
+            open_tags.append((name, pm.span()))
+        elif open_tags and open_tags[-1][0] == name:
+            open_tags.pop()
+        else:
+            # Unclosed tags on their own are ambiguous, so only a mismatch
+            # between start and end counts.
+            mismatched.add(pm.span())
+            if open_tags:
+                mismatched.add(open_tags.pop()[1])
+    return mismatched
+
 
 def count_unnumbered_placeholders(preview: str) -> Counter[str]:
     return Counter(
@@ -222,16 +270,19 @@ def require_placeholders_match(
                 if not (
                     isinstance(el, Expression)
                     and isinstance(el.arg, str)
-                    and el.function is None
+                    and el.function in (None, "html")
                 ):
                     src_ph_strings.add(ps)
                     ph_spans.append((len(preview), len(preview) + len(ps), ps))
                 preview += ps
             enclosed_spans: set[tuple[int, int, str]] = set()
             elements: Counter[str] = Counter()
+            src_mismatched = mismatched_tags(preview)
             # Put tags back together when placeholders split them into parts.
             for pm in ph_re.finditer(preview):
-                if pm[0].startswith("<"):
+                if pm[0].startswith("<") and (
+                    is_element(pm[0], preview) or pm.span() in src_mismatched
+                ):
                     src_ph_strings.add(pm[0])
                     required_ph.add(pm[0])
                     elements[pm[0]] += 1
@@ -263,6 +314,7 @@ def require_placeholders_match(
     for pattern in get_patterns(tgt):
         pat_src = get_simple_preview(format, pattern)
         target_counts.append(count_unnumbered_placeholders(pat_src))
+        tgt_mismatched = mismatched_tags(pat_src)
 
         for pm in ph_re.finditer(pat_src):
             rest = pat_src[pm.start() :]
@@ -272,9 +324,11 @@ def require_placeholders_match(
                     break
             else:
                 ph = pm[0]
-                if ph not in {"%%", "%n"}:
-                    kind = "Element" if ph.startswith("<") else "Placeholder"
-                    errors.append(f"{kind} {ph} not found in reference")
+                if ph.startswith("<"):
+                    if is_element(ph, pat_src) or pm.span() in tgt_mismatched:
+                        errors.append(f"Element {ph} not found in reference")
+                elif ph not in {"%%", "%n"}:
+                    errors.append(f"Placeholder {ph} not found in reference")
 
     for ph in sorted(required_ph):
         if ph not in found_ph:

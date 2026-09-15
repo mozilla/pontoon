@@ -337,6 +337,81 @@ def test_android_paired_element_in_text():
     ]
 
 
+def test_android_literal_angle_brackets():
+    """Escaped brackets around a non-element word are literal text.
+
+    Source XML: Press &lt;Enter&gt; to continue
+    """
+    entity = mock_entity("android", string="Press {|<Enter>| :html} to continue")
+    assert run_custom_checks(entity, "Premi <Invio> per continuare") == {}
+    assert run_custom_checks(entity, "Premi {|<Invio>| :html} per continuare") == {}
+    assert run_custom_checks(entity, "Premi Invio per continuare") == {}
+
+
+def test_android_literal_element_name():
+    """A bare tag is literal text even when it names a real HTML element.
+
+    Source XML: Type &lt;br&gt; for a break
+    """
+    entity = mock_entity("android", string="Type {|<br>| :html} for a break")
+    assert run_custom_checks(entity, "Digita per andare a capo") == {}
+    assert run_custom_checks(entity, "Digita {|<br>| :html} per andare a capo") == {}
+
+
+def test_android_escaped_element_pair():
+    """Escaped brackets that pair up are markup, whatever they're named.
+
+    Source XML: &lt;myTag&gt;text&lt;/myTag&gt;
+    """
+    entity = mock_entity("android", string="{|<myTag>| :html}text{|</myTag>| :html}")
+    assert run_custom_checks(entity, "{|<myTag>| :html}testo{|</myTag>| :html}") == {}
+    checks = run_custom_checks(entity, "testo")
+    assert sorted(checks["pWarnings"]) == [
+        "Element </myTag> not found in translation",
+        "Element <myTag> not found in translation",
+    ]
+
+
+def test_android_escaped_element_with_attributes():
+    """A tag with attributes is markup even if its name is unknown.
+
+    Source XML: &lt;myTag id="1"&gt;text&lt;/myTag&gt;
+    """
+    entity = mock_entity(
+        "android", string='{|<myTag id="1">| :html}text{|</myTag>| :html}'
+    )
+    assert run_custom_checks(entity, "testo") == {
+        "pWarnings": [
+            "Element </myTag> not found in translation",
+            'Element <myTag id="1"> not found in translation',
+        ]
+    }
+
+
+def test_android_mismatched_elements_in_text():
+    """Tags that don't pair up are markup, whatever they're named."""
+    entity = mock_entity("android", string="text")
+    checks = run_custom_checks(entity, "<foo>testo</bar>")
+    assert sorted(checks["pErrors"]) == [
+        "Element </bar> not found in reference",
+        "Element <foo> not found in reference",
+    ]
+
+
+def test_android_stray_angle_brackets():
+    entity = mock_entity("android", string="5 < 10 and x > y")
+    assert run_custom_checks(entity, "5 < 10 e x > y") == {}
+
+
+def test_xcode_literal_angle_brackets():
+    """Unlike Android, xliff keeps escaped brackets as literal text.
+
+    Source XLIFF: Press &lt;Enter&gt; to continue
+    """
+    entity = mock_entity("xcode", string="Press <Enter> to continue")
+    assert run_custom_checks(entity, "Premi <Invio> per continuare") == {}
+
+
 def test_android_protections_with_shared_substring():
     original = (
         "Hi {$a :xliff:g id=a @translate=no @source=Name} "
