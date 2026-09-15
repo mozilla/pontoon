@@ -1070,3 +1070,30 @@ describe('<EditorProvider>', () => {
     expect(editor.fields.map((f) => f.handle.current.value)).toEqual(['', '']);
   });
 });
+
+describe('copying plural variants from another locale', () => {
+  it('uses target plural categories', () => {
+    let editor, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source =
+      'key = { $count ->\n    [one] One item\n   *[other] Other items\n    }';
+    const copied =
+      'key = { $count ->\n    [one] Russian one\n    [few] Russian few\n   *[other] Russian other\n    }';
+    mountSpy(Spy, 'fluent', undefined, source, {
+      locale: { code: 'en-US', cldrPlurals: [1, 5] },
+    });
+    act(() => actions.setEditorFromHistory(copied, true));
+    expect(editor.fields.map((field) => field.labels.at(-1).label)).toEqual([
+      'one',
+      'other',
+    ]);
+    expect(editor.fields.map((field) => field.handle.current.value)).toEqual([
+      'Russian one',
+      'Russian other',
+    ]);
+  });
+});

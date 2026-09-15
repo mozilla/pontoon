@@ -43,7 +43,7 @@ export function OtherLocaleTranslationComponent({
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      setEditorFromHistory(translation.translation);
+      setEditorFromHistory(translation.translation, true);
     }
   }, [index, setElement, setEditorFromHistory, translation.translation]);
 

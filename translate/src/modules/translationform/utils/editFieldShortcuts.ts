@@ -143,7 +143,7 @@ export function useHandleCtrlShiftArrow(): (
       }
     } else {
       const { translation } = otherLocaleTranslations[nextIdx];
-      setEditorFromHistory(translation);
+      setEditorFromHistory(translation, true);
     }
     return true;
   };

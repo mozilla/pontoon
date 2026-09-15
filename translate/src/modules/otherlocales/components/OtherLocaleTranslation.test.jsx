@@ -84,7 +84,7 @@ describe('<OtherLocaleTranslationComponent>', () => {
 
     fireEvent.click(getByRole('listitem'));
 
-    expect(spy.mock.calls).toEqual([[PLAIN_TRANSLATION.translation]]);
+    expect(spy.mock.calls).toEqual([[PLAIN_TRANSLATION.translation, true]]);
   });
 
   it('sets editor value for a Fluent translation', () => {
@@ -93,6 +93,6 @@ describe('<OtherLocaleTranslationComponent>', () => {
 
     fireEvent.click(container.querySelector('li'));
 
-    expect(spy.mock.calls).toEqual([[FLUENT_TRANSLATION.translation]]);
+    expect(spy.mock.calls).toEqual([[FLUENT_TRANSLATION.translation, true]]);
   });
 });
