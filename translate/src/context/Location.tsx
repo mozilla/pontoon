@@ -34,7 +34,6 @@ export type Location = {
   created_time: string | null;
   reviewer: string | null;
   review_time: string | null;
-  exclude_self_reviewed: boolean;
 };
 
 export const emptyParams = {
@@ -53,7 +52,6 @@ export const emptyParams = {
   created_time: null,
   reviewer: null,
   review_time: null,
-  exclude_self_reviewed: false,
 };
 
 export const Location = createContext<Location>({
@@ -140,7 +138,6 @@ function parse(
         created_time: params.get('created_time'),
         reviewer: params.get('reviewer'),
         review_time: params.get('review_time'),
-        exclude_self_reviewed: params.has('exclude_self_reviewed'),
         list: null,
       };
   return location;
@@ -179,7 +176,6 @@ function stringify(prev: Location, next: string | Partial<Location>) {
     'created_time',
     'reviewer',
     'review_time',
-    'exclude_self_reviewed',
   ] as const) {
     const value = key in next ? next[key] : prev[key];
     if (value) {

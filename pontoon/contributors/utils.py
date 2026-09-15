@@ -306,7 +306,10 @@ def get_contributions_map(
     """
 
     actions_base = cast(ActionLogQuerySet, ActionLog.objects)
-    actions = actions_base.visible_for(viewer)
+    actions = actions_base.visible_for(viewer).filter(
+        translation__entity__obsolete=False,
+        translation__entity__resource__project__disabled=False,
+    )
 
     if contribution_period is not None:
         actions = actions.filter(contribution_period, is_implicit_action=False)
@@ -316,15 +319,15 @@ def get_contributions_map(
         ActionLog.ActionType.TRANSLATION_REJECTED,
     ]
 
+    non_self_reviews = actions.filter(action_type__in=review_action_types).exclude(
+        performed_by=F("translation__user")
+    )
+
     user_translations = actions.filter(
         performed_by=contributor, action_type=ActionLog.ActionType.TRANSLATION_CREATED
     )
-    user_reviews = actions.filter(
-        performed_by=contributor, action_type__in=review_action_types
-    )
-    peer_reviews = actions.filter(
-        translation__user=contributor, action_type__in=review_action_types
-    )
+    user_reviews = non_self_reviews.filter(performed_by=contributor)
+    peer_reviews = non_self_reviews.filter(translation__user=contributor)
 
     all_user_contributions = user_translations | user_reviews
 
@@ -541,7 +544,6 @@ def get_contribution_timeline_data(
                     url_params = {
                         "author": contributor.email,
                         "review_time": time_str,
-                        "exclude_self_reviewed": "",
                     }
             title += f" in {intcomma(p_count)} project{pluralize(p_count)}"
 
