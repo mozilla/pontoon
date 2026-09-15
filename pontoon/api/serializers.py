@@ -257,6 +257,9 @@ class TermSerializer(DynamicFieldsModelSerializer):
         ]
 
     def get_translation_text(self, obj):
+        if obj.do_not_translate:
+            return obj.text
+
         if hasattr(obj, "filtered_translations") and (ft := obj.filtered_translations):
             return ft[0].text
 

@@ -1,9 +1,13 @@
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from xml.sax.saxutils import escape, quoteattr
 
 from moz.l10n.model import Message, Pattern, PatternMessage
 
 from django.conf import settings
+from django.db.models import Prefetch
+
+from pontoon.base.models import Locale
+from pontoon.terminology.models import Term, TermTranslation
 
 
 def get_message_patterns(msg: Message) -> Iterator[Pattern]:
@@ -28,6 +32,35 @@ def get_all_message_text(messages: list[Message]) -> str:
         if isinstance(part, str)
     )
     return "\n".join(text_parts)
+
+
+def join_text_fragments(texts: Iterable[str]) -> str:
+    """
+    Join text fragments into a single string, so that terms can be matched
+    against it.
+
+    Fragments are joined by newlines so that terms are not matched across
+    their boundaries. Duplicate fragments are dropped to keep the string short.
+    """
+    return "\n".join(dict.fromkeys(texts))
+
+
+def get_terms_for_text(locale: Locale, text: str) -> list[Term]:
+    """
+    Get terms matching a text, with their translation in the locale prefetched.
+
+    Translations are prefetched as `filtered_translations`, the attribute read
+    by the API `TermSerializer`.
+    """
+    terms = Term.objects.prefetch_related(
+        Prefetch(
+            "translations",
+            queryset=TermTranslation.objects.filter(locale=locale),
+            to_attr="filtered_translations",
+        )
+    ).order_by("text", "id")
+
+    return terms.for_string(text)
 
 
 def build_tbx_v2_file(term_translations, locale):

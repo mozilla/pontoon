@@ -1355,3 +1355,6 @@ SPECTACULAR_SETTINGS = {
 
 # Maximum length of input text allowed for pretranslation
 PRETRANSLATION_API_MAX_CHARS = int(os.environ.get("PRETRANSLATION_API_MAX_CHARS", 2048))
+
+# Maximum length of input text allowed for terminology extraction
+TERMINOLOGY_API_MAX_CHARS = int(os.environ.get("TERMINOLOGY_API_MAX_CHARS", 2048))

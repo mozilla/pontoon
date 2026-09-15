@@ -73,6 +73,62 @@ An example may look like this:
 $ curl --globoff "https://example.com/api/v2/locales/?page_size=50"
 ```
 
+## Terminology Extraction
+
+### `GET /api/v2/terminology/extract-from-text/`
+
+Extract the terms appearing in a text, with their translation in a given locale.
+
+Unlike [`/api/v2/search/terminology/`](#json-mode), which looks up terms by name, this
+endpoint matches every known term against the text, at word boundaries: a term matches
+the start of a word, so `open` matches `Opened`, but not `Reopened`. Terms without a
+definition, and terms marked as forbidden, are never returned.
+
+| Parameter | Description                                               |
+| --------- | --------------------------------------------------------- |
+| `locale`  | Locale code                                               |
+| `text`    | Text to extract terminology from, at most 2048 characters |
+
+```bash
+$ curl --globoff \
+  --data-urlencode "locale=it" \
+  --data-urlencode "text=Open a new tab" \
+  --get "https://example.com/api/v2/terminology/extract-from-text/"
+```
+
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "definition": "Allow access",
+      "part_of_speech": "verb",
+      "text": "open",
+      "translation_text": "apri",
+      "usage": "Open the door.",
+      "notes": ""
+    },
+    {
+      "definition": "A page in the browser",
+      "part_of_speech": "noun",
+      "text": "tab",
+      "translation_text": "scheda",
+      "usage": "Open a new tab.",
+      "notes": ""
+    }
+  ]
+}
+```
+
+`translation_text` is `null` for terms not yet translated in the locale, and the term
+itself for terms marked as "do not translate", such as product names.
+
+No authentication is required. Longer texts are rejected with `400`: the maximum length
+is configurable via `TERMINOLOGY_API_MAX_CHARS` (default 2048 characters).
+An unknown locale returns `404`.
+
 ## Write Endpoints
 
 The following endpoints can write data and always require authentication with a Personal

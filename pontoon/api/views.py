@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from types import SimpleNamespace
 
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import generics, status
 from rest_framework.exceptions import APIException, PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -43,11 +43,15 @@ from pontoon.base.services import readonly_exists
 from pontoon.base.user_utils import can_translate
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.pretranslation.pretranslate import get_pretranslation
-from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
+from pontoon.settings.base import (
+    PRETRANSLATION_API_MAX_CHARS,
+    TERMINOLOGY_API_MAX_CHARS,
+)
 from pontoon.terminology.models import (
     Term,
     TermTranslation,
 )
+from pontoon.terminology.utils import get_terms_for_text
 from pontoon.translations.utils import parse_source_string_to_json
 
 from .serializers import (
@@ -473,6 +477,59 @@ class TermSearchListView(RequestFieldsMixin, generics.ListAPIView):
             ).select_related("entity")
 
         return qs
+
+
+class TermExtractFromTextView(generics.ListAPIView):
+    """Terms matching a text."""
+
+    serializer_class = TermSerializer
+    queryset = Term.objects.none()
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter("locale", str, required=True, description="Locale code."),
+            OpenApiParameter(
+                "text",
+                str,
+                required=True,
+                description="Text to extract terminology from "
+                f"(max {TERMINOLOGY_API_MAX_CHARS} characters).",
+            ),
+        ],
+        responses={
+            200: TermSerializer(many=True),
+            400: OpenApiResponse(
+                description="Missing parameter, or a text that is too long."
+            ),
+            404: OpenApiResponse(description="Unknown locale."),
+        },
+        description=(
+            "Extract all known terms appearing in a text, with their "
+            "translation in the given locale."
+        ),
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        locale_code = self.request.query_params.get("locale")
+        text = self.request.query_params.get("text", "")
+
+        errors = {}
+        if not locale_code:
+            errors["locale"] = ["This field is required."]
+        if not text.strip():
+            errors["text"] = ["This field is required."]
+        elif len(text) > TERMINOLOGY_API_MAX_CHARS:
+            errors["text"] = [
+                f"Text exceeds maximum length of {TERMINOLOGY_API_MAX_CHARS} characters."
+            ]
+        if errors:
+            raise ValidationError(errors)
+
+        locale = get_object_or_404(Locale, code=locale_code)
+
+        return get_terms_for_text(locale, text)
 
 
 class TranslationMemorySearchListView(generics.ListAPIView):
