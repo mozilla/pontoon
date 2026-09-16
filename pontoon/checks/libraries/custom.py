@@ -258,6 +258,7 @@ def require_placeholders_match(
     if src:
         for pattern in get_patterns(src):
             preview = ""
+            ph_spans: list[tuple[int, int, str]] = []
             for el in pattern:
                 if isinstance(el, str):
                     if "%" in el:
@@ -272,10 +273,12 @@ def require_placeholders_match(
                     and el.function in (None, "html")
                 ):
                     src_ph_strings.add(ps)
-                    required_ph.add(ps)
+                    ph_spans.append((len(preview), len(preview) + len(ps), ps))
                 preview += ps
+            enclosed_spans: set[tuple[int, int, str]] = set()
             elements: Counter[str] = Counter()
             src_mismatched = mismatched_tags(preview)
+            # Put tags back together when placeholders split them into parts.
             for pm in ph_re.finditer(preview):
                 if pm[0].startswith("<") and (
                     is_element(pm[0], preview) or pm.span() in src_mismatched
@@ -283,6 +286,18 @@ def require_placeholders_match(
                     src_ph_strings.add(pm[0])
                     required_ph.add(pm[0])
                     elements[pm[0]] += 1
+                    enclosed_spans.update(
+                        (start, end, ps)
+                        for start, end, ps in ph_spans
+                        if pm.start() <= start
+                        and end <= pm.end()
+                        and pm.span() != (start, end)
+                    )
+            required_ph.update(
+                ps
+                for start, end, ps in ph_spans
+                if (start, end, ps) not in enclosed_spans
+            )
             variant_counts = count_unnumbered_placeholders(preview)
             src_max_counts |= variant_counts
             src_min_counts = (
