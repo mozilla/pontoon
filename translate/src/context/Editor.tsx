@@ -359,7 +359,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (specialFormats.has(format)) {
             let entry = parseEntry(format, str);
             if (entry && remapPlurals) {
-              entry = copyMessageEntry(entry, locale);
+              entry = copyMessageEntry(entry, locale, sourceEntry);
             }
             if (entry) {
               includeSourceAttributesAndDeclarations(entry, sourceEntry);

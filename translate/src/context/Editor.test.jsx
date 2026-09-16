@@ -1072,6 +1072,33 @@ describe('<EditorProvider>', () => {
 });
 
 describe('copying plural variants from another locale', () => {
+  it('retains target plural fields when copying a plain translation', () => {
+    let editor, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source =
+      'key = { $count ->\n    [one] One item\n   *[other] Other items\n    }';
+    mountSpy(Spy, 'fluent', undefined, source, {
+      locale: { code: 'en-US', cldrPlurals: [1, 5] },
+    });
+    act(() => actions.setEditorFromHistory('key = Copied text', true));
+    expect(editor.fields.map((field) => field.labels.at(-1).label)).toEqual([
+      'one',
+      'other',
+    ]);
+    expect(editor.fields.map((field) => field.handle.current.value)).toEqual([
+      '',
+      'Copied text',
+    ]);
+    act(() => actions.setEditorFromHistory('key = History text'));
+    expect(editor.fields.map((field) => field.handle.current.value)).toEqual([
+      'History text',
+    ]);
+  });
+
   it('uses target plural categories', () => {
     let editor, actions;
     const Spy = () => {

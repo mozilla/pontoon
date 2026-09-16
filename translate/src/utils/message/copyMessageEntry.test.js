@@ -33,20 +33,20 @@ describe('copyMessageEntry', () => {
     ]);
   });
 
-  it('fills additional plural categories from the source catchall', () => {
+  it('leaves plural categories absent from the copied locale empty', () => {
     const source = parseEntry('fluent', plural);
     const result = copyMessageEntry(source, { code: 'ar' });
-    expect(values(result)).toEqual([
-      'OTHER',
-      'ONE',
-      'OTHER',
-      'OTHER',
-      'OTHER',
-      'OTHER',
-    ]);
+    expect(values(result)).toEqual(['', 'ONE', '', '', '', 'OTHER']);
     expect(serializeEntry(source)).toBe(
       serializeEntry(parseEntry('fluent', plural)),
     );
+  });
+
+  it('copies a plain translation into the default form without removing plurals', () => {
+    const source = parseEntry('fluent', 'key = TRANSLATION');
+    const original = parseEntry('fluent', plural);
+    const result = copyMessageEntry(source, { code: 'en' }, original);
+    expect(values(result)).toEqual(['', 'TRANSLATION']);
   });
 
   it('collapses a single-category locale to its catchall pattern', () => {
@@ -55,6 +55,21 @@ describe('copyMessageEntry', () => {
     });
     expect(values(result)).toEqual(['OTHER']);
     expect(editMessageEntry(result)[0].keys).toEqual([]);
+  });
+
+  it('retains plural attributes and copied local attributes without mutating the template', () => {
+    const original = parseEntry(
+      'fluent',
+      'key = VALUE\n    .label = { $n ->\n        [one] ONE\n       *[other] OTHER\n        }',
+    );
+    const before = serializeEntry(original);
+    const copied = parseEntry(
+      'fluent',
+      'key = COPIED\n    .label = LABEL\n    .gender = feminine',
+    );
+    const result = copyMessageEntry(copied, { code: 'en' }, original);
+    expect(values(result)).toEqual(['COPIED', '', 'LABEL', 'feminine']);
+    expect(serializeEntry(original)).toBe(before);
   });
 
   it('preserves explicit numeric variants', () => {

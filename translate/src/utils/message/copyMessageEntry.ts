@@ -2,13 +2,36 @@ import { isSelectMessage, type Message } from '@mozilla/l10n';
 import type { Locale } from '~/context/Locale';
 import type { MessageEntry } from '.';
 import { getEmptyMessageEntry } from './getEmptyMessage';
+import { findPluralSelectors } from './findPluralSelectors';
 
 /** Copy an entry using the plural categories of the destination locale. */
 export function copyMessageEntry(
   source: MessageEntry,
   locale: Locale,
+  original?: MessageEntry,
 ): MessageEntry {
-  const target = getEmptyMessageEntry(source, locale);
+  const template = structuredClone(source);
+  if (
+    source.value &&
+    original?.value &&
+    !isSelectMessage(source.value) &&
+    findPluralSelectors(original.value).size
+  ) {
+    template.value = original.value;
+  }
+  if (source.attributes && template.attributes) {
+    for (const [name, message] of source.attributes) {
+      const reference = original?.attributes?.get(name);
+      if (
+        !isSelectMessage(message) &&
+        reference &&
+        findPluralSelectors(reference).size
+      ) {
+        template.attributes.set(name, reference);
+      }
+    }
+  }
+  const target = getEmptyMessageEntry(template, locale);
   if (source.value && target.value) {
     target.value = copyPatterns(source.value, target.value);
   }
@@ -25,8 +48,23 @@ export function copyMessageEntry(
 
 function copyPatterns(source: Message, target: Message): Message {
   if (!isSelectMessage(source)) {
+    if (isSelectMessage(target)) {
+      const fallback = target.alt.find(({ keys }) =>
+        keys.every((key) => typeof key !== 'string'),
+      );
+      if (fallback) {
+        fallback.pat = structuredClone(
+          Array.isArray(source) ? source : source.msg,
+        );
+      }
+      if (!Array.isArray(source)) {
+        Object.assign(target.decl, structuredClone(source.decl));
+      }
+      return target;
+    }
     return structuredClone(source);
   }
+  const plurals = findPluralSelectors(source);
   const select = isSelectMessage(target);
   const variants = select ? target.alt : [{ keys: [], pat: [] }];
   for (const variant of variants) {
@@ -41,9 +79,10 @@ function copyPatterns(source: Message, target: Message): Message {
           (typeof candidate === 'string' ? candidate : candidate['*']) === value
         );
       });
-      candidates = exact.length
-        ? exact
-        : candidates.filter(({ keys }) => typeof keys[i] !== 'string');
+      candidates =
+        exact.length || plurals.has(i)
+          ? exact
+          : candidates.filter(({ keys }) => typeof keys[i] !== 'string');
     }
     variant.pat = structuredClone(candidates[0]?.pat ?? []);
   }
