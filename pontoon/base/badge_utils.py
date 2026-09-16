@@ -76,3 +76,20 @@ def badges_review_level(user: User) -> int:
         if thresholds[level] <= count < thresholds[level + 1]:
             return level + 1
     return 0
+
+
+def badge_levels(user: User) -> dict[str, int]:
+    """Current level of each badge awarded for translation and review activity."""
+    return {
+        "Translation Champion": badges_translation_level(user),
+        "Review Master": badges_review_level(user),
+    }
+
+
+def new_badge_levels(user: User, before: dict[str, int]) -> list[tuple[str, int]]:
+    """Badges whose level increased since `before`, each with its new level."""
+    return [
+        (badge, level)
+        for badge, level in badge_levels(user).items()
+        if level > before[badge]
+    ]

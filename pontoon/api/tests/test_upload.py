@@ -13,9 +13,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError
 from django.utils.timezone import now
 
-from pontoon.api import views
 from pontoon.api.models import PersonalAccessToken
 from pontoon.api.serializers import UPLOAD_KEYS_ERROR_LIMIT
+from pontoon.base import badge_utils
 from pontoon.base.models import Project, Translation
 from pontoon.sync import upload as sync_upload
 from pontoon.sync.upload import UploadConflictError
@@ -551,8 +551,10 @@ def test_upload_badge_notification(
 ):
     """Crossing a badge threshold through the API notifies the user."""
     levels = iter([0, 1])
-    monkeypatch.setattr(views, "badges_translation_level", lambda user: next(levels))
-    monkeypatch.setattr(views, "badges_review_level", lambda user: 0)
+    monkeypatch.setattr(
+        badge_utils, "badges_translation_level", lambda user: next(levels)
+    )
+    monkeypatch.setattr(badge_utils, "badges_review_level", lambda user: 0)
 
     response = _upload(
         _pat_client(upload_translator.user),
@@ -573,8 +575,8 @@ def test_upload_no_badge_notification_below_threshold(
     monkeypatch, upload_translator, project_locale_a, resource_path
 ):
     """No notification when the upload doesn't move the user to a new badge level."""
-    monkeypatch.setattr(views, "badges_translation_level", lambda user: 1)
-    monkeypatch.setattr(views, "badges_review_level", lambda user: 0)
+    monkeypatch.setattr(badge_utils, "badges_translation_level", lambda user: 1)
+    monkeypatch.setattr(badge_utils, "badges_review_level", lambda user: 0)
 
     response = _upload(
         _pat_client(upload_translator.user),

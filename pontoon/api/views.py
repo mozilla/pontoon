@@ -25,7 +25,7 @@ from pontoon.api.authentication import (
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.api.throttling import SCOPED_THROTTLE_CLASSES
 from pontoon.base import forms
-from pontoon.base.badge_utils import badges_review_level, badges_translation_level
+from pontoon.base.badge_utils import badge_levels, new_badge_levels
 from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Entity,
@@ -804,25 +804,14 @@ class UploadTranslationsView(UploadView):
 
         project, locale, resource, uploadfile = self.upload_target(request)
 
-        badge_levels_before = (
-            badges_translation_level(request.user),
-            badges_review_level(request.user),
-        )
+        levels_before = badge_levels(request.user)
 
         result = self.run_import(
             import_uploaded_file, project, locale, resource, uploadfile, request.user
         )
 
-        for (badge, get_level), before in zip(
-            (
-                ("Translation Champion", badges_translation_level),
-                ("Review Master", badges_review_level),
-            ),
-            badge_levels_before,
-        ):
-            after = get_level(request.user)
-            if after > before:
-                send_badge_notification(request.user, badge, after)
+        for badge, level in new_badge_levels(request.user, levels_before):
+            send_badge_notification(request.user, badge, level)
 
         return Response(
             {
