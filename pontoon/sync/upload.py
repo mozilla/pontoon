@@ -4,6 +4,7 @@ from datetime import datetime
 from itertools import groupby
 from os.path import basename, join
 from tempfile import TemporaryDirectory
+from typing import NamedTuple
 
 from moz.l10n.model import Id as L10nId
 from moz.l10n.resource import parse_resource
@@ -19,6 +20,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     Resource as DbResource,
+    TranslatedResource,
     Translation,
     User,
 )
@@ -179,6 +181,30 @@ class FailedCheck:
         )
 
 
+def lock_import_target(db_res: DbResource, locale: Locale) -> None:
+    """
+    Serialize imports targeting the same resource and locale.
+
+    Two concurrent imports of the same target could each read a string's
+    translations, find no match, and both insert the same one. Neither insert is
+    caught by `lock_read_translations()`, which only re-checks rows that existed when
+    they were read. Taking this lock before reading closes that gap: a second import
+    blocks until the first commits, and then reads what it wrote.
+
+    The lock is taken on the target's `TranslatedResource` row rather than on its
+    entities. That row is known to exist for any upload, `update_stats()` writes it
+    later in the same transaction anyway, and it is specific to the locale, so
+    imports of the same resource in other locales are not held back.
+
+    Must run inside a transaction; the lock is held until it ends.
+    """
+    list(
+        TranslatedResource.objects.select_for_update()
+        .filter(resource=db_res, locale=locale)
+        .values_list("pk", flat=True)
+    )
+
+
 def translations_by_entity(
     locale: Locale, entity_ids: Iterable[int]
 ) -> dict[int, list[Translation]]:
@@ -195,6 +221,29 @@ def translations_by_entity(
     }
 
 
+class ReviewState(NamedTuple):
+    """
+    The translation fields used to make a decision on how to treat imported
+    translations and to detect concurrent changes.
+    """
+
+    approved: bool
+    pretranslated: bool
+    fuzzy: bool
+    rejected: bool
+    active: bool
+
+    @classmethod
+    def of(cls, tx: Translation) -> "ReviewState":
+        """The review state of `tx`."""
+        return cls._make(getattr(tx, f) for f in cls._fields)
+
+
+def read_state(translations: list[Translation]) -> dict[int, ReviewState]:
+    """The review state of each translation, keyed by translation id."""
+    return {tx.pk: ReviewState.of(tx) for tx in translations}
+
+
 @dataclass
 class PendingChange:
     """
@@ -203,10 +252,13 @@ class PendingChange:
     - `match`: the translation the upload matches, if Pontoon already has it
     - `reject_ids`: ids of the translations to reject
     - `deactivate_ids`: ids of the translations to leave in place, but deactivate
+    - `read_state`: the review state of the entity's translations as read when the
+      change was decided, keyed by translation id
     - `check_results`: the `run_checks()` result of the uploaded translation
     """
 
     key: L10nId
+    read_state: dict[int, ReviewState]
     new: Translation | None = None
     match: Translation | None = None
     reject_ids: list[int] = field(default_factory=list)
@@ -217,6 +269,38 @@ class PendingChange:
     def translation(self) -> Translation:
         """The row holding the uploaded translation, whether created or matched."""
         return self.new or self.match
+
+
+def lock_read_translations(applied: list[PendingChange]) -> None:
+    """
+    Lock the translations the staged changes were decided on, and check that none
+    has changed since it was read.
+
+    Acquiring the lock waits for any concurrent transaction on these rows to commit,
+    so the state re-read here is the one the changes are written over. Comparing it
+    with the state read earlier catches a review or deletion that happened in between.
+
+    Translations another import inserted in the meantime are not among these rows;
+    `lock_import_target()` keeps such imports from overlapping in the first place.
+
+    Raises `UploadConflictError` if the review state of any translation differs from
+    the one read, or if one was deleted.
+    """
+    expected = {
+        pk: state for change in applied for pk, state in change.read_state.items()
+    }
+    if not expected:
+        return
+    locked = (
+        Translation.objects.select_for_update()
+        .filter(pk__in=expected)
+        .values_list("pk", *ReviewState._fields)
+    )
+    current = {pk: ReviewState(*state) for pk, *state in locked}
+    if len(current) != len(expected) or any(
+        current[pk] != state for pk, state in expected.items()
+    ):
+        raise UploadConflictError()
 
 
 def run_staged_checks(
@@ -266,10 +350,11 @@ def write_changes(
     and stats, and mark the written translations as changed for sync. Must run
     inside a transaction.
 
-    Raises `UploadConflictError` if a review approved one of the translations the
-    changes reject, deactivate or match, or rejected a matched one, after this
-    import read it.
+    Raises `UploadConflictError` if another transaction reviewed or deleted a
+    translation the changes were decided on after this import read it.
     """
+    lock_read_translations(applied)
+
     reject_ids = [pk for change in applied for pk in change.reject_ids]
     deactivate_ids = [pk for change in applied for pk in change.deactivate_ids]
     matched = [change.match for change in applied if change.match is not None]
@@ -305,19 +390,6 @@ def write_changes(
         Translation.objects.bulk_update(matched, ["active", "fuzzy", "pretranslated"])
     if created:
         Translation.objects.bulk_create(created)
-
-    # A review may approve or reject one of these translations after they were read;
-    # abort if it did, rolling back the upload. A rejection is only a conflict for
-    # matched translations, as the other rejected rows were rejected above.
-    matched_ids = [tx.pk for tx in matched]
-    modified_ids = reject_ids + deactivate_ids + matched_ids
-    if (
-        modified_ids
-        and Translation.objects.filter(
-            Q(pk__in=modified_ids, approved=True) | Q(pk__in=matched_ids, rejected=True)
-        ).exists()
-    ):
-        raise UploadConflictError()
 
     actions.extend(
         ActionLog(
@@ -391,8 +463,9 @@ def import_uploaded_pretranslations(
     translation never replaces a good one. A new pretranslation is not stored, a
     matching one is not converted, and the previous translation stays in place.
 
-    Raises `UploadConflictError` if a review approved a targeted translation after this
-    import read it, and that approval was committed first.
+    Must run inside a transaction. Raises `UploadConflictError` if a translation of a
+    targeted string was reviewed or deleted after this import read it, and that change
+    was committed first.
 
     This does not reuse `update_db_translations()`, which has the same overall shape,
     but makes a different call at nearly every decision point:
@@ -409,6 +482,7 @@ def import_uploaded_pretranslations(
     upload_translations, entities, result.undefined_keys = parse_upload_for_entities(
         locale, db_res, upload
     )
+    lock_import_target(db_res, locale)
     current = translations_by_entity(
         locale, [entities[key] for key in upload_translations]
     )
@@ -434,7 +508,9 @@ def import_uploaded_pretranslations(
             result.unchanged += 1
             continue
 
-        change = PendingChange(key=key, match=match)
+        change = PendingChange(
+            key=key, read_state=read_state(translations), match=match
+        )
         for tx in translations:
             if tx is match:
                 continue

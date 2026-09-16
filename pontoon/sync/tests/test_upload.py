@@ -3,7 +3,8 @@ from types import SimpleNamespace
 import pytest
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.db import transaction
+from django.db import connection, transaction
+from django.test.utils import CaptureQueriesContext
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
@@ -120,7 +121,8 @@ def _review_during_import(monkeypatch, review):
 
     The importers call `timezone.now()` after reading the current translations and
     before writing anything, so this reproduces a review landing in the window the
-    conflict check guards.
+    conflict check guards. It runs in the same transaction, so it does not exercise
+    the locks themselves.
     """
     real_now = sync_upload.timezone.now
     reviewed = False
@@ -818,3 +820,51 @@ def test_upload_pretranslations_conflicts_with_concurrent_rejection_of_suggestio
     assert not po_translation.rejected
     assert not po_translation.pretranslated
     assert Translation.objects.filter(entity=po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("field", ["pretranslated", "fuzzy"])
+def test_upload_pretranslations_conflicts_with_concurrent_precedence_change(
+    monkeypatch, project_locale_a, resource, po_translation, uploader, field
+):
+    """A suggestion that gains precedence mid-import is not just deactivated."""
+    po_translation.active = True
+    po_translation.save()
+
+    _review_during_import(
+        monkeypatch,
+        lambda: Translation.objects.filter(pk=po_translation.pk).update(
+            **{field: True}
+        ),
+    )
+    _import_conflicts(
+        import_uploaded_pretranslations, project_locale_a, resource, uploader
+    )
+
+    # The import is rolled back, which also undoes the change made inside it.
+    po_translation.refresh_from_db()
+
+    assert po_translation.active
+    assert not getattr(po_translation, field)
+    assert Translation.objects.filter(entity=po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_locks_target_before_reading_translations(
+    project_locale_a, resource, po_translation, uploader
+):
+    """The lock that serializes concurrent imports is taken before the read it guards."""
+    with CaptureQueriesContext(connection) as queries:
+        _import(import_uploaded_pretranslations, project_locale_a, resource, uploader)
+
+    statements = [query["sql"] for query in queries.captured_queries]
+    lock = next(
+        i
+        for i, sql in enumerate(statements)
+        if "base_translatedresource" in sql and "FOR UPDATE" in sql
+    )
+    read = next(
+        i for i, sql in enumerate(statements) if 'FROM "base_translation"' in sql
+    )
+
+    assert lock < read
