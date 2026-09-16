@@ -696,6 +696,37 @@ class UploadConflict(APIException):
     )
 
 
+def upload_schema(
+    response,
+    *,
+    accepted: str,
+    forbidden: str,
+    description: str,
+):
+    """OpenAPI schema of an upload endpoint, with the error responses they all share."""
+    return extend_schema(
+        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
+        responses={
+            200: OpenApiResponse(response=response, description=accepted),
+            400: OpenApiResponse(
+                description="Invalid parameters, or a file that is too large, "
+                "cannot be parsed, or contains no translations."
+            ),
+            403: OpenApiResponse(description=forbidden),
+            404: OpenApiResponse(
+                description="Unknown or disabled project, unknown locale or resource, "
+                "or a project or resource not enabled for the locale."
+            ),
+            409: OpenApiResponse(
+                description="A concurrent upload or review changed the same "
+                "translations."
+            ),
+            429: OpenApiResponse(description="Rate limit exceeded."),
+        },
+        description=description,
+    )
+
+
 class UploadView(APIView):
     """Shared behavior of endpoints writing translations from an uploaded file."""
 
@@ -764,33 +795,23 @@ class UploadView(APIView):
             "undefined_keys_count": len(result.undefined_keys),
         }
 
+    def failed_checks(self, result) -> dict:
+        """Response fields reporting the keys left out because they fail checks."""
+        return {
+            "failed_checks": [
+                {"key": list(fc.key), "errors": fc.errors, "warnings": fc.warnings}
+                for fc in result.failed_checks[:UPLOAD_KEYS_ERROR_LIMIT]
+            ],
+            "failed_checks_count": len(result.failed_checks),
+        }
+
 
 class UploadTranslationsView(UploadView):
-    @extend_schema(
-        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
-        responses={
-            200: OpenApiResponse(
-                response=UploadTranslationsResponseSerializer,
-                description="Upload accepted. Reports the number of translations "
-                "updated and unchanged, and the keys not found in Pontoon.",
-            ),
-            400: OpenApiResponse(
-                description="Invalid parameters, or a file that is too large, "
-                "cannot be parsed, or contains no translations."
-            ),
-            403: OpenApiResponse(
-                description="Missing translate permission, or read-only project locale."
-            ),
-            404: OpenApiResponse(
-                description="Unknown or disabled project, unknown locale or resource, "
-                "or a project or resource not enabled for the locale."
-            ),
-            409: OpenApiResponse(
-                description="A concurrent upload or review changed the same "
-                "translations."
-            ),
-            429: OpenApiResponse(description="Rate limit exceeded."),
-        },
+    @upload_schema(
+        UploadTranslationsResponseSerializer,
+        accepted="Upload accepted. Reports the number of translations updated and "
+        "unchanged, and the keys not found in Pontoon.",
+        forbidden="Missing translate permission, or read-only project locale.",
         description=(
             "Update translations from an uploaded file, as the authenticated user. "
             "Requires translator rights for the target locale, and a project locale "
@@ -825,32 +846,12 @@ class UploadTranslationsView(UploadView):
 class UploadPretranslationsView(UploadView):
     permission_classes = [IsAuthenticated, IsPretranslator]
 
-    @extend_schema(
-        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
-        responses={
-            200: OpenApiResponse(
-                response=UploadPretranslationsResponseSerializer,
-                description="Upload accepted. Reports how the pretranslations were "
-                "stored, and the keys not found in Pontoon.",
-            ),
-            400: OpenApiResponse(
-                description="Invalid parameters, or a file that is too large, "
-                "cannot be parsed, or contains no translations."
-            ),
-            403: OpenApiResponse(
-                description="Missing membership of the pretranslators group, missing "
-                "translate permission, or read-only project locale."
-            ),
-            404: OpenApiResponse(
-                description="Unknown or disabled project, unknown locale or resource, "
-                "or a project or resource not enabled for the locale."
-            ),
-            409: OpenApiResponse(
-                description="A concurrent upload or review changed the same "
-                "translations."
-            ),
-            429: OpenApiResponse(description="Rate limit exceeded."),
-        },
+    @upload_schema(
+        UploadPretranslationsResponseSerializer,
+        accepted="Upload accepted. Reports how the pretranslations were stored, and "
+        "the keys not found in Pontoon.",
+        forbidden="Missing membership of the pretranslators group, missing translate "
+        "permission, or read-only project locale.",
         description=(
             "Store translations from an uploaded translation file as pretranslations. "
             "This API requires the user to be a member of the `pretranslators` group, "
@@ -887,11 +888,7 @@ class UploadPretranslationsView(UploadView):
                 "converted": result.converted,
                 "unchanged": result.unchanged,
                 "skipped": result.skipped,
-                "failed_checks": [
-                    {"key": list(fc.key), "errors": fc.errors, "warnings": fc.warnings}
-                    for fc in result.failed_checks[:UPLOAD_KEYS_ERROR_LIMIT]
-                ],
-                "failed_checks_count": len(result.failed_checks),
+                **self.failed_checks(result),
                 **self.undefined_keys(result),
             }
         )

@@ -422,6 +422,23 @@ UPLOAD_REQUEST_SCHEMA = {
 UPLOAD_KEYS_ERROR_LIMIT = 100
 
 
+def undefined_keys_field() -> serializers.ListField:
+    """Upload response field listing the keys that match no entity in Pontoon."""
+    return serializers.ListField(
+        child=serializers.ListField(child=serializers.CharField()),
+        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
+        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+
+
+def undefined_keys_count_field() -> serializers.IntegerField:
+    """Upload response field counting the keys that match no entity in Pontoon."""
+    return serializers.IntegerField(
+        help_text="Total number of keys with no matching entity in Pontoon, "
+        "before truncation."
+    )
+
+
 class UploadTranslationsResponseSerializer(serializers.Serializer):
     """Result of a translation file upload."""
 
@@ -431,15 +448,8 @@ class UploadTranslationsResponseSerializer(serializers.Serializer):
     unchanged = serializers.IntegerField(
         help_text="Number of translations identical to the current ones, ignored."
     )
-    undefined_keys = serializers.ListField(
-        child=serializers.ListField(child=serializers.CharField()),
-        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
-        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
-    )
-    undefined_keys_count = serializers.IntegerField(
-        help_text="Total number of keys with no matching entity in Pontoon, "
-        "before truncation."
-    )
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
 
 
 class FailedCheckSerializer(serializers.Serializer):
@@ -492,12 +502,5 @@ class UploadPretranslationsResponseSerializer(serializers.Serializer):
         help_text="Total number of strings left untouched because of failing checks, "
         "before truncation."
     )
-    undefined_keys = serializers.ListField(
-        child=serializers.ListField(child=serializers.CharField()),
-        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
-        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
-    )
-    undefined_keys_count = serializers.IntegerField(
-        help_text="Total number of keys with no matching entity in Pontoon, "
-        "before truncation."
-    )
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
