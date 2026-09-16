@@ -10,6 +10,26 @@ function values(entry) {
 }
 
 describe('copyMessageEntry', () => {
+  it.each(['ru', 'uk', 'pl', 'be', 'szl'])(
+    'copies the source catchall into the %s default form',
+    (code) => {
+      const result = copyMessageEntry(parseEntry('fluent', plural), { code });
+      expect(values(result)).toEqual(['ONE', '', 'OTHER']);
+    },
+  );
+
+  it('keeps missing Slovenian categories empty while copying its catchall', () => {
+    const result = copyMessageEntry(parseEntry('fluent', plural), {
+      code: 'sl',
+    });
+    expect(values(result)).toEqual(['ONE', '', '', 'OTHER']);
+  });
+
+  it('uses a differently named source catchall when the selector collapses', () => {
+    const source = parseEntry('fluent', plural.replace('*[other]', '*[many]'));
+    expect(values(copyMessageEntry(source, { code: 'zh' }))).toEqual(['OTHER']);
+  });
+
   it('keeps non-plural branches when a plural selector collapses', () => {
     const source = parseEntry(
       'fluent',

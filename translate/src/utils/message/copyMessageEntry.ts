@@ -80,7 +80,8 @@ function copyPatterns(source: Message, target: Message): Message {
         );
       });
       candidates =
-        exact.length || plurals.has(i)
+        exact.length ||
+        (plurals.has(i) && index >= 0 && typeof key === 'string')
           ? exact
           : candidates.filter(({ keys }) => typeof keys[i] !== 'string');
     }
