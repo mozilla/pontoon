@@ -1,4 +1,6 @@
+from collections.abc import Iterable
 from dataclasses import dataclass, field
+from datetime import datetime
 from itertools import groupby
 from os.path import basename, join
 from tempfile import TemporaryDirectory
@@ -21,6 +23,7 @@ from pontoon.base.models import (
     User,
 )
 from pontoon.checks.libraries import run_checks
+from pontoon.checks.utils import are_blocking_checks
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import (
     Updates,
@@ -162,6 +165,181 @@ class FailedCheck:
     errors: list[str]
     warnings: list[str]
 
+    @classmethod
+    def from_check_results(
+        cls, key: L10nId, results: dict[str, list[str]]
+    ) -> "FailedCheck":
+        """The key and the messages of a `run_checks()` result, split by severity."""
+        return cls(
+            key=key,
+            errors=[m for g, ms in results.items() if g.endswith("Errors") for m in ms],
+            warnings=[
+                m for g, ms in results.items() if g.endswith("Warnings") for m in ms
+            ],
+        )
+
+
+def translations_by_entity(
+    locale: Locale, entity_ids: Iterable[int]
+) -> dict[int, list[Translation]]:
+    """The locale's unrejected translations of `entity_ids`, keyed by entity id."""
+    translations = Translation.objects.filter(
+        entity_id__in=entity_ids, locale=locale, rejected=False
+    )
+    return {
+        entity_id: list(txs)
+        for entity_id, txs in groupby(
+            translations.order_by("entity_id").iterator(),
+            key=lambda tx: tx.entity_id,
+        )
+    }
+
+
+@dataclass
+class PendingChange:
+    """
+    Changes staged for one entity, applied only once its checks are known:
+    - `new`: a translation to create, if the upload matches none Pontoon has
+    - `match`: the translation the upload matches, if Pontoon already has it
+    - `reject_ids`: ids of the translations to reject
+    - `deactivate_ids`: ids of the translations to leave in place, but deactivate
+    - `check_results`: the `run_checks()` result of the uploaded translation
+    """
+
+    key: L10nId
+    new: Translation | None = None
+    match: Translation | None = None
+    reject_ids: list[int] = field(default_factory=list)
+    deactivate_ids: list[int] = field(default_factory=list)
+    check_results: dict[str, list[str]] = field(default_factory=dict)
+
+    @property
+    def translation(self) -> Translation:
+        """The row holding the uploaded translation, whether created or matched."""
+        return self.new or self.match
+
+
+def run_staged_checks(
+    pending: list[PendingChange], db_res: DbResource, locale: Locale
+) -> None:
+    """
+    Run the quality checks on each staged translation, recording the results on its
+    `PendingChange` as `check_results`.
+
+    Checks run before anything is written, so that a translation failing them
+    can be left out, keeping in place the translation it would have replaced.
+
+    The results are kept in memory rather than read back from the database
+    after the write, as `run_checks()` also reports checks from libraries that
+    `bulk_run_checks()` does not store.
+    """
+    if not pending:
+        return
+
+    entities = {
+        entity.pk: entity
+        for entity in Entity.objects.filter(
+            pk__in={change.translation.entity_id for change in pending}
+        )
+    }
+    if db_res.format == DbResource.Format.DTD:
+        # compare-locales needs the other entities of the resource as a reference,
+        # and reloads them for each check unless they are cached on `db_res`.
+        prefetch_related_objects([db_res], "entities")
+
+    for change in pending:
+        entity = entities[change.translation.entity_id]
+        entity.resource = db_res
+        change.check_results = run_checks(
+            entity, locale.code, change.translation.string, False
+        )
+
+
+def write_changes(
+    project: Project,
+    user: User,
+    now: datetime,
+    applied: list[PendingChange],
+) -> None:
+    """
+    Write the staged changes to the database, along with their action log entries
+    and stats, and mark the written translations as changed for sync. Must run
+    inside a transaction.
+
+    Raises `UploadConflictError` if a review approved one of the translations the
+    changes reject, deactivate or match, or rejected a matched one, after this
+    import read it.
+    """
+    reject_ids = [pk for change in applied for pk in change.reject_ids]
+    deactivate_ids = [pk for change in applied for pk in change.deactivate_ids]
+    matched = [change.match for change in applied if change.match is not None]
+    created = [change.new for change in applied if change.new is not None]
+
+    actions: list[ActionLog] = []
+    # Rejections and deactivations must be written before translations are activated,
+    # to keep a single active translation per entity and locale.
+    if reject_ids:
+        rejected = Translation.objects.filter(pk__in=reject_ids)
+        actions.extend(
+            ActionLog(
+                action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+                created_at=now,
+                performed_by=user,
+                translation=tx,
+                is_implicit_action=True,
+            )
+            for tx in rejected
+        )
+        # Only approved translations have TM entries, so there are none to remove here.
+        rejected.update(
+            active=False,
+            rejected=True,
+            rejected_user=user,
+            rejected_date=now,
+            pretranslated=False,
+            fuzzy=False,
+        )
+    if deactivate_ids:
+        Translation.objects.filter(pk__in=deactivate_ids).update(active=False)
+    if matched:
+        Translation.objects.bulk_update(matched, ["active", "fuzzy", "pretranslated"])
+    if created:
+        Translation.objects.bulk_create(created)
+
+    # A review may approve or reject one of these translations after they were read;
+    # abort if it did, rolling back the upload. A rejection is only a conflict for
+    # matched translations, as the other rejected rows were rejected above.
+    matched_ids = [tx.pk for tx in matched]
+    modified_ids = reject_ids + deactivate_ids + matched_ids
+    if (
+        modified_ids
+        and Translation.objects.filter(
+            Q(pk__in=modified_ids, approved=True) | Q(pk__in=matched_ids, rejected=True)
+        ).exists()
+    ):
+        raise UploadConflictError()
+
+    actions.extend(
+        ActionLog(
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            created_at=now,
+            performed_by=user,
+            translation=tx,
+        )
+        for tx in created
+    )
+    if actions:
+        ActionLog.objects.bulk_create(actions)
+
+    if created:
+        # bulk_create() skips Translation.save(), which would do this
+        created[0].update_latest_translation()
+
+    changed_pks = [tx.pk for tx in created + matched]
+    if changed_pks or reject_ids:
+        update_stats(project)
+        Translation.objects.filter(pk__in=reject_ids + changed_pks).bulk_mark_changed()
+
 
 @dataclass
 class PretranslationUploadResult:
@@ -188,23 +366,6 @@ class PretranslationUploadResult:
     skipped: int = 0
     failed_checks: list[FailedCheck] = field(default_factory=list)
     undefined_keys: list[L10nId] = field(default_factory=list)
-
-
-@dataclass
-class _PendingPretranslation:
-    """Changes staged for one entity, applied only if its checks pass."""
-
-    key: L10nId
-    match: Translation | None
-    new: Translation | None
-    reject_ids: list[int]
-    deactivate_ids: list[int]
-    replaces_translation: bool
-
-    @property
-    def translation(self) -> Translation:
-        """The row holding the uploaded translation, whether created or matched."""
-        return self.new or self.match
 
 
 def import_uploaded_pretranslations(
@@ -248,24 +409,12 @@ def import_uploaded_pretranslations(
     upload_translations, entities, result.undefined_keys = parse_upload_for_entities(
         locale, db_res, upload
     )
-
-    current: dict[int, list[Translation]] = {
-        entity_id: list(txs)
-        for entity_id, txs in groupby(
-            Translation.objects.filter(
-                entity__resource=db_res,
-                entity__obsolete=False,
-                locale=locale,
-                rejected=False,
-            )
-            .order_by("entity_id")
-            .iterator(),
-            key=lambda tx: tx.entity_id,
-        )
-    }
+    current = translations_by_entity(
+        locale, [entities[key] for key in upload_translations]
+    )
 
     now = timezone.now()
-    pending: list[_PendingPretranslation] = []
+    pending: list[PendingChange] = []
     for key, rt in upload_translations.items():
         entity_id = entities[key]
         translations = current.get(entity_id, [])
@@ -285,148 +434,42 @@ def import_uploaded_pretranslations(
             result.unchanged += 1
             continue
 
-        reject_ids: list[int] = []
-        deactivate_ids: list[int] = []
+        change = PendingChange(key=key, match=match)
         for tx in translations:
             if tx is match:
                 continue
             if tx.pretranslated or tx.fuzzy:
-                reject_ids.append(tx.pk)
+                change.reject_ids.append(tx.pk)
             elif tx.active:
-                deactivate_ids.append(tx.pk)
+                change.deactivate_ids.append(tx.pk)
 
-        new = None
         if match is None:
-            new = build_translation(rt, entity_id, locale.pk, user, now)
-            new.pretranslated = True
-            new.active = True
-        pending.append(
-            _PendingPretranslation(
-                key=key,
-                match=match,
-                new=new,
-                reject_ids=reject_ids,
-                deactivate_ids=deactivate_ids,
-                replaces_translation=any(
-                    tx.pretranslated or tx.fuzzy for tx in translations
-                ),
-            )
-        )
+            change.new = build_translation(rt, entity_id, locale.pk, user, now)
+            change.new.pretranslated = True
+            change.new.active = True
+        pending.append(change)
 
-    # Checks run on the staged translations, before anything is written: a failing
-    # upload must not have discarded the translation it would replace. `run_checks()`
-    # reports more than `bulk_run_checks()` stores, as only some libraries are saved
-    # to the database, so its result is used here rather than the stored rows.
-    entities_by_id = {
-        entity.pk: entity
-        for entity in Entity.objects.filter(
-            pk__in={p.translation.entity_id for p in pending}
-        )
-    }
-    if db_res.format == DbResource.Format.DTD:
-        # compare-locales needs the other entities of the resource as a reference,
-        # and reloads them for each check unless they are cached on `db_res`.
-        prefetch_related_objects([db_res], "entities")
+    run_staged_checks(pending, db_res, locale)
 
-    applied: list[_PendingPretranslation] = []
-    for p in pending:
-        entity = entities_by_id[p.translation.entity_id]
-        entity.resource = db_res
-        failed = run_checks(entity, locale.code, p.translation.string, False)
-        if failed:
+    applied: list[PendingChange] = []
+    for change in pending:
+        if are_blocking_checks(change.check_results, ignore_warnings=False):
             result.failed_checks.append(
-                FailedCheck(
-                    key=p.key,
-                    errors=[m for g, ms in failed.items() if "Errors" in g for m in ms],
-                    warnings=[
-                        m for g, ms in failed.items() if "Warnings" in g for m in ms
-                    ],
-                )
+                FailedCheck.from_check_results(change.key, change.check_results)
             )
         else:
-            applied.append(p)
+            applied.append(change)
 
-    for p in applied:
-        if p.match is not None:
+    for change in applied:
+        if change.match is not None:
             result.converted += 1
-            p.match.pretranslated = True
-            p.match.fuzzy = False
-            p.match.active = True
-        elif p.replaces_translation:
+            change.match.pretranslated = True
+            change.match.fuzzy = False
+            change.match.active = True
+        elif change.reject_ids:
             result.replaced += 1
         else:
             result.created += 1
 
-    reject_ids = [pk for p in applied for pk in p.reject_ids]
-    deactivate_ids = [pk for p in applied for pk in p.deactivate_ids]
-    converted_translations = [p.match for p in applied if p.match is not None]
-    new_translations = [p.new for p in applied if p.new is not None]
-
-    actions: list[ActionLog] = []
-    # Rejections and deactivations must be written before translations are activated,
-    # to keep a single active translation per entity and locale.
-    if reject_ids:
-        rejected = Translation.objects.filter(pk__in=reject_ids)
-        actions.extend(
-            ActionLog(
-                action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
-                created_at=now,
-                performed_by=user,
-                translation=tx,
-                is_implicit_action=True,
-            )
-            for tx in rejected
-        )
-        # Only approved translations have TM entries, so there are none to remove here.
-        rejected.update(
-            active=False,
-            rejected=True,
-            rejected_user=user,
-            rejected_date=now,
-            pretranslated=False,
-            fuzzy=False,
-        )
-    if deactivate_ids:
-        Translation.objects.filter(pk__in=deactivate_ids).update(active=False)
-    if converted_translations:
-        Translation.objects.bulk_update(
-            converted_translations, ["active", "fuzzy", "pretranslated"]
-        )
-    if new_translations:
-        Translation.objects.bulk_create(new_translations)
-
-    # A review may approve or reject one of these translations after `current` was
-    # loaded; abort if it did, rolling back the upload. A rejection is only a conflict
-    # for converted translations, as the other rejected rows were rejected above.
-    converted_ids = [tx.pk for tx in converted_translations]
-    modified_ids = reject_ids + deactivate_ids + converted_ids
-    if (
-        modified_ids
-        and Translation.objects.filter(
-            Q(pk__in=modified_ids, approved=True)
-            | Q(pk__in=converted_ids, rejected=True)
-        ).exists()
-    ):
-        raise UploadConflictError()
-
-    actions.extend(
-        ActionLog(
-            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
-            created_at=now,
-            performed_by=user,
-            translation=tx,
-        )
-        for tx in new_translations
-    )
-    if actions:
-        ActionLog.objects.bulk_create(actions)
-
-    if new_translations:
-        # bulk_create() skips Translation.save(), which would do this
-        new_translations[0].update_latest_translation()
-
-    changed_pks = [tx.pk for tx in new_translations + converted_translations]
-    if changed_pks or reject_ids:
-        update_stats(project)
-        Translation.objects.filter(pk__in=reject_ids + changed_pks).bulk_mark_changed()
+    write_changes(project, user, now, applied)
     return result
