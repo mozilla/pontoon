@@ -73,27 +73,27 @@ An example may look like this:
 $ curl --globoff "https://example.com/api/v2/locales/?page_size=50"
 ```
 
-## Terminology Extraction
+## Terminology Matching
 
-### `GET /api/v2/terminology/extract-from-text/`
+### `GET /api/v2/terminology/matches/`
 
-Extract the terms appearing in a text, with their translation in a given locale.
+Find the terms appearing in a text, with their translation in a given locale.
 
-Unlike [`/api/v2/search/terminology/`](#json-mode), which looks up terms by name, this
+Unlike [`/api/v2/search/terminology/`](#/search/search_terminology_list), which looks up terms by name, this
 endpoint matches every known term against the text, at word boundaries: a term matches
 the start of a word, so `open` matches `Opened`, but not `Reopened`. Terms without a
 definition, and terms marked as forbidden, are never returned.
 
-| Parameter | Description                                               |
-| --------- | --------------------------------------------------------- |
-| `locale`  | Locale code                                               |
-| `text`    | Text to extract terminology from, at most 2048 characters |
+| Parameter | Description                 |
+| --------- | --------------------------- |
+| `locale`  | Locale code                 |
+| `text`    | Text to match terms against |
 
 ```bash
 $ curl --globoff \
   --data-urlencode "locale=it" \
   --data-urlencode "text=Open a new tab" \
-  --get "https://example.com/api/v2/terminology/extract-from-text/"
+  --get "https://example.com/api/v2/terminology/matches/"
 ```
 
 ```json
@@ -125,9 +125,15 @@ $ curl --globoff \
 `translation_text` is `null` for terms not yet translated in the locale, and the term
 itself for terms marked as "do not translate", such as product names.
 
-No authentication is required. Longer texts are rejected with `400`: the maximum length
-is configurable via `TERMINOLOGY_API_MAX_CHARS` (default 2048 characters).
+No authentication is required. Texts over the maximum length are rejected with `400`:
+the limit is configurable via `TERMINOLOGY_API_MAX_CHARS` (default 2048 characters).
 An unknown locale returns `404`.
+
+The endpoint is rate limited per user, or per IP address for anonymous requests, with a
+burst limit of 60 calls per minute and a sustained limit of 600 calls per hour by default
+(configurable via `API_TERMINOLOGY_THROTTLE_BURST` and
+`API_TERMINOLOGY_THROTTLE_SUSTAINED`). Calls over the limit are rejected with `429`.
+This quota is separate from the one used by the write endpoints.
 
 ## Write Endpoints
 

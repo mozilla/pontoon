@@ -23,7 +23,7 @@ from pontoon.api.authentication import (
     PersonalAccessTokenAuthentication,
 )
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
-from pontoon.api.throttling import UPLOAD_THROTTLE_CLASSES
+from pontoon.api.throttling import SCOPED_THROTTLE_CLASSES
 from pontoon.base import forms
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.get_entities import get_entities_for_project_locale
@@ -479,11 +479,13 @@ class TermSearchListView(RequestFieldsMixin, generics.ListAPIView):
         return qs
 
 
-class TermExtractFromTextView(generics.ListAPIView):
+class TermMatchListView(generics.ListAPIView):
     """Terms matching a text."""
 
     serializer_class = TermSerializer
     queryset = Term.objects.none()
+    throttle_classes = SCOPED_THROTTLE_CLASSES
+    throttle_scope = "terminology"
 
     @extend_schema(
         parameters=[
@@ -492,7 +494,7 @@ class TermExtractFromTextView(generics.ListAPIView):
                 "text",
                 str,
                 required=True,
-                description="Text to extract terminology from "
+                description="Text to match terms against "
                 f"(max {TERMINOLOGY_API_MAX_CHARS} characters).",
             ),
         ],
@@ -502,9 +504,10 @@ class TermExtractFromTextView(generics.ListAPIView):
                 description="Missing parameter, or a text that is too long."
             ),
             404: OpenApiResponse(description="Unknown locale."),
+            429: OpenApiResponse(description="Rate limit exceeded."),
         },
         description=(
-            "Extract all known terms appearing in a text, with their "
+            "Find all known terms appearing in a text, with their "
             "translation in the given locale."
         ),
     )
@@ -520,7 +523,7 @@ class TermExtractFromTextView(generics.ListAPIView):
             errors["locale"] = ["This field is required."]
         if not text.strip():
             errors["text"] = ["This field is required."]
-        elif len(text) > TERMINOLOGY_API_MAX_CHARS:
+        if len(text) > TERMINOLOGY_API_MAX_CHARS:
             errors["text"] = [
                 f"Text exceeds maximum length of {TERMINOLOGY_API_MAX_CHARS} characters."
             ]
@@ -698,7 +701,7 @@ class UploadView(APIView):
 
     authentication_classes = [PersonalAccessTokenAuthentication]
     permission_classes = [IsAuthenticated]
-    throttle_classes = UPLOAD_THROTTLE_CLASSES
+    throttle_classes = SCOPED_THROTTLE_CLASSES
     # Endpoints share a single upload quota per user.
     throttle_scope = "upload"
 
