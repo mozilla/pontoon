@@ -6,7 +6,7 @@ Pontoon provides a set of [RESTful](https://developer.mozilla.org/en-US/docs/Glo
 
 Most endpoints are publicly accessible and require no authentication. A few endpoints require an authenticated user.
 
-Requests can be authenticated either with a session cookie or with a Personal Access Token (PAT). Write endpoints accept only a PAT. You can create a PAT from your [user settings](https://pontoon.mozilla.org/settings/) page (see the [User Accounts & Settings](https://github.com/mozilla/pontoon/blob/main/documentation/docs/localizer/users.md#personal-access-tokens) documentation for details).
+Requests can be authenticated either with a session cookie or with a Personal Access Token (PAT). Session requests that write data are subject to Django's CSRF checks. The upload endpoints accept both; `POST /api/v2/pretranslate/`, which returns a machine pretranslation for a string, accepts only a PAT. You can create a PAT from your [user settings](https://pontoon.mozilla.org/settings/) page (see the [User Accounts & Settings](https://github.com/mozilla/pontoon/blob/main/documentation/docs/localizer/users.md#personal-access-tokens) documentation for details).
 
 Send the token in the `Authorization` header using the `Bearer` scheme:
 
@@ -141,8 +141,8 @@ used by the write endpoints.
 
 ## Write Endpoints
 
-The following endpoints can write data and always require authentication with a Personal
-Access Token. Session cookies are not accepted.
+The following endpoints can write data and always require authentication, with a Personal
+Access Token or with a session cookie and CSRF token.
 
 ### `POST /api/v2/upload/translations/`
 
@@ -220,7 +220,7 @@ Status codes:
 | ----- | ---------------------------------------------------------------------------------------------------------- |
 | `200` | Upload accepted (possibly with `"updated": 0`)                                                             |
 | `400` | Missing or invalid field, unsupported format, unparseable or empty file, or file too large                 |
-| `403` | Missing token, invalid or expired token, or insufficient permission                                        |
+| `403` | Not authenticated, invalid or expired token, missing CSRF token, or insufficient permission                |
 | `404` | Unknown or disabled project, unknown locale or resource, or project or resource not enabled for the locale |
 | `409` | A concurrent upload or review changed the same translations; retry the request                             |
 | `429` | Rate limit exceeded                                                                                        |

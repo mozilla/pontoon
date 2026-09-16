@@ -118,16 +118,32 @@ def test_upload_requires_authentication(url, project_locale_a, resource_path):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("url", ENDPOINTS)
-def test_upload_session_auth_rejected(
-    url, pretranslator, project_locale_a, resource_path
-):
+def test_upload_session_auth(url, pretranslator, project_locale_a, resource_path):
+    """The translate app uploads with its session, without a token."""
     client = APIClient()
     # force_authenticate() would bypass authentication_classes.
     client.force_login(pretranslator.user)
 
     response = _upload(client, url, project_locale_a, resource_path)
 
+    assert response.status_code == 200
+    assert Translation.objects.filter(string="new translation").exists()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("url", ENDPOINTS)
+def test_upload_session_auth_requires_csrf_token(
+    url, pretranslator, project_locale_a, resource_path
+):
+    """Session requests are subject to CSRF checks, unlike token requests."""
+    client = APIClient(enforce_csrf_checks=True)
+    client.force_login(pretranslator.user)
+
+    response = _upload(client, url, project_locale_a, resource_path)
+
     assert response.status_code == 403
+    assert "CSRF" in response.json()["detail"]
+    assert not Translation.objects.filter(string="new translation").exists()
 
 
 @pytest.mark.django_db

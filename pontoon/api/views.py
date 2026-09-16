@@ -730,7 +730,6 @@ def upload_schema(
 class UploadView(APIView):
     """Shared behavior of endpoints writing translations from an uploaded file."""
 
-    authentication_classes = [PersonalAccessTokenAuthentication]
     permission_classes = [IsAuthenticated]
     throttle_classes = SCOPED_THROTTLE_CLASSES
     # Endpoints share a single upload quota per user.
