@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
 import { EditorActions } from '~/context/Editor';
-import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { HelperSelection } from '~/context/HelperSelection';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
@@ -10,7 +9,6 @@ import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 import { useLLMTranslation } from '~/context/TranslationContext';
 import { Locale } from '~/context/Locale';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage, parseEntry } from '~/utils/message';
 import { logUXAction } from '~/api/uxaction';
 
 import { useExistingTranslationGetter } from '../../editor/hooks/useExistingTranslationGetter';
@@ -83,8 +81,7 @@ export function useHandleEscape(): () => boolean {
 export function useHandleCtrlShiftArrow(): (
   key: 'ArrowDown' | 'ArrowUp',
 ) => boolean {
-  const { entity } = useContext(EntityView);
-  const { setEditorFromHelpers, setEditorFromComposed } =
+  const { setEditorFromHelpers, setEditorFromComposed, setEditorFromHistory } =
     useContext(EditorActions);
   const helperSelection = useContext(HelperSelection);
   const { composed, translations: machineryTranslations } = useContext(
@@ -146,12 +143,7 @@ export function useHandleCtrlShiftArrow(): (
       }
     } else {
       const { translation } = otherLocaleTranslations[nextIdx];
-      const entry = parseEntry(entity.format, translation);
-      setEditorFromHelpers(
-        entry ? getPlainMessage(entry) : translation,
-        [],
-        true,
-      );
+      setEditorFromHistory(translation, true);
     }
     return true;
   };

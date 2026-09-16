@@ -22,6 +22,7 @@ import {
   serializeEntry,
 } from '~/utils/message';
 import { createMessageEntry } from '~/utils/message/createMessageEntry';
+import { copyMessageEntry } from '~/utils/message/copyMessageEntry';
 import {
   hasOuterWhitespace,
   htmlElementEscapes,
@@ -104,7 +105,7 @@ export type EditorActions = {
   setEditorBusy(busy: boolean): void;
 
   /** If `format: 'fluent'`, must be called with the source of a full entry */
-  setEditorFromHistory(value: string): void;
+  setEditorFromHistory(value: string, remapPlurals?: boolean): void;
 
   /**
    * @param manual Set `true` when value set due to direct user action
@@ -352,11 +353,14 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           };
         }),
 
-      setEditorFromHistory: (str) =>
+      setEditorFromHistory: (str, remapPlurals = false) =>
         setState((prev) => {
           const next = { ...prev, autofilled: null };
           if (specialFormats.has(format)) {
-            const entry = parseEntry(format, str);
+            let entry = parseEntry(format, str);
+            if (entry && remapPlurals) {
+              entry = copyMessageEntry(entry, locale, sourceEntry);
+            }
             if (entry) {
               includeSourceAttributesAndDeclarations(entry, sourceEntry);
               next.base = entry;
