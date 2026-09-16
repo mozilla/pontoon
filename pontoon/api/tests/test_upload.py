@@ -447,6 +447,7 @@ def test_upload_translations_response(
         "unchanged": 0,
         "undefined_keys": [],
         "undefined_keys_count": 0,
+        "badge_updates": [],
     }
 
     translation = Translation.objects.get(string="new translation")
@@ -478,6 +479,7 @@ def test_upload_pretranslations_response(
         "failed_checks_count": 0,
         "undefined_keys": [],
         "undefined_keys_count": 0,
+        "badge_updates": [],
     }
 
     translation = Translation.objects.get(entity=untranslated_entity)
@@ -507,6 +509,7 @@ def test_upload_unknown_keys_reported(
         "unchanged": 0,
         "undefined_keys": [["no_such_key"], ["another_missing"]],
         "undefined_keys_count": 2,
+        "badge_updates": [],
     }
 
 
@@ -562,10 +565,11 @@ def test_upload_failed_checks_reported(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("url", ENDPOINTS)
 def test_upload_badge_notification(
-    monkeypatch, upload_translator, project_locale_a, resource_path
+    monkeypatch, url, pretranslator, project_locale_a, resource_path
 ):
-    """Crossing a badge threshold through the API notifies the user."""
+    """Crossing a badge threshold is reported in the response, and notified."""
     levels = iter([0, 1])
     monkeypatch.setattr(
         badge_utils, "badges_translation_level", lambda user: next(levels)
@@ -573,15 +577,15 @@ def test_upload_badge_notification(
     monkeypatch.setattr(badge_utils, "badges_review_level", lambda user: 0)
 
     response = _upload(
-        _pat_client(upload_translator.user),
-        TRANSLATIONS,
-        project_locale_a,
-        resource_path,
+        _pat_client(pretranslator.user), url, project_locale_a, resource_path
     )
 
     assert response.status_code == 200
+    assert response.json()["badge_updates"] == [
+        {"name": "Translation Champion", "level": 1}
+    ]
     notification = Notification.objects.filter(
-        recipient=upload_translator.user, data__category="badge"
+        recipient=pretranslator.user, data__category="badge"
     ).get()
     assert "Translation Champion" in notification.description
 
@@ -602,6 +606,7 @@ def test_upload_no_badge_notification_below_threshold(
     )
 
     assert response.status_code == 200
+    assert response.json()["badge_updates"] == []
     assert not Notification.objects.filter(
         recipient=upload_translator.user, data__category="badge"
     ).exists()

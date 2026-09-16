@@ -774,16 +774,36 @@ class UploadView(APIView):
         return project, locale, resource, uploadfile
 
     def run_import(self, importer, *args):
-        """Run an import in a transaction, reporting its failures as API errors."""
+        """
+        Run an import in a transaction, reporting its failures as API errors.
+
+        Returns the import result and the badge levels the user reached through it,
+        after notifying them of each.
+        """
         from pontoon.sync.upload import UploadConflictError, UploadError
 
+        user = self.request.user
+        levels_before = badge_levels(user)
         try:
             with transaction.atomic():
-                return importer(*args)
+                result = importer(*args)
         except UploadError as error:
             raise ValidationError({"uploadfile": [str(error)]})
         except (IntegrityError, UploadConflictError):
             raise UploadConflict()
+
+        new_levels = new_badge_levels(user, levels_before)
+        for badge, level in new_levels:
+            send_badge_notification(user, badge, level)
+        return result, new_levels
+
+    def badge_updates(self, levels: list[tuple[str, int]]) -> dict:
+        """Response field reporting the badge levels the user reached through the import."""
+        return {
+            "badge_updates": [
+                {"name": badge, "level": level} for badge, level in levels
+            ]
+        }
 
     def undefined_keys(self, result) -> dict:
         """Response fields reporting the keys with no matching entity in Pontoon."""
@@ -824,20 +844,16 @@ class UploadTranslationsView(UploadView):
 
         project, locale, resource, uploadfile = self.upload_target(request)
 
-        levels_before = badge_levels(request.user)
-
-        result = self.run_import(
+        result, badges = self.run_import(
             import_uploaded_file, project, locale, resource, uploadfile, request.user
         )
-
-        for badge, level in new_badge_levels(request.user, levels_before):
-            send_badge_notification(request.user, badge, level)
 
         return Response(
             {
                 "updated": result.updated,
                 "unchanged": result.unchanged,
                 **self.undefined_keys(result),
+                **self.badge_updates(badges),
             }
         )
 
@@ -871,7 +887,7 @@ class UploadPretranslationsView(UploadView):
 
         project, locale, resource, uploadfile = self.upload_target(request)
 
-        result = self.run_import(
+        result, badges = self.run_import(
             import_uploaded_pretranslations,
             project,
             locale,
@@ -889,5 +905,6 @@ class UploadPretranslationsView(UploadView):
                 "skipped": result.skipped,
                 **self.failed_checks(result),
                 **self.undefined_keys(result),
+                **self.badge_updates(badges),
             }
         )

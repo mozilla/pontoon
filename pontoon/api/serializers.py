@@ -439,6 +439,22 @@ def undefined_keys_count_field() -> serializers.IntegerField:
     )
 
 
+class BadgeUpdateSerializer(serializers.Serializer):
+    """A badge level the user reached through the upload."""
+
+    name = serializers.CharField(help_text="Name of the badge.")
+    level = serializers.IntegerField(help_text="Level reached.")
+
+
+def badge_updates_field() -> BadgeUpdateSerializer:
+    """Upload response field listing the badge levels the user reached."""
+    return BadgeUpdateSerializer(
+        many=True,
+        help_text="Badges whose level the upload raised, with the new level. "
+        "The user is also notified of each.",
+    )
+
+
 class UploadTranslationsResponseSerializer(serializers.Serializer):
     """Result of a translation file upload."""
 
@@ -450,6 +466,7 @@ class UploadTranslationsResponseSerializer(serializers.Serializer):
     )
     undefined_keys = undefined_keys_field()
     undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()
 
 
 class FailedCheckSerializer(serializers.Serializer):
@@ -504,3 +521,4 @@ class UploadPretranslationsResponseSerializer(serializers.Serializer):
     )
     undefined_keys = undefined_keys_field()
     undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()

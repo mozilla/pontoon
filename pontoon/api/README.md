@@ -175,7 +175,8 @@ A successful request returns a summary of the import:
   "updated": 12,
   "unchanged": 3,
   "undefined_keys": [["obsolete_key"]],
-  "undefined_keys_count": 1
+  "undefined_keys_count": 1,
+  "badge_updates": [{ "name": "Translation Champion", "level": 2 }]
 }
 ```
 
@@ -188,6 +189,8 @@ A successful request returns a summary of the import:
   Only the first 100 keys are listed.
 - `undefined_keys_count`: total number of keys with no matching string in Pontoon,
   before truncation.
+- `badge_updates`: badges whose level the upload raised, each with its `name` and new
+  `level`. The user is also notified of each. Empty when no level changed.
 
 The upload is additive: strings missing from the uploaded file are left untouched, so
 partial files can be used to update a subset of translations. Re-uploading an unchanged
@@ -258,7 +261,8 @@ A successful request returns a summary of the import:
   ],
   "failed_checks_count": 1,
   "undefined_keys": [["obsolete_key"]],
-  "undefined_keys_count": 1
+  "undefined_keys_count": 1,
+  "badge_updates": []
 }
 ```
 
@@ -283,6 +287,8 @@ A successful request returns a summary of the import:
   Only the first 100 keys are listed.
 - `undefined_keys_count`: total number of keys with no matching string in Pontoon,
   before truncation.
+- `badge_updates`: badges whose level the upload raised, each with its `name` and new
+  `level`. The user is also notified of each. Empty when no level changed.
 
 Unlike the built-in pretranslation, strings with unreviewed suggestions are
 pretranslated. Suggestions that don't match the uploaded translation are kept as
