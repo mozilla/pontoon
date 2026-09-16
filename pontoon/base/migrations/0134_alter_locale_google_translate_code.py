@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name="google_translate_code",
             field=models.CharField(
                 blank=True,
-                help_text='\n        Google Cloud Translation maintains its own list of\n        <a href="https://cloud.google.com/translate/docs/languages">\n        supported languages</a>. Choose a matching locale from the list or leave blank to disable\n        support for Google Cloud Translation machine translation service.\n        ',
+                help_text='\n        Google Cloud Translation maintains its own list of\n        <a href="https://docs.cloud.google.com/translate/docs/languages">\n        supported languages</a>. Choose a matching locale from the list or leave blank to disable\n        support for Google Cloud Translation machine translation service.\n        ',
                 max_length=20,
             ),
         ),

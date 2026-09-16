@@ -143,7 +143,7 @@ class Locale(models.Model, AggregatedStats):
         blank=True,
         help_text="""
         Google Cloud Translation maintains its own list of
-        <a href="https://cloud.google.com/translate/docs/languages">
+        <a href="https://docs.cloud.google.com/translate/docs/languages">
         supported languages</a>. Choose a matching locale from the list or leave blank to disable
         support for Google Cloud Translation machine translation service.
         """,
