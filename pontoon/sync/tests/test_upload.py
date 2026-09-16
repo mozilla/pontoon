@@ -13,6 +13,7 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
 )
+from pontoon.checks.models import Error, Warning
 from pontoon.sync import upload as sync_upload
 from pontoon.sync.upload import (
     FailedCheck,
@@ -710,6 +711,38 @@ def test_upload_pretranslations_flags_matching_suggestion(
     assert po_translation.active
     assert not po_translation.approved
     assert po_translation.user == author
+
+
+@pytest.mark.django_db
+def test_upload_pretranslations_clears_stale_checks_of_matching_suggestion(
+    project_locale_a, resource, po_translation, uploader
+):
+    """A converted suggestion loses the checks stored for it, as it passes them now."""
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.save()
+    # Checks stored when the translation was written, before they changed.
+    Warning.objects.create(
+        library="p", message="Stale warning", translation=po_translation
+    )
+    Error.objects.create(library="p", message="Stale error", translation=po_translation)
+
+    result = _import(
+        import_uploaded_pretranslations, project_locale_a, resource, uploader
+    )
+
+    assert result.converted == 1
+    assert not po_translation.warnings.exists()
+    assert not po_translation.errors.exists()
+
+    # Stale checks would have kept the pretranslation out of the stats and the export.
+    translated_resource = TranslatedResource.objects.get(
+        resource=resource, locale=project_locale_a.locale
+    )
+
+    assert translated_resource.pretranslated_strings == 1
+    assert translated_resource.strings_with_warnings == 0
+    assert translated_resource.strings_with_errors == 0
 
 
 @pytest.mark.django_db

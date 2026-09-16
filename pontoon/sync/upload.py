@@ -25,7 +25,7 @@ from pontoon.base.models import (
     User,
 )
 from pontoon.checks.libraries import run_checks
-from pontoon.checks.utils import are_blocking_checks
+from pontoon.checks.utils import are_blocking_checks, get_failed_checks_db_objects
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import (
     Updates,
@@ -346,13 +346,15 @@ def write_changes(
     applied: list[PendingChange],
 ) -> None:
     """
-    Write the staged changes to the database, along with their action log entries
-    and stats, and mark the written translations as changed for sync. Must run
-    inside a transaction.
+    Write the staged changes to the database, along with their check results,
+    action log entries and stats, and mark the written translations as changed
+    for sync. Must run inside a transaction.
 
     Raises `UploadConflictError` if another transaction reviewed or deleted a
     translation the changes were decided on after this import read it.
     """
+    from pontoon.checks.models import Error, Warning
+
     lock_read_translations(applied)
 
     reject_ids = [pk for change in applied for pk in change.reject_ids]
@@ -402,6 +404,27 @@ def write_changes(
     )
     if actions:
         ActionLog.objects.bulk_create(actions)
+
+    # Failed checks must be stored before stats are updated (bug 1521606).
+    matched_ids = [tx.pk for tx in matched]
+    if matched_ids:
+        # A matched translation's stored checks date from when it was written; the
+        # source string or the checks may have changed since. Replace them with the
+        # results just computed.
+        Warning.objects.filter(translation_id__in=matched_ids).delete()
+        Error.objects.filter(translation_id__in=matched_ids).delete()
+    warnings, errors = [], []
+    for change in applied:
+        if change.check_results:
+            translation_warnings, translation_errors = get_failed_checks_db_objects(
+                change.translation, change.check_results
+            )
+            warnings += translation_warnings
+            errors += translation_errors
+    if warnings:
+        Warning.objects.bulk_create(warnings)
+    if errors:
+        Error.objects.bulk_create(errors)
 
     if created:
         # bulk_create() skips Translation.save(), which would do this
