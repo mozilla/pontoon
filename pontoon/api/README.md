@@ -302,3 +302,81 @@ The requirements, limits and status codes of
 [`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations) also apply here,
 with one difference: the request is rejected with `403` unless the user is a member of
 the `pretranslators` group.
+
+### `POST /api/v2/upload/suggestions/`
+
+Store translations from an uploaded translation file as unreviewed suggestions,
+authored by the authenticated user.
+
+The request body is the same `multipart/form-data` as
+[`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations):
+
+```bash
+$ curl -X POST \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  -F "project=firefox" \
+  -F "locale=it" \
+  -F "resource=browser/browser.ftl" \
+  -F "uploadfile=@browser.ftl" \
+  "https://example.com/api/v2/upload/suggestions/"
+```
+
+A successful request returns a summary of the import:
+
+```json
+{
+  "created": 9,
+  "restored": 1,
+  "unchanged": 4,
+  "failed_checks": [
+    {
+      "key": ["entity_key"],
+      "errors": ["Ending newline mismatch"],
+      "warnings": []
+    }
+  ],
+  "failed_checks_count": 1,
+  "undefined_keys": [["obsolete_key"]],
+  "undefined_keys_count": 1,
+  "badge_updates": []
+}
+```
+
+- `created`: number of suggestions added.
+- `restored`: number of rejected translations matching the upload that were
+  un-rejected, becoming pending suggestions again.
+- `unchanged`: number of uploaded translations that match existing unrejected
+  translations, in any review state, ignored.
+- `failed_checks`: strings left untouched, because the uploaded translation has errors.
+  Each entry has the `key` of the string, in the same format as the `key` field of
+  entities, and the `errors` and `warnings` reported for it. Only the first 100 keys are
+  listed.
+- `failed_checks_count`: total number of strings left untouched because of errors,
+  before truncation.
+- `undefined_keys`: keys of translations with no matching string in Pontoon, ignored.
+  Each key is a list of strings, in the same format as the `key` field of entities.
+  Only the first 100 keys are listed.
+- `undefined_keys_count`: total number of keys with no matching string in Pontoon,
+  before truncation.
+- `badge_updates`: badges whose level the upload raised, each with its `name` and new
+  `level`. The user is also notified of each. Empty when no level changed.
+
+Nothing already in Pontoon is replaced or rejected: every uploaded translation is stored
+as a suggestion, unless the string already has an unrejected translation with the same
+value, whether approved, pretranslated or unreviewed. The fuzzy flag of the uploaded
+file is ignored: the translation is stored as a plain suggestion.
+
+A rejected translation matching the upload is un-rejected instead of being suggested
+again, so a translation rejected by mistake can be re-proposed. Its original author and
+date are kept, and it becomes a pending suggestion, awaiting review like any other.
+
+Uploaded translations reported with errors are left out, as the editor rejects them as
+well. Translations with warnings are stored, with their warnings, as a reviewer can
+still accept them.
+
+NOTE: unlike in the UI, where any user can submit suggestions, this endpoint
+requires translator rights. This is done to prevent abuse, since a malicious actor
+could submit thousands of suggestions.
+
+The requirements, limits and status codes of
+[`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations) also apply here.

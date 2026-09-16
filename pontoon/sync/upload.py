@@ -206,12 +206,12 @@ def lock_import_target(db_res: DbResource, locale: Locale) -> None:
 
 
 def translations_by_entity(
-    locale: Locale, entity_ids: Iterable[int]
+    locale: Locale, entity_ids: Iterable[int], *, include_rejected: bool
 ) -> dict[int, list[Translation]]:
-    """The locale's unrejected translations of `entity_ids`, keyed by entity id."""
-    translations = Translation.objects.filter(
-        entity_id__in=entity_ids, locale=locale, rejected=False
-    )
+    """The locale's translations of the given entities, keyed by entity id."""
+    translations = Translation.objects.filter(entity_id__in=entity_ids, locale=locale)
+    if not include_rejected:
+        translations = translations.filter(rejected=False)
     return {
         entity_id: list(txs)
         for entity_id, txs in groupby(
@@ -250,6 +250,7 @@ class PendingChange:
     Changes staged for one entity, applied only once its checks are known:
     - `new`: a translation to create, if the upload matches none Pontoon has
     - `match`: the translation the upload matches, if Pontoon already has it
+    - `match_action`: the action to log for `match`, if any
     - `reject_ids`: ids of the translations to reject
     - `deactivate_ids`: ids of the translations to leave in place, but deactivate
     - `read_state`: the review state of the entity's translations as read when the
@@ -261,6 +262,7 @@ class PendingChange:
     read_state: dict[int, ReviewState]
     new: Translation | None = None
     match: Translation | None = None
+    match_action: str | None = None
     reject_ids: list[int] = field(default_factory=list)
     deactivate_ids: list[int] = field(default_factory=list)
     check_results: dict[str, list[str]] = field(default_factory=dict)
@@ -344,11 +346,16 @@ def write_changes(
     user: User,
     now: datetime,
     applied: list[PendingChange],
+    *,
+    match_fields: tuple[str, ...],
+    mark_changed: bool,
 ) -> None:
     """
     Write the staged changes to the database, along with their check results,
-    action log entries and stats, and mark the written translations as changed
-    for sync. Must run inside a transaction.
+    action log entries and stats. Must run inside a transaction.
+
+    `match_fields` are the only fields saved for matched translations.
+    `mark_changed` marks the written translations as changed for sync.
 
     Raises `UploadConflictError` if another transaction reviewed or deleted a
     translation the changes were decided on after this import read it.
@@ -389,7 +396,7 @@ def write_changes(
     if deactivate_ids:
         Translation.objects.filter(pk__in=deactivate_ids).update(active=False)
     if matched:
-        Translation.objects.bulk_update(matched, ["active", "fuzzy", "pretranslated"])
+        Translation.objects.bulk_update(matched, list(match_fields))
     if created:
         Translation.objects.bulk_create(created)
 
@@ -401,6 +408,16 @@ def write_changes(
             translation=tx,
         )
         for tx in created
+    )
+    actions.extend(
+        ActionLog(
+            action_type=change.match_action,
+            created_at=now,
+            performed_by=user,
+            translation=change.match,
+        )
+        for change in applied
+        if change.match is not None and change.match_action is not None
     )
     if actions:
         ActionLog.objects.bulk_create(actions)
@@ -433,7 +450,10 @@ def write_changes(
     changed_pks = [tx.pk for tx in created + matched]
     if changed_pks or reject_ids:
         update_stats(project)
-        Translation.objects.filter(pk__in=reject_ids + changed_pks).bulk_mark_changed()
+        if mark_changed:
+            Translation.objects.filter(
+                pk__in=reject_ids + changed_pks
+            ).bulk_mark_changed()
 
 
 @dataclass
@@ -507,7 +527,7 @@ def import_uploaded_pretranslations(
     )
     lock_import_target(db_res, locale)
     current = translations_by_entity(
-        locale, [entities[key] for key in upload_translations]
+        locale, [entities[key] for key in upload_translations], include_rejected=False
     )
 
     now = timezone.now()
@@ -570,5 +590,133 @@ def import_uploaded_pretranslations(
         else:
             result.created += 1
 
-    write_changes(project, user, now, applied)
+    write_changes(
+        project,
+        user,
+        now,
+        applied,
+        match_fields=("active", "fuzzy", "pretranslated"),
+        mark_changed=True,
+    )
+    return result
+
+
+@dataclass
+class SuggestionUploadResult:
+    """
+    Summary of an uploaded suggestion file import:
+    - `created`: number of suggestions added
+    - `restored`: number of rejected translations matching the upload that were
+      un-rejected, becoming pending suggestions again
+    - `unchanged`: number of uploaded translations that the string already has as an
+      unrejected translation, in any review state
+    - `failed_checks`: keys of the strings left untouched because the uploaded
+      translation has errors, with the errors and warnings reported for each of them
+    - `undefined_keys`: keys of translations with no matching entity in Pontoon
+    """
+
+    created: int = 0
+    restored: int = 0
+    unchanged: int = 0
+    failed_checks: list[FailedCheck] = field(default_factory=list)
+    undefined_keys: list[L10nId] = field(default_factory=list)
+
+
+def import_uploaded_suggestions(
+    project: Project,
+    locale: Locale,
+    db_res: DbResource,
+    upload: File,
+    user: User,
+) -> SuggestionUploadResult:
+    """
+    Store translations from an uploaded file in the database as unreviewed suggestions.
+
+    Nothing already in Pontoon is replaced or rejected: every uploaded translation is
+    stored as a suggestion, unless the string already has an unrejected translation
+    with the same value, whether approved, pretranslated or unreviewed. The fuzzy flag
+    of the uploaded file is ignored: the translation is stored as a plain suggestion.
+
+    A rejected translation matching the upload is un-rejected instead of suggested
+    again, so that a translation rejected by mistake can be re-proposed.
+
+    Uploaded translations reported with errors are left out, as the editor rejects them
+    as well. Translations with warnings are stored, with their warnings, as a reviewer
+    can still accept them.
+
+    Must run inside a transaction. Raises `UploadConflictError` if a translation of a
+    targeted string was reviewed or deleted after this import read it, and that change
+    was committed first.
+    """
+    result = SuggestionUploadResult()
+    upload_translations, entities, result.undefined_keys = parse_upload_for_entities(
+        locale, db_res, upload
+    )
+    lock_import_target(db_res, locale)
+    # Rejected translations are read as well, to be restored rather than duplicated.
+    current = translations_by_entity(
+        locale, [entities[key] for key in upload_translations], include_rejected=True
+    )
+
+    now = timezone.now()
+    pending: list[PendingChange] = []
+    for key, rt in upload_translations.items():
+        entity_id = entities[key]
+        translations = current.get(entity_id, [])
+        matches = [
+            tx
+            for tx in translations
+            if translations_equal(rt.value, rt.properties, tx.value, tx.properties)
+        ]
+        if any(not tx.rejected for tx in matches):
+            result.unchanged += 1
+            continue
+
+        change = PendingChange(key=key, read_state=read_state(translations))
+        if matches:
+            # Restore the most recent match, preserving its original author and date.
+            change.match = max(matches, key=lambda tx: tx.date)
+            change.match.rejected = False
+            change.match.unrejected_user = user
+            change.match.unrejected_date = now
+            change.match_action = ActionLog.ActionType.TRANSLATION_UNREJECTED
+            suggestion = change.match
+        else:
+            change.new = build_translation(rt, entity_id, locale.pk, user, now)
+            suggestion = change.new
+
+        # The suggestion is the active translation of its string unless another
+        # unrejected translation takes precedence.
+        others = [
+            tx for tx in translations if tx is not change.match and not tx.rejected
+        ]
+        suggestion.active = not any(
+            tx.approved or tx.pretranslated or tx.fuzzy or tx.date > suggestion.date
+            for tx in others
+        )
+        if suggestion.active:
+            change.deactivate_ids = [tx.pk for tx in others if tx.active]
+        pending.append(change)
+
+    run_staged_checks(pending, db_res, locale)
+
+    applied: list[PendingChange] = []
+    for change in pending:
+        if are_blocking_checks(change.check_results, ignore_warnings=True):
+            result.failed_checks.append(
+                FailedCheck.from_check_results(change.key, change.check_results)
+            )
+        else:
+            applied.append(change)
+    result.restored = sum(1 for change in applied if change.match is not None)
+    result.created = len(applied) - result.restored
+
+    write_changes(
+        project,
+        user,
+        now,
+        applied,
+        match_fields=("active", "rejected", "unrejected_user", "unrejected_date"),
+        mark_changed=False,
+    )
     return result

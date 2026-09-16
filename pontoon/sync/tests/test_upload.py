@@ -1,3 +1,4 @@
+from datetime import timedelta
 from types import SimpleNamespace
 
 import pytest
@@ -21,6 +22,7 @@ from pontoon.sync.upload import (
     UploadError,
     import_uploaded_file,
     import_uploaded_pretranslations,
+    import_uploaded_suggestions,
 )
 from pontoon.test.factories import (
     EntityFactory,
@@ -882,13 +884,556 @@ def test_upload_pretranslations_conflicts_with_concurrent_precedence_change(
     assert Translation.objects.filter(entity=po_translation.entity).count() == 1
 
 
+# Suggestions
+
+
 @pytest.mark.django_db
-def test_upload_locks_target_before_reading_translations(
+def test_upload_suggestions_creates_suggestion(
+    project_locale_a, resource, untranslated_entity, uploader
+):
+    """An untranslated string gets a new suggestion, authored by the uploader."""
+    result = _import(
+        import_uploaded_suggestions,
+        project_locale_a,
+        resource,
+        uploader,
+        contents='msgid "other_key"\nmsgstr "a suggestion"',
+    )
+
+    assert result.created == 1
+    assert result.restored == 0
+    assert result.unchanged == 0
+    assert result.failed_checks == []
+    assert result.undefined_keys == []
+
+    translation = Translation.objects.get(entity=untranslated_entity)
+
+    assert translation.string == "a suggestion"
+    assert translation.active
+    assert not translation.approved
+    assert not translation.pretranslated
+    assert not translation.fuzzy
+    assert not translation.rejected
+    assert translation.user == uploader
+    assert ActionLog.objects.filter(
+        performed_by=uploader,
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        translation=translation,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_ignores_fuzzy_flag(
+    project_locale_a, resource, untranslated_entity, uploader
+):
+    """A translation marked as fuzzy in the file is stored as a plain suggestion."""
+    result = _import(
+        import_uploaded_suggestions,
+        project_locale_a,
+        resource,
+        uploader,
+        contents='#, fuzzy\nmsgid "other_key"\nmsgstr "a suggestion"',
+    )
+
+    assert result.created == 1
+
+    translation = Translation.objects.get(entity=untranslated_entity)
+
+    assert not translation.fuzzy
+    assert translation.active
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "state",
+    [
+        {},
+        {"approved": True},
+        {"pretranslated": True},
+        {"fuzzy": True},
+    ],
+)
+def test_upload_suggestions_skips_matching_translation(
+    project_locale_a, resource, po_translation, uploader, state
+):
+    """An unrejected translation Pontoon has is not suggested again, in any state."""
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.active = True
+    for name, value in state.items():
+        setattr(po_translation, name, value)
+    po_translation.save()
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.unchanged == 1
+    assert result.created == 0
+    assert result.restored == 0
+    assert Translation.objects.filter(entity=po_translation.entity).count() == 1
+
+    po_translation.refresh_from_db()
+
+    # The matched translation keeps the review state it had, fuzzy included.
+    for name, value in state.items():
+        assert getattr(po_translation, name) == value
+    assert not po_translation.rejected
+    assert po_translation.active
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_keeps_approved_translation_active(
     project_locale_a, resource, po_translation, uploader
+):
+    """A suggestion for an approved string is stored, without becoming active."""
+    po_translation.approved = True
+    po_translation.active = True
+    po_translation.save()
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.created == 1
+
+    po_translation.refresh_from_db()
+    suggestion = Translation.objects.get(string="new translation")
+
+    assert po_translation.approved
+    assert po_translation.active
+    assert not po_translation.rejected
+    assert not suggestion.active
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_deactivates_previous_suggestion(
+    project_locale_a, resource, po_translation, uploader
+):
+    """As the newest suggestion, the uploaded one is shown instead of the previous."""
+    po_translation.active = True
+    po_translation.save()
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.created == 1
+
+    po_translation.refresh_from_db()
+    suggestion = Translation.objects.get(string="new translation")
+
+    assert suggestion.active
+    assert not po_translation.active
+    assert not po_translation.rejected
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_drops_errors(
+    monkeypatch, project_locale_a, resource, po_translation, uploader
+):
+    """A suggestion with errors is not stored, as the editor rejects it too."""
+    monkeypatch.setattr(
+        sync_upload, "run_checks", _failing_checks({"pErrors": ["Test error"]})
+    )
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.created == 0
+    assert result.failed_checks == [
+        FailedCheck(key=("test_key",), errors=["Test error"], warnings=[])
+    ]
+    assert not Translation.objects.filter(string="new translation").exists()
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_stores_warnings(
+    monkeypatch, project_locale_a, resource, po_translation, uploader
+):
+    """A suggestion with warnings is stored, with its warnings, for a reviewer to see."""
+    monkeypatch.setattr(
+        sync_upload, "run_checks", _failing_checks({"pWarnings": ["Test warning"]})
+    )
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.created == 1
+    assert result.failed_checks == []
+
+    suggestion = Translation.objects.get(string="new translation")
+
+    assert [w.message for w in suggestion.warnings.all()] == ["Test warning"]
+    assert not suggestion.errors.exists()
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_stores_missing_placeholder_warning(
+    project_locale_a, android_entity, uploader
+):
+    """A dropped placeholder is only a warning, so the suggestion is still stored."""
+    result = _import(
+        import_uploaded_suggestions,
+        project_locale_a,
+        android_entity.resource,
+        uploader,
+        upload=_android_upload_without_placeholder(),
+    )
+
+    assert result.created == 1
+    assert result.failed_checks == []
+
+    suggestion = Translation.objects.get(entity=android_entity)
+
+    assert [w.message for w in suggestion.warnings.all()] == [
+        "Placeholder {$arg1} not found in translation"
+    ]
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_unknown_keys_ignored(
+    project_locale_a, resource, po_translation, uploader
+):
+    result = _import(
+        import_uploaded_suggestions,
+        project_locale_a,
+        resource,
+        uploader,
+        contents='msgid "test_key"\nmsgstr "new translation"\n\n'
+        'msgid "no_such_key"\nmsgstr "x"\n',
+    )
+
+    assert result.created == 1
+    assert result.undefined_keys == [("no_such_key",)]
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_updates_stats_without_marking_changed(
+    project_locale_a, resource, untranslated_entity, uploader
+):
+    """Suggestions are counted in stats, but never exported, so nothing is changed."""
+    ChangedEntityLocale.objects.all().delete()
+
+    _import(
+        import_uploaded_suggestions,
+        project_locale_a,
+        resource,
+        uploader,
+        contents='msgid "other_key"\nmsgstr "a suggestion"',
+    )
+
+    translated_resource = TranslatedResource.objects.get(
+        resource=resource, locale=project_locale_a.locale
+    )
+
+    # `po_translation` is an unreviewed suggestion of the other entity.
+    assert translated_resource.unreviewed_strings == 2
+    assert translated_resource.approved_strings == 0
+    assert not ChangedEntityLocale.objects.exists()
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_updates_latest_translation(
+    project_locale_a, resource, untranslated_entity, uploader
+):
+    """Latest activity is updated, as it would be by Translation.save()."""
+    _import(
+        import_uploaded_suggestions,
+        project_locale_a,
+        resource,
+        uploader,
+        contents='msgid "other_key"\nmsgstr "a suggestion"',
+    )
+
+    suggestion = Translation.objects.get(entity=untranslated_entity)
+    project_locale_a.refresh_from_db()
+
+    assert (
+        TranslatedResource.objects.get(
+            resource=resource, locale=project_locale_a.locale
+        ).latest_translation
+        == suggestion
+    )
+    assert project_locale_a.latest_translation == suggestion
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_restores_rejected_translation(
+    project_locale_a, resource, po_translation, uploader, admin
+):
+    """A rejected translation matching the upload is un-rejected, not duplicated."""
+    author = po_translation.user
+    date = po_translation.date
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.save()
+    po_translation.reject(admin)
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.restored == 1
+    assert result.created == 0
+    assert result.unchanged == 0
+    assert Translation.objects.filter(entity=po_translation.entity).count() == 1
+
+    po_translation.refresh_from_db()
+
+    assert not po_translation.rejected
+    assert not po_translation.approved
+    assert not po_translation.pretranslated
+    assert not po_translation.fuzzy
+    assert po_translation.active
+    # The restored suggestion keeps its own author and date.
+    assert po_translation.user == author
+    assert po_translation.date == date
+    assert po_translation.unrejected_user == uploader
+    assert ActionLog.objects.filter(
+        performed_by=uploader,
+        action_type=ActionLog.ActionType.TRANSLATION_UNREJECTED,
+        translation=po_translation,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_restored_stays_behind_approved(
+    project_locale_a, resource, po_translation, uploader, admin
+):
+    """Restoring a suggestion does not take the active slot from an approved one."""
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.save()
+    po_translation.reject(admin)
+    approved = TranslationFactory.create(
+        entity=po_translation.entity,
+        locale=project_locale_a.locale,
+        string="the approved one",
+        value=["the approved one"],
+        approved=True,
+        active=True,
+    )
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.restored == 1
+
+    po_translation.refresh_from_db()
+    approved.refresh_from_db()
+
+    assert not po_translation.rejected
+    assert not po_translation.active
+    assert approved.active
+    assert approved.approved
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_restored_stays_behind_newer_suggestion(
+    project_locale_a, resource, po_translation, uploader, admin
+):
+    """A restored suggestion older than the active one does not become active."""
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.save()
+    po_translation.reject(admin)
+    newer = TranslationFactory.create(
+        entity=po_translation.entity,
+        locale=project_locale_a.locale,
+        string="a newer suggestion",
+        value=["a newer suggestion"],
+        active=True,
+        date=po_translation.date + timedelta(days=1),
+    )
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.restored == 1
+
+    po_translation.refresh_from_db()
+    newer.refresh_from_db()
+
+    assert not po_translation.rejected
+    assert not po_translation.active
+    assert newer.active
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_restore_counted_in_stats(
+    project_locale_a, resource, po_translation, uploader, admin
+):
+    """A restored suggestion is unreviewed again, so it is counted in stats."""
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.save()
+    po_translation.reject(admin)
+
+    translated_resource = TranslatedResource.objects.get(
+        resource=resource, locale=project_locale_a.locale
+    )
+
+    assert translated_resource.unreviewed_strings == 0
+
+    _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    translated_resource.refresh_from_db()
+
+    assert translated_resource.unreviewed_strings == 1
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_does_not_restore_translation_with_errors(
+    monkeypatch, project_locale_a, resource, po_translation, uploader, admin
+):
+    """A rejected translation that no longer passes checks stays rejected."""
+    monkeypatch.setattr(
+        sync_upload, "run_checks", _failing_checks({"pErrors": ["Test error"]})
+    )
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.save()
+    po_translation.reject(admin)
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.restored == 0
+    assert result.failed_checks == [
+        FailedCheck(key=("test_key",), errors=["Test error"], warnings=[])
+    ]
+
+    po_translation.refresh_from_db()
+
+    assert po_translation.rejected
+    assert po_translation.unrejected_user is None
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_refreshes_checks_of_restored_translation(
+    monkeypatch, project_locale_a, resource, po_translation, uploader, admin
+):
+    """The checks stored for a restored translation are the ones just run for it."""
+    monkeypatch.setattr(
+        sync_upload, "run_checks", _failing_checks({"pWarnings": ["Fresh warning"]})
+    )
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.save()
+    po_translation.reject(admin)
+    # Checks stored when the translation was written, before they changed.
+    Warning.objects.create(
+        library="p", message="Stale warning", translation=po_translation
+    )
+    Error.objects.create(library="p", message="Stale error", translation=po_translation)
+
+    result = _import(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert result.restored == 1
+    assert [w.message for w in po_translation.warnings.all()] == ["Fresh warning"]
+    assert not po_translation.errors.exists()
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_conflicts_with_concurrent_approval(
+    monkeypatch, project_locale_a, resource, po_translation, uploader, admin
+):
+    """A suggestion approved mid-import is not deactivated by the uploaded one."""
+    po_translation.active = True
+    po_translation.save()
+
+    _approve_during_import(monkeypatch, po_translation, admin)
+    _import_conflicts(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    # The import is rolled back, which also undoes the approval made inside it.
+    po_translation.refresh_from_db()
+
+    assert po_translation.active
+    assert not po_translation.approved
+    assert Translation.objects.filter(entity=po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("field", ["pretranslated", "fuzzy"])
+def test_upload_suggestions_conflicts_with_concurrent_precedence_change(
+    monkeypatch, project_locale_a, resource, po_translation, uploader, field
+):
+    """A suggestion that gains precedence mid-import is not deactivated."""
+    po_translation.active = True
+    po_translation.save()
+
+    _review_during_import(
+        monkeypatch,
+        lambda: Translation.objects.filter(pk=po_translation.pk).update(
+            **{field: True}
+        ),
+    )
+    _import_conflicts(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    # The import is rolled back, which also undoes the change made inside it.
+    po_translation.refresh_from_db()
+
+    assert po_translation.active
+    assert not getattr(po_translation, field)
+    assert Translation.objects.filter(entity=po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_conflicts_with_concurrent_rejection_of_approved(
+    monkeypatch, project_locale_a, resource, po_translation, uploader, admin
+):
+    """The approved translation an inactive suggestion defers to is rejected mid-import."""
+    po_translation.approved = True
+    po_translation.active = True
+    po_translation.save()
+
+    _review_during_import(monkeypatch, lambda: po_translation.reject(admin))
+    _import_conflicts(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    # The import is rolled back, which also undoes the rejection made inside it.
+    po_translation.refresh_from_db()
+
+    assert po_translation.approved
+    assert po_translation.active
+    assert Translation.objects.filter(entity=po_translation.entity).count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_conflicts_with_concurrent_unrejection(
+    monkeypatch, project_locale_a, resource, po_translation, uploader, admin
+):
+    """A rejected translation un-rejected mid-import is not restored a second time."""
+    po_translation.string = "new translation"
+    po_translation.value = ["new translation"]
+    po_translation.save()
+    po_translation.reject(admin)
+
+    _review_during_import(monkeypatch, lambda: po_translation.unreject(admin))
+    _import_conflicts(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    # The import is rolled back, which also undoes the un-rejection made inside it.
+    po_translation.refresh_from_db()
+
+    assert po_translation.rejected
+    assert po_translation.unrejected_user is None
+    assert not ActionLog.objects.filter(
+        action_type=ActionLog.ActionType.TRANSLATION_UNREJECTED,
+        translation=po_translation,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_suggestions_conflicts_with_concurrent_deletion(
+    monkeypatch, project_locale_a, resource, po_translation, uploader
+):
+    """A suggestion deleted mid-import, which the upload would deactivate, is a conflict."""
+    po_translation.active = True
+    po_translation.save()
+
+    _review_during_import(monkeypatch, lambda: po_translation.delete())
+    _import_conflicts(import_uploaded_suggestions, project_locale_a, resource, uploader)
+
+    assert not Translation.objects.filter(string="new translation").exists()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "importer", [import_uploaded_pretranslations, import_uploaded_suggestions]
+)
+def test_upload_locks_target_before_reading_translations(
+    importer, project_locale_a, resource, po_translation, uploader
 ):
     """The lock that serializes concurrent imports is taken before the read it guards."""
     with CaptureQueriesContext(connection) as queries:
-        _import(import_uploaded_pretranslations, project_locale_a, resource, uploader)
+        _import(importer, project_locale_a, resource, uploader)
 
     statements = [query["sql"] for query in queries.captured_queries]
     lock = next(

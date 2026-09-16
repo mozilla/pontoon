@@ -69,6 +69,7 @@ from .serializers import (
     TermSerializer,
     TranslationMemorySerializer,
     UploadPretranslationsResponseSerializer,
+    UploadSuggestionsResponseSerializer,
     UploadTranslationsResponseSerializer,
 )
 
@@ -903,6 +904,57 @@ class UploadPretranslationsView(UploadView):
                 "converted": result.converted,
                 "unchanged": result.unchanged,
                 "skipped": result.skipped,
+                **self.failed_checks(result),
+                **self.undefined_keys(result),
+                **self.badge_updates(badges),
+            }
+        )
+
+
+class UploadSuggestionsView(UploadView):
+    @upload_schema(
+        UploadSuggestionsResponseSerializer,
+        accepted="Upload accepted. Reports the number of suggestions created and "
+        "restored, the translations Pontoon already had, and the keys not found in "
+        "Pontoon.",
+        forbidden="Missing translate permission, or read-only project locale.",
+        description=(
+            "Store translations from an uploaded translation file as unreviewed "
+            "suggestions, authored by the authenticated user. Requires translator "
+            "rights for the target locale, and a project locale that is not "
+            "read-only, which is stricter than the editor, where any user can "
+            "suggest: a write API that did not require them would let a single "
+            "account flood a locale with suggestions. Nothing already in Pontoon is "
+            "replaced or rejected: every uploaded translation is stored as a "
+            "suggestion, unless the string already has an unrejected translation "
+            "with the same value, in any review state. A rejected translation "
+            "matching the upload is un-rejected instead, becoming a pending "
+            "suggestion again. "
+            "Keys not found in Pontoon are ignored, and the fuzzy flag of the "
+            "uploaded file is ignored as well, as a suggestion is unreviewed by "
+            "definition. Uploaded translations reported with errors are left out, as "
+            "the editor rejects them too; translations with warnings are stored."
+        ),
+    )
+    def post(self, request):
+        from pontoon.sync.upload import import_uploaded_suggestions
+
+        project, locale, resource, uploadfile = self.upload_target(request)
+
+        result, badges = self.run_import(
+            import_uploaded_suggestions,
+            project,
+            locale,
+            resource,
+            uploadfile,
+            request.user,
+        )
+
+        return Response(
+            {
+                "created": result.created,
+                "restored": result.restored,
+                "unchanged": result.unchanged,
                 **self.failed_checks(result),
                 **self.undefined_keys(result),
                 **self.badge_updates(badges),

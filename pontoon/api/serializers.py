@@ -522,3 +522,31 @@ class UploadPretranslationsResponseSerializer(serializers.Serializer):
     undefined_keys = undefined_keys_field()
     undefined_keys_count = undefined_keys_count_field()
     badge_updates = badge_updates_field()
+
+
+class UploadSuggestionsResponseSerializer(serializers.Serializer):
+    """Result of a suggestion file upload."""
+
+    created = serializers.IntegerField(
+        help_text="Number of suggestions added by the upload."
+    )
+    restored = serializers.IntegerField(
+        help_text="Number of rejected translations matching the upload that were "
+        "un-rejected, becoming pending suggestions again."
+    )
+    unchanged = serializers.IntegerField(
+        help_text="Number of uploaded translations that the string already has as an "
+        "unrejected translation, in any review state, ignored."
+    )
+    failed_checks = FailedCheckSerializer(
+        many=True,
+        help_text="Strings left untouched, because the uploaded translation has "
+        f"errors. Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+    failed_checks_count = serializers.IntegerField(
+        help_text="Total number of strings left untouched because of errors, "
+        "before truncation."
+    )
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()

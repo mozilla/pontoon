@@ -24,12 +24,14 @@ from pontoon.test.factories import EntityFactory
 
 TRANSLATIONS = "/api/v2/upload/translations/"
 PRETRANSLATIONS = "/api/v2/upload/pretranslations/"
-ENDPOINTS = [TRANSLATIONS, PRETRANSLATIONS]
+SUGGESTIONS = "/api/v2/upload/suggestions/"
+ENDPOINTS = [TRANSLATIONS, PRETRANSLATIONS, SUGGESTIONS]
 
 # The importer each endpoint calls, as named in `pontoon.sync.upload`.
 IMPORTERS = {
     TRANSLATIONS: "import_uploaded_file",
     PRETRANSLATIONS: "import_uploaded_pretranslations",
+    SUGGESTIONS: "import_uploaded_suggestions",
 }
 
 PO_CONTENTS = 'msgid "test_key"\nmsgstr "new translation"'
@@ -489,6 +491,37 @@ def test_upload_pretranslations_response(
 
 
 @pytest.mark.django_db
+def test_upload_suggestions_response(
+    upload_translator, project_locale_a, untranslated_entity
+):
+    response = _upload(
+        _pat_client(upload_translator.user),
+        SUGGESTIONS,
+        project_locale_a,
+        untranslated_entity.resource.path,
+        contents='msgid "other_key"\nmsgstr "a suggestion"',
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "created": 1,
+        "restored": 0,
+        "unchanged": 0,
+        "failed_checks": [],
+        "failed_checks_count": 0,
+        "undefined_keys": [],
+        "undefined_keys_count": 0,
+        "badge_updates": [],
+    }
+
+    translation = Translation.objects.get(entity=untranslated_entity)
+
+    assert not translation.approved
+    assert not translation.pretranslated
+    assert translation.user == upload_translator.user
+
+
+@pytest.mark.django_db
 def test_upload_unknown_keys_reported(
     upload_translator, project_locale_a, resource_path
 ):
@@ -536,8 +569,9 @@ def test_upload_unknown_keys_truncated(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("url", [PRETRANSLATIONS, SUGGESTIONS])
 def test_upload_failed_checks_reported(
-    monkeypatch, pretranslator, project_locale_a, resource_path
+    monkeypatch, url, pretranslator, project_locale_a, resource_path
 ):
     """Translations left out for failing checks are reported with their messages."""
 
@@ -547,10 +581,7 @@ def test_upload_failed_checks_reported(
     monkeypatch.setattr(sync_upload, "run_checks", failing_checks)
 
     response = _upload(
-        _pat_client(pretranslator.user),
-        PRETRANSLATIONS,
-        project_locale_a,
-        resource_path,
+        _pat_client(pretranslator.user), url, project_locale_a, resource_path
     )
 
     assert response.status_code == 200
@@ -647,13 +678,14 @@ def test_upload_endpoints_share_the_quota(
     monkeypatch.setattr(
         SimpleRateThrottle,
         "THROTTLE_RATES",
-        {"upload_burst": "2/minute", "upload_sustained": "1000/hour"},
+        {"upload_burst": "3/minute", "upload_sustained": "1000/hour"},
     )
     cache.clear()
 
     client = _pat_client(pretranslator.user)
     for url, expected_status in zip(
-        [TRANSLATIONS, PRETRANSLATIONS, TRANSLATIONS], (200, 200, 429)
+        [TRANSLATIONS, PRETRANSLATIONS, SUGGESTIONS, TRANSLATIONS],
+        (200, 200, 200, 429),
     ):
         response = _upload(client, url, project_locale_a, resource_path)
         assert response.status_code == expected_status
