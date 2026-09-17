@@ -133,7 +133,11 @@ The endpoint is rate limited per user, or per IP address for anonymous requests,
 burst limit of 60 calls per minute and a sustained limit of 600 calls per hour by default
 (configurable via `API_TERMINOLOGY_THROTTLE_BURST` and
 `API_TERMINOLOGY_THROTTLE_SUSTAINED`). Calls over the limit are rejected with `429`.
-This quota is separate from the one used by the write endpoints.
+The two limits are not independent: calls rejected by the burst limit still count against
+the sustained limit, so a client that keeps calling after a `429` spends its hourly quota
+on rejected calls. For example, 60 accepted calls followed by 540 rejected ones exhaust
+the hourly quota, locking the client out for one hour. This quota is separate from the one
+used by the write endpoints.
 
 ## Write Endpoints
 
