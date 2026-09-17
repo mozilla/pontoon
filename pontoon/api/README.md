@@ -73,6 +73,72 @@ An example may look like this:
 $ curl --globoff "https://example.com/api/v2/locales/?page_size=50"
 ```
 
+## Terminology Matching
+
+### `GET /api/v2/terminology/matches/`
+
+Find the terms appearing in a text, with their translation in a given locale.
+
+Unlike [`/api/v2/search/terminology/`](#/search/search_terminology_list), which looks up terms by name, this
+endpoint matches every known term against the text, at word boundaries: a term matches
+the start of a word, so `open` matches `Opened`, but not `Reopened`. Terms without a
+definition, and terms marked as forbidden, are never returned.
+
+| Parameter | Description                 |
+| --------- | --------------------------- |
+| `locale`  | Locale code                 |
+| `text`    | Text to match terms against |
+
+```bash
+$ curl --globoff \
+  --data-urlencode "locale=it" \
+  --data-urlencode "text=Open a new tab" \
+  --get "https://example.com/api/v2/terminology/matches/"
+```
+
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "definition": "Allow access",
+      "part_of_speech": "verb",
+      "text": "open",
+      "translation_text": "apri",
+      "usage": "Open the door.",
+      "notes": ""
+    },
+    {
+      "definition": "A page in the browser",
+      "part_of_speech": "noun",
+      "text": "tab",
+      "translation_text": "scheda",
+      "usage": "Open a new tab.",
+      "notes": ""
+    }
+  ]
+}
+```
+
+`translation_text` is `null` for terms not yet translated in the locale, and the term
+itself for terms marked as "do not translate", such as product names.
+
+No authentication is required. Texts over the maximum length are rejected with `400`:
+the limit is configurable via `TERMINOLOGY_API_MAX_CHARS` (default 2048 characters).
+An unknown locale returns `404`.
+
+The endpoint is rate limited per user, or per IP address for anonymous requests, with a
+burst limit of 60 calls per minute and a sustained limit of 600 calls per hour by default
+(configurable via `API_TERMINOLOGY_THROTTLE_BURST` and
+`API_TERMINOLOGY_THROTTLE_SUSTAINED`). Calls over the limit are rejected with `429`.
+The two limits are not independent: calls rejected by the burst limit still count against
+the sustained limit, so a client that keeps calling after a `429` spends its hourly quota
+on rejected calls. For example, 60 accepted calls followed by 540 rejected ones exhaust
+the hourly quota, locking the client out for one hour. This quota is separate from the one
+used by the write endpoints.
+
 ## Write Endpoints
 
 The following endpoints can write data and always require authentication with a Personal

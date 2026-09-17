@@ -17,6 +17,18 @@ Optional. Email address for the `ADMINS` setting.
 `ADMIN_NAME`  
 Optional. Name for the `ADMINS` setting.
 
+`API_TERMINOLOGY_THROTTLE_BURST`
+Optional. Short-window rate limit for the terminology matching API endpoint,
+applied per user, or per IP address for anonymous requests. Uses the Django REST
+Framework format `<number>/<period>`, where period is one of `second`, `minute`,
+`hour` or `day` (default: `60/minute`).
+
+`API_TERMINOLOGY_THROTTLE_SUSTAINED`
+Optional. Long-window rate limit for the terminology matching API endpoint,
+applied per user, or per IP address for anonymous requests. Uses the Django REST
+Framework format `<number>/<period>`, where period is one of `second`, `minute`,
+`hour` or `day` (default: `600/hour`).
+
 `API_UPLOAD_THROTTLE_BURST`  
 Optional. Short-window rate limit for the upload API endpoints,
 applied per authenticated user. Uses the Django REST Framework format

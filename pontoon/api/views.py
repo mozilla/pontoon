@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from types import SimpleNamespace
 
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import generics, status
 from rest_framework.exceptions import APIException, PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -23,7 +23,7 @@ from pontoon.api.authentication import (
     PersonalAccessTokenAuthentication,
 )
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
-from pontoon.api.throttling import UPLOAD_THROTTLE_CLASSES
+from pontoon.api.throttling import SCOPED_THROTTLE_CLASSES
 from pontoon.base import forms
 from pontoon.base.badge_utils import badges_review_level, badges_translation_level
 from pontoon.base.get_entities import get_entities_for_project_locale
@@ -43,11 +43,15 @@ from pontoon.base.services import readonly_exists
 from pontoon.base.user_utils import can_translate
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.pretranslation.pretranslate import get_pretranslation
-from pontoon.settings.base import PRETRANSLATION_API_MAX_CHARS
+from pontoon.settings.base import (
+    PRETRANSLATION_API_MAX_CHARS,
+    TERMINOLOGY_API_MAX_CHARS,
+)
 from pontoon.terminology.models import (
     Term,
     TermTranslation,
 )
+from pontoon.terminology.utils import get_terms_for_text
 from pontoon.translations.utils import parse_source_string_to_json
 
 from .serializers import (
@@ -475,6 +479,62 @@ class TermSearchListView(RequestFieldsMixin, generics.ListAPIView):
         return qs
 
 
+class TermMatchListView(generics.ListAPIView):
+    """Terms matching a text."""
+
+    serializer_class = TermSerializer
+    queryset = Term.objects.none()
+    throttle_classes = SCOPED_THROTTLE_CLASSES
+    throttle_scope = "terminology"
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter("locale", str, required=True, description="Locale code."),
+            OpenApiParameter(
+                "text",
+                str,
+                required=True,
+                description="Text to match terms against "
+                f"(max {TERMINOLOGY_API_MAX_CHARS} characters).",
+            ),
+        ],
+        responses={
+            200: TermSerializer(many=True),
+            400: OpenApiResponse(
+                description="Missing parameter, or a text that is too long."
+            ),
+            404: OpenApiResponse(description="Unknown locale."),
+            429: OpenApiResponse(description="Rate limit exceeded."),
+        },
+        description=(
+            "Find all known terms appearing in a text, with their "
+            "translation in the given locale."
+        ),
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        locale_code = self.request.query_params.get("locale")
+        text = self.request.query_params.get("text", "")
+
+        errors = {}
+        if not locale_code:
+            errors["locale"] = ["This field is required."]
+        if not text.strip():
+            errors["text"] = ["This field is required."]
+        if len(text) > TERMINOLOGY_API_MAX_CHARS:
+            errors["text"] = [
+                f"Text exceeds maximum length of {TERMINOLOGY_API_MAX_CHARS} characters."
+            ]
+        if errors:
+            raise ValidationError(errors)
+
+        locale = get_object_or_404(Locale, code=locale_code)
+
+        return get_terms_for_text(locale, text)
+
+
 class TranslationMemorySearchListView(generics.ListAPIView):
     serializer_class = TranslationMemorySerializer
     filter_backends = [DjangoFilterBackend]
@@ -641,7 +701,7 @@ class UploadView(APIView):
 
     authentication_classes = [PersonalAccessTokenAuthentication]
     permission_classes = [IsAuthenticated]
-    throttle_classes = UPLOAD_THROTTLE_CLASSES
+    throttle_classes = SCOPED_THROTTLE_CLASSES
     # Endpoints share a single upload quota per user.
     throttle_scope = "upload"
 
