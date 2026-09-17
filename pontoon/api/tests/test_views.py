@@ -25,6 +25,7 @@ from pontoon.base.models.resource import Resource
 from pontoon.base.models.translated_resource import TranslatedResource
 from pontoon.base.models.translation import Translation
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
+from pontoon.settings.base import TERMINOLOGY_API_MAX_CHARS
 from pontoon.terminology.models import Term, TermTranslation
 from pontoon.test.factories import (
     EntityFactory,
@@ -1179,6 +1180,211 @@ def test_terminology_search(django_assert_num_queries):
             },
         ],
     }
+
+
+@pytest.fixture
+def terminology_matches_setup():
+    locale = LocaleFactory(code="kg", name="Klingon")
+    other_locale = LocaleFactory(code="gs", name="Geonosian")
+
+    term_open = Term.objects.create(
+        text="open",
+        part_of_speech="verb",
+        definition="Allow access",
+        usage="Open the door.",
+    )
+    term_tab = Term.objects.create(
+        text="tab",
+        part_of_speech="noun",
+        definition="A page in the browser",
+        usage="Open a new tab.",
+    )
+    term_click = Term.objects.create(
+        text="click",
+        part_of_speech="verb",
+        definition="Press",
+        usage="Click the button.",
+    )
+    Term.objects.create(
+        text="Firefox",
+        part_of_speech="noun",
+        definition="A web browser",
+        do_not_translate=True,
+    )
+    # Terms without a definition, or forbidden, are never matched
+    Term.objects.create(text="window", part_of_speech="noun", definition="")
+    Term.objects.create(
+        text="bookmark",
+        part_of_speech="noun",
+        definition="A saved page",
+        forbidden=True,
+    )
+
+    TermTranslation.objects.create(term=term_open, locale=locale, text="odpri")
+    TermTranslation.objects.create(term=term_tab, locale=locale, text="zavihek")
+    TermTranslation.objects.create(term=term_click, locale=other_locale, text="klikni")
+
+    return SimpleNamespace(locale=locale, other_locale=other_locale)
+
+
+@pytest.mark.django_db
+def test_terminology_matches(terminology_matches_setup, django_assert_num_queries):
+    with django_assert_num_queries(3):
+        response = APIClient().get(
+            "/api/v2/terminology/matches/",
+            {"locale": "kg", "text": "Open a new tab in this window."},
+        )
+
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 2,
+        "next": None,
+        "previous": None,
+        "results": [
+            {
+                "definition": "Allow access",
+                "part_of_speech": "verb",
+                "text": "open",
+                "translation_text": "odpri",
+                "usage": "Open the door.",
+                "notes": "",
+            },
+            {
+                "definition": "A page in the browser",
+                "part_of_speech": "noun",
+                "text": "tab",
+                "translation_text": "zavihek",
+                "usage": "Open a new tab.",
+                "notes": "",
+            },
+        ],
+    }
+
+
+@pytest.mark.django_db
+def test_terminology_matches_word_start(terminology_matches_setup):
+    """Terms are matched at the start of a word, to also catch inflected forms."""
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Reopened the crab."},
+    )
+
+    assert response.status_code == 200
+    assert response.data["results"] == []
+
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Opened the tabs."},
+    )
+
+    assert response.status_code == 200
+    assert [t["text"] for t in response.data["results"]] == ["open", "tab"]
+
+
+@pytest.mark.django_db
+def test_terminology_matches_missing_translation(
+    terminology_matches_setup,
+):
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Click here."},
+    )
+
+    assert response.status_code == 200
+    assert [(t["text"], t["translation_text"]) for t in response.data["results"]] == [
+        ("click", None)
+    ]
+
+
+@pytest.mark.django_db
+def test_terminology_matches_do_not_translate(terminology_matches_setup):
+    """Terms that must not be translated are reported as-is, in every locale."""
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Open Firefox."},
+    )
+
+    assert response.status_code == 200
+    assert [(t["text"], t["translation_text"]) for t in response.data["results"]] == [
+        ("Firefox", "Firefox"),
+        ("open", "odpri"),
+    ]
+
+
+@pytest.mark.django_db
+def test_terminology_matches_fields(terminology_matches_setup):
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Open a new tab.", "fields": "text"},
+    )
+
+    assert response.status_code == 200
+    assert response.data["results"] == [{"text": "open"}, {"text": "tab"}]
+
+
+@pytest.mark.django_db
+def test_terminology_matches_errors(terminology_matches_setup):
+    client = APIClient()
+
+    response = client.get("/api/v2/terminology/matches/", {"text": "Open"})
+    assert response.status_code == 400
+    assert response.data == {"locale": ["This field is required."]}
+
+    response = client.get("/api/v2/terminology/matches/", {"locale": "kg"})
+    assert response.status_code == 400
+    assert response.data == {"text": ["This field is required."]}
+
+    response = client.get(
+        "/api/v2/terminology/matches/", {"locale": "missing", "text": "Open"}
+    )
+    assert response.status_code == 404
+
+    response = client.get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Open a new tab. " * TERMINOLOGY_API_MAX_CHARS},
+    )
+    assert response.status_code == 400
+    assert response.data == {
+        "text": [
+            f"Text exceeds maximum length of {TERMINOLOGY_API_MAX_CHARS} characters."
+        ]
+    }
+
+    # Whitespace-only text that is also too long reports the length error
+    response = client.get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": " " * (TERMINOLOGY_API_MAX_CHARS + 1)},
+    )
+    assert response.status_code == 400
+    assert response.data == {
+        "text": [
+            f"Text exceeds maximum length of {TERMINOLOGY_API_MAX_CHARS} characters."
+        ]
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "rates",
+    [
+        {"terminology_burst": "2/minute", "terminology_sustained": "1000/hour"},
+        {"terminology_burst": "60/minute", "terminology_sustained": "2/hour"},
+    ],
+)
+def test_terminology_matches_throttled(monkeypatch, terminology_matches_setup, rates):
+    # DRF copies the rates into a class attribute at import time, so overriding the
+    # REST_FRAMEWORK setting has no effect here.
+    monkeypatch.setattr(SimpleRateThrottle, "THROTTLE_RATES", rates)
+    cache.clear()
+
+    client = APIClient()
+    for expected_status in (200, 200, 429):
+        response = client.get(
+            "/api/v2/terminology/matches/", {"locale": "kg", "text": "Open a new tab."}
+        )
+        assert response.status_code == expected_status
+
+    cache.clear()
 
 
 @pytest.mark.django_db
