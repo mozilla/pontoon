@@ -18,6 +18,7 @@ from pontoon.test.factories import (
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
+    TranslatedResourceFactory,
     TranslationFactory,
 )
 
@@ -351,10 +352,10 @@ def test_get_contributions_map_keeps_reviews_of_imported_translations(
 
 
 @pytest.mark.django_db
-def test_get_contributions_map_excludes_obsolete_entities(
+def test_get_contributions_map_keeps_obsolete_entities(
     user_a, user_b, locale_a, project_locale_a, resource_a
 ):
-    """The translate view can't show obsolete strings, so they aren't counted."""
+    """A review still counts as activity once its entity becomes obsolete."""
     obsolete_entity = EntityFactory.create(
         resource=resource_a, string="Obsolete string", obsolete=True
     )
@@ -373,13 +374,13 @@ def test_get_contributions_map_excludes_obsolete_entities(
 
     map = utils.get_contributions_map(user_a, user_b)
 
-    assert not map["user_reviews"].exists()
-    assert not map["all_contributions"].exists()
+    assert map["user_reviews"].exists()
+    assert map["all_contributions"].exists()
 
 
 @pytest.mark.django_db
-def test_get_contributions_map_excludes_disabled_projects(user_a, user_b, locale_a):
-    """The translate view can't show strings of disabled projects either."""
+def test_get_contributions_map_keeps_disabled_projects(user_a, user_b, locale_a):
+    """A review still counts as activity once its project is disabled."""
     project = ProjectFactory.create(
         slug="disabled_project", name="Disabled Project", disabled=True
     )
@@ -402,8 +403,79 @@ def test_get_contributions_map_excludes_disabled_projects(user_a, user_b, locale
 
     map = utils.get_contributions_map(user_a, user_b)
 
-    assert not map["user_reviews"].exists()
-    assert not map["all_contributions"].exists()
+    assert map["user_reviews"].exists()
+    assert map["all_contributions"].exists()
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_labels_listable_actions(
+    user_a, user_b, locale_a, project_locale_a, entity_a
+):
+    """Actions the timeline link can list are labelled by action type."""
+    TranslatedResourceFactory.create(resource=entity_a.resource, locale=locale_a)
+    translation = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_b,
+        string="Translation by user_b",
+        value=["Translation by user_b"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved"]
+    assert data["count"] == 1
+    assert data["obsolete"] == 0
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_labels_obsolete_separately(
+    user_a, user_b, locale_a, project_locale_a, entity_a
+):
+    """Actions the link cannot list are counted, but labelled "obsolete"."""
+    TranslatedResourceFactory.create(resource=entity_a.resource, locale=locale_a)
+    listable = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_b,
+        string="Translation by user_b",
+        value=["Translation by user_b"],
+    )
+    obsolete_entity = EntityFactory.create(
+        resource=entity_a.resource, string="Obsolete string", obsolete=True
+    )
+    unlistable = TranslationFactory(
+        entity=obsolete_entity,
+        locale=locale_a,
+        user=user_b,
+        string="Translation of an obsolete string",
+        value=["Translation of an obsolete string"],
+    )
+    for translation in (listable, unlistable):
+        ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            performed_by=user_a,
+            translation=translation,
+        )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved", "1 obsolete"]
+    assert data["count"] == 2
+    assert data["obsolete"] == 1
 
 
 @pytest.mark.django_db
@@ -499,6 +571,7 @@ def test_get_contribution_timeline_data_with_actions(
                             },
                             "actions": ["1 approved"],
                             "count": 1,
+                            "obsolete": 0,
                             "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                         },
                     },
