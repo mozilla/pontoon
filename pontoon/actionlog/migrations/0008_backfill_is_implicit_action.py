@@ -23,6 +23,12 @@ def backfill_is_implicit_action(apps, schema_editor):
         created_at__lt=FLAG_LIVE_SINCE,
         performed_by__isnull=False,
     )
+
+    old_rejections.filter(performed_by__profile__system_user=True).update(
+        is_implicit_action=True
+    )
+    old_rejections = old_rejections.exclude(performed_by__profile__system_user=True)
+
     performer_ids = list(
         old_rejections.order_by().values_list("performed_by_id", flat=True).distinct()
     )
@@ -77,6 +83,7 @@ def clear_is_implicit_action(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("actionlog", "0007_actionlog_is_implicit_action"),
+        ("base", "0039_mark_system_users"),
     ]
 
     operations = [
