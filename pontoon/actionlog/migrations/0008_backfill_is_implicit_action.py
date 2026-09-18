@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("actionlog", "0007_actionlog_is_implicit_action"),
-        ("base", "0126_set_system_user_roles"),
+        ("base", "0039_mark_system_users"),
     ]
 
     operations = [
