@@ -1,13 +1,11 @@
-from datetime import UTC, datetime, timedelta
+from datetime import timedelta
 
 from django.db import migrations
+from django.db.migrations.recorder import MigrationRecorder
 
 
 REJECTED = "translation:rejected"
 TRIGGER_TYPES = ("translation:created", "translation:approved")
-
-# Timestamp with reference to #3442
-FLAG_LIVE_SINCE = datetime(2024, 12, 11, 17, 18, 7, 999514, tzinfo=UTC)
 
 # Smallest gap among any explicit rejection is 1089ms, hence the 1000ms window
 TRIGGER_WINDOW = timedelta(milliseconds=1000)
@@ -15,12 +13,21 @@ TRIGGER_WINDOW = timedelta(milliseconds=1000)
 BATCH_SIZE = 10000
 
 
+def flag_live_since(connection):
+    return (
+        MigrationRecorder(connection)
+        .migration_qs.get(app="actionlog", name="0007_actionlog_is_implicit_action")
+        .applied
+    )
+
+
 def backfill_is_implicit_action(apps, schema_editor):
     ActionLog = apps.get_model("actionlog", "ActionLog")
+    cutoff = flag_live_since(schema_editor.connection)
 
     old_rejections = ActionLog.objects.filter(
         action_type=REJECTED,
-        created_at__lt=FLAG_LIVE_SINCE,
+        created_at__lt=cutoff,
         performed_by__isnull=False,
     )
 
@@ -50,7 +57,7 @@ def backfill_is_implicit_action(apps, schema_editor):
             ActionLog.objects.filter(
                 performed_by_id=performer_id,
                 action_type__in=TRIGGER_TYPES,
-                created_at__lt=FLAG_LIVE_SINCE + TRIGGER_WINDOW,
+                created_at__lt=cutoff + TRIGGER_WINDOW,
             )
             .order_by("created_at")
             .values_list("created_at", flat=True)
@@ -72,18 +79,21 @@ def backfill_is_implicit_action(apps, schema_editor):
 
 def clear_is_implicit_action(apps, schema_editor):
     ActionLog = apps.get_model("actionlog", "ActionLog")
+    cutoff = flag_live_since(schema_editor.connection)
 
     ActionLog.objects.filter(
         action_type=REJECTED,
-        created_at__lt=FLAG_LIVE_SINCE,
+        created_at__lt=cutoff,
         is_implicit_action=True,
     ).update(is_implicit_action=False)
 
 
 class Migration(migrations.Migration):
+    atomic = False
+
     dependencies = [
         ("actionlog", "0007_actionlog_is_implicit_action"),
-        ("base", "0039_mark_system_users"),
+        ("base", "0126_set_system_user_roles"),
     ]
 
     operations = [
