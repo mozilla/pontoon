@@ -242,6 +242,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("base", "0081_fix_android_spaces"),
         ("sync", "0002_change_pontoon_sync_email"),
+        ("actionlog", "0001_squashed_0002_auto_20200123_1843"),
     ]
     operations = [
         migrations.RunPython(escape),

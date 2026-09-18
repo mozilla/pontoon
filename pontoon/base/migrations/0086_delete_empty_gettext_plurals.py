@@ -30,6 +30,7 @@ def delete_empty_gettext_plurals(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("base", "0085_remove_entity_word_count"),
+        ("actionlog", "0001_squashed_0002_auto_20200123_1843"),
     ]
     operations = [
         migrations.RunPython(
