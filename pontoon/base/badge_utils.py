@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, F, OuterRef
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models.permission_changelog import PermissionChangelog
@@ -19,12 +19,16 @@ def badges_translation_count(user: User) -> int:
 
 def badges_review_count(user: User) -> int:
     """Translation reviews provided by user that count towards their badges."""
-    return ActionLog.objects.filter(
-        performed_by=user,
-        action_type__in={"translation:approved", "translation:rejected"},
-        created_at__gte=settings.BADGES_START_DATE,
-        is_implicit_action=False,
-    ).count()
+    return (
+        ActionLog.objects.filter(
+            performed_by=user,
+            action_type__in={"translation:approved", "translation:rejected"},
+            created_at__gte=settings.BADGES_START_DATE,
+            is_implicit_action=False,
+        )
+        .exclude(performed_by=F("translation__user"))
+        .count()
+    )
 
 
 def badges_promotion_count(user: User) -> int:

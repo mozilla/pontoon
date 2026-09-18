@@ -12,7 +12,9 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db.models import (
     Count,
+    Exists,
     F,
+    OuterRef,
     Prefetch,
     Q,
 )
@@ -24,6 +26,7 @@ from django.utils import timezone
 from pontoon.actionlog.models import ActionLog, ActionLogQuerySet
 from pontoon.base.models import (
     Locale,
+    TranslatedResource,
     Translation,
     User,
     UserBanLog,
@@ -316,15 +319,15 @@ def get_contributions_map(
         ActionLog.ActionType.TRANSLATION_REJECTED,
     ]
 
+    non_self_reviews = actions.filter(action_type__in=review_action_types).exclude(
+        performed_by=F("translation__user")
+    )
+
     user_translations = actions.filter(
         performed_by=contributor, action_type=ActionLog.ActionType.TRANSLATION_CREATED
     )
-    user_reviews = actions.filter(
-        performed_by=contributor, action_type__in=review_action_types
-    )
-    peer_reviews = actions.filter(
-        translation__user=contributor, action_type__in=review_action_types
-    )
+    user_reviews = non_self_reviews.filter(performed_by=contributor)
+    peer_reviews = non_self_reviews.filter(translation__user=contributor)
 
     all_user_contributions = user_translations | user_reviews
 
@@ -403,9 +406,12 @@ def get_contribution_years(contributor: User):
     return list(range(current_year, first_year - 1, -1))
 
 
-def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
-    counts = {}
+def _add_project_locale_counts(counts: dict, contributions_qs, listable: bool):
+    """Group `contributions_qs` by month, project and locale, adding it to `counts`.
 
+    Counts of actions the timeline link cannot list are kept apart under `obsolete`,
+    so that they can be labelled separately once every group has been collected.
+    """
     for item in (
         contributions_qs.annotate(
             month=TruncMonth("created_at"),
@@ -430,20 +436,27 @@ def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
         key = (item["project_slug"], item["locale_code"])
         count = item["count"]
 
-        match item["action_type"]:
-            case "translation:created":
-                action = f"{intcomma(count)} translation{pluralize(count)}"
-            case "translation:approved":
-                action = f"{intcomma(count)} approved"
-            case "translation:rejected" | _:
-                action = f"{intcomma(count)} rejected"
+        if listable:
+            match item["action_type"]:
+                case "translation:created":
+                    action = f"{intcomma(count)} translation{pluralize(count)}"
+                case "translation:approved":
+                    action = f"{intcomma(count)} approved"
+                case "translation:rejected" | _:
+                    action = f"{intcomma(count)} rejected"
+            actions = [action]
+            obsolete = 0
+        else:
+            actions = []
+            obsolete = count
 
         if month not in counts:
             counts[month] = {}
 
         if key in counts[month]:
-            counts[month][key]["actions"].append(action)
+            counts[month][key]["actions"].extend(actions)
             counts[month][key]["count"] += count
+            counts[month][key]["obsolete"] += obsolete
         else:
             counts[month][key] = {
                 "project": {
@@ -454,10 +467,36 @@ def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
                     "name": item["locale_name"],
                     "code": item["locale_code"],
                 },
-                "actions": [action],
+                "actions": actions,
                 "count": count,
+                "obsolete": obsolete,
                 "url": "",
             }
+
+
+def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
+    is_listable = Q(
+        translation__entity__obsolete=False,
+        translation__entity__resource__project__disabled=False,
+    ) & Exists(
+        TranslatedResource.objects.filter(
+            resource=OuterRef("translation__entity__resource_id"),
+            locale=OuterRef("translation__locale_id"),
+        )
+    )
+
+    counts = {}
+    _add_project_locale_counts(
+        counts, contributions_qs.filter(is_listable), listable=True
+    )
+    _add_project_locale_counts(
+        counts, contributions_qs.exclude(is_listable), listable=False
+    )
+
+    for localizations in counts.values():
+        for data in localizations.values():
+            if data["obsolete"]:
+                data["actions"].append(f"{intcomma(data['obsolete'])} obsolete")
 
     return counts
 
@@ -541,7 +580,6 @@ def get_contribution_timeline_data(
                     url_params = {
                         "author": contributor.email,
                         "review_time": time_str,
-                        "exclude_self_reviewed": "",
                     }
             title += f" in {intcomma(p_count)} project{pluralize(p_count)}"
 

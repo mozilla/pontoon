@@ -360,7 +360,6 @@ class GetEntitiesForm(forms.Form):
     author = forms.CharField(required=False)
     review_time = forms.CharField(required=False)
     reviewer = forms.CharField(required=False)
-    exclude_self_reviewed = forms.BooleanField(required=False)
     search = forms.CharField(required=False)
     entity_ids = forms.CharField(required=False)
     pk_only = forms.BooleanField(required=False)

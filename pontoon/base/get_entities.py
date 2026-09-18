@@ -32,7 +32,6 @@ def get_entities_for_project_locale(
     author: str | None = None,
     review_time: str | None = None,
     reviewer: str | None = None,
-    exclude_self_reviewed: bool = False,
 ) -> QuerySet[Entity]:
     """Get project entities with locale translations."""
 
@@ -46,7 +45,6 @@ def get_entities_for_project_locale(
             review_time,
             author,
             reviewer,
-            exclude_self_reviewed,
         )
     )
     if pre_filter:
@@ -172,7 +170,6 @@ def _time_and_user_filters(
     review_time: str | None,
     author: str | None,
     reviewer: str | None,
-    exclude_self_reviewed: bool,
 ) -> Iterator[Q]:
     if time and match("^[0-9]{12}-[0-9]{12}$", time):
         range = _parse_time_interval(time)
@@ -207,7 +204,7 @@ def _time_and_user_filters(
                 | Q(translation__rejected_user__email__in=emails)
             )
 
-    if exclude_self_reviewed:
+    if reviewer or review_time:
         yield ~Q(
             Q(translation__approved_user=F("translation__user"))
             | Q(translation__rejected_user=F("translation__user"))
