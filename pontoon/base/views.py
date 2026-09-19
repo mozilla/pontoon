@@ -34,7 +34,7 @@ from django.views.generic.edit import FormView
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
-from pontoon.base.badge_utils import badges_review_level, badges_translation_level
+from pontoon.base.badge_utils import badge_levels, new_badge_levels
 from pontoon.base.get_entities import (
     get_entities_for_project_locale,
     get_mismatched_filters,
@@ -1067,8 +1067,7 @@ def upload(request):
 
         upload = request.FILES["uploadfile"]
         try:
-            translation_before_level = badges_translation_level(request.user)
-            review_before_level = badges_review_level(request.user)
+            levels_before = badge_levels(request.user)
             result = import_uploaded_file(
                 project, locale, resource, upload, request.user
             )
@@ -1081,20 +1080,10 @@ def upload(request):
             else:
                 messages.info(request, message, extra_tags="upload")
 
-            badge_levels = (
-                (
-                    "Translation Champion",
-                    translation_before_level,
-                    badges_translation_level,
-                ),
-                ("Review Master", review_before_level, badges_review_level),
-            )
-            for badge_name, before_level, get_level in badge_levels:
-                after_level = get_level(request.user)
-                if after_level > before_level:
-                    send_badge_notification(request.user, badge_name, after_level)
-                    message = json.dumps({"name": badge_name, "level": after_level})
-                    messages.info(request, message, extra_tags="badge")
+            for badge, level in new_badge_levels(request.user, levels_before):
+                send_badge_notification(request.user, badge, level)
+                message = json.dumps({"name": badge, "level": level})
+                messages.info(request, message, extra_tags="badge")
         except Exception as error:
             messages.error(request, str(error))
     else:

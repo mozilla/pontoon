@@ -422,6 +422,39 @@ UPLOAD_REQUEST_SCHEMA = {
 UPLOAD_KEYS_ERROR_LIMIT = 100
 
 
+def undefined_keys_field() -> serializers.ListField:
+    """Upload response field listing the keys that match no entity in Pontoon."""
+    return serializers.ListField(
+        child=serializers.ListField(child=serializers.CharField()),
+        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
+        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+
+
+def undefined_keys_count_field() -> serializers.IntegerField:
+    """Upload response field counting the keys that match no entity in Pontoon."""
+    return serializers.IntegerField(
+        help_text="Total number of keys with no matching entity in Pontoon, "
+        "before truncation."
+    )
+
+
+class BadgeUpdateSerializer(serializers.Serializer):
+    """A badge level the user reached through the upload."""
+
+    name = serializers.CharField(help_text="Name of the badge.")
+    level = serializers.IntegerField(help_text="Level reached.")
+
+
+def badge_updates_field() -> BadgeUpdateSerializer:
+    """Upload response field listing the badge levels the user reached."""
+    return BadgeUpdateSerializer(
+        many=True,
+        help_text="Badges whose level the upload raised, with the new level. "
+        "The user is also notified of each.",
+    )
+
+
 class UploadTranslationsResponseSerializer(serializers.Serializer):
     """Result of a translation file upload."""
 
@@ -431,15 +464,9 @@ class UploadTranslationsResponseSerializer(serializers.Serializer):
     unchanged = serializers.IntegerField(
         help_text="Number of translations identical to the current ones, ignored."
     )
-    undefined_keys = serializers.ListField(
-        child=serializers.ListField(child=serializers.CharField()),
-        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
-        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
-    )
-    undefined_keys_count = serializers.IntegerField(
-        help_text="Total number of keys with no matching entity in Pontoon, "
-        "before truncation."
-    )
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()
 
 
 class FailedCheckSerializer(serializers.Serializer):
@@ -492,12 +519,34 @@ class UploadPretranslationsResponseSerializer(serializers.Serializer):
         help_text="Total number of strings left untouched because of failing checks, "
         "before truncation."
     )
-    undefined_keys = serializers.ListField(
-        child=serializers.ListField(child=serializers.CharField()),
-        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
-        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()
+
+
+class UploadSuggestionsResponseSerializer(serializers.Serializer):
+    """Result of a suggestion file upload."""
+
+    created = serializers.IntegerField(
+        help_text="Number of suggestions added by the upload."
     )
-    undefined_keys_count = serializers.IntegerField(
-        help_text="Total number of keys with no matching entity in Pontoon, "
+    restored = serializers.IntegerField(
+        help_text="Number of rejected translations matching the upload that were "
+        "un-rejected, becoming pending suggestions again."
+    )
+    unchanged = serializers.IntegerField(
+        help_text="Number of uploaded translations that the string already has as an "
+        "unrejected translation, in any review state, ignored."
+    )
+    failed_checks = FailedCheckSerializer(
+        many=True,
+        help_text="Strings left untouched, because the uploaded translation has "
+        f"errors. Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+    failed_checks_count = serializers.IntegerField(
+        help_text="Total number of strings left untouched because of errors, "
         "before truncation."
     )
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()
