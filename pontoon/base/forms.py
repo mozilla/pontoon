@@ -196,23 +196,26 @@ class ProjectLocaleFormSet(forms.models.BaseModelFormSet):
                     form.save()
 
             # We have to cleanup projects from translators
-            without_translators = (
-                form.instance.pk
+            without_translators = [
+                form
                 for form in self
                 if form.instance.pk
                 and not form.cleaned_data.get("has_custom_translators")
-            )
+            ]
 
             if not without_translators:
                 return
 
-            ProjectLocale.objects.filter(pk__in=without_translators).update(
-                has_custom_translators=False
-            )
+            ProjectLocale.objects.filter(
+                pk__in=[form.instance.pk for form in without_translators]
+            ).update(has_custom_translators=False)
 
-            User.groups.through.objects.filter(
-                group__projectlocales__pk__in=without_translators
-            ).delete()
+            # Removing all translators of a project must be logged, so the
+            # changes remain visible in the permission changelog.
+            for form in without_translators:
+                if form.instance.translators_group is None:
+                    continue
+                form.assign_users_to_groups("translators", User.objects.none())
 
 
 ProjectLocalePermsFormsSet = forms.modelformset_factory(
