@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q
 from django.utils import timezone
 
 
@@ -11,6 +11,13 @@ if TYPE_CHECKING:
 
 
 class ActionLogQuerySet(models.QuerySet):
+    def exclude_self_reviews(self):
+        """
+        Exclude reviews users performed on their own translations because they
+        are not reviews of someone else's work.
+        """
+        return self.exclude(performed_by=F("translation__user"))
+
     def visible_for(self, user: "User"):
         """
         The visibility of actionlogs is determined by the role of the user:

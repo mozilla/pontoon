@@ -319,9 +319,9 @@ def get_contributions_map(
         ActionLog.ActionType.TRANSLATION_REJECTED,
     ]
 
-    non_self_reviews = actions.filter(action_type__in=review_action_types).exclude(
-        performed_by=F("translation__user")
-    )
+    non_self_reviews = actions.filter(
+        action_type__in=review_action_types
+    ).exclude_self_reviews()
 
     user_translations = actions.filter(
         performed_by=contributor, action_type=ActionLog.ActionType.TRANSLATION_CREATED

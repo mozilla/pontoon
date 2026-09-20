@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models import Exists, F, OuterRef
+from django.db.models import Exists, OuterRef
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models.permission_changelog import PermissionChangelog
@@ -26,7 +26,7 @@ def badges_review_count(user: User) -> int:
             created_at__gte=settings.BADGES_START_DATE,
             is_implicit_action=False,
         )
-        .exclude(performed_by=F("translation__user"))
+        .exclude_self_reviews()
         .count()
     )
 
