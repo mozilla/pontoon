@@ -25,7 +25,7 @@ from pontoon.api.authentication import (
 from pontoon.api.filters import TermFilter, TranslationMemoryFilter
 from pontoon.api.throttling import SCOPED_THROTTLE_CLASSES
 from pontoon.base import forms
-from pontoon.base.badge_utils import badges_review_level, badges_translation_level
+from pontoon.base.badge_utils import badge_levels, new_badge_levels
 from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Entity,
@@ -69,6 +69,7 @@ from .serializers import (
     TermSerializer,
     TranslationMemorySerializer,
     UploadPretranslationsResponseSerializer,
+    UploadSuggestionsResponseSerializer,
     UploadTranslationsResponseSerializer,
 )
 
@@ -696,10 +697,40 @@ class UploadConflict(APIException):
     )
 
 
+def upload_schema(
+    response,
+    *,
+    accepted: str,
+    forbidden: str,
+    description: str,
+):
+    """OpenAPI schema of an upload endpoint, with the error responses they all share."""
+    return extend_schema(
+        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
+        responses={
+            200: OpenApiResponse(response=response, description=accepted),
+            400: OpenApiResponse(
+                description="Invalid parameters, or a file that is too large, "
+                "cannot be parsed, or contains no translations."
+            ),
+            403: OpenApiResponse(description=forbidden),
+            404: OpenApiResponse(
+                description="Unknown or disabled project, unknown locale or resource, "
+                "or a project or resource not enabled for the locale."
+            ),
+            409: OpenApiResponse(
+                description="A concurrent upload or review changed the same "
+                "translations."
+            ),
+            429: OpenApiResponse(description="Rate limit exceeded."),
+        },
+        description=description,
+    )
+
+
 class UploadView(APIView):
     """Shared behavior of endpoints writing translations from an uploaded file."""
 
-    authentication_classes = [PersonalAccessTokenAuthentication]
     permission_classes = [IsAuthenticated]
     throttle_classes = SCOPED_THROTTLE_CLASSES
     # Endpoints share a single upload quota per user.
@@ -744,16 +775,36 @@ class UploadView(APIView):
         return project, locale, resource, uploadfile
 
     def run_import(self, importer, *args):
-        """Run an import in a transaction, reporting its failures as API errors."""
+        """
+        Run an import in a transaction, reporting its failures as API errors.
+
+        Returns the import result and the badge levels the user reached through it,
+        after notifying them of each.
+        """
         from pontoon.sync.upload import UploadConflictError, UploadError
 
+        user = self.request.user
+        levels_before = badge_levels(user)
         try:
             with transaction.atomic():
-                return importer(*args)
+                result = importer(*args)
         except UploadError as error:
             raise ValidationError({"uploadfile": [str(error)]})
         except (IntegrityError, UploadConflictError):
             raise UploadConflict()
+
+        new_levels = new_badge_levels(user, levels_before)
+        for badge, level in new_levels:
+            send_badge_notification(user, badge, level)
+        return result, new_levels
+
+    def badge_updates(self, levels: list[tuple[str, int]]) -> dict:
+        """Response field reporting the badge levels the user reached through the import."""
+        return {
+            "badge_updates": [
+                {"name": badge, "level": level} for badge, level in levels
+            ]
+        }
 
     def undefined_keys(self, result) -> dict:
         """Response fields reporting the keys with no matching entity in Pontoon."""
@@ -764,33 +815,23 @@ class UploadView(APIView):
             "undefined_keys_count": len(result.undefined_keys),
         }
 
+    def failed_checks(self, result) -> dict:
+        """Response fields reporting the keys left out because they fail checks."""
+        return {
+            "failed_checks": [
+                {"key": list(fc.key), "errors": fc.errors, "warnings": fc.warnings}
+                for fc in result.failed_checks[:UPLOAD_KEYS_ERROR_LIMIT]
+            ],
+            "failed_checks_count": len(result.failed_checks),
+        }
+
 
 class UploadTranslationsView(UploadView):
-    @extend_schema(
-        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
-        responses={
-            200: OpenApiResponse(
-                response=UploadTranslationsResponseSerializer,
-                description="Upload accepted. Reports the number of translations "
-                "updated and unchanged, and the keys not found in Pontoon.",
-            ),
-            400: OpenApiResponse(
-                description="Invalid parameters, or a file that is too large, "
-                "cannot be parsed, or contains no translations."
-            ),
-            403: OpenApiResponse(
-                description="Missing translate permission, or read-only project locale."
-            ),
-            404: OpenApiResponse(
-                description="Unknown or disabled project, unknown locale or resource, "
-                "or a project or resource not enabled for the locale."
-            ),
-            409: OpenApiResponse(
-                description="A concurrent upload or review changed the same "
-                "translations."
-            ),
-            429: OpenApiResponse(description="Rate limit exceeded."),
-        },
+    @upload_schema(
+        UploadTranslationsResponseSerializer,
+        accepted="Upload accepted. Reports the number of translations updated and "
+        "unchanged, and the keys not found in Pontoon.",
+        forbidden="Missing translate permission, or read-only project locale.",
         description=(
             "Update translations from an uploaded file, as the authenticated user. "
             "Requires translator rights for the target locale, and a project locale "
@@ -804,31 +845,16 @@ class UploadTranslationsView(UploadView):
 
         project, locale, resource, uploadfile = self.upload_target(request)
 
-        badge_levels_before = (
-            badges_translation_level(request.user),
-            badges_review_level(request.user),
-        )
-
-        result = self.run_import(
+        result, badges = self.run_import(
             import_uploaded_file, project, locale, resource, uploadfile, request.user
         )
-
-        for (badge, get_level), before in zip(
-            (
-                ("Translation Champion", badges_translation_level),
-                ("Review Master", badges_review_level),
-            ),
-            badge_levels_before,
-        ):
-            after = get_level(request.user)
-            if after > before:
-                send_badge_notification(request.user, badge, after)
 
         return Response(
             {
                 "updated": result.updated,
                 "unchanged": result.unchanged,
                 **self.undefined_keys(result),
+                **self.badge_updates(badges),
             }
         )
 
@@ -836,32 +862,12 @@ class UploadTranslationsView(UploadView):
 class UploadPretranslationsView(UploadView):
     permission_classes = [IsAuthenticated, IsPretranslator]
 
-    @extend_schema(
-        request={"multipart/form-data": UPLOAD_REQUEST_SCHEMA},
-        responses={
-            200: OpenApiResponse(
-                response=UploadPretranslationsResponseSerializer,
-                description="Upload accepted. Reports how the pretranslations were "
-                "stored, and the keys not found in Pontoon.",
-            ),
-            400: OpenApiResponse(
-                description="Invalid parameters, or a file that is too large, "
-                "cannot be parsed, or contains no translations."
-            ),
-            403: OpenApiResponse(
-                description="Missing membership of the pretranslators group, missing "
-                "translate permission, or read-only project locale."
-            ),
-            404: OpenApiResponse(
-                description="Unknown or disabled project, unknown locale or resource, "
-                "or a project or resource not enabled for the locale."
-            ),
-            409: OpenApiResponse(
-                description="A concurrent upload or review changed the same "
-                "translations."
-            ),
-            429: OpenApiResponse(description="Rate limit exceeded."),
-        },
+    @upload_schema(
+        UploadPretranslationsResponseSerializer,
+        accepted="Upload accepted. Reports how the pretranslations were stored, and "
+        "the keys not found in Pontoon.",
+        forbidden="Missing membership of the pretranslators group, missing translate "
+        "permission, or read-only project locale.",
         description=(
             "Store translations from an uploaded translation file as pretranslations. "
             "This API requires the user to be a member of the `pretranslators` group, "
@@ -882,7 +888,7 @@ class UploadPretranslationsView(UploadView):
 
         project, locale, resource, uploadfile = self.upload_target(request)
 
-        result = self.run_import(
+        result, badges = self.run_import(
             import_uploaded_pretranslations,
             project,
             locale,
@@ -898,11 +904,59 @@ class UploadPretranslationsView(UploadView):
                 "converted": result.converted,
                 "unchanged": result.unchanged,
                 "skipped": result.skipped,
-                "failed_checks": [
-                    {"key": list(fc.key), "errors": fc.errors, "warnings": fc.warnings}
-                    for fc in result.failed_checks[:UPLOAD_KEYS_ERROR_LIMIT]
-                ],
-                "failed_checks_count": len(result.failed_checks),
+                **self.failed_checks(result),
                 **self.undefined_keys(result),
+                **self.badge_updates(badges),
+            }
+        )
+
+
+class UploadSuggestionsView(UploadView):
+    @upload_schema(
+        UploadSuggestionsResponseSerializer,
+        accepted="Upload accepted. Reports the number of suggestions created and "
+        "restored, the translations Pontoon already had, and the keys not found in "
+        "Pontoon.",
+        forbidden="Missing translate permission, or read-only project locale.",
+        description=(
+            "Store translations from an uploaded translation file as unreviewed "
+            "suggestions, authored by the authenticated user. Requires translator "
+            "rights for the target locale, and a project locale that is not "
+            "read-only, which is stricter than the editor, where any user can "
+            "suggest: a write API that did not require them would let a single "
+            "account flood a locale with suggestions. Nothing already in Pontoon is "
+            "replaced or rejected: every uploaded translation is stored as a "
+            "suggestion, unless the string already has an unrejected translation "
+            "with the same value, in any review state. A rejected translation "
+            "matching the upload is un-rejected instead, becoming a pending "
+            "suggestion again. "
+            "Keys not found in Pontoon are ignored, and the fuzzy flag of the "
+            "uploaded file is ignored as well, as a suggestion is unreviewed by "
+            "definition. Uploaded translations reported with errors are left out, as "
+            "the editor rejects them too; translations with warnings are stored."
+        ),
+    )
+    def post(self, request):
+        from pontoon.sync.upload import import_uploaded_suggestions
+
+        project, locale, resource, uploadfile = self.upload_target(request)
+
+        result, badges = self.run_import(
+            import_uploaded_suggestions,
+            project,
+            locale,
+            resource,
+            uploadfile,
+            request.user,
+        )
+
+        return Response(
+            {
+                "created": result.created,
+                "restored": result.restored,
+                "unchanged": result.unchanged,
+                **self.failed_checks(result),
+                **self.undefined_keys(result),
+                **self.badge_updates(badges),
             }
         )
