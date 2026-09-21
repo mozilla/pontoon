@@ -18,7 +18,10 @@ from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
-from pontoon.settings.base import TERMINOLOGY_API_MAX_CHARS
+from pontoon.settings.base import (
+    PRETRANSLATION_API_MAX_CHARS,
+    TERMINOLOGY_API_MAX_CHARS,
+)
 from pontoon.terminology.models import Term, TermTranslation
 from pontoon.test.factories import (
     EntityFactory,
@@ -1855,6 +1858,30 @@ def test_pretranslation_group_authentication(member):
     assert response.status_code == 403
     assert response.data == {
         "detail": "You do not have permission to perform this action."
+    }
+
+
+def test_pretranslation_schema():
+    response = APIClient().get(
+        "/api/v2/schema/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+    operation = response.data["paths"]["/api/v2/pretranslate/"]["post"]
+    assert [parameter["name"] for parameter in operation["parameters"]] == [
+        "locale",
+        "resource_format",
+    ]
+    assert operation["parameters"][0]["required"] is True
+    assert operation["parameters"][1]["schema"]["enum"] == Resource.Format.values
+    assert operation["requestBody"]["content"]["text/plain"]["schema"] == {
+        "type": "string",
+        "maxLength": PRETRANSLATION_API_MAX_CHARS,
+        "description": "Source string to pretranslate.",
+    }
+    assert operation["responses"]["200"]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/PretranslationResponse"
     }
 
 

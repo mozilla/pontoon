@@ -66,6 +66,7 @@ from .serializers import (
     NestedLocaleSerializer,
     NestedProjectLocaleSerializer,
     NestedProjectSerializer,
+    PretranslationResponseSerializer,
     TermSerializer,
     TranslationMemorySerializer,
     UploadPretranslationsResponseSerializer,
@@ -627,6 +628,38 @@ class PretranslationView(APIView):
     permission_classes = [IsAuthenticated, IsPretranslator]
     authentication_classes = [PersonalAccessTokenAuthentication]
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter("locale", str, required=True, description="Locale code."),
+            OpenApiParameter(
+                "resource_format",
+                str,
+                enum=Resource.Format.values,
+                description="Source format; omit for plain text.",
+            ),
+        ],
+        request={
+            "text/plain": {
+                "type": "string",
+                "maxLength": PRETRANSLATION_API_MAX_CHARS,
+                "description": "Source string to pretranslate.",
+            }
+        },
+        responses={
+            200: PretranslationResponseSerializer,
+            400: OpenApiResponse(
+                description="Missing or invalid parameters, text, format, or syntax."
+            ),
+            403: OpenApiResponse(
+                description="Authentication required, or user is not a pretranslator."
+            ),
+            404: OpenApiResponse(description="Unknown locale."),
+        },
+        description=(
+            "Pretranslate a source string using a 100% translation memory match, "
+            "falling back to Google Translate."
+        ),
+    )
     def post(self, request):
         resource_format = request.query_params.get("resource_format")
         locale = request.query_params.get("locale")
