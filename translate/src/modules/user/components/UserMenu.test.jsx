@@ -1,10 +1,12 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { Provider } from 'react-redux';
 
 import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import * as Translator from '~/hooks/useTranslator';
 
+import { createReduxStore } from '~/test/store';
 import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
 
 import { FileUpload } from './FileUpload';
@@ -36,18 +38,20 @@ describe('<UserMenuDialog>', () => {
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
     return mount(
-      <Location.Provider value={location}>
-        <MockLocalizationProvider>
-          <EntityView.Provider
-            value={{ entity: { pk: 42, readonly: isReadOnly } }}
-          >
-            <UserMenuDialog
-              user={{ isAuthenticated, isPM }}
-              onThemeChange={onThemeChange}
-            />
-          </EntityView.Provider>
-        </MockLocalizationProvider>
-      </Location.Provider>,
+      <Provider store={createReduxStore()}>
+        <Location.Provider value={location}>
+          <MockLocalizationProvider>
+            <EntityView.Provider
+              value={{ entity: { pk: 42, readonly: isReadOnly } }}
+            >
+              <UserMenuDialog
+                user={{ isAuthenticated, isPM }}
+                onThemeChange={onThemeChange}
+              />
+            </EntityView.Provider>
+          </MockLocalizationProvider>
+        </Location.Provider>
+      </Provider>,
     );
   }
 

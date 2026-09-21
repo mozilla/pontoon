@@ -147,7 +147,7 @@ Access Token or with a session cookie and CSRF token.
 ### `POST /api/v2/upload/translations/`
 
 Update translations from an uploaded translation file, as the authenticated user. This
-is the API equivalent of the **Upload Translations** button in the translate app.
+is also used by the **Upload Translations** button in the translate app.
 
 The request body is `multipart/form-data` with these fields:
 
