@@ -1,4 +1,3 @@
-import json
 import logging
 import re
 
@@ -10,7 +9,6 @@ from urllib.parse import urlparse
 from allauth.socialaccount.models import SocialAccount
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
@@ -19,7 +17,6 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponse,
-    HttpResponseForbidden,
     JsonResponse,
     StreamingHttpResponse,
 )
@@ -34,7 +31,6 @@ from django.views.generic.edit import FormView
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
-from pontoon.base.badge_utils import badge_levels, new_badge_levels
 from pontoon.base.get_entities import (
     get_entities_for_project_locale,
     get_mismatched_filters,
@@ -55,12 +51,10 @@ from pontoon.base.models import (
 )
 from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.base.notification_utils import serialized_notifications
-from pontoon.base.services import readonly_exists
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.base.user_utils import (
     avatar_url,
     can_manage_locales,
-    can_translate,
     can_translate_locales,
     human_users,
     manager_for_locales,
@@ -72,7 +66,7 @@ from pontoon.base.user_utils import (
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
 from pontoon.contributors.utils import users_with_translations_counts
-from pontoon.messaging.notifications import send_badge_notification, send_notification
+from pontoon.messaging.notifications import send_notification
 
 
 log = logging.getLogger(__name__)
@@ -1038,64 +1032,6 @@ def download_translations(request):
     response.content = str_res.encode("utf-8")
     response["Content-Type"] = "text/plain"
     response["Content-Disposition"] = f"attachment; filename={filename}"
-    return response
-
-
-@login_required(redirect_field_name="", login_url="/403")
-@require_POST
-@transaction.atomic
-def upload(request):
-    """Upload translated resource."""
-    try:
-        slug = request.POST["slug"]
-        code = request.POST["code"]
-        res_path = request.POST["part"]
-    except MultiValueDictKeyError:
-        raise Http404
-
-    locale = get_object_or_404(Locale, code=code)
-    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
-    if not can_translate(request.user, project, locale) or readonly_exists(
-        project, locale
-    ):
-        return HttpResponseForbidden("You don't have permission to upload files.")
-    resource = get_object_or_404(Resource, project=project, path=res_path)
-
-    form = forms.UploadFileForm(request.POST, request.FILES)
-    if form.is_valid():
-        from pontoon.sync.upload import import_uploaded_file
-
-        upload = request.FILES["uploadfile"]
-        try:
-            levels_before = badge_levels(request.user)
-            result = import_uploaded_file(
-                project, locale, resource, upload, request.user
-            )
-            summary = [f"{result.updated} updated", f"{result.unchanged} unchanged"]
-            if result.undefined:
-                summary.append(f"{result.undefined} not found in Pontoon")
-            message = f"Translations uploaded: {', '.join(summary)}."
-            if result.updated:
-                messages.success(request, message, extra_tags="upload")
-            else:
-                messages.info(request, message, extra_tags="upload")
-
-            for badge, level in new_badge_levels(request.user, levels_before):
-                send_badge_notification(request.user, badge, level)
-                message = json.dumps({"name": badge, "level": level})
-                messages.info(request, message, extra_tags="badge")
-        except Exception as error:
-            messages.error(request, str(error))
-    else:
-        for errors in form.errors.values():
-            for error in errors:
-                messages.error(request, error)
-
-    response = HttpResponse(content="", status=303)
-    response["Location"] = reverse(
-        "pontoon.translate",
-        kwargs={"locale": code, "project": slug, "resource": res_path},
-    )
     return response
 
 
