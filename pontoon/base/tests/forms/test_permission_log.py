@@ -172,8 +172,6 @@ def test_project_locale_formset_log_removal_of_custom_translators(
     project_locale_a.save()
     project_locale_a.translators_group.user_set.add(user_b, user_c)
 
-    # `has_custom_translators` is a checkbox, so unchecking it means that it's
-    # missing from the submitted data.
     data = project_locale_formset_data(project_locale_a, [user_b, user_c])
     formset = project_locale_formset(data, project_locale_a, user_a)
 
