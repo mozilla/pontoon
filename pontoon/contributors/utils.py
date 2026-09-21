@@ -499,7 +499,7 @@ def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
             listable_counts = data.pop("listable_counts")
             obsolete_counts = data.pop("obsolete_counts")
             data["obsolete"] = sum(obsolete_counts.values())
-            data["linked"] = key in linkable
+            data["linked"] = bool(listable_counts) and key in linkable
 
             data["actions"] = [
                 _action_label(action_type, count)
