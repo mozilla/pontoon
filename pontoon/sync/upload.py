@@ -20,7 +20,6 @@ from pontoon.base.models import (
     Locale,
     Project,
     Resource as DbResource,
-    TranslatedResource,
     Translation,
     User,
 )
@@ -115,11 +114,16 @@ def import_uploaded_file(
     upload: File,
     user: User,
 ) -> UploadResult:
-    """Update translations in the database from an uploaded file."""
+    """
+    Update translations in the database from an uploaded file.
+
+    Must run inside a transaction; `lock_import_target()` holds its lock until it ends.
+    """
     result = UploadResult()
     upload_translations, entities, result.undefined_keys = parse_upload_for_entities(
         locale, db_res, upload
     )
+    lock_import_target(entities[key] for key in upload_translations)
 
     current_translations = (
         Translation.objects.filter(
@@ -181,26 +185,46 @@ class FailedCheck:
         )
 
 
-def lock_import_target(db_res: DbResource, locale: Locale) -> None:
+def lock_import_target(entity_ids: Iterable[int]) -> None:
     """
-    Serialize imports targeting the same resource and locale.
+    Ensure imports targeting any of the same entities run one at a time.
 
-    Two concurrent imports of the same target could each read a string's
-    translations, find no match, and both insert the same one. Neither insert is
-    caught by `lock_read_translations()`, which only re-checks rows that existed when
-    they were read. Taking this lock before reading closes that gap: a second import
-    blocks until the first commits, and then reads what it wrote.
+    Without this lock, two imports could read the same entity before either writes to
+    it, find no matching translation, and both insert one. This race cannot be caught
+    by `lock_read_translations()`, which only checks translations that already existed
+    when they were read.
 
-    The lock is taken on the target's `TranslatedResource` row rather than on its
-    entities. That row is known to exist for any upload, `update_stats()` writes it
-    later in the same transaction anyway, and it is specific to the locale, so
-    imports of the same resource in other locales are not held back.
+    Entities are locked in ID order, so imports with partially overlapping targets
+    wait for each other instead of deadlocking.
+
+    Locking the target's `TranslatedResource` row would also make overlapping imports
+    run one at a time, separately for each locale. However, it would acquire that lock
+    before the `Translation` locks taken later by `lock_read_translations()`. Other
+    write paths use the opposite order: `Translation.save()` writes the translation
+    first and then updates its `TranslatedResource` through `adjust_stats()`. A review
+    and an import could therefore each hold the lock the other needs next.
+
+    The same inversion could deadlock two imports of different resources. Each would
+    hold its target `TranslatedResource`, then `update_stats()` would try to update all
+    translated resources in the project, including the row held by the other import.
+
+    Entity locks avoid both inversions. The no-key mode still conflicts with other
+    no-key locks, so overlapping imports still run one at a time, but it does not
+    conflict with the key-share lock PostgreSQL takes when inserting a translation
+    that references the entity. A full `FOR UPDATE` lock would unnecessarily block
+    those inserts for the duration of the import.
+
+    Because entities are shared across locales, imports of the same strings in
+    different locales also wait for each other. Uploads are rare and rate-limited, so
+    this is preferable to using locale-specific advisory locks outside the normal row
+    lock order.
 
     Must run inside a transaction; the lock is held until it ends.
     """
     list(
-        TranslatedResource.objects.select_for_update()
-        .filter(resource=db_res, locale=locale)
+        Entity.objects.select_for_update(no_key=True)
+        .filter(pk__in=entity_ids)
+        .order_by("pk")
         .values_list("pk", flat=True)
     )
 
@@ -525,10 +549,9 @@ def import_uploaded_pretranslations(
     upload_translations, entities, result.undefined_keys = parse_upload_for_entities(
         locale, db_res, upload
     )
-    lock_import_target(db_res, locale)
-    current = translations_by_entity(
-        locale, [entities[key] for key in upload_translations], include_rejected=False
-    )
+    target_ids = [entities[key] for key in upload_translations]
+    lock_import_target(target_ids)
+    current = translations_by_entity(locale, target_ids, include_rejected=False)
 
     now = timezone.now()
     pending: list[PendingChange] = []
@@ -652,11 +675,10 @@ def import_uploaded_suggestions(
     upload_translations, entities, result.undefined_keys = parse_upload_for_entities(
         locale, db_res, upload
     )
-    lock_import_target(db_res, locale)
+    target_ids = [entities[key] for key in upload_translations]
+    lock_import_target(target_ids)
     # Rejected translations are read as well, to be restored rather than duplicated.
-    current = translations_by_entity(
-        locale, [entities[key] for key in upload_translations], include_rejected=True
-    )
+    current = translations_by_entity(locale, target_ids, include_rejected=True)
 
     now = timezone.now()
     pending: list[PendingChange] = []

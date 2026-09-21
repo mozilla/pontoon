@@ -1426,12 +1426,16 @@ def test_upload_suggestions_conflicts_with_concurrent_deletion(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "importer", [import_uploaded_pretranslations, import_uploaded_suggestions]
+    "importer",
+    [
+        import_uploaded_file,
+        import_uploaded_pretranslations,
+        import_uploaded_suggestions,
+    ],
 )
-def test_upload_locks_target_before_reading_translations(
+def test_upload_locks_entities_in_order_before_reading_translations(
     importer, project_locale_a, resource, po_translation, uploader
 ):
-    """The lock that serializes concurrent imports is taken before the read it guards."""
     with CaptureQueriesContext(connection) as queries:
         _import(importer, project_locale_a, resource, uploader)
 
@@ -1439,10 +1443,33 @@ def test_upload_locks_target_before_reading_translations(
     lock = next(
         i
         for i, sql in enumerate(statements)
-        if "base_translatedresource" in sql and "FOR UPDATE" in sql
+        if 'FROM "base_entity"' in sql and "FOR NO KEY UPDATE" in sql
     )
     read = next(
         i for i, sql in enumerate(statements) if 'FROM "base_translation"' in sql
     )
 
     assert lock < read
+    assert "ORDER BY" in statements[lock]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "importer",
+    [
+        import_uploaded_file,
+        import_uploaded_pretranslations,
+        import_uploaded_suggestions,
+    ],
+)
+def test_upload_does_not_lock_translated_resource(
+    importer, project_locale_a, resource, po_translation, uploader
+):
+    with CaptureQueriesContext(connection) as queries:
+        _import(importer, project_locale_a, resource, uploader)
+
+    assert not [
+        query["sql"]
+        for query in queries.captured_queries
+        if "base_translatedresource" in query["sql"] and " FOR " in query["sql"]
+    ]
