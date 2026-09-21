@@ -650,6 +650,43 @@ def test_get_contribution_timeline_data_without_actions(user_a, user_b):
 
 
 @pytest.mark.django_db
+def test_get_contribution_timeline_data_keeps_months_without_linkable_activity(
+    user_a, user_b, locale_a
+):
+    """A month spent entirely in disabled projects is still a month of activity."""
+    project = ProjectFactory.create(
+        slug="disabled_project",
+        name="Disabled Project",
+        disabled=True,
+        locales=[locale_a],
+    )
+    resource = ResourceFactory.create(
+        project=project, path="resource_disabled.po", format="gettext"
+    )
+    entity = EntityFactory.create(resource=resource, string="Disabled string")
+    translation = TranslationFactory(
+        entity=entity,
+        locale=locale_a,
+        user=user_b,
+        string="Translation in a disabled project",
+        value=["Translation in a disabled project"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    contributions = utils.get_contribution_timeline_data(user_a, user_b)
+
+    (month,) = contributions.values()
+    (val,) = month.values()
+    assert val["title"] == "Reviewed 1 suggestion in 1 project"
+    (data,) = val["data"].values()
+    assert data["url"] == ""
+
+
+@pytest.mark.django_db
 def test_get_contribution_timeline_data_with_actions(
     user_a, user_b, yesterdays_action_user_a, action_user_b
 ):

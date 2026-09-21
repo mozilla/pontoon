@@ -595,17 +595,16 @@ def get_contribution_timeline_data(
 
             # Generate localization URL and add it to the data dict
             for _, val in data.items():
-                if not val["linked"]:
-                    continue
-                url = reverse(
-                    "pontoon.translate",
-                    args=[
-                        val["locale"]["code"],
-                        val["project"]["slug"],
-                        "all-resources",
-                    ],
-                )
-                val["url"] = f"{url}?{urlencode(url_params)}"
+                if val["linked"]:
+                    url = reverse(
+                        "pontoon.translate",
+                        args=[
+                            val["locale"]["code"],
+                            val["project"]["slug"],
+                            "all-resources",
+                        ],
+                    )
+                    val["url"] = f"{url}?{urlencode(url_params)}"
 
                 if month not in contributions:
                     contributions[month] = {}
