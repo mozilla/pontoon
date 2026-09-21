@@ -524,10 +524,9 @@ svg.js-calendar-graph-svg {
 
 #timeline .localizations li {
   line-height: 1.8em;
-  padding: 0 10px;
 }
 
-#timeline .localizations li:hover {
+#timeline .localizations li a:hover {
   background: var(--black-3);
 }
 
@@ -535,6 +534,7 @@ svg.js-calendar-graph-svg {
 #timeline .localizations li .unlinked {
   display: block;
   font-weight: 300;
+  padding: 0 10px;
 }
 
 #timeline .localizations li a {
