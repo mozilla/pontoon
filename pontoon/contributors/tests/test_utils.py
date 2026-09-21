@@ -18,7 +18,6 @@ from pontoon.test.factories import (
     LocaleFactory,
     ProjectFactory,
     ResourceFactory,
-    TranslatedResourceFactory,
     TranslationFactory,
 )
 
@@ -412,7 +411,6 @@ def test_get_project_locale_contribution_counts_labels_listable_actions(
     user_a, user_b, locale_a, project_locale_a, entity_a
 ):
     """Actions the timeline link can list are labelled by action type."""
-    TranslatedResourceFactory.create(resource=entity_a.resource, locale=locale_a)
     translation = TranslationFactory(
         entity=entity_a,
         locale=locale_a,
@@ -435,14 +433,14 @@ def test_get_project_locale_contribution_counts_labels_listable_actions(
     assert data["actions"] == ["1 approved"]
     assert data["count"] == 1
     assert data["obsolete"] == 0
+    assert data["linked"] is True
 
 
 @pytest.mark.django_db
 def test_get_project_locale_contribution_counts_labels_obsolete_separately(
     user_a, user_b, locale_a, project_locale_a, entity_a
 ):
-    """Actions the link cannot list are counted, but labelled "obsolete"."""
-    TranslatedResourceFactory.create(resource=entity_a.resource, locale=locale_a)
+    """Actions on obsolete entities are counted, but labelled "obsolete"."""
     listable = TranslationFactory(
         entity=entity_a,
         locale=locale_a,
@@ -476,6 +474,117 @@ def test_get_project_locale_contribution_counts_labels_obsolete_separately(
     assert data["actions"] == ["1 approved", "1 obsolete"]
     assert data["count"] == 2
     assert data["obsolete"] == 1
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_drops_link_for_disabled_projects(
+    user_a, user_b, locale_a
+):
+    """A link to a disabled project 404s, so the counts are kept but not linked."""
+    project = ProjectFactory.create(
+        slug="disabled_project",
+        name="Disabled Project",
+        disabled=True,
+        locales=[locale_a],
+    )
+    resource = ResourceFactory.create(
+        project=project, path="resource_disabled.po", format="gettext"
+    )
+    entity = EntityFactory.create(resource=resource, string="Disabled string")
+    translation = TranslationFactory(
+        entity=entity,
+        locale=locale_a,
+        user=user_b,
+        string="Translation in a disabled project",
+        value=["Translation in a disabled project"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved"]
+    assert data["obsolete"] == 0
+    assert data["linked"] is False
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_labels_obsolete_when_unlinked(
+    user_a, user_b, locale_a
+):
+    """Obsolete entities are labelled the same way whether or not there is a link."""
+    project = ProjectFactory.create(
+        slug="disabled_project",
+        name="Disabled Project",
+        disabled=True,
+        locales=[locale_a],
+    )
+    resource = ResourceFactory.create(
+        project=project, path="resource_disabled.po", format="gettext"
+    )
+    live_entity = EntityFactory.create(resource=resource, string="Live string")
+    obsolete_entity = EntityFactory.create(
+        resource=resource, string="Obsolete string", obsolete=True
+    )
+    for entity in (live_entity, obsolete_entity):
+        translation = TranslationFactory(
+            entity=entity,
+            locale=locale_a,
+            user=user_b,
+            string=f"Translation of {entity.string}",
+            value=[f"Translation of {entity.string}"],
+        )
+        ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            performed_by=user_a,
+            translation=translation,
+        )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved", "1 obsolete"]
+    assert data["count"] == 2
+    assert data["obsolete"] == 1
+    assert data["linked"] is False
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_drops_link_for_removed_locales(
+    user_a, user_b, locale_a, entity_a
+):
+    """A link to a locale no longer part of the project 404s, so it isn't linked."""
+    translation = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_b,
+        string="Translation by user_b",
+        value=["Translation by user_b"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved"]
+    assert data["linked"] is False
 
 
 @pytest.mark.django_db
@@ -572,6 +681,7 @@ def test_get_contribution_timeline_data_with_actions(
                             "actions": ["1 approved"],
                             "count": 1,
                             "obsolete": 0,
+                            "linked": True,
                             "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                         },
                     },
