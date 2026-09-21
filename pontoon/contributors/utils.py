@@ -485,10 +485,13 @@ def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
         counts, contributions_qs.filter(obsolete_entities), obsolete=True
     )
 
+    pairs = {key for localizations in counts.values() for key in localizations}
     linkable = set(
-        ProjectLocale.objects.filter(project__disabled=False).values_list(
-            "project__slug", "locale__code"
-        )
+        ProjectLocale.objects.filter(
+            project__disabled=False,
+            project__slug__in={slug for slug, _ in pairs},
+            locale__code__in={code for _, code in pairs},
+        ).values_list("project__slug", "locale__code")
     )
 
     for localizations in counts.values():
