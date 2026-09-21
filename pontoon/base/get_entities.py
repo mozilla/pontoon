@@ -179,7 +179,10 @@ def _time_and_user_filters(
         range = _parse_time_interval(created_time)
         yield Q(date_created__range=range)
 
+    review_filter_applied = False
+
     if review_time and match("^[0-9]{12}-[0-9]{12}$", review_time):
+        review_filter_applied = True
         range = _parse_time_interval(review_time)
         yield Q(translation__locale=locale) & (
             Q(translation__approved_date__range=range)
@@ -199,12 +202,13 @@ def _time_and_user_filters(
     if reviewer:
         emails = [e for e in reviewer.split(",") if _is_email(e)]
         if emails:
+            review_filter_applied = True
             yield Q(translation__locale=locale) & (
                 Q(translation__approved_user__email__in=emails)
                 | Q(translation__rejected_user__email__in=emails)
             )
 
-    if reviewer or review_time:
+    if review_filter_applied:
         yield ~Q(
             Q(translation__approved_user=F("translation__user"))
             | Q(translation__rejected_user=F("translation__user"))
