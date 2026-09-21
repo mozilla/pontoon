@@ -24,6 +24,7 @@ from django.utils import timezone
 from pontoon.actionlog.models import ActionLog, ActionLogQuerySet
 from pontoon.base.models import (
     Locale,
+    ProjectLocale,
     Translation,
     User,
     UserBanLog,
@@ -316,15 +317,15 @@ def get_contributions_map(
         ActionLog.ActionType.TRANSLATION_REJECTED,
     ]
 
+    non_self_reviews = actions.filter(
+        action_type__in=review_action_types
+    ).exclude_self_reviews()
+
     user_translations = actions.filter(
         performed_by=contributor, action_type=ActionLog.ActionType.TRANSLATION_CREATED
     )
-    user_reviews = actions.filter(
-        performed_by=contributor, action_type__in=review_action_types
-    )
-    peer_reviews = actions.filter(
-        translation__user=contributor, action_type__in=review_action_types
-    )
+    user_reviews = non_self_reviews.filter(performed_by=contributor)
+    peer_reviews = non_self_reviews.filter(translation__user=contributor)
 
     all_user_contributions = user_translations | user_reviews
 
@@ -403,9 +404,23 @@ def get_contribution_years(contributor: User):
     return list(range(current_year, first_year - 1, -1))
 
 
-def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
-    counts = {}
+def _action_label(action_type: str, count: int) -> str:
+    match action_type:
+        case "translation:created":
+            return f"{intcomma(count)} translation{pluralize(count)}"
+        case "translation:approved":
+            return f"{intcomma(count)} approved"
+        case "translation:rejected" | _:
+            return f"{intcomma(count)} rejected"
 
+
+def _add_project_locale_counts(counts: dict, contributions_qs, obsolete: bool):
+    """Group `contributions_qs` by month, project and locale, adding it to `counts`.
+
+    Counts are collected per action type, keeping the ones on obsolete entities
+    apart, because those are reported as a single total rather than broken down
+    by action type.
+    """
     for item in (
         contributions_qs.annotate(
             month=TruncMonth("created_at"),
@@ -430,21 +445,10 @@ def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
         key = (item["project_slug"], item["locale_code"])
         count = item["count"]
 
-        match item["action_type"]:
-            case "translation:created":
-                action = f"{intcomma(count)} translation{pluralize(count)}"
-            case "translation:approved":
-                action = f"{intcomma(count)} approved"
-            case "translation:rejected" | _:
-                action = f"{intcomma(count)} rejected"
-
         if month not in counts:
             counts[month] = {}
 
-        if key in counts[month]:
-            counts[month][key]["actions"].append(action)
-            counts[month][key]["count"] += count
-        else:
+        if key not in counts[month]:
             counts[month][key] = {
                 "project": {
                     "name": item["project_name"],
@@ -454,10 +458,55 @@ def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
                     "name": item["locale_name"],
                     "code": item["locale_code"],
                 },
-                "actions": [action],
-                "count": count,
+                "listable_counts": defaultdict(int),
+                "obsolete_counts": defaultdict(int),
+                "actions": [],
+                "count": 0,
+                "obsolete": 0,
+                "linked": True,
                 "url": "",
             }
+
+        data = counts[month][key]
+        data["obsolete_counts" if obsolete else "listable_counts"][
+            item["action_type"]
+        ] += count
+        data["count"] += count
+
+
+def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
+    obsolete_entities = Q(translation__entity__obsolete=True)
+
+    counts = {}
+    _add_project_locale_counts(
+        counts, contributions_qs.exclude(obsolete_entities), obsolete=False
+    )
+    _add_project_locale_counts(
+        counts, contributions_qs.filter(obsolete_entities), obsolete=True
+    )
+
+    pairs = {key for localizations in counts.values() for key in localizations}
+    linkable = set(
+        ProjectLocale.objects.filter(
+            project__disabled=False,
+            project__slug__in={slug for slug, _ in pairs},
+            locale__code__in={code for _, code in pairs},
+        ).values_list("project__slug", "locale__code")
+    )
+
+    for localizations in counts.values():
+        for key, data in localizations.items():
+            listable_counts = data.pop("listable_counts")
+            obsolete_counts = data.pop("obsolete_counts")
+            data["obsolete"] = sum(obsolete_counts.values())
+            data["linked"] = bool(listable_counts) and key in linkable
+
+            data["actions"] = [
+                _action_label(action_type, count)
+                for action_type, count in listable_counts.items()
+            ]
+            if data["obsolete"]:
+                data["actions"].append(f"{intcomma(data['obsolete'])} obsolete")
 
     return counts
 
@@ -541,21 +590,21 @@ def get_contribution_timeline_data(
                     url_params = {
                         "author": contributor.email,
                         "review_time": time_str,
-                        "exclude_self_reviewed": "",
                     }
             title += f" in {intcomma(p_count)} project{pluralize(p_count)}"
 
             # Generate localization URL and add it to the data dict
             for _, val in data.items():
-                url = reverse(
-                    "pontoon.translate",
-                    args=[
-                        val["locale"]["code"],
-                        val["project"]["slug"],
-                        "all-resources",
-                    ],
-                )
-                val["url"] = f"{url}?{urlencode(url_params)}"
+                if val["linked"]:
+                    url = reverse(
+                        "pontoon.translate",
+                        args=[
+                            val["locale"]["code"],
+                            val["project"]["slug"],
+                            "all-resources",
+                        ],
+                    )
+                    val["url"] = f"{url}?{urlencode(url_params)}"
 
                 if month not in contributions:
                     contributions[month] = {}

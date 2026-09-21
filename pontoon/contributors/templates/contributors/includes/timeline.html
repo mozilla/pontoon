@@ -1,3 +1,10 @@
+{% macro localization_details(localization) %}
+  <span class="stress">{{ localization.project.name }}</span>
+  &middot; {{ localization.locale.name }}
+  <span class="stress">{{ localization.locale.code }}</span>
+  <span class="contribution-count">{{ ", ".join(localization.actions) }}</span>
+{% endmacro %}
+
 <h3>Contribution activity</h3>
 
 {% for month, contributions in contribution_timeline.contributions.items() %}
@@ -12,14 +19,15 @@
         <ul class="localizations">
           {% for _, localization in val.data.items() %}
             <li>
-              <a href="{{ localization.url }}">
-                <span class="stress">{{ localization.project.name }}</span>
-                &middot; {{ localization.locale.name }}
-                <span class="stress">{{ localization.locale.code }}</span>
-                <span class="contribution-count"
-                  >{{ ", ".join(localization.actions) }}</span
+              {% if localization.url %}
+                <a href="{{ localization.url }}"
+                  >{{ localization_details(localization) }}</a
                 >
-              </a>
+              {% else %}
+                <span class="unlinked"
+                  >{{ localization_details(localization) }}</span
+                >
+              {% endif %}
             </li>
           {% endfor %}
         </ul>

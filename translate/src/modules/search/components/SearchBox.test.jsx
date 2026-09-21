@@ -199,7 +199,6 @@ describe('<SearchBoxBase>', () => {
       created_time: null,
       reviewer: null,
       review_time: null,
-      exclude_self_reviewed: false,
       entity: 0,
     });
   });
@@ -216,7 +215,6 @@ describe('<SearchBoxBase>', () => {
           created_time: '202606120818-202606120818',
           reviewer: 'user@example.com',
           review_time: '202606120818-202606120818',
-          exclude_self_reviewed: true,
         }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
@@ -235,7 +233,6 @@ describe('<SearchBoxBase>', () => {
     expect(pushed.created_time).toBeNull();
     expect(pushed.reviewer).toBeNull();
     expect(pushed.review_time).toBeNull();
-    expect(pushed.exclude_self_reviewed).toBe(false);
   });
 
   it('sets correct status', () => {
@@ -281,7 +278,6 @@ describe('<SearchBoxBase>', () => {
       created_time: null,
       reviewer: null,
       review_time: null,
-      exclude_self_reviewed: false,
       entity: 0,
       list: null,
     });
