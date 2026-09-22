@@ -1,6 +1,6 @@
 from datetime import datetime
 from unittest.mock import patch
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import pytest
 
@@ -766,6 +766,38 @@ def test_get_contribution_timeline_data_for_year(user_a, user_b, peer_translatio
         collapsed["December 2025"]["user_reviews"]["title"]
         == "Reviewed 1 suggestion in 1 project"
     )
+
+
+@pytest.mark.django_db
+def test_get_contribution_timeline_links_span_a_single_month(
+    user_a, user_b, peer_translation
+):
+    """Each month links to its own time interval, not to the whole period."""
+    for review_date in [datetime(2025, 6, 15), datetime(2025, 12, 10)]:
+        action = ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            performed_by=user_a,
+            translation=peer_translation,
+        )
+        action.created_at = timezone.make_aware(review_date)
+        action.save()
+
+    full_year = utils.get_contribution_timeline_data(
+        user_a, user_b, full_year=True, contribution_type="user_reviews", year=2025
+    )
+
+    review_times = {}
+    for month, types in full_year.items():
+        times = set()
+        for info in types["user_reviews"]["data"].values():
+            query = parse_qs(urlparse(info["url"]).query)
+            times.add(query["review_time"][0])
+        review_times[month] = times
+
+    assert review_times == {
+        "December 2025": {"202512010000-202512312359"},
+        "June 2025": {"202506010000-202506302359"},
+    }
 
 
 @pytest.mark.django_db
