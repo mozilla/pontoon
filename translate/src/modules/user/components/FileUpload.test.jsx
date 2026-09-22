@@ -38,7 +38,7 @@ function mountFileUpload({ hasUnsavedChanges = false, confirm = true } = {}) {
     // Mimic the popup being confirmed or dismissed.
     checkUnsavedChanges: (callback) => {
       if (confirm) {
-        callback();
+        callback(hasUnsavedChanges);
       }
     },
     resetUnsavedChanges: () => {},

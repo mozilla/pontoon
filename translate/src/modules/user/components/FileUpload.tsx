@@ -8,7 +8,7 @@ import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 import type { Location } from '~/context/Location';
 import type { NotificationMessage } from '~/context/Notification';
 import { ShowNotification } from '~/context/Notification';
-import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 import { useAppDispatch } from '~/hooks';
 import { resetEntities } from '~/modules/entities/actions';
 
@@ -110,7 +110,6 @@ export function FileUpload({
   const showNotification = useContext(ShowNotification);
   const showBadgeTooltip = useContext(ShowBadgeTooltip);
   const { checkUnsavedChanges, setUnsavedChanges } = useContext(UnsavedActions);
-  const { check } = useContext(UnsavedChanges);
 
   const uploadFile = async (file: File) => {
     setUploading(true);
@@ -153,13 +152,9 @@ export function FileUpload({
     if (!file || uploading) {
       return;
     }
-    // Save this before confirmation clears the unsaved state.
-    const hadUnsavedChanges = check();
-    checkUnsavedChanges(() => {
+    checkUnsavedChanges((hadUnsavedChanges) => {
       if (hadUnsavedChanges) {
-        // The draft is still in the editor, so keep protecting it. Restored
-        // here rather than after the upload, so that an edit mid-upload is
-        // preserved.
+        // Keep protecting the draft while the upload runs.
         setUnsavedChanges(() => true);
       }
       void uploadFile(file);
