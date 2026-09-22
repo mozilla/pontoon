@@ -45,6 +45,7 @@ nav = [
     { "First Contribution" = "dev/first-contribution.md" },
     { "Developer Setup" = "dev/developer-setup.md" },
     { "Contributing Guidelines" = "dev/contributing.md" },
+    { "REST API" = "dev/api.md" },
     { "Feature Development Process" = "dev/feature-development-process.md" },
     { "Deployment" = "dev/deployment.md" },
     { "Maintenance" = "dev/maintenance.md" },

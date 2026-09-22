@@ -1,0 +1,382 @@
+# REST API
+
+Pontoon provides a set of [RESTful](https://developer.mozilla.org/en-US/docs/Glossary/REST) endpoints via the [Django REST Framework](https://www.django-rest-framework.org/), accessible under `/api/v2/`.
+
+## Authentication
+
+Most endpoints are publicly accessible and require no authentication. A few endpoints require an authenticated user.
+
+Requests can be authenticated either with a session cookie or with a Personal Access Token (PAT). Session requests that write data are subject to Django's CSRF checks. The upload endpoints accept both; `POST /api/v2/pretranslate/`, which returns a machine pretranslation for a string, accepts only a PAT. You can create a PAT from your [user settings](https://pontoon.mozilla.org/settings/) page (see the [User Accounts & Settings](../localizer/users.md#personal-access-tokens) documentation for details).
+
+Send the token in the `Authorization` header using the `Bearer` scheme:
+
+```bash
+$ curl \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  "https://example.com/api/v2/pretranslate/"
+```
+
+A PAT automatically expires one year after it is created, and can be deleted manually at any time. Requests made with an invalid or expired token are rejected.
+
+## JSON Mode
+
+When a request is sent without any headers or with `Accept: application/json`,
+the endpoint will return JSON `application/json` responses to GET requests.
+
+An example GET request may look like this:
+
+```bash
+$ curl --globoff "https://example.com/api/v2/search/terminology/?locale=ar"
+```
+
+## Browsable API
+
+When accessed from a browser, Pontoon’s REST API provides a browsable, interactive HTML interface powered by Django REST Framework.
+
+Available at any `/api/v2/` endpoint, the browsable API lets you:
+
+- View and explore JSON data in a human-friendly format
+- See validation rules and error messages inline
+- Navigate related resources easily via hyperlinks
+
+This interface is especially useful for exploring the API without external tools like Postman or curl.
+
+## Response Customization
+
+You can customize the response by specifying the fields you want to include using the `fields=field_1,field_2,...field_N` query parameter. This allows you to limit the data returned to only the fields you need, reducing payload size and improving performance.
+
+For example, to retrieve only the `name` and `code` fields for `locales`, you can use:
+
+```bash
+$ curl --globoff "https://example.com/api/v2/locales/?fields=name,code"
+```
+
+This will return a response containing only the specified fields for each locale.
+
+## Pagination
+
+All list-based endpoints are paginated. By default, each page contains up to 100 items.
+
+Use the `?page=N` query parameter to navigate between pages.
+
+An example may look like this:
+
+```bash
+$ curl --globoff "https://example.com/api/v2/locales/?page=2"
+```
+
+The page size can also be set with the `?page_size=N` query parameter, reaching a maximum of 1000 items.
+
+An example may look like this:
+
+```bash
+$ curl --globoff "https://example.com/api/v2/locales/?page_size=50"
+```
+
+## Terminology Matching
+
+### `GET /api/v2/terminology/matches/`
+
+Find the terms appearing in a text, with their translation in a given locale.
+
+Unlike [`/api/v2/search/terminology/`](/api/v2/#/search/search_terminology_list), which looks up terms by name, this
+endpoint matches every known term against the text, at word boundaries: a term matches
+the start of a word, so `open` matches `Opened`, but not `Reopened`. Terms without a
+definition, and terms marked as forbidden, are never returned.
+
+| Parameter | Description                 |
+| --------- | --------------------------- |
+| `locale`  | Locale code                 |
+| `text`    | Text to match terms against |
+
+```bash
+$ curl --globoff \
+  --data-urlencode "locale=it" \
+  --data-urlencode "text=Open a new tab" \
+  --get "https://example.com/api/v2/terminology/matches/"
+```
+
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "definition": "Allow access",
+      "part_of_speech": "verb",
+      "text": "open",
+      "translation_text": "apri",
+      "usage": "Open the door.",
+      "notes": ""
+    },
+    {
+      "definition": "A page in the browser",
+      "part_of_speech": "noun",
+      "text": "tab",
+      "translation_text": "scheda",
+      "usage": "Open a new tab.",
+      "notes": ""
+    }
+  ]
+}
+```
+
+`translation_text` is `null` for terms not yet translated in the locale, and the term
+itself for terms marked as "do not translate", such as product names.
+
+No authentication is required. Texts over the maximum length are rejected with `400`:
+the limit is configurable via `TERMINOLOGY_API_MAX_CHARS` (default 2048 characters).
+An unknown locale returns `404`.
+
+The endpoint is rate limited per user, or per IP address for anonymous requests, with a
+burst limit of 60 calls per minute and a sustained limit of 600 calls per hour by default
+(configurable via `API_TERMINOLOGY_THROTTLE_BURST` and
+`API_TERMINOLOGY_THROTTLE_SUSTAINED`). Calls over the limit are rejected with `429`.
+The two limits are not independent: calls rejected by the burst limit still count against
+the sustained limit, so a client that keeps calling after a `429` spends its hourly quota
+on rejected calls. For example, 60 accepted calls followed by 540 rejected ones exhaust
+the hourly quota, locking the client out for one hour. This quota is separate from the one
+used by the write endpoints.
+
+## Write Endpoints
+
+The following endpoints can write data and always require authentication, with a Personal
+Access Token or with a session cookie and CSRF token.
+
+### `POST /api/v2/upload/translations/`
+
+Update translations from an uploaded translation file, as the authenticated user. This
+is also used by the **Upload Translations** button in the translate app.
+
+The request body is `multipart/form-data` with these fields:
+
+| Field        | Description                                                 |
+| ------------ | ----------------------------------------------------------- |
+| `project`    | Project slug                                                |
+| `locale`     | Locale code                                                 |
+| `resource`   | Resource path within the project                            |
+| `uploadfile` | Translation file, in the same format as the target resource |
+
+```bash
+$ curl -X POST \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  -F "project=firefox" \
+  -F "locale=it" \
+  -F "resource=browser/browser.ftl" \
+  -F "uploadfile=@browser.ftl" \
+  "https://example.com/api/v2/upload/translations/"
+```
+
+A successful request returns a summary of the import:
+
+```json
+{
+  "updated": 12,
+  "unchanged": 3,
+  "undefined_keys": [["obsolete_key"]],
+  "undefined_keys_count": 1,
+  "badge_updates": [{ "name": "Translation Champion", "level": 2 }]
+}
+```
+
+- `updated`: translations added or replaced. Uploaded translations replace the
+  current approved translation, or approve a matching suggestion.
+- `unchanged`: translations identical to the current approved, pretranslated or fuzzy
+  one, ignored.
+- `undefined_keys`: keys of translations with no matching string in Pontoon, ignored.
+  Each key is a list of strings, in the same format as the `key` field of entities.
+  Only the first 100 keys are listed.
+- `undefined_keys_count`: total number of keys with no matching string in Pontoon,
+  before truncation.
+- `badge_updates`: badges whose level the upload raised, each with its `name` and new
+  `level`. The user is also notified of each. Empty when no level changed.
+
+The upload is additive: strings missing from the uploaded file are left untouched, so
+partial files can be used to update a subset of translations. Re-uploading an unchanged
+file succeeds with `"updated": 0`. A file that cannot be parsed, or that contains no
+translations at all, is rejected with `400` rather than reported as an unchanged upload,
+so `"updated": 0` always means the file was valid and simply didn't change anything.
+
+Requirements and limits:
+
+- You must have translator rights for the target locale, and the project locale must not
+  be read-only. Otherwise the request is rejected with `403`.
+- The project must not be disabled, and both the project and the resource must be
+  enabled for the target locale. Otherwise the request is rejected with `404`.
+- Uploaded files must be under 5000 kB, and must match the format of the target
+  resource.
+- The endpoint is rate limited per user, with a burst limit of 30 calls per minute and a
+  sustained limit of 180 calls per hour by default (configurable via
+  `API_UPLOAD_THROTTLE_BURST` and `API_UPLOAD_THROTTLE_SUSTAINED`). The two limits are
+  not independent: calls rejected by the burst limit still count against the sustained
+  limit, so a client that keeps calling after a `429` spends its hourly quota on
+  rejected calls. For example, 30 accepted uploads followed by 150 rejected ones exhaust
+  the hourly quota, locking the client out for one hour.
+
+Uploaded translations are written to the database immediately, and pushed to the
+project's VCS repository by the next sync.
+
+Status codes:
+
+| Code  | Meaning                                                                                                    |
+| ----- | ---------------------------------------------------------------------------------------------------------- |
+| `200` | Upload accepted (possibly with `"updated": 0`)                                                             |
+| `400` | Missing or invalid field, unsupported format, unparseable or empty file, or file too large                 |
+| `403` | Not authenticated, invalid or expired token, missing CSRF token, or insufficient permission                |
+| `404` | Unknown or disabled project, unknown locale or resource, or project or resource not enabled for the locale |
+| `409` | A concurrent upload or review changed the same translations; retry the request                             |
+| `429` | Rate limit exceeded                                                                                        |
+
+### `POST /api/v2/upload/pretranslations/`
+
+Store translations from an uploaded translation file as pretranslations.
+This API requires the user to be a member of the `pretranslators` group,
+in addition to have translator rights for the target locale and project.
+
+The request body is the same `multipart/form-data` as
+[`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations):
+
+```bash
+$ curl -X POST \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  -F "project=firefox" \
+  -F "locale=it" \
+  -F "resource=browser/browser.ftl" \
+  -F "uploadfile=@browser.ftl" \
+  "https://example.com/api/v2/upload/pretranslations/"
+```
+
+A successful request returns a summary of the import:
+
+```json
+{
+  "created": 8,
+  "replaced": 2,
+  "converted": 1,
+  "unchanged": 3,
+  "skipped": 12,
+  "failed_checks": [
+    { "key": ["entity_key"], "errors": ["Double space"], "warnings": [] }
+  ],
+  "failed_checks_count": 1,
+  "undefined_keys": [["obsolete_key"]],
+  "undefined_keys_count": 1,
+  "badge_updates": []
+}
+```
+
+- `created`: number of pretranslations added for strings with no pretranslation
+  or fuzzy translation.
+- `replaced`: number of pretranslations replacing a previous, different
+  pretranslation or fuzzy translation. The replaced translation is rejected.
+- `converted`: number of existing translations made the active pretranslation,
+  because they match the uploaded translation. Their original author is preserved.
+- `unchanged`: number of translations identical to the current pretranslation, ignored.
+- `skipped`: number of strings left untouched, because they already have an
+  approved translation, or are marked as fuzzy in the uploaded file.
+- `failed_checks`: number of strings left untouched, because the
+  uploaded translation fails quality checks. Each entry has the `key`
+  of the string, in the same format as the `key` field of entities,
+  and the `errors` and `warnings` reported for it.
+  Only the first 100 keys are listed.
+- `failed_checks_count`: total number of strings left untouched because of failing
+  checks, before truncation.
+- `undefined_keys`: keys of translations with no matching string in Pontoon, ignored.
+  Each key is a list of strings, in the same format as the `key` field of entities.
+  Only the first 100 keys are listed.
+- `undefined_keys_count`: total number of keys with no matching string in Pontoon,
+  before truncation.
+- `badge_updates`: badges whose level the upload raised, each with its `name` and new
+  `level`. The user is also notified of each. Empty when no level changed.
+
+Unlike the built-in pretranslation, strings with unreviewed suggestions are
+pretranslated. Suggestions that don't match the uploaded translation are kept as
+unreviewed suggestions. Fuzzy translations already in Pontoon are rejected and replaced
+by the pretranslation, while approved translations are never replaced. An uploaded
+translation that fails any quality check is neither stored nor converted, and the
+previous translation is left in place, so that a broken translation never replaces a
+good one.
+
+The requirements, limits and status codes of
+[`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations) also apply here,
+with one difference: the request is rejected with `403` unless the user is a member of
+the `pretranslators` group.
+
+### `POST /api/v2/upload/suggestions/`
+
+Store translations from an uploaded translation file as unreviewed suggestions,
+authored by the authenticated user.
+
+The request body is the same `multipart/form-data` as
+[`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations):
+
+```bash
+$ curl -X POST \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  -F "project=firefox" \
+  -F "locale=it" \
+  -F "resource=browser/browser.ftl" \
+  -F "uploadfile=@browser.ftl" \
+  "https://example.com/api/v2/upload/suggestions/"
+```
+
+A successful request returns a summary of the import:
+
+```json
+{
+  "created": 9,
+  "restored": 1,
+  "unchanged": 4,
+  "failed_checks": [
+    {
+      "key": ["entity_key"],
+      "errors": ["Ending newline mismatch"],
+      "warnings": []
+    }
+  ],
+  "failed_checks_count": 1,
+  "undefined_keys": [["obsolete_key"]],
+  "undefined_keys_count": 1,
+  "badge_updates": []
+}
+```
+
+- `created`: number of suggestions added.
+- `restored`: number of rejected translations matching the upload that were
+  un-rejected, becoming pending suggestions again.
+- `unchanged`: number of uploaded translations that match existing unrejected
+  translations, in any review state, ignored.
+- `failed_checks`: strings left untouched, because the uploaded translation has errors.
+  Each entry has the `key` of the string, in the same format as the `key` field of
+  entities, and the `errors` and `warnings` reported for it. Only the first 100 keys are
+  listed.
+- `failed_checks_count`: total number of strings left untouched because of errors,
+  before truncation.
+- `undefined_keys`: keys of translations with no matching string in Pontoon, ignored.
+  Each key is a list of strings, in the same format as the `key` field of entities.
+  Only the first 100 keys are listed.
+- `undefined_keys_count`: total number of keys with no matching string in Pontoon,
+  before truncation.
+- `badge_updates`: badges whose level the upload raised, each with its `name` and new
+  `level`. The user is also notified of each. Empty when no level changed.
+
+Nothing already in Pontoon is replaced or rejected: every uploaded translation is stored
+as a suggestion, unless the string already has an unrejected translation with the same
+value, whether approved, pretranslated or unreviewed. The fuzzy flag of the uploaded
+file is ignored: the translation is stored as a plain suggestion.
+
+A rejected translation matching the upload is un-rejected instead of being suggested
+again, so a translation rejected by mistake can be re-proposed. Its original author and
+date are kept, and it becomes a pending suggestion, awaiting review like any other.
+
+Uploaded translations reported with errors are left out, as the editor rejects them as
+well. Translations with warnings are stored, with their warnings, as a reviewer can
+still accept them.
+
+NOTE: unlike in the UI, where any user can submit suggestions, this endpoint
+requires translator rights. This is done to prevent abuse, since a malicious actor
+could submit thousands of suggestions.
+
+The requirements, limits and status codes of
+[`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations) also apply here.
