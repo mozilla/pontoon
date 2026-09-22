@@ -91,6 +91,28 @@ def test_user_actions_includes_implicit_flag(member):
     }
 
 
+def test_schema_documents_user_actions_and_entity_lookups():
+    response = APIClient().get(
+        "/api/v2/schema/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+    paths = response.data["paths"]
+    assert paths["/api/v2/user-actions/{date}/project/{slug}/"]["get"]["responses"][
+        "200"
+    ]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/UserActionsResponse"
+    }
+    assert paths["/api/v2/entities/{id}/"]["get"]["operationId"] == (
+        "entities_retrieve"
+    )
+    assert (
+        paths["/api/v2/entities/{project}/{resource}/{entity}/"]["get"]["operationId"]
+        == "entities_retrieve_by_path"
+    )
+
+
 @pytest.mark.django_db
 def test_dynamic_fields(django_assert_num_queries):
     expected_results = [

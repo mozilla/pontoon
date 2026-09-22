@@ -313,6 +313,63 @@ class TranslationSerializer(serializers.ModelSerializer):
         return get_simple_preview(obj.entity.resource.format, obj.string)
 
 
+class UserActionUserSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    name = serializers.CharField()
+    system_user = serializers.BooleanField()
+
+
+class UserActionLocaleSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    code = serializers.CharField()
+    name = serializers.CharField()
+
+
+class UserActionEntitySerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    key = serializers.ListField(child=serializers.CharField())
+
+
+class UserActionResourceSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    path = serializers.CharField()
+    format = serializers.ChoiceField(choices=Resource.Format.values)
+
+
+class UserActionTranslationSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    status = serializers.CharField()
+    string = serializers.CharField()
+    value = serializers.JSONField()
+    properties = serializers.JSONField(required=False)
+    errors = serializers.ListField(child=serializers.CharField(), required=False)
+    warnings = serializers.ListField(child=serializers.CharField(), required=False)
+
+
+class UserActionSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    is_implicit_action = serializers.BooleanField()
+    date = serializers.DateTimeField()
+    user = UserActionUserSerializer()
+    locale = UserActionLocaleSerializer()
+    entity = UserActionEntitySerializer()
+    resource = UserActionResourceSerializer()
+    translation = UserActionTranslationSerializer(required=False)
+
+
+class UserActionsProjectSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    slug = serializers.CharField()
+    name = serializers.CharField()
+
+
+class UserActionsResponseSerializer(serializers.Serializer):
+    """Response returned by the user-actions endpoint."""
+
+    actions = UserActionSerializer(many=True)
+    project = UserActionsProjectSerializer()
+
+
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
