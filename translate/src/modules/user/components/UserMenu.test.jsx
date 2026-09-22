@@ -1,5 +1,6 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
 import { EntityView } from '~/context/EntityView';
@@ -47,6 +48,8 @@ describe('<UserMenuDialog>', () => {
               <UserMenuDialog
                 user={{ isAuthenticated, isPM }}
                 onThemeChange={onThemeChange}
+                uploading={false}
+                setUploading={() => {}}
               />
             </EntityView.Provider>
           </MockLocalizationProvider>
@@ -179,5 +182,16 @@ describe('<UserMenu>', () => {
 
     wrapper.find('.selector').simulate('click');
     expect(wrapper.find('UserMenuDialog')).toHaveLength(0);
+  });
+
+  it('keeps the uploading state when the menu is closed and reopened', () => {
+    const wrapper = createShallowUserMenuBase();
+    wrapper.find('.selector').simulate('click');
+
+    act(() => wrapper.find('UserMenuDialog').prop('setUploading')(true));
+    wrapper.find('.selector').simulate('click');
+    wrapper.find('.selector').simulate('click');
+
+    expect(wrapper.find('UserMenuDialog').prop('uploading')).toBe(true);
   });
 });

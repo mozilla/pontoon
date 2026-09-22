@@ -1,5 +1,6 @@
 import { Localized } from '@fluent/react';
-import React, { useCallback, useContext, useState } from 'react';
+import NProgress from 'nprogress';
+import React, { useContext } from 'react';
 
 import { uploadTranslations } from '~/api/upload';
 import type { UploadTranslationsResult } from '~/api/upload';
@@ -7,6 +8,7 @@ import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 import type { Location } from '~/context/Location';
 import type { NotificationMessage } from '~/context/Notification';
 import { ShowNotification } from '~/context/Notification';
+import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 import { useAppDispatch } from '~/hooks';
 import { resetEntities } from '~/modules/entities/actions';
 
@@ -14,6 +16,8 @@ import './FileUpload.css';
 
 type Props = {
   parameters: Location;
+  uploading: boolean;
+  setUploading: (uploading: boolean) => void;
 };
 
 /** Show upload summaries for longer than a standard status message (2s),
@@ -97,29 +101,27 @@ function failure(status: number, error: string | undefined) {
 /*
  * Render a File Upload button.
  */
-export function FileUpload({ parameters }: Props): React.ReactElement<'div'> {
+export function FileUpload({
+  parameters,
+  uploading,
+  setUploading,
+}: Props): React.ReactElement<'div'> {
   const dispatch = useAppDispatch();
   const showNotification = useContext(ShowNotification);
   const showBadgeTooltip = useContext(ShowBadgeTooltip);
-  const [uploading, setUploading] = useState(false);
+  const { checkUnsavedChanges, setUnsavedChanges } = useContext(UnsavedActions);
+  const { check } = useContext(UnsavedChanges);
 
-  const upload = useCallback(
-    async (ev: React.ChangeEvent<HTMLInputElement>) => {
-      const file = ev.currentTarget.files?.[0];
-      // Let the same file be picked again, e.g. after fixing it.
-      ev.currentTarget.value = '';
-      if (!file || uploading) {
-        return;
-      }
-
-      setUploading(true);
+  const uploadFile = async (file: File) => {
+    setUploading(true);
+    NProgress.start();
+    try {
       const { status, result, error } = await uploadTranslations(
         parameters.locale,
         parameters.project,
         parameters.resource,
         file,
       );
-      setUploading(false);
 
       if (!result) {
         showNotification(failure(status, error));
@@ -138,9 +140,31 @@ export function FileUpload({ parameters }: Props): React.ReactElement<'div'> {
         // the upload, so start it over.
         dispatch(resetEntities());
       }
-    },
-    [dispatch, parameters, showBadgeTooltip, showNotification, uploading],
-  );
+    } finally {
+      setUploading(false);
+      NProgress.done();
+    }
+  };
+
+  const upload = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const file = ev.currentTarget.files?.[0];
+    // Let the same file be picked again, e.g. after fixing it.
+    ev.currentTarget.value = '';
+    if (!file || uploading) {
+      return;
+    }
+    // Save this before confirmation clears the unsaved state.
+    const hadUnsavedChanges = check();
+    checkUnsavedChanges(() => {
+      if (hadUnsavedChanges) {
+        // The draft is still in the editor, so keep protecting it. Restored
+        // here rather than after the upload, so that an edit mid-upload is
+        // preserved.
+        setUnsavedChanges(() => true);
+      }
+      void uploadFile(file);
+    });
+  };
 
   return (
     <div className='file-upload'>
