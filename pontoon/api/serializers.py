@@ -390,6 +390,16 @@ class EntitySearchSerializer(EntitySerializer):
         return TranslationSerializer(translation, context=self.context).data
 
 
+class PretranslationResponseSerializer(serializers.Serializer):
+    """Result of pretranslating a source string."""
+
+    text = serializers.CharField(help_text="Pretranslation of the source string.")
+    author = serializers.ChoiceField(
+        choices=["gt", "tm"],
+        help_text="Service that provided the pretranslation: Google Translate or TM.",
+    )
+
+
 # A serializer would document `uploadfile` as a plain string unless
 # `COMPONENT_SPLIT_REQUEST` is enabled for the whole API, so the request is described
 # with a raw OpenAPI schema here.
