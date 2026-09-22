@@ -514,7 +514,7 @@ def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
 def _month_time_interval(
     month: str, start: datetime.datetime, end: datetime.datetime
 ) -> str:
-    """Build the `time` URL parameter for the given month of the timeline."""
+    """Build the time interval URL parameter value for the given timeline month."""
     month_start = timezone.make_aware(datetime.datetime.strptime(month, "%B %Y"))
     month_end = month_start + relativedelta(months=1, minutes=-1)
 
