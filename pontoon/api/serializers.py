@@ -393,7 +393,7 @@ class EntitySearchSerializer(EntitySerializer):
 class PretranslationResponseSerializer(serializers.Serializer):
     """Result of pretranslating a source string."""
 
-    text = serializers.CharField(help_text="Pretranslated source string.")
+    text = serializers.CharField(help_text="Pretranslation of the source string.")
     author = serializers.ChoiceField(
         choices=["gt", "tm"],
         help_text="Service that provided the pretranslation: Google Translate or TM.",

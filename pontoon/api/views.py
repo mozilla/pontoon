@@ -651,7 +651,7 @@ class PretranslationView(APIView):
                 description="Missing or invalid parameters, text, format, or syntax."
             ),
             403: OpenApiResponse(
-                description="Authentication required, or user is not a pretranslator."
+                description="Authentication required, or user is not a member of the pretranslators group."
             ),
             404: OpenApiResponse(description="Unknown locale."),
         },
