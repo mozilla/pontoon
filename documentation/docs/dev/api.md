@@ -1,4 +1,4 @@
-# Pontoon Application Programming Interface
+# REST API
 
 Pontoon provides a set of [RESTful](https://developer.mozilla.org/en-US/docs/Glossary/REST) endpoints via the [Django REST Framework](https://www.django-rest-framework.org/), accessible under `/api/v2/`.
 
@@ -6,7 +6,7 @@ Pontoon provides a set of [RESTful](https://developer.mozilla.org/en-US/docs/Glo
 
 Most endpoints are publicly accessible and require no authentication. A few endpoints require an authenticated user.
 
-Requests can be authenticated either with a session cookie or with a Personal Access Token (PAT). Session requests that write data are subject to Django's CSRF checks. The upload endpoints accept both; `POST /api/v2/pretranslate/`, which returns a machine pretranslation for a string, accepts only a PAT. You can create a PAT from your [user settings](https://pontoon.mozilla.org/settings/) page (see the [User Accounts & Settings](https://github.com/mozilla/pontoon/blob/main/documentation/docs/localizer/users.md#personal-access-tokens) documentation for details).
+Requests can be authenticated either with a session cookie or with a Personal Access Token (PAT). Session requests that write data are subject to Django's CSRF checks. The upload endpoints accept both; `POST /api/v2/pretranslate/`, which returns a machine pretranslation for a string, accepts only a PAT. You can create a PAT from your [user settings](https://pontoon.mozilla.org/settings/) page (see the [User Accounts & Settings](../localizer/users.md#personal-access-tokens) documentation for details).
 
 Send the token in the `Authorization` header using the `Bearer` scheme:
 
@@ -79,7 +79,7 @@ $ curl --globoff "https://example.com/api/v2/locales/?page_size=50"
 
 Find the terms appearing in a text, with their translation in a given locale.
 
-Unlike [`/api/v2/search/terminology/`](#/search/search_terminology_list), which looks up terms by name, this
+Unlike [`/api/v2/search/terminology/`](/api/v2/#/search/search_terminology_list), which looks up terms by name, this
 endpoint matches every known term against the text, at word boundaries: a term matches
 the start of a word, so `open` matches `Opened`, but not `Reopened`. Terms without a
 definition, and terms marked as forbidden, are never returned.
