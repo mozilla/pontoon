@@ -511,6 +511,21 @@ def get_project_locale_contribution_counts(contributions_qs: ActionLogQuerySet):
     return counts
 
 
+def _month_time_interval(
+    month: str, start: datetime.datetime, end: datetime.datetime
+) -> str:
+    """Build the `time` URL parameter for the given month of the timeline."""
+    month_start = timezone.make_aware(datetime.datetime.strptime(month, "%B %Y"))
+    month_end = month_start + relativedelta(months=1, minutes=-1)
+
+    interval_start = max(start, month_start)
+    interval_end = min(end, month_end)
+
+    return (
+        f"{interval_start.strftime('%Y%m%d%H%M')}-{interval_end.strftime('%Y%m%d%H%M')}"
+    )
+
+
 def get_contribution_timeline_data(
     contributor, viewer, full_year=False, contribution_type=None, day=None, year=None
 ):
@@ -558,10 +573,6 @@ def get_contribution_timeline_data(
         case "all_user_contributions" | _:
             contribution_types = ["user_translations", "user_reviews"]
 
-    start_ = start.strftime("%Y%m%d%H%M")
-    end_ = end.strftime("%Y%m%d%H%M")
-    time_str = f"{start_}-{end_}"
-
     contributions = {}
     for contribution_type in contribution_types:
         contributions_qs = contributions_map[contribution_type]
@@ -570,6 +581,7 @@ def get_contribution_timeline_data(
         for month, data in contribution_data.items():
             total_count = sum([info["count"] for _, info in data.items()])
             p_count = len(data)
+            time_str = _month_time_interval(month, start, end)
 
             # Generate title for the localizations belonging to the same contribution type
             match contribution_type:
