@@ -1,3 +1,5 @@
+import logging
+
 from django.db.models import QuerySet
 from django.utils import timezone
 
@@ -14,6 +16,9 @@ from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.translations.utils import parse_source_string_to_json
+
+
+logger = logging.getLogger(__name__)
 
 
 def batch_action_template(form, user, translations, locale):
@@ -433,12 +438,23 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
     translations_to_create = []
 
     for entity in eligible_entities:
-        pretranslation = get_pretranslation(entity, locale)
+        try:
+            pretranslation = get_pretranslation(entity, locale)
+        except ValueError as e:
+            logger.info(f"Pretranslation error for entity {entity.pk}: {e!r}")
+            continue
 
-        string, _engine = pretranslation
-        _, value, properties = parse_source_string_to_json(
-            entity.resource.format, string
-        )
+        string, engine = pretranslation
+
+        try:
+            _, value, properties = parse_source_string_to_json(
+                entity.resource.format, string, locale.plural_catchall
+            )
+        except ValueError as e:
+            logger.error(
+                f"Unparsable pretranslation for entity {entity.pk}: {e!r}: {string!r}"
+            )
+            continue
 
         translations_to_create.append(
             Translation(
