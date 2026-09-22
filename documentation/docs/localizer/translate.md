@@ -102,7 +102,7 @@ When uploading translations to Pontoon:
 * Strings missing from the uploaded file are left untouched, so partial files can be used to update a subset of translations.
 * Uploaded files must be under 5000 kB, and must match the format of the resource currently selected.
 
-Translations can also be uploaded programmatically, using the [upload endpoint](https://github.com/mozilla/pontoon/blob/main/pontoon/api/README.md#write-endpoints) of Pontoon’s API. The endpoint requires a [Personal Access Token](users.md#personal-access-tokens) and is rate limited.
+Translations can also be uploaded programmatically, using the [upload endpoint](https://github.com/mozilla/pontoon/blob/main/pontoon/api/README.md#write-endpoints) of Pontoon’s API. The endpoint requires a [Personal Access Token](users.md#personal-access-tokens) and is rate limited. Uploads performed through the UI are subject to the same rate limits.
 
 ## Downloading .tbx and .tmx files via command line
 

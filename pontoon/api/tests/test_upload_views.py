@@ -13,13 +13,14 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError
 from django.utils.timezone import now
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.api.models import PersonalAccessToken
 from pontoon.api.serializers import UPLOAD_KEYS_ERROR_LIMIT
 from pontoon.base import badge_utils
-from pontoon.base.models import Project, Translation
+from pontoon.base.models import ChangedEntityLocale, Project, Translation
 from pontoon.sync import upload as sync_upload
 from pontoon.sync.upload import UploadConflictError
-from pontoon.test.factories import EntityFactory
+from pontoon.test.factories import EntityFactory, TranslationFactory
 
 
 TRANSLATIONS = "/api/v2/upload/translations/"
@@ -59,6 +60,22 @@ def _po_file(contents=PO_CONTENTS, name="resource_a.po"):
 
 def _post(client, url, **data):
     return client.post(url, data, format="multipart")
+
+
+def _approved_translation(
+    project_locale, resource, key, string="other translation", obsolete=False
+):
+    """An entity with an approved translation, in the resource of an upload."""
+    return TranslationFactory.create(
+        entity=EntityFactory.create(
+            resource=resource, string=key, key=[key], obsolete=obsolete
+        ),
+        locale=project_locale.locale,
+        string=string,
+        value=[string],
+        approved=True,
+        active=True,
+    )
 
 
 def _upload(client, url, project_locale, resource_path, contents=PO_CONTENTS):
@@ -285,7 +302,7 @@ def test_upload_unparseable_file(upload_translator, project_locale_a, resource_p
     )
 
     assert response.status_code == 400
-    assert "uploadfile" in response.json()
+    assert response.json()["uploadfile"][0].startswith("Could not parse uploaded file")
 
 
 @pytest.mark.django_db
@@ -434,8 +451,13 @@ def test_upload_concurrent_conflict(
 
 @pytest.mark.django_db
 def test_upload_translations_response(
-    upload_translator, project_locale_a, resource_path
+    upload_translator, project_locale_a, upload_po_translation, resource_path
 ):
+    """The upload is also additive: strings missing from the file are left alone."""
+    untouched = _approved_translation(
+        project_locale_a, upload_po_translation.entity.resource, "other_key"
+    )
+
     response = _upload(
         _pat_client(upload_translator.user),
         TRANSLATIONS,
@@ -456,6 +478,176 @@ def test_upload_translations_response(
 
     assert translation.approved
     assert translation.user == upload_translator.user
+    assert not translation.warnings.exists()
+    assert ActionLog.objects.filter(
+        performed_by=upload_translator.user,
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        translation=translation,
+    ).exists()
+
+    untouched.refresh_from_db()
+    assert untouched.approved
+    assert untouched.active
+    assert not untouched.rejected
+
+
+@pytest.mark.django_db
+def test_upload_translations_unchanged(
+    upload_translator, project_locale_a, upload_po_translation, resource_path
+):
+    """Re-uploading a file that changed nothing is reported as unchanged."""
+    client = _pat_client(upload_translator.user)
+    first = _upload(client, TRANSLATIONS, project_locale_a, resource_path)
+    assert first.json()["updated"] == 1
+
+    second = _upload(client, TRANSLATIONS, project_locale_a, resource_path)
+
+    assert second.status_code == 200
+    assert second.json()["updated"] == 0
+    assert second.json()["unchanged"] == 1
+    assert Translation.objects.filter(string="new translation").count() == 1
+
+
+@pytest.mark.django_db
+def test_upload_translations_replaces_approved_translation(
+    upload_translator, project_locale_a, upload_po_translation, resource_path
+):
+    """An uploaded translation replaces the approved one, rejecting it."""
+    upload_po_translation.approved = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    response = _upload(
+        _pat_client(upload_translator.user),
+        TRANSLATIONS,
+        project_locale_a,
+        resource_path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["updated"] == 1
+
+    upload_po_translation.refresh_from_db()
+    assert not upload_po_translation.approved
+    assert upload_po_translation.rejected
+    assert (
+        Translation.objects.get(
+            entity=upload_po_translation.entity, approved=True
+        ).string
+        == "new translation"
+    )
+
+
+@pytest.mark.django_db
+def test_upload_translations_approves_matching_suggestion(
+    upload_translator, project_locale_a, upload_po_translation, resource_path
+):
+    """An upload matching an existing suggestion approves it in place,
+    and the entity is still marked as changed for the next sync."""
+    assert not upload_po_translation.approved
+
+    response = _upload(
+        _pat_client(upload_translator.user),
+        TRANSLATIONS,
+        project_locale_a,
+        resource_path,
+        contents=f'msgid "test_key"\nmsgstr "{upload_po_translation.string}"',
+    )
+
+    assert response.status_code == 200
+    assert response.json()["updated"] == 1
+
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+    upload_po_translation.refresh_from_db()
+    assert upload_po_translation.approved
+    assert ChangedEntityLocale.objects.filter(
+        entity=upload_po_translation.entity, locale=project_locale_a.locale
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_translations_identical_fuzzy_unchanged(
+    upload_translator, project_locale_a, upload_po_translation, resource_path
+):
+    """An uploaded fuzzy translation matching an existing fuzzy one changes nothing."""
+    upload_po_translation.fuzzy = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    response = _upload(
+        _pat_client(upload_translator.user),
+        TRANSLATIONS,
+        project_locale_a,
+        resource_path,
+        contents=f'#, fuzzy\nmsgid "test_key"\nmsgstr "{upload_po_translation.string}"',
+    )
+
+    assert response.status_code == 200
+    assert response.json()["updated"] == 0
+    assert response.json()["unchanged"] == 1
+
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+    assert not ChangedEntityLocale.objects.filter(
+        entity=upload_po_translation.entity
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_upload_translations_approves_matching_fuzzy(
+    upload_translator, project_locale_a, upload_po_translation, resource_path
+):
+    """An uploaded non-fuzzy translation matching an existing fuzzy one approves it."""
+    upload_po_translation.fuzzy = True
+    upload_po_translation.active = True
+    upload_po_translation.save()
+
+    response = _upload(
+        _pat_client(upload_translator.user),
+        TRANSLATIONS,
+        project_locale_a,
+        resource_path,
+        contents=f'msgid "test_key"\nmsgstr "{upload_po_translation.string}"',
+    )
+
+    assert response.status_code == 200
+    assert response.json()["updated"] == 1
+
+    assert Translation.objects.filter(entity=upload_po_translation.entity).count() == 1
+    upload_po_translation.refresh_from_db()
+    assert upload_po_translation.approved
+    assert not upload_po_translation.fuzzy
+
+
+@pytest.mark.django_db
+def test_upload_translations_ignores_obsolete_entities(
+    upload_translator, project_locale_a, upload_po_translation, resource_path
+):
+    """A key removed and later re-added leaves an obsolete entity with the same key.
+    The upload fills the new, untranslated key and counts it as updated, even though
+    the translation matches the one of the obsolete entity."""
+    _approved_translation(
+        project_locale_a,
+        upload_po_translation.entity.resource,
+        "test_key",
+        string="new translation",
+        obsolete=True,
+    )
+
+    response = _upload(
+        _pat_client(upload_translator.user),
+        TRANSLATIONS,
+        project_locale_a,
+        resource_path,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["updated"] == 1
+    assert (
+        Translation.objects.get(
+            entity=upload_po_translation.entity, approved=True
+        ).string
+        == "new translation"
+    )
 
 
 @pytest.mark.django_db

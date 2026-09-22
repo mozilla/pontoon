@@ -779,6 +779,17 @@ user-UserAvatar--anon-alt-text =
 user-UserAvatar--alt-text =
     .alt = User Profile
 
+## File Upload
+## Reports the outcome of uploading a translation file.
+
+user-FileUpload--upload-summary = Translations uploaded: { $updated } updated, { $unchanged } unchanged.
+user-FileUpload--upload-summary-not-found = Translations uploaded: { $updated } updated, { $unchanged } unchanged, { $notFound } not found in Pontoon.
+user-FileUpload--upload-invalid = Upload failed: the file could not be used.
+user-FileUpload--upload-forbidden = You don’t have permission to upload files.
+user-FileUpload--upload-conflict = Upload failed: someone else changed the same translations. Please try again.
+user-FileUpload--upload-throttled = Too many uploads. Please wait a while and try again.
+user-FileUpload--upload-error = Upload failed. Please try again.
+
 ## User Menu
 ## Shows user menu entries and options to sign in or out.
 

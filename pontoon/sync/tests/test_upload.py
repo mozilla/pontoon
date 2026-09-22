@@ -19,7 +19,6 @@ from pontoon.sync import upload as sync_upload
 from pontoon.sync.upload import (
     FailedCheck,
     UploadConflictError,
-    UploadError,
     import_uploaded_file,
     import_uploaded_pretranslations,
     import_uploaded_suggestions,
@@ -144,95 +143,6 @@ def _review_during_import(monkeypatch, review):
 
 def _approve_during_import(monkeypatch, translation, user):
     _review_during_import(monkeypatch, lambda: translation.approve(user))
-
-
-# Translations
-
-
-@pytest.mark.django_db
-def test_upload_translations_file(project_locale_a, resource, po_translation, uploader):
-    result = _import(import_uploaded_file, project_locale_a, resource, uploader)
-
-    assert result.updated == 1
-    assert result.unchanged == 0
-    assert result.undefined_keys == []
-
-    translation = Translation.objects.get(string="new translation")
-
-    assert translation.entity.key == ["test_key"]
-    assert translation.approved
-    assert translation.user == uploader
-    assert not translation.warnings.exists()
-    assert ActionLog.objects.filter(
-        performed_by=uploader,
-        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
-        translation=translation,
-    ).exists()
-
-
-@pytest.mark.django_db
-def test_upload_translations_unchanged(
-    project_locale_a, resource, po_translation, uploader
-):
-    """Re-importing a file that changed nothing is reported as unchanged."""
-    first = _import(import_uploaded_file, project_locale_a, resource, uploader)
-    assert first.updated == 1
-
-    second = _import(import_uploaded_file, project_locale_a, resource, uploader)
-
-    assert second.updated == 0
-    assert second.unchanged == 1
-    assert Translation.objects.filter(string="new translation").count() == 1
-
-
-@pytest.mark.django_db
-def test_upload_translations_unknown_keys_ignored(
-    project_locale_a, resource, po_translation, uploader
-):
-    """Skip unknown keys and report them, importing the rest of the file."""
-    result = _import(
-        import_uploaded_file,
-        project_locale_a,
-        resource,
-        uploader,
-        contents='msgid "test_key"\nmsgstr "new translation"\n\n'
-        'msgid "no_such_key"\nmsgstr "x"\n\n'
-        'msgid "another_missing"\nmsgstr "y"\n',
-    )
-
-    assert result.updated == 1
-    assert result.undefined_keys == [("no_such_key",), ("another_missing",)]
-    assert result.undefined == 2
-    assert Translation.objects.filter(string="new translation").exists()
-
-
-@pytest.mark.django_db
-def test_upload_translations_unparseable_file(
-    project_locale_a, resource, po_translation, uploader
-):
-    with pytest.raises(UploadError, match="Could not parse uploaded file"):
-        _import(
-            import_uploaded_file,
-            project_locale_a,
-            resource,
-            uploader,
-            contents="this is not valid gettext {{{ broken",
-        )
-
-
-@pytest.mark.django_db
-def test_upload_translations_file_without_translations(
-    project_locale_a, resource, po_translation, uploader
-):
-    """A file with no translations is an error, rather than a no-op."""
-    with pytest.raises(UploadError, match="No translations found"):
-        _import(
-            import_uploaded_file,
-            project_locale_a,
-            resource,
-            uploader,
-            contents="# Just a comment\n",
-        )
 
 
 # Pretranslations

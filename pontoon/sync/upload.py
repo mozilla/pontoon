@@ -57,10 +57,6 @@ class UploadResult:
     unchanged: int = 0
     undefined_keys: list[L10nId] = field(default_factory=list)
 
-    @property
-    def undefined(self) -> int:
-        return len(self.undefined_keys)
-
 
 def parse_uploaded_file(
     locale: Locale, db_res: DbResource, upload: File

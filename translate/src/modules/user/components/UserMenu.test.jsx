@@ -1,10 +1,13 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
 
 import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import * as Translator from '~/hooks/useTranslator';
 
+import { createReduxStore } from '~/test/store';
 import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
 
 import { FileUpload } from './FileUpload';
@@ -36,18 +39,22 @@ describe('<UserMenuDialog>', () => {
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
     return mount(
-      <Location.Provider value={location}>
-        <MockLocalizationProvider>
-          <EntityView.Provider
-            value={{ entity: { pk: 42, readonly: isReadOnly } }}
-          >
-            <UserMenuDialog
-              user={{ isAuthenticated, isPM }}
-              onThemeChange={onThemeChange}
-            />
-          </EntityView.Provider>
-        </MockLocalizationProvider>
-      </Location.Provider>,
+      <Provider store={createReduxStore()}>
+        <Location.Provider value={location}>
+          <MockLocalizationProvider>
+            <EntityView.Provider
+              value={{ entity: { pk: 42, readonly: isReadOnly } }}
+            >
+              <UserMenuDialog
+                user={{ isAuthenticated, isPM }}
+                onThemeChange={onThemeChange}
+                uploading={false}
+                setUploading={() => {}}
+              />
+            </EntityView.Provider>
+          </MockLocalizationProvider>
+        </Location.Provider>
+      </Provider>,
     );
   }
 
@@ -175,5 +182,16 @@ describe('<UserMenu>', () => {
 
     wrapper.find('.selector').simulate('click');
     expect(wrapper.find('UserMenuDialog')).toHaveLength(0);
+  });
+
+  it('keeps the uploading state when the menu is closed and reopened', () => {
+    const wrapper = createShallowUserMenuBase();
+    wrapper.find('.selector').simulate('click');
+
+    act(() => wrapper.find('UserMenuDialog').prop('setUploading')(true));
+    wrapper.find('.selector').simulate('click');
+    wrapper.find('.selector').simulate('click');
+
+    expect(wrapper.find('UserMenuDialog').prop('uploading')).toBe(true);
   });
 });
