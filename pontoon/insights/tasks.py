@@ -444,6 +444,7 @@ def get_active_users_actions(
         )
         # Exclude implicit actions (e.g. self-approvals on submission).
         .exclude(is_implicit_action=True)
+        .exclude_self_reviews()
         .values("action_type", "created_at", "performed_by", "translation__locale")
         .order_by("translation__locale")
         .distinct()
