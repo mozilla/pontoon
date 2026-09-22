@@ -521,9 +521,12 @@ def _month_time_interval(
     interval_start = max(start, month_start)
     interval_end = min(end, month_end)
 
-    return (
-        f"{interval_start.strftime('%Y%m%d%H%M')}-{interval_end.strftime('%Y%m%d%H%M')}"
-    )
+    # Timestamps are parsed as UTC in pontoon.base.get_entities._parse_timestamp,
+    # while month buckets are truncated in settings.TIME_ZONE.
+    start_utc = interval_start.astimezone(datetime.timezone.utc)
+    end_utc = interval_end.astimezone(datetime.timezone.utc)
+
+    return f"{start_utc.strftime('%Y%m%d%H%M')}-{end_utc.strftime('%Y%m%d%H%M')}"
 
 
 def get_contribution_timeline_data(
