@@ -1,3 +1,4 @@
+import json
 import textwrap
 
 from dataclasses import dataclass
@@ -23,6 +24,17 @@ class OpenAITranslation:
     """
 
     text: str
+    cache_hit: bool
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+
+
+@dataclass
+class OpenAIComposedTranslation:
+    """Ids the model failed to return are absent from `leaves`, so the caller can
+    leave those leaves unrefined instead of failing the whole entry."""
+
+    leaves: dict[str, str]
     cache_hit: bool
     prompt_tokens: int | None = None
     completion_tokens: int | None = None
@@ -120,11 +132,48 @@ def _system_rules(style_goal, output_instruction, extra_rules=()) -> str:
     )
 
 
+COMPOSED_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "leaves": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "string"},
+                    "text": {"type": "string"},
+                },
+                "required": ["id", "text"],
+                "additionalProperties": False,
+            },
+        }
+    },
+    "required": ["leaves"],
+    "additionalProperties": False,
+}
+
+
 class OpenAIService:
     def __init__(self):
         if not settings.OPENAI_API_KEY:
             raise ValueError("Missing OpenAI API key")
         self.client = OpenAI()
+
+    def _complete(self, system_message, user_prompt, response_format=None):
+        kwargs = {}
+        if response_format is not None:
+            kwargs["response_format"] = response_format
+        return self.client.chat.completions.create(
+            model=settings.OPENAI_MODEL,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0,  # Set temperature to 0 for deterministic output
+            top_p=1,  # Set top_p to 1 to consider the full distribution
+            reasoning_effort="none",  # Disable reasoning for faster responses
+            **kwargs,
+        )
 
     def get_translation(
         self,
@@ -213,23 +262,112 @@ class OpenAIService:
         if cached is not None:
             return OpenAITranslation(text=cached, cache_hit=True)
 
-        # Call the OpenAI API with the constructed prompt
-        response = self.client.chat.completions.create(
-            model=settings.OPENAI_MODEL,
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0,  # Set temperature to 0 for deterministic output
-            top_p=1,  # Set top_p to 1 to consider the full distribution
-            reasoning_effort="none",  # Disable reasoning for faster responses
-        )
+        response = self._complete(system_message, user_prompt)
 
         result = response.choices[0].message.content.strip()
         set_machinery_service_cache_key(cache_key, result)
         usage = getattr(response, "usage", None)
         return OpenAITranslation(
             text=result,
+            cache_hit=False,
+            prompt_tokens=getattr(usage, "prompt_tokens", None),
+            completion_tokens=getattr(usage, "completion_tokens", None),
+        )
+
+    def get_composed_translation(
+        self,
+        leaves,
+        characteristic,
+        locale,
+        entity_key=None,
+        entity_comment=None,
+        group_comment=None,
+        resource_comment=None,
+        pinned_comments=None,
+        terms=None,
+    ) -> OpenAIComposedTranslation:
+        """Refine every part of a multi-part string in one request.
+
+        One call rather than one per part, so the shared context is sent once and
+        the model keeps one register across parts the user sees side by side.
+
+        :param leaves: ``[{"id": …, "source": …, "current": …}, …]``, each text
+            in the resource format's own syntax.
+        """
+        style_goal = _style_goal(characteristic, locale)
+        context_args = (
+            entity_key,
+            entity_comment,
+            group_comment,
+            resource_comment,
+            pinned_comments,
+            terms,
+        )
+
+        context_parts = _context_data(*context_args)
+        context_parts.append(
+            "PARTS (JSON):\n" + json.dumps(list(leaves), ensure_ascii=False, indent=2)
+        )
+        user_prompt = "\n\n".join(context_parts)
+
+        system_header = textwrap.dedent(
+            f"""\
+            You are an expert {locale.name} ({locale.code}) localization specialist.
+
+            Your task: produce a {characteristic} {locale.name} ({locale.code}) translation of every part of a multi-part UI string.
+            Each part has an `id`, its English `source`, and a `current` machine-assembled translation.
+            Use each `current` translation as a guide, but rewrite freely if it can be improved.
+            """
+        )
+
+        system_message = (
+            system_header
+            + _context_instructions(*context_args)
+            + _system_rules(
+                style_goal,
+                "Return one entry for every `id` you were given, and no others. Output only the translations, with no explanation.",
+                extra_rules=[
+                    "Reproduce any placeable, such as { $count }, exactly as it appears; never translate or drop one.",
+                    "Keep register, terminology and phrasing consistent across all parts — the user sees them together, so they must read as one string.",
+                ],
+            )
+        )
+
+        cache_key = get_machinery_service_cache_key(
+            "openai_chatgpt_composed",
+            settings.OPENAI_MODEL,
+            system_message,
+            user_prompt,
+        )
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return OpenAIComposedTranslation(leaves=json.loads(cached), cache_hit=True)
+
+        response = self._complete(
+            system_message,
+            user_prompt,
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "composed_translation",
+                    "strict": True,
+                    "schema": COMPOSED_SCHEMA,
+                },
+            },
+        )
+
+        requested = {leaf["id"] for leaf in leaves}
+        parsed = json.loads(response.choices[0].message.content)
+        result = {
+            leaf["id"]: leaf["text"]
+            for leaf in parsed["leaves"]
+            if leaf["id"] in requested
+        }
+
+        set_machinery_service_cache_key(cache_key, json.dumps(result))
+        usage = getattr(response, "usage", None)
+        return OpenAIComposedTranslation(
+            leaves=result,
             cache_hit=False,
             prompt_tokens=getattr(usage, "prompt_tokens", None),
             completion_tokens=getattr(usage, "completion_tokens", None),

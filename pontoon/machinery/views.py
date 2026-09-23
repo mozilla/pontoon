@@ -7,7 +7,8 @@ from urllib.parse import quote
 
 import requests
 
-from moz.l10n.message import message_to_json
+from moz.l10n.message import message_from_json, message_to_json
+from moz.l10n.model import Entry
 from sacremoses import MosesDetokenizer
 
 from django.conf import settings
@@ -19,6 +20,12 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
 
 from pontoon.base.models import Entity, Locale, Project, Translation
+from pontoon.machinery.composed_refine import (
+    has_translatable_text,
+    is_accesskey,
+    iter_leaves,
+    placeables_survived,
+)
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
@@ -26,12 +33,25 @@ from pontoon.machinery.utils import (
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
-from pontoon.pretranslation.pretranslate import MTEngine, Pretranslation
+from pontoon.pretranslation.pretranslate import (
+    MTEngine,
+    Pretranslation,
+    message_format,
+    pattern_as_context,
+    pattern_as_text,
+    pattern_from_text,
+    set_accesskey,
+)
 
 from .openai_service import OpenAIService
 
 
 log = logging.getLogger(__name__)
+
+# One prompt holds every part of an entity, so an entity with an implausible
+# number of variants would otherwise turn one request into an arbitrarily
+# large one.
+MAX_COMPOSED_LEAVES = 50
 
 
 def _machinery_error_response(service_name, e):
@@ -369,6 +389,156 @@ def openai_chatgpt(request):
 
     except Exception as e:
         return _machinery_error_response("OpenAI ChatGPT", e)
+
+
+@require_POST
+@login_required(redirect_field_name="", login_url="/403")
+def openai_chatgpt_composed(request):
+    """
+    Refine a composed multi-value translation using GPT.
+
+    Each leaf is refined against the English it came from, all in one request.
+
+    POST params:
+        entity_pk: Entity pk
+        locale: Locale code
+        characteristic: `rephrased`, `formal` or `informal`
+        value, properties: The composed translation to refine, as the
+            `(value, properties)` data model that `machinery-composed/` returned.
+        trigger: `auto` for suggestions generated automatically by the Machinery
+            panel, `manual` for those requested from the AI dropdown.
+
+    Returns the refined `(value, properties)`, or `{}` when the suggestion has no
+    refinable text.
+    """
+    try:
+        characteristic = request.POST.get("characteristic")
+        locale_code = request.POST.get("locale")
+        trigger = request.POST.get("trigger", "manual")
+
+        try:
+            entity_pk = int(request.POST["entity_pk"])
+            target_value = message_from_json(json.loads(request.POST["value"]))
+            target_properties = {
+                key: message_from_json(prop)
+                for key, prop in json.loads(
+                    request.POST.get("properties") or "{}"
+                ).items()
+            }
+        except (KeyError, TypeError, ValueError) as e:
+            return JsonResponse(
+                {"status": False, "message": f"Bad Request: {e}"}, status=400
+            )
+
+        error = _llm_trigger_error(trigger, locale_code)
+        if error is not None:
+            return error
+
+        locale = Locale.objects.get(code=locale_code)
+        entity = Entity.objects.select_related("resource", "section").get(pk=entity_pk)
+
+        source_value = message_from_json(entity.value)
+        source_properties = {
+            key: message_from_json(prop)
+            for key, prop in (entity.properties or {}).items()
+        }
+
+        # A leaf is sent as the format's own syntax, the same text a translator
+        # reads, and the reply is parsed back the way a Translation Memory match
+        # is. A leaf whose format cannot express its placeholders as text is left
+        # alone rather than sent as something that cannot be read back.
+        fmt = message_format(entity.resource.format)
+        payload = []
+        leaves = {}
+        for leaf in iter_leaves(
+            source_value, source_properties, target_value, target_properties
+        ):
+            if not has_translatable_text(leaf.target):
+                continue
+            current = pattern_as_text(leaf.target, fmt)
+            # Fluent's inline form cannot express a line break, so a leaf
+            # carrying one could not be read back and is left alone.
+            if current is None or "\n" in current:
+                continue
+            # The English is only shown, so it does not have to be readable back.
+            source_text = pattern_as_context(leaf.source, fmt)
+            payload.append({"id": leaf.id, "source": source_text, "current": current})
+            leaves[leaf.id] = leaf
+
+        if not payload:
+            return JsonResponse({})
+        if len(payload) > MAX_COMPOSED_LEAVES:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": f"Bad Request: more than {MAX_COMPOSED_LEAVES} parts",
+                },
+                status=400,
+            )
+
+        # Terminology is matched against the leaf sources rather than
+        # `entity.string`, whose serialization would match terms against the
+        # message id and property names too.
+        source_texts = "\n".join(part["source"] for part in payload)
+        context = get_llm_entity_context(entity, locale, source_texts)
+
+        service = OpenAIService()
+        started = time.monotonic()
+        result = service.get_composed_translation(
+            payload,
+            characteristic,
+            locale,
+            **context,
+        )
+
+        applied = 0
+        for part in payload:
+            text = result.leaves.get(part["id"])
+            if text is None or "\n" in text:
+                continue
+            leaf = leaves[part["id"]]
+            try:
+                pattern = pattern_from_text(text, fmt)
+            except Exception:
+                # A reply that does not parse leaves its leaf as it was.
+                continue
+            if not placeables_survived(pattern, leaf.target, fmt):
+                continue
+            leaf.target[:] = pattern
+            applied += 1
+
+        # Derived rather than translated, so they were left out of the request.
+        entry = Entry(
+            id=tuple(entity.key), value=target_value, properties=target_properties
+        )
+        for key, prop in target_properties.items():
+            if is_accesskey(key):
+                set_accesskey(entry, key, prop)
+
+        _log_llm_suggestion(
+            trigger,
+            locale,
+            characteristic,
+            started,
+            result,
+            composed="true",
+            leaves=len(payload),
+            refined=applied,
+            rejected=len(result.leaves) - applied,
+        )
+
+        return JsonResponse(
+            {
+                "value": message_to_json(target_value),
+                "properties": {
+                    key: message_to_json(prop)
+                    for key, prop in target_properties.items()
+                },
+            }
+        )
+
+    except Exception as e:
+        return _machinery_error_response("OpenAI ChatGPT (composed)", e)
 
 
 def caighdean(request):

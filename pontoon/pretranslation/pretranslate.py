@@ -100,6 +100,23 @@ def pattern_as_text(pattern: Pattern, format: Format | None) -> str | None:
     return "".join(pattern) if all(isinstance(el, str) for el in pattern) else None
 
 
+def pattern_as_context(pattern: Pattern, format: Format | None) -> str:
+    """Text for a pattern that is only shown to a model, never read back.
+
+    Unlike `pattern_as_text`, a format whose placeholders have no
+    round-trippable syntax still gets something readable: each placeholder is
+    rendered as the source text it was parsed from, which is what a translator
+    sees in the file.
+    """
+    text = pattern_as_text(pattern, format)
+    if text is not None:
+        return text
+    return "".join(
+        el if isinstance(el, str) else el.attributes.get("source", "") or ""
+        for el in pattern
+    )
+
+
 def pattern_from_text(text: str, format: Format | None) -> Pattern:
     """Parse text back into a pattern, the way a Translation Memory match is parsed."""
     if format == Format.fluent:
