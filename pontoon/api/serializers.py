@@ -333,7 +333,7 @@ class UserActionEntitySerializer(serializers.Serializer):
 class UserActionResourceSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     path = serializers.CharField()
-    format = serializers.ChoiceField(choices=Resource.Format.values)
+    format = serializers.ChoiceField(choices=Resource.Format.values, allow_blank=True)
 
 
 class UserActionTranslationSerializer(serializers.Serializer):

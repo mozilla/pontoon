@@ -104,6 +104,10 @@ def test_schema_documents_user_actions_and_entity_lookups():
     ]["content"]["application/json"]["schema"] == {
         "$ref": "#/components/schemas/UserActionsResponse"
     }
+    resource_schema = response.data["components"]["schemas"]["UserActionResource"]
+    assert {"$ref": "#/components/schemas/BlankEnum"} in resource_schema["properties"][
+        "format"
+    ]["oneOf"]
     assert paths["/api/v2/entities/{id}/"]["get"]["operationId"] == (
         "entities_retrieve"
     )
