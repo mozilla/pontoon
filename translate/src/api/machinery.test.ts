@@ -1,6 +1,10 @@
 import type { Locale } from '~/context/Locale';
 
-import { fetchComposedMachinery, fetchOpenAITranslation } from './machinery';
+import {
+  fetchComposedMachinery,
+  fetchOpenAIComposedTranslation,
+  fetchOpenAITranslation,
+} from './machinery';
 import * as base from './utils/base';
 
 vi.mock('./utils/base', () => ({
@@ -176,5 +180,87 @@ describe('fetchComposedMachinery', () => {
     );
 
     expect(result[0].sources).toEqual(['microsoft-translator']);
+  });
+});
+
+describe('fetchOpenAIComposedTranslation', () => {
+  const POST = vi.mocked(base.POST);
+  const value = ['Hola'];
+  const properties = { title: ['Sugerencia'] };
+  const refined = { value: ['Saludos'], properties: { title: ['Refinada'] } };
+
+  beforeEach(() => {
+    POST.mockResolvedValue(refined);
+  });
+
+  it('sends the whole composed model', async () => {
+    await fetchOpenAIComposedTranslation(42, value, properties, 'formal', 'es');
+
+    const [url, params] = POST.mock.calls[0] as [string, URLSearchParams];
+    expect(url).toBe('/openai-chatgpt-composed/');
+    expect(params.get('entity_pk')).toBe('42');
+    expect(params.get('value')).toBe(JSON.stringify(value));
+    expect(params.get('properties')).toBe(JSON.stringify(properties));
+    expect(params.get('characteristic')).toBe('formal');
+    expect(params.get('locale')).toBe('es');
+    expect(params.get('trigger')).toBe('manual');
+    expect(params.get('csrfmiddlewaretoken')).toBe('test-csrf-token');
+  });
+
+  it('sends an empty object for an entity without properties', async () => {
+    await fetchOpenAIComposedTranslation(42, value, undefined, 'formal', 'es');
+
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
+    expect(params.get('properties')).toBe('{}');
+  });
+
+  it('passes the automatic trigger through', async () => {
+    await fetchOpenAIComposedTranslation(
+      42,
+      value,
+      properties,
+      'rephrased',
+      'es',
+      'auto',
+    );
+
+    const [, params] = POST.mock.calls[0] as [string, URLSearchParams];
+    expect(params.get('trigger')).toBe('auto');
+  });
+
+  it('returns the refined model', async () => {
+    const result = await fetchOpenAIComposedTranslation(
+      42,
+      value,
+      properties,
+      'formal',
+      'es',
+    );
+    expect(result).toEqual(refined);
+  });
+
+  it('returns null when there was nothing to refine', async () => {
+    POST.mockResolvedValueOnce({});
+    const result = await fetchOpenAIComposedTranslation(
+      42,
+      value,
+      properties,
+      'formal',
+      'es',
+    );
+    expect(result).toBeNull();
+  });
+
+  it('returns null when the request fails', async () => {
+    POST.mockRejectedValueOnce(new Error('boom'));
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const result = await fetchOpenAIComposedTranslation(
+      42,
+      value,
+      properties,
+      'formal',
+      'es',
+    );
+    expect(result).toBeNull();
   });
 });
