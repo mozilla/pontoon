@@ -11,11 +11,13 @@ from django.template import TemplateSyntaxError
 from django.test.client import RequestFactory
 from django.urls import NoReverseMatch
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import User
 from pontoon.base.templatetags.helpers import full_url
 from pontoon.insights.models import LocaleInsightsSnapshot
 from pontoon.messaging.emails import (
     _get_monthly_locale_stats,
+    _get_monthly_user_actions,
     send_inactive_contributor_emails,
     send_inactive_manager_emails,
     send_inactive_translator_emails,
@@ -28,7 +30,7 @@ from pontoon.messaging.emails import (
     send_verification_email,
 )
 from pontoon.messaging.models import EmailContent
-from pontoon.test.factories import LocaleFactory, UserFactory
+from pontoon.test.factories import LocaleFactory, TranslationFactory, UserFactory
 
 
 @pytest.mark.django_db
@@ -131,6 +133,28 @@ def test_get_monthly_locale_stats_uses_end_of_month_snapshot():
     assert result[locale.pk].pk == snapshot_nov_1.pk
     assert result[locale.pk].approved_strings == 100
     assert result[locale.pk].completion == 100.0
+
+
+@pytest.mark.django_db
+def test_get_monthly_user_actions_excludes_self_reviews(
+    user_a, user_b, entity_a, locale_a
+):
+    own = TranslationFactory.create(entity=entity_a, locale=locale_a, user=user_a)
+    peer = TranslationFactory.create(entity=entity_a, locale=locale_a, user=user_b)
+
+    for action_type, translation in (
+        (ActionLog.ActionType.TRANSLATION_CREATED, own),
+        (ActionLog.ActionType.TRANSLATION_APPROVED, own),
+        (ActionLog.ActionType.TRANSLATION_APPROVED, peer),
+    ):
+        ActionLog.objects.create(
+            action_type=action_type, performed_by=user_a, translation=translation
+        )
+
+    actions = _get_monthly_user_actions(User.objects.filter(pk=user_a.pk), months_ago=0)
+
+    assert actions[user_a.pk]["submitted"] == 1
+    assert actions[user_a.pk]["reviewed"] == 1
 
 
 @pytest.mark.django_db
