@@ -203,6 +203,175 @@ describe('<MachineryProvider> automatic LLM suggestions', () => {
   });
 });
 
+describe('<MachineryProvider> automatic composed LLM suggestions', () => {
+  // Two leaves, so `hasMultipleFields()` asks for a composed suggestion.
+  const multiFieldEntity = (translation) => ({
+    ...entityOf(translation),
+    format: 'fluent',
+    properties: { title: ['Tooltip'] },
+  });
+
+  const COMPOSED_GT = [
+    {
+      sources: ['google-translate'],
+      value: ['Hola'],
+      properties: { title: ['Sugerencia'] },
+    },
+  ];
+
+  function ComposedConsumer() {
+    const { composed } = useContext(MachineryTranslations);
+    return (
+      <span data-testid='composed'>
+        {composed.map((t) => t.sources.join('+')).join(',')}
+      </span>
+    );
+  }
+
+  const mountComposed = (entity) =>
+    render(
+      <Locale.Provider value={locale}>
+        <EntityView.Provider value={{ entity }}>
+          <SearchData.Provider value={{ query: '' }}>
+            <MachineryProvider>
+              <ComposedConsumer />
+            </MachineryProvider>
+          </SearchData.Provider>
+        </EntityView.Provider>
+      </Locale.Provider>,
+    );
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    api.fetchGoogleTranslation.mockResolvedValue(GT_RESULT);
+    api.fetchComposedMachinery.mockImplementation((_pk, _locale, service) =>
+      Promise.resolve(service === 'google-translate' ? COMPOSED_GT : []),
+    );
+  });
+
+  it('refines the Google-Translate-backed composition', async () => {
+    setRootFlags({ enabled: true });
+    api.fetchOpenAIComposedTranslation.mockResolvedValue({
+      value: ['Saludos'],
+      properties: { title: ['Refinada'] },
+    });
+
+    const { getByTestId } = mountComposed(multiFieldEntity(undefined));
+
+    await waitFor(() =>
+      expect(api.fetchOpenAIComposedTranslation).toHaveBeenCalled(),
+    );
+
+    const [pk, value, properties, characteristic, code, trigger] =
+      api.fetchOpenAIComposedTranslation.mock.calls[0];
+    expect(pk).toBe(42);
+    expect(value).toEqual(['Hola']);
+    expect(properties).toEqual({ title: ['Sugerencia'] });
+    expect(characteristic).toBe('rephrased');
+    expect(code).toBe('es');
+    expect(trigger).toBe('auto');
+
+    await waitFor(() =>
+      expect(getByTestId('composed').textContent).toBe(
+        'google-translate,openai-chatgpt',
+      ),
+    );
+  });
+
+  it('replaces the single-string suggestion rather than adding to it', async () => {
+    // One automatic call per string: refining the flattened string would only
+    // ever fill the focused field.
+    setRootFlags({ enabled: true });
+    api.fetchOpenAIComposedTranslation.mockResolvedValue({
+      value: ['Saludos'],
+      properties: { title: ['Refinada'] },
+    });
+
+    mountComposed(multiFieldEntity(undefined));
+
+    await waitFor(() =>
+      expect(api.fetchOpenAIComposedTranslation).toHaveBeenCalled(),
+    );
+    expect(api.fetchOpenAITranslation).not.toHaveBeenCalled();
+  });
+
+  it('merges the sources when the LLM returns the composition unchanged', async () => {
+    setRootFlags({ enabled: true });
+    api.fetchOpenAIComposedTranslation.mockResolvedValue({
+      value: ['Hola'],
+      properties: { title: ['Sugerencia'] },
+    });
+
+    const { getByTestId } = mountComposed(multiFieldEntity(undefined));
+
+    await waitFor(() =>
+      expect(getByTestId('composed').textContent).toBe(
+        'google-translate+openai-chatgpt',
+      ),
+    );
+  });
+
+  it('skips strings that already have an approved translation', async () => {
+    setRootFlags({ enabled: true });
+    mountComposed(
+      multiFieldEntity({
+        pk: 1,
+        status: 'approved',
+        string: 'Hola',
+        value: ['Hola'],
+      }),
+    );
+
+    await waitFor(() => expect(api.fetchComposedMachinery).toHaveBeenCalled());
+    expect(api.fetchOpenAIComposedTranslation).not.toHaveBeenCalled();
+  });
+
+  it('skips locales it is not enabled for', async () => {
+    setRootFlags({ enabled: false });
+    mountComposed(multiFieldEntity(undefined));
+
+    await waitFor(() => expect(api.fetchComposedMachinery).toHaveBeenCalled());
+    expect(api.fetchOpenAIComposedTranslation).not.toHaveBeenCalled();
+  });
+
+  it('skips single-field entities, which have no composition to refine', async () => {
+    setRootFlags({ enabled: true });
+    mountComposed(entityOf(undefined));
+
+    await waitFor(() => expect(api.fetchGoogleTranslation).toHaveBeenCalled());
+    expect(api.fetchComposedMachinery).not.toHaveBeenCalled();
+    expect(api.fetchOpenAIComposedTranslation).not.toHaveBeenCalled();
+  });
+
+  it('skips when the composed request returns nothing to refine', async () => {
+    setRootFlags({ enabled: true });
+    api.fetchComposedMachinery.mockResolvedValue([]);
+    mountComposed(multiFieldEntity(undefined));
+
+    await waitFor(() => expect(api.fetchComposedMachinery).toHaveBeenCalled());
+    expect(api.fetchOpenAIComposedTranslation).not.toHaveBeenCalled();
+  });
+
+  it('skips when the user moved on before the composition resolved', async () => {
+    setRootFlags({ enabled: true });
+    let resolveComposed;
+    api.fetchComposedMachinery.mockImplementation((_pk, _locale, service) =>
+      service === 'google-translate'
+        ? new Promise((resolve) => {
+            resolveComposed = resolve;
+          })
+        : Promise.resolve([]),
+    );
+
+    const { unmount } = mountComposed(multiFieldEntity(undefined));
+    unmount();
+    resolveComposed(COMPOSED_GT);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(api.fetchOpenAIComposedTranslation).not.toHaveBeenCalled();
+  });
+});
+
 describe('<MachineryProvider> result merging', () => {
   beforeEach(() => {
     vi.clearAllMocks();
