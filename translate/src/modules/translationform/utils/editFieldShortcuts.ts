@@ -129,7 +129,11 @@ export function useHandleCtrlShiftArrow(): (
       const llmState = getLLMTranslationState(translationObj);
       const updatedTranslation =
         llmState.llmTranslation || translationObj.translation;
-      setEditorFromHelpers(updatedTranslation, translationObj.sources, true);
+      setEditorFromHelpers(
+        updatedTranslation,
+        llmState.llmTranslation ? ['openai-chatgpt'] : translationObj.sources,
+        true,
+      );
 
       if (llmState.llmTranslation) {
         logUXAction(
