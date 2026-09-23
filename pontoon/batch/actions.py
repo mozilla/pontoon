@@ -437,11 +437,14 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
 
     translations_to_create = []
 
+    invalid_entity_pks = []
+
     for entity in eligible_entities:
         try:
             pretranslation = get_pretranslation(entity, locale)
         except ValueError as e:
             logger.info(f"Pretranslation error for entity {entity.pk}: {e!r}")
+            invalid_entity_pks.append(entity.pk)
             continue
 
         string, engine = pretranslation
@@ -454,6 +457,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
             logger.error(
                 f"Unparsable pretranslation for entity {entity.pk}: {e!r}: {string!r}"
             )
+            invalid_entity_pks.append(entity.pk)
             continue
 
         translations_to_create.append(
@@ -511,7 +515,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
         if changed_translation_pks
         else None,
         "changed_translation_pks": changed_translation_pks,
-        "invalid_translation_pks": [],
+        "invalid_translation_pks": invalid_entity_pks,
         "badge_update": badge_update,
     }
 
