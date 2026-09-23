@@ -574,17 +574,21 @@ machinery-ConcordanceSearch--translation-memory = TRANSLATION MEMORY
 ## Machinery Google Translation
 ## Shows the translation source from Google Translate.
 machinery-GoogleTranslation--translation-source = GOOGLE TRANSLATE
-machinery-GoogleTranslation--selector =
-    .title = Refine using AI
-machinery-GoogleTranslation--dropdown-title = AI
 
-machinery-GoogleTranslation--option-rephrase = REPHRASE
-machinery-GoogleTranslation--option-rephrased = REPHRASED
-machinery-GoogleTranslation--option-make-formal = MAKE FORMAL
-machinery-GoogleTranslation--option-formal = FORMAL
-machinery-GoogleTranslation--option-make-informal = MAKE INFORMAL
-machinery-GoogleTranslation--option-informal = INFORMAL
-machinery-GoogleTranslation--option-show-original = SHOW ORIGINAL
+
+## Machinery AI Refine
+## The dropdown that refines a Machinery suggestion using AI.
+machinery-AIRefine--selector =
+    .title = Refine using AI
+machinery-AIRefine--dropdown-title = AI
+
+machinery-AIRefine--option-rephrase = REPHRASE
+machinery-AIRefine--option-rephrased = REPHRASED
+machinery-AIRefine--option-make-formal = MAKE FORMAL
+machinery-AIRefine--option-formal = FORMAL
+machinery-AIRefine--option-make-informal = MAKE INFORMAL
+machinery-AIRefine--option-informal = INFORMAL
+machinery-AIRefine--option-show-original = SHOW ORIGINAL
 
 
 ## Machinery OpenAI Translation

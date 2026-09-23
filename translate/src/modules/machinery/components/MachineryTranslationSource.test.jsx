@@ -64,4 +64,66 @@ describe('<MachineryTranslationSource>', () => {
     getByText(translationMemoryTitle);
     getByText(microsoftTerminologyTitle);
   });
+
+  describe('AI badge', () => {
+    let root;
+
+    beforeEach(() => {
+      root = document.createElement('div');
+      root.id = 'root';
+      root.dataset.isOpenaiChatgptSupported = 'true';
+      document.body.appendChild(root);
+    });
+
+    afterEach(() => root.remove());
+
+    const sourceList = (translation, props) =>
+      render(
+        <WrapMachineryTranslationSource translation={translation} {...props} />,
+      ).container.querySelector('ul.sources');
+
+    it('comes last, not where its source landed in the list', () => {
+      // Google Translate arriving anywhere but last used to leave the dropdown
+      // stranded mid-list, because it hung off the label.
+      const sources = sourceList({
+        sources: ['google-translate', 'microsoft-translator'],
+      });
+
+      expect([...sources.children].map((li) => li.className)).toEqual([
+        'google-translation',
+        '',
+        'ai-refine',
+      ]);
+    });
+
+    it('carries no source label of its own', () => {
+      const sources = sourceList({ sources: ['google-translate'] });
+      const badge = sources.querySelector('li.ai-refine');
+
+      expect(
+        badge.querySelector('.translation-source'),
+      ).not.toBeInTheDocument();
+      expect(sources.querySelector('li.google-translation')).toHaveTextContent(
+        googleTranslationTitle,
+      );
+    });
+
+    it('is offered only for Google Translate output', () => {
+      for (const source of [
+        'translation-memory',
+        'microsoft-translator',
+        'caighdean',
+      ]) {
+        const sources = sourceList({ sources: [source] });
+        expect(sources.querySelector('li.ai-refine')).not.toBeInTheDocument();
+      }
+    });
+
+    it('is hidden when OpenAI is not supported', () => {
+      root.dataset.isOpenaiChatgptSupported = 'false';
+      const sources = sourceList({ sources: ['google-translate'] });
+
+      expect(sources.querySelector('li.ai-refine')).not.toBeInTheDocument();
+    });
+  });
 });
