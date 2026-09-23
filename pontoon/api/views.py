@@ -72,6 +72,7 @@ from .serializers import (
     UploadPretranslationsResponseSerializer,
     UploadSuggestionsResponseSerializer,
     UploadTranslationsResponseSerializer,
+    UserActionsResponseSerializer,
 )
 
 
@@ -86,6 +87,10 @@ class RequestFieldsMixin:
 class UserActionsView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        responses={200: UserActionsResponseSerializer},
+        description="List translation actions for a project on a given date.",
+    )
     def get(self, request, date, slug):
         try:
             start_date = make_aware(datetime.strptime(date, "%Y-%m-%d"))
@@ -385,6 +390,12 @@ class EntityIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
             resource__path=self.kwargs["resource"],
             key__overlap=[self.kwargs["entity"]],
         )
+
+
+class EntityIndividualByPathView(EntityIndividualView):
+    @extend_schema(operation_id="entities_retrieve_by_path")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class ProjectLocaleIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
