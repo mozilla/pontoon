@@ -137,7 +137,6 @@ comments-Comment--cancel-button = CANCEL
 
 editor-EditorMenu--sign-in-to-translate = <form>Sign in</form> to translate.
 editor-EditorMenu--read-only-localization = This is a read-only localization.
-editor-EditorMenu--pretranslation-in-progress = Pretranslation in progress.
 editor-EditorMenu--button-copy = COPY
     .title = Copy From Source (Ctrl + Shift + C)
 editor-EditorMenu--button-clear = CLEAR
