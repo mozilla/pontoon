@@ -125,6 +125,10 @@ def count_activities(dt_max: datetime):
         # aren't explicit user review actions.
         performed_by_sync = performed_by == sync_user
 
+        # Review actions performed by the translation author are ignored, because
+        # they aren't reviews of someone else's work.
+        performed_by_author = performed_by == user
+
         match action["action_type"]:
             case "translation:created":
                 if not action["machinery_sources"]:
@@ -140,7 +144,7 @@ def count_activities(dt_max: datetime):
                     data.self_approved.add(translation)
 
             case "translation:approved" if not performed_by_sync:
-                if performed_by == user:
+                if performed_by_author:
                     data.self_approved.add(translation)
                 else:
                     data.peer_approved.add(translation)
@@ -157,12 +161,13 @@ def count_activities(dt_max: datetime):
                     data.pretranslations_chrf_scores.append(100)
 
             case "translation:rejected" if not performed_by_sync:
-                data.rejected.add(translation)
-                if action["rejected_date"]:
-                    review_time = action["rejected_date"] - date
-                    data.times_to_review_suggestions.append(review_time)
-                    if user in pretranslation_users:
-                        data.times_to_review_pretranslations.append(review_time)
+                if not performed_by_author:
+                    data.rejected.add(translation)
+                    if action["rejected_date"]:
+                        review_time = action["rejected_date"] - date
+                        data.times_to_review_suggestions.append(review_time)
+                        if user in pretranslation_users:
+                            data.times_to_review_pretranslations.append(review_time)
                 if user in pretranslation_users:
                     data.pretranslations_rejected.add(translation)
                     score = calculate_chrf_score(action, approved_translations)

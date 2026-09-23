@@ -85,6 +85,57 @@ def test_count_activities(user_a, user_b, locale_a, project_locale_a, resource_a
 
 
 @pytest.mark.django_db
+def test_count_activities_excludes_self_rejections(
+    user_a, user_b, locale_a, project_locale_a, resource_a
+):
+    now, t = now_times()
+    own = TranslationFactory.create(
+        entity__resource=resource_a,
+        locale=locale_a,
+        user=user_a,
+        date=t[1],
+        rejected=True,
+        rejected_date=t[2],
+    )
+    peer = TranslationFactory.create(
+        entity__resource=resource_a,
+        locale=locale_a,
+        user=user_b,
+        date=t[1],
+        rejected=True,
+        rejected_date=t[3],
+    )
+    for translation in (own, peer):
+        ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            created_at=t[1],
+            performed_by=translation.user,
+            translation=translation,
+        )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+        created_at=t[2],
+        performed_by=user_a,
+        translation=own,
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+        created_at=t[3],
+        performed_by=user_a,
+        translation=peer,
+    )
+    assert count_activities(now) == {
+        project_locale_a.pk: Activity(
+            locale=locale_a.pk,
+            human_translations={own.pk, peer.pk},
+            new_suggestions={own.pk, peer.pk},
+            rejected={peer.pk},
+            times_to_review_suggestions=[t[3] - t[1]],
+        )
+    }
+
+
+@pytest.mark.django_db
 def test_count_created_entities(locale_a, project_locale_a, resource_a):
     now, t = now_times()
     TranslatedResourceFactory.create(resource=resource_a, locale=locale_a)
