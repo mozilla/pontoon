@@ -1,44 +1,69 @@
+import type { Message } from '@mozilla/l10n';
 import React, { createContext, useContext, useState, useRef } from 'react';
 import {
+  type ComposedMachineryTranslation,
   type MachineryTranslation,
+  fetchOpenAIComposedTranslation,
   fetchOpenAITranslation,
 } from '~/api/machinery';
+
+type ComposedRefinement = {
+  value: Message;
+  properties?: Record<string, Message>;
+};
 
 type SelState = {
   loading: boolean;
   selectedOption: string;
   llmTranslation: string;
+  llmComposed: ComposedRefinement | null;
 };
 
+/** Object identity keys either kind in the WeakMap. */
+type Refinable = MachineryTranslation | ComposedMachineryTranslation;
+
 interface LLMTranslationContextType {
-  getSelState(mt: MachineryTranslation): SelState;
+  getSelState(mt: Refinable): SelState;
   transformLLMTranslation: (
     mt: MachineryTranslation,
     characteristic: string,
     localeCode: string,
     entityPk?: number,
   ) => Promise<void>;
-  restoreOriginal: (mt: MachineryTranslation) => void;
+  transformComposedLLMTranslation: (
+    ct: ComposedMachineryTranslation,
+    characteristic: string,
+    localeCode: string,
+    entityPk: number,
+  ) => Promise<void>;
+  restoreOriginal: (mt: Refinable) => void;
 }
 
 const initSelState = () => ({
   loading: false,
   selectedOption: '',
   llmTranslation: '',
+  llmComposed: null,
 });
 
 const LLMTranslationContext = createContext<LLMTranslationContextType>({
   getSelState: initSelState,
   transformLLMTranslation: async () => {},
+  transformComposedLLMTranslation: async () => {},
   restoreOriginal: () => {},
 });
 
 export const LLMTranslationProvider: React.FC = ({ children }) => {
-  const stateRef = useRef(new WeakMap<MachineryTranslation, SelState>());
+  const stateRef = useRef(new WeakMap<Refinable, SelState>());
   const [, setVersion] = useState(0); // Counter to trigger re-renders
 
-  const getSelState = (mt: MachineryTranslation): SelState => {
+  const getSelState = (mt: Refinable): SelState => {
     return stateRef.current.get(mt) ?? initSelState();
+  };
+
+  const setLoading = (mt: Refinable) => {
+    stateRef.current.set(mt, { ...getSelState(mt), loading: true });
+    setVersion((v) => v + 1); // Trigger re-render
   };
 
   const transformLLMTranslation = async (
@@ -48,11 +73,7 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
     entityPk?: number,
   ) => {
     const currentState = getSelState(mt);
-    stateRef.current.set(mt, {
-      ...currentState,
-      loading: true,
-    });
-    setVersion((v) => v + 1); // Trigger re-render
+    setLoading(mt);
 
     const machineryTranslations = await fetchOpenAITranslation(
       mt.original,
@@ -66,6 +87,7 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
         loading: false,
         selectedOption: characteristic,
         llmTranslation: machineryTranslations[0].translation,
+        llmComposed: null,
       });
     } else {
       stateRef.current.set(mt, {
@@ -76,18 +98,56 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
     setVersion((v) => v + 1);
   };
 
-  const restoreOriginal = (mt: MachineryTranslation) => {
+  const transformComposedLLMTranslation = async (
+    ct: ComposedMachineryTranslation,
+    characteristic: string,
+    localeCode: string,
+    entityPk: number,
+  ) => {
+    const currentState = getSelState(ct);
+    setLoading(ct);
+
+    const refined = await fetchOpenAIComposedTranslation(
+      entityPk,
+      ct.value,
+      ct.properties,
+      characteristic,
+      localeCode,
+    );
+    if (refined) {
+      stateRef.current.set(ct, {
+        loading: false,
+        selectedOption: characteristic,
+        llmTranslation: '',
+        llmComposed: refined,
+      });
+    } else {
+      stateRef.current.set(ct, {
+        ...currentState,
+        loading: false,
+      });
+    }
+    setVersion((v) => v + 1);
+  };
+
+  const restoreOriginal = (mt: Refinable) => {
     const currentState = getSelState(mt);
     stateRef.current.set(mt, {
       ...currentState,
       selectedOption: '',
       llmTranslation: '',
+      llmComposed: null,
     });
     setVersion((v) => v + 1);
   };
   return (
     <LLMTranslationContext.Provider
-      value={{ getSelState, transformLLMTranslation, restoreOriginal }}
+      value={{
+        getSelState,
+        transformLLMTranslation,
+        transformComposedLLMTranslation,
+        restoreOriginal,
+      }}
     >
       {children}
     </LLMTranslationContext.Provider>
@@ -95,13 +155,17 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
 };
 
 export const useLLMTranslation = () => {
-  const { getSelState, transformLLMTranslation, restoreOriginal } = useContext(
-    LLMTranslationContext,
-  );
+  const {
+    getSelState,
+    transformLLMTranslation,
+    transformComposedLLMTranslation,
+    restoreOriginal,
+  } = useContext(LLMTranslationContext);
 
-  return (mt: MachineryTranslation) => ({
+  return (mt: Refinable) => ({
     ...getSelState(mt),
     transformLLMTranslation,
+    transformComposedLLMTranslation,
     restoreOriginal,
   });
 };
