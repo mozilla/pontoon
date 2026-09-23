@@ -66,6 +66,49 @@ class MTEngine(Enum):
                 return get_microsoft_translator_data
 
 
+def message_format(resource_format: str) -> Format | None:
+    """The `moz.l10n` model a resource's messages are parsed into."""
+    match resource_format:
+        case Resource.Format.FLUENT:
+            return Format.fluent
+        case (
+            Resource.Format.ANDROID
+            | Resource.Format.GETTEXT
+            | Resource.Format.WEBEXT
+            | Resource.Format.XCODE
+            | Resource.Format.XLIFF
+        ):
+            return Format.mf2
+        case _:
+            return None
+
+
+def pattern_as_text(pattern: Pattern, format: Format | None) -> str | None:
+    """Serialize a pattern to the text a translator reads and types.
+
+    `None` when the format has no round-trippable text for a pattern holding
+    placeholders, so a caller that needs to read the text back can skip it
+    rather than send something it cannot parse.
+    """
+    if format == Format.fluent:
+        return "".join(
+            el.value if isinstance(el, FTL.TextElement) else serialize_expression(el)
+            for el in fluent_astify_message(
+                PatternMessage(pattern), escape_syntax=False
+            ).elements
+        )
+    return "".join(pattern) if all(isinstance(el, str) for el in pattern) else None
+
+
+def pattern_from_text(text: str, format: Format | None) -> Pattern:
+    """Parse text back into a pattern, the way a Translation Memory match is parsed."""
+    if format == Format.fluent:
+        entry = fluent_parse_entry(f"key = {text}\n")
+        assert isinstance(entry.value, PatternMessage)
+        return entry.value.pattern
+    return [text]
+
+
 def get_pretranslation(
     entity: Entity, locale: Locale, preserve_placeables: bool = False
 ) -> tuple[str, Literal["gt", "tm"]]:
@@ -116,19 +159,7 @@ class Pretranslation:
             current entity. Defaults to False.
         """
         self.entity = entity
-        match entity.resource.format:
-            case Resource.Format.FLUENT:
-                self.format = Format.fluent
-            case (
-                Resource.Format.ANDROID
-                | Resource.Format.GETTEXT
-                | Resource.Format.WEBEXT
-                | Resource.Format.XCODE
-                | Resource.Format.XLIFF
-            ):
-                self.format = Format.mf2
-            case _:
-                self.format = None
+        self.format = message_format(entity.resource.format)
         self.source = entity.string
         self.locale = locale
         self.preserve_placeables = preserve_placeables
@@ -240,14 +271,7 @@ class Pretranslation:
     def pattern(self, pattern: Pattern) -> Pattern:
         # First try to get a 100% match from Translation Memory
         tm_source = (
-            "".join(
-                el.value
-                if isinstance(el, FTL.TextElement)
-                else serialize_expression(el)
-                for el in fluent_astify_message(
-                    PatternMessage(pattern), escape_syntax=False
-                ).elements
-            )
+            pattern_as_text(pattern, self.format)
             if self.format == Format.fluent
             else self.source
         )
@@ -262,12 +286,7 @@ class Pretranslation:
         if tm_q100:
             tm_best = max(set(tm_q100), key=tm_q100.count)
             self.services.append("tm")
-            if self.format == Format.fluent:
-                te = fluent_parse_entry(f"key = {tm_best}\n")
-                assert isinstance(te.value, PatternMessage)
-                return te.value.pattern
-            else:
-                return [tm_best]
+            return pattern_from_text(tm_best, self.format)
 
         placeholders: list[Expression | Markup] = []
         gt_source = ""
