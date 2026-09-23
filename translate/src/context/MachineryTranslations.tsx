@@ -11,6 +11,7 @@ import {
   fetchMicrosoftTranslation,
   fetchTranslationMemory,
   MachineryTranslation,
+  SourceType,
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
@@ -107,6 +108,22 @@ function composedEquals(
   );
 }
 
+/**
+ * Fold a later result's sources into the suggestion already on screen.
+ *
+ * Updated in place rather than replaced: LLM refinement state is held in a
+ * WeakMap keyed by the suggestion object, so a replacement would hide the
+ * spinner of a refinement in flight and file its answer under a key nothing
+ * renders any more. Deduplicated so that merging twice changes nothing.
+ */
+function mergeInto(
+  target: { sources: SourceType[]; quality?: number },
+  extra: { sources: SourceType[]; quality?: number },
+): void {
+  target.sources = [...new Set([...target.sources, ...extra.sources])];
+  target.quality ??= extra.quality;
+}
+
 export function MachineryProvider({
   children,
 }: {
@@ -142,10 +159,7 @@ export function MachineryProvider({
             if (i === -1) {
               translations.push(tx);
             } else {
-              const t0 = translations[i];
-              const sources = t0.sources.concat(tx.sources);
-              const quality = t0.quality ?? tx.quality;
-              translations[i] = { ...t0, sources, quality };
+              mergeInto(translations[i], tx);
             }
           }
           translations.sort(sortByQuality);
@@ -165,10 +179,7 @@ export function MachineryProvider({
             if (i === -1) {
               composed.push(tx);
             } else {
-              const t0 = composed[i];
-              const sources = t0.sources.concat(tx.sources);
-              const quality = t0.quality ?? tx.quality;
-              composed[i] = { ...t0, sources, quality };
+              mergeInto(composed[i], tx);
             }
           }
           composed.sort(sortByQuality);
