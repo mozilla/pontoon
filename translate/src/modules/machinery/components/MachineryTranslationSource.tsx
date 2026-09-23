@@ -36,7 +36,15 @@ export function MachineryTranslationSource({
   const isOpenAIChatGPTSupported =
     root?.dataset.isOpenaiChatgptSupported === 'true';
 
-  for (const source of translation.sources) {
+  // The quality score is rendered ahead of this list and always comes from the
+  // Translation Memory match, so that badge has to lead for the two to read as
+  // one. A stable sort leaves the rest in arrival order.
+  const ordered = [...translation.sources].sort(
+    (a, b) =>
+      Number(b === 'translation-memory') - Number(a === 'translation-memory'),
+  );
+
+  for (const source of ordered) {
     if (seen.includes(source)) {
       continue;
     }

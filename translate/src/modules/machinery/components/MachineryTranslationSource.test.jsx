@@ -65,6 +65,39 @@ describe('<MachineryTranslationSource>', () => {
     getByText(microsoftTerminologyTitle);
   });
 
+  it('leads with Translation Memory, which the quality score belongs to', () => {
+    // Google Translate resolving first used to render
+    // `100% • GOOGLE TRANSLATE • TRANSLATION MEMORY`, reading as if the score
+    // scored Google Translate.
+    const { container } = render(
+      <WrapMachineryTranslationSource
+        translation={{
+          sources: ['google-translate', 'translation-memory'],
+          quality: 100,
+        }}
+      />,
+    );
+
+    const sources = container.querySelector('ul.sources');
+    expect(sources.firstElementChild).toHaveTextContent(translationMemoryTitle);
+  });
+
+  it('keeps the order the other sources arrived in', () => {
+    const { container } = render(
+      <WrapMachineryTranslationSource
+        translation={{
+          sources: ['caighdean', 'microsoft-translator'],
+        }}
+      />,
+    );
+
+    const sources = container.querySelector('ul.sources');
+    expect([...sources.children].map((li) => li.textContent)).toEqual([
+      caighdeanTranslationTitle,
+      microsoftTranslationTitle,
+    ]);
+  });
+
   describe('AI badge', () => {
     let root;
 
