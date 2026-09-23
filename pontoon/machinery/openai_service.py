@@ -28,6 +28,98 @@ class OpenAITranslation:
     completion_tokens: int | None = None
 
 
+def _style_goal(characteristic, locale) -> str:
+    style_goals = {
+        "informal": f"Use simple, everyday {locale.name} ({locale.code}) — avoid jargon, technical terms, and formal constructions.",
+        "formal": f"Use formal {locale.name} ({locale.code}) throughout; maintain a consistent register and do not mix formal and informal modes.",
+        "rephrased": f"Provide an alternative wording that preserves the original meaning; adapt idioms and culturally marked expressions for {locale.name} ({locale.code}); you may restructure sentences but must not introduce new information or omit essential meaning.",
+    }
+    style_goal = style_goals.get(characteristic)
+    if style_goal is None:
+        raise ValueError(f"Unrecognized characteristic: '{characteristic}'")
+    return style_goal
+
+
+def _context_data(
+    entity_key, entity_comment, group_comment, resource_comment, pinned_comments, terms
+) -> list[str]:
+    """Kept separate from the instructions that explain them
+    (`_context_instructions`), so injected text cannot masquerade as one."""
+    parts = []
+    if entity_key:
+        parts.append(f"STRING ID:\n{entity_key}")
+    if resource_comment:
+        parts.append(f"RESOURCE COMMENT:\n{resource_comment}")
+    if group_comment:
+        parts.append(f"GROUP COMMENT:\n{group_comment}")
+    if entity_comment:
+        parts.append(f"STRING COMMENT:\n{entity_comment}")
+    if pinned_comments:
+        pinned_block = "\n".join(f"- {c}" for c in pinned_comments)
+        parts.append(f"PINNED COMMENTS:\n{pinned_block}")
+    if terms:
+        term_lines = []
+        for term in terms:
+            text = term.get("text", "")
+            pos = term.get("part_of_speech", "")
+            translation = term.get("translation", "")
+            term_parts = [f'"{text}"']
+            if pos:
+                term_parts.append(f"({pos})")
+            if translation:
+                term_parts.append(f'→ "{translation}"')
+            term_lines.append(" ".join(term_parts))
+        terms_block = "\n".join(f"- {line}" for line in term_lines)
+        parts.append(
+            f"TERMINOLOGY:\nThese are terminology matches in the source text that you should consider:\n{terms_block}"
+        )
+    return parts
+
+
+def _context_instructions(
+    entity_key, entity_comment, group_comment, resource_comment, pinned_comments, terms
+) -> str:
+    """Paired with `_context_data`; "" when there is no context."""
+    instructions = []
+    if entity_key:
+        instructions.append(
+            "STRING ID: infer the UI context (e.g. button, menu item, title, tooltip) and adapt length and phrasing accordingly."
+        )
+    if resource_comment:
+        instructions.append("RESOURCE COMMENT: background context about the file.")
+    if group_comment:
+        instructions.append(
+            "GROUP COMMENT: background context about the group of strings this one belongs to."
+        )
+    if entity_comment:
+        instructions.append(
+            "STRING COMMENT: authoritative translator notes (e.g. placeholders or terms to preserve) — takes precedence over stylistic choices."
+        )
+    if pinned_comments:
+        instructions.append(
+            "PINNED COMMENTS: high-priority guidance from the localization team's project manager."
+        )
+    if terms:
+        instructions.append(
+            "TERMINOLOGY: use the given translations consistently, unless incorrect for this context."
+        )
+    return "\n".join(instructions) + "\n\n" if instructions else ""
+
+
+def _system_rules(style_goal, output_instruction, extra_rules=()) -> str:
+    rules = [
+        "Match the English source's ending punctuation exactly (including having none), using correct target-language conventions (e.g. Spanish ¿¡, French non-breaking space before ?!:).",
+        "Preserve all HTML tags and attributes exactly as in the source; translate only text content and translatable attributes (e.g. alt, title).",
+        style_goal,
+        *extra_rules,
+    ]
+    numbered = "\n".join(f"{i}) {rule}" for i, rule in enumerate(rules, 1))
+    return (
+        f"Rules, in priority order if they conflict:\n{numbered}\n\n"
+        f"{output_instruction}"
+    )
+
+
 class OpenAIService:
     def __init__(self):
         if not settings.OPENAI_API_KEY:
@@ -53,46 +145,17 @@ class OpenAIService:
             presented. May be empty, in which case the model translates from the
             English source alone.
         """
-        style_goals = {
-            "informal": f"Use simple, everyday {locale.name} ({locale.code}) — avoid jargon, technical terms, and formal constructions.",
-            "formal": f"Use formal {locale.name} ({locale.code}) throughout; maintain a consistent register and do not mix formal and informal modes.",
-            "rephrased": f"Provide an alternative wording that preserves the original meaning; adapt idioms and culturally marked expressions for {locale.name} ({locale.code}); you may restructure sentences but must not introduce new information or omit essential meaning.",
-        }
+        style_goal = _style_goal(characteristic, locale)
+        context_args = (
+            entity_key,
+            entity_comment,
+            group_comment,
+            resource_comment,
+            pinned_comments,
+            terms,
+        )
 
-        style_goal = style_goals.get(characteristic)
-        if style_goal is None:
-            raise ValueError(f"Unrecognized characteristic: '{characteristic}'")
-
-        # Separate the instruction from the data.
-        # It makes it hard for injected text to masquerade as instructions.
-        context_parts = []
-        if entity_key:
-            context_parts.append(f"STRING ID:\n{entity_key}")
-        if resource_comment:
-            context_parts.append(f"RESOURCE COMMENT:\n{resource_comment}")
-        if group_comment:
-            context_parts.append(f"GROUP COMMENT:\n{group_comment}")
-        if entity_comment:
-            context_parts.append(f"STRING COMMENT:\n{entity_comment}")
-        if pinned_comments:
-            pinned_block = "\n".join(f"- {c}" for c in pinned_comments)
-            context_parts.append(f"PINNED COMMENTS:\n{pinned_block}")
-        if terms:
-            term_lines = []
-            for term in terms:
-                text = term.get("text", "")
-                pos = term.get("part_of_speech", "")
-                translation = term.get("translation", "")
-                parts = [f'"{text}"']
-                if pos:
-                    parts.append(f"({pos})")
-                if translation:
-                    parts.append(f'→ "{translation}"')
-                term_lines.append(" ".join(parts))
-            terms_block = "\n".join(f"- {line}" for line in term_lines)
-            context_parts.append(
-                f"TERMINOLOGY:\nThese are terminology matches in the source text that you should consider:\n{terms_block}"
-            )
+        context_parts = _context_data(*context_args)
         context_parts.append(f"ENGLISH SOURCE:\n{english_text}")
         # Flattened, because a source may contribute more than one text and the
         # prompt presents them as a flat list.
@@ -132,46 +195,13 @@ class OpenAIService:
             + reference_instruction
         )
 
-        context_instructions = []
-        if entity_key:
-            context_instructions.append(
-                "STRING ID: infer the UI context (e.g. button, menu item, title, tooltip) and adapt length and phrasing accordingly."
+        system_message = (
+            system_header
+            + _context_instructions(*context_args)
+            + _system_rules(
+                style_goal, "Output only the translation, with no explanation."
             )
-        if resource_comment:
-            context_instructions.append(
-                "RESOURCE COMMENT: background context about the file."
-            )
-        if group_comment:
-            context_instructions.append(
-                "GROUP COMMENT: background context about the group of strings this one belongs to."
-            )
-        if entity_comment:
-            context_instructions.append(
-                "STRING COMMENT: authoritative translator notes (e.g. placeholders or terms to preserve) — takes precedence over stylistic choices."
-            )
-        if pinned_comments:
-            context_instructions.append(
-                "PINNED COMMENTS: high-priority guidance from the localization team's project manager."
-            )
-        if terms:
-            context_instructions.append(
-                "TERMINOLOGY: use the given translations consistently, unless incorrect for this context."
-            )
-        context_block = (
-            "\n".join(context_instructions) + "\n\n" if context_instructions else ""
         )
-
-        system_rules = textwrap.dedent(
-            f"""\
-            Rules, in priority order if they conflict:
-            1) Match the English source's ending punctuation exactly (including having none), using correct target-language conventions (e.g. Spanish ¿¡, French non-breaking space before ?!:).
-            2) Preserve all HTML tags and attributes exactly as in the source; translate only text content and translatable attributes (e.g. alt, title).
-            3) {style_goal}
-
-            Output only the translation, with no explanation."""
-        )
-
-        system_message = system_header + context_block + system_rules
 
         cache_key = get_machinery_service_cache_key(
             "openai_chatgpt",

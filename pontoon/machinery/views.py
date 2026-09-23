@@ -16,19 +16,17 @@ from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
-from django.utils.html import strip_tags
 from django.views.decorators.http import require_POST
 
-from pontoon.base.models import Comment, Entity, Locale, Project, Translation
+from pontoon.base.models import Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
-    get_llm_string_id,
+    get_llm_entity_context,
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
 from pontoon.pretranslation.pretranslate import MTEngine, Pretranslation
-from pontoon.terminology.models import Term
 
 from .openai_service import OpenAIService
 
@@ -278,6 +276,42 @@ def _parse_references(raw):
     return references
 
 
+def _llm_trigger_error(trigger, locale_code):
+    """Automatic requests are restricted to
+    `settings.OPENAI_AUTO_SUGGESTION_LOCALES`, so spend stays bounded by the
+    locales they were enabled for."""
+    if trigger not in ("auto", "manual"):
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: unknown trigger `{trigger}`"},
+            status=400,
+        )
+    if trigger == "auto" and locale_code not in settings.OPENAI_AUTO_SUGGESTION_LOCALES:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Automatic LLM suggestions are not enabled for this locale",
+            },
+            status=403,
+        )
+    return None
+
+
+def _log_llm_suggestion(trigger, locale, characteristic, started, result, **extra):
+    """A flat line rather than `extra`, which the console handler's default
+    formatter would drop, and `key=value` because Cloud Logging parses it into a
+    metric. One line per suggestion, so the metric counts suggestions, not calls.
+    """
+    duration_ms = round((time.monotonic() - started) * 1000)
+    fields = "".join(f" {key}={value}" for key, value in extra.items())
+    log.info(
+        f"llm_suggestion trigger={trigger} locale={locale.code} "
+        f"characteristic={characteristic} "
+        f"cache_hit={'true' if result.cache_hit else 'false'} "
+        f"duration_ms={duration_ms} prompt_tokens={result.prompt_tokens or ''} "
+        f"completion_tokens={result.completion_tokens or ''}{fields}"
+    )
+
+
 @require_POST
 @login_required(redirect_field_name="", login_url="/403")
 def openai_chatgpt(request):
@@ -292,9 +326,7 @@ def openai_chatgpt(request):
     reference dropped entirely, without changing the request shape.
 
     `trigger` is `auto` for suggestions generated automatically by the Machinery
-    panel, and `manual` for those requested from the AI dropdown. Automatic
-    requests are restricted to `settings.OPENAI_AUTO_SUGGESTION_LOCALES`, so that
-    spend stays bounded by the locales they were enabled for.
+    panel, and `manual` for those requested from the AI dropdown.
     """
     try:
         english_text = request.POST.get("english_text")
@@ -310,63 +342,18 @@ def openai_chatgpt(request):
                 {"status": False, "message": f"Bad Request: {e}"}, status=400
             )
 
-        if trigger not in ("auto", "manual"):
-            return JsonResponse(
-                {
-                    "status": False,
-                    "message": f"Bad Request: unknown trigger `{trigger}`",
-                },
-                status=400,
-            )
-
-        if (
-            trigger == "auto"
-            and locale_code not in settings.OPENAI_AUTO_SUGGESTION_LOCALES
-        ):
-            return JsonResponse(
-                {
-                    "status": False,
-                    "message": "Automatic LLM suggestions are not enabled for this locale",
-                },
-                status=403,
-            )
+        error = _llm_trigger_error(trigger, locale_code)
+        if error is not None:
+            return error
 
         locale = Locale.objects.get(code=locale_code)
 
-        entity_key = None
-        entity_comment = None
-        group_comment = None
-        resource_comment = None
-        pinned_comments = None
-        terms = None
-
+        context = {}
         if entity_pk:
             entity = Entity.objects.select_related("resource", "section").get(
                 pk=entity_pk
             )
-            entity_key = get_llm_string_id(entity)
-            entity_comment = entity.comment or None
-            group_comment = (entity.section.comment if entity.section else None) or None
-            resource_comment = entity.resource.comment or None
-
-            pinned = [
-                stripped
-                for content in Comment.objects.filter(
-                    entity=entity, pinned=True
-                ).values_list("content", flat=True)
-                if (stripped := strip_tags(content).strip())
-            ]
-            pinned_comments = pinned if pinned else None
-
-            terms_list = [
-                {
-                    "text": term.text,
-                    "part_of_speech": term.part_of_speech,
-                    "translation": term.translation(locale),
-                }
-                for term in Term.objects.for_string(english_text)
-            ]
-            terms = terms_list if terms_list else None
+            context = get_llm_entity_context(entity, locale, english_text)
 
         service = OpenAIService()
         started = time.monotonic()
@@ -375,27 +362,9 @@ def openai_chatgpt(request):
             references,
             characteristic,
             locale,
-            entity_key=entity_key,
-            entity_comment=entity_comment,
-            group_comment=group_comment,
-            resource_comment=resource_comment,
-            pinned_comments=pinned_comments,
-            terms=terms,
+            **context,
         )
-        duration_ms = round((time.monotonic() - started) * 1000)
-        cache_hit = "true" if result.cache_hit else "false"
-        prompt_tokens = result.prompt_tokens or ""
-        completion_tokens = result.completion_tokens or ""
-        # Logged as a single flat line rather than through `extra`, because the
-        # console handler uses the default formatter, which would drop the extra
-        # fields. Parsed into a log-based metric in Cloud Logging, so the
-        # `key=value` shape matters.
-        log.info(
-            f"llm_suggestion trigger={trigger} locale={locale.code} "
-            f"characteristic={characteristic} cache_hit={cache_hit} "
-            f"duration_ms={duration_ms} prompt_tokens={prompt_tokens} "
-            f"completion_tokens={completion_tokens}"
-        )
+        _log_llm_suggestion(trigger, locale, characteristic, started, result)
         return JsonResponse({"translation": result.text})
 
     except Exception as e:
