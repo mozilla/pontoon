@@ -1341,6 +1341,12 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "upload_burst": os.environ.get("API_UPLOAD_THROTTLE_BURST", "30/minute"),
         "upload_sustained": os.environ.get("API_UPLOAD_THROTTLE_SUSTAINED", "180/hour"),
+        "terminology_burst": os.environ.get(
+            "API_TERMINOLOGY_THROTTLE_BURST", "60/minute"
+        ),
+        "terminology_sustained": os.environ.get(
+            "API_TERMINOLOGY_THROTTLE_SUSTAINED", "600/hour"
+        ),
     },
 }
 
@@ -1355,3 +1361,6 @@ SPECTACULAR_SETTINGS = {
 
 # Maximum length of input text allowed for pretranslation
 PRETRANSLATION_API_MAX_CHARS = int(os.environ.get("PRETRANSLATION_API_MAX_CHARS", 2048))
+
+# Maximum length of input text allowed for terminology matching
+TERMINOLOGY_API_MAX_CHARS = int(os.environ.get("TERMINOLOGY_API_MAX_CHARS", 2048))

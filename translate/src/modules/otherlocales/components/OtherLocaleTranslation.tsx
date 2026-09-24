@@ -33,7 +33,7 @@ export function OtherLocaleTranslationComponent({
   parameters: { project, resource, entity },
   index,
 }: Props): React.ReactElement<React.ElementType> {
-  const { setEditorFromHelpers } = useContext(EditorActions);
+  const { setEditorFromHistory } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
 
@@ -43,9 +43,9 @@ export function OtherLocaleTranslationComponent({
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      setEditorFromHelpers(plain, [], true);
+      setEditorFromHistory(translation.translation, true);
     }
-  }, [index, setEditorFromHelpers, plain]);
+  }, [index, setElement, setEditorFromHistory, translation.translation]);
 
   const className = classNames(
     'translation',

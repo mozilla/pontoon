@@ -42,7 +42,7 @@ api_v2_patterns = [
     ),
     path(
         "entities/<slug:project>/<path:resource>/<str:entity>/",
-        views.EntityIndividualView.as_view(),
+        views.EntityIndividualByPathView.as_view(),
         name="entity-individual-alternate",
     ),
     path(
@@ -55,6 +55,21 @@ api_v2_patterns = [
         "upload/translations/",
         views.UploadTranslationsView.as_view(),
         name="upload-translations",
+    ),
+    path(
+        "upload/pretranslations/",
+        views.UploadPretranslationsView.as_view(),
+        name="upload-pretranslations",
+    ),
+    path(
+        "upload/suggestions/",
+        views.UploadSuggestionsView.as_view(),
+        name="upload-suggestions",
+    ),
+    path(
+        "terminology/matches/",
+        views.TermMatchListView.as_view(),
+        name="term-matches",
     ),
     path(
         # Terminology Search

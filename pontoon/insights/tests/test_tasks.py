@@ -21,6 +21,7 @@ from pontoon.insights.tasks import (
     count_activities,
     count_created_entities,
     count_projectlocale_stats,
+    get_active_users_actions,
     locale_insights,
     projectlocale_insights,
 )
@@ -599,3 +600,31 @@ def test_build_chs_snapshots(locale_a):
     assert snapshot.completion_score == 36.8
     assert snapshot.key_projects_enabled_score == 4.0
     assert snapshot.chs == 40.8
+
+
+@pytest.mark.django_db
+def test_get_active_users_actions_uses_relative_year(user_a, locale_a, resource_a):
+    """relativedelta(years=1) keeps a 1-year window; year=1 would load year 1 CE onward."""
+    now, t = now_times()
+    tr = TranslationFactory.create(
+        entity__resource=resource_a,
+        locale=locale_a,
+        user=user_a,
+        date=t[1],
+        active=True,
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        created_at=now - relativedelta(months=6),
+        performed_by=user_a,
+        translation=tr,
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        created_at=now - relativedelta(years=2),
+        performed_by=user_a,
+        translation=tr,
+    )
+    grouped = get_active_users_actions(now)
+    actions = grouped.get(locale_a.pk, [])
+    assert len(actions) == 1

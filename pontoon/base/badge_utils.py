@@ -19,12 +19,16 @@ def badges_translation_count(user: User) -> int:
 
 def badges_review_count(user: User) -> int:
     """Translation reviews provided by user that count towards their badges."""
-    return ActionLog.objects.filter(
-        performed_by=user,
-        action_type__in={"translation:approved", "translation:rejected"},
-        created_at__gte=settings.BADGES_START_DATE,
-        is_implicit_action=False,
-    ).count()
+    return (
+        ActionLog.objects.filter(
+            performed_by=user,
+            action_type__in={"translation:approved", "translation:rejected"},
+            created_at__gte=settings.BADGES_START_DATE,
+            is_implicit_action=False,
+        )
+        .exclude_self_reviews()
+        .count()
+    )
 
 
 def badges_promotion_count(user: User) -> int:
@@ -76,3 +80,20 @@ def badges_review_level(user: User) -> int:
         if thresholds[level] <= count < thresholds[level + 1]:
             return level + 1
     return 0
+
+
+def badge_levels(user: User) -> dict[str, int]:
+    """Current level of each badge awarded for translation and review activity."""
+    return {
+        "Translation Champion": badges_translation_level(user),
+        "Review Master": badges_review_level(user),
+    }
+
+
+def new_badge_levels(user: User, before: dict[str, int]) -> list[tuple[str, int]]:
+    """Badges whose level increased since `before`, each with its new level."""
+    return [
+        (badge, level)
+        for badge, level in badge_levels(user).items()
+        if level > before[badge]
+    ]

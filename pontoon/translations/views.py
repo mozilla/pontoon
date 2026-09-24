@@ -357,11 +357,12 @@ def approve_translation(request):
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
-    review_count = badges_review_count(user)
-    if review_count in settings.BADGES_REVIEW_THRESHOLDS:
-        badge_name = "Review Master"
-        badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
-        _add_badge_data(response_data, user, badge_name, badge_level)
+    if translation.user_id != user.pk:
+        review_count = badges_review_count(user)
+        if review_count in settings.BADGES_REVIEW_THRESHOLDS:
+            badge_name = "Review Master"
+            badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
+            _add_badge_data(response_data, user, badge_name, badge_level)
 
     return JsonResponse(response_data)
 
@@ -483,11 +484,12 @@ def reject_translation(request):
     _add_stats(response_data, resource, locale, stats)
 
     # Send Review Master Badge notification information
-    review_count = badges_review_count(request.user)
-    if review_count in settings.BADGES_REVIEW_THRESHOLDS:
-        badge_name = "Review Master"
-        badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
-        _add_badge_data(response_data, request.user, badge_name, badge_level)
+    if translation.user_id != request.user.pk:
+        review_count = badges_review_count(request.user)
+        if review_count in settings.BADGES_REVIEW_THRESHOLDS:
+            badge_name = "Review Master"
+            badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
+            _add_badge_data(response_data, request.user, badge_name, badge_level)
 
     return JsonResponse(response_data)
 

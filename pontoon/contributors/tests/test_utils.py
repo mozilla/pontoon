@@ -1,6 +1,6 @@
 from datetime import datetime
 from unittest.mock import patch
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import pytest
 
@@ -65,7 +65,32 @@ def action_c(translation_a):
 
 
 @pytest.fixture
-def action_user_a(translation_a, user_a):
+def peer_translation(locale_a, project_locale_a, entity_a, user_b):
+    """Return a translation by another user so reviews of it are peer reviews."""
+    return TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_b,
+        string="Translation by user_b",
+        value=["Translation by user_b"],
+    )
+
+
+@pytest.fixture
+def action_user_a(peer_translation, user_a):
+    action = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=peer_translation,
+    )
+    action.created_at = timezone.now() - relativedelta(months=1)
+    action.save()
+    return action
+
+
+@pytest.fixture
+def self_approval_user_a(translation_a, user_a):
+    """Return user_a approving their own translation."""
     action = ActionLog.objects.create(
         action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
         performed_by=user_a,
@@ -89,12 +114,12 @@ def action_user_b(translation_a, user_b):
 
 
 @pytest.fixture
-def yesterdays_action_user_a(translation_a, user_a):
+def yesterdays_action_user_a(peer_translation, user_a):
     current_date = timezone.now()
     action = ActionLog.objects.create(
         action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
         performed_by=user_a,
-        translation=translation_a,
+        translation=peer_translation,
     )
     if current_date.day == 1:
         # First day of the month, so we instead set created_at to be earlier today
@@ -198,7 +223,9 @@ def test_get_approvals_charts_data_without_actions(user_a):
 
 
 @pytest.mark.django_db
-def test_get_approvals_charts_data_with_actions(user_a, action_user_a, action_user_b):
+def test_get_approvals_charts_data_with_actions(
+    user_a, self_approval_user_a, action_user_b
+):
     data = utils.get_approvals_charts_data(user_a)
 
     assert data["approval_rates"] == [0] * 11 + [100]
@@ -270,7 +297,9 @@ def test_get_contributions_map_without_actions(user_a, user_b):
 
 
 @pytest.mark.django_db
-def test_get_contributions_map_with_actions(user_a, action_user_a, user_b):
+def test_get_contributions_map_with_actions(
+    user_a, action_user_a, action_user_b, user_b
+):
     map = utils.get_contributions_map(user_a, user_b)
 
     for key, value in map.items():
@@ -278,6 +307,284 @@ def test_get_contributions_map_with_actions(user_a, action_user_a, user_b):
             assert not value.exists()
         else:
             assert value.exists()
+
+
+@pytest.mark.django_db
+def test_get_contributions_map_excludes_self_reviews(user_a, user_b, translation_a):
+    """Self-reviews count as neither performed nor received reviews."""
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+
+    map = utils.get_contributions_map(user_a, user_b)
+
+    assert not map["user_reviews"].exists()
+    assert not map["peer_reviews"].exists()
+    assert not map["all_user_contributions"].exists()
+    assert not map["all_contributions"].exists()
+
+
+@pytest.mark.django_db
+def test_get_contributions_map_keeps_reviews_of_imported_translations(
+    user_a, user_b, locale_a, project_locale_a, entity_a
+):
+    """A translation without an author is nobody's own work, so reviewing it counts."""
+    imported = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=None,
+        string="Imported translation",
+        value=["Imported translation"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+        performed_by=user_a,
+        translation=imported,
+    )
+
+    map = utils.get_contributions_map(user_a, user_b)
+
+    assert map["user_reviews"].exists()
+    assert not map["peer_reviews"].exists()
+
+
+@pytest.mark.django_db
+def test_get_contributions_map_keeps_obsolete_entities(
+    user_a, user_b, locale_a, project_locale_a, resource_a
+):
+    """A review still counts as activity once its entity becomes obsolete."""
+    obsolete_entity = EntityFactory.create(
+        resource=resource_a, string="Obsolete string", obsolete=True
+    )
+    translation = TranslationFactory(
+        entity=obsolete_entity,
+        locale=locale_a,
+        user=user_b,
+        string="Translation of an obsolete string",
+        value=["Translation of an obsolete string"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    map = utils.get_contributions_map(user_a, user_b)
+
+    assert map["user_reviews"].exists()
+    assert map["all_contributions"].exists()
+
+
+@pytest.mark.django_db
+def test_get_contributions_map_keeps_disabled_projects(user_a, user_b, locale_a):
+    """A review still counts as activity once its project is disabled."""
+    project = ProjectFactory.create(
+        slug="disabled_project", name="Disabled Project", disabled=True
+    )
+    resource = ResourceFactory.create(
+        project=project, path="resource_disabled.po", format="gettext"
+    )
+    entity = EntityFactory.create(resource=resource, string="Disabled string")
+    translation = TranslationFactory(
+        entity=entity,
+        locale=locale_a,
+        user=user_b,
+        string="Translation in a disabled project",
+        value=["Translation in a disabled project"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    map = utils.get_contributions_map(user_a, user_b)
+
+    assert map["user_reviews"].exists()
+    assert map["all_contributions"].exists()
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_labels_listable_actions(
+    user_a, user_b, locale_a, project_locale_a, entity_a
+):
+    """Actions the timeline link can list are labelled by action type."""
+    translation = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_b,
+        string="Translation by user_b",
+        value=["Translation by user_b"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved"]
+    assert data["count"] == 1
+    assert data["obsolete"] == 0
+    assert data["linked"] is True
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_labels_obsolete_separately(
+    user_a, user_b, locale_a, project_locale_a, entity_a
+):
+    """Actions on obsolete entities are counted, but labelled "obsolete"."""
+    listable = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_b,
+        string="Translation by user_b",
+        value=["Translation by user_b"],
+    )
+    obsolete_entity = EntityFactory.create(
+        resource=entity_a.resource, string="Obsolete string", obsolete=True
+    )
+    unlistable = TranslationFactory(
+        entity=obsolete_entity,
+        locale=locale_a,
+        user=user_b,
+        string="Translation of an obsolete string",
+        value=["Translation of an obsolete string"],
+    )
+    for translation in (listable, unlistable):
+        ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            performed_by=user_a,
+            translation=translation,
+        )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved", "1 obsolete"]
+    assert data["count"] == 2
+    assert data["obsolete"] == 1
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_drops_link_for_disabled_projects(
+    user_a, user_b, locale_a
+):
+    """A link to a disabled project 404s, so the counts are kept but not linked."""
+    project = ProjectFactory.create(
+        slug="disabled_project",
+        name="Disabled Project",
+        disabled=True,
+        locales=[locale_a],
+    )
+    resource = ResourceFactory.create(
+        project=project, path="resource_disabled.po", format="gettext"
+    )
+    entity = EntityFactory.create(resource=resource, string="Disabled string")
+    translation = TranslationFactory(
+        entity=entity,
+        locale=locale_a,
+        user=user_b,
+        string="Translation in a disabled project",
+        value=["Translation in a disabled project"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved"]
+    assert data["obsolete"] == 0
+    assert data["linked"] is False
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_labels_obsolete_when_unlinked(
+    user_a, user_b, locale_a
+):
+    """Obsolete entities are labelled the same way whether or not there is a link."""
+    project = ProjectFactory.create(
+        slug="disabled_project",
+        name="Disabled Project",
+        disabled=True,
+        locales=[locale_a],
+    )
+    resource = ResourceFactory.create(
+        project=project, path="resource_disabled.po", format="gettext"
+    )
+    live_entity = EntityFactory.create(resource=resource, string="Live string")
+    obsolete_entity = EntityFactory.create(
+        resource=resource, string="Obsolete string", obsolete=True
+    )
+    for entity in (live_entity, obsolete_entity):
+        translation = TranslationFactory(
+            entity=entity,
+            locale=locale_a,
+            user=user_b,
+            string=f"Translation of {entity.string}",
+            value=[f"Translation of {entity.string}"],
+        )
+        ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            performed_by=user_a,
+            translation=translation,
+        )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved", "1 obsolete"]
+    assert data["count"] == 2
+    assert data["obsolete"] == 1
+    assert data["linked"] is False
+
+
+@pytest.mark.django_db
+def test_get_project_locale_contribution_counts_drops_link_for_removed_locales(
+    user_a, user_b, locale_a, entity_a
+):
+    """A link to a locale no longer part of the project 404s, so it isn't linked."""
+    translation = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_b,
+        string="Translation by user_b",
+        value=["Translation by user_b"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    counts = utils.get_project_locale_contribution_counts(
+        ActionLog.objects.filter(performed_by=user_a)
+    )
+
+    (localizations,) = counts.values()
+    (data,) = localizations.values()
+    assert data["actions"] == ["1 approved"]
+    assert data["linked"] is False
 
 
 @pytest.mark.django_db
@@ -301,12 +608,12 @@ def test_get_contribution_graph_data_with_actions(user_a, action_user_a, user_b)
 
 
 @pytest.mark.django_db
-def test_get_contribution_graph_data_for_year(user_a, user_b, translation_a):
+def test_get_contribution_graph_data_for_year(user_a, user_b, peer_translation):
     # Action in 2025
     action_2025 = ActionLog.objects.create(
         action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
         performed_by=user_a,
-        translation=translation_a,
+        translation=peer_translation,
     )
     action_2025.created_at = timezone.make_aware(datetime(2025, 6, 15))
     action_2025.save()
@@ -315,7 +622,7 @@ def test_get_contribution_graph_data_for_year(user_a, user_b, translation_a):
     action_2026 = ActionLog.objects.create(
         action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
         performed_by=user_a,
-        translation=translation_a,
+        translation=peer_translation,
     )
     action_2026.created_at = timezone.make_aware(datetime(2026, 1, 1))
     action_2026.save()
@@ -340,6 +647,43 @@ def test_get_contribution_years(user_a):
 @pytest.mark.django_db
 def test_get_contribution_timeline_data_without_actions(user_a, user_b):
     assert utils.get_contribution_timeline_data(user_a, user_b) == ({})
+
+
+@pytest.mark.django_db
+def test_get_contribution_timeline_data_keeps_months_without_linkable_activity(
+    user_a, user_b, locale_a
+):
+    """A month spent entirely in disabled projects is still a month of activity."""
+    project = ProjectFactory.create(
+        slug="disabled_project",
+        name="Disabled Project",
+        disabled=True,
+        locales=[locale_a],
+    )
+    resource = ResourceFactory.create(
+        project=project, path="resource_disabled.po", format="gettext"
+    )
+    entity = EntityFactory.create(resource=resource, string="Disabled string")
+    translation = TranslationFactory(
+        entity=entity,
+        locale=locale_a,
+        user=user_b,
+        string="Translation in a disabled project",
+        value=["Translation in a disabled project"],
+    )
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation,
+    )
+
+    contributions = utils.get_contribution_timeline_data(user_a, user_b)
+
+    (month,) = contributions.values()
+    (val,) = month.values()
+    assert val["title"] == "Reviewed 1 suggestion in 1 project"
+    (data,) = val["data"].values()
+    assert data["url"] == ""
 
 
 @pytest.mark.django_db
@@ -373,6 +717,8 @@ def test_get_contribution_timeline_data_with_actions(
                             },
                             "actions": ["1 approved"],
                             "count": 1,
+                            "obsolete": 0,
+                            "linked": True,
                             "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                         },
                     },
@@ -385,13 +731,13 @@ def test_get_contribution_timeline_data_with_actions(
 
 
 @pytest.mark.django_db
-def test_get_contribution_timeline_data_for_year(user_a, user_b, translation_a):
+def test_get_contribution_timeline_data_for_year(user_a, user_b, peer_translation):
     # Reviews in two different months of 2025
     for review_date in [datetime(2025, 6, 15), datetime(2025, 12, 10)]:
         action = ActionLog.objects.create(
             action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
             performed_by=user_a,
-            translation=translation_a,
+            translation=peer_translation,
         )
         action.created_at = timezone.make_aware(review_date)
         action.save()
@@ -400,7 +746,7 @@ def test_get_contribution_timeline_data_for_year(user_a, user_b, translation_a):
     action_2026 = ActionLog.objects.create(
         action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
         performed_by=user_a,
-        translation=translation_a,
+        translation=peer_translation,
     )
     action_2026.created_at = timezone.make_aware(datetime(2026, 6, 15))
     action_2026.save()
@@ -420,6 +766,38 @@ def test_get_contribution_timeline_data_for_year(user_a, user_b, translation_a):
         collapsed["December 2025"]["user_reviews"]["title"]
         == "Reviewed 1 suggestion in 1 project"
     )
+
+
+@pytest.mark.django_db
+def test_get_contribution_timeline_links_span_a_single_month(
+    user_a, user_b, peer_translation
+):
+    """Each month links to its own time interval, not to the whole period."""
+    for review_date in [datetime(2025, 6, 15), datetime(2025, 12, 10)]:
+        action = ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+            performed_by=user_a,
+            translation=peer_translation,
+        )
+        action.created_at = timezone.make_aware(review_date)
+        action.save()
+
+    full_year = utils.get_contribution_timeline_data(
+        user_a, user_b, full_year=True, contribution_type="user_reviews", year=2025
+    )
+
+    review_times = {}
+    for month, types in full_year.items():
+        times = set()
+        for info in types["user_reviews"]["data"].values():
+            query = parse_qs(urlparse(info["url"]).query)
+            times.add(query["review_time"][0])
+        review_times[month] = times
+
+    assert review_times == {
+        "December 2025": {"202512010000-202512312359"},
+        "June 2025": {"202506010000-202506302359"},
+    }
 
 
 @pytest.mark.django_db

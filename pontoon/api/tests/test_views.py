@@ -1,26 +1,27 @@
+from types import SimpleNamespace
+
 import pytest
 
-from notifications.models import Notification
 from rest_framework.test import APIClient
 from rest_framework.throttling import SimpleRateThrottle
 
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.core.cache import cache
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models import Prefetch
 from django.utils.timezone import now, timedelta
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.api import views
 from pontoon.api.models import PersonalAccessToken
-from pontoon.api.serializers import UNDEFINED_KEYS_LIMIT
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
-from pontoon.base.models.translation import Translation
 from pontoon.base.models.translation_memory import TranslationMemoryEntry
+from pontoon.settings.base import (
+    PRETRANSLATION_API_MAX_CHARS,
+    TERMINOLOGY_API_MAX_CHARS,
+)
 from pontoon.terminology.models import Term, TermTranslation
 from pontoon.test.factories import (
     EntityFactory,
@@ -57,8 +58,6 @@ def test_user_actions_project_not_visible(member):
 
 @pytest.mark.django_db
 def test_user_actions_includes_implicit_flag(member):
-    from pontoon.actionlog.models import ActionLog
-
     client = APIClient()
     client.force_authenticate(user=member.user)
 
@@ -93,6 +92,32 @@ def test_user_actions_includes_implicit_flag(member):
         "translation:created": False,
         "translation:approved": True,
     }
+
+
+def test_schema_documents_user_actions_and_entity_lookups():
+    response = APIClient().get(
+        "/api/v2/schema/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+    paths = response.data["paths"]
+    assert paths["/api/v2/user-actions/{date}/project/{slug}/"]["get"]["responses"][
+        "200"
+    ]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/UserActionsResponse"
+    }
+    resource_schema = response.data["components"]["schemas"]["UserActionResource"]
+    assert {"$ref": "#/components/schemas/BlankEnum"} in resource_schema["properties"][
+        "format"
+    ]["oneOf"]
+    assert paths["/api/v2/entities/{id}/"]["get"]["operationId"] == (
+        "entities_retrieve"
+    )
+    assert (
+        paths["/api/v2/entities/{project}/{resource}/{entity}/"]["get"]["operationId"]
+        == "entities_retrieve_by_path"
+    )
 
 
 @pytest.mark.django_db
@@ -1177,6 +1202,211 @@ def test_terminology_search(django_assert_num_queries):
     }
 
 
+@pytest.fixture
+def terminology_matches_setup():
+    locale = LocaleFactory(code="kg", name="Klingon")
+    other_locale = LocaleFactory(code="gs", name="Geonosian")
+
+    term_open = Term.objects.create(
+        text="open",
+        part_of_speech="verb",
+        definition="Allow access",
+        usage="Open the door.",
+    )
+    term_tab = Term.objects.create(
+        text="tab",
+        part_of_speech="noun",
+        definition="A page in the browser",
+        usage="Open a new tab.",
+    )
+    term_click = Term.objects.create(
+        text="click",
+        part_of_speech="verb",
+        definition="Press",
+        usage="Click the button.",
+    )
+    Term.objects.create(
+        text="Firefox",
+        part_of_speech="noun",
+        definition="A web browser",
+        do_not_translate=True,
+    )
+    # Terms without a definition, or forbidden, are never matched
+    Term.objects.create(text="window", part_of_speech="noun", definition="")
+    Term.objects.create(
+        text="bookmark",
+        part_of_speech="noun",
+        definition="A saved page",
+        forbidden=True,
+    )
+
+    TermTranslation.objects.create(term=term_open, locale=locale, text="odpri")
+    TermTranslation.objects.create(term=term_tab, locale=locale, text="zavihek")
+    TermTranslation.objects.create(term=term_click, locale=other_locale, text="klikni")
+
+    return SimpleNamespace(locale=locale, other_locale=other_locale)
+
+
+@pytest.mark.django_db
+def test_terminology_matches(terminology_matches_setup, django_assert_num_queries):
+    with django_assert_num_queries(3):
+        response = APIClient().get(
+            "/api/v2/terminology/matches/",
+            {"locale": "kg", "text": "Open a new tab in this window."},
+        )
+
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 2,
+        "next": None,
+        "previous": None,
+        "results": [
+            {
+                "definition": "Allow access",
+                "part_of_speech": "verb",
+                "text": "open",
+                "translation_text": "odpri",
+                "usage": "Open the door.",
+                "notes": "",
+            },
+            {
+                "definition": "A page in the browser",
+                "part_of_speech": "noun",
+                "text": "tab",
+                "translation_text": "zavihek",
+                "usage": "Open a new tab.",
+                "notes": "",
+            },
+        ],
+    }
+
+
+@pytest.mark.django_db
+def test_terminology_matches_word_start(terminology_matches_setup):
+    """Terms are matched at the start of a word, to also catch inflected forms."""
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Reopened the crab."},
+    )
+
+    assert response.status_code == 200
+    assert response.data["results"] == []
+
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Opened the tabs."},
+    )
+
+    assert response.status_code == 200
+    assert [t["text"] for t in response.data["results"]] == ["open", "tab"]
+
+
+@pytest.mark.django_db
+def test_terminology_matches_missing_translation(
+    terminology_matches_setup,
+):
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Click here."},
+    )
+
+    assert response.status_code == 200
+    assert [(t["text"], t["translation_text"]) for t in response.data["results"]] == [
+        ("click", None)
+    ]
+
+
+@pytest.mark.django_db
+def test_terminology_matches_do_not_translate(terminology_matches_setup):
+    """Terms that must not be translated are reported as-is, in every locale."""
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Open Firefox."},
+    )
+
+    assert response.status_code == 200
+    assert [(t["text"], t["translation_text"]) for t in response.data["results"]] == [
+        ("Firefox", "Firefox"),
+        ("open", "odpri"),
+    ]
+
+
+@pytest.mark.django_db
+def test_terminology_matches_fields(terminology_matches_setup):
+    response = APIClient().get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Open a new tab.", "fields": "text"},
+    )
+
+    assert response.status_code == 200
+    assert response.data["results"] == [{"text": "open"}, {"text": "tab"}]
+
+
+@pytest.mark.django_db
+def test_terminology_matches_errors(terminology_matches_setup):
+    client = APIClient()
+
+    response = client.get("/api/v2/terminology/matches/", {"text": "Open"})
+    assert response.status_code == 400
+    assert response.data == {"locale": ["This field is required."]}
+
+    response = client.get("/api/v2/terminology/matches/", {"locale": "kg"})
+    assert response.status_code == 400
+    assert response.data == {"text": ["This field is required."]}
+
+    response = client.get(
+        "/api/v2/terminology/matches/", {"locale": "missing", "text": "Open"}
+    )
+    assert response.status_code == 404
+
+    response = client.get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": "Open a new tab. " * TERMINOLOGY_API_MAX_CHARS},
+    )
+    assert response.status_code == 400
+    assert response.data == {
+        "text": [
+            f"Text exceeds maximum length of {TERMINOLOGY_API_MAX_CHARS} characters."
+        ]
+    }
+
+    # Whitespace-only text that is also too long reports the length error
+    response = client.get(
+        "/api/v2/terminology/matches/",
+        {"locale": "kg", "text": " " * (TERMINOLOGY_API_MAX_CHARS + 1)},
+    )
+    assert response.status_code == 400
+    assert response.data == {
+        "text": [
+            f"Text exceeds maximum length of {TERMINOLOGY_API_MAX_CHARS} characters."
+        ]
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "rates",
+    [
+        {"terminology_burst": "2/minute", "terminology_sustained": "1000/hour"},
+        {"terminology_burst": "60/minute", "terminology_sustained": "2/hour"},
+    ],
+)
+def test_terminology_matches_throttled(monkeypatch, terminology_matches_setup, rates):
+    # DRF copies the rates into a class attribute at import time, so overriding the
+    # REST_FRAMEWORK setting has no effect here.
+    monkeypatch.setattr(SimpleRateThrottle, "THROTTLE_RATES", rates)
+    cache.clear()
+
+    client = APIClient()
+    for expected_status in (200, 200, 429):
+        response = client.get(
+            "/api/v2/terminology/matches/", {"locale": "kg", "text": "Open a new tab."}
+        )
+        assert response.status_code == expected_status
+
+    cache.clear()
+
+
 @pytest.mark.django_db
 def test_tm_search(django_assert_num_queries):
     locale_a = LocaleFactory(
@@ -1657,6 +1887,30 @@ def test_pretranslation_group_authentication(member):
     }
 
 
+def test_pretranslation_schema():
+    response = APIClient().get(
+        "/api/v2/schema/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+    operation = response.data["paths"]["/api/v2/pretranslate/"]["post"]
+    assert [parameter["name"] for parameter in operation["parameters"]] == [
+        "locale",
+        "resource_format",
+    ]
+    assert operation["parameters"][0]["required"] is True
+    assert operation["parameters"][1]["schema"]["enum"] == Resource.Format.values
+    assert operation["requestBody"]["content"]["text/plain"]["schema"] == {
+        "type": "string",
+        "maxLength": PRETRANSLATION_API_MAX_CHARS,
+        "description": "Source string to pretranslate.",
+    }
+    assert operation["responses"]["200"]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/PretranslationResponse"
+    }
+
+
 @pytest.mark.django_db
 def test_pretranslation_tm(member):
     pretranslators = Group.objects.get(name="pretranslators")
@@ -2004,553 +2258,3 @@ def test_expired_pat_rejected_on_non_pretranslation_endpoint(member):
     )
 
     assert response.status_code == 403
-
-
-def _pat_client(user, name="Upload Token"):
-    token = PersonalAccessToken.objects.create(
-        user=user,
-        name=name,
-        token_hash="placeholder",
-        expires_at=now() + timedelta(days=1),
-    )
-    token_unhashed = "unhashed-token"
-    token.token_hash = make_password(token_unhashed)
-    token.save()
-
-    client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token.id}_{token_unhashed}")
-    return client
-
-
-def _upload(client, **data):
-    return client.post("/api/v2/upload/translations/", data, format="multipart")
-
-
-def _po_file(
-    contents='msgid "test_key"\nmsgstr "new translation"', name="resource_a.po"
-):
-    return SimpleUploadedFile(name, contents.encode("utf-8"))
-
-
-@pytest.fixture
-def upload_translator(member, project_locale_a):
-    project_locale_a.locale.translators_group.user_set.add(member.user)
-    return member
-
-
-@pytest.fixture
-def upload_po_translation(translation_a):
-    translation_a.entity.key = ["test_key"]
-    translation_a.entity.save()
-    return translation_a
-
-
-@pytest.mark.django_db
-def test_upload_api_requires_authentication(project_locale_a):
-    response = _upload(
-        APIClient(),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource="resource_a.po",
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 403
-
-
-@pytest.mark.django_db
-def test_upload_api_session_auth_rejected(upload_translator, project_locale_a):
-    client = APIClient()
-    # force_authenticate() would bypass authentication_classes.
-    client.force_login(upload_translator.user)
-
-    response = _upload(
-        client,
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource="resource_a.po",
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 403
-
-
-@pytest.mark.django_db
-def test_upload_api_cannot_translate(member, project_locale_a, resource_a):
-    response = _upload(
-        _pat_client(member.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource="resource_a.po",
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 403
-
-
-@pytest.mark.django_db
-def test_upload_api_readonly_project_locale(
-    upload_translator, project_locale_a, resource_a
-):
-    project_locale_a.readonly = True
-    project_locale_a.save()
-
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource="resource_a.po",
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 403
-
-
-@pytest.mark.django_db
-def test_upload_api_missing_file(upload_translator, project_locale_a):
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource="resource_a.po",
-    )
-
-    assert response.status_code == 400
-    assert "uploadfile" in response.json()
-
-
-@pytest.mark.django_db
-def test_upload_api_missing_project(upload_translator, project_locale_a):
-    response = _upload(
-        _pat_client(upload_translator.user),
-        locale=project_locale_a.locale.code,
-        resource="resource_a.po",
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 400
-    assert "project" in response.json()
-
-
-@pytest.mark.django_db
-def test_upload_api_incompatible_format(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(contents="irrelevant", name="resource_a.ftl"),
-    )
-
-    assert response.status_code == 400
-
-
-@pytest.mark.django_db
-def test_upload_api_unparseable_file(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    """Reject malformed files."""
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(contents="this is not valid gettext {{{ broken"),
-    )
-
-    assert response.status_code == 400
-    assert "uploadfile" in response.json()
-
-
-@pytest.mark.django_db
-def test_upload_api_unknown_keys_ignored(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    """Skip unknown keys and report them, importing the rest of the file."""
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(
-            contents='msgid "test_key"\nmsgstr "new translation"\n\n'
-            'msgid "no_such_key"\nmsgstr "x"\n\n'
-            'msgid "another_missing"\nmsgstr "y"\n'
-        ),
-    )
-
-    assert response.status_code == 200
-    assert response.json() == {
-        "updated": 1,
-        "unchanged": 0,
-        "undefined_keys": [["no_such_key"], ["another_missing"]],
-        "undefined_keys_count": 2,
-    }
-    assert Translation.objects.filter(string="new translation").exists()
-
-
-@pytest.mark.django_db
-def test_upload_api_unknown_keys_truncated(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    """Report at most UNDEFINED_KEYS_LIMIT unknown keys, alongside their total number."""
-    unknown = 2 * UNDEFINED_KEYS_LIMIT
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(
-            contents="\n\n".join(
-                f'msgid "missing_{i}"\nmsgstr "x"' for i in range(unknown)
-            )
-        ),
-    )
-
-    assert response.status_code == 200
-    body = response.json()
-    assert len(body["undefined_keys"]) == UNDEFINED_KEYS_LIMIT
-    assert body["undefined_keys_count"] == unknown
-
-
-@pytest.mark.django_db
-def test_upload_api_badge_notification(
-    monkeypatch, upload_translator, project_locale_a, upload_po_translation
-):
-    """Crossing a badge threshold through the API notifies the user."""
-    levels = iter([0, 1])
-    monkeypatch.setattr(views, "badges_translation_level", lambda user: next(levels))
-    monkeypatch.setattr(views, "badges_review_level", lambda user: 0)
-
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 200
-    notification = Notification.objects.filter(
-        recipient=upload_translator.user, data__category="badge"
-    ).get()
-    assert "Translation Champion" in notification.description
-
-
-@pytest.mark.django_db
-def test_upload_api_no_badge_notification_below_threshold(
-    monkeypatch, upload_translator, project_locale_a, upload_po_translation
-):
-    """No notification when the upload doesn't move the user to a new badge level."""
-    monkeypatch.setattr(views, "badges_translation_level", lambda user: 1)
-    monkeypatch.setattr(views, "badges_review_level", lambda user: 0)
-
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 200
-    assert not Notification.objects.filter(
-        recipient=upload_translator.user, data__category="badge"
-    ).exists()
-
-
-@pytest.mark.django_db
-def test_upload_api_file_without_translations(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    """Reject files with no translations, rather than reporting a no-op."""
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(contents="# Just a comment\n"),
-    )
-
-    assert response.status_code == 400
-    assert response.json() == {
-        "uploadfile": ["No translations found in uploaded file."]
-    }
-
-
-@pytest.mark.django_db
-def test_upload_api_disabled_project(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    """Reject disabled projects."""
-    project = project_locale_a.project
-    project.disabled = True
-    project.save()
-
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(contents='msgid "test_key"\nmsgstr "into disabled"'),
-    )
-
-    assert response.status_code == 404
-    assert not Translation.objects.filter(string="into disabled").exists()
-
-
-@pytest.mark.django_db
-def test_upload_api_oversized_file(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(contents="#" * (5000 * 1000 + 1)),
-    )
-
-    assert response.status_code == 400
-
-
-@pytest.mark.django_db
-def test_upload_api_file_validated_after_authorization(
-    member, project_locale_a, resource_a
-):
-    """An oversized file from a user without translator rights is a 403, not a 400."""
-    response = _upload(
-        _pat_client(member.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=resource_a.path,
-        uploadfile=_po_file(contents="#" * (5000 * 1000 + 1)),
-    )
-
-    assert response.status_code == 403
-
-
-@pytest.mark.django_db
-def test_upload_api_resource_not_enabled_for_locale(
-    upload_translator, project_locale_a, resource_a
-):
-    """A resource with no TranslatedResource for the locale is not writable."""
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=resource_a.path,
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 404
-    assert not Translation.objects.filter(entity__resource=resource_a).exists()
-
-
-@pytest.mark.django_db
-def test_upload_api_concurrent_conflict(
-    monkeypatch, upload_translator, project_locale_a, upload_po_translation
-):
-    """A uniqueness clash with a concurrent upload is reported as a conflict."""
-    from django.db import IntegrityError
-
-    from pontoon.sync import utils as sync_utils
-
-    def raise_integrity_error(*args, **kwargs):
-        raise IntegrityError("duplicate key value violates unique constraint")
-
-    monkeypatch.setattr(sync_utils, "import_uploaded_file", raise_integrity_error)
-
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 409
-
-
-@pytest.mark.django_db
-def test_upload_api_unknown_resource(upload_translator, project_locale_a):
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource="does_not_exist.po",
-        uploadfile=_po_file(name="does_not_exist.po"),
-    )
-
-    assert response.status_code == 404
-
-
-@pytest.mark.django_db
-def test_upload_api_locale_not_enabled_for_project(member, project_locale_a, locale_b):
-    locale_b.translators_group.user_set.add(member.user)
-
-    response = _upload(
-        _pat_client(member.user),
-        project=project_locale_a.project.slug,
-        locale=locale_b.code,
-        resource="resource_a.po",
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 404
-
-
-@pytest.mark.django_db
-def test_upload_api_admin_can_upload(member, project_locale_a, upload_po_translation):
-    member.user.is_superuser = True
-    member.user.save()
-
-    assert not project_locale_a.locale.translators_group.user_set.filter(
-        pk=member.user.pk
-    ).exists()
-
-    response = _upload(
-        _pat_client(member.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 200
-    assert response.json()["updated"] == 1
-
-
-@pytest.mark.django_db
-def test_upload_api_unknown_locale(upload_translator, project_locale_a):
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale="does-not-exist",
-        resource="resource_a.po",
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 404
-
-
-@pytest.mark.django_db
-def test_upload_api_private_project_not_visible(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    project = project_locale_a.project
-    project.visibility = Project.Visibility.PRIVATE
-    project.save()
-
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 404
-
-
-@pytest.mark.django_db
-def test_upload_api_file(upload_translator, project_locale_a, upload_po_translation):
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 200
-    assert response.json() == {
-        "updated": 1,
-        "unchanged": 0,
-        "undefined_keys": [],
-        "undefined_keys_count": 0,
-    }
-
-    translation = Translation.objects.get(string="new translation")
-
-    assert translation.entity.key == ["test_key"]
-    assert translation.entity.resource.path == "resource_a.po"
-    assert translation.approved
-    assert translation.user == upload_translator.user
-    assert not translation.warnings.exists()
-
-
-@pytest.mark.django_db
-def test_upload_api_no_changes(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    client = _pat_client(upload_translator.user)
-    kwargs = dict(
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-    )
-
-    first = _upload(client, uploadfile=_po_file(), **kwargs)
-    assert first.status_code == 200
-    assert first.json()["updated"] == 1
-
-    second = _upload(client, uploadfile=_po_file(), **kwargs)
-    assert second.status_code == 200
-    assert second.json() == {
-        "updated": 0,
-        "unchanged": 1,
-        "undefined_keys": [],
-        "undefined_keys_count": 0,
-    }
-
-
-@pytest.mark.django_db
-def test_upload_api_logs_action(
-    upload_translator, project_locale_a, upload_po_translation
-):
-    response = _upload(
-        _pat_client(upload_translator.user),
-        project=project_locale_a.project.slug,
-        locale=project_locale_a.locale.code,
-        resource=upload_po_translation.entity.resource.path,
-        uploadfile=_po_file(),
-    )
-
-    assert response.status_code == 200
-    assert ActionLog.objects.filter(
-        performed_by=upload_translator.user,
-        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
-    ).exists()
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "rates",
-    [
-        {"upload_burst": "2/minute", "upload_sustained": "1000/hour"},
-        {"upload_burst": "60/minute", "upload_sustained": "2/hour"},
-    ],
-)
-def test_upload_api_throttled(
-    monkeypatch, upload_translator, project_locale_a, upload_po_translation, rates
-):
-    # DRF copies the rates into a class attribute at import time, so overriding the
-    # REST_FRAMEWORK setting has no effect here.
-    monkeypatch.setattr(SimpleRateThrottle, "THROTTLE_RATES", rates)
-    cache.clear()
-
-    client = _pat_client(upload_translator.user)
-    for expected_status in (200, 200, 429):
-        response = _upload(
-            client,
-            project=project_locale_a.project.slug,
-            locale=project_locale_a.locale.code,
-            resource=upload_po_translation.entity.resource.path,
-            uploadfile=_po_file(),
-        )
-        assert response.status_code == expected_status
-
-    cache.clear()

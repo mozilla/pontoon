@@ -82,6 +82,25 @@ def sync_translations_from_repo(
     return del_count, update_count
 
 
+def build_translation(
+    rt: RepoTranslation, entity_id: int, locale_id: int, user: User, now: datetime
+) -> Translation:
+    """An unsaved translation of an entity, from a parsed resource entry."""
+    return Translation(
+        entity_id=entity_id,
+        locale_id=locale_id,
+        string=rt.string,
+        value=message_to_json(rt.value),
+        properties=(
+            {key: message_to_json(msg) for key, msg in rt.properties.items()}
+            if rt.properties
+            else None
+        ),
+        date=now,
+        user=user,
+    )
+
+
 def write_db_updates(
     project: Project, updates: Updates, user: User | None, now: datetime
 ) -> None:
@@ -381,21 +400,8 @@ def update_db_translations(
         # Add new approved translations for the remainder
         for (entity_id, locale_id), rt in repo_translations.items():
             if rt is not None:
-                json_properties = (
-                    {key: message_to_json(msg) for key, msg in rt.properties.items()}
-                    if rt.properties
-                    else None
-                )
-                tx = Translation(
-                    entity_id=entity_id,
-                    locale_id=locale_id,
-                    string=rt.string,
-                    value=message_to_json(rt.value),
-                    properties=json_properties,
-                    date=now,
-                    active=True,
-                    user=user,
-                )
+                tx = build_translation(rt, entity_id, locale_id, user, now)
+                tx.active = True
                 if rt.fuzzy:
                     tx.fuzzy = True
                 else:

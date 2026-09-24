@@ -10,8 +10,9 @@ export type UnsavedActions = {
    * The `callback` is called as `setTimout(callback)`
    * to avoid an occasional React complaint about
    * updating one component while rendering a different component.
+   * Its argument reports whether a draft was ignored.
    */
-  checkUnsavedChanges(callback: () => void): void;
+  checkUnsavedChanges(callback: (hadUnsavedChanges: boolean) => void): void;
 
   /**
    * If `ignore` is true and `checkUnsavedChanges` has been called,
@@ -28,7 +29,7 @@ const initUnsavedChanges: UnsavedChanges = {
 
 const initUnsavedActions: UnsavedActions = {
   checkUnsavedChanges: (callback) => {
-    callback();
+    callback(false);
   },
   resetUnsavedChanges: () => {},
   setUnsavedChanges: () => {},
@@ -50,12 +51,15 @@ export function UnsavedChangesProvider({
 
   const actions = useMemo<UnsavedActions>(
     () => ({
-      checkUnsavedChanges: (callback: () => void) =>
+      checkUnsavedChanges: (callback: (hadUnsavedChanges: boolean) => void) =>
         setState((prev) => {
           if (prev.check()) {
-            return { check: () => true, onIgnore: callback };
+            return {
+              check: () => true,
+              onIgnore: () => callback(true),
+            };
           } else {
-            setTimeout(callback);
+            setTimeout(() => callback(false));
             return prev;
           }
         }),

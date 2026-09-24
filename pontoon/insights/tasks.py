@@ -439,7 +439,7 @@ def get_active_users_actions(
     """Get actions of the previous year, needed for the Active users charts."""
     actions = (
         ActionLog.objects.filter(
-            created_at__gte=dt_max - relativedelta(year=1),
+            created_at__gte=dt_max - relativedelta(years=1),
             created_at__lt=dt_max,
         )
         # Exclude implicit actions (e.g. self-approvals on submission).

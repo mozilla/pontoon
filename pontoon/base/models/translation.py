@@ -116,7 +116,9 @@ class TranslationQuerySet(models.QuerySet["Translation"]):
                     entity=translation.entity, locale=translation.locale
                 )
 
-        ChangedEntityLocale.objects.bulk_create(changed_entities.values())
+        ChangedEntityLocale.objects.bulk_create(
+            changed_entities.values(), ignore_conflicts=True
+        )
 
 
 class Translation(DirtyFieldsMixin, models.Model):

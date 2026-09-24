@@ -257,6 +257,9 @@ class TermSerializer(DynamicFieldsModelSerializer):
         ]
 
     def get_translation_text(self, obj):
+        if obj.do_not_translate:
+            return obj.text
+
         if hasattr(obj, "filtered_translations") and (ft := obj.filtered_translations):
             return ft[0].text
 
@@ -308,6 +311,63 @@ class TranslationSerializer(serializers.ModelSerializer):
 
     def get_string(self, obj):
         return get_simple_preview(obj.entity.resource.format, obj.string)
+
+
+class UserActionUserSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    name = serializers.CharField()
+    system_user = serializers.BooleanField()
+
+
+class UserActionLocaleSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    code = serializers.CharField()
+    name = serializers.CharField()
+
+
+class UserActionEntitySerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    key = serializers.ListField(child=serializers.CharField())
+
+
+class UserActionResourceSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    path = serializers.CharField()
+    format = serializers.ChoiceField(choices=Resource.Format.values, allow_blank=True)
+
+
+class UserActionTranslationSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    status = serializers.CharField()
+    string = serializers.CharField()
+    value = serializers.JSONField()
+    properties = serializers.JSONField(required=False)
+    errors = serializers.ListField(child=serializers.CharField(), required=False)
+    warnings = serializers.ListField(child=serializers.CharField(), required=False)
+
+
+class UserActionSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    is_implicit_action = serializers.BooleanField()
+    date = serializers.DateTimeField()
+    user = UserActionUserSerializer()
+    locale = UserActionLocaleSerializer()
+    entity = UserActionEntitySerializer()
+    resource = UserActionResourceSerializer()
+    translation = UserActionTranslationSerializer(required=False)
+
+
+class UserActionsProjectSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    slug = serializers.CharField()
+    name = serializers.CharField()
+
+
+class UserActionsResponseSerializer(serializers.Serializer):
+    """Response returned by the user-actions endpoint."""
+
+    actions = UserActionSerializer(many=True)
+    project = UserActionsProjectSerializer()
 
 
 class ResourceSerializer(serializers.ModelSerializer):
@@ -387,6 +447,16 @@ class EntitySearchSerializer(EntitySerializer):
         return TranslationSerializer(translation, context=self.context).data
 
 
+class PretranslationResponseSerializer(serializers.Serializer):
+    """Result of pretranslating a source string."""
+
+    text = serializers.CharField(help_text="Pretranslation of the source string.")
+    author = serializers.ChoiceField(
+        choices=["gt", "tm"],
+        help_text="Service that provided the pretranslation: Google Translate or TM.",
+    )
+
+
 # A serializer would document `uploadfile` as a plain string unless
 # `COMPONENT_SPLIT_REQUEST` is enabled for the whole API, so the request is described
 # with a raw OpenAPI schema here.
@@ -414,9 +484,42 @@ UPLOAD_REQUEST_SCHEMA = {
 }
 
 
-# For large files, only report the first undefined keys, alongside
+# For large files, only report the first keys that could not be imported, alongside
 # their total number.
-UNDEFINED_KEYS_LIMIT = 100
+UPLOAD_KEYS_ERROR_LIMIT = 100
+
+
+def undefined_keys_field() -> serializers.ListField:
+    """Upload response field listing the keys that match no entity in Pontoon."""
+    return serializers.ListField(
+        child=serializers.ListField(child=serializers.CharField()),
+        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
+        f"Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+
+
+def undefined_keys_count_field() -> serializers.IntegerField:
+    """Upload response field counting the keys that match no entity in Pontoon."""
+    return serializers.IntegerField(
+        help_text="Total number of keys with no matching entity in Pontoon, "
+        "before truncation."
+    )
+
+
+class BadgeUpdateSerializer(serializers.Serializer):
+    """A badge level the user reached through the upload."""
+
+    name = serializers.CharField(help_text="Name of the badge.")
+    level = serializers.IntegerField(help_text="Level reached.")
+
+
+def badge_updates_field() -> BadgeUpdateSerializer:
+    """Upload response field listing the badge levels the user reached."""
+    return BadgeUpdateSerializer(
+        many=True,
+        help_text="Badges whose level the upload raised, with the new level. "
+        "The user is also notified of each.",
+    )
 
 
 class UploadTranslationsResponseSerializer(serializers.Serializer):
@@ -428,12 +531,89 @@ class UploadTranslationsResponseSerializer(serializers.Serializer):
     unchanged = serializers.IntegerField(
         help_text="Number of translations identical to the current ones, ignored."
     )
-    undefined_keys = serializers.ListField(
-        child=serializers.ListField(child=serializers.CharField()),
-        help_text=f"Keys of translations with no matching entity in Pontoon, ignored. "
-        f"Truncated to the first {UNDEFINED_KEYS_LIMIT} keys.",
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()
+
+
+class FailedCheckSerializer(serializers.Serializer):
+    """An uploaded translation left out because it fails quality checks."""
+
+    key = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="Key of the string, in the same format as the `key` field of "
+        "entities.",
     )
-    undefined_keys_count = serializers.IntegerField(
-        help_text="Total number of keys with no matching entity in Pontoon, "
+    errors = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="Errors reported by the quality checks.",
+    )
+    warnings = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="Warnings reported by the quality checks.",
+    )
+
+
+class UploadPretranslationsResponseSerializer(serializers.Serializer):
+    """Result of a pretranslation file upload."""
+
+    created = serializers.IntegerField(
+        help_text="Number of pretranslations added for strings with no pretranslation "
+        "or fuzzy translation."
+    )
+    replaced = serializers.IntegerField(
+        help_text="Number of pretranslations replacing a previous, different "
+        "pretranslation or fuzzy translation."
+    )
+    converted = serializers.IntegerField(
+        help_text="Number of existing translations made the active pretranslation, "
+        "because they match the uploaded translation."
+    )
+    unchanged = serializers.IntegerField(
+        help_text="Number of translations identical to the current pretranslation, "
+        "ignored."
+    )
+    skipped = serializers.IntegerField(
+        help_text="Number of strings left untouched, because they already have an "
+        "approved translation, or are marked as fuzzy in the uploaded file."
+    )
+    failed_checks = FailedCheckSerializer(
+        many=True,
+        help_text="Strings left untouched, because the uploaded translation fails "
+        f"quality checks. Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+    failed_checks_count = serializers.IntegerField(
+        help_text="Total number of strings left untouched because of failing checks, "
         "before truncation."
     )
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()
+
+
+class UploadSuggestionsResponseSerializer(serializers.Serializer):
+    """Result of a suggestion file upload."""
+
+    created = serializers.IntegerField(
+        help_text="Number of suggestions added by the upload."
+    )
+    restored = serializers.IntegerField(
+        help_text="Number of rejected translations matching the upload that were "
+        "un-rejected, becoming pending suggestions again."
+    )
+    unchanged = serializers.IntegerField(
+        help_text="Number of uploaded translations that the string already has as an "
+        "unrejected translation, in any review state, ignored."
+    )
+    failed_checks = FailedCheckSerializer(
+        many=True,
+        help_text="Strings left untouched, because the uploaded translation has "
+        f"errors. Truncated to the first {UPLOAD_KEYS_ERROR_LIMIT} keys.",
+    )
+    failed_checks_count = serializers.IntegerField(
+        help_text="Total number of strings left untouched because of errors, "
+        "before truncation."
+    )
+    undefined_keys = undefined_keys_field()
+    undefined_keys_count = undefined_keys_count_field()
+    badge_updates = badge_updates_field()

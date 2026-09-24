@@ -23,6 +23,10 @@ This guide covers everything you need to know to contribute to, deploy and maint
 
     Guidelines and best practices for contributing code to Pontoon.
 
+- :material-api: **[REST API](api.md)**
+
+    Reference for Pontoon's public REST API, including authentication and write endpoints.
+
 - :material-source-branch: **[Feature Development Process](feature-development-process.md)**
 
     Overview of how new features are designed, developed, and reviewed.

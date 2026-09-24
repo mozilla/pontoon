@@ -47,6 +47,7 @@ def delete_more_empty_gettext_plurals(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("base", "0092_del_entity_old_key"),
+        ("actionlog", "0001_squashed_0002_auto_20200123_1843"),
     ]
     operations = [
         migrations.RunPython(

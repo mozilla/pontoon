@@ -1,5 +1,6 @@
+from collections import Counter
 from collections.abc import Iterable, Iterator
-from re import compile, fullmatch
+from re import DOTALL, compile, escape, fullmatch, search
 from typing import cast
 
 from fluent.syntax import FluentParser, ast
@@ -178,10 +179,68 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
     return checks
 
 
-# Matches all HTML/XML elements and Android & Xcode printf specifiers
-ph_re = compile(
-    r"<[^>]+>|%#@\w+@|%(?:[1-9]\$|<)?[-#+ 0,(]?[0-9.]*(?:hh?|ll?|[qztjLT])?.?"
+printf_re = compile(
+    r"%#@\w+@|%(?:[1-9][0-9]*\$|<)?[-#+ 0,(]?[0-9.]*(?:hh?|ll?|[qztjLT])?.?"
 )
+# Match whole HTML tags, but count printf placeholders inside their attributes too.
+ph_re = compile(r"<[^>]+>|" + printf_re.pattern)
+
+tag_re = compile(r"<\s*(/?)\s*([A-Za-z_][\w:.-]*)(.*?)(/?)\s*>", DOTALL)
+
+
+def is_element(tag: str, context: str) -> bool:
+    """
+    Tell markup apart from literal text such as "Press <Enter> to continue".
+
+    Strings read from a resource file are well-formed XML, so markup there always
+    carries attributes, is self-closing, or has its counterpart in the same pattern.
+    A bare angle-bracketed word can only have been escaped literal text.
+    """
+    tm = fullmatch(tag_re, tag)
+    if tm is None:
+        return False
+    closing, name, attributes, self_closing = tm.groups()
+    if self_closing or attributes.strip():
+        return True
+    pair = (
+        rf"<\s*{escape(name)}\s*(?:/?>|\s)" if closing else rf"</\s*{escape(name)}\s*>"
+    )
+    return search(pair, context) is not None
+
+
+def mismatched_tags(preview: str) -> set[tuple[int, int]]:
+    """
+    Find spans of tags whose nesting doesn't line up, as in "<a>text</b>".
+    """
+    open_tags: list[tuple[str, tuple[int, int]]] = []
+    mismatched: set[tuple[int, int]] = set()
+    for pm in ph_re.finditer(preview):
+        tm = fullmatch(tag_re, pm[0]) if pm[0].startswith("<") else None
+        if tm is None:
+            continue
+        closing, name, _, self_closing = tm.groups()
+        if self_closing:
+            continue
+        if not closing:
+            open_tags.append((name, pm.span()))
+        elif open_tags and open_tags[-1][0] == name:
+            open_tags.pop()
+        else:
+            # Unclosed tags on their own are ambiguous, so only a mismatch
+            # between start and end counts.
+            mismatched.add(pm.span())
+            if open_tags:
+                mismatched.add(open_tags.pop()[1])
+    return mismatched
+
+
+def count_unnumbered_placeholders(preview: str) -> Counter[str]:
+    return Counter(
+        pm[0]
+        for pm in printf_re.finditer(preview)
+        if pm[0] not in {"%%", "%n"}
+        and not fullmatch(r"%(?:[1-9][0-9]*\$|<|#@).*", pm[0])
+    )
 
 
 def require_placeholders_match(
@@ -192,41 +251,128 @@ def require_placeholders_match(
     warnings: list[str],
 ) -> None:
     src_ph_strings: set[str] = set()
+    required_ph: set[str] = set()
+    src_min_counts: Counter[str] | None = None
+    src_max_counts: Counter[str] = Counter()
+    source_elements: list[Counter[str]] = []
     if src:
         for pattern in get_patterns(src):
+            preview = ""
+            ph_spans: list[tuple[int, int, str]] = []
             for el in pattern:
                 if isinstance(el, str):
                     if "%" in el:
-                        # If the bare text includes a %, presumably the message is not going
-                        # to be printf-formatted, and so we can exit early.
+                        # Assume a source with a literal % doesn't use printf formatting.
                         return
-                elif not (
+                    preview += el
+                    continue
+                ps = preview_placeholder(el)
+                if not (
                     isinstance(el, Expression)
                     and isinstance(el.arg, str)
-                    and el.function is None
+                    and el.function in (None, "html")
                 ):
-                    src_ph_strings.add(preview_placeholder(el))
+                    src_ph_strings.add(ps)
+                    ph_spans.append((len(preview), len(preview) + len(ps), ps))
+                preview += ps
+            enclosed_spans: set[tuple[int, int, str]] = set()
+            elements: Counter[str] = Counter()
+            src_mismatched = mismatched_tags(preview)
+            # Put tags back together when placeholders split them into parts.
+            for pm in ph_re.finditer(preview):
+                if pm[0].startswith("<") and (
+                    is_element(pm[0], preview) or pm.span() in src_mismatched
+                ):
+                    src_ph_strings.add(pm[0])
+                    required_ph.add(pm[0])
+                    elements[pm[0]] += 1
+                    enclosed_spans.update(
+                        (start, end, ps)
+                        for start, end, ps in ph_spans
+                        if pm.start() <= start
+                        and end <= pm.end()
+                        and pm.span() != (start, end)
+                    )
+            required_ph.update(
+                ps
+                for start, end, ps in ph_spans
+                if (start, end, ps) not in enclosed_spans
+            )
+            variant_counts = count_unnumbered_placeholders(preview)
+            src_max_counts |= variant_counts
+            src_min_counts = (
+                variant_counts
+                if src_min_counts is None
+                else src_min_counts & variant_counts
+            )
+            source_elements.append(elements)
+    if src_min_counts is None:
+        src_min_counts = Counter()
 
     found_ph: set[str] = set()
+    target_counts: list[Counter[str]] = []
     for pattern in get_patterns(tgt):
         pat_src = get_simple_preview(format, pattern)
+        target_counts.append(count_unnumbered_placeholders(pat_src))
+        tgt_mismatched = mismatched_tags(pat_src)
 
         for pm in ph_re.finditer(pat_src):
-            rest = pat_src[pm.start() :]
             for ph in src_ph_strings:
-                if rest.startswith(ph):
+                if pat_src.startswith(ph, pm.start()):
                     found_ph.add(ph)
                     break
             else:
                 ph = pm[0]
-                if ph not in {"%%", "%n"}:
-                    kind = "Element" if ph.startswith("<") else "Placeholder"
-                    errors.append(f"{kind} {ph} not found in reference")
+                if ph.startswith("<"):
+                    if is_element(ph, pat_src) or pm.span() in tgt_mismatched:
+                        errors.append(f"Element {ph} not found in reference")
+                elif ph not in {"%%", "%n"}:
+                    errors.append(f"Placeholder {ph} not found in reference")
 
-    for ph in src_ph_strings:
+    for ph in sorted(required_ph):
         if ph not in found_ph:
             kind = "Element" if ph.startswith("<") else "Placeholder"
             warnings.append(f"{kind} {ph} not found in translation")
+
+    # Avoid a second warning for placeholders missing along with their tags.
+    # Compare placeholder counts across source variants, since their tags may differ.
+    missing_element_counts: Counter[str] | None = None
+    for elements in source_elements:
+        missing: Counter[str] = Counter()
+        for element, count in elements.items():
+            if element in required_ph and element not in found_ph:
+                for ph, occurrences in count_unnumbered_placeholders(element).items():
+                    missing[ph] += count * occurrences
+        missing_element_counts = (
+            missing
+            if missing_element_counts is None
+            else missing_element_counts & missing
+        )
+    if missing_element_counts is None:
+        missing_element_counts = Counter()
+
+    # Locales have different plural forms; each can use any count in the source range.
+    for counts in target_counts:
+        for ph, maximum in src_max_counts.items():
+            minimum = src_min_counts[ph]
+            found = counts[ph]
+            if found > maximum:
+                error = (
+                    f"Placeholder {ph} has more occurrences in translation "
+                    f"(expected {maximum}, found {found})"
+                )
+                if error not in errors:
+                    errors.append(error)
+            elif found + missing_element_counts[ph] < minimum:
+                if ph in required_ph and ph not in found_ph:
+                    # We already warned that this placeholder is missing.
+                    continue
+                warning = (
+                    f"Placeholder {ph} has fewer occurrences in translation "
+                    f"(expected {minimum}, found {found})"
+                )
+                if warning not in warnings:
+                    warnings.append(warning)
 
 
 def get_patterns(msg: Message) -> Iterable[Pattern]:

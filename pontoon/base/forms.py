@@ -28,20 +28,6 @@ class HtmlField(forms.CharField):
         return utils.sanitize_html(value)
 
 
-class NoTabStopCharField(forms.CharField):
-    widget = forms.TextInput(attrs={"tabindex": "-1"})
-
-
-class NoTabStopFileField(forms.FileField):
-    widget = forms.FileInput(attrs={"tabindex": "-1"})
-
-
-class DownloadFileForm(forms.Form):
-    slug = NoTabStopCharField()
-    code = NoTabStopCharField()
-    part = NoTabStopCharField()
-
-
 def validate_uploaded_file(uploadfile, target_path):
     """Check the size of an uploaded file and its compatibility with the target resource."""
     if not uploadfile:
@@ -65,17 +51,8 @@ def validate_uploaded_file(uploadfile, target_path):
             raise forms.ValidationError(message)
 
 
-class UploadFileForm(DownloadFileForm):
-    uploadfile = NoTabStopFileField()
-
-    def clean(self):
-        cleaned_data = super().clean()
-        validate_uploaded_file(cleaned_data.get("uploadfile"), cleaned_data.get("part"))
-        return cleaned_data
-
-
 class UploadTranslationsAPIForm(forms.Form):
-    """Same as `UploadFileForm`, with field names matching the rest of the API.
+    """Fields of a translation upload request.
 
     The file is validated separately, after the API has authorized the caller.
     """
@@ -360,7 +337,6 @@ class GetEntitiesForm(forms.Form):
     author = forms.CharField(required=False)
     review_time = forms.CharField(required=False)
     reviewer = forms.CharField(required=False)
-    exclude_self_reviewed = forms.BooleanField(required=False)
     search = forms.CharField(required=False)
     entity_ids = forms.CharField(required=False)
     pk_only = forms.BooleanField(required=False)

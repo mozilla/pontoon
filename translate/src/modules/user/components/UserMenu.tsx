@@ -20,6 +20,8 @@ type Props = {
 
 type UserMenuProps = Props & {
   onDiscard: () => void;
+  uploading: boolean;
+  setUploading: (uploading: boolean) => void;
 };
 
 const ThemeButton = ({
@@ -57,6 +59,8 @@ export function UserMenuDialog({
   onDiscard,
   user,
   onThemeChange,
+  uploading,
+  setUploading,
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
   const { entity } = useContext(EntityView);
@@ -169,7 +173,11 @@ export function UserMenuDialog({
 
       {canUpload && (
         <li>
-          <FileUpload parameters={location} />
+          <FileUpload
+            parameters={location}
+            uploading={uploading}
+            setUploading={setUploading}
+          />
         </li>
       )}
 
@@ -290,6 +298,7 @@ export function UserMenuDialog({
 
 export function UserMenu(props: Props): React.ReactElement<'div'> {
   const [visible, setVisible] = useState(false);
+  const [uploading, setUploading] = useState(false);
   return (
     <div className='user-menu'>
       <div
@@ -309,7 +318,12 @@ export function UserMenu(props: Props): React.ReactElement<'div'> {
       </div>
 
       {visible && (
-        <UserMenuDialog {...props} onDiscard={() => setVisible(false)} />
+        <UserMenuDialog
+          {...props}
+          onDiscard={() => setVisible(false)}
+          uploading={uploading}
+          setUploading={setUploading}
+        />
       )}
     </div>
   );

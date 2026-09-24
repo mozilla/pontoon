@@ -308,7 +308,6 @@ export function SearchBoxBase({
           created_time: null,
           reviewer: null,
           review_time: null,
-          exclude_self_reviewed: false,
           entity: 0, // With the new results, the current entity might not be available anymore.
           list: parameters.list ?? null,
           ...getSearchUpdates(searchOptions),

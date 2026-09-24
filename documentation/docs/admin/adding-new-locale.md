@@ -16,7 +16,7 @@ It’s the locale code, in this case `am`.
 
 ### Google Translate code
 
-Google Translate maintains a list of supported locales in its own format. Choose one that matches the locale from [a list of supported locales](https://translate.google.com/intl/en/about/languages/) or leave it blank to disable support for Google Translate for this locale.
+Google Cloud Translation maintains a list of supported locales in its own format. Choose one that matches the locale from [the list of supported languages](https://docs.cloud.google.com/translate/docs/languages) or leave it blank to disable support for Google Cloud Translation for this locale.
 
 ### Google AutoML model
 

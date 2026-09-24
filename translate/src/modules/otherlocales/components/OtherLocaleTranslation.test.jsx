@@ -26,10 +26,10 @@ const MF2_TRANSLATION = {
   locale: LOCALE,
 };
 
-function createTranslation(format, translation, setEditorFromHelpers) {
+function createTranslation(format, translation, setEditorFromHistory) {
   const store = createReduxStore();
   const Wrapper = (props) => (
-    <EditorActions.Provider value={{ setEditorFromHelpers }}>
+    <EditorActions.Provider value={{ setEditorFromHistory }}>
       <HelperSelection.Provider value={{ element: -1, setElement() {} }}>
         <OtherLocaleTranslationComponent {...props} />
       </HelperSelection.Provider>
@@ -84,9 +84,7 @@ describe('<OtherLocaleTranslationComponent>', () => {
 
     fireEvent.click(getByRole('listitem'));
 
-    expect(spy.mock.calls).toEqual([
-      ['Un cheval, un cheval ! Mon royaume pour un cheval !', [], true],
-    ]);
+    expect(spy.mock.calls).toEqual([[PLAIN_TRANSLATION.translation, true]]);
   });
 
   it('sets editor value for a Fluent translation', () => {
@@ -95,8 +93,6 @@ describe('<OtherLocaleTranslationComponent>', () => {
 
     fireEvent.click(container.querySelector('li'));
 
-    expect(spy.mock.calls).toEqual([
-      ['Un cheval, un cheval ! Mon royaume pour un cheval !', [], true],
-    ]);
+    expect(spy.mock.calls).toEqual([[FLUENT_TRANSLATION.translation, true]]);
   });
 });
