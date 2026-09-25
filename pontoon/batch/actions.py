@@ -1,3 +1,5 @@
+import logging
+
 from django.db.models import QuerySet
 from django.utils import timezone
 
@@ -12,7 +14,11 @@ from pontoon.base.models import (
 from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
+from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.translations.utils import parse_source_string_to_json
+
+
+logger = logging.getLogger(__name__)
 
 
 def batch_action_template(form, user, translations, locale):
@@ -403,6 +409,117 @@ def copy_translation_from_locale(
     }
 
 
+def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
+    """
+    Enable teams to pretranslate an entire project or a subset of strings on projects
+    for which pretranslation is not enabled by the admins.
+    """
+
+    entity_pks_with_translation = set(
+        Translation.objects.filter(
+            locale=locale,
+            entity__in=entities,
+            approved=True,
+        ).values_list("entity__pk", flat=True)
+    )
+
+    already_active_entity_pks = set(
+        Translation.objects.filter(
+            locale=locale,
+            entity__in=entities,
+            active=True,
+        ).values_list("entity__pk", flat=True)
+    )
+
+    eligible_entities = entities.exclude(pk__in=entity_pks_with_translation)
+
+    before_level = badges_translation_level(user)
+
+    translations_to_create = []
+
+    invalid_entity_pks = []
+
+    for entity in eligible_entities:
+        try:
+            pretranslation = get_pretranslation(entity, locale)
+        except ValueError as e:
+            logger.info(f"Pretranslation error for entity {entity.pk}: {e!r}")
+            invalid_entity_pks.append(entity.pk)
+            continue
+
+        string, engine = pretranslation
+
+        try:
+            _, value, properties = parse_source_string_to_json(
+                entity.resource.format, string, locale.plural_catchall
+            )
+        except ValueError as e:
+            logger.error(
+                f"Unparsable pretranslation for entity {entity.pk}: {e!r}: {string!r}"
+            )
+            invalid_entity_pks.append(entity.pk)
+            continue
+
+        translations_to_create.append(
+            Translation(
+                locale=locale,
+                entity=entity,
+                string=string,
+                approved=False,
+                rejected=False,
+                fuzzy=False,
+                pretranslated=True,
+                active=entity.pk not in already_active_entity_pks,
+                user=user,
+                value=value,
+                properties=properties,
+            )
+        )
+
+    changed_translations = Translation.objects.bulk_create(translations_to_create)
+    changed_translations_qs = Translation.objects.filter(
+        pk__in=[t.pk for t in changed_translations]
+    )
+
+    count, translated_resources, changed_entities = utils.get_translations_info(
+        changed_translations_qs, locale
+    )
+
+    actions_to_log = [
+        ActionLog(
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            performed_by=user,
+            translation=t,
+        )
+        for t in changed_translations
+    ]
+
+    ActionLog.objects.bulk_create(actions_to_log)
+
+    after_level = badges_translation_level(user)
+
+    badge_update = {}
+
+    if after_level > before_level:
+        badge_update["level"] = after_level
+        badge_update["name"] = "Translation Champion"
+        send_badge_notification(user, badge_update["name"], badge_update["level"])
+
+    changed_translation_pks = [t.pk for t in changed_translations]
+
+    return {
+        "count": count,
+        "translated_resources": translated_resources,
+        "changed_entities": changed_entities,
+        "latest_translation_pk": max(changed_translation_pks)
+        if changed_translation_pks
+        else None,
+        "changed_translation_pks": changed_translation_pks,
+        "invalid_translation_pks": invalid_entity_pks,
+        "badge_update": badge_update,
+    }
+
+
 """A map of action names to functions.
 
 The keys define the available batch actions in the `batch_edit_translations`
@@ -415,4 +532,5 @@ ACTIONS_FN_MAP = {
     "reject": reject_translations,
     "replace": replace_translations,
     "copy_from_locale": copy_translation_from_locale,
+    "pretranslate": pretranslate_translations,
 }
