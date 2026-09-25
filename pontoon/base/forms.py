@@ -210,8 +210,8 @@ class ProjectLocaleFormSet(forms.models.BaseModelFormSet):
             ProjectLocale.objects.filter(
                 pk__in=[form.instance.pk for form in without_translators]
             ).update(has_custom_translators=False)
-            
-            # group ids of the project locales, skipping those with no group. 
+
+            # group ids of the project locales, skipping those with no group.
             candidate_groups_ids = [
                 form.instance.translators_group_id
                 for form in without_translators
