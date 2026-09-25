@@ -1,11 +1,15 @@
-import { Localized } from '@fluent/react';
-import React from 'react';
+import React, { useContext } from 'react';
 
 import type {
   ComposedMachineryTranslation,
   MachineryTranslation,
 } from '~/api/machinery';
+import { EntityView } from '~/context/EntityView';
+import { Locale } from '~/context/Locale';
+import { SearchData } from '~/context/SearchData';
+import { useLLMTranslation } from '~/context/TranslationContext';
 
+import { AIRefine } from './source/AIRefine';
 import { GoogleTranslation } from './source/GoogleTranslation';
 import { OpenAITranslation } from './source/OpenAITranslation';
 import { MicrosoftTranslation } from './source/MicrosoftTranslation';
@@ -32,7 +36,15 @@ export function MachineryTranslationSource({
   const isOpenAIChatGPTSupported =
     root?.dataset.isOpenaiChatgptSupported === 'true';
 
-  for (const source of translation.sources) {
+  // The quality score is rendered ahead of this list and always comes from the
+  // Translation Memory match, so that badge has to lead for the two to read as
+  // one. A stable sort leaves the rest in arrival order.
+  const ordered = [...translation.sources].sort(
+    (a, b) =>
+      Number(b === 'translation-memory') - Number(a === 'translation-memory'),
+  );
+
+  for (const source of ordered) {
     if (seen.includes(source)) {
       continue;
     }
@@ -49,21 +61,7 @@ export function MachineryTranslationSource({
         );
         break;
       case 'google-translate':
-        sources.push(
-          composed ? (
-            <li className='google-translation' key={source}>
-              <Localized id='machinery-GoogleTranslation--translation-source'>
-                <span className='translation-source'>GOOGLE TRANSLATE</span>
-              </Localized>
-            </li>
-          ) : (
-            <GoogleTranslation
-              isOpenAIChatGPTSupported={isOpenAIChatGPTSupported}
-              translation={translation as MachineryTranslation}
-              key={source}
-            />
-          ),
-        );
+        sources.push(<GoogleTranslation key={source} />);
         break;
       case 'openai-chatgpt':
         sources.push(<OpenAITranslation key={source} />);
@@ -80,5 +78,90 @@ export function MachineryTranslationSource({
     }
   }
 
-  return <ul className='sources'>{sources}</ul>;
+  return (
+    <ul className='sources'>
+      {sources}
+      {isOpenAIChatGPTSupported &&
+        (composed ? (
+          <ComposedAIRefine
+            translation={translation as ComposedMachineryTranslation}
+          />
+        ) : (
+          <SingleAIRefine translation={translation as MachineryTranslation} />
+        ))}
+    </ul>
+  );
+}
+
+/**
+ * A suggestion that is already LLM output doesn't offer to refine itself, which
+ * matches the single-string rows the Machinery panel generates automatically.
+ */
+function ComposedAIRefine({
+  translation,
+}: {
+  translation: ComposedMachineryTranslation;
+}): React.ReactElement<'li'> | null {
+  const locale = useContext(Locale);
+  const { entity } = useContext(EntityView);
+  const getLLMTranslationState = useLLMTranslation();
+  const { selectedOption, transformComposedLLMTranslation, restoreOriginal } =
+    getLLMTranslationState(translation);
+
+  if (translation.sources.every((source) => source === 'openai-chatgpt')) {
+    return null;
+  }
+
+  return (
+    <AIRefine
+      selectedOption={selectedOption}
+      onSelect={(characteristic) =>
+        transformComposedLLMTranslation(
+          translation,
+          characteristic,
+          locale.code,
+          entity.pk,
+        )
+      }
+      onRestore={() => restoreOriginal(translation)}
+    />
+  );
+}
+
+/**
+ * Offered for Google Translate output only: the refinement prompt takes one
+ * machine translation as its reference, and that is the one the panel has.
+ */
+function SingleAIRefine({
+  translation,
+}: {
+  translation: MachineryTranslation;
+}): React.ReactElement<'li'> | null {
+  const locale = useContext(Locale);
+  const { entity } = useContext(EntityView);
+  const { query } = useContext(SearchData);
+  const getLLMTranslationState = useLLMTranslation();
+  const { selectedOption, transformLLMTranslation, restoreOriginal } =
+    getLLMTranslationState(translation);
+
+  if (!translation.sources.includes('google-translate')) {
+    return null;
+  }
+
+  return (
+    <AIRefine
+      selectedOption={selectedOption}
+      onSelect={(characteristic) =>
+        transformLLMTranslation(
+          translation,
+          characteristic,
+          locale.code,
+          // A Concordance search result is not the entity being translated, so
+          // its context would be the wrong context to refine against.
+          query ? undefined : entity.pk,
+        )
+      }
+      onRestore={() => restoreOriginal(translation)}
+    />
+  );
 }

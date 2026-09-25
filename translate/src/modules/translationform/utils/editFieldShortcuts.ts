@@ -115,8 +115,25 @@ export function useHandleCtrlShiftArrow(): (
 
     if (isMachinery) {
       if (nextIdx < composed.length) {
-        const { value, properties, sources } = composed[nextIdx];
-        setEditorFromComposed(value, properties, sources, true);
+        const composedObj = composed[nextIdx];
+        const { llmComposed } = getLLMTranslationState(composedObj);
+        const refined = llmComposed ?? composedObj;
+        setEditorFromComposed(
+          refined.value,
+          refined.properties,
+          llmComposed ? ['openai-chatgpt'] : composedObj.sources,
+          true,
+        );
+        if (llmComposed) {
+          logUXAction(
+            'LLM Translation Copied via Shortcut',
+            'LLM Feature Adoption',
+            {
+              action: 'Copy LLM Translation via Shortcut',
+              localeCode: locale.code,
+            },
+          );
+        }
         return true;
       }
 
@@ -129,7 +146,11 @@ export function useHandleCtrlShiftArrow(): (
       const llmState = getLLMTranslationState(translationObj);
       const updatedTranslation =
         llmState.llmTranslation || translationObj.translation;
-      setEditorFromHelpers(updatedTranslation, translationObj.sources, true);
+      setEditorFromHelpers(
+        updatedTranslation,
+        llmState.llmTranslation ? ['openai-chatgpt'] : translationObj.sources,
+        true,
+      );
 
       if (llmState.llmTranslation) {
         logUXAction(
