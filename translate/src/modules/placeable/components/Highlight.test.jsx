@@ -169,6 +169,15 @@ describe('<Highlight search>', () => {
     expect(marks).toHaveLength(1);
     expect(marks[0]).toHaveTextContent('hello');
   });
+
+  it('keeps marks aligned when lowercasing changes the length', () => {
+    const { container } = mountMarker(
+      'İnceleyenin kararına itiraz et',
+      [],
+      'itiraz',
+    );
+    expect(container.querySelector('mark.search').textContent).toBe('itiraz');
+  });
 });
 
 describe('specific marker', () => {
