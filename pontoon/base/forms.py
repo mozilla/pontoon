@@ -4,6 +4,7 @@ from pathlib import Path
 
 from django import forms
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 
 from pontoon.api.models import PersonalAccessToken
@@ -209,13 +210,25 @@ class ProjectLocaleFormSet(forms.models.BaseModelFormSet):
             ProjectLocale.objects.filter(
                 pk__in=[form.instance.pk for form in without_translators]
             ).update(has_custom_translators=False)
+            
+            # group ids of the project locales, skipping those with no group. 
+            candidate_groups_ids = [
+                form.instance.translators_group_id
+                for form in without_translators
+                if form.instance.translators_group_id is not None
+            ]
+
+            non_empty_group_ids = set(
+                Group.objects.filter(pk__in=candidate_groups_ids, user__isnull=False)
+                .distinct()
+                .values_list("pk", flat=True)
+            )
 
             # Removing all translators of a project must be logged, so the
             # changes remain visible in the permission changelog.
             for form in without_translators:
-                if form.instance.translators_group is None:
-                    continue
-                form.assign_users_to_groups("translators", User.objects.none())
+                if form.instance.translators_group_id in non_empty_group_ids:
+                    form.assign_users_to_groups("translators", User.objects.none())
 
 
 ProjectLocalePermsFormsSet = forms.modelformset_factory(

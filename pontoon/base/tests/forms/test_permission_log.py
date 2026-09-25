@@ -182,24 +182,18 @@ def test_project_locale_formset_log_removal_of_custom_translators(
     assert not project_locale_a.has_custom_translators
     assert not project_locale_a.translators_group.user_set.exists()
 
-    changelog_entry0, changelog_entry1 = PermissionChangelog.objects.all()
+    entries = PermissionChangelog.objects.order_by("performed_on__email")
+    expected_users = sorted([user_b, user_c], key=lambda u: u.email)
 
-    assert_permissionchangelog(
-        changelog_entry0,
-        PermissionChangelog.ActionType.REMOVED,
-        user_a,
-        user_b,
-        project_locale_a.translators_group,
-    )
-
-    assert_permissionchangelog(
-        changelog_entry1,
-        PermissionChangelog.ActionType.REMOVED,
-        user_a,
-        user_c,
-        project_locale_a.translators_group,
-    )
-
+    assert entries.count() == len(expected_users)
+    for entry, user in zip(entries, expected_users):
+        assert_permissionchangelog(
+            entry,
+            PermissionChangelog.ActionType.REMOVED,
+            user_a,
+            user,
+            project_locale_a.translators_group,
+        )
 
 @pytest.mark.django_db
 def test_project_locale_formset_log_no_custom_translators(
