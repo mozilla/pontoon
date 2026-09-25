@@ -195,6 +195,7 @@ def test_project_locale_formset_log_removal_of_custom_translators(
             project_locale_a.translators_group,
         )
 
+
 @pytest.mark.django_db
 def test_project_locale_formset_log_no_custom_translators(
     project_locale_a, user_a, assert_permissionchangelog
