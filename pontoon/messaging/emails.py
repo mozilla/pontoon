@@ -42,6 +42,7 @@ def _get_monthly_user_actions(users, months_ago):
             created_at__month=month_date.month,
             created_at__year=month_date.year,
         )
+        .exclude_self_reviews()
         .values("performed_by")
         .annotate(
             submitted=Count("id", filter=Q(action_type="translation:created")),
