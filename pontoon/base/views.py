@@ -515,6 +515,64 @@ def get_sibling_entities(request):
 
 
 @utils.require_AJAX
+def get_fluent_terms(request: HttpRequest) -> JsonResponse:
+    """Get all Fluent terms in a project, with their translations for a locale.
+
+    Terms are Fluent-only, and identifiable by their key starting with a
+    hyphen-minus character. The response is keyed on project + locale, so that
+    it can be cached in an SPA context.
+    """
+    try:
+        project_slug = request.GET["project"]
+        locale_code = request.GET["locale"]
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    project = get_object_or_404(
+        Project.objects.available().visible_for(request.user), slug=project_slug
+    )
+    locale = get_object_or_404(Locale, code=locale_code)
+
+    terms = list(
+        Entity.objects.filter(
+            resource__project=project,
+            resource__format=Resource.Format.FLUENT,
+            obsolete=False,
+            key__0__startswith="-",
+        )
+    )
+    active_translations = {
+        translation.entity_id: translation
+        for translation in Translation.objects.filter(
+            entity__in=terms, locale=locale, active=True
+        )
+    }
+
+    payload = {
+        term.key[0]: {
+            "value": term.value,
+            "properties": term.properties,
+            "translation_value": (
+                active_translations[term.pk].value
+                if term.pk in active_translations
+                else None
+            ),
+            "translation_properties": (
+                active_translations[term.pk].properties
+                if term.pk in active_translations
+                else None
+            ),
+        }
+        for term in terms
+    }
+
+    return JsonResponse(payload)
+
+
+@utils.require_AJAX
 def get_translation_history(request):
     """Get history of translations of given entity to given locale."""
     try:
