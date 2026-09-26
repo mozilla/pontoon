@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 from pontoon.actionlog import utils
 from pontoon.actionlog.models import ActionLog
-from pontoon.test.factories import TranslationMemoryFactory
+from pontoon.test.factories import TranslationFactory, TranslationMemoryFactory
 
 
 @pytest.mark.django_db
@@ -159,3 +159,25 @@ def test_log_action_valid_with_tm_entries_edited(user_a, entity_a, locale_a):
     )
     assert len(log) == 1
     assert log[0].action_type == ActionLog.ActionType.TM_ENTRIES_EDITED
+
+
+@pytest.mark.django_db
+def test_exclude_self_reviews(user_a, user_b, entity_a, locale_a):
+    own = TranslationFactory.create(entity=entity_a, locale=locale_a, user=user_a)
+    peer = TranslationFactory.create(entity=entity_a, locale=locale_a, user=user_b)
+    imported = TranslationFactory.create(entity=entity_a, locale=locale_a, user=None)
+
+    def is_kept(action_type, **kwargs):
+        """Log an action performed by user_a and check that it survives."""
+        action = ActionLog.objects.create(
+            action_type=action_type, performed_by=user_a, **kwargs
+        )
+        return ActionLog.objects.filter(pk=action.pk).exclude_self_reviews().exists()
+
+    for action_type in ActionLog.REVIEW_ACTION_TYPES:
+        assert not is_kept(action_type, translation=own), action_type
+        assert is_kept(action_type, translation=peer), action_type
+
+    assert is_kept(ActionLog.ActionType.TRANSLATION_APPROVED, translation=imported)
+    assert is_kept(ActionLog.ActionType.TRANSLATION_CREATED, translation=own)
+    assert is_kept(ActionLog.ActionType.COMMENT_ADDED, entity=entity_a, locale=locale_a)

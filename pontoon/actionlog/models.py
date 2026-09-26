@@ -16,7 +16,10 @@ class ActionLogQuerySet(models.QuerySet):
         Exclude reviews users performed on their own translations because they
         are not reviews of someone else's work.
         """
-        return self.exclude(performed_by=F("translation__user"))
+        return self.exclude(
+            action_type__in=ActionLog.REVIEW_ACTION_TYPES,
+            performed_by=F("translation__user"),
+        )
 
     def visible_for(self, user: "User"):
         """
@@ -59,6 +62,14 @@ class ActionLog(models.Model):
         TM_ENTRIES_EDITED = "tm_entries:edited", "TranslationMemoryEntries edited"
         # TranslationMemoryEntries have been uploaded.
         TM_ENTRIES_UPLOADED = "tm_entries:uploaded", "TranslationMemoryEntries uploaded"
+
+    # Action types that constitute a review of a translation.
+    REVIEW_ACTION_TYPES = (
+        ActionType.TRANSLATION_APPROVED,
+        ActionType.TRANSLATION_UNAPPROVED,
+        ActionType.TRANSLATION_REJECTED,
+        ActionType.TRANSLATION_UNREJECTED,
+    )
 
     action_type = models.CharField(max_length=50, choices=ActionType.choices)
     created_at = models.DateTimeField(default=timezone.now)

@@ -97,6 +97,7 @@ def get_contributor_metrics_by_locale(locales, end_date: datetime) -> dict[int, 
                 performed_by__is_active=True,
                 performed_by__profile__system_user=False,
             )
+            .exclude_self_reviews()
             .values("performed_by", locale_pk=F("translation__locale"))
             .annotate(action_count=Count("id"))
         )
