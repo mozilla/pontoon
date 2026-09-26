@@ -9,6 +9,7 @@ from pontoon.base.templatetags.helpers import (
     format_datetime,
     full_static,
     full_url,
+    highlight_matches,
     linkify,
     metric_prefix,
     nospam,
@@ -137,3 +138,14 @@ def test_user_editor_theme_anonymous_resolves_to_default():
 )
 def test_helper_linkify(source, expected):
     assert linkify(source) == expected
+
+
+@pytest.mark.parametrize(
+    "search_query,expected",
+    (
+        ("don't", "<mark>Don&#x27;t</mark> &amp; stop"),
+        ("&", "Don&#x27;t <mark>&amp;</mark> stop"),
+    ),
+)
+def test_helper_highlight_matches_escaped_query(search_query, expected):
+    assert highlight_matches("Don't & stop", search_query) == expected
