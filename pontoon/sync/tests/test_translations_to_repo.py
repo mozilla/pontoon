@@ -88,6 +88,67 @@ def test_target_outside_checkout_is_not_written():
 
 
 @pytest.mark.django_db
+def test_target_outside_checkout_is_not_removed():
+    """A removal only deletes paths that resolve inside the checkout."""
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-rm-containment", locales=[locale], repositories=[repo]
+        )
+        res = ResourceFactory.create(
+            project=project,
+            path=join("sub", "messages.properties"),
+            format="properties",
+        )
+        TranslatedResourceFactory.create(locale=locale, resource=res)
+
+        # Filesystem setup: a directory in the checkout is a symlink out of it
+        elsewhere = join(root, "elsewhere")
+        makedirs(elsewhere)
+        with open(join(elsewhere, "messages.properties"), "w") as file:
+            file.write("key=Unchanged\n")
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"sub": {"messages.properties": "key=Value\n"}},
+                "fr-Test": {"other.properties": "key=Valeur\n"},
+            },
+        )
+        symlink(elsewhere, join(repo.checkout_path, "fr-Test", "sub"))
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[],
+            removed=[join("en-US", "sub", "messages.properties")],
+            renamed=[],
+        )
+        checkouts = Checkouts(mock_checkout, mock_checkout)
+        paths = find_paths(project, checkouts)
+
+        sync_translations_to_repo(
+            project,
+            False,
+            {locale.code: locale},
+            checkouts,
+            paths,
+            cast(Any, []),
+            set(),
+            {join("sub", "messages.properties")},
+            now,
+        )
+
+        assert exists(join(elsewhere, "messages.properties")), (
+            "removed outside the checkout"
+        )
+
+
+@pytest.mark.django_db
 def test_remove_resource():
     with TemporaryDirectory() as root:
         # Database setup
