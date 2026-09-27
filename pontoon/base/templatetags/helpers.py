@@ -342,7 +342,7 @@ def highlight_matches(
             rf"{boundary}{re.escape(term)}{boundary}" for term in escaped_terms
         )
     else:
-        pattern = re.escape(search_query)
+        pattern = re.escape(escape(search_query))
 
     # Then apply highlighting to the escaped text
     highlighted_text = re.sub(
