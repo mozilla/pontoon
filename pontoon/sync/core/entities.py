@@ -35,10 +35,10 @@ def sync_resources_from_repo(
     checkout: Checkout,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     now: datetime,
-) -> tuple[int, set[str], set[str]]:
-    """(added_entities_count, changed_source_paths, removed_source_paths"""
+) -> tuple[int, set[str], set[str], set[str]]:
+    """(added_entities_count, changed_source_paths, removed_source_paths, unreferenced_source_paths)"""
     if not checkout.changed and not checkout.removed and not checkout.renamed:
-        return 0, set(), set()
+        return 0, set(), set(), set()
     log.info(f"[{project.slug}] Syncing entities from repo...")
     # db_path -> parsed_resource
     updates: dict[str, L10nResource[Message]] = {}
@@ -76,6 +76,7 @@ def sync_resources_from_repo(
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)
         removed_paths = remove_resources(project, paths, checkout, now)
+        unreferenced_paths = remove_unreferenced_resources(project, paths, now)
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
         new_res_added_ent_count, added_paths = add_resources(
             project, updates, changed_paths, now
@@ -86,6 +87,7 @@ def sync_resources_from_repo(
         old_res_added_ent_count + new_res_added_ent_count,
         renamed_paths | changed_paths | added_paths,
         removed_paths,
+        unreferenced_paths,
     )
 
 
@@ -132,6 +134,27 @@ def remove_resources(
             f"[{project.slug}] Removed {rm_count} {str_source_files}: {', '.join(removed_db_paths)}"
         )
     return removed_db_paths
+
+
+def remove_unreferenced_resources(
+    project: Project,
+    paths: L10nConfigPaths | L10nDiscoverPaths,
+    now: datetime,
+) -> set[str]:
+    ref_db_paths = {get_db_path(paths, ref_path) for ref_path in paths.ref_paths}
+    unref_db_paths = {
+        path
+        for path in project.resources.current().values_list("path", flat=True)
+        if path not in ref_db_paths
+    }
+    if unref_db_paths:
+        project.resources.filter(path__in=unref_db_paths).mark_as_obsolete(now)
+        rm_count = len(unref_db_paths)
+        str_source_files = "source file" if rm_count == 1 else "source files"
+        log.info(
+            f"[{project.slug}] Removed {rm_count} unreferenced {str_source_files}: {', '.join(unref_db_paths)}"
+        )
+    return unref_db_paths
 
 
 def update_resources(
