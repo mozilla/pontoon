@@ -1,11 +1,11 @@
 import logging
 
-from os.path import join, relpath
+from os.path import isfile, join, normpath, relpath
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, get_android_locale
 
 from pontoon.base.models import Project
-from pontoon.sync.core.checkout import Checkouts
+from pontoon.sync.core.checkout import Checkouts, is_inside
 
 
 log = logging.getLogger(__name__)
@@ -48,3 +48,38 @@ def find_paths(
     log.debug(f"[{project.slug}] Paths({name}): ref_root={rel_root} base={rel_base}")
 
     return paths
+
+
+def add_newly_configured_files(
+    project: Project,
+    checkouts: Checkouts,
+    paths: L10nConfigPaths | L10nDiscoverPaths,
+) -> None:
+    source, target = checkouts
+    src_changed = {join(source.path, co_path) for co_path in source.changed}
+    if not isinstance(paths, L10nConfigPaths) or src_changed.isdisjoint(
+        normpath(cfg_path) for cfg_path in paths.config_paths()
+    ):
+        return
+    tgt_changed = {join(target.path, co_path) for co_path in target.changed}
+    current = set(project.resources.current().values_list("path", flat=True))
+    for ref_path in paths.ref_paths:
+        if (
+            relpath(ref_path, paths.ref_root) in current
+            or not isfile(ref_path)
+            or not is_inside(source.path, ref_path)
+        ):
+            continue
+        if ref_path not in src_changed:
+            source.changed.append(relpath(ref_path, source.path))
+        tgt_template, locales = paths.target(ref_path)
+        if tgt_template is None:
+            continue
+        for locale in locales:
+            tgt_path = paths.format_target_path(tgt_template, locale)
+            if (
+                tgt_path not in tgt_changed
+                and isfile(tgt_path)
+                and is_inside(target.path, tgt_path)
+            ):
+                target.changed.append(relpath(tgt_path, target.path))
