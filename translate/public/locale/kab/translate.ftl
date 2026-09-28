@@ -440,16 +440,20 @@ machinery-ConcordanceSearch--translation-memory = TAKATUT N TSUQILT
 ## Shows the translation source from Google Translate.
 
 machinery-GoogleTranslation--translation-source = GOOGLE TRANSLATE
-machinery-GoogleTranslation--selector =
+
+
+## Machinery AI Refine
+## The dropdown that refines a Machinery suggestion using AI.
+machinery-AIRefine--selector =
     .title = Refine using AI
-machinery-GoogleTranslation--dropdown-title = AI
-machinery-GoogleTranslation--option-rephrase = REPHRASE
-machinery-GoogleTranslation--option-rephrased = REPHRASED
-machinery-GoogleTranslation--option-make-formal = ERR D ALƔAWAN
-machinery-GoogleTranslation--option-formal = ALƔAW
-machinery-GoogleTranslation--option-make-informal = ERR-IT D ARALƔAWAN
-machinery-GoogleTranslation--option-informal = ARALƔAWAN
-machinery-GoogleTranslation--option-show-original = SKEN AƔBALU
+machinery-AIRefine--dropdown-title = AI
+machinery-AIRefine--option-rephrase = REPHRASE
+machinery-AIRefine--option-rephrased = REPHRASED
+machinery-AIRefine--option-make-formal = ERR D ALƔAWAN
+machinery-AIRefine--option-formal = ALƔAW
+machinery-AIRefine--option-make-informal = ERR-IT D ARALƔAWAN
+machinery-AIRefine--option-informal = ARALƔAWAN
+machinery-AIRefine--option-show-original = SKEN AƔBALU
 
 ## Machinery Microsoft Translation
 ## Shows the translation source from Microsoft Translation.

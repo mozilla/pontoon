@@ -519,17 +519,21 @@ machinery-ConcordanceSearch--translation-memory = ÖVERSÄTTNINGSMINNE
 ## Machinery Google Translation
 ## Shows the translation source from Google Translate.
 machinery-GoogleTranslation--translation-source = GOOGLE TRANSLATE
-machinery-GoogleTranslation--selector =
-    .title = Förfina med hjälp av AI
-machinery-GoogleTranslation--dropdown-title = AI
 
-machinery-GoogleTranslation--option-rephrase = OMFORMULERA
-machinery-GoogleTranslation--option-rephrased = OMFORMULERAD
-machinery-GoogleTranslation--option-make-formal = GÖR FORMELL
-machinery-GoogleTranslation--option-formal = FORMELL
-machinery-GoogleTranslation--option-make-informal = GÖR INFORMELL
-machinery-GoogleTranslation--option-informal = INFORMELL
-machinery-GoogleTranslation--option-show-original = VISA ORIGINAL
+
+## Machinery AI Refine
+## The dropdown that refines a Machinery suggestion using AI.
+machinery-AIRefine--selector =
+    .title = Förfina med hjälp av AI
+machinery-AIRefine--dropdown-title = AI
+
+machinery-AIRefine--option-rephrase = OMFORMULERA
+machinery-AIRefine--option-rephrased = OMFORMULERAD
+machinery-AIRefine--option-make-formal = GÖR FORMELL
+machinery-AIRefine--option-formal = FORMELL
+machinery-AIRefine--option-make-informal = GÖR INFORMELL
+machinery-AIRefine--option-informal = INFORMELL
+machinery-AIRefine--option-show-original = VISA ORIGINAL
 
 
 ## Machinery Microsoft Translation

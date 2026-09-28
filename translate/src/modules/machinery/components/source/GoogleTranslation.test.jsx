@@ -1,16 +1,8 @@
 import React from 'react';
 
 import { GoogleTranslation } from './GoogleTranslation';
-import { fireEvent, render, within } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { MockLocalizationProvider } from '~/test/utils';
-
-vi.mock('~/hooks', () => ({
-  useAppSelector: (selector) =>
-    selector({
-      term: { terms: [], fetching: false, entity: 0, locale: '' },
-      teamcomments: { comments: [], fetching: false, entity: null },
-    }),
-}));
 
 describe('<GoogleTranslation>', () => {
   it('renders the GoogleTranslation component properly', () => {
@@ -27,35 +19,5 @@ describe('<GoogleTranslation>', () => {
 
     getByRole('listitem');
     getByText(message);
-  });
-
-  it('renders the GoogleTranslation LLM features properly', () => {
-    const mockTranslation = {
-      translation: 'Translated text here',
-      original: 'Original text here',
-    };
-    const message = 'test-source';
-
-    const { container, getByRole } = render(
-      <MockLocalizationProvider
-        resources={[
-          `machinery-GoogleTranslation--translation-source = ${message}`,
-        ]}
-      >
-        <GoogleTranslation
-          isOpenAIChatGPTSupported={true}
-          translation={mockTranslation}
-        />
-      </MockLocalizationProvider>,
-    );
-
-    getByRole('listitem');
-
-    expect(
-      container.querySelector('span.translation-source'),
-    ).toHaveTextContent(message);
-
-    fireEvent.click(container.querySelector('.selector'));
-    expect(within(getByRole('list')).getAllByRole('listitem')).toHaveLength(3);
   });
 });
