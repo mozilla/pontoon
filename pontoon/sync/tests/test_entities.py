@@ -39,7 +39,7 @@ def test_no_changes():
         Mock(Checkout, changed=[], removed=[], renamed=[]),
         Mock(L10nDiscoverPaths),
         now,
-    ) == (0, set(), set())
+    ) == (0, set(), set(), set())
 
 
 @pytest.mark.django_db
@@ -97,7 +97,7 @@ def test_resource_obsoletion():
         # Test sync_resources_from_repo
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (0, set(), {"c.ftl"})
+        ) == (0, set(), {"c.ftl"}, set())
         assert {res.path: res.obsolete for res in project.resources.all()} == {
             "a.ftl": False,
             "b.po": False,
@@ -177,7 +177,7 @@ def test_resource_deobsoletion():
         # Test
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (3, {"c.ftl"}, set())
+        ) == (3, {"c.ftl"}, set(), set())
 
         res_c = project.resources.get(path="c.ftl")
 
@@ -236,7 +236,7 @@ def test_rename_resource():
         # Test
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (0, {"d.ftl"}, set())
+        ) == (0, {"d.ftl"}, set(), set())
         assert {res.path for res in project.resources.all()} == {
             "a.ftl",
             "b.po",
@@ -290,7 +290,7 @@ def test_add_resource():
         # Test
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (3, {"c.ftl"}, set())
+        ) == (3, {"c.ftl"}, set(), set())
         res_c = project.resources.get(path="c.ftl")
         TranslatedResource.objects.get(resource=res_c)
         section = Section.objects.get(resource=res_c)
@@ -349,7 +349,7 @@ def test_add_resource_with_comments():
         # Test
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (2, {"c.ftl"}, set())
+        ) == (2, {"c.ftl"}, set(), set())
         res_c = project.resources.get(path="c.ftl")
         assert res_c.comment == "Resource-level comment for this file."
         assert res_c.meta == [
@@ -425,7 +425,7 @@ def test_update_resource():
         # Test sync
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (1, {"c.ftl"}, set())
+        ) == (1, {"c.ftl"}, set(), set())
         section = Section.objects.get(resource=res["c"])
         assert {
             (
@@ -513,7 +513,7 @@ def test_change_entities():
         # Test sync
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (2, {"res.ftl"}, set())
+        ) == (2, {"res.ftl"}, set(), set())
         assert {
             tuple(ent.key): (ent.order, ent.value, ent.section, ent.comment)
             for ent in Entity.objects.filter(resource=res)
@@ -589,7 +589,7 @@ def test_fluent_group_comment_change():
         # Test sync
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (1, {"file.ftl"}, set())
+        ) == (1, {"file.ftl"}, set(), set())
         sections = Section.objects.filter(resource=res)
         assert len(sections) == 1
         assert sections[0].comment == "New comment"
