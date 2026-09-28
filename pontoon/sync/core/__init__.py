@@ -20,7 +20,7 @@ from pontoon.messaging.notifications import send_notification
 from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.core.checkout import checkout_repos
 from pontoon.sync.core.entities import sync_resources_from_repo
-from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.paths import add_newly_configured_files, find_paths
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
 from pontoon.sync.core.translations_to_repo import sync_translations_to_repo
@@ -74,9 +74,10 @@ def sync_project(
     else:
         locale_map = {lc.code: lc for lc in project.locales.order_by("code")}
     paths.locales = list(locale_map.keys())
+    add_newly_configured_files(project, checkouts, paths)
 
-    added_entities_count, changed_paths, removed_paths = sync_resources_from_repo(
-        project, locale_map, checkouts.source, paths, now
+    added_entities_count, changed_paths, removed_paths, unreferenced_paths = (
+        sync_resources_from_repo(project, locale_map, checkouts.source, paths, now)
     )
 
     db_changes = ChangedEntityLocale.objects.filter(
@@ -89,6 +90,7 @@ def sync_project(
         added_entities_count
         or changed_paths
         or removed_paths
+        or unreferenced_paths
         or del_trans_count
         or updated_trans_count
     )
