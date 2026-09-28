@@ -1015,3 +1015,59 @@ def test_locales_from_config():
             tr.locale.code: tr.total_strings
             for tr in TranslatedResource.objects.filter(resource__project=project)
         } == {"fr-Test": 1, "de-Test": 1}
+
+
+@pytest.mark.django_db
+def test_config_changes():
+    mock_vcs = MockVersionControl(changed=["l10n.toml"])
+    with mock_setup(mock_vcs) as (repo, locale):
+        # Database setup
+        project = ProjectFactory.create(
+            name="test-config-changes",
+            configuration_file="l10n.toml",
+            locales=[locale],
+            repositories=[repo],
+            system_project=False,
+        )
+
+        # Filesystem setup
+        config_a = '[[paths]]\nreference = "en/a.ftl"\nl10n = "{locale}/a.ftl"\n'
+        config_ab = (
+            config_a + '[[paths]]\nreference = "en/b.ftl"\nl10n = "{locale}/b.ftl"\n'
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en": {"a.ftl": "a = A\n", "b.ftl": "b = B\n"},
+                "de-Test": {"a.ftl": "a = A de\n", "b.ftl": "b = B de\n"},
+                "l10n.toml": config_a,
+            },
+        )
+
+        def sync_with_config(config: str) -> dict[str, int]:
+            with open(join(repo.checkout_path, "l10n.toml"), "w") as file:
+                file.write(config)
+            sync_project_task(project.pk)
+            return {
+                tr.resource.path: tr.approved_strings
+                for tr in TranslatedResource.objects.filter(resource__project=project)
+            }
+
+        assert sync_with_config(config_a) == {"en/a.ftl": 1}
+        assert sync_with_config(config_ab) == {"en/a.ftl": 1, "en/b.ftl": 1}
+
+        # Removing it from configuration obsoletes it
+        assert sync_with_config(config_a) == {"en/a.ftl": 1}
+        entity_b = Entity.objects.get(
+            resource__project=project, resource__path="en/b.ftl"
+        )
+        assert entity_b.obsolete and entity_b.resource.obsolete
+        assert Sync.objects.filter(project=project).latest("pk").status == (
+            Sync.Status.DONE
+        )
+
+        # Adding it back restores it
+        assert sync_with_config(config_ab) == {"en/a.ftl": 1, "en/b.ftl": 1}
+        with open(join(repo.checkout_path, "de-Test", "b.ftl")) as file:
+            assert file.read() == "b = B de\n"
