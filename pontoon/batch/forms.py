@@ -15,12 +15,14 @@ class BatchActionsForm(forms.Form):
             ("reject", "reject"),
             ("replace", "replace"),
             ("copy_from_locale", "copy_from_locale"),
+            ("pretranslate", "pretranslate"),
         ]
     )
     entities = forms.CharField(required=False)
     find = forms.CharField(required=False)
     replace = forms.CharField(required=False)
     other_locale = forms.CharField(required=False)
+    pretranslate = forms.CharField(required=False)
 
     def clean_entities(self):
         return utils.split_ints(self.cleaned_data["entities"])
@@ -42,3 +44,6 @@ class BatchActionsForm(forms.Form):
 
     def clean_other_locale(self):
         return self.decode_field("other_locale")
+
+    def clean_pretranslate(self):
+        return self.decode_field("pretranslate")

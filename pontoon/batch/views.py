@@ -17,12 +17,13 @@ from pontoon.base.models import (
 )
 from pontoon.base.models.translation import Translation, TranslationQuerySet
 from pontoon.base.services import readonly_exists
-from pontoon.base.user_utils import can_translate
+from pontoon.base.user_utils import can_pretranslate, can_translate
 from pontoon.base.utils import require_AJAX
 from pontoon.batch import forms
 from pontoon.batch.actions import (
     approve_translations,
     copy_translation_from_locale,
+    pretranslate_translations,
     reject_translations,
     replace_translations,
 )
@@ -110,6 +111,24 @@ def batch_edit_translations(request):
             action_status = copy_translation_from_locale(
                 user, locale, entities, form.cleaned_data["other_locale"]
             )
+        case "pretranslate":
+            if not can_pretranslate(user):
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "Forbidden: You don't have permission for batch pretranslation.",
+                    },
+                    status=403,
+                )
+            if not locale.google_translate_code:
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "Pretranslation is not supported for this locale.",
+                    },
+                    status=400,
+                )
+            action_status = pretranslate_translations(user, locale, entities)
         case "reject":
             action_status = reject_translations(user, locale, entities)
         case "replace":
