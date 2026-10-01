@@ -90,7 +90,6 @@ export function AddComment({
   const [mentionTarget, setMentionTarget] = useState<Range | null>(null);
   const [mentionIndex, setMentionIndex] = useState(0);
   const [mentionSearch, setMentionSearch] = useState('');
-  const [requireUsers, setRequireUsers] = useState(false);
   const banner = useUserBanner();
 
   const { initMentions, mentionUsers } = useContext(MentionUsers);
@@ -132,8 +131,7 @@ export function AddComment({
   // and then clear the value from state
   useEffect(() => {
     if (contactPerson) {
-      insertMention({ name: contactPerson });
-      setRequireUsers(true);
+      insertMention({ name: contactPerson, url: entity.project.contact.url });
       resetContactPerson?.();
       placeFocus();
     }
@@ -237,10 +235,7 @@ export function AddComment({
   };
 
   const submitComment = () => {
-    if (
-      Node.string(editor).trim() !== '' &&
-      (!requireUsers || mentionUsers.length > 0)
-    ) {
+    if (Node.string(editor).trim() !== '') {
       const comment = editor.children
         .map((node) => serialize(node, mentionUsers))
         .join('');
@@ -298,7 +293,6 @@ export function AddComment({
         >
           <button
             className='submit-button'
-            disabled={requireUsers && mentionUsers.length === 0}
             title='Submit comment'
             onClick={submitComment}
           >

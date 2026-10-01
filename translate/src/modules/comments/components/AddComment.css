@@ -76,11 +76,7 @@
   padding-left: 10px;
 }
 
-.comments-list .add-comment .submit-button:hover:not(:disabled) {
+.comments-list .add-comment .submit-button:hover {
   color: var(--black-3);
   background: var(--status-translated);
-}
-
-.comments-list .add-comment .submit-button:disabled {
-  cursor: wait;
 }
