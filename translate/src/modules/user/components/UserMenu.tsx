@@ -6,6 +6,7 @@ import { useTheme } from '~/hooks/useTheme';
 import { Location } from '~/context/Location';
 import { useOnDiscard } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
+import { useProject } from '~/modules/project';
 
 import type { UserState } from '../index';
 import { FileUpload } from './FileUpload';
@@ -67,9 +68,13 @@ export function UserMenuDialog({
 
   const location = useContext(Location);
   const { locale, project, resource } = location;
+  const { fetching, dataSource } = useProject();
 
   const canDownload =
-    project !== 'all-projects' && resource !== 'all-resources';
+    project !== 'all-projects' &&
+    resource !== 'all-resources' &&
+    !fetching &&
+    dataSource === 'repository';
   const canUpload = canDownload && isTranslator && !entity.readonly;
 
   const ref = useRef<HTMLUListElement>(null);

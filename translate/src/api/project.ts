@@ -11,6 +11,7 @@ export type Project = {
   slug: string;
   name: string;
   info: string;
+  data_source: 'database' | 'repository';
   tags: Tag[];
   locales: LocaleOption[];
 };

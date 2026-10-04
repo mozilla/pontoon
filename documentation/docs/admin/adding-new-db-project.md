@@ -37,7 +37,7 @@ After you have created your project, you will be able to manage its source strin
 
 ## Downloading translations
 
-On the project’s admin page and on the Manage Strings page, you’ll find a **DOWNLOAD STRINGS** link. Clicking it will download a CSV file that contains all the translations in all enabled locales. The file format looks as follow:
+On the project’s admin page and on the Manage Strings page, you’ll find a **DOWNLOAD STRINGS** link. Clicking it will download a CSV file that contains all the translations in all enabled locales. Downloading and uploading translations from the translation workspace is not available for DB projects. The file format looks as follow:
 
 ```CSV
 Source, fr, de

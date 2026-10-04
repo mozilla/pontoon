@@ -794,6 +794,8 @@ class UploadView(APIView):
         project = get_object_or_404(
             Project.objects.visible_for(request.user).available(), slug=project_slug
         )
+        if project.data_source == Project.DataSource.DATABASE:
+            raise PermissionDenied("Uploads are not supported for this project.")
 
         get_object_or_404(ProjectLocale, project=project, locale=locale)
 

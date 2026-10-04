@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import * as Translator from '~/hooks/useTranslator';
+import { PROJECT } from '~/modules/project';
 
 import { createReduxStore } from '~/test/store';
 import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
@@ -35,11 +36,16 @@ describe('<UserMenuDialog>', () => {
     isTranslator = true,
     isAuthenticated = true,
     location = LOCATION,
+    dataSource = 'repository',
+    fetching = false,
     onThemeChange = () => {},
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
+    const store = createReduxStore({
+      [PROJECT]: { dataSource, fetching },
+    });
     return mount(
-      <Provider store={createReduxStore()}>
+      <Provider store={store}>
         <Location.Provider value={location}>
           <MockLocalizationProvider>
             <EntityView.Provider
@@ -87,6 +93,24 @@ describe('<UserMenuDialog>', () => {
     const wrapper = createUserMenu({
       location: { ...LOCATION, project: 'all-projects' },
     });
+
+    expect(wrapper.find(FileUpload)).toHaveLength(0);
+    expect(
+      findLocalizedById(wrapper, 'user-UserMenu--download-translations'),
+    ).toHaveLength(0);
+  });
+
+  it('hides upload & download menu items when translating a database project', () => {
+    const wrapper = createUserMenu({ dataSource: 'database' });
+
+    expect(wrapper.find(FileUpload)).toHaveLength(0);
+    expect(
+      findLocalizedById(wrapper, 'user-UserMenu--download-translations'),
+    ).toHaveLength(0);
+  });
+
+  it('hides upload & download menu items while project data is loading', () => {
+    const wrapper = createUserMenu({ fetching: true });
 
     expect(wrapper.find(FileUpload)).toHaveLength(0);
     expect(

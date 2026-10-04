@@ -12,6 +12,7 @@ export type ProjectState = {
   readonly slug: string;
   readonly name: string;
   readonly info: string;
+  readonly dataSource: string;
   readonly tags: Tag[];
   readonly locales: LocaleOption[];
 };
@@ -21,6 +22,7 @@ const initial: ProjectState = {
   slug: '',
   name: '',
   info: '',
+  dataSource: '',
   tags: [],
   locales: [],
 };
@@ -51,6 +53,7 @@ export function reducer(
         slug: action.slug,
         name: action.name,
         info: action.info,
+        dataSource: action.dataSource,
         tags: action.tags,
         locales: action.locales,
       };
