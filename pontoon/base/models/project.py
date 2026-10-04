@@ -19,6 +19,9 @@ if TYPE_CHECKING:
     from pontoon.tags.models import TagQuerySet
 
 
+TERMINOLOGY_PROJECT_SLUG = "terminology"
+
+
 class Priority(models.IntegerChoices):
     LOWEST = 1, "Lowest"
     LOW = 2, "Low"
@@ -304,6 +307,10 @@ class Project(models.Model, AggregatedStats):
     def checkout_path(self):
         """Path where this project's VCS checkouts are located."""
         return join(settings.MEDIA_ROOT, "projects", self.slug)
+
+    @property
+    def is_terminology(self) -> bool:
+        return self.slug == TERMINOLOGY_PROJECT_SLUG
 
     def get_latest_activity(self):
         return (
