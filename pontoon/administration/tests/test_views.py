@@ -22,6 +22,34 @@ from pontoon.test.factories import (
 )
 
 
+def _project_form_data(project, **overrides):
+    """POST data for saving the project admin form, including its formsets."""
+    form_data = dict(ProjectForm(instance=project).initial)
+    del form_data["deadline"]
+    del form_data["contact"]
+    form_data.update(
+        {
+            "externalresource_set-TOTAL_FORMS": "1",
+            "externalresource_set-MAX_NUM_FORMS": "1000",
+            "externalresource_set-MIN_NUM_FORMS": "0",
+            "externalresource_set-INITIAL_FORMS": "0",
+            "tags-TOTAL_FORMS": "1",
+            "tags-INITIAL_FORMS": "0",
+            "tags-MAX_NUM_FORMS": "1000",
+            "tags-MIN_NUM_FORMS": "0",
+            "repositories-INITIAL_FORMS": "0",
+            "repositories-MIN_NUM_FORMS": "0",
+            "repositories-MAX_NUM_FORMS": "1000",
+            "repositories-TOTAL_FORMS": "0",
+            "pk": project.pk,
+            "locales": [locale.pk for locale in project.locales.all()],
+            "configuration_file": "",
+            **overrides,
+        }
+    )
+    return form_data
+
+
 @pytest.mark.django_db
 def test_manage_project_strings(client):
     project = ProjectFactory.create(
@@ -412,6 +440,56 @@ def test_manage_project_translate_link_excludes_obsolete_resources(client_superu
 
 
 @pytest.mark.django_db
+def test_manage_project_hides_strings_for_terminology(client_superuser):
+    project = ProjectFactory.create(
+        data_source=Project.DataSource.DATABASE, repositories=[]
+    )
+    response = client_superuser.get(
+        reverse("pontoon.admin.project", args=(project.slug,))
+    )
+    assert b'class="new-strings"' in response.content
+
+    response = client_superuser.get(
+        reverse("pontoon.admin.project", args=("terminology",))
+    )
+    assert response.status_code == 200
+    assert b'class="new-strings"' not in response.content
+
+
+@pytest.mark.django_db
+def test_manage_project_strings_terminology(client_superuser):
+    url = reverse("pontoon.admin.project.strings", args=("terminology",))
+
+    assert client_superuser.get(url).status_code == 403
+    assert client_superuser.get(url, {"format": "csv"}).status_code == 403
+    assert client_superuser.post(url, {"new_strings": "foo"}).status_code == 403
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("is_terminology", [False, True])
+def test_manage_project_new_strings_terminology(client_superuser, is_terminology):
+    if is_terminology:
+        project = Project.objects.get(slug="terminology")
+    else:
+        project = ProjectFactory.create(
+            data_source=Project.DataSource.DATABASE,
+            locales=[LocaleFactory.create()],
+            repositories=[],
+        )
+    entity_count = Entity.objects.filter(resource__project=project).count()
+
+    form_data = _project_form_data(project, new_strings="foo")
+    response = client_superuser.post(
+        reverse("pontoon.admin.project", args=(project.slug,)), form_data
+    )
+    assert response.status_code == 200
+    assert b". Saved." in response.content
+
+    new_entities = Entity.objects.filter(resource__project=project).count()
+    assert new_entities == entity_count + (0 if is_terminology else 1)
+
+
+@pytest.mark.django_db
 def test_project_add_locale(client_superuser):
     locale_kl = LocaleFactory.create(code="kl", name="Klingon")
     locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
@@ -424,32 +502,7 @@ def test_project_add_locale(client_superuser):
 
     url = reverse("pontoon.admin.project", args=(project.slug,))
 
-    # Boring data creation for FormSets. Django is painful with that,
-    # or I don't know how to handle that more gracefully.
-    form = ProjectForm(instance=project)
-    form_data = dict(form.initial)
-    del form_data["deadline"]
-    del form_data["contact"]
-    form_data.update(
-        {
-            "externalresource_set-TOTAL_FORMS": "1",
-            "externalresource_set-MAX_NUM_FORMS": "1000",
-            "externalresource_set-MIN_NUM_FORMS": "0",
-            "externalresource_set-INITIAL_FORMS": "0",
-            "tags-TOTAL_FORMS": "1",
-            "tags-INITIAL_FORMS": "0",
-            "tags-MAX_NUM_FORMS": "1000",
-            "tags-MIN_NUM_FORMS": "0",
-            "repositories-INITIAL_FORMS": "0",
-            "repositories-MIN_NUM_FORMS": "0",
-            "repositories-MAX_NUM_FORMS": "1000",
-            "repositories-TOTAL_FORMS": "0",
-            # These are the values that actually matter.
-            "pk": project.pk,
-            "locales": [locale_kl.id, locale_gs.id],
-            "configuration_file": "",
-        }
-    )
+    form_data = _project_form_data(project, locales=[locale_kl.id, locale_gs.id])
 
     response = client_superuser.post(url, form_data)
     assert response.status_code == 200
@@ -507,31 +560,12 @@ def test_manage_project_save_preserves_pretranslate_locales(client_superuser):
 
     url = reverse("pontoon.admin.project", args=(project.slug,))
 
-    form = ProjectForm(instance=project)
-    form_data = dict(form.initial)
-    del form_data["deadline"]
-    del form_data["contact"]
-    form_data.update(
-        {
-            "externalresource_set-TOTAL_FORMS": "1",
-            "externalresource_set-MAX_NUM_FORMS": "1000",
-            "externalresource_set-MIN_NUM_FORMS": "0",
-            "externalresource_set-INITIAL_FORMS": "0",
-            "tags-TOTAL_FORMS": "1",
-            "tags-INITIAL_FORMS": "0",
-            "tags-MAX_NUM_FORMS": "1000",
-            "tags-MIN_NUM_FORMS": "0",
-            "repositories-INITIAL_FORMS": "0",
-            "repositories-MIN_NUM_FORMS": "0",
-            "repositories-MAX_NUM_FORMS": "1000",
-            "repositories-TOTAL_FORMS": "0",
-            "pk": project.pk,
-            "locales": [locale_kl.id, locale_gs.id],
-            "configuration_file": "",
-            # locales_pretranslate is the form value submitted by the (hidden)
-            # <select>, which is preselected from the project's enabled locales.
-            "locales_pretranslate": [locale_kl.id],
-        }
+    form_data = _project_form_data(
+        project,
+        locales=[locale_kl.id, locale_gs.id],
+        # locales_pretranslate is the form value submitted by the (hidden)
+        # <select>, which is preselected from the project's enabled locales.
+        locales_pretranslate=[locale_kl.id],
     )
 
     response = client_superuser.post(url, form_data)
