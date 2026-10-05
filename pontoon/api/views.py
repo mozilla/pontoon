@@ -794,6 +794,8 @@ class UploadView(APIView):
         project = get_object_or_404(
             Project.objects.visible_for(request.user).available(), slug=project_slug
         )
+        # Resources of DB projects have a blank format, so uploaded files can't be
+        # parsed. See https://github.com/mozilla/pontoon/pull/4568
         if project.data_source == Project.DataSource.DATABASE:
             raise PermissionDenied("Uploads are not supported for this project.")
 

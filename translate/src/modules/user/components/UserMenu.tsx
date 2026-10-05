@@ -70,6 +70,8 @@ export function UserMenuDialog({
   const { locale, project, resource } = location;
   const { fetching, dataSource } = useProject();
 
+  // Resources of DB projects have a blank format, which breaks file download
+  // and upload on the server side. See https://github.com/mozilla/pontoon/pull/4568
   const canDownload =
     project !== 'all-projects' &&
     resource !== 'all-resources' &&

@@ -1016,6 +1016,8 @@ def download_translations(request):
     project = get_object_or_404(
         Project.objects.visible_for(request.user), slug=slug, disabled=False
     )
+    # Resources of DB projects have a blank format, so uploaded files can't be
+    # parsed. See https://github.com/mozilla/pontoon/pull/4568
     if project.data_source == Project.DataSource.DATABASE:
         return HttpResponseForbidden("Downloads are not supported for this project.")
 
