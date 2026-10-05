@@ -4,12 +4,7 @@ from pontoon.base.models.entity import Entity
 from pontoon.base.models.external_resource import ExternalResource
 from pontoon.base.models.locale import Locale, LocaleCodeHistory, validate_cldr
 from pontoon.base.models.permission_changelog import PermissionChangelog
-from pontoon.base.models.project import (
-    TERMINOLOGY_PROJECT_SLUG,
-    Priority,
-    Project,
-    ProjectSlugHistory,
-)
+from pontoon.base.models.project import Priority, Project, ProjectSlugHistory
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.repository import Repository, repository_url_validator
 from pontoon.base.models.resource import Resource
@@ -38,7 +33,6 @@ __all__ = [
     "Repository",
     "Resource",
     "Section",
-    "TERMINOLOGY_PROJECT_SLUG",
     "TranslatedResource",
     "Translation",
     "TranslationMemoryEntry",

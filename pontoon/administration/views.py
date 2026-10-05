@@ -238,8 +238,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
 
                 # If the data source is database and there are new strings, save them.
                 if project.data_source == Project.DataSource.DATABASE:
-                    if not project.is_terminology:
-                        _save_new_strings(project, request.POST.get("new_strings", ""))
+                    _save_new_strings(project, request.POST.get("new_strings", ""))
                     _create_or_update_translated_resources(project, locales)
 
                 # Properly displays formsets, but removes errors (if valid only)
@@ -478,11 +477,6 @@ def manage_project_strings(request, slug=None):
     if project.data_source != Project.DataSource.DATABASE:
         return HttpResponseForbidden(
             f"Project {project.name}'s strings come from a repository, managing strings is forbidden."
-        )
-
-    if project.is_terminology:
-        return HttpResponseForbidden(
-            "Terminology can not be managed through this interface."
         )
 
     entities = Entity.objects.filter(resource__project=project, obsolete=False)

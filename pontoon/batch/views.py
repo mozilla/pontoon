@@ -9,7 +9,6 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 
 from pontoon.base.models import (
-    TERMINOLOGY_PROJECT_SLUG,
     Entity,
     Locale,
     Project,
@@ -150,7 +149,7 @@ def batch_edit_translations(request):
     changed_entity_pks = [entity.pk for entity in action_status["changed_entities"]]
     terminology_entities = Entity.objects.filter(
         pk__in=changed_entity_pks,
-        resource__project__slug=TERMINOLOGY_PROJECT_SLUG,
+        resource__project__slug="terminology",
     )
 
     for e in terminology_entities:

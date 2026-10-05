@@ -10,7 +10,6 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from pontoon.base.models import (
-    TERMINOLOGY_PROJECT_SLUG,
     Locale,
     LocaleCodeHistory,
     Project,
@@ -188,7 +187,7 @@ def add_locale_to_terminology_project(sender, instance, created, **kwargs):
     Enable Terminology project for newly added locales.
     """
     if created:
-        project = Project.objects.get(slug=TERMINOLOGY_PROJECT_SLUG)
+        project = Project.objects.get(slug="terminology")
         ProjectLocale.objects.create(project=project, locale=instance)
         for resource in project.resources.current():
             translated_resource = TranslatedResource.objects.create(

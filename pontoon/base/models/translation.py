@@ -349,7 +349,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         if self.approved:
             self.mark_changed()
 
-        if project.is_terminology:
+        if project.slug == "terminology":
             self.entity.reset_term_translation(self.locale)
 
         # We use get_or_create() instead of just get() to make it easier to test.
