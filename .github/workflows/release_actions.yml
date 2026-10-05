@@ -8,7 +8,7 @@ jobs:
   release:
     name: New release
     if: github.repository == 'mozilla/pontoon'
-    runs-on: ubuntu-26
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
       pull-requests: read
@@ -89,7 +89,7 @@ jobs:
   attach-sbom:
     name: Attach SBOM to release
     needs: [release, sbom]
-    runs-on: ubuntu-26
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
     steps:
