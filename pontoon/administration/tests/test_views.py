@@ -1,8 +1,14 @@
 import pytest
 
+from django.forms.formsets import BaseFormSet
 from django.urls import reverse
 
-from pontoon.administration.forms import ProjectForm
+from pontoon.administration.forms import (
+    ExternalResourceInlineFormSet,
+    ProjectForm,
+    RepositoryInlineFormSet,
+    TagInlineFormSet,
+)
 from pontoon.administration.views import _create_or_update_translated_resources
 from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
@@ -22,32 +28,26 @@ from pontoon.test.factories import (
 )
 
 
+def _form_data(form):
+    """POST data a browser would submit for an unbound form or formset."""
+    if isinstance(form, BaseFormSet):
+        data = _form_data(form.management_form)
+        for f in form.forms:
+            data.update(_form_data(f))
+        return data
+    return {bf.html_name: bf.value() for bf in form if bf.value() is not None}
+
+
 def _project_form_data(project, **overrides):
     """POST data for saving the project admin form, including its formsets."""
-    form_data = dict(ProjectForm(instance=project).initial)
-    del form_data["deadline"]
-    del form_data["contact"]
-    form_data.update(
-        {
-            "externalresource_set-TOTAL_FORMS": "1",
-            "externalresource_set-MAX_NUM_FORMS": "1000",
-            "externalresource_set-MIN_NUM_FORMS": "0",
-            "externalresource_set-INITIAL_FORMS": "0",
-            "tags-TOTAL_FORMS": "1",
-            "tags-INITIAL_FORMS": "0",
-            "tags-MAX_NUM_FORMS": "1000",
-            "tags-MIN_NUM_FORMS": "0",
-            "repositories-INITIAL_FORMS": "0",
-            "repositories-MIN_NUM_FORMS": "0",
-            "repositories-MAX_NUM_FORMS": "1000",
-            "repositories-TOTAL_FORMS": "0",
-            "pk": project.pk,
-            "locales": [locale.pk for locale in project.locales.all()],
-            "configuration_file": "",
-            **overrides,
-        }
-    )
-    return form_data
+    return {
+        **_form_data(ProjectForm(instance=project)),
+        **_form_data(RepositoryInlineFormSet(instance=project)),
+        **_form_data(ExternalResourceInlineFormSet(instance=project)),
+        **_form_data(TagInlineFormSet(instance=project)),
+        "pk": project.pk,
+        **overrides,
+    }
 
 
 @pytest.mark.django_db
