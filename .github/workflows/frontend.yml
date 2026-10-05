@@ -22,7 +22,7 @@ permissions: {}
 jobs:
   typescript:
     name: TypeScript
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -39,7 +39,7 @@ jobs:
         working-directory: translate
 
   licenses:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -59,7 +59,7 @@ jobs:
           license-checker-rseidelsohn --summary --failOn 'GPL'
 
   test:
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-26
       steps:
         - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
           with:

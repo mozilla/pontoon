@@ -26,7 +26,7 @@ jobs:
     name: pytest
     env:
       UV_SYSTEM_PYTHON: 1
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26
     services:
       postgres:
         image: postgres:15

@@ -8,7 +8,7 @@ jobs:
   release:
     name: New release
     if: github.repository == 'mozilla/pontoon'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26
     permissions:
       contents: write
       pull-requests: read
@@ -27,7 +27,7 @@ jobs:
         run: |
           SHA=$(curl -fsS --max-time 10 \
             https://pontoon.mozilla.org/static/revision.txt | tr -d '[:space:]')
-          
+
           if ! printf '%s' "$SHA" | grep -qE '^[0-9a-f]{40}$'; then
             echo "::error::Expected a 40-character commit hash, got: ${SHA:-<empty>}"
             exit 1
@@ -89,7 +89,7 @@ jobs:
   attach-sbom:
     name: Attach SBOM to release
     needs: [release, sbom]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26
     permissions:
       contents: write
     steps:

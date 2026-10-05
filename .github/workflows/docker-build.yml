@@ -16,7 +16,7 @@ permissions: {}
 jobs:
   build:
     name: Build Docker Image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26
     permissions:
       contents: read
       id-token: write
