@@ -362,16 +362,32 @@ describe('bidi isolation', () => {
     expect(getByText('-v')).toHaveAttribute('dir', 'ltr');
   });
 
-  it('does not isolate whitespace, punctuation, numbers and emails', () => {
-    const content = 'foo\tbar  «baz» -1 2.5 foo@example.com';
+  it('isolates signed numbers as LTR', () => {
+    const content = 'دما -1 و −۱۲۳٫۴ و +۵ و -25 درجه';
+    const { getByText } = mountMarker(content);
+
+    for (const text of ['-1', '−۱۲۳٫۴', '+۵', '-25']) {
+      const mark = getByText(text);
+      expect(mark.tagName).toBe('MARK');
+      expect(mark).toHaveAttribute('dir', 'ltr');
+    }
+  });
+
+  it('does not isolate Arabic-Indic digits', () => {
+    const { container } = mountMarker('درجة -٣');
+    expect(container.querySelector('mark[dir]')).toBeNull();
+  });
+
+  it('does not isolate whitespace, punctuation, unsigned numbers, ranges and emails', () => {
+    const content = 'foo\tbar  «baz» 2.5 ۱۲۳ 1-2 foo@example.com';
     const { container, getByText } = mountMarker(content);
 
-    for (const text of ['-1', '2.5', 'foo@example.com']) {
+    for (const text of ['2.5', '۱۲۳', '1', '-2', 'foo@example.com']) {
       expect(getByText(text).tagName).toBe('MARK');
     }
 
     const marks = container.querySelectorAll('mark');
-    expect(marks).toHaveLength(7);
+    expect(marks).toHaveLength(9);
     for (const mark of marks) {
       expect(mark).not.toHaveAttribute('dir');
     }
