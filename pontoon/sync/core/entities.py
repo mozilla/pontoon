@@ -115,14 +115,19 @@ def remove_resources(
     checkout: Checkout,
     now: datetime,
 ) -> set[str]:
-    if not checkout.removed:
+    removed_paths = {
+        get_db_path(paths, join(checkout.path, co_path)) for co_path in checkout.removed
+    }
+    if isinstance(paths, L10nConfigPaths):
+        ref_db_paths = {get_db_path(paths, ref_path) for ref_path in paths.ref_paths}
+        removed_paths.update(
+            path
+            for path in project.resources.current().values_list("path", flat=True)
+            if path not in ref_db_paths
+        )
+    if not removed_paths:
         return set()
-    removed_resources = project.resources.filter(
-        path__in={
-            get_db_path(paths, join(checkout.path, co_path))
-            for co_path in checkout.removed
-        }
-    )
+    removed_resources = project.resources.filter(path__in=removed_paths)
     removed_db_paths = {res.path for res in removed_resources}
     if removed_db_paths:
         removed_resources.mark_as_obsolete(now)
