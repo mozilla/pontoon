@@ -133,15 +133,6 @@ class Project(models.Model, AggregatedStats):
         Locale, through="ProjectLocale"
     )
 
-    class DataSource(models.TextChoices):
-        REPOSITORY = "repository", "Repository"
-        DATABASE = "database", "Database"
-
-    data_source = models.CharField(
-        max_length=255,
-        default=DataSource.REPOSITORY,
-        choices=DataSource.choices,
-    )
     can_be_requested = models.BooleanField(
         default=True,
         help_text="""
