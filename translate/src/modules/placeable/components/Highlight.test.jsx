@@ -355,12 +355,23 @@ describe('bidi isolation', () => {
     }
   });
 
-  it('does not isolate whitespace and punctuation', () => {
-    const content = 'foo\tbar  «baz»';
-    const { container } = mountMarker(content);
+  it('isolates command-line options as LTR', () => {
+    const { getByText } = mountMarker('اجرا با --help یا -v');
+
+    expect(getByText('--help')).toHaveAttribute('dir', 'ltr');
+    expect(getByText('-v')).toHaveAttribute('dir', 'ltr');
+  });
+
+  it('does not isolate whitespace, punctuation, numbers and emails', () => {
+    const content = 'foo\tbar  «baz» -1 2.5 foo@example.com';
+    const { container, getByText } = mountMarker(content);
+
+    for (const text of ['-1', '2.5', 'foo@example.com']) {
+      expect(getByText(text).tagName).toBe('MARK');
+    }
 
     const marks = container.querySelectorAll('mark');
-    expect(marks.length).toBeGreaterThan(0);
+    expect(marks).toHaveLength(7);
     for (const mark of marks) {
       expect(mark).not.toHaveAttribute('dir');
     }

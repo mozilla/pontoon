@@ -55,6 +55,8 @@ export function Highlight({
         break;
       case '-':
         l10nId = 'highlight-cli-option';
+        // Keep the minus of negative numbers like `-1` on its natural side
+        ltr = !/^-\d/.test(text);
         break;
       case 'f':
       case 'h':
@@ -105,7 +107,7 @@ export function Highlight({
         length: text.length,
         mark: (
           <Localized id={l10nId} attrs={{ title: true }} key={++keyCounter}>
-            <mark className='placeable' data-match={text} dir='ltr'>
+            <mark className='placeable' data-match={text}>
               {text}
             </mark>
           </Localized>
