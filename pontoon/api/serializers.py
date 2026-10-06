@@ -140,6 +140,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "disabled",
             "sync_disabled",
             "pretranslation_enabled",
+            "data_source",
         ] + TRANSLATION_STATS_FIELDS
 
     def get_contact(self, obj):

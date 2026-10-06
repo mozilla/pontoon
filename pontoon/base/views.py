@@ -17,6 +17,7 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponse,
+    HttpResponseForbidden,
     JsonResponse,
     StreamingHttpResponse,
 )
@@ -1015,6 +1016,11 @@ def download_translations(request):
     project = get_object_or_404(
         Project.objects.visible_for(request.user), slug=slug, disabled=False
     )
+    # Resources of DB projects have a blank format, so translations can't be
+    # serialized. See https://github.com/mozilla/pontoon/issues/4567
+    if project.data_source == Project.DataSource.DATABASE:
+        return HttpResponseForbidden("Downloads are not supported for this project.")
+
     resource = get_object_or_404(
         Resource, project=project, path=res_path, obsolete=False
     )

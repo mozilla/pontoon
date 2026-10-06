@@ -202,6 +202,8 @@ Requirements and limits:
 
 - You must have translator rights for the target locale, and the project locale must not
   be read-only. Otherwise the request is rejected with `403`.
+- The project must use a repository as its data source: uploads to database projects
+  are rejected with `403`.
 - The project must not be disabled, and both the project and the resource must be
   enabled for the target locale. Otherwise the request is rejected with `404`.
 - Uploaded files must be under 5000 kB, and must match the format of the target
@@ -219,14 +221,14 @@ project's VCS repository by the next sync.
 
 Status codes:
 
-| Code  | Meaning                                                                                                    |
-| ----- | ---------------------------------------------------------------------------------------------------------- |
-| `200` | Upload accepted (possibly with `"updated": 0`)                                                             |
-| `400` | Missing or invalid field, unsupported format, unparseable or empty file, or file too large                 |
-| `403` | Not authenticated, invalid or expired token, missing CSRF token, or insufficient permission                |
-| `404` | Unknown or disabled project, unknown locale or resource, or project or resource not enabled for the locale |
-| `409` | A concurrent upload or review changed the same translations; retry the request                             |
-| `429` | Rate limit exceeded                                                                                        |
+| Code  | Meaning                                                                                                       |
+| ----- | ------------------------------------------------------------------------------------------------------------- |
+| `200` | Upload accepted (possibly with `"updated": 0`)                                                                |
+| `400` | Missing or invalid field, unsupported format, unparseable or empty file, or file too large                    |
+| `403` | Not authenticated, invalid or expired token, missing CSRF token, insufficient permission, or database project |
+| `404` | Unknown or disabled project, unknown locale or resource, or project or resource not enabled for the locale    |
+| `409` | A concurrent upload or review changed the same translations; retry the request                                |
+| `429` | Rate limit exceeded                                                                                           |
 
 ### `POST /api/v2/upload/pretranslations/`
 

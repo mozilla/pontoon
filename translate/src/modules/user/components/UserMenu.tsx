@@ -6,6 +6,7 @@ import { useTheme } from '~/hooks/useTheme';
 import { Location } from '~/context/Location';
 import { useOnDiscard } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
+import { useProject } from '~/modules/project';
 
 import type { UserState } from '../index';
 import { FileUpload } from './FileUpload';
@@ -67,9 +68,14 @@ export function UserMenuDialog({
 
   const location = useContext(Location);
   const { locale, project, resource } = location;
+  const { dataSource } = useProject();
 
+  // Resources of DB projects have a blank format, which breaks file download
+  // and upload on the server side. See https://github.com/mozilla/pontoon/issues/4567
   const canDownload =
-    project !== 'all-projects' && resource !== 'all-resources';
+    project !== 'all-projects' &&
+    resource !== 'all-resources' &&
+    dataSource === 'repository';
   const canUpload = canDownload && isTranslator && !entity.readonly;
 
   const ref = useRef<HTMLUListElement>(null);
