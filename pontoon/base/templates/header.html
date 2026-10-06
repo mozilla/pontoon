@@ -94,7 +94,7 @@
                     ><i class="fas fa-wrench fa-fw"></i>Admin</a
                   >
                 </li>
-                {% if project %}
+                {% if project and project.has_repositories %}
                   <li>
                     <a href="{{ url('pontoon.admin.project', project.slug) }}"
                       ><i class="fas fa-wrench fa-fw"></i>Admin &middot; Current

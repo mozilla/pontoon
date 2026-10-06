@@ -11,6 +11,23 @@ from pontoon.test.factories import (
 )
 
 
+def _repository_form_data(project):
+    data = {
+        "repositories-TOTAL_FORMS": str(project.repositories.count()),
+        "repositories-INITIAL_FORMS": str(project.repositories.count()),
+    }
+    for i, repo in enumerate(project.repositories.all()):
+        data.update(
+            {
+                f"repositories-{i}-id": repo.pk,
+                f"repositories-{i}-type": repo.type,
+                f"repositories-{i}-url": repo.url,
+                f"repositories-{i}-branch": repo.branch,
+            }
+        )
+    return data
+
+
 @pytest.mark.django_db
 def test_manage_project(client_superuser):
     url = reverse("pontoon.admin.project.new")
@@ -19,13 +36,62 @@ def test_manage_project(client_superuser):
 
 
 @pytest.mark.django_db
+def test_admin_hides_projects_without_repositories(client_superuser):
+    repo_project = ProjectFactory.create()
+    db_project = ProjectFactory.create(repositories=[])
+
+    response = client_superuser.get(reverse("pontoon.admin"))
+    assert response.status_code == 200
+    assert repo_project.name.encode() in response.content
+    assert db_project.name.encode() not in response.content
+
+
+@pytest.mark.django_db
+def test_manage_project_without_repositories(client_superuser, locale_a):
+    project = ProjectFactory.create(locales=[locale_a], repositories=[])
+    url = reverse("pontoon.admin.project", args=(project.slug,))
+
+    response = client_superuser.get(url)
+    assert response.status_code == 404
+
+    response = client_superuser.post(url, {"pk": project.pk})
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_manage_project_requires_repository(client_superuser, locale_a):
+    project = ProjectFactory.create(locales=[locale_a])
+    repository = project.repositories.get()
+    url = reverse("pontoon.admin.project", args=(project.slug,))
+
+    form_data = dict(ProjectForm(instance=project).initial)
+    del form_data["deadline"]
+    del form_data["contact"]
+    form_data.update(
+        {
+            "pk": project.pk,
+            "locales": [locale_a.id],
+            "configuration_file": "",
+            "externalresource_set-TOTAL_FORMS": "0",
+            "externalresource_set-INITIAL_FORMS": "0",
+            "tags-TOTAL_FORMS": "0",
+            "tags-INITIAL_FORMS": "0",
+            **_repository_form_data(project),
+            "repositories-0-DELETE": "on",
+        }
+    )
+
+    response = client_superuser.post(url, form_data)
+    assert response.status_code == 200
+    assert b"At least one repository is required." in response.content
+    assert project.repositories.filter(pk=repository.pk).exists()
+
+
+@pytest.mark.django_db
 def test_manage_project_translate_link_excludes_obsolete_resources(client_superuser):
     """Test that Translate link is only shown when non-obsolete resources exist."""
     locale_kl = LocaleFactory.create(code="tlh", name="Klingon")
-    project = ProjectFactory.create(
-        locales=[locale_kl],
-        repositories=[],
-    )
+    project = ProjectFactory.create(locales=[locale_kl])
 
     url = reverse("pontoon.admin.project", args=(project.slug,))
     translate_url = reverse(
@@ -51,10 +117,7 @@ def test_manage_project_translate_link_excludes_obsolete_resources(client_superu
 def test_project_add_locale(client_superuser):
     locale_kl = LocaleFactory.create(code="kl", name="Klingon")
     locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
-    project = ProjectFactory.create(
-        locales=[locale_kl],
-        repositories=[],
-    )
+    project = ProjectFactory.create(locales=[locale_kl])
 
     url = reverse("pontoon.admin.project", args=(project.slug,))
 
@@ -74,10 +137,7 @@ def test_project_add_locale(client_superuser):
             "tags-INITIAL_FORMS": "0",
             "tags-MAX_NUM_FORMS": "1000",
             "tags-MIN_NUM_FORMS": "0",
-            "repositories-INITIAL_FORMS": "0",
-            "repositories-MIN_NUM_FORMS": "0",
-            "repositories-MAX_NUM_FORMS": "1000",
-            "repositories-TOTAL_FORMS": "0",
+            **_repository_form_data(project),
             # These are the values that actually matter.
             "pk": project.pk,
             "locales": [locale_kl.id, locale_gs.id],
@@ -103,10 +163,7 @@ def test_project_form_preselects_pretranslate_locales():
     """
     locale_kl = LocaleFactory.create(code="kl", name="Klingon")
     locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
-    project = ProjectFactory.create(
-        locales=[locale_kl, locale_gs],
-        repositories=[],
-    )
+    project = ProjectFactory.create(locales=[locale_kl, locale_gs])
     ProjectLocale.objects.filter(project=project, locale=locale_kl).update(
         pretranslation_enabled=True
     )
@@ -124,10 +181,7 @@ def test_manage_project_save_preserves_pretranslate_locales(client_superuser):
     """
     locale_kl = LocaleFactory.create(code="kl", name="Klingon")
     locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
-    project = ProjectFactory.create(
-        locales=[locale_kl, locale_gs],
-        repositories=[],
-    )
+    project = ProjectFactory.create(locales=[locale_kl, locale_gs])
     ProjectLocale.objects.filter(project=project, locale=locale_kl).update(
         pretranslation_enabled=True
     )
@@ -148,10 +202,7 @@ def test_manage_project_save_preserves_pretranslate_locales(client_superuser):
             "tags-INITIAL_FORMS": "0",
             "tags-MAX_NUM_FORMS": "1000",
             "tags-MIN_NUM_FORMS": "0",
-            "repositories-INITIAL_FORMS": "0",
-            "repositories-MIN_NUM_FORMS": "0",
-            "repositories-MAX_NUM_FORMS": "1000",
-            "repositories-TOTAL_FORMS": "0",
+            **_repository_form_data(project),
             "pk": project.pk,
             "locales": [locale_kl.id, locale_gs.id],
             "configuration_file": "",

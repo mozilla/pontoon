@@ -6,7 +6,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
+from django.db.models import Exists, OuterRef
+from django.http import Http404, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils.datastructures import MultiValueDictKeyError
@@ -23,6 +24,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
+    Repository,
     Resource,
 )
 from pontoon.base.models.project import ProjectQuerySet
@@ -39,12 +41,18 @@ def admin(request):
     if not request.user.has_perm("base.can_manage_project"):
         raise PermissionDenied
 
-    projects = Project.objects.prefetch_related(
-        "latest_translation__entity__resource",
-        "latest_translation__locale",
-        "latest_translation__user",
-        "latest_translation__approved_user",
-    ).order_by("name")
+    projects = (
+        Project.objects.filter(
+            Exists(Repository.objects.filter(project=OuterRef("pk")))
+        )
+        .prefetch_related(
+            "latest_translation__entity__resource",
+            "latest_translation__locale",
+            "latest_translation__user",
+            "latest_translation__approved_user",
+        )
+        .order_by("name")
+    )
 
     enabled_projects = projects.filter(disabled=False)
     disabled_projects = projects.filter(disabled=True)
@@ -146,6 +154,8 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 .visible_for(request.user)
                 .get(pk=pk)
             )
+            if not project.has_repositories:
+                raise Http404
             form = ProjectForm(request.POST, instance=project)
             # Needed if form invalid
             repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
@@ -248,6 +258,8 @@ def manage_project(request, slug=None, template="admin_project.html"):
     elif slug is not None:
         try:
             project = Project.objects.get(slug=slug)
+            if not project.has_repositories:
+                raise Http404
             pk = project.pk
             form = ProjectForm(instance=project)
             repo_formset = RepositoryInlineFormSet(instance=project)

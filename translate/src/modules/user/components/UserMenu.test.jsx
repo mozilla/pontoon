@@ -119,6 +119,13 @@ describe('<UserMenuDialog>', () => {
     ).toHaveLength(0);
   });
 
+  it('hides admin · current project menu item when the project has no repositories', () => {
+    const wrapper = createUserMenu({ isPM: true, hasRepositories: false });
+
+    expect(wrapper.find('a[href="/admin/"]')).toHaveLength(1);
+    expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(0);
+  });
+
   it('shows admin · current project menu item when translating a project', () => {
     const wrapper = createUserMenu({ isPM: true });
 

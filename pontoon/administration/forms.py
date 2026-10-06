@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms.models import inlineformset_factory
+from django.forms.models import BaseInlineFormSet, inlineformset_factory
 
 from pontoon.base.forms import HtmlField
 from pontoon.base.models import (
@@ -103,12 +103,19 @@ class RepositoryForm(forms.ModelForm):
         fields = ("type", "url", "branch", "website", "source_repo")
 
 
+class BaseRepositoryInlineFormSet(BaseInlineFormSet):
+    default_error_messages = {
+        "too_few_forms": "At least one repository is required.",
+    }
+
+
 RepositoryInlineFormSet = inlineformset_factory(
     Project,
     Repository,
     form=RepositoryForm,
-    extra=1,
-    min_num=0,
+    formset=BaseRepositoryInlineFormSet,
+    extra=0,
+    min_num=1,
     validate_min=True,
 )
 
