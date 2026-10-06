@@ -87,3 +87,24 @@ def test_project_top_contributors(client, project_a, project_b):
         assert list(mock_render.call_args[0][0]["contributors"]) == [
             project_b_contributor
         ]
+
+
+@pytest.mark.django_db
+def test_project_teams_latest_activity_locale(client, translation_a):
+    """
+    Checks if the latest activity tooltip data includes the translation locale.
+    """
+    locale = translation_a.locale
+    locale.direction = "rtl"
+    locale.script = "Arab"
+    locale.save()
+
+    response = client.get(
+        f"/projects/{translation_a.entity.resource.project.slug}/ajax/",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert f'data-translation-locale="{locale.code}"' in content
+    assert 'data-translation-direction="rtl"' in content
+    assert 'data-translation-script="Arab"' in content

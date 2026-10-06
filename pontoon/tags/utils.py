@@ -91,7 +91,7 @@ class Tags:
             # Find translations with matching date and tag/locale
             translations |= Translation.objects.filter(
                 Q(**{"date": date, f"{prefix}{group_by}": tr[group_by]})
-            ).prefetch_related("user", "approved_user")
+            ).prefetch_related("user", "approved_user", "locale")
 
         for t in translations:
             key = dates[t.latest_activity["date"]]

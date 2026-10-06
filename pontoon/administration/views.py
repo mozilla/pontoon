@@ -47,6 +47,7 @@ def admin(request):
 
     projects = Project.objects.prefetch_related(
         "latest_translation__entity__resource",
+        "latest_translation__locale",
         "latest_translation__user",
         "latest_translation__approved_user",
     ).order_by("name")

@@ -66,6 +66,7 @@ def teams(request):
     """List all active localization teams."""
     locales = Locale.objects.visible().prefetch_related(
         "latest_translation__entity__resource",
+        "latest_translation__locale",
         "latest_translation__user",
         "latest_translation__approved_user",
     )
@@ -135,7 +136,7 @@ def ajax_projects(request, locale):
                 .values_list("latest_translation_id", flat=True)
             ),
         )
-        .select_related("user", "approved_user")
+        .select_related("user", "approved_user", "locale")
         .prefetch_related("entity__resource")
         .annotate(project_id=F("entity__resource__project__id"))
     }
