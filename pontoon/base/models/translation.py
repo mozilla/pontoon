@@ -106,9 +106,9 @@ class TranslationQuerySet(models.QuerySet["Translation"]):
             "entity", "locale"
         ).distinct()
 
-        for translation in self.exclude(
-            entity__resource__project__data_source=Project.DataSource.DATABASE
-        ):
+        for translation in self.filter(
+            entity__resource__project__repositories__isnull=False
+        ).distinct():
             key = (translation.entity.pk, translation.locale.pk)
 
             if key not in existing:
@@ -507,7 +507,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         Mark the given locale as having changed translations since the
         last sync.
         """
-        if self.entity.resource.project.data_source == Project.DataSource.DATABASE:
+        if not self.entity.resource.project.has_repositories:
             return
 
         ChangedEntityLocale.objects.get_or_create(

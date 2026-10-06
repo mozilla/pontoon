@@ -109,7 +109,6 @@ def project_a():
     return factories.ProjectFactory(
         slug="project_a",
         name="Project A",
-        repositories=[],
     )
 
 

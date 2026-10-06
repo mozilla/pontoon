@@ -63,9 +63,9 @@ class ProjectQuerySet(models.QuerySet["Project"]):
 
     def force_syncable(self):
         """
-        Projects that can be force-synced are not disabled and use repository as their data source type.
+        Only projects that are not disabled can be force-synced.
         """
-        return self.filter(disabled=False, data_source=Project.DataSource.REPOSITORY)
+        return self.filter(disabled=False, repositories__isnull=False).distinct()
 
     def syncable(self):
         """
@@ -299,6 +299,12 @@ class Project(models.Model, AggregatedStats):
                 pass
 
         super().save(*args, **kwargs)
+
+    @property
+    def has_repositories(self) -> bool:
+        """Projects without repositories (DB projects) are stored only in the DB."""
+        # Django raises ValueError when querying related objects of an unsaved instance.
+        return self.pk is not None and self.repositories.exists()
 
     @property
     def checkout_path(self):

@@ -438,21 +438,15 @@ def test_entity_project_comments(admin, resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_entity_marked_changed_when_project_data_source_is_repository(translation_a):
+def test_entity_marked_changed_when_project_has_repositories(translation_a):
     assert ChangedEntityLocale.objects.count() == 0
     translation_a.mark_changed()
     assert ChangedEntityLocale.objects.count() == 1
 
 
 @pytest.mark.django_db
-def test_entity_marked_changed_when_project_data_source_is_database(translation_a):
-    project = translation_a.entity.resource.project
-
-    Project.objects.filter(pk=project.pk).update(
-        data_source=Project.DataSource.DATABASE
-    )
-
-    translation_a.refresh_from_db()
+def test_entity_not_marked_changed_when_project_has_no_repositories(translation_a):
+    translation_a.entity.resource.project.repositories.all().delete()
 
     assert ChangedEntityLocale.objects.count() == 0
     translation_a.mark_changed()

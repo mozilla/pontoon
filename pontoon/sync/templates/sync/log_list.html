@@ -92,7 +92,7 @@
               >
                 {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
               </td>
-              {% if settings.MANUAL_SYNC and is_manager and project.data_source != "database" %}
+              {% if settings.MANUAL_SYNC and is_manager and project.has_repositories %}
                 <td class="sync-now">
                   <button
                     class="button sync"

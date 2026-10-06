@@ -197,9 +197,7 @@ def test_upload_readonly_project_locale(
 @pytest.mark.django_db
 @pytest.mark.parametrize("url", ENDPOINTS)
 def test_upload_database_project(url, pretranslator, project_locale_a, resource_path):
-    project = project_locale_a.project
-    project.data_source = Project.DataSource.DATABASE
-    project.save()
+    project_locale_a.project.repositories.all().delete()
 
     response = _upload(
         _pat_client(pretranslator.user), url, project_locale_a, resource_path
