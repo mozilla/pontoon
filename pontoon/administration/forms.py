@@ -5,7 +5,6 @@ from django.forms.models import inlineformset_factory
 
 from pontoon.base.forms import HtmlField
 from pontoon.base.models import (
-    Entity,
     ExternalResource,
     Locale,
     Project,
@@ -64,7 +63,6 @@ class ProjectForm(forms.ModelForm):
             "name",
             "slug",
             "locales",
-            "data_source",
             "can_be_requested",
             "configuration_file",
             "info",
@@ -137,13 +135,6 @@ class ExternalResourceInlineForm(forms.ModelForm):
 
 ExternalResourceInlineFormSet = inlineformset_factory(
     Project, ExternalResource, form=ExternalResourceInlineForm, extra=1
-)
-
-
-EntityFormSet = forms.modelformset_factory(
-    Entity,
-    fields=("string", "comment", "obsolete"),
-    extra=1,
 )
 
 
