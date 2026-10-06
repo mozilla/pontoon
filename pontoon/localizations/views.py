@@ -81,6 +81,7 @@ def ajax_resources(request, code, slug):
         .prefetch_related(
             "resource",
             "latest_translation__entity__resource",
+            "latest_translation__locale",
             "latest_translation__user",
             "latest_translation__approved_user",
         )

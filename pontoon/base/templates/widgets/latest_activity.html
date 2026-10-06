@@ -12,9 +12,13 @@
         {% set link = '' %}
         {% set avatar = '' %}
       {% endif %}
+      {% set locale = latest_activity.translation.locale %}
       <time
         datetime="{{ latest_activity.date.isoformat() }}"
         data-translation="{{ latest_activity.translation|as_plain_message() }}"
+        data-translation-locale="{{ locale.code }}"
+        data-translation-direction="{{ locale.direction }}"
+        data-translation-script="{{ locale.script }}"
         data-action="{{ action }}"
         data-user-name="{{ user }}"
         data-user-link="{{ link }}"

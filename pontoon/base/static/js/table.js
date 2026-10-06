@@ -28,6 +28,9 @@ $('body')
 
     timer = setTimeout(function () {
       const translation = Pontoon.doNotRender($element.data('translation')),
+        locale = $element.data('translation-locale'),
+        direction = $element.data('translation-direction'),
+        script = $element.data('translation-script'),
         avatar = $element.data('user-avatar'),
         action = $element.data('action'),
         name = $element.data('user-name'),
@@ -38,7 +41,13 @@ $('body')
       $element.after(
         '<aside class="tooltip">' +
           '<span class="quote fas fa-quote-right fa-2x"></span>' +
-          '<p class="translation">' +
+          '<p class="translation" dir="' +
+          direction +
+          '" lang="' +
+          locale +
+          '" data-script="' +
+          script +
+          '">' +
           translation +
           '</p>' +
           '<footer class="clearfix">' +
