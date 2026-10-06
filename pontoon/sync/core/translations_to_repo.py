@@ -142,9 +142,11 @@ def delete_removed_resources(
     count = 0
     for path in removed_source_paths:
         log_scope = f"[{project.slug}:{path}]"
-        log.info(f"{log_scope} Removing for all locales")
         target, locale_codes = paths.target(path)
-        if target and paths.base and commonpath((paths.base, target)) == paths.base:
+        if target is None:
+            continue
+        log.info(f"{log_scope} Removing for all locales")
+        if paths.base and commonpath((paths.base, target)) == paths.base:
             for lc in locale_codes:
                 if lc not in locale_map or locale_map[lc] in readonly_locales:
                     continue
