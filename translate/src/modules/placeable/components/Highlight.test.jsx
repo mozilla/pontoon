@@ -342,3 +342,27 @@ describe('specific marker', () => {
     });
   }
 });
+
+describe('bidi isolation', () => {
+  it('isolates consecutive tags and placeholders as LTR', () => {
+    const content = '<strong>اینڈ پوائنٹ آگے کریں:</strong> { waiting }';
+    const { getByText } = mountMarker(content);
+
+    for (const text of ['<strong>', '</strong>', '{ waiting }']) {
+      const mark = getByText(text);
+      expect(mark.tagName).toBe('MARK');
+      expect(mark).toHaveAttribute('dir', 'ltr');
+    }
+  });
+
+  it('does not isolate whitespace and punctuation', () => {
+    const content = 'foo\tbar  «baz»';
+    const { container } = mountMarker(content);
+
+    const marks = container.querySelectorAll('mark');
+    expect(marks.length).toBeGreaterThan(0);
+    for (const mark of marks) {
+      expect(mark).not.toHaveAttribute('dir');
+    }
+  });
+});

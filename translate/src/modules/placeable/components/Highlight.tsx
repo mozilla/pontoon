@@ -32,6 +32,9 @@ export function Highlight({
   for (const match of source.matchAll(placeholder)) {
     let l10nId: string;
     let hidden = '';
+    // Code-like placeables are isolated as LTR, so that their
+    // neutral characters (e.g. `<`, `/`, `>`) are not reordered in RTL text.
+    let ltr = true;
     const text = match[0];
     switch (text[0]) {
       case '<':
@@ -60,22 +63,29 @@ export function Highlight({
       case '\n':
         l10nId = 'highlight-newline';
         hidden = '¶';
+        ltr = false;
         break;
       case '\t':
         l10nId = 'highlight-tab';
         hidden = ' →';
+        ltr = false;
         break;
       default:
         l10nId = /^\s/.test(text)
           ? 'highlight-spaces'
           : 'highlight-punctuation';
+        ltr = false;
     }
     marks.push({
       index: match.index ?? -1,
       length: text.length,
       mark: (
         <Localized id={l10nId} attrs={{ title: true }} key={++keyCounter}>
-          <mark className='placeable' data-match={text}>
+          <mark
+            className='placeable'
+            data-match={text}
+            dir={ltr ? 'ltr' : undefined}
+          >
             {hidden ? <span aria-hidden>{hidden}</span> : null}
             {text}
           </mark>
@@ -95,7 +105,7 @@ export function Highlight({
         length: text.length,
         mark: (
           <Localized id={l10nId} attrs={{ title: true }} key={++keyCounter}>
-            <mark className='placeable' data-match={text}>
+            <mark className='placeable' data-match={text} dir='ltr'>
               {text}
             </mark>
           </Localized>
