@@ -36,12 +36,12 @@ describe('<UserMenuDialog>', () => {
     isTranslator = true,
     isAuthenticated = true,
     location = LOCATION,
-    dataSource = 'repository',
+    hasRepositories = true,
     onThemeChange = () => {},
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
     const store = createReduxStore({
-      [PROJECT]: { dataSource },
+      [PROJECT]: { hasRepositories },
     });
     return mount(
       <Provider store={store}>
@@ -99,17 +99,8 @@ describe('<UserMenuDialog>', () => {
     ).toHaveLength(0);
   });
 
-  it('hides upload & download menu items when translating a database project', () => {
-    const wrapper = createUserMenu({ dataSource: 'database' });
-
-    expect(wrapper.find(FileUpload)).toHaveLength(0);
-    expect(
-      findLocalizedById(wrapper, 'user-UserMenu--download-translations'),
-    ).toHaveLength(0);
-  });
-
-  it('hides upload & download menu items while project data is loading', () => {
-    const wrapper = createUserMenu({ dataSource: '' });
+  it('hides upload & download menu items when the project has no repositories', () => {
+    const wrapper = createUserMenu({ hasRepositories: false });
 
     expect(wrapper.find(FileUpload)).toHaveLength(0);
     expect(

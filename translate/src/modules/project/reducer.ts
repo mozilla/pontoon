@@ -12,7 +12,7 @@ export type ProjectState = {
   readonly slug: string;
   readonly name: string;
   readonly info: string;
-  readonly dataSource: string;
+  readonly hasRepositories: boolean;
   readonly tags: Tag[];
   readonly locales: LocaleOption[];
 };
@@ -22,7 +22,7 @@ const initial: ProjectState = {
   slug: '',
   name: '',
   info: '',
-  dataSource: '',
+  hasRepositories: false,
   tags: [],
   locales: [],
 };
@@ -44,7 +44,7 @@ export function reducer(
         ...state,
         fetching: true,
         slug: action.slug,
-        dataSource: '',
+        hasRepositories: false,
         locales: [],
       };
     case RECEIVE:
@@ -54,7 +54,7 @@ export function reducer(
         slug: action.slug,
         name: action.name,
         info: action.info,
-        dataSource: action.dataSource,
+        hasRepositories: action.hasRepositories,
         tags: action.tags,
         locales: action.locales,
       };

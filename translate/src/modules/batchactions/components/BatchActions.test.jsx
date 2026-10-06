@@ -27,7 +27,7 @@ const DEFAULT_PROJECT_STATE = {
   slug: '',
   name: '',
   info: '',
-  dataSource: '',
+  hasRepositories: false,
   tags: [],
   locales: [],
 };
