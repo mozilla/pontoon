@@ -37,12 +37,11 @@ describe('<UserMenuDialog>', () => {
     isAuthenticated = true,
     location = LOCATION,
     dataSource = 'repository',
-    fetching = false,
     onThemeChange = () => {},
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
     const store = createReduxStore({
-      [PROJECT]: { dataSource, fetching },
+      [PROJECT]: { dataSource },
     });
     return mount(
       <Provider store={store}>
@@ -110,7 +109,7 @@ describe('<UserMenuDialog>', () => {
   });
 
   it('hides upload & download menu items while project data is loading', () => {
-    const wrapper = createUserMenu({ fetching: true });
+    const wrapper = createUserMenu({ dataSource: '' });
 
     expect(wrapper.find(FileUpload)).toHaveLength(0);
     expect(

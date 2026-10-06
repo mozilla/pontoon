@@ -44,6 +44,7 @@ export function reducer(
         ...state,
         fetching: true,
         slug: action.slug,
+        dataSource: '',
         locales: [],
       };
     case RECEIVE:
