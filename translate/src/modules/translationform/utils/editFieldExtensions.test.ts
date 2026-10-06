@@ -1,8 +1,11 @@
+import { currentCompletions, startCompletion } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 
 import { getExtensions } from './editFieldExtensions';
 import { parseEntry } from '~/utils/message';
+
+import type { FluentTerms } from '~/api/fluentTerms';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -12,20 +15,91 @@ let currentTempView: EditorView | null = null;
 // Create a hidden view with the given document and extensions that
 // lives until the next call to `tempView`.
 // From: https://github.com/codemirror/view/blob/main/test/tempview.ts
-function tempView(format: string, doc = ''): EditorView {
+function tempView(
+  format: string,
+  doc = '',
+  getTerms?: (project: string, locale: string) => Promise<FluentTerms>,
+): EditorView {
   if (currentTempView) {
     currentTempView.destroy();
     currentTempView = null;
   }
 
-  const entry = parseEntry(format, `key = ${doc}`)!;
-  const extensions = getExtensions(entry, {} as any);
+  // Docs with unbalanced syntax (e.g. an unclosed `{`) cannot be parsed;
+  // fall back to a minimal valid entry, as only the format is needed then.
+  const entry =
+    parseEntry(format, `key = ${doc}`) ?? parseEntry(format, 'key = x')!;
+  const extensions = getExtensions(
+    entry,
+    {} as any,
+    doc,
+    'acme',
+    'ab',
+    getTerms,
+  );
   currentTempView = new EditorView({
     state: EditorState.create({ doc, extensions }),
   });
   div.appendChild(currentTempView.dom);
   return currentTempView;
 }
+
+describe('term variants autocomplete', () => {
+  const terms: FluentTerms = {
+    '-brand-name': {
+      value: {
+        decl: {},
+        sel: ['case'],
+        alt: [
+          { keys: ['nominative'], pat: ['Brand'] },
+          { keys: ['accusative'], pat: ['the Brand'] },
+          { keys: [{ '*': '' }], pat: ['Brand'] },
+        ],
+      },
+      properties: null,
+      translation_value: null,
+      translation_properties: null,
+    },
+  };
+
+  async function completeInto(doc: string, insert: string) {
+    const getTerms = vi.fn(async () => terms);
+    const view = tempView('fluent', doc, getTerms);
+
+    view.dispatch({
+      changes: { from: doc.length, insert },
+      selection: { anchor: doc.length + insert.length },
+    });
+    startCompletion(view);
+
+    await vi.waitFor(() => {
+      expect(currentCompletions(view.state).length).toBeGreaterThan(0);
+    });
+    return { view, getTerms, options: currentCompletions(view.state) };
+  }
+
+  it('offers term variants', async () => {
+    const { options } = await completeInto('foo ', '{ -brand-name(');
+
+    expect(options.map((option) => option.label)).toEqual(
+      expect.arrayContaining(['nominative', 'accusative']),
+    );
+  });
+
+  it.skip('closes brackets', async () => {
+    const { view } = await completeInto('foo ', '{ -brand-name(');
+
+    expect(view.state.doc.toString()).toBe('foo { -brand-name()');
+  });
+
+  it('offers term variants in a message with placeholders', async () => {
+    const { options } = await completeInto('foo { $bar } ', '{ -brand-name(');
+
+    expect(options.map((option) => option.label)).toEqual(
+      expect.arrayContaining(['nominative', 'accusative']),
+    );
+  });
+});
 
 function getAncestorWith(node: Node | null, attribute: string) {
   let el = node instanceof HTMLElement ? node : node?.parentElement;

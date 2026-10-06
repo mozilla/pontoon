@@ -21,6 +21,8 @@ import { EditorView, keymap, tooltips } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useMemo, useRef } from 'react';
 
+import { getFluentTerms } from '~/api/fluentTermsCache';
+import type { FluentTerms } from '~/api/fluentTerms';
 import { EditorActions, EditorData } from '~/context/Editor';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
@@ -44,6 +46,7 @@ import {
 } from './editFieldShortcuts';
 import { fluentMode, commonMode, webextMode } from './editFieldModes';
 import './editFieldExtensions.css';
+import { fluentTermVariantsCompletion } from './fluentTermVariantsCompletion';
 
 /**
  * Key handlers depend on application state,
@@ -136,6 +139,12 @@ export const getExtensions = (
   entry: MessageEntry,
   ref: ReturnType<typeof useKeyHandlers>,
   initialDoc = '',
+  project = '',
+  locale = '',
+  getTerms: (
+    project: string,
+    locale: string,
+  ) => Promise<FluentTerms> = getFluentTerms,
 ): Extension[] => [
   history(),
   emptyEditorCaret(initialDoc.length === 0),
@@ -144,7 +153,7 @@ export const getExtensions = (
   // horizontal scrolling if it overflows the right edge of .main-column.
   // We avoid this by placing tooltips in its parent container.
   tooltips({ parent: document.querySelector('.panel-content') as HTMLElement }),
-  autocompletePlaceholders(entry) ?? closeBrackets(),
+  autocompletePlaceholders(entry, project, locale, getTerms) ?? closeBrackets(),
   EditorView.lineWrapping,
   StreamLanguage.define<any>(
     entry.format === 'fluent'
@@ -201,8 +210,17 @@ export const getExtensions = (
  *
  * If no autocompletions are found, bracket auto-closing is enabled.
  */
-function autocompletePlaceholders(entry: MessageEntry) {
+function autocompletePlaceholders(
+  entry: MessageEntry,
+  project: string,
+  locale: string,
+  getTerms: (project: string, locale: string) => Promise<FluentTerms>,
+) {
   const override: CompletionSource[] = [];
+  if (entry.format === 'fluent') {
+    override.push(fluentTermVariantsCompletion(getTerms, project, locale));
+  }
+
   for (const pattern of entryPatterns(entry)) {
     const edit = editablePattern(entry.format, pattern);
     const highlights: [start: number, ends: number[]][] = [];
