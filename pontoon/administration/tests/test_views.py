@@ -88,6 +88,32 @@ def test_manage_project_requires_repository(client_superuser, locale_a):
 
 
 @pytest.mark.django_db
+def test_manage_project_new_with_invalid_repository(client_superuser, locale_a):
+    url = reverse("pontoon.admin.project.new")
+    form_data = dict(ProjectForm().initial)
+    form_data.update(
+        {
+            "name": "New Project",
+            "slug": "new-project",
+            "locales": [locale_a.id],
+            "visibility": "public",
+            "priority": 1,
+            "set_translated_resources_from_repo": False,
+            "externalresource_set-TOTAL_FORMS": "0",
+            "externalresource_set-INITIAL_FORMS": "0",
+            "repositories-TOTAL_FORMS": "1",
+            "repositories-INITIAL_FORMS": "0",
+            "repositories-0-type": "git",
+            "repositories-0-url": "not a url",
+        }
+    )
+
+    response = client_superuser.post(url, form_data)
+    assert response.status_code == 200
+    assert b". Error." in response.content
+
+
+@pytest.mark.django_db
 def test_manage_project_translate_link_excludes_obsolete_resources(client_superuser):
     """Test that Translate link is only shown when non-obsolete resources exist."""
     locale_kl = LocaleFactory.create(code="tlh", name="Klingon")

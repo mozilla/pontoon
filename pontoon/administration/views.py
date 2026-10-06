@@ -318,7 +318,12 @@ def manage_project(request, slug=None, template="admin_project.html"):
     }
 
     # Set locale in Translate link
-    if Resource.objects.current().filter(project=project).exists() and locales_selected:
+    if (
+        project
+        and project.pk
+        and Resource.objects.current().filter(project=project).exists()
+        and locales_selected
+    ):
         locale = (
             utils.get_project_locale_from_request(request, project.locales)
             or locales_selected[0].code
