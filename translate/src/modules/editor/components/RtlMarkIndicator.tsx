@@ -33,7 +33,7 @@ export function RtlMarkIndicator() {
     <Localized id='editor-RtlMarkIndicator--rlm' attrs={{ title: true }}>
       <div
         className='rtl-mark'
-        title='A right-to-left mark (RLM) will be added at the start of this translation, so that it is displayed right-to-left. To prevent this, start the translation with a left-to-right mark (LRM).'
+        title='A right-to-left mark (RLM) will be inserted at the beginning of this translation so that it will be displayed right-to-left. To avoid this, you should prefix the translation with a left-to-right mark (LRM).'
       >
         RLM
       </div>

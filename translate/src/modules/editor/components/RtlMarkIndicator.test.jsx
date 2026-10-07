@@ -22,7 +22,7 @@ const mount = ({
     <MockLocalizationProvider
       resources={[
         `editor-RtlMarkIndicator--rlm = RLM
-    .title = A right-to-left mark (RLM) will be added`,
+    .title = A right-to-left mark (RLM) will be inserted`,
       ]}
     >
       <Locale.Provider value={{ direction }}>

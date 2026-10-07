@@ -246,7 +246,7 @@ editor-MachinerySourceIndicator--match = <stress>100%</stress> MATCH
 ## “RLM” and “LRM” are abbreviations of Unicode character names and should not be translated.
 
 editor-RtlMarkIndicator--rlm = RLM
-    .title = A right-to-left mark (RLM) will be added at the start of this translation, so that it is displayed right-to-left. To prevent this, start the translation with a left-to-right mark (LRM).
+    .title = A right-to-left mark (RLM) will be inserted at the beginning of this translation so that it will be displayed right-to-left. To avoid this, you should prefix the translation with a left-to-right mark (LRM).
 
 
 ## Editor New Contributor Tooltip
