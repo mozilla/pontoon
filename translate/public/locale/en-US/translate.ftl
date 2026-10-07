@@ -240,6 +240,15 @@ editor-MachinerySourceIndicator--match = <stress>100%</stress> MATCH
     .title = 100% Translation Memory match
 
 
+## Editor right-to-left mark indicator
+## Shown for right-to-left locales when the translation starts with left-to-right text,
+## and an invisible right-to-left mark (RLM) will be added to its start when saved.
+## “RLM” and “LRM” are abbreviations of Unicode character names and should not be translated.
+
+editor-RtlMarkIndicator--rlm = RLM
+    .title = A right-to-left mark (RLM) will be added at the start of this translation, so that it is displayed right-to-left. To prevent this, start the translation with a left-to-right mark (LRM).
+
+
 ## Editor New Contributor Tooltip
 ## Renders the guidelines for new contributors
 
