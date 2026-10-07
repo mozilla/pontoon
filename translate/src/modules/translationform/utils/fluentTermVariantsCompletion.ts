@@ -7,17 +7,38 @@ import type { FluentTerms, FluentTermType } from '~/api/fluentTerms';
 
 const MATCH_TERM_RE = /\{[ \t\n]*-([A-Za-z][\w-]*)\(([A-Za-z][\w-]*)?$/;
 
-type VariantOptions = Array<{ selector: string; key: string }>;
+type VariantOptions = Array<{ selector: string; keys: Array<string> }>;
 
-function getTermVariants(value: FluentTermType['value']): VariantOptions {
-  if (typeof value === 'string' || Array.isArray(value) || !('sel' in value)) {
+export function getTermVariants(
+  value: FluentTermType['value'],
+): VariantOptions {
+  if (Array.isArray(value) || !('sel' in value)) {
     return [];
   }
-  return value.alt.flatMap((alt) =>
-    alt.keys.flatMap((key, i) =>
-      typeof key === 'string' ? [{ selector: value.sel[i], key }] : [],
-    ),
-  );
+
+  const keysBySelector = new Map<string, Set<string>>();
+  for (const alt of value.alt) {
+    for (const [i, selector] of value.sel.entries()) {
+      let key = alt.keys[i];
+      if (typeof key !== 'string') {
+        if (!key['*']) {
+          continue;
+        }
+        key = key['*'];
+      }
+      let keys = keysBySelector.get(selector);
+      if (!keys) {
+        keys = new Set();
+        keysBySelector.set(selector, keys);
+      }
+      keys.add(key);
+    }
+  }
+
+  return [...keysBySelector].map(([selector, keys]) => ({
+    selector,
+    keys: [...keys],
+  }));
 }
 
 export function fluentTermVariantsCompletion(
@@ -57,11 +78,12 @@ export function fluentTermVariantsCompletion(
       from: parenIdx + 1,
       to: context.pos,
       validFor: /^[A-Za-z][\w-]*$/,
-      options: variants.map(({ selector, key }) => ({
-        label: key,
-        apply: `${selector}: "${key}"`,
-        type: 'keyword',
-      })),
+      options: variants.flatMap(({ selector, keys }) =>
+        keys.map((key) => ({
+          label: `${selector}: "${key}"`,
+          type: 'keyword',
+        })),
+      ),
     };
   };
 }

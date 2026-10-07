@@ -82,7 +82,7 @@ describe('term variants autocomplete', () => {
     const { options } = await completeInto('foo ', '{ -brand-name(');
 
     expect(options.map((option) => option.label)).toEqual(
-      expect.arrayContaining(['nominative', 'accusative']),
+      expect.arrayContaining(['case: "nominative"', 'case: "accusative"']),
     );
   });
 
@@ -96,7 +96,7 @@ describe('term variants autocomplete', () => {
     const { options } = await completeInto('foo { $bar } ', '{ -brand-name(');
 
     expect(options.map((option) => option.label)).toEqual(
-      expect.arrayContaining(['nominative', 'accusative']),
+      expect.arrayContaining(['case: "nominative"', 'case: "accusative"']),
     );
   });
 });

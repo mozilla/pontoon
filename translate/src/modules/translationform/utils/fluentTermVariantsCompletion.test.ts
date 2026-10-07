@@ -1,9 +1,13 @@
 import { CompletionContext } from '@codemirror/autocomplete';
 import { EditorState } from '@codemirror/state';
 
-import { fluentTermVariantsCompletion } from './fluentTermVariantsCompletion';
+import {
+  fluentTermVariantsCompletion,
+  getTermVariants,
+} from './fluentTermVariantsCompletion';
 
-import type { FluentTerms } from '~/api/fluentTerms';
+import type { SelectMessage } from '@mozilla/l10n';
+import type { FluentTermType, FluentTerms } from '~/api/fluentTerms';
 
 const terms: FluentTerms = {
   '-brand-name': {
@@ -19,7 +23,7 @@ const terms: FluentTerms = {
     properties: null,
     translation_value: {
       decl: {},
-      sel: ['forma'],
+      sel: ['case'],
       alt: [
         { keys: ['nor'], pat: ['marka'] },
         { keys: ['nork'], pat: ['markak'] },
@@ -35,6 +39,73 @@ const terms: FluentTerms = {
     translation_properties: null,
   },
 };
+
+describe('getTermVariants', () => {
+  const select = (
+    sel: string | SelectMessage['sel'],
+    alt: SelectMessage['alt'],
+  ): FluentTermType['value'] => ({
+    decl: {},
+    sel: [sel].flat(),
+    alt,
+  });
+
+  it('returns no variants for plain pattern terms', () => {
+    expect(getTermVariants(['Just a pattern'])).toEqual([]);
+  });
+
+  it('groups keys by selector and dedupes them', () => {
+    const value = select('case', [
+      { keys: ['nor'], pat: ['marka'] },
+      { keys: ['nork'], pat: ['markak'] },
+      { keys: [{ '*': '' }], pat: ['marka'] },
+    ]);
+
+    expect(getTermVariants(value)).toEqual([
+      { selector: 'case', keys: ['nor', 'nork'] },
+    ]);
+  });
+
+  it('zips keys with selectors within each variant', () => {
+    const value = select(
+      ['case', 'count'],
+      [
+        { keys: ['nom', 'one'], pat: ['CD'] },
+        { keys: ['nom', 'two'], pat: ['CDs'] },
+        { keys: ['acc', 'one'], pat: ['the CD'] },
+      ],
+    );
+
+    expect(getTermVariants(value)).toEqual([
+      { selector: 'case', keys: ['nom', 'acc'] },
+      { selector: 'count', keys: ['one', 'two'] },
+    ]);
+  });
+
+  it('uses the catchall key name when present', () => {
+    const value = select(
+      ['capitalize', 'case', 'number'],
+      [
+        { keys: ['yes', 'nork', 'sing'], pat: ['Leiho adimendunak'] },
+        { keys: ['yes', 'nork', 'pl'], pat: ['Leiho adimendunek'] },
+        { keys: ['yes', 'nork', { '*': 'mugg' }], pat: ['Leiho adimendunek'] },
+        { keys: ['yes', { '*': 'nor' }, 'sing'], pat: ['Leiho adimenduna'] },
+        { keys: ['yes', { '*': 'nor' }, 'pl'], pat: ['Leiho adimendunak'] },
+        { keys: [{ '*': 'no' }, 'nork', 'sing'], pat: ['leiho adimendunak'] },
+        {
+          keys: [{ '*': 'no' }, { '*': 'nor' }, { '*': 'mugg' }],
+          pat: ['leiho adimendun'],
+        },
+      ],
+    );
+
+    expect(getTermVariants(value)).toEqual([
+      { selector: 'capitalize', keys: ['yes', 'no'] },
+      { selector: 'case', keys: ['nork', 'nor'] },
+      { selector: 'number', keys: ['sing', 'pl', 'mugg'] },
+    ]);
+  });
+});
 
 describe('fluentTermVariantsCompletion', () => {
   const getTerms = vi.fn(async () => terms);
@@ -57,16 +128,9 @@ describe('fluentTermVariantsCompletion', () => {
     expect(result).not.toBeNull();
     expect(result!.from).toBe(doc.length);
     expect(result!.options.map((option) => option.label)).toEqual([
-      'nor',
-      'nork',
+      'case: "nor"',
+      'case: "nork"',
     ]);
-  });
-
-  it('applies the full `forma: "…"` form on acceptance', async () => {
-    const doc = '{ -brand-name(';
-    const result = await complete(doc);
-
-    expect(result!.options[0].apply).toBe('forma: "nor"');
   });
 
   it('completes in the middle of the text', async () => {
@@ -78,8 +142,8 @@ describe('fluentTermVariantsCompletion', () => {
     expect(result).not.toBeNull();
     expect(result!.from).toBe(pos);
     expect(result!.options.map((option) => option.label)).toEqual([
-      'nor',
-      'nork',
+      'case: "nor"',
+      'case: "nork"',
     ]);
   });
 
@@ -89,8 +153,8 @@ describe('fluentTermVariantsCompletion', () => {
 
     expect(result).not.toBeNull();
     expect(result!.options.map((option) => option.label)).toEqual([
-      'nor',
-      'nork',
+      'case: "nor"',
+      'case: "nork"',
     ]);
   });
 
@@ -101,8 +165,8 @@ describe('fluentTermVariantsCompletion', () => {
     expect(result).not.toBeNull();
     expect(result!.from).toBe('{ -brand-name('.length);
     expect(result!.options.map((option) => option.label)).toEqual([
-      'nor',
-      'nork',
+      'case: "nor"',
+      'case: "nork"',
     ]);
   });
 
@@ -118,8 +182,8 @@ describe('fluentTermVariantsCompletion', () => {
     expect(result).not.toBeNull();
     expect(result!.from).toBe(doc.length);
     expect(result!.options.map((option) => option.label)).toEqual([
-      'nominative',
-      'accusative',
+      'case: "nominative"',
+      'case: "accusative"',
     ]);
   });
 
