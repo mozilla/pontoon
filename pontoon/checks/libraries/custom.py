@@ -111,7 +111,12 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                 errors.append("Ending newline mismatch")
 
         case Resource.Format.FLUENT:
-            translation_ast = parser.parse_entry(string)
+            translation_entries = [
+                entry
+                for entry in parser.parse(string).body
+                if not isinstance(entry, ast.BaseComment)
+            ]
+            translation_ast = translation_entries[0] if translation_entries else None
             entity_ast = parser.parse_entry(entity.string)
 
             # Parse error
