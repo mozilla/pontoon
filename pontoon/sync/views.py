@@ -22,10 +22,10 @@ def sync_log_list(request: HttpRequest):
             sync_start_time=Subquery(sync_events.values("start_time")[:1]),
             sync_end_time=Subquery(sync_events.values("end_time")[:1]),
             sync_status=Subquery(sync_events.values("status")[:1]),
-            has_repositories=Exists(Repository.objects.filter(project=OuterRef("pk"))),
+            is_db_project=~Exists(Repository.objects.filter(project=OuterRef("pk"))),
         )
         .values(
-            "has_repositories",
+            "is_db_project",
             "name",
             "slug",
             "sync_start_time",

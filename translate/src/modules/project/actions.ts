@@ -19,7 +19,7 @@ type ReceiveAction = {
   readonly slug: string;
   readonly name: string;
   readonly info: string;
-  readonly hasRepositories: boolean;
+  readonly isDbProject: boolean;
   readonly tags: Tag[];
   readonly locales: LocaleOption[];
 };
@@ -35,7 +35,7 @@ export const getProject = (slug: string) => async (dispatch: AppDispatch) => {
       info,
       name,
       slug: slug_,
-      has_repositories,
+      is_db_project,
       tags,
       locales,
     } = await fetchProject(slug);
@@ -44,7 +44,7 @@ export const getProject = (slug: string) => async (dispatch: AppDispatch) => {
       slug: slug_,
       name: name,
       info: info,
-      hasRepositories: has_repositories,
+      isDbProject: is_db_project,
       tags: tags.sort((a, b) => b.priority - a.priority),
       locales: locales,
     });

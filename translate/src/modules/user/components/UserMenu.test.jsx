@@ -36,12 +36,12 @@ describe('<UserMenuDialog>', () => {
     isTranslator = true,
     isAuthenticated = true,
     location = LOCATION,
-    hasRepositories = true,
+    isDbProject = false,
     onThemeChange = () => {},
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
     const store = createReduxStore({
-      [PROJECT]: { hasRepositories },
+      [PROJECT]: { isDbProject },
     });
     return mount(
       <Provider store={store}>
@@ -99,8 +99,8 @@ describe('<UserMenuDialog>', () => {
     ).toHaveLength(0);
   });
 
-  it('hides upload & download menu items when the project has no repositories', () => {
-    const wrapper = createUserMenu({ hasRepositories: false });
+  it('hides upload & download menu items for DB projects', () => {
+    const wrapper = createUserMenu({ isDbProject: true });
 
     expect(wrapper.find(FileUpload)).toHaveLength(0);
     expect(
@@ -119,8 +119,8 @@ describe('<UserMenuDialog>', () => {
     ).toHaveLength(0);
   });
 
-  it('hides admin · current project menu item when the project has no repositories', () => {
-    const wrapper = createUserMenu({ isPM: true, hasRepositories: false });
+  it('hides admin · current project menu item for DB projects', () => {
+    const wrapper = createUserMenu({ isPM: true, isDbProject: true });
 
     expect(wrapper.find('a[href="/admin/"]')).toHaveLength(1);
     expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(0);

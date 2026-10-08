@@ -125,7 +125,7 @@ class LocaleSerializer(DynamicFieldsModelSerializer):
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
     contact = serializers.SerializerMethodField()
-    has_repositories = serializers.SerializerMethodField()
+    is_db_project = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Project
@@ -141,16 +141,13 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "disabled",
             "sync_disabled",
             "pretranslation_enabled",
-            "has_repositories",
+            "is_db_project",
         ] + TRANSLATION_STATS_FIELDS
 
     def get_contact(self, obj):
         if obj.contact:
             return obj.contact.username
         return None
-
-    def get_has_repositories(self, obj):
-        return not obj.is_db_project
 
 
 class CompactProjectSerializer(serializers.ModelSerializer):

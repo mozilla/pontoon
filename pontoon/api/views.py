@@ -272,7 +272,7 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
         if not requested or "tags" in requested:
             qs = qs.prefetch_related("tags")
 
-        if not requested or "has_repositories" in requested:
+        if not requested or "is_db_project" in requested:
             qs = qs.prefetch_related("repositories")
 
         filters = Q()
@@ -322,7 +322,7 @@ class ProjectIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
         if not requested or "tags" in requested:
             qs = qs.prefetch_related("tags")
 
-        if not requested or "has_repositories" in requested:
+        if not requested or "is_db_project" in requested:
             qs = qs.prefetch_related("repositories")
 
         # Only gather stats when requested

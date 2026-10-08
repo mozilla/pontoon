@@ -11,7 +11,7 @@ export type Project = {
   slug: string;
   name: string;
   info: string;
-  has_repositories: boolean;
+  is_db_project: boolean;
   tags: Tag[];
   locales: LocaleOption[];
 };
