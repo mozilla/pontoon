@@ -51,9 +51,8 @@ describe('term variants autocomplete', () => {
         decl: {},
         sel: ['case'],
         alt: [
-          { keys: ['nominative'], pat: ['Brand'] },
+          { keys: [{ '*': 'nominative' }], pat: ['Brand'] },
           { keys: ['accusative'], pat: ['the Brand'] },
-          { keys: [{ '*': '' }], pat: ['Brand'] },
         ],
       },
       properties: null,
@@ -78,11 +77,20 @@ describe('term variants autocomplete', () => {
     return { view, getTerms, options: currentCompletions(view.state) };
   }
 
-  it('offers term variants', async () => {
+  it('offers term variants with the default variant last', async () => {
     const { options } = await completeInto('foo ', '{ -brand-name(');
 
-    expect(options.map((option) => option.label)).toEqual(
-      expect.arrayContaining(['case: "nominative"', 'case: "accusative"']),
+    expect(options.map((option) => option.label)).toEqual([
+      'case: "accusative"',
+      'case: "nominative"',
+    ]);
+  });
+
+  it('keeps the default variant visible when filtering', async () => {
+    const { options } = await completeInto('foo ', '{ -brand-name(no');
+
+    expect(options.map((option) => option.label)).toContain(
+      'case: "nominative"',
     );
   });
 

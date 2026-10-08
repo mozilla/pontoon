@@ -8,6 +8,7 @@ import {
 
 import type { SelectMessage } from '@mozilla/l10n';
 import type { FluentTermType, FluentTerms } from '~/api/fluentTerms';
+import type { VariantOptions } from './fluentTermVariantsCompletion';
 
 const terms: FluentTerms = {
   '-brand-name': {
@@ -50,6 +51,12 @@ describe('getTermVariants', () => {
     alt,
   });
 
+  const variantKeys = (variants: VariantOptions) =>
+    variants.map(({ selector, keys }) => ({
+      selector,
+      keys: keys.map(({ key }) => key),
+    }));
+
   it('returns no variants for plain pattern terms', () => {
     expect(getTermVariants(['Just a pattern'])).toEqual([]);
   });
@@ -61,7 +68,9 @@ describe('getTermVariants', () => {
       { keys: [{ '*': '' }], pat: ['marka'] },
     ]);
 
-    expect(getTermVariants(value)).toEqual([
+    const variants = getTermVariants(value);
+
+    expect(variantKeys(variants)).toEqual([
       { selector: 'case', keys: ['nor', 'nork'] },
     ]);
   });
@@ -76,7 +85,9 @@ describe('getTermVariants', () => {
       ],
     );
 
-    expect(getTermVariants(value)).toEqual([
+    const variants = getTermVariants(value);
+
+    expect(variantKeys(variants)).toEqual([
       { selector: 'case', keys: ['nom', 'acc'] },
       { selector: 'count', keys: ['one', 'two'] },
     ]);
@@ -99,10 +110,19 @@ describe('getTermVariants', () => {
       ],
     );
 
-    expect(getTermVariants(value)).toEqual([
+    const variants = getTermVariants(value);
+
+    expect(variantKeys(variants)).toEqual([
       { selector: 'capitalize', keys: ['yes', 'no'] },
       { selector: 'case', keys: ['nork', 'nor'] },
       { selector: 'number', keys: ['sing', 'pl', 'mugg'] },
+    ]);
+    expect(
+      variants.map(({ keys }) => keys.findLast(({ isDefault }) => isDefault)),
+    ).toEqual([
+      { key: 'no', isDefault: true },
+      { key: 'nor', isDefault: true },
+      { key: 'mugg', isDefault: true },
     ]);
   });
 });

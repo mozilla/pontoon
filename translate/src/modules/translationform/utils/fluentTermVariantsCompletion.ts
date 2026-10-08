@@ -7,7 +7,10 @@ import type { FluentTerms, FluentTermType } from '~/api/fluentTerms';
 
 const MATCH_TERM_RE = /\{[ \t\n]*-([A-Za-z][\w-]*)\(([A-Za-z][\w-]*)?$/;
 
-type VariantOptions = Array<{ selector: string; keys: Array<string> }>;
+export type VariantOptions = Array<{
+  selector: string;
+  keys: Array<{ key: string; isDefault: boolean }>;
+}>;
 
 export function getTermVariants(
   value: FluentTermType['value'],
@@ -16,29 +19,44 @@ export function getTermVariants(
     return [];
   }
 
-  const keysBySelector = new Map<string, Set<string>>();
+  const keysBySelector = new Map<
+    string,
+    { keys: Set<string>; defaultKeys: Set<string> }
+  >();
   for (const alt of value.alt) {
     for (const [i, selector] of value.sel.entries()) {
-      let key = alt.keys[i];
-      if (typeof key !== 'string') {
-        if (!key['*']) {
+      const rawKey = alt.keys[i];
+      let key: string;
+      const isDefault = typeof rawKey !== 'string';
+      if (isDefault) {
+        if (!rawKey['*']) {
           continue;
         }
-        key = key['*'];
+        key = rawKey['*'];
+      } else {
+        key = rawKey;
       }
-      let keys = keysBySelector.get(selector);
-      if (!keys) {
-        keys = new Set();
-        keysBySelector.set(selector, keys);
+      let group = keysBySelector.get(selector);
+      if (!group) {
+        group = { keys: new Set(), defaultKeys: new Set() };
+        keysBySelector.set(selector, group);
       }
-      keys.add(key);
+      group.keys.add(key);
+      if (isDefault) {
+        group.defaultKeys.add(key);
+      }
     }
   }
 
-  return [...keysBySelector].map(([selector, keys]) => ({
-    selector,
-    keys: [...keys],
-  }));
+  return keysBySelector
+    .entries()
+    .map(([selector, { keys, defaultKeys }]) => ({
+      selector,
+      keys: [...keys]
+        .map((key) => ({ key, isDefault: defaultKeys.has(key) }))
+        .sort((a, b) => Number(a.isDefault) - Number(b.isDefault)),
+    }))
+    .toArray();
 }
 
 export function fluentTermVariantsCompletion(
@@ -78,10 +96,13 @@ export function fluentTermVariantsCompletion(
       from: parenIdx + 1,
       to: context.pos,
       validFor: /^[A-Za-z][\w-]*$/,
-      options: variants.flatMap(({ selector, keys }) =>
-        keys.map((key) => ({
+      options: variants.flatMap(({ selector, keys }, groupIndex) =>
+        keys.map(({ key }, keyIndex) => ({
           label: `${selector}: "${key}"`,
           type: 'keyword',
+          // Keep each group sorted the same way they are defined.
+          // Note the default comes last as per `getTermVariants()` sorting.
+          boost: -groupIndex * 100 - keyIndex,
         })),
       ),
     };
