@@ -27,7 +27,7 @@ $('body')
     const $element = $(this);
 
     timer = setTimeout(function () {
-      const translation = $element.data('translation'),
+      const translation = $element.attr('data-translation'),
         locale = $element.data('translation-locale'),
         direction = $element.data('translation-direction'),
         script = $element.data('translation-script'),
