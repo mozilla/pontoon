@@ -367,9 +367,10 @@ $(function () {
       }
     })
     .on('keydown.search', '.menu input[type=search]', function (e) {
-      // Prevent form submission on Enter
+      // Prevent form submission on Enter, but let the event bubble up to
+      // the general shortcuts handler, which selects the hovered item
       if (e.which === 13) {
-        return false;
+        e.preventDefault();
       }
     });
 
