@@ -802,7 +802,7 @@ class UploadView(APIView):
         )
         # Resources of DB projects have a blank format, so uploaded files can't be
         # parsed. See https://github.com/mozilla/pontoon/issues/4567
-        if not project.has_repositories:
+        if project.is_db_project:
             raise PermissionDenied("Uploads are not supported for this project.")
 
         get_object_or_404(ProjectLocale, project=project, locale=locale)

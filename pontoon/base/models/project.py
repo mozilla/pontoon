@@ -3,17 +3,28 @@ from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
 from django.db import models
-from django.db.models import BooleanField, Case, F, QuerySet, Sum, Value, When
+from django.db.models import (
+    BooleanField,
+    Case,
+    Exists,
+    F,
+    OuterRef,
+    QuerySet,
+    Sum,
+    Value,
+    When,
+)
 from django.utils import timezone
 
 from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
+from pontoon.base.models.repository import Repository
 from pontoon.base.models.user import User
 from pontoon.base.user_utils import user_serialize
 
 
 if TYPE_CHECKING:
-    from pontoon.base.models import Repository, Translation
+    from pontoon.base.models import Translation
     from pontoon.base.models.project_locale import ProjectLocaleQuerySet
     from pontoon.base.models.resource import ResourceQuerySet
     from pontoon.tags.models import TagQuerySet
@@ -65,7 +76,10 @@ class ProjectQuerySet(models.QuerySet["Project"]):
         """
         Only projects that are not disabled can be force-synced.
         """
-        return self.filter(disabled=False, repositories__isnull=False).distinct()
+        return self.filter(
+            Exists(Repository.objects.filter(project=OuterRef("pk"))),
+            disabled=False,
+        )
 
     def syncable(self):
         """
@@ -292,10 +306,10 @@ class Project(models.Model, AggregatedStats):
         super().save(*args, **kwargs)
 
     @property
-    def has_repositories(self) -> bool:
-        """Projects without repositories (DB projects) are stored only in the DB."""
+    def is_db_project(self) -> bool:
+        """DB projects have no repositories and are stored only in the DB."""
         # Django raises ValueError when querying related objects of an unsaved instance.
-        return self.pk is not None and self.repositories.exists()
+        return self.pk is None or not self.repositories.exists()
 
     @property
     def checkout_path(self):

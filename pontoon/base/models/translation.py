@@ -4,7 +4,7 @@ from dirtyfields import DirtyFieldsMixin
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import IntegrityError, models, transaction
-from django.db.models import Count, Q, QuerySet
+from django.db.models import Count, Exists, OuterRef, Q, QuerySet
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
@@ -14,6 +14,7 @@ from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
+from pontoon.base.models.repository import Repository
 from pontoon.base.models.user import User
 from pontoon.base.simple_preview import get_simple_preview
 from pontoon.checks import DB_FORMATS
@@ -107,8 +108,10 @@ class TranslationQuerySet(models.QuerySet["Translation"]):
         ).distinct()
 
         for translation in self.filter(
-            entity__resource__project__repositories__isnull=False
-        ).distinct():
+            Exists(
+                Repository.objects.filter(project=OuterRef("entity__resource__project"))
+            )
+        ):
             key = (translation.entity.pk, translation.locale.pk)
 
             if key not in existing:
@@ -507,7 +510,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         Mark the given locale as having changed translations since the
         last sync.
         """
-        if not self.entity.resource.project.has_repositories:
+        if self.entity.resource.project.is_db_project:
             return
 
         ChangedEntityLocale.objects.get_or_create(

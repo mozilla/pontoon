@@ -125,7 +125,7 @@ class LocaleSerializer(DynamicFieldsModelSerializer):
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
     contact = serializers.SerializerMethodField()
-    has_repositories = serializers.BooleanField(read_only=True)
+    has_repositories = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -148,6 +148,9 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         if obj.contact:
             return obj.contact.username
         return None
+
+    def get_has_repositories(self, obj):
+        return not obj.is_db_project
 
 
 class CompactProjectSerializer(serializers.ModelSerializer):

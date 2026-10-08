@@ -202,8 +202,6 @@ Requirements and limits:
 
 - You must have translator rights for the target locale, and the project locale must not
   be read-only. Otherwise the request is rejected with `403`.
-- The project must have a repository: uploads to projects stored only in the database
-  are rejected with `403`.
 - The project must not be disabled, and both the project and the resource must be
   enabled for the target locale. Otherwise the request is rejected with `404`.
 - Uploaded files must be under 5000 kB, and must match the format of the target

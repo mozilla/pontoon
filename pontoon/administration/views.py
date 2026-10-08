@@ -154,7 +154,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 .visible_for(request.user)
                 .get(pk=pk)
             )
-            if not project.has_repositories:
+            if project.is_db_project:
                 raise Http404
             form = ProjectForm(request.POST, instance=project)
             # Needed if form invalid
@@ -258,7 +258,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
     elif slug is not None:
         try:
             project = Project.objects.get(slug=slug)
-            if not project.has_repositories:
+            if project.is_db_project:
                 raise Http404
             pk = project.pk
             form = ProjectForm(instance=project)
