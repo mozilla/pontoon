@@ -40,7 +40,7 @@ markupsafe==2.0.1
 moz.l10n[xml]==0.14.2
 newrelic==9.6.0
 openai==3.0.0
-PyJWT==2.13.0
+PyJWT==2.15.0
 python-dateutil==2.9.0
 python-dotenv==1.2.2
 rapidfuzz==3.9.7
