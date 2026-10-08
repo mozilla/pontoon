@@ -143,9 +143,7 @@ def test_target_outside_checkout_is_not_removed():
             now,
         )
 
-        assert exists(join(elsewhere, "messages.properties")), (
-            "removed outside the checkout"
-        )
+        assert exists(join(elsewhere, "messages.properties"))
 
 
 @pytest.mark.django_db
