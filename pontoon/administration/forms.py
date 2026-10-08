@@ -104,9 +104,10 @@ class RepositoryForm(forms.ModelForm):
 
 
 class BaseRepositoryInlineFormSet(BaseInlineFormSet):
-    default_error_messages = {
-        "too_few_forms": "At least one repository is required.",
-    }
+    def clean(self):
+        super().clean()
+        if all(self._should_delete_form(form) for form in self.forms):
+            raise ValidationError("At least one repository is required.")
 
 
 RepositoryInlineFormSet = inlineformset_factory(
@@ -116,7 +117,6 @@ RepositoryInlineFormSet = inlineformset_factory(
     formset=BaseRepositoryInlineFormSet,
     extra=0,
     min_num=1,
-    validate_min=True,
 )
 
 

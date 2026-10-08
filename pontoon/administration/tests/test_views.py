@@ -112,6 +112,11 @@ def test_manage_project_new_with_invalid_repository(client_superuser, locale_a):
     assert response.status_code == 200
     assert b". Error." in response.content
 
+    form_data["repositories-0-url"] = ""
+    response = client_superuser.post(url, form_data)
+    assert response.status_code == 200
+    assert b"This field is required." in response.content
+
 
 @pytest.mark.django_db
 def test_manage_project_translate_link_excludes_obsolete_resources(client_superuser):
