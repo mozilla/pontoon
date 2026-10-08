@@ -980,7 +980,9 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.14.2 \
     --hash=sha256:6961af76ed6c8578679cf66662dbdffa5f27f3b16d6c9b18f765eb9a7da04e99 \
     --hash=sha256:b66a626185a6d2578a51c304725f1b4bc3b4995a06cf28de51fd9f719ff7b6bc
-    # via -r 0-base.in
+    # via
+    #   -r 0-base.in
+    #   moz-l10n
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -1926,9 +1928,9 @@ uritemplate==4.2.0 \
     --hash=sha256:480c2ed180878955863323eea31b0ede668795de182617fef9c6ca09e6ec9d0e \
     --hash=sha256:962201ba1c4edcab02e60f9a0d3821e82dfc5d2d6662a21abd533879bdb8a686
     # via drf-spectacular
-urllib3==2.7.0 \
-    --hash=sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c \
-    --hash=sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897
+urllib3==2.8.0 \
+    --hash=sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3 \
+    --hash=sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63
     # via requests
 vine==5.1.0 \
     --hash=sha256:40fdf3c48b2cfe1c38a49e9ae2da6fda88e4794c810050a728bd7413811fb1dc \
@@ -1964,6 +1966,3 @@ zensical==0.0.34 \
     --hash=sha256:eb9d880ccb25edba332e1f310b40e65afb0e1072c69530ec02afc6179b33c5ec \
     --hash=sha256:f77cb1152b51ccc5bf0c1055ac06802a6eeeff9cb8b4293919300c0becbd26bd
     # via -r 0-base.in
-
-# The following packages were excluded from the output:
-# setuptools

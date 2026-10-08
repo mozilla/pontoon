@@ -1283,6 +1283,7 @@ moz-l10n[xml]==0.14.2 \
     # via
     #   -c 1-prod.txt
     #   -r 0-base.in
+    #   moz-l10n
 mypy==2.1.0 \
     --hash=sha256:022c771234936ceac541ebaf836fe9e2abeb3f5e09aff21588fe543ff006fe21 \
     --hash=sha256:0b1a5260c95aa443083f9ed3592662941951bca3d4ca224a5dc517c38b7cf666 \
@@ -2479,9 +2480,9 @@ uritemplate==4.2.0 \
     # via
     #   -c 1-prod.txt
     #   drf-spectacular
-urllib3==2.7.0 \
-    --hash=sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c \
-    --hash=sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897
+urllib3==2.8.0 \
+    --hash=sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3 \
+    --hash=sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63
     # via
     #   -c 1-prod.txt
     #   requests
@@ -2528,6 +2529,3 @@ zensical==0.0.34 \
     # via
     #   -c 1-prod.txt
     #   -r 0-base.in
-
-# The following packages were excluded from the output:
-# setuptools
