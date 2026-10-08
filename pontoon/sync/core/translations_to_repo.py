@@ -149,6 +149,10 @@ def delete_removed_resources(
                 if lc not in locale_map or locale_map[lc] in readonly_locales:
                     continue
                 target_path = paths.format_target_path(target, lc)
+                # A symlinked target should not redirect the removal out of the checkout
+                if not is_inside(paths.base, target_path):
+                    log.error(f"{log_scope} [{lc}] Resource path outside the checkout")
+                    continue
                 try:
                     remove(target_path)
                     count += 1
