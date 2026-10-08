@@ -127,6 +127,17 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
             elif not isinstance(translation_ast, (ast.Message, ast.Term)):
                 errors.append("Translation needs to be a valid localizable entry")
 
+            elif len(translation_entries) > 1:
+                extra = translation_entries[1]
+                content = extra.content if isinstance(extra, ast.Junk) else ""
+                ch = (content or "").lstrip()[:1]
+                if ch in ("[", "*", "}"):
+                    errors.append(
+                        f'A line cannot start with "{ch}". Use {{ "{ch}" }} to write it as text.'
+                    )
+                else:
+                    errors.append("Unexpected text after the end of the message")
+
             # Message ID mismatch
             elif entity_ast.id.name != translation_ast.id.name:
                 errors.append("Translation key needs to match source string key")
