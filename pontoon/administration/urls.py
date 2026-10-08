@@ -19,12 +19,6 @@ urlpatterns = [
                     views.manually_sync_project,
                     name="pontoon.admin.project.sync",
                 ),
-                # Project strings
-                path(
-                    "strings/",
-                    views.manage_project_strings,
-                    name="pontoon.admin.project.strings",
-                ),
                 # Pretranslate project
                 path(
                     "pretranslate/",

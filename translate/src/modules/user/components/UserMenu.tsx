@@ -68,14 +68,12 @@ export function UserMenuDialog({
 
   const location = useContext(Location);
   const { locale, project, resource } = location;
-  const { dataSource } = useProject();
+  const { isDbProject } = useProject();
 
   // Resources of DB projects have a blank format, which breaks file download
   // and upload on the server side. See https://github.com/mozilla/pontoon/issues/4567
   const canDownload =
-    project !== 'all-projects' &&
-    resource !== 'all-resources' &&
-    dataSource === 'repository';
+    project !== 'all-projects' && resource !== 'all-resources' && !isDbProject;
   const canUpload = canDownload && isTranslator && !entity.readonly;
 
   const ref = useRef<HTMLUListElement>(null);
@@ -253,7 +251,7 @@ export function UserMenuDialog({
               <a href='/admin/'>{'<glyph></glyph>Admin'}</a>
             </Localized>
           </li>
-          {project !== 'all-projects' && (
+          {project !== 'all-projects' && !isDbProject && (
             <li>
               <Localized
                 id='user-UserMenu--admin-project'

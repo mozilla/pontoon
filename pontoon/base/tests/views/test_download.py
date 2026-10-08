@@ -140,7 +140,7 @@ def test_download_database_project():
         name="test-dldb",
         locales=[locale],
         visibility=Project.Visibility.PUBLIC,
-        data_source=Project.DataSource.DATABASE,
+        repositories=[],
     )
     res = ResourceFactory.create(project=project, format="po", path="file.po")
     TranslatedResourceFactory.create(locale=locale, resource=res)

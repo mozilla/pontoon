@@ -36,12 +36,12 @@ describe('<UserMenuDialog>', () => {
     isTranslator = true,
     isAuthenticated = true,
     location = LOCATION,
-    dataSource = 'repository',
+    isDbProject = false,
     onThemeChange = () => {},
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
     const store = createReduxStore({
-      [PROJECT]: { dataSource },
+      [PROJECT]: { isDbProject },
     });
     return mount(
       <Provider store={store}>
@@ -99,17 +99,8 @@ describe('<UserMenuDialog>', () => {
     ).toHaveLength(0);
   });
 
-  it('hides upload & download menu items when translating a database project', () => {
-    const wrapper = createUserMenu({ dataSource: 'database' });
-
-    expect(wrapper.find(FileUpload)).toHaveLength(0);
-    expect(
-      findLocalizedById(wrapper, 'user-UserMenu--download-translations'),
-    ).toHaveLength(0);
-  });
-
-  it('hides upload & download menu items while project data is loading', () => {
-    const wrapper = createUserMenu({ dataSource: '' });
+  it('hides upload & download menu items for DB projects', () => {
+    const wrapper = createUserMenu({ isDbProject: true });
 
     expect(wrapper.find(FileUpload)).toHaveLength(0);
     expect(
@@ -126,6 +117,13 @@ describe('<UserMenuDialog>', () => {
     expect(
       wrapper.find('a[href="/admin/projects/all-projects/"]'),
     ).toHaveLength(0);
+  });
+
+  it('hides admin · current project menu item for DB projects', () => {
+    const wrapper = createUserMenu({ isPM: true, isDbProject: true });
+
+    expect(wrapper.find('a[href="/admin/"]')).toHaveLength(1);
+    expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(0);
   });
 
   it('shows admin · current project menu item when translating a project', () => {

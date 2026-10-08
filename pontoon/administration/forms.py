@@ -1,11 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms.models import inlineformset_factory
+from django.forms.models import BaseInlineFormSet, inlineformset_factory
 
 from pontoon.base.forms import HtmlField
 from pontoon.base.models import (
-    Entity,
     ExternalResource,
     Locale,
     Project,
@@ -64,7 +63,6 @@ class ProjectForm(forms.ModelForm):
             "name",
             "slug",
             "locales",
-            "data_source",
             "can_be_requested",
             "configuration_file",
             "info",
@@ -105,13 +103,20 @@ class RepositoryForm(forms.ModelForm):
         fields = ("type", "url", "branch", "website", "source_repo")
 
 
+class BaseRepositoryInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        if all(self._should_delete_form(form) for form in self.forms):
+            raise ValidationError("At least one repository is required.")
+
+
 RepositoryInlineFormSet = inlineformset_factory(
     Project,
     Repository,
     form=RepositoryForm,
-    extra=1,
-    min_num=0,
-    validate_min=True,
+    formset=BaseRepositoryInlineFormSet,
+    extra=0,
+    min_num=1,
 )
 
 
@@ -137,13 +142,6 @@ class ExternalResourceInlineForm(forms.ModelForm):
 
 ExternalResourceInlineFormSet = inlineformset_factory(
     Project, ExternalResource, form=ExternalResourceInlineForm, extra=1
-)
-
-
-EntityFormSet = forms.modelformset_factory(
-    Entity,
-    fields=("string", "comment", "obsolete"),
-    extra=1,
 )
 
 

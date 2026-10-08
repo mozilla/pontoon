@@ -1,11 +1,12 @@
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import Exists, OuterRef, Q, Subquery
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
 from pontoon.base.models.project import Project
+from pontoon.base.models.repository import Repository
 from pontoon.sync.models import Sync
 
 
@@ -21,9 +22,10 @@ def sync_log_list(request: HttpRequest):
             sync_start_time=Subquery(sync_events.values("start_time")[:1]),
             sync_end_time=Subquery(sync_events.values("end_time")[:1]),
             sync_status=Subquery(sync_events.values("status")[:1]),
+            is_db_project=~Exists(Repository.objects.filter(project=OuterRef("pk"))),
         )
         .values(
-            "data_source",
+            "is_db_project",
             "name",
             "slug",
             "sync_start_time",

@@ -6,7 +6,6 @@ import pytest
 
 from django.core.management.base import CommandError
 
-from pontoon.base.models import Project
 from pontoon.sync.management.commands import sync_projects
 from pontoon.test.factories import ProjectFactory
 
@@ -58,9 +57,9 @@ def test_syncable_projects_only(command, mock_sync_project_task):
 
 @pytest.mark.django_db
 def test_non_repository_projects(command, mock_sync_project_task):
-    """Only sync projects with data_source=repository."""
-    ProjectFactory.create(data_source=Project.DataSource.DATABASE)
-    repo_project = ProjectFactory.create(data_source=Project.DataSource.REPOSITORY)
+    """Only sync projects with repositories."""
+    ProjectFactory.create(repositories=[])
+    repo_project = ProjectFactory.create()
 
     execute_command(command)
     mock_sync_project_task.delay.assert_called_with(
