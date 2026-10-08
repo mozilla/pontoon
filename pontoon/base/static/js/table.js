@@ -38,7 +38,7 @@ $('body')
         date = date_formatter.format(new Date($element.attr('datetime'))),
         time = time_formatter.format(new Date($element.attr('datetime')));
 
-      // These five values are contributor-supplied and reach us HTML-decoded,
+      // The following values are contributor-supplied and reach us HTML-decoded,
       // so the tooltip is assembled from nodes: each one is set as text or as
       // an attribute, and none of them is ever parsed as markup.
       const $wrapper = $('<div class="wrapper"></div>').append(
