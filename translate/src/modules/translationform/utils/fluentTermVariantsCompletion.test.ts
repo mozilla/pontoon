@@ -190,6 +190,36 @@ describe('fluentTermVariantsCompletion', () => {
     ]);
   });
 
+  it('completes missing variants after existing function call arguments', async () => {
+    const doc = '{ -brand-name(foo: "bar", ';
+    const result = await complete(doc);
+
+    expect(result).not.toBeNull();
+    expect(result!.from).toBe(doc.length);
+    expect(result!.options.map((option) => option.label)).toEqual([
+      'case: "nor"',
+      'case: "nork"',
+    ]);
+  });
+
+  it('replaces the current variant name after existing function call arguments', async () => {
+    const doc = '{ -brand-name(foo: "bar", ca';
+    const result = await complete(doc);
+
+    expect(result).not.toBeNull();
+    expect(result!.from).toBe(doc.length - 'ca'.length);
+    expect(result!.options.map((option) => option.label)).toEqual([
+      'case: "nor"',
+      'case: "nork"',
+    ]);
+  });
+
+  it('does not repeat variants already in the term call', async () => {
+    const result = await complete('{ -brand-name(case: "nor", ');
+
+    expect(result).toBeNull();
+  });
+
   it('falls back to source variants', async () => {
     getTerms.mockResolvedValueOnce({
       ...terms,

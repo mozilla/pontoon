@@ -5,7 +5,8 @@ import type {
 
 import type { FluentTerms, FluentTermType } from '~/api/fluentTerms';
 
-const MATCH_TERM_RE = /\{[ \t\n]*-([A-Za-z][\w-]*)\(([A-Za-z][\w-]*)?$/;
+const MATCH_TERM_RE =
+  /\{[ \t\n]*-([A-Za-z][\w-]*)\((?:[^),]*,)*[ \t\n]*([A-Za-z][\w-]*)?$/;
 
 export type VariantOptions = Array<{
   selector: string;
@@ -79,7 +80,17 @@ export function fluentTermVariantsCompletion(
       return null;
     }
 
-    const parenIdx = match.index + match[0].indexOf('(');
+    const partial = match[2] ?? '';
+    const from = context.pos - partial.length;
+    const args = match[0].slice(
+      match[0].indexOf('(') + 1,
+      match[0].length - partial.length,
+    );
+    const usedSelectors = new Set(
+      [...args.matchAll(/(?:^|,)\s*([A-Za-z][\w-]*)\s*:/g)].map(
+        ([, selector]) => selector,
+      ),
+    );
     const requestedTerm = `-${match[1]}`;
     const term = terms[requestedTerm];
 
@@ -87,13 +98,15 @@ export function fluentTermVariantsCompletion(
       return null;
     }
 
-    const variants = getTermVariants(term.translation_value ?? term.value);
+    const variants = getTermVariants(term.translation_value ?? term.value).filter(
+      ({ selector }) => !usedSelectors.has(selector),
+    );
     if (!variants.length) {
       return null;
     }
 
     return {
-      from: parenIdx + 1,
+      from,
       to: context.pos,
       validFor: /^[A-Za-z][\w-]*$/,
       options: variants.flatMap(({ selector, keys }, groupIndex) =>
