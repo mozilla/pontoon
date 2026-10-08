@@ -216,9 +216,9 @@ system.
 
 Direct dependencies for Pontoon are distributed across these files:
 
-1. `requirements/base.in`: Running Pontoon in any environment
-2. `requirements/prod.in`: Running Pontoon in production
-3. `requirements/dev.in`: Development
+1. `requirements/0-base.in`: Running Pontoon in any environment
+2. `requirements/1-prod.in`: Running Pontoon in production
+3. `requirements/2-dev.in`: Development
 
 In order to pin and hash the direct and indirect dependencies, we use
 [uv pip compile](https://docs.astral.sh/uv/#the-pip-interface), which
@@ -233,7 +233,7 @@ $ make requirements
 
 When adding a new requirement, add it to the appropriate
 `requirements/*.in` file. For example, to add the development dependency
-`foobar` version 5, add `foobar==5` to `requirements/dev.in`, and then
+`foobar` version 5, add `foobar==5` to `requirements/2-dev.in`, and then
 run the command from above.
 
 Once you are done adding, removing or updating requirements, rebuild
@@ -345,7 +345,7 @@ these steps, as they don't affect your setup if nothing has changed:
 git pull origin main
 
 # Install new dependencies or update existing ones.
-uv pip install -U --force -r requirements/prod.txt
+uv pip install -U --force -r requirements/1-prod.txt
 
 # Run database migrations.
 python manage.py migrate
