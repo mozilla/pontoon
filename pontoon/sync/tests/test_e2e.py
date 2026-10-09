@@ -1073,7 +1073,12 @@ def test_config_changes(caplog):
             Sync.Status.DONE
         )
 
-        # Adding it back restores it
+        # Adding it back restores the same entity, keeping its translation
         assert sync_with_config(config_all) == {"en/a.ftl": 1, "en/b.ftl": 1}
+        restored_b = Entity.objects.get(
+            resource__project=project, resource__path="en/b.ftl"
+        )
+        assert restored_b.pk == entity_b.pk and not restored_b.obsolete
+        assert restored_b.translation_set.count() == 1
         with open(join(repo.checkout_path, "de-Test", "b.ftl")) as file:
             assert file.read() == "b = B de\n"

@@ -137,15 +137,14 @@ def test_resource_deobsoletion():
         res_c = ResourceFactory.create(
             project=project, path="c.ftl", format="fluent", obsolete=True
         )
-        EntityFactory.create(
-            resource=res_c, key=["key-4"], string="key-4 = Message 4", obsolete=True
+        EntityFactory.create(resource=res_c, string="key-1 = Message 1", obsolete=True)
+        newest_key_1 = EntityFactory.create(
+            resource=res_c, string="key-1 = Message 1", obsolete=True
         )
         EntityFactory.create(
-            resource=res_c, key=["key-5"], string="key-5 = Message 5", obsolete=True
+            resource=res_c, string="key-2 = Old message 2", obsolete=True
         )
-        EntityFactory.create(
-            resource=res_c, key=["key-6"], string="key-6 = Message 6", obsolete=True
-        )
+        EntityFactory.create(resource=res_c, string="key-4 = Message 4", obsolete=True)
 
         # Filesystem setup
         c_ftl = dedent(
@@ -177,25 +176,25 @@ def test_resource_deobsoletion():
         # Test
         assert sync_resources_from_repo(
             project, locale_map, mock_checkout, paths, now
-        ) == (3, {"c.ftl"}, set())
+        ) == (2, {"c.ftl"}, set())
 
         res_c = project.resources.get(path="c.ftl")
 
         # resource de-obsoleted
         assert not res_c.obsolete
 
-        # TODO Entities should also be de-obsoleted
-        assert {
-            (tuple(ent.key), ent.obsolete)
-            for ent in Entity.objects.filter(resource=res_c)
-        } == {
-            (("key-1",), False),
-            (("key-2",), False),
-            (("key-3",), False),
-            (("key-4",), True),
-            (("key-5",), True),
-            (("key-6",), True),
-        }
+        assert sorted(
+            (ent.key[0], ent.obsolete) for ent in Entity.objects.filter(resource=res_c)
+        ) == [
+            ("key-1", False),
+            ("key-1", True),
+            ("key-2", False),
+            ("key-2", True),
+            ("key-3", False),
+            ("key-4", True),
+        ]
+        newest_key_1.refresh_from_db()
+        assert not newest_key_1.obsolete and newest_key_1.section is not None
 
 
 @pytest.mark.django_db

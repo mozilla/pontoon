@@ -153,7 +153,6 @@ def update_resources(
         return 0, set()
 
     # De-obsolete any resources that were previously marked obsolete
-    # TODO: Entity de-obsoletion needs to accompany Resource de-obsoletion
     deobsoletion_paths = [
         res.path for res in changed_resources.values() if res.obsolete
     ]
@@ -235,6 +234,32 @@ def update_resources(
             elif not db_section.pk:
                 new_sections.pop()
 
+    restored: dict[tuple[str, L10nId], Entity] = {}
+    if deobsoletion_paths:
+        for ent in (
+            Entity.objects.filter(
+                resource__project=project,
+                resource__path__in=deobsoletion_paths,
+                obsolete=True,
+            )
+            .order_by("-pk")
+            .iterator()
+        ):
+            key = (changed_resources[ent.resource_id].path, tuple(ent.key))
+            next_ent = next_entities.get(key, None)
+            if (
+                next_ent is not None
+                and key not in prev_entities
+                and key not in restored
+                and ent.value == next_ent.value
+                and ent.properties == next_ent.properties
+            ):
+                ent.obsolete = False
+                ent.date_obsoleted = None
+                restored[key] = ent
+        Entity.objects.bulk_update(restored.values(), ["obsolete", "date_obsoleted"])
+        prev_entities.update(restored)
+
     obsolete_entities: list[Entity] = []
     log_rm: dict[str, list[str]] = defaultdict(list)
     for key, prev_ent in prev_entities.items():
@@ -285,7 +310,8 @@ def update_resources(
             + model_update(prev_ent, "section", next_ent.section)
         ):
             mod_entities.append(prev_ent)
-            log_mod[key_path].append("/".join(key_entity))
+            if key not in restored:
+                log_mod[key_path].append("/".join(key_entity))
     Entity.objects.bulk_update(
         mod_entities, ["value", "properties", "string", "comment", "meta", "section"]
     )
@@ -302,10 +328,16 @@ def update_resources(
     added_entities = Entity.objects.bulk_create(added_entities)
     add_count = len(added_entities)
 
-    if log_rm or log_add or log_mod:
-        for path in sorted(list(log_rm.keys() | log_add.keys() | log_mod.keys())):
+    log_restore: dict[str, list[str]] = defaultdict(list)
+    for key_path, key_entity in restored:
+        log_restore[key_path].append("/".join(key_entity))
+    if log_rm or log_add or log_mod or log_restore:
+        for path in sorted(
+            list(log_rm.keys() | log_add.keys() | log_mod.keys() | log_restore.keys())
+        ):
             for desc, log_data in (
                 ("Obsolete", log_rm),
+                ("Restored", log_restore),
                 ("Changed", log_mod),
                 ("New", log_add),
             ):
