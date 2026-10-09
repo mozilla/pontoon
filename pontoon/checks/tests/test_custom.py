@@ -174,6 +174,51 @@ def test_ftl_non_localizable_entries():
     ) == {"pErrors": ["Expected an entry start"]}
 
 
+def test_ftl_trailing_junk():
+    """Content after the end of the entry is not ignored"""
+    ftl_entity = mock_entity("fluent", string="key = value")
+    assert run_custom_checks(
+        ftl_entity,
+        "key =\n    <strong>[aaa]</strong> <strong>\n    [bbb]</strong>\n",
+    ) == {"pErrors": ['A line cannot start with "[". Use { "[" } to write it as text.']}
+    assert run_custom_checks(ftl_entity, "key = translation\n    *[bbb]\n") == {
+        "pErrors": ['A line cannot start with "*". Use { "*" } to write it as text.']
+    }
+    assert run_custom_checks(ftl_entity, "key = translation\n    }\n") == {
+        "pErrors": ['A line cannot start with "}". Use { "}" } to write it as text.']
+    }
+    assert run_custom_checks(ftl_entity, "key = translation\nmore text\n") == {
+        "pErrors": ["Unexpected text after the end of the message"]
+    }
+    assert (
+        run_custom_checks(
+            ftl_entity,
+            'key =\n    <strong>[aaa]</strong> <strong>\n    { "[" }bbb]</strong>\n',
+        )
+        == {}
+    )
+
+
+def test_ftl_multiple_entries():
+    """Only one entry is allowed"""
+    assert run_custom_checks(
+        mock_entity("fluent", string="key = value"),
+        "key = translation\nother = translation",
+    ) == {"pErrors": ["Unexpected text after the end of the message"]}
+
+
+def test_ftl_comments():
+    """Comments before the entry are ignored, but not after it"""
+    ftl_entity = mock_entity("fluent", string="key = value")
+    assert run_custom_checks(ftl_entity, "# comment\nkey = translation") == {}
+    assert run_custom_checks(ftl_entity, "key = translation\n# comment") == {
+        "pErrors": ["Unexpected text after the end of the message"]
+    }
+    assert run_custom_checks(ftl_entity, "# comment") == {
+        "pErrors": ["Expected an entry start"]
+    }
+
+
 def test_ftl_id_missmatch():
     """ID of the source string and translation must be the same"""
     assert run_custom_checks(
