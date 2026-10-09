@@ -1,6 +1,7 @@
 import pytest
 
 from allauth.socialaccount.models import SocialAccount
+from guardian.utils import get_anonymous_user
 
 from django.db.utils import IntegrityError
 
@@ -28,7 +29,8 @@ def test_human_users(user_a, sync_user, gt_user, tm_user):
 
 @pytest.mark.django_db
 def test_system_users(user_a, sync_user, gt_user, tm_user):
-    assert set(system_users()) == {sync_user, gt_user, tm_user}
+    anonymous_user = get_anonymous_user()
+    assert set(system_users()) == {sync_user, gt_user, tm_user, anonymous_user}
     assert user_a not in system_users()
 
     # Filtered by role

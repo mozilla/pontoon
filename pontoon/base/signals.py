@@ -1,5 +1,6 @@
 import logging
 
+from guardian.conf import settings as guardian_settings
 from guardian.models import GroupObjectPermission
 
 from django.contrib.auth.models import Group, Permission, User
@@ -218,7 +219,10 @@ def assign_project_locale_group_permissions(sender, **kwargs):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
+        # django-guardian keeps an AnonymousUser row for anonymous permissions.
+        # It's not a real person, so treat it as a system user.
+        system_user = instance.username == guardian_settings.ANONYMOUS_USER_NAME
+        UserProfile.objects.create(user=instance, system_user=system_user)
 
 
 @receiver(post_save, sender=User)
