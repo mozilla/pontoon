@@ -98,6 +98,12 @@ class Checkout:
                 log.error(f"[{slug}:{co_path}] Skipping path outside the checkout")
         self.changed = inside
 
+    def prev_file(self, co_path: str) -> str | None:
+        """The contents of a file at the last synced revision, if available."""
+        if not self.prev_commit:
+            return None
+        return get_repo(self.repo.type).show(self.path, self.prev_commit, co_path)
+
 
 class Checkouts(NamedTuple):
     source: Checkout

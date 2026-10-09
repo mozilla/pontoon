@@ -2,7 +2,7 @@ import logging
 import re
 
 from contextlib import contextmanager
-from os import makedirs
+from os import makedirs, symlink
 from os.path import isfile, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
@@ -1015,3 +1015,83 @@ def test_locales_from_config():
             tr.locale.code: tr.total_strings
             for tr in TranslatedResource.objects.filter(resource__project=project)
         } == {"fr-Test": 1, "de-Test": 1}
+
+
+@pytest.mark.django_db
+def test_config_changes(caplog):
+    mock_vcs = MockVersionControl(changed=["l10n.toml"])
+    with mock_setup(mock_vcs) as (repo, locale):
+        # Database setup
+        project = ProjectFactory.create(
+            name="test-config-changes",
+            configuration_file="l10n.toml",
+            locales=[locale],
+            repositories=[repo],
+            system_project=False,
+        )
+
+        # Filesystem setup, with en/c.ftl linking out of the checkout
+        config_a = '[[paths]]\nreference = "en/a.ftl"\nl10n = "{locale}/a.ftl"\n'
+        config_all = '[[paths]]\nreference = "en/*.ftl"\nl10n = "{locale}/*.ftl"\n'
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en": {"a.ftl": "a = A\n", "b.ftl": "b = B\n"},
+                "de-Test": {"a.ftl": "a = A de\n", "b.ftl": "b = B de\n"},
+                "l10n.toml": config_a,
+            },
+        )
+        build_file_tree(settings.MEDIA_ROOT, {"elsewhere.ftl": "secret = Secret\n"})
+        symlink(
+            join(settings.MEDIA_ROOT, "elsewhere.ftl"),
+            join(repo.checkout_path, "en", "c.ftl"),
+        )
+
+        def sync_with_config(config: str) -> dict[str, int]:
+            config_path = join(repo.checkout_path, "l10n.toml")
+            with open(config_path) as file:
+                mock_vcs.prev_files["l10n.toml"] = file.read()
+            with open(config_path, "w") as file:
+                file.write(config)
+            sync_project_task(project.pk)
+            return {
+                tr.resource.path: tr.approved_strings
+                for tr in TranslatedResource.objects.filter(resource__project=project)
+            }
+
+        assert sync_with_config(config_a) == {"en/a.ftl": 1}
+
+        # Adding en/b.ftl imports it with its translation, without reading en/c.ftl
+        assert sync_with_config(config_all) == {"en/a.ftl": 1, "en/b.ftl": 1}
+
+        # Removing it from configuration obsoletes it
+        assert sync_with_config(config_a) == {"en/a.ftl": 1}
+        entity_b = Entity.objects.get(
+            resource__project=project, resource__path="en/b.ftl"
+        )
+        assert entity_b.obsolete and entity_b.resource.obsolete
+        assert "Invalid resource path" not in caplog.text
+        assert Sync.objects.filter(project=project).latest("pk").status == (
+            Sync.Status.DONE
+        )
+
+        # Adding it back restores it
+        assert sync_with_config(config_all) == {"en/a.ftl": 1, "en/b.ftl": 1}
+        with open(join(repo.checkout_path, "de-Test", "b.ftl")) as file:
+            assert file.read() == "b = B de\n"
+
+        build_file_tree(
+            repo.checkout_path,
+            {"l10n": {"de-Test": {"a.ftl": "a = A de v2\n", "b.ftl": "b = B de\n"}}},
+        )
+        config_moved = config_all.replace('"{locale}/', '"l10n/{locale}/')
+        assert sync_with_config(config_moved) == {"en/a.ftl": 1, "en/b.ftl": 1}
+        translation_a = Translation.objects.get(
+            entity__resource__project=project, entity__key=["a"], active=True
+        )
+        assert translation_a.string == "a = A de v2\n"
+
+        sync_with_config(config_all.replace('"en/*.ftl"', '"en/*.flt"'))
+        assert not project.resources.filter(obsolete=True).exists()
+        assert "Not removing 2 of 2 source files" in caplog.text
