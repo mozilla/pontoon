@@ -835,6 +835,39 @@ describe('<EditorProvider>', () => {
     });
   });
 
+  it('keeps lines starting with [ when toggling Fluent source view', () => {
+    let editor, result, actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      result = useContext(EditorResult);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    mountSpy(Spy, 'fluent', 'key = test');
+    act(() => editor.fields[0].handle.current.setValue('aaa\n[bbb]'));
+    act(() => actions.setResultFromInput());
+    act(() => actions.toggleSourceView());
+
+    expect(editor).toMatchObject({
+      sourceView: true,
+      fields: [
+        {
+          handle: { current: { value: 'key =\n    aaa\n    { "[" }bbb]' } },
+        },
+      ],
+    });
+
+    act(() => actions.setResultFromInput());
+    act(() => actions.toggleSourceView());
+
+    expect(editor).toMatchObject({ sourceView: false });
+    expect(result).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: ['aaa\n', { _: '[' }, 'bbb]'],
+    });
+  });
+
   it('reconstructs message after Fluent source view changes', () => {
     let editor, result, actions;
     const Spy = () => {

@@ -1,5 +1,6 @@
 import ftl from '@fluent/dedent';
 
+import { parseEntry } from './parseEntry';
 import { serializeEntry } from './serializeEntry';
 
 describe('serialize fluent entry', () => {
@@ -49,6 +50,95 @@ describe('serialize fluent entry', () => {
           }
 
       `);
+  });
+
+  it('escapes [, * and . at the start of a line', () => {
+    const entry = {
+      format: 'fluent',
+      id: 'key',
+      value: ['<strong>[aaa]</strong> <strong>\n[bbb]</strong>\n*ccc\n  .ddd'],
+    };
+    const source = serializeEntry(entry);
+    expect(source).toEqual(ftl`
+      key =
+          <strong>[aaa]</strong> <strong>
+          { "[" }bbb]</strong>
+          { "*" }ccc
+            { "." }ddd
+
+      `);
+    expect(parseEntry('fluent', source)).toEqual({
+      format: 'fluent',
+      id: 'key',
+      value: [
+        '<strong>[aaa]</strong> <strong>\n',
+        { _: '[' },
+        'bbb]</strong>\n',
+        { _: '*' },
+        'ccc\n  ',
+        { _: '.' },
+        'ddd',
+      ],
+    });
+    expect(entry.value).toEqual([
+      '<strong>[aaa]</strong> <strong>\n[bbb]</strong>\n*ccc\n  .ddd',
+    ]);
+  });
+
+  it('escapes the start of a multiline pattern', () => {
+    const entry = {
+      format: 'fluent',
+      id: 'key',
+      value: null,
+      attributes: new Map([['attr', ['[aaa]\nbbb']]]),
+    };
+    const source = serializeEntry(entry);
+    expect(source).toEqual(ftl`
+      key =
+          .attr =
+              { "[" }aaa]
+              bbb
+
+      `);
+    expect(parseEntry('fluent', source)).not.toBeNull();
+  });
+
+  it('escapes the start of lines in variants', () => {
+    const entry = {
+      format: 'fluent',
+      id: 'key',
+      value: {
+        decl: { n: { $: 'n', fn: 'number' } },
+        sel: ['n'],
+        alt: [
+          { keys: ['one'], pat: ['aaa\n[bbb]'] },
+          { keys: [{ '*': 'other' }], pat: ['ccc\n*ddd'] },
+        ],
+      },
+    };
+    const source = serializeEntry(entry);
+    expect(source).toEqual(ftl`
+      key =
+          { $n ->
+              [one]
+                  aaa
+                  { "[" }bbb]
+             *[other]
+                  ccc
+                  { "*" }ddd
+          }
+
+      `);
+    expect(parseEntry('fluent', source)).not.toBeNull();
+  });
+
+  it('does not escape syntax characters elsewhere', () => {
+    const entry = {
+      format: 'fluent',
+      id: 'key',
+      value: ['[aaa] *bbb .ccc { $ddd }'],
+    };
+    expect(serializeEntry(entry)).toEqual('key = [aaa] *bbb .ccc { $ddd }\n');
   });
 });
 
