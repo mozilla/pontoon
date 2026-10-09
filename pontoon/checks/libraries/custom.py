@@ -111,13 +111,10 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                 errors.append("Ending newline mismatch")
 
         case Resource.Format.FLUENT:
-            translation_entries = [
-                entry
-                for entry in parser.parse(string).body
-                if not isinstance(entry, ast.BaseComment)
-            ]
-            translation_ast = translation_entries[0] if translation_entries else None
+            translation_ast = parser.parse_entry(string)
             entity_ast = parser.parse_entry(entity.string)
+            end = translation_ast.span.end if translation_ast.span else len(string)
+            extra = string[end:].lstrip()
 
             # Parse error
             if isinstance(translation_ast, ast.Junk):
@@ -127,11 +124,9 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
             elif not isinstance(translation_ast, (ast.Message, ast.Term)):
                 errors.append("Translation needs to be a valid localizable entry")
 
-            elif len(translation_entries) > 1:
-                extra = translation_entries[1]
-                content = extra.content if isinstance(extra, ast.Junk) else ""
-                ch = (content or "").lstrip()[:1]
-                if ch in ("[", "*", "}"):
+            elif extra:
+                ch = extra[0]
+                if ch in "[*.}":
                     errors.append(
                         f'A line cannot start with "{ch}". Use {{ "{ch}" }} to write it as text.'
                     )
