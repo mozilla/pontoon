@@ -28,6 +28,8 @@ from pontoon.sync.formats import as_entity
 
 log = logging.getLogger(__name__)
 
+MASS_REMOVAL_THRESHOLD = 0.9
+
 
 def sync_resources_from_repo(
     project: Project,
@@ -122,7 +124,7 @@ def remove_resources(
         ref_db_paths = {get_db_path(paths, ref_path) for ref_path in paths.ref_paths}
         current_paths = set(project.resources.current().values_list("path", flat=True))
         unreferenced_paths = current_paths - ref_db_paths
-        if len(unreferenced_paths) > 0.9 * len(current_paths):
+        if len(unreferenced_paths) > MASS_REMOVAL_THRESHOLD * len(current_paths):
             log.warning(
                 f"[{project.slug}] Not removing {len(unreferenced_paths)} of {len(current_paths)} source files missing from the project configuration, check its reference paths"
             )

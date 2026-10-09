@@ -59,9 +59,7 @@ def add_newly_configured_files(
         return
     source, target = checkouts
     src_changed = {join(source.path, co_path) for co_path in source.changed}
-    if src_changed.isdisjoint(
-        normpath(cfg_path) for cfg_path in paths.config_paths()
-    ):
+    if src_changed.isdisjoint(normpath(cfg_path) for cfg_path in paths.config_paths()):
         return
     tgt_changed = {join(target.path, co_path) for co_path in target.changed}
     current = set(project.resources.current().values_list("path", flat=True))
