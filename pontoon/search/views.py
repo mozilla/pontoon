@@ -17,9 +17,14 @@ from pontoon.settings.base import SITE_URL
 
 
 def get_valid_locale_code(request, locale_code):
-    """Return a valid locale code, falling back to project locale or en-GB."""
+    """Return a valid locale code, falling back to the user's homepage locale,
+    project locale or en-GB."""
     visible_locales = Locale.objects.visible()
     if not locale_code or not visible_locales.filter(code=locale_code).exists():
+        if request.user.is_authenticated:
+            homepage = request.user.profile.custom_homepage
+            if homepage and visible_locales.filter(code=homepage).exists():
+                return homepage
         return get_project_locale_from_request(request, visible_locales) or "en-GB"
     return locale_code
 

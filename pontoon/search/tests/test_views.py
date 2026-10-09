@@ -2,6 +2,8 @@ import pytest
 
 from django.urls import reverse
 
+from pontoon.test import factories
+
 
 @pytest.fixture
 def search_url():
@@ -72,3 +74,20 @@ def test_search_options_explicit_url_params_override_profile(
     assert "search-identifiers-enabled enabled" in content
     assert "match-case-enabled enabled" in content
     assert "match-whole-word-enabled enabled" in content
+
+
+@pytest.mark.django_db
+def test_search_locale_defaults_to_homepage_locale(
+    member, locale_a, locale_b, search_url
+):
+    """Homepage locale is used ahead of the Accept-Language header."""
+    project = factories.ProjectFactory()
+    factories.ResourceFactory(project=project)
+    factories.ProjectLocaleFactory(project=project, locale=locale_a)
+    factories.ProjectLocaleFactory(project=project, locale=locale_b)
+    member.user.profile.custom_homepage = locale_a.code
+    member.user.profile.save()
+
+    response = member.client.get(search_url, HTTP_ACCEPT_LANGUAGE=locale_b.code)
+    assert response.status_code == 200
+    assert f'<span class="code">{locale_a.code}</span>' in response.content.decode()
