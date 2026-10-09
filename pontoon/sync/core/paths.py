@@ -55,9 +55,11 @@ def add_newly_configured_files(
     checkouts: Checkouts,
     paths: L10nConfigPaths | L10nDiscoverPaths,
 ) -> None:
+    if isinstance(paths, L10nDiscoverPaths):
+        return
     source, target = checkouts
     src_changed = {join(source.path, co_path) for co_path in source.changed}
-    if not isinstance(paths, L10nConfigPaths) or src_changed.isdisjoint(
+    if src_changed.isdisjoint(
         normpath(cfg_path) for cfg_path in paths.config_paths()
     ):
         return
