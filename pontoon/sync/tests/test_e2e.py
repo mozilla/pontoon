@@ -1049,7 +1049,10 @@ def test_config_changes(caplog):
         )
 
         def sync_with_config(config: str) -> dict[str, int]:
-            with open(join(repo.checkout_path, "l10n.toml"), "w") as file:
+            config_path = join(repo.checkout_path, "l10n.toml")
+            with open(config_path) as file:
+                mock_vcs.prev_files["l10n.toml"] = file.read()
+            with open(config_path, "w") as file:
                 file.write(config)
             sync_project_task(project.pk)
             return {
@@ -1077,6 +1080,17 @@ def test_config_changes(caplog):
         assert sync_with_config(config_all) == {"en/a.ftl": 1, "en/b.ftl": 1}
         with open(join(repo.checkout_path, "de-Test", "b.ftl")) as file:
             assert file.read() == "b = B de\n"
+
+        build_file_tree(
+            repo.checkout_path,
+            {"l10n": {"de-Test": {"a.ftl": "a = A de v2\n", "b.ftl": "b = B de\n"}}},
+        )
+        config_moved = config_all.replace('"{locale}/', '"l10n/{locale}/')
+        assert sync_with_config(config_moved) == {"en/a.ftl": 1, "en/b.ftl": 1}
+        translation_a = Translation.objects.get(
+            entity__resource__project=project, entity__key=["a"], active=True
+        )
+        assert translation_a.string == "a = A de v2\n"
 
         sync_with_config(config_all.replace('"en/*.ftl"', '"en/*.flt"'))
         assert not project.resources.filter(obsolete=True).exists()

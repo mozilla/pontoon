@@ -281,6 +281,7 @@ def test_rename_resource_with_config():
             changed=["l10n.toml"],
             removed=[],
             renamed=[("en/a.ftl", "src/a.ftl"), ("en/b.ftl", "src/b.ftl")],
+            prev_commit=None,
         )
         checkouts = Checkouts(mock_checkout, mock_checkout)
         paths = find_paths(project, checkouts)

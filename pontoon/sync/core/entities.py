@@ -58,7 +58,7 @@ def sync_resources_from_repo(
         if isinstance(paths, L10nConfigPaths)
         else set()
     )
-    add_newly_configured_files(checkouts, paths, current_paths)
+    add_newly_configured_files(project, checkouts, paths, current_paths)
     # db_path -> parsed_resource
     updates: dict[str, L10nResource[Message]] = {}
     source_paths = set(paths.ref_paths)

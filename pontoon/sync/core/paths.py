@@ -1,6 +1,8 @@
 import logging
 
 from os.path import isfile, join, normpath, relpath
+from tomllib import loads
+from typing import Any
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, get_android_locale
 
@@ -50,7 +52,38 @@ def find_paths(
     return paths
 
 
+def find_prev_config_paths(
+    project: Project, checkouts: Checkouts, paths: L10nConfigPaths
+) -> L10nConfigPaths | None:
+    """The project configuration at the last synced revision, if it can be read."""
+    source = checkouts.source
+    if not source.prev_commit:
+        return None
+
+    def load_prev(cfg_path: str) -> dict[str, Any]:
+        co_path = relpath(cfg_path, source.path)
+        cfg = source.prev_file(co_path)
+        if cfg is None:
+            raise FileNotFoundError(co_path)
+        return loads(cfg)
+
+    try:
+        prev_paths = L10nConfigPaths(
+            next(paths.config_paths()),
+            cfg_load=load_prev,
+            locale_map={"android_locale": get_android_locale},
+        )
+    except Exception as error:
+        log.warning(f"[{project.slug}] Previous configuration not available: {error}")
+        return None
+    if checkouts.target != checkouts.source:
+        prev_paths.base = checkouts.target.path
+    prev_paths.locales = paths.locales
+    return prev_paths
+
+
 def add_newly_configured_files(
+    project: Project,
     checkouts: Checkouts,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     current_paths: set[str],
@@ -61,21 +94,26 @@ def add_newly_configured_files(
     src_changed = {join(source.path, co_path) for co_path in source.changed}
     if src_changed.isdisjoint(normpath(cfg_path) for cfg_path in paths.config_paths()):
         return
+    prev_paths = find_prev_config_paths(project, checkouts, paths)
+    renamed_refs = {join(source.path, new_path) for _, new_path in source.renamed}
     tgt_changed = {join(target.path, co_path) for co_path in target.changed}
     for ref_path in paths.ref_paths:
-        if (
-            relpath(ref_path, paths.ref_root) in current_paths
-            or not isfile(ref_path)
-            or not is_inside(source.path, ref_path)
-        ):
+        if not isfile(ref_path) or not is_inside(source.path, ref_path):
             continue
-        if ref_path not in src_changed:
+        tracked = relpath(ref_path, paths.ref_root) in current_paths
+        if not tracked and ref_path not in src_changed:
             source.changed.append(relpath(ref_path, source.path))
         tgt_template, locales = paths.target(ref_path)
         if tgt_template is None:
             continue
         for locale in locales:
             tgt_path = paths.format_target_path(tgt_template, locale)
+            if tracked and (
+                ref_path in renamed_refs
+                or prev_paths is None
+                or prev_paths.target(ref_path, locale=locale)[0] == tgt_path
+            ):
+                continue
             if (
                 tgt_path not in tgt_changed
                 and isfile(tgt_path)
