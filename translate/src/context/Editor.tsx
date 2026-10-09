@@ -28,6 +28,7 @@ import {
   htmlElementEscapes,
 } from '~/utils/message/entryInformation';
 import { messageEntryFromEntityTranslation } from '~/utils/message/fromEntity';
+import { addRtlMarks, removeRtlMark } from '~/utils/message/rtlMark';
 import { getMessageEntryFormat } from '~/utils/message/getMessageEntryFormat';
 import { specialFormats } from '~/utils/message/specialFormats';
 import { pojoEquals } from '~/utils/pojo';
@@ -265,6 +266,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const pendingFieldValues = useRef<Array<[string, string]> | null>(null);
   const [result, setResult] = useState<MessageEntry | null>(null);
 
+  // A leading RLM is kept out of the editor, and added back on save.
+  // https://github.com/mozilla/pontoon/issues/3236
+  const rtl = locale.direction === 'rtl';
+  const editOpts = { rtl };
+  const editString = (str: string) => (rtl ? removeRtlMark(str) : str);
+
   const actions = useMemo<EditorActions>(() => {
     if (readonly) {
       return initEditorActions;
@@ -272,6 +279,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     const buildOpts = {
       escapeHTML: htmlElementEscapes(sourceEntry),
       trim: !hasOuterWhitespace(sourceEntry),
+      rtl,
     };
 
     const resetFields = (next: EditorData): EditorData => {
@@ -302,7 +310,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         setState((prev) => {
           const { fields, focusField, sourceView } = prev;
           let field = focusField.current ?? fields[0];
-          field.handle.current.setValue(str);
+          field.handle.current.setValue(editString(str));
           const next = {
             ...prev,
             machinery: { manual, translation: str, sources },
@@ -337,7 +345,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           } else {
             next.fields = prev.sourceView
               ? editSource(entry)
-              : editMessageEntry(sourceEntry, entry);
+              : editMessageEntry(sourceEntry, entry, editOpts);
           }
           const state = resetFields(next);
           return {
@@ -370,14 +378,14 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             if (entry && !requiresSourceView(entry)) {
               next.fields = prev.sourceView
                 ? editSource(entry)
-                : editMessageEntry(sourceEntry, entry);
+                : editMessageEntry(sourceEntry, entry, editOpts);
             } else {
               next.fields = editSource(str);
               next.sourceView = true;
             }
           } else {
-            next.fields = editMessageEntry(sourceEntry, prev.initial);
-            next.fields[0].handle.current.setValue(str);
+            next.fields = editMessageEntry(sourceEntry, prev.initial, editOpts);
+            next.fields[0].handle.current.setValue(editString(str));
           }
           return resetFields(next);
         }),
@@ -395,9 +403,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         setState((state) => {
           // Inside setState() only to access the current `state` value
           const { base, fields, sourceView } = state;
-          const result = sourceView
+          let result = sourceView
             ? parseEntryFromFluentSource(sourceEntry, fields)
             : buildMessageEntry(base, fields, buildOpts);
+          if (sourceView && rtl && result) {
+            result = addRtlMarks(result);
+          }
           setResult(result);
           return state;
         }),
@@ -409,9 +420,13 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             const entry = parseEntryFromFluentSource(sourceEntry, fields);
             if (entry && !requiresSourceView(entry)) {
               includeSourceAttributesAndDeclarations(entry, sourceEntry);
-              const fields = editMessageEntry(sourceEntry, entry);
+              const fields = editMessageEntry(sourceEntry, entry, editOpts);
               state.focusField.current = fields[0];
-              setResult(entry);
+              setResult(
+                rtl
+                  ? (buildMessageEntry(entry, fields, buildOpts) ?? entry)
+                  : entry,
+              );
               return { ...state, base: entry, fields, sourceView: false };
             }
           } else if (format === 'fluent') {
@@ -427,7 +442,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           return state;
         }),
     };
-  }, [format, readonly, sourceEntry]);
+  }, [format, readonly, rtl, sourceEntry]);
 
   useEffect(() => {
     const base = messageEntryFromEntityTranslation(entity, locale);
@@ -435,7 +450,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     const sourceView = requiresSourceView(base);
     const fields = sourceView
       ? editSource(serializeEntry(base))
-      : editMessageEntry(sourceEntry, base);
+      : editMessageEntry(sourceEntry, base, editOpts);
     setState(() => ({
       pk: entity.pk,
       busy: false,

@@ -2,6 +2,8 @@ import React, { useContext } from 'react';
 
 import { EditorData, EditorResult } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
+import { Locale } from '~/context/Locale';
+import { RLM } from '~/utils/message/rtlMark';
 
 import { TranslationLength } from './TranslationLength';
 import { vi } from 'vitest';
@@ -17,8 +19,15 @@ describe('<TranslationLength>', () => {
     vi.restoreAllMocks();
   });
 
-  function mountTranslationLength(format, source, value, comment) {
+  function mountTranslationLength(
+    format,
+    source,
+    value,
+    comment,
+    direction = 'ltr',
+  ) {
     const context = new Map([
+      [Locale, { direction }],
       [EditorData, { sourceView: false, fields: [{}] }],
       [EditorResult, { value: [value] }],
       [EntityView, { entity: { key: ['id'], comment, format, value: source } }],
@@ -67,5 +76,18 @@ describe('<TranslationLength>', () => {
 
     const div = container.querySelector('.translation-vs-original');
     expect(div.childNodes[0].textContent).toEqual('19');
+  });
+
+  it('does not count an RLM added to RTL translations', () => {
+    const { container } = mountTranslationLength(
+      '',
+      ['12345'],
+      `${RLM}%s فایل`,
+      '',
+      'rtl',
+    );
+
+    const div = container.querySelector('.translation-vs-original');
+    expect(div.childNodes[0].textContent).toEqual('7');
   });
 });

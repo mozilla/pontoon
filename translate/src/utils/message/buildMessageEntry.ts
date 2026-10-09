@@ -7,10 +7,14 @@ import {
 } from '@mozilla/l10n';
 import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
+import { addRtlMark } from './rtlMark';
 
 /**
  * Get a `MessageEntry` corresponding to `fields`, based on `base`.
  * Returns `null` on parse error.
+ *
+ * With `rtl` set, patterns that would otherwise be displayed
+ * with a left-to-right base direction get a leading RLM.
  */
 export function buildMessageEntry(
   base: MessageEntry,
@@ -18,6 +22,7 @@ export function buildMessageEntry(
   options: {
     escapeHTML: RegExp | null;
     trim: boolean;
+    rtl?: boolean;
   } = { escapeHTML: null, trim: false },
 ): MessageEntry | null {
   const res = structuredClone(base);
@@ -41,6 +46,9 @@ export function buildMessageEntry(
     }
     if (options.trim) {
       src = src.trim();
+    }
+    if (options.rtl) {
+      src = addRtlMark(src);
     }
     return parsePattern(format, src, {
       editable: true,
