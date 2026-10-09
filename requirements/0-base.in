@@ -2,10 +2,10 @@
 # that are used in both prod and dev environments.
 #
 # The requirements listed here are incomplete,
-# and no compiled requirements/base.txt file is provided.
+# and no compiled requirements/0-base.txt file is provided.
 # Instead, install dependencies from one of the following:
-# - prod.txt: required for running Pontoon in production
-# - dev.txt: required for running and working on Pontoon in development
+# - 1-prod.txt: required for running Pontoon in production
+# - 2-dev.txt: required for running and working on Pontoon in development
 #
 # When making changes to any requirements/*.in file,
 # recompile the requirements with:
@@ -19,7 +19,7 @@ beautifulsoup4==4.12.3
 celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==3.1.2
-Django==5.2.15
+Django==5.2.18
 djangorestframework==3.17.1
 django-ace==1.43.5
 django-allauth[socialaccount]==65.16.1
@@ -40,7 +40,7 @@ markupsafe==2.0.1
 moz.l10n[xml]==0.14.2
 newrelic==9.6.0
 openai==3.0.0
-PyJWT==2.13.0
+PyJWT==2.15.0
 python-dateutil==2.9.0
 python-dotenv==1.2.2
 rapidfuzz==3.9.7

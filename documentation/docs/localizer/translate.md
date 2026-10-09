@@ -85,7 +85,7 @@ In the COPY FROM ANOTHER LOCALE section, the user can select a locale and click 
 
 ## Downloading and uploading translations
 
-Pontoon provides the ability to download and upload translations, including [terminology](glossary.md#terminology) and [translation memories](glossary.md#translation-memory). To access these features, click on the profile icon in the top-right corner of any page. Note that the user must be in the translation workspace for the download/upload options to be displayed in the dropdown menu.
+Pontoon provides the ability to download and upload translations, including [terminology](glossary.md#terminology) and [translation memories](glossary.md#translation-memory). To access these features, click on the profile icon in the top-right corner of any page. Note that the user must be in the translation workspace for the download/upload options to be displayed in the dropdown menu. Translations can’t be downloaded or uploaded for projects that are stored only in Pontoon’s database, like Terminology.
 
 ![Profile dropdown menu](../assets/localizer/translate/profile_menu.png "Screenshot of the profile dropdown menu with download and upload options")
 

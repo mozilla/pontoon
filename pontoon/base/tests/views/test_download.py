@@ -131,3 +131,23 @@ def test_download_xliff():
           </file>
         </xliff>
         """)
+
+
+@pytest.mark.django_db
+def test_download_database_project():
+    locale = LocaleFactory.create(code="de-Test")
+    project = ProjectFactory.create(
+        name="test-dldb",
+        locales=[locale],
+        visibility=Project.Visibility.PUBLIC,
+        repositories=[],
+    )
+    res = ResourceFactory.create(project=project, format="po", path="file.po")
+    TranslatedResourceFactory.create(locale=locale, resource=res)
+
+    request = RequestFactory().get(
+        "/translations/?code=de-Test&slug=test-dldb&part=file.po"
+    )
+    request.user = UserFactory()
+    response = download_translations(request)
+    assert response.status_code == 403

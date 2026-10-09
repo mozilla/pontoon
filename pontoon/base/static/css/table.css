@@ -215,6 +215,7 @@ table.table.project-list.hidden {
   display: block;
   margin: -20px 0 0 40px;
   overflow-wrap: break-word;
+  text-align: start;
 }
 
 .table .latest-activity .tooltip footer {

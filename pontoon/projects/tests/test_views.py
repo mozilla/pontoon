@@ -41,6 +41,21 @@ def test_project_view(client, project_a, resource_a):
 
 
 @pytest.mark.django_db
+def test_project_view_admin_link(client_superuser, project_a, resource_a):
+    """
+    Checks that the admin link is only shown for projects with repositories.
+    """
+    admin_url = f'href="/admin/projects/{project_a.slug}/"'.encode()
+
+    response = client_superuser.get(f"/projects/{project_a.slug}/")
+    assert admin_url in response.content
+
+    project_a.repositories.all().delete()
+    response = client_superuser.get(f"/projects/{project_a.slug}/")
+    assert admin_url not in response.content
+
+
+@pytest.mark.django_db
 def test_project_view_filtered_teams(
     client, locale_a, project_a, project_locale_a, resource_a
 ):
@@ -87,3 +102,24 @@ def test_project_top_contributors(client, project_a, project_b):
         assert list(mock_render.call_args[0][0]["contributors"]) == [
             project_b_contributor
         ]
+
+
+@pytest.mark.django_db
+def test_project_teams_latest_activity_locale(client, translation_a):
+    """
+    Checks if the latest activity tooltip data includes the translation locale.
+    """
+    locale = translation_a.locale
+    locale.direction = "rtl"
+    locale.script = "Arab"
+    locale.save()
+
+    response = client.get(
+        f"/projects/{translation_a.entity.resource.project.slug}/ajax/",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert f'data-translation-locale="{locale.code}"' in content
+    assert 'data-translation-direction="rtl"' in content
+    assert 'data-translation-script="Arab"' in content

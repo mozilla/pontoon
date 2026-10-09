@@ -27,6 +27,7 @@ const DEFAULT_PROJECT_STATE = {
   slug: '',
   name: '',
   info: '',
+  isDbProject: true,
   tags: [],
   locales: [],
 };

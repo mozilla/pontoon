@@ -125,6 +125,7 @@ class LocaleSerializer(DynamicFieldsModelSerializer):
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
     contact = serializers.SerializerMethodField()
+    is_db_project = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Project
@@ -140,6 +141,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "disabled",
             "sync_disabled",
             "pretranslation_enabled",
+            "is_db_project",
         ] + TRANSLATION_STATS_FIELDS
 
     def get_contact(self, obj):

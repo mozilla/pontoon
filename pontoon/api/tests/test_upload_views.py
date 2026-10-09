@@ -195,6 +195,19 @@ def test_upload_readonly_project_locale(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("url", ENDPOINTS)
+def test_upload_database_project(url, pretranslator, project_locale_a, resource_path):
+    project_locale_a.project.repositories.all().delete()
+
+    response = _upload(
+        _pat_client(pretranslator.user), url, project_locale_a, resource_path
+    )
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Uploads are not supported for this project."
+
+
+@pytest.mark.django_db
 def test_upload_pretranslations_requires_pretranslators_group(
     upload_translator, project_locale_a, resource_path
 ):

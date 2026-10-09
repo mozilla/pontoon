@@ -219,14 +219,14 @@ project's VCS repository by the next sync.
 
 Status codes:
 
-| Code  | Meaning                                                                                                    |
-| ----- | ---------------------------------------------------------------------------------------------------------- |
-| `200` | Upload accepted (possibly with `"updated": 0`)                                                             |
-| `400` | Missing or invalid field, unsupported format, unparseable or empty file, or file too large                 |
-| `403` | Not authenticated, invalid or expired token, missing CSRF token, or insufficient permission                |
-| `404` | Unknown or disabled project, unknown locale or resource, or project or resource not enabled for the locale |
-| `409` | A concurrent upload or review changed the same translations; retry the request                             |
-| `429` | Rate limit exceeded                                                                                        |
+| Code  | Meaning                                                                                                       |
+| ----- | ------------------------------------------------------------------------------------------------------------- |
+| `200` | Upload accepted (possibly with `"updated": 0`)                                                                |
+| `400` | Missing or invalid field, unsupported format, unparseable or empty file, or file too large                    |
+| `403` | Not authenticated, invalid or expired token, missing CSRF token, insufficient permission, or database project |
+| `404` | Unknown or disabled project, unknown locale or resource, or project or resource not enabled for the locale    |
+| `409` | A concurrent upload or review changed the same translations; retry the request                                |
+| `429` | Rate limit exceeded                                                                                           |
 
 ### `POST /api/v2/upload/pretranslations/`
 

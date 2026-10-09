@@ -171,14 +171,6 @@ $(function () {
   const setLocalesCheckbox = $('#id_set_locales_from_repo');
   const configFileInput = $('#id_configuration_file');
   function setLocalesUpdate() {
-    const controls = $('.repo-locale-control');
-    if ($('#id_data_source').val() === 'repository') {
-      controls.show();
-    } else {
-      controls.hide();
-      setLocalesCheckbox.prop('checked', false);
-    }
-
     const configFile = configFileInput.val();
     const localeSource = configFile ? 'the configuration file' : 'repository';
     const label = $('#id_set_locales_from_repo + span');
@@ -239,27 +231,6 @@ $(function () {
     });
   });
 
-  // Show new strings input or link when source type is "database".
-  function displayNewStringsInput(input) {
-    if (input.val() === 'database') {
-      $('.new-strings').show();
-      $('.manage-strings').show();
-
-      // For now, we also hide the entire Repositories section. We might
-      // want to revisit that behavior later.
-      $('.repositories').hide();
-    } else {
-      $('.new-strings').hide();
-      $('.manage-strings').hide();
-      $('.repositories').show();
-    }
-  }
-  const dataSourceInput = $('#id_data_source');
-  dataSourceInput.on('change', function () {
-    displayNewStringsInput(dataSourceInput);
-  });
-  displayNewStringsInput(dataSourceInput);
-
   // Suggest public repository website URL
   $('body').on('blur', '.repo input', function () {
     const val = $(this)
@@ -282,7 +253,6 @@ $(function () {
   // Add inline form item (e.g. external resource)
   const count = {
     externalresource: $('.externalresource:last').data('count'),
-    entity: $('.entity:last').data('count'),
     tag: $('.tag:last').data('count'),
   };
   $('.add-inline').click(function (e) {
@@ -298,9 +268,7 @@ $(function () {
     );
     count[type]++;
 
-    // These two forms of selectors cover all the cases for django-generated forms we use.
     $('#id_' + type + '_set-TOTAL_FORMS').val(count[type]);
-    $('#id_form-TOTAL_FORMS').val(count[type]);
   });
 
   // Toggle branch input

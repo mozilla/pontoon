@@ -18,10 +18,6 @@ This guide covers administrative tasks in Pontoon — managing projects, locales
 
     How to set up a standard VCS-backed project in Pontoon, including repository configuration, locale selection, tags, and deadlines.
 
-- :material-calendar-clock: **[Adding a New DB Project](adding-new-db-project.md)**
-
-    How to create database-backed projects for newsletters, campaigns, and surveys — no VCS required.
-
 - :material-translate: **[Adding a New Locale](adding-new-locale.md)**
 
     How to add a new language/locale to Pontoon, including machine translation setup and plural rules.

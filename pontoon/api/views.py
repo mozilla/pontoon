@@ -272,6 +272,9 @@ class ProjectListView(RequestFieldsMixin, generics.ListAPIView):
         if not requested or "tags" in requested:
             qs = qs.prefetch_related("tags")
 
+        if not requested or "is_db_project" in requested:
+            qs = qs.prefetch_related("repositories")
+
         filters = Q()
         if include_disabled == "true":
             filters |= Q(disabled=True)
@@ -318,6 +321,9 @@ class ProjectIndividualView(RequestFieldsMixin, generics.RetrieveAPIView):
         # Only prefetch tags when requested
         if not requested or "tags" in requested:
             qs = qs.prefetch_related("tags")
+
+        if not requested or "is_db_project" in requested:
+            qs = qs.prefetch_related("repositories")
 
         # Only gather stats when requested
         if not requested or requested & set(TRANSLATION_STATS_FIELDS):
@@ -794,6 +800,10 @@ class UploadView(APIView):
         project = get_object_or_404(
             Project.objects.visible_for(request.user).available(), slug=project_slug
         )
+        # Resources of DB projects have a blank format, so uploaded files can't be
+        # parsed. See https://github.com/mozilla/pontoon/issues/4567
+        if project.is_db_project:
+            raise PermissionDenied("Uploads are not supported for this project.")
 
         get_object_or_404(ProjectLocale, project=project, locale=locale)
 

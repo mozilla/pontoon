@@ -19,6 +19,7 @@ type ReceiveAction = {
   readonly slug: string;
   readonly name: string;
   readonly info: string;
+  readonly isDbProject: boolean;
   readonly tags: Tag[];
   readonly locales: LocaleOption[];
 };
@@ -30,12 +31,20 @@ export const getProject = (slug: string) => async (dispatch: AppDispatch) => {
   // When 'all-projects' are selected, we do not fetch data.
   dispatch({ type: REQUEST, slug });
   if (slug !== 'all-projects') {
-    const { info, name, slug: slug_, tags, locales } = await fetchProject(slug);
+    const {
+      info,
+      name,
+      slug: slug_,
+      is_db_project,
+      tags,
+      locales,
+    } = await fetchProject(slug);
     dispatch({
       type: RECEIVE,
       slug: slug_,
       name: name,
       info: info,
+      isDbProject: is_db_project,
       tags: tags.sort((a, b) => b.priority - a.priority),
       locales: locales,
     });

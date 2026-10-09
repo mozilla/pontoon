@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import * as Translator from '~/hooks/useTranslator';
+import { PROJECT } from '~/modules/project';
 
 import { createReduxStore } from '~/test/store';
 import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
@@ -35,11 +36,15 @@ describe('<UserMenuDialog>', () => {
     isTranslator = true,
     isAuthenticated = true,
     location = LOCATION,
+    isDbProject = false,
     onThemeChange = () => {},
   } = {}) {
     Translator.useTranslator.mockReturnValue(isTranslator);
+    const store = createReduxStore({
+      [PROJECT]: { isDbProject },
+    });
     return mount(
-      <Provider store={createReduxStore()}>
+      <Provider store={store}>
         <Location.Provider value={location}>
           <MockLocalizationProvider>
             <EntityView.Provider
@@ -94,6 +99,15 @@ describe('<UserMenuDialog>', () => {
     ).toHaveLength(0);
   });
 
+  it('hides upload & download menu items for DB projects', () => {
+    const wrapper = createUserMenu({ isDbProject: true });
+
+    expect(wrapper.find(FileUpload)).toHaveLength(0);
+    expect(
+      findLocalizedById(wrapper, 'user-UserMenu--download-translations'),
+    ).toHaveLength(0);
+  });
+
   it('hides admin · current project menu item when translating all projects', () => {
     const wrapper = createUserMenu({
       location: { ...LOCATION, project: 'all-projects' },
@@ -103,6 +117,13 @@ describe('<UserMenuDialog>', () => {
     expect(
       wrapper.find('a[href="/admin/projects/all-projects/"]'),
     ).toHaveLength(0);
+  });
+
+  it('hides admin · current project menu item for DB projects', () => {
+    const wrapper = createUserMenu({ isPM: true, isDbProject: true });
+
+    expect(wrapper.find('a[href="/admin/"]')).toHaveLength(1);
+    expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(0);
   });
 
   it('shows admin · current project menu item when translating a project', () => {

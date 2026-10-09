@@ -26,6 +26,7 @@ def projects(request):
         .visible_for(request.user)
         .prefetch_related(
             "latest_translation__entity__resource",
+            "latest_translation__locale",
             "latest_translation__user",
             "latest_translation__approved_user",
         )
@@ -104,7 +105,7 @@ def ajax_teams(request, slug):
     latest_activities = {
         trans.locale_id: trans.latest_activity
         for trans in Translation.objects.filter(id__in=latest_trans_ids).select_related(
-            "user", "approved_user"
+            "user", "approved_user", "locale"
         )
     }
 

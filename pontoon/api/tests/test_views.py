@@ -389,7 +389,7 @@ def test_project(django_assert_num_queries):
         translated_resource.unreviewed_strings = 5
         translated_resource.save()
 
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/projects/{project.slug}/", HTTP_ACCEPT="application/json"
         )
@@ -409,6 +409,7 @@ def test_project(django_assert_num_queries):
         "disabled": False,
         "sync_disabled": True,
         "pretranslation_enabled": False,
+        "is_db_project": True,
         "total_strings": 50,
         "approved_strings": 20,
         "pretranslated_strings": 10,
@@ -587,7 +588,7 @@ def test_project_locale_renamed_redirects():
 def test_system_project(django_assert_num_queries):
     project = Project.objects.get(slug="tutorial")
 
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(6):
         response = APIClient().get(
             f"/api/v2/projects/{project.slug}/", HTTP_ACCEPT="application/json"
         )
@@ -669,6 +670,7 @@ def test_projects(django_assert_num_queries):
             "disabled": p.disabled,
             "sync_disabled": p.sync_disabled,
             "pretranslation_enabled": p.pretranslation_enabled,
+            "is_db_project": p.is_db_project,
             "total_strings": p.total_strings,
             "approved_strings": p.approved_strings,
             "pretranslated_strings": p.pretranslated_strings,
@@ -682,7 +684,7 @@ def test_projects(django_assert_num_queries):
         for p in sorted(Project.objects.all(), key=lambda p: p.pk)
     ]
 
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(5):
         response = APIClient().get(
             "/api/v2/projects/?include_system=True&include_disabled=True"
         )
@@ -708,7 +710,7 @@ def test_system_projects(
 ):
     ProjectFactory.create_batch(3, disabled=True)
     ProjectFactory.create_batch(3, system_project=True)
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(5):
         response = APIClient().get("/api/v2/projects/?include_system=True")
 
     assert response.status_code == 200
@@ -726,6 +728,7 @@ def test_system_projects(
             "disabled": p.disabled,
             "sync_disabled": p.sync_disabled,
             "pretranslation_enabled": p.pretranslation_enabled,
+            "is_db_project": p.is_db_project,
             "total_strings": p.total_strings,
             "approved_strings": p.approved_strings,
             "pretranslated_strings": p.pretranslated_strings,
@@ -761,7 +764,7 @@ def test_disabled_projects(
 ):
     ProjectFactory.create_batch(3, disabled=True)
     ProjectFactory.create_batch(3, system_project=True)
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(5):
         response = APIClient().get("/api/v2/projects/?include_disabled=True")
 
         assert response.status_code == 200
@@ -779,6 +782,7 @@ def test_disabled_projects(
             "disabled": p.disabled,
             "sync_disabled": p.sync_disabled,
             "pretranslation_enabled": p.pretranslation_enabled,
+            "is_db_project": p.is_db_project,
             "total_strings": p.total_strings,
             "approved_strings": p.approved_strings,
             "pretranslated_strings": p.pretranslated_strings,
@@ -1053,7 +1057,7 @@ def test_project_locale(django_assert_num_queries):
         translated_resource.unreviewed_strings = 5
         translated_resource.save()
 
-    with django_assert_num_queries(6):
+    with django_assert_num_queries(7):
         response = APIClient().get(
             "/api/v2/af/terminology/", HTTP_ACCEPT="application/json"
         )
@@ -1104,6 +1108,7 @@ def test_project_locale(django_assert_num_queries):
             "disabled": False,
             "sync_disabled": True,
             "pretranslation_enabled": False,
+            "is_db_project": True,
             "total_strings": 50,
             "approved_strings": 20,
             "pretranslated_strings": 10,

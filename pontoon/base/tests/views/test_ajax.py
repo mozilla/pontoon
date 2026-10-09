@@ -6,9 +6,11 @@ import pytest
 
 from django.http import Http404
 
+from pontoon.base.models import Resource
 from pontoon.base.views import (
     AjaxFormPostView,
     AjaxFormView,
+    get_fluent_terms,
     get_sibling_entities,
     get_team_comments,
     get_translation_history,
@@ -21,8 +23,10 @@ from pontoon.test.factories import (
     ProjectFactory,
     ResourceFactory,
     TranslatedResourceFactory,
+    TranslationFactory,
     UserFactory,
 )
+from pontoon.translations.utils import parse_source_string_to_json
 
 
 @pytest.fixture
@@ -248,6 +252,347 @@ def test_get_sibling_entities_authentication(rf, user_a, admin):
     response = get_sibling_entities(request_b)
 
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "query",
+    [
+        # Missing project parameter
+        "locale=ab",
+        # Missing locale parameter
+        "project=project_a",
+    ],
+)
+def test_get_fluent_terms_bad_request(rf, user_a, query):
+    """Test a 400 response for missing parameters."""
+    request = rf.get(
+        f"/get-fluent-terms/?{query}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_get_fluent_terms_invalid_locale(rf, user_a, project_a):
+    """Test a 404 response for a non-existent locale."""
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale=invalid-locale",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    with pytest.raises(Http404):
+        get_fluent_terms(request)
+
+
+@pytest.mark.django_db
+def test_get_fluent_terms_private_project_access(rf, user_a, admin, locale_a):
+    """Test a 404 response for a private project for a non-admin user."""
+    project_a = ProjectFactory(name="Project A", visibility="private")
+    ResourceFactory(project=project_a)
+
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    with pytest.raises(Http404):
+        get_fluent_terms(request)
+
+    request.user = admin
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 200
+    assert json.loads(response.content) == {}
+
+
+@pytest.mark.django_db
+def test_get_fluent_terms_no_terms(rf, user_a, locale_a, project_a):
+    """Test an empty payload for a project without Fluent terms."""
+    resource_a = ResourceFactory(
+        project=project_a,
+        path="a.ftl",
+        format=Resource.Format.FLUENT,
+    )
+    EntityFactory(
+        resource=resource_a,
+        string="message = Hello",
+    )
+
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 200
+    assert json.loads(response.content) == {}
+
+
+@pytest.mark.django_db
+def test_get_fluent_terms_non_fluent_resource(rf, user_a, locale_a, project_a):
+    """Test an empty payload for a project with only non-Fluent resources."""
+    resource_a = ResourceFactory(
+        project=project_a,
+        path="a.dtd",
+        format=Resource.Format.DTD,
+    )
+    entity_a = EntityFactory(
+        resource=resource_a,
+        string="-brand-term = about Brand",
+    )
+    TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        active=True,
+        approved=True,
+        string="-brand-term = about Brand-localized",
+    )
+
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 200
+    assert json.loads(response.content) == {}
+
+
+@pytest.mark.django_db
+def test_get_fluent_terms_happy_path(rf, user_a, locale_a, project_a):
+    """Test fetching all terms in a project with their translations."""
+    resource_a = ResourceFactory(
+        project=project_a,
+        path="a.ftl",
+        format=Resource.Format.FLUENT,
+    )
+    # Term with translation.
+    entity_term = EntityFactory(
+        resource=resource_a,
+        string="-brand-term = about Brand",
+    )
+    translation = TranslationFactory(
+        entity=entity_term,
+        locale=locale_a,
+        active=True,
+        approved=True,
+        string=(
+            "-brand-term = { $case ->\n"
+            "   *[nominative] Brand-nom\n"
+            "    [accusative] Brand-acc\n"
+            "}"
+        ),
+    )
+    # Term without translation.
+    entity_term_no_translation = EntityFactory(
+        resource=resource_a,
+        string="-other-term = Other",
+    )
+    # Regular message.
+    EntityFactory(
+        resource=resource_a,
+        string="message = This uses { -brand-term }",
+    )
+
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 200
+    assert json.loads(response.content) == {
+        "-brand-term": {
+            "value": entity_term.value,
+            "properties": entity_term.properties,
+            "translation_value": translation.value,
+            "translation_properties": translation.properties,
+        },
+        "-other-term": {
+            "value": entity_term_no_translation.value,
+            "properties": entity_term_no_translation.properties,
+            "translation_value": None,
+            "translation_properties": None,
+        },
+    }
+
+
+@pytest.mark.django_db
+def test_get_fluent_terms_term_with_attributes(rf, user_a, locale_a, project_a):
+    """Test term attributes are included in value and translation payloads."""
+    resource_a = ResourceFactory(
+        project=project_a,
+        path="a.ftl",
+        format=Resource.Format.FLUENT,
+    )
+    entity_term = EntityFactory(
+        resource=resource_a,
+        string=(
+            "-brand-term = Brand\n"
+            "    .case = { $case ->\n"
+            "       *[nom] Brand\n"
+            "        [gen] Brand's\n"
+            "    }"
+        ),
+    )
+    translation_string = (
+        "-brand-term = Brand\n"
+        "    .case = { $case ->\n"
+        "       *[nom] Brand-nom\n"
+        "        [gen] Brand-gen\n"
+        "    }"
+    )
+    _, translation_value, translation_properties = parse_source_string_to_json(
+        Resource.Format.FLUENT, translation_string
+    )
+    translation = TranslationFactory(
+        entity=entity_term,
+        locale=locale_a,
+        active=True,
+        approved=True,
+        string=translation_string,
+        value=translation_value,
+        properties=translation_properties,
+    )
+
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 200
+    assert json.loads(response.content) == {
+        "-brand-term": {
+            "value": entity_term.value,
+            "properties": entity_term.properties,
+            "translation_value": translation.value,
+            "translation_properties": translation.properties,
+        },
+    }
+
+
+@pytest.mark.django_db
+def test_get_fluent_terms_obsolete_term(rf, user_a, locale_a, project_a):
+    """Test obsolete terms are not returned."""
+    resource_a = ResourceFactory(
+        project=project_a,
+        path="a.ftl",
+        format=Resource.Format.FLUENT,
+    )
+    EntityFactory(
+        resource=resource_a,
+        string="-brand-term = about Brand",
+        obsolete=True,
+    )
+
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 200
+    assert json.loads(response.content) == {}
+
+
+@pytest.mark.django_db
+def test_get_fluent_terms_inactive_translation(rf, user_a, locale_a, project_a):
+    """Test inactive translations are not used."""
+    resource_a = ResourceFactory(
+        project=project_a,
+        path="a.ftl",
+        format=Resource.Format.FLUENT,
+    )
+    entity_term = EntityFactory(
+        resource=resource_a,
+        string="-brand-term = about Brand",
+    )
+    TranslationFactory(
+        entity=entity_term,
+        locale=locale_a,
+        active=False,
+        approved=False,
+        string="-brand-term = Brand",
+    )
+
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 200
+    assert json.loads(response.content) == {
+        "-brand-term": {
+            "value": entity_term.value,
+            "properties": entity_term.properties,
+            "translation_value": None,
+            "translation_properties": None,
+        },
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("factory_kwargs", "expected"),
+    [
+        ({"active": True, "approved": True}, True),
+        ({"active": True, "approved": False, "fuzzy": True}, True),
+        ({"active": False, "approved": True}, False),
+    ],
+)
+def test_get_fluent_terms_translation_selection(
+    rf, user_a, locale_a, project_a, factory_kwargs, expected
+):
+    """Test only the active translation is used."""
+    resource_a = ResourceFactory(
+        project=project_a,
+        path="a.ftl",
+        format=Resource.Format.FLUENT,
+    )
+    entity_term = EntityFactory(
+        resource=resource_a,
+        string="-brand-term = about Brand",
+    )
+    TranslationFactory(
+        entity=entity_term,
+        locale=locale_a,
+        string="-brand-term = translated",
+        **factory_kwargs,
+    )
+
+    request = rf.get(
+        f"/get-fluent-terms/?project={project_a.slug}&locale={locale_a.code}",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+    request.user = user_a
+
+    response = get_fluent_terms(request)
+
+    assert response.status_code == 200
+    payload = json.loads(response.content)
+    has_translation_value = payload["-brand-term"]["translation_value"] is not None
+    assert has_translation_value is expected
 
 
 @pytest.mark.django_db

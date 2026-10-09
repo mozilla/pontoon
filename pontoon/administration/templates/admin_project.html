@@ -96,43 +96,6 @@
       </section>
     </div>
 
-    <section class="data-source">
-      <h3>
-        <span>Data Source</span>
-      </h3>
-      {{ form.data_source }}
-    </section>
-
-    <section class="new-strings">
-      <h3>
-        <span>Strings</span>
-      </h3>
-      {% if not pk %}
-        <div class="clearfix">
-          <label for="id_new_strings">
-            Enter strings to create the first entities. Strings are separated on
-            new line characters.
-          </label>
-          <textarea
-            id="id_new_strings"
-            name="new_strings"
-            class="strings-source"
-            placeholder="First strings"
-          ></textarea>
-        </div>
-      {% endif %}
-      {% if pk %}
-        <div class="clearfix manage-strings">
-          <a href="{{ url('pontoon.admin.project.strings', slug) }}"
-            >Manage Strings</a
-          >
-          <a href="{{ url('pontoon.admin.project.strings', slug) }}?format=csv"
-            >Download Strings</a
-          >
-        </div>
-      {% endif %}
-    </section>
-
     <section class="repositories">
       <h3>
         <span>Repositories</span>
@@ -359,7 +322,7 @@
           {{ form.sync_disabled }}{{ form.sync_disabled.label }}
         </label>
       </div>
-      {% if settings.MANUAL_SYNC and not project.disabled and project.data_source != "database" %}
+      {% if settings.MANUAL_SYNC and project and not project.disabled and not project.is_db_project %}
         <button class="sync button">Sync</button>
       {% endif %}
       <button class="button active save">Save project</button>
