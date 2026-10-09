@@ -36,7 +36,7 @@ def test_no_changes():
     assert sync_resources_from_repo(
         Mock(Project),
         {},
-        Mock(Checkout, changed=[], removed=[], renamed=[]),
+        Mock(Checkouts, source=Mock(Checkout, changed=[], removed=[], renamed=[])),
         Mock(L10nDiscoverPaths),
         now,
     ) == (0, set(), set())
@@ -96,7 +96,7 @@ def test_resource_obsoletion():
 
         # Test sync_resources_from_repo
         assert sync_resources_from_repo(
-            project, locale_map, mock_checkout, paths, now
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
         ) == (0, set(), {"c.ftl"})
         assert {res.path: res.obsolete for res in project.resources.all()} == {
             "a.ftl": False,
@@ -175,7 +175,7 @@ def test_resource_deobsoletion():
 
         # Test
         assert sync_resources_from_repo(
-            project, locale_map, mock_checkout, paths, now
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
         ) == (2, {"c.ftl"}, set())
 
         res_c = project.resources.get(path="c.ftl")
@@ -234,7 +234,7 @@ def test_rename_resource():
 
         # Test
         assert sync_resources_from_repo(
-            project, locale_map, mock_checkout, paths, now
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
         ) == (0, {"d.ftl"}, set())
         assert {res.path for res in project.resources.all()} == {
             "a.ftl",
@@ -243,6 +243,58 @@ def test_rename_resource():
         }
         res_c.refresh_from_db()
         assert res_c.path == "d.ftl"
+
+
+@pytest.mark.django_db
+def test_rename_resource_with_config():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-mv-config",
+            configuration_file="l10n.toml",
+            locales=[locale],
+            repositories=[repo],
+        )
+        for path in ["en/a.ftl", "en/b.ftl", "en/c.ftl"]:
+            ResourceFactory.create(project=project, path=path, format="fluent")
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en": {"c.ftl": ""},
+                "src": {"a.ftl": "", "b.ftl": ""},
+                "l10n.toml": '[[paths]]\nreference = "src/*.ftl"\nl10n = "{locale}/*.ftl"\n',
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=["l10n.toml"],
+            removed=[],
+            renamed=[("en/a.ftl", "src/a.ftl"), ("en/b.ftl", "src/b.ftl")],
+        )
+        checkouts = Checkouts(mock_checkout, mock_checkout)
+        paths = find_paths(project, checkouts)
+
+        # Test
+        assert sync_resources_from_repo(project, locale_map, checkouts, paths, now) == (
+            0,
+            {"src/a.ftl", "src/b.ftl"},
+            {"en/c.ftl"},
+        )
+        assert {res.path: res.obsolete for res in project.resources.all()} == {
+            "src/a.ftl": False,
+            "src/b.ftl": False,
+            "en/c.ftl": True,
+        }
 
 
 @pytest.mark.django_db
@@ -288,7 +340,7 @@ def test_add_resource():
 
         # Test
         assert sync_resources_from_repo(
-            project, locale_map, mock_checkout, paths, now
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
         ) == (3, {"c.ftl"}, set())
         res_c = project.resources.get(path="c.ftl")
         TranslatedResource.objects.get(resource=res_c)
@@ -347,7 +399,7 @@ def test_add_resource_with_comments():
 
         # Test
         assert sync_resources_from_repo(
-            project, locale_map, mock_checkout, paths, now
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
         ) == (2, {"c.ftl"}, set())
         res_c = project.resources.get(path="c.ftl")
         assert res_c.comment == "Resource-level comment for this file."
@@ -423,7 +475,7 @@ def test_update_resource():
 
         # Test sync
         assert sync_resources_from_repo(
-            project, locale_map, mock_checkout, paths, now
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
         ) == (1, {"c.ftl"}, set())
         section = Section.objects.get(resource=res["c"])
         assert {
@@ -511,7 +563,7 @@ def test_change_entities():
 
         # Test sync
         assert sync_resources_from_repo(
-            project, locale_map, mock_checkout, paths, now
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
         ) == (2, {"res.ftl"}, set())
         assert {
             tuple(ent.key): (ent.order, ent.value, ent.section, ent.comment)
@@ -587,7 +639,7 @@ def test_fluent_group_comment_change():
 
         # Test sync
         assert sync_resources_from_repo(
-            project, locale_map, mock_checkout, paths, now
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
         ) == (1, {"file.ftl"}, set())
         sections = Section.objects.filter(resource=res)
         assert len(sections) == 1

@@ -51,9 +51,9 @@ def find_paths(
 
 
 def add_newly_configured_files(
-    project: Project,
     checkouts: Checkouts,
     paths: L10nConfigPaths | L10nDiscoverPaths,
+    current_paths: set[str],
 ) -> None:
     if isinstance(paths, L10nDiscoverPaths):
         return
@@ -62,10 +62,9 @@ def add_newly_configured_files(
     if src_changed.isdisjoint(normpath(cfg_path) for cfg_path in paths.config_paths()):
         return
     tgt_changed = {join(target.path, co_path) for co_path in target.changed}
-    current = set(project.resources.current().values_list("path", flat=True))
     for ref_path in paths.ref_paths:
         if (
-            relpath(ref_path, paths.ref_root) in current
+            relpath(ref_path, paths.ref_root) in current_paths
             or not isfile(ref_path)
             or not is_inside(source.path, ref_path)
         ):

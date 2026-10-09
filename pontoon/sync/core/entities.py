@@ -22,7 +22,8 @@ from pontoon.base.models import (
     Section,
     TranslatedResource,
 )
-from pontoon.sync.core.checkout import Checkout
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.paths import add_newly_configured_files
 from pontoon.sync.formats import as_entity
 
 
@@ -34,14 +35,30 @@ MASS_REMOVAL_THRESHOLD = 0.9
 def sync_resources_from_repo(
     project: Project,
     locale_map: dict[str, Locale],
-    checkout: Checkout,
+    checkouts: Checkouts,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     now: datetime,
 ) -> tuple[int, set[str], set[str]]:
     """(added_entities_count, changed_source_paths, removed_source_paths"""
+    checkout = checkouts.source
     if not checkout.changed and not checkout.removed and not checkout.renamed:
         return 0, set(), set()
     log.info(f"[{project.slug}] Syncing entities from repo...")
+    renamed_db_paths = {
+        get_db_path(paths, join(checkout.path, old_path)): get_db_path(
+            paths, join(checkout.path, new_path)
+        )
+        for old_path, new_path in checkout.renamed
+    }
+    current_paths = (
+        {
+            renamed_db_paths.get(path, path)
+            for path in project.resources.current().values_list("path", flat=True)
+        }
+        if isinstance(paths, L10nConfigPaths)
+        else set()
+    )
+    add_newly_configured_files(checkouts, paths, current_paths)
     # db_path -> parsed_resource
     updates: dict[str, L10nResource[Message]] = {}
     source_paths = set(paths.ref_paths)
@@ -76,8 +93,8 @@ def sync_resources_from_repo(
                 )
 
     with transaction.atomic():
-        renamed_paths = rename_resources(project, paths, checkout)
-        removed_paths = remove_resources(project, paths, checkout, now)
+        renamed_paths = rename_resources(project, renamed_db_paths)
+        removed_paths = remove_resources(project, paths, checkout, current_paths, now)
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
         new_res_added_ent_count, added_paths = add_resources(
             project, updates, changed_paths, now
@@ -91,17 +108,9 @@ def sync_resources_from_repo(
     )
 
 
-def rename_resources(
-    project: Project, paths: L10nConfigPaths | L10nDiscoverPaths, checkout: Checkout
-) -> set[str]:
-    if not checkout.renamed:
+def rename_resources(project: Project, renamed_db_paths: dict[str, str]) -> set[str]:
+    if not renamed_db_paths:
         return set()
-    renamed_db_paths = {
-        get_db_path(paths, join(checkout.path, old_path)): get_db_path(
-            paths, join(checkout.path, new_path)
-        )
-        for old_path, new_path in checkout.renamed
-    }
     renamed_resources = project.resources.filter(path__in=renamed_db_paths.keys())
     for res in renamed_resources:
         new_db_path = renamed_db_paths[res.path]
@@ -115,6 +124,7 @@ def remove_resources(
     project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     checkout: Checkout,
+    current_paths: set[str],
     now: datetime,
 ) -> set[str]:
     removed_paths = {
@@ -122,7 +132,6 @@ def remove_resources(
     }
     if isinstance(paths, L10nConfigPaths):
         ref_db_paths = {get_db_path(paths, ref_path) for ref_path in paths.ref_paths}
-        current_paths = set(project.resources.current().values_list("path", flat=True))
         unreferenced_paths = current_paths - ref_db_paths
         if len(unreferenced_paths) > MASS_REMOVAL_THRESHOLD * len(current_paths):
             log.warning(
