@@ -1076,7 +1076,7 @@ def download_translations(request):
     )
     # Resources of DB projects have a blank format, so translations can't be
     # serialized. See https://github.com/mozilla/pontoon/issues/4567
-    if project.data_source == Project.DataSource.DATABASE:
+    if project.is_db_project:
         return HttpResponseForbidden("Downloads are not supported for this project.")
 
     resource = get_object_or_404(

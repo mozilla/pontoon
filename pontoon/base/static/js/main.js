@@ -365,11 +365,22 @@ $(function () {
       } else {
         ul.find('.no-match').hide();
       }
+
+      // Highlight the first match, so it can be selected with Enter
+      if (!ul.parents('.menu').is('.permanent')) {
+        ul.find('li.hover').removeClass('hover');
+        if (val) {
+          ul.find('li:visible:not(.no-match, .horizontal-separator, :has(li))')
+            .first()
+            .addClass('hover');
+        }
+      }
     })
     .on('keydown.search', '.menu input[type=search]', function (e) {
-      // Prevent form submission on Enter
+      // Prevent form submission on Enter, but let the event bubble up to
+      // the general shortcuts handler, which selects the hovered item
       if (e.which === 13) {
-        return false;
+        e.preventDefault();
       }
     });
 

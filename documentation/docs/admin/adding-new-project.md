@@ -2,7 +2,7 @@
 
 The following page describes how to make your projects localizable with your Pontoon instance.
 
-Pontoon specializes in using version control systems as the source and store of localizable strings. While [internal Pontoon DB](adding-new-db-project.md) can be used for that purpose as well, steps below assume you store strings in a [GitHub repository](https://help.github.com/en/articles/create-a-repo).
+Pontoon uses version control systems as the source and store of localizable strings. Steps below assume you store strings in a [GitHub repository](https://help.github.com/en/articles/create-a-repo).
 
 ## Verify that the project is properly localizable
 

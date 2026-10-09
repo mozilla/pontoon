@@ -29,7 +29,6 @@ nav = [
   { "Admin Guide" = [
     { "Overview" = "admin/index.md" },
     { "Adding a New Project" = "admin/adding-new-project.md" },
-    { "Adding a New DB Project" = "admin/adding-new-db-project.md" },
     { "Adding a New Locale" = "admin/adding-new-locale.md" },
     { "Managing Pretranslation" = "admin/managing-pretranslation.md" },
     { "Messaging Center" = "admin/messaging-center.md" },

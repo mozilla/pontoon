@@ -41,6 +41,21 @@ def test_project_view(client, project_a, resource_a):
 
 
 @pytest.mark.django_db
+def test_project_view_admin_link(client_superuser, project_a, resource_a):
+    """
+    Checks that the admin link is only shown for projects with repositories.
+    """
+    admin_url = f'href="/admin/projects/{project_a.slug}/"'.encode()
+
+    response = client_superuser.get(f"/projects/{project_a.slug}/")
+    assert admin_url in response.content
+
+    project_a.repositories.all().delete()
+    response = client_superuser.get(f"/projects/{project_a.slug}/")
+    assert admin_url not in response.content
+
+
+@pytest.mark.django_db
 def test_project_view_filtered_teams(
     client, locale_a, project_a, project_locale_a, resource_a
 ):

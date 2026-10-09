@@ -149,15 +149,6 @@ form .controls .button.manage-resources[disabled]:hover {
   background: var(--input-background-1);
 }
 
-#admin-strings-form .controls .add-inline {
-  float: left;
-  margin-left: 0;
-}
-
-#admin-strings-form .strings-list .entity textarea {
-  margin-bottom: 20px;
-}
-
 .controls .button.sync,
 .controls .button.sync:hover {
   float: left;
@@ -313,26 +304,14 @@ form .locales-pretranslate .item.select.selected {
   text-transform: uppercase;
 }
 
-.data-source,
-.new-strings,
 .visibility {
   position: relative;
 }
 
-.data-source #id_data_source,
-.new-strings .manage-strings,
 .visibility #id_visibility {
   position: absolute;
   right: 0;
-}
-
-.data-source #id_data_source,
-.visibility #id_visibility {
   top: 5px;
-}
-
-.new-strings .manage-strings {
-  top: -3px;
 }
 
 .repository .delete-wrapper label {
@@ -467,9 +446,6 @@ label[for='id_configuration_file'] a {
 textarea {
   height: 60px;
 }
-textarea.strings-source {
-  height: 300px;
-}
 
 .subtitle {
   font-size: 12px;
@@ -503,18 +479,6 @@ textarea.strings-source {
   display: block;
   margin-left: auto;
   margin-right: auto;
-}
-
-.new-strings {
-  display: none;
-}
-.manage-strings a {
-  margin-left: 20px;
-}
-
-/* Code specific to the manage strings page */
-.strings-list .entity {
-  margin-bottom: 30px;
 }
 
 /* Code specific to the manage tags widget */

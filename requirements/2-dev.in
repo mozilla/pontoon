@@ -9,11 +9,12 @@
 # The dependencies are sorted by category, then alphabetical order.
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
--c prod.txt
+# Must sort after 1-prod.in for Dependabot, see docker/compile_requirements.sh.
+-c 1-prod.txt
 
 # Runtime dependencies
--r base.in
-# Should match the psycopg2 version of requirements/prod.in.
+-r 0-base.in
+# Should match the psycopg2 version of requirements/1-prod.in.
 # Pre-compiled binary version for easier dev env setup.
 psycopg2-binary==2.9.12
 

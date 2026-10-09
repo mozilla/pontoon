@@ -90,4 +90,4 @@ Most projects store source content and translations outside of Pontoon, in repos
 
 Pontoon periodically (usually every 10 minutes) imports source content and translations from these repositories and writes translations back. This process is referred to as *Sync*.
 
-Pontoon also supports the so-called `DB projects`, where source content and translations are stored in Pontoon’s internal database (DB).
+Some internal projects, like Terminology and Tutorial, don’t have a repository, and their source content and translations are stored only in Pontoon’s internal database (DB).
