@@ -1082,3 +1082,7 @@ def test_config_changes(caplog):
         assert restored_b.translation_set.count() == 1
         with open(join(repo.checkout_path, "de-Test", "b.ftl")) as file:
             assert file.read() == "b = B de\n"
+
+        sync_with_config(config_all.replace('"en/*.ftl"', '"en/*.flt"'))
+        assert not Entity.objects.filter(resource__project=project, obsolete=True)
+        assert "Not removing 2 of 2 source files" in caplog.text
