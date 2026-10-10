@@ -11,6 +11,7 @@ export type TermType = {
   readonly usage: string;
   readonly translation: string;
   readonly entityId: number;
+  readonly doNotTranslate: boolean;
 };
 
 export async function fetchTerms(

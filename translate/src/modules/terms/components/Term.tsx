@@ -53,13 +53,17 @@ export function Term({ navigateToPath, term }: Props): React.ReactElement {
         <header>
           <span className='text'>{term.text}</span>
           <span className='part-of-speech'>{term.partOfSpeech}</span>
-          <a
-            href={`/${code}/terminology/common/?string=${term.entityId}`}
-            onClick={handleLinkClick}
-            className='translate'
-          >
-            Translate
-          </a>
+          {term.doNotTranslate ? (
+            <span className='do-not-translate'>Do Not Translate</span>
+          ) : (
+            <a
+              href={`/${code}/terminology/common/?string=${term.entityId}`}
+              onClick={handleLinkClick}
+              className='translate'
+            >
+              Translate
+            </a>
+          )}
         </header>
         <p className='translation'>{term.translation}</p>
         <div className='details'>
