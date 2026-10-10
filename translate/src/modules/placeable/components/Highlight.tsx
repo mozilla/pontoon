@@ -32,6 +32,9 @@ export function Highlight({
   for (const match of source.matchAll(placeholder)) {
     let l10nId: string;
     let hidden = '';
+    // Code-like placeables are isolated as LTR, so that their
+    // neutral characters (e.g. `<`, `/`, `>`) are not reordered in RTL text.
+    let ltr = true;
     const text = match[0];
     switch (text[0]) {
       case '<':
@@ -51,7 +54,10 @@ export function Highlight({
         l10nId = 'highlight-escape';
         break;
       case '-':
-        l10nId = 'highlight-cli-option';
+        // `-1` also looks like a CLI option, but is a negative number
+        l10nId = /^-\d$/.test(text)
+          ? 'highlight-number'
+          : 'highlight-cli-option';
         break;
       case 'f':
       case 'h':
@@ -60,22 +66,29 @@ export function Highlight({
       case '\n':
         l10nId = 'highlight-newline';
         hidden = '¶';
+        ltr = false;
         break;
       case '\t':
         l10nId = 'highlight-tab';
         hidden = ' →';
+        ltr = false;
         break;
       default:
         l10nId = /^\s/.test(text)
           ? 'highlight-spaces'
           : 'highlight-punctuation';
+        ltr = false;
     }
     marks.push({
       index: match.index ?? -1,
       length: text.length,
       mark: (
         <Localized id={l10nId} attrs={{ title: true }} key={++keyCounter}>
-          <mark className='placeable' data-match={text}>
+          <mark
+            className='placeable'
+            data-match={text}
+            dir={ltr ? 'ltr' : undefined}
+          >
             {hidden ? <span aria-hidden>{hidden}</span> : null}
             {text}
           </mark>
@@ -86,16 +99,31 @@ export function Highlight({
 
   for (const { l10nId, re } of [
     { l10nId: 'highlight-email', re: /(?:mailto:)?\w[\w.-]*@\w[\w.]*\w/g },
-    { l10nId: 'highlight-number', re: /[-+]?\d+(?:[\u00A0.,]\d+)*\b/gu },
+    {
+      l10nId: 'highlight-number',
+      // Latin and Persian digits, with Persian decimal and thousands separators
+      re: /[-+\u2212]?[0-9\u06F0-\u06F9]+(?:[\u00A0.,\u066B\u066C][0-9\u06F0-\u06F9]+)*(?![\w\u06F0-\u06F9])/gu,
+    },
   ]) {
     for (const match of source.matchAll(re)) {
       const text = match[0];
+      const index = match.index ?? -1;
+      // Signed numbers are isolated as LTR to keep the sign on the left of
+      // the digits in RTL text, as in CLDR (e.g. U+200E U+2212 for Persian).
+      // In ranges like `1-2` the dash is not a sign.
+      const signed =
+        /^[-+\u2212]/.test(text) &&
+        !/[\w\u06f0-\u06f9]/.test(source[index - 1] ?? '');
       marks.push({
-        index: match.index ?? -1,
+        index,
         length: text.length,
         mark: (
           <Localized id={l10nId} attrs={{ title: true }} key={++keyCounter}>
-            <mark className='placeable' data-match={text}>
+            <mark
+              className='placeable'
+              data-match={text}
+              dir={signed ? 'ltr' : undefined}
+            >
               {text}
             </mark>
           </Localized>

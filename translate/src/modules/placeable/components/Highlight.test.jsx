@@ -342,3 +342,54 @@ describe('specific marker', () => {
     });
   }
 });
+
+describe('bidi isolation', () => {
+  it('isolates consecutive tags and placeholders as LTR', () => {
+    const content = '<strong>اینڈ پوائنٹ آگے کریں:</strong> { waiting }';
+    const { getByText } = mountMarker(content);
+
+    for (const text of ['<strong>', '</strong>', '{ waiting }']) {
+      const mark = getByText(text);
+      expect(mark.tagName).toBe('MARK');
+      expect(mark).toHaveAttribute('dir', 'ltr');
+    }
+  });
+
+  it('isolates command-line options as LTR', () => {
+    const { getByText } = mountMarker('اجرا با --help یا -v');
+
+    expect(getByText('--help')).toHaveAttribute('dir', 'ltr');
+    expect(getByText('-v')).toHaveAttribute('dir', 'ltr');
+  });
+
+  it('isolates signed numbers as LTR', () => {
+    const content = 'دما -1 و −۱۲۳٫۴ و +۵ و -25 درجه';
+    const { getByText } = mountMarker(content);
+
+    for (const text of ['-1', '−۱۲۳٫۴', '+۵', '-25']) {
+      const mark = getByText(text);
+      expect(mark.tagName).toBe('MARK');
+      expect(mark).toHaveAttribute('dir', 'ltr');
+    }
+  });
+
+  it('does not isolate Arabic-Indic digits', () => {
+    const { container } = mountMarker('درجة -٣');
+    expect(container.querySelector('mark[dir]')).toBeNull();
+  });
+
+  it('does not isolate whitespace, punctuation, unsigned numbers, ranges and emails', () => {
+    const content = 'foo\tbar  «baz» 2.5 ۱۲۳ 1-2 foo@example.com';
+    const { container, getByText } = mountMarker(content);
+
+    for (const text of ['2.5', '۱۲۳', '1', '-2', 'foo@example.com']) {
+      expect(getByText(text).tagName).toBe('MARK');
+    }
+
+    const marks = container.querySelectorAll('mark');
+    expect(marks).toHaveLength(9);
+    for (const mark of marks) {
+      expect(mark).not.toHaveAttribute('dir');
+    }
+  });
+});
