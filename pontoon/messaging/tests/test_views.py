@@ -1,5 +1,7 @@
 import pytest
 
+from guardian.utils import get_anonymous_user
+
 from pontoon.base.models import User
 from pontoon.messaging.forms import MessageForm
 from pontoon.messaging.views import get_recipients
@@ -87,3 +89,21 @@ def test_get_recipients_excludes_system_users_with_permissions(
     recipients = get_recipients(form)
     assert user_a in recipients
     assert tm_user not in recipients
+
+
+@pytest.mark.django_db
+def test_get_recipients_excludes_guardian_anonymous_user(user_a):
+    """The AnonymousUser row created by django-guardian is not a contributor."""
+    form = MessageForm(
+        {
+            "subject": "Subject",
+            "body": "Body",
+            "notification": True,
+            "contributors": True,
+        }
+    )
+    assert form.is_valid()
+
+    recipients = get_recipients(form)
+    assert user_a in recipients
+    assert get_anonymous_user() not in recipients
