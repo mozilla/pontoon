@@ -21,6 +21,8 @@ const TERM = {
   definition: 'definition',
   usage: 'usage',
   translation: 'translation',
+  entityId: 1,
+  doNotTranslate: false,
 };
 
 function MockTerm({ isAuthenticated, setEditorSelection, term }) {
@@ -70,6 +72,25 @@ describe('<Term>', () => {
     expect(container.querySelector('.translation').textContent).toEqual(
       'translation',
     );
+    expect(container.querySelector('a').textContent).toEqual('Translate');
+    expect(container.querySelector('a').className).toEqual('translate');
+    expect(container.querySelector('a').getAttribute('href')).toEqual(
+      '/kg/terminology/common/?string=1',
+    );
+  });
+
+  it('shows Do Not Translate as plain text without a link', () => {
+    const { container } = render(
+      <MockTerm
+        isAuthenticated
+        setEditorSelection={vi.fn()}
+        term={{ ...TERM, doNotTranslate: true, entityId: null }}
+      />,
+    );
+
+    const label = container.querySelector('span.do-not-translate');
+    expect(label.textContent).toEqual('Do Not Translate');
+    expect(container.querySelector('a')).toBeNull();
   });
 
   it('calls the addTextToEditorTranslation function on click', async () => {
