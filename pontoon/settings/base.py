@@ -888,12 +888,27 @@ pontoon_file_handler = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler", "stream": sys.stdout}},
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "formatter": "verbose",
+        }
+    },
     "formatters": {
         "verbose": {"format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s"},
     },
     "loggers": {
-        "django": {"handlers": ["console"]},
+        "django": {"handlers": ["console"], "level": "INFO"},
+        # Ensure 500s and auth failures are visible even when DEBUG=False.
+        # Without an explicit django.request logger, allauth/socialapp errors
+        # (e.g. missing SocialApp table) surfaced as silent 500s (see #4053).
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "allauth": {"handlers": ["console"], "level": "INFO", "propagate": False},
         "pontoon": {
             "handlers": ["console"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),

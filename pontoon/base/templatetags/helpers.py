@@ -232,7 +232,16 @@ def provider_login_url(request, provider_id=settings.AUTHENTICATION_METHOD, **qu
     This function adapts the django-allauth templatetags that don't support jinja2.
     @TODO: land support for the jinja2 tags in the django-allauth.
     """
-    provider = get_adapter().get_provider(request, provider_id)
+    import logging
+
+    try:
+        provider = get_adapter().get_provider(request, provider_id)
+    except Exception:
+        logging.getLogger(__name__).exception(
+            "Failed to get auth provider %r; check SOCIALACCOUNT_PROVIDERS config",
+            provider_id,
+        )
+        raise
 
     auth_params = query.get("auth_params", None)
     process = query.get("process", None)
