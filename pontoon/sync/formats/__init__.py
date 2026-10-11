@@ -25,6 +25,71 @@ from moz.l10n.model import (
 from pontoon.base.models import Entity
 
 
+def fluent_nested_same_selector_keys(source: str) -> set[str]:
+    """
+    Return the names of Fluent entries with a select expression nested inside
+    another select using the same selector.
+
+    moz.l10n (<= 0.14.2) collapses such nesting when parsing, dropping the
+    outer text of the inner variants (mozilla/moz-l10n#211, pontoon#4183).
+    Callers use this to avoid persisting the corrupted flattening until the
+    library is fixed. Never raises; returns an empty set when parsing fails.
+    """
+    try:
+        from fluent.syntax import FluentParser
+        from fluent.syntax import ast as fluent_ast
+    except ImportError:
+        return set()
+    try:
+        res = FluentParser().parse(source)
+    except Exception:
+        return set()
+
+    def selector_key(selector) -> tuple:
+        if isinstance(selector, fluent_ast.VariableReference):
+            return ("var", selector.id.name)
+        if isinstance(selector, fluent_ast.TermReference):
+            return ("term", selector.id.name)
+        if isinstance(selector, fluent_ast.MessageReference):
+            return ("msg", selector.id.name)
+        return (type(selector).__name__,)
+
+    def has_nested_same_selector(node, ancestors: tuple = ()) -> bool:
+        if isinstance(node, fluent_ast.SelectExpression):
+            key = selector_key(node.selector)
+            if key in ancestors:
+                return True
+            ancestors = ancestors + (key,)
+            return any(has_nested_same_selector(v.value, ancestors) for v in node.variants)
+        if isinstance(node, fluent_ast.Pattern):
+            return any(has_nested_same_selector(el, ancestors) for el in node.elements)
+        if isinstance(node, fluent_ast.Placeable):
+            return has_nested_same_selector(node.expression, ancestors)
+        return False
+
+    found: set[str] = set()
+    for entry in res.body:
+        if not isinstance(entry, (fluent_ast.Message, fluent_ast.Term)):
+            continue
+        try:
+            nested = entry.value is not None and has_nested_same_selector(entry.value)
+            if not nested:
+                for attr in entry.attributes or []:
+                    if has_nested_same_selector(attr.value):
+                        nested = True
+                        break
+            if nested:
+                # fluent.syntax Term ids omit the leading "-", which Pontoon
+                # (and moz.l10n) entry ids include.
+                name = entry.id.name
+                if isinstance(entry, fluent_ast.Term):
+                    name = "-" + name
+                found.add(name)
+        except Exception:
+            continue
+    return found
+
+
 @dataclass
 class RepoTranslation:
     """
