@@ -111,28 +111,42 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                 errors.append("Ending newline mismatch")
 
         case Resource.Format.FLUENT:
-            translation_ast = parser.parse_entry(string)
-            entity_ast = parser.parse_entry(entity.string)
+            res = parser.parse(string)
+            if len(res.body) != 1 or not isinstance(
+                res.body[0], (ast.Message, ast.Term)
+            ):
+                # parse_entry() only returns the first entry and silently drops
+                # trailing Junk (e.g. a line starting with `[`), so validate
+                # the full resource instead (see #3621).
+                junk = next(
+                    (e for e in res.body if isinstance(e, ast.Junk)), None
+                )
+                if junk is not None and junk.annotations:
+                    errors.append(junk.annotations[0].message)
+                elif len(res.body) != 1:
+                    errors.append(
+                        "Translation needs to be a single localizable entry"
+                    )
+                else:
+                    errors.append(
+                        "Translation needs to be a valid localizable entry"
+                    )
 
-            # Parse error
-            if isinstance(translation_ast, ast.Junk):
-                errors.append(translation_ast.annotations[0].message)
-
-            # Not a localizable entry
-            elif not isinstance(translation_ast, (ast.Message, ast.Term)):
-                errors.append("Translation needs to be a valid localizable entry")
-
-            # Message ID mismatch
-            elif entity_ast.id.name != translation_ast.id.name:
-                errors.append("Translation key needs to match source string key")
-
-            # Empty translation entry warning; set here rather than with the other
-            # non-DB warnings to avoid needing to parse the Fluent message twice.
             else:
-                visitor = IsEmptyVisitor()
-                visitor.visit(translation_ast)
-                if visitor.is_empty:
-                    non_db_warnings.append("Empty translation")
+                translation_ast = res.body[0]
+                entity_ast = parser.parse_entry(entity.string)
+
+                # Message ID mismatch
+                if entity_ast.id.name != translation_ast.id.name:
+                    errors.append("Translation key needs to match source string key")
+
+                # Empty translation entry warning; set here rather than with the other
+                # non-DB warnings to avoid needing to parse the Fluent message twice.
+                else:
+                    visitor = IsEmptyVisitor()
+                    visitor.visit(translation_ast)
+                    if visitor.is_empty:
+                        non_db_warnings.append("Empty translation")
 
         case Resource.Format.WEBEXT:
             try:
