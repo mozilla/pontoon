@@ -595,6 +595,7 @@ class UploadPretranslationsResponseSerializer(serializers.Serializer):
 
 class UploadSuggestionsResponseSerializer(serializers.Serializer):
     """Result of a suggestion file upload."""
+
     created = serializers.IntegerField(
         help_text="Number of suggestions added by the upload."
     )

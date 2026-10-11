@@ -1044,9 +1044,7 @@ class TranslationCommentView(APIView):
         serializer = TranslationCommentRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         translation = get_object_or_404(
-            Translation.objects.select_related(
-                "entity__resource__project", "locale"
-            ),
+            Translation.objects.select_related("entity__resource__project", "locale"),
             pk=serializer.validated_data["translation"],
         )
         content = sanitize_html(serializer.validated_data["content"])

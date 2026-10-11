@@ -213,9 +213,7 @@ class Term(models.Model):
         elif not old_term.localizable and term.localizable:
             _, created = term.create_entity()
             if created:
-                notify_new_terminology_entity(
-                    Entity.objects.get(pk=term.entity_id)
-                )
+                notify_new_terminology_entity(Entity.objects.get(pk=term.entity_id))
 
         # If relevant changes are made to the localizable term that stays localizable
         else:
@@ -224,9 +222,7 @@ class Term(models.Model):
                 old_term.obsolete_entity()
                 _, created = term.create_entity()
                 if created:
-                    notify_new_terminology_entity(
-                        Entity.objects.get(pk=term.entity_id)
-                    )
+                    notify_new_terminology_entity(Entity.objects.get(pk=term.entity_id))
 
             # If Term.part_of_speech, Term.definition or Term.usage change, Entity.comment gets updated.
             elif (

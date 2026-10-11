@@ -406,9 +406,9 @@ def carry_translations_for_moves(
         old_ent = candidates[0]
         # Move non-rejected translations, preserving user, date, approved
         # metadata and history (pk unchanged, so comments/checks/TM follow).
-        moved = Translation.objects.filter(
-            entity_id=old_ent.pk, rejected=False
-        ).update(entity_id=new_ent.pk)
+        moved = Translation.objects.filter(entity_id=old_ent.pk, rejected=False).update(
+            entity_id=new_ent.pk
+        )
         if not moved:
             continue
         # Carry sync change markers so the moved translations commit outward.

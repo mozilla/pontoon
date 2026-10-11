@@ -92,9 +92,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             # concurrently or left over from before the unique constraint
             # (see #2284), then activate the winner via queryset update to
             # stay inside the same transaction.
-            translations.exclude(pk=active_pk).filter(active=True).update(
-                active=False
-            )
+            translations.exclude(pk=active_pk).filter(active=True).update(active=False)
             translations.filter(pk=active_pk).update(active=True)
             return Translation.objects.get(pk=active_pk).serialize()
 

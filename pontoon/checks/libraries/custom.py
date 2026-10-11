@@ -118,19 +118,13 @@ def run_custom_checks(entity: Entity, string: str) -> dict[str, list[str]]:
                 # parse_entry() only returns the first entry and silently drops
                 # trailing Junk (e.g. a line starting with `[`), so validate
                 # the full resource instead (see #3621).
-                junk = next(
-                    (e for e in res.body if isinstance(e, ast.Junk)), None
-                )
+                junk = next((e for e in res.body if isinstance(e, ast.Junk)), None)
                 if junk is not None and junk.annotations:
                     errors.append(junk.annotations[0].message)
                 elif len(res.body) != 1:
-                    errors.append(
-                        "Translation needs to be a single localizable entry"
-                    )
+                    errors.append("Translation needs to be a single localizable entry")
                 else:
-                    errors.append(
-                        "Translation needs to be a valid localizable entry"
-                    )
+                    errors.append("Translation needs to be a valid localizable entry")
 
             else:
                 translation_ast = res.body[0]

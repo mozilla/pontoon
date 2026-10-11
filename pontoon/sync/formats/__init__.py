@@ -36,8 +36,7 @@ def fluent_nested_same_selector_keys(source: str) -> set[str]:
     library is fixed. Never raises; returns an empty set when parsing fails.
     """
     try:
-        from fluent.syntax import FluentParser
-        from fluent.syntax import ast as fluent_ast
+        from fluent.syntax import FluentParser, ast as fluent_ast
     except ImportError:
         return set()
     try:
@@ -60,7 +59,9 @@ def fluent_nested_same_selector_keys(source: str) -> set[str]:
             if key in ancestors:
                 return True
             ancestors = ancestors + (key,)
-            return any(has_nested_same_selector(v.value, ancestors) for v in node.variants)
+            return any(
+                has_nested_same_selector(v.value, ancestors) for v in node.variants
+            )
         if isinstance(node, fluent_ast.Pattern):
             return any(has_nested_same_selector(el, ancestors) for el in node.elements)
         if isinstance(node, fluent_ast.Placeable):
