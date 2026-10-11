@@ -199,6 +199,7 @@
 .utility-container.controls a.edit:hover,
 .utility-container.controls a.all-locales:hover {
   background: var(--status-translated);
+  color: var(--translation-main-button-color);
 }
 
 #initial-section-container {
@@ -224,6 +225,7 @@
 
   .button:hover {
     background: var(--status-translated);
+    color: var(--translation-main-button-color);
   }
 }
 
@@ -276,7 +278,7 @@
 
         .translation-locale-code {
           font-style: italic;
-          color: var(--status-translated-alt);
+          color: var(--status-translated);
           vertical-align: sub;
         }
       }

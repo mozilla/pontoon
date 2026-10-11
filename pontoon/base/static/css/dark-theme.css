@@ -2,6 +2,8 @@
 .dark-theme {
   /* Main */
   --main-border-1: #4d5967;
+  --control-border: #4d5967;
+  --focus-ring: #4a9ccc;
   --moz-logo: url(../img/moz-logo-light.svg);
 
   /* User banner and details */
@@ -36,6 +38,9 @@
   --tooltip-color: #ffffff;
   --tooltip-color-2: #aaaaaa;
   --tooltip-border: #4d5967;
+  --tooltip-surface-background: #000000dd;
+  --tooltip-surface-color: #ffffff;
+  --tooltip-surface-color-2: #888888;
 
   /* Homepage */
   --homepage-background-image: url(../img/background.svg);
@@ -44,13 +49,10 @@
 
   /* Translation status */
   --status-translated: #7bc876;
-  --status-translated-alt: #7bc876;
   --status-pretranslated: #c0ff00;
-  --status-pretranslated-alt: #c0ff00;
   --status-warning: #ffa10f;
   --status-error: #ff3366;
   --status-missing: #5f7285;
-  --status-missing-alt: #5f7285;
   --status-unreviewed: #4fc4f6;
   --status-fuzzy: #fed271;
 
@@ -60,6 +62,7 @@
   --translation-color: #ffffff;
   --translation-secondary-color: #aaaaaa;
   --translation-main-button-color: #272a2f;
+  --on-status-error-color: #ffffff;
   --translation-subtitle-color: #888888;
   --editor-background: #333941;
   --editor-color: #e6e6e6;
@@ -107,6 +110,10 @@
   --dark-pink: #b3005e;
   --lilac: #c6c1f0;
   --grey-5: #385465;
+
+  /* Insights and profile charts */
+  --chart-neutral: #272a2f;
+  --chart-label-muted: #4d5967;
 
   /* Contribution graph (empty → most active) */
   --contribution-graph-0: #333941;

@@ -26,9 +26,10 @@
   display: none;
 }
 
-/* Style placeholder color in Chrome */
-.search-box input[type='search']::-webkit-input-placeholder {
+/* Placeholder color (opacity: 1 overrides Firefox's default dimming) */
+.search-box input[type='search']::placeholder {
   color: var(--light-grey-7);
+  opacity: 1;
 }
 
 .search-box > label {

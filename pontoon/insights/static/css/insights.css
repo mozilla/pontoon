@@ -101,7 +101,7 @@
         height: 44px;
 
         a {
-          color: var(--status-translated-alt);
+          color: var(--status-translated);
         }
 
         div {
