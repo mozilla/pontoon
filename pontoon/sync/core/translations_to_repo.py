@@ -191,7 +191,10 @@ def update_changed_resources(
             prev = changed_resources[db_res.path]
             if prev[1]:
                 prev[1].add(change.locale)
-    changed_entities = {change.entity for change in db_changes}
+    # Track (entity, locale) pairs, not just entities, to avoid attributing
+    # translators to locales they did not touch on forced all-locale rewrites
+    # (see #3601).
+    changed_keys = {(change.entity_id, change.locale_id) for change in db_changes}
     if changed_resources:
         n = len(changed_resources)
         str_resources = "resource" if n == 1 else "resources"
@@ -281,12 +284,29 @@ def update_changed_resources(
                     )
                     continue
                 makedirs(dirname(target_path), exist_ok=True)
+                content = "".join(
+                    serialize_resource(tr_res, gettext_plurals=lc_plurals)
+                )
+                # Only count byte-changed files: forced syncs rewrite all locales,
+                # but git only commits differing files. Counting every rewrite
+                # inflates commit messages (e.g. 122 localizations for 1 locale,
+                # see #3601).
+                try:
+                    with open(target_path, encoding="utf-8") as prev_file:
+                        prev_content = prev_file.read()
+                except FileNotFoundError:
+                    prev_content = None
+                if content == prev_content:
+                    continue
                 with open(target_path, "w", encoding="utf-8") as file:
-                    for line in serialize_resource(tr_res, gettext_plurals=lc_plurals):
-                        file.write(line)
+                    file.write(content)
                 updated_locales.add(locale)
                 for tx in lc_translations.values():
-                    if tx.approved and tx.entity in changed_entities and tx.user:
+                    if (
+                        tx.approved
+                        and (tx.entity_id, tx.locale_id) in changed_keys
+                        and tx.user
+                    ):
                         translators[tx.user].add(locale.code)
                 count += 1
             except Exception as error:
