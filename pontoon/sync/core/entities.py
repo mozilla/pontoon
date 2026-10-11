@@ -25,7 +25,7 @@ from pontoon.base.models import (
     Translation,
 )
 from pontoon.sync.core.checkout import Checkout
-from pontoon.sync.formats import as_entity
+from pontoon.sync.formats import as_entity, fluent_nested_same_selector_keys
 
 
 log = logging.getLogger(__name__)
@@ -44,6 +44,10 @@ def sync_resources_from_repo(
     log.info(f"[{project.slug}] Syncing entities from repo...")
     # db_path -> parsed_resource
     updates: dict[str, L10nResource[Message]] = {}
+    # db_path -> entry names with nested same-selector Fluent selects, whose
+    # moz.l10n flattening is lossy (see #4183). Used to avoid persisting the
+    # corrupted value until the library is fixed.
+    nested_fluent: dict[str, set[str]] = {}
     source_paths = set(paths.ref_paths)
     source_plurals = ["one", "other"]
     for co_path in checkout.changed:
@@ -66,6 +70,17 @@ def sync_resources_from_repo(
                 try:
                     Resource.Format(res.format.name)
                     updates[db_path] = res
+                    if res.format == L10nFormat.fluent:
+                        try:
+                            with open(path, encoding="utf-8") as f:
+                                affected = fluent_nested_same_selector_keys(f.read())
+                            if affected:
+                                nested_fluent[db_path] = affected
+                        except Exception as error:
+                            log.warning(
+                                f"[{project.slug}:{db_path}] "
+                                f"Nested Fluent detection failed: {error}"
+                            )
                 except ValueError:
                     log.error(
                         f"[{project.slug}:{db_path}] Skipping resource with unsupported format: {res.format.name}"
@@ -78,9 +93,11 @@ def sync_resources_from_repo(
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)
         removed_paths = remove_resources(project, paths, checkout, now)
-        old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
+        old_res_added_ent_count, changed_paths = update_resources(
+            project, updates, now, nested_fluent
+        )
         new_res_added_ent_count, added_paths = add_resources(
-            project, updates, changed_paths, now
+            project, updates, changed_paths, now, nested_fluent
         )
         update_translated_resources(project, locale_map, paths)
 
@@ -163,6 +180,7 @@ def update_resources(
     project: Project,
     updates: dict[str, L10nResource[Message]],
     now: datetime,
+    nested_fluent: dict[str, set[str]] | None = None,
 ) -> tuple[int, set[str]]:
     changed_resources: dict[int, Resource] | None = (
         {res.pk: res for res in project.resources.filter(path__in=updates.keys())}
@@ -303,12 +321,38 @@ def update_resources(
     added_entities: list[Entity] = []
     log_mod: dict[str, list[str]] = defaultdict(list)
     log_add: dict[str, list[str]] = defaultdict(list)
+    nested_warned: set[str] = set()
     for key, next_ent in next_entities.items():
         key_path, key_entity = key
         prev_ent = prev_entities.get(key, None)
         if prev_ent is None:
             added_entities.append(next_ent)
             log_add[key_path].append("/".join(key_entity))
+        elif (
+            nested_fluent
+            and key_path in nested_fluent
+            and key_entity[-1] in nested_fluent[key_path]
+        ):
+            # moz.l10n collapses nested same-selector selects, losing the outer
+            # text of inner variants (mozilla/moz-l10n#211). Preserve the stored
+            # value/properties/string instead of persisting the corruption;
+            # other fields (comment, meta, section) still update. Remove this
+            # guard after the library fix + a force resync of affected files
+            # (see #4183).
+            if key_path not in nested_warned:
+                nested_warned.add(key_path)
+                log.warning(
+                    f"[{project.slug}:{key_path}] Preserving stored Fluent value "
+                    "for nested same-selector entries until mozilla/moz-l10n#211 "
+                    "is fixed"
+                )
+            if (
+                model_update(prev_ent, "comment", next_ent.comment)
+                + model_update(prev_ent, "meta", next_ent.meta)
+                + model_update(prev_ent, "section", next_ent.section)
+            ):
+                mod_entities.append(prev_ent)
+                log_mod[key_path].append("/".join(key_entity))
         elif (
             model_update(prev_ent, "value", next_ent.value)
             + model_update(prev_ent, "properties", next_ent.properties)
@@ -405,6 +449,7 @@ def add_resources(
     updates: dict[str, L10nResource[Message]],
     changed_paths: set[str],
     now: datetime,
+    nested_fluent: dict[str, set[str]] | None = None,
 ) -> tuple[int, set[str]]:
 
     new_resources = [
@@ -459,6 +504,19 @@ def add_resources(
                 new_sections.append(db_section)
     Section.objects.bulk_create(new_sections)
     Entity.objects.bulk_create(new_entities)
+
+    # Flag brand-new entries with nested same-selector selects: their stored
+    # value is already flattened by moz.l10n (see #4183) and will need a force
+    # resync once mozilla/moz-l10n#211 is fixed.
+    if nested_fluent:
+        for db_res in new_resources:
+            affected = nested_fluent.get(db_res.path)
+            if affected:
+                log.warning(
+                    f"[{project.slug}:{db_res.path}] Stored flattened value for "
+                    f"nested same-selector entries ({', '.join(sorted(affected))}); "
+                    "resync after the moz.l10n fix to heal"
+                )
 
     # Preserve translations for strings moved into brand-new files: match new
     # entities against entities obsoleted in this same sync (see #3500).
