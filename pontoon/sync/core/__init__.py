@@ -73,6 +73,19 @@ def sync_project(
         )
     else:
         locale_map = {lc.code: lc for lc in project.locales.order_by("code")}
+    # Never sync the source locale as a target: translating en-US into itself
+    # corrupts stats and violates check constraints (see #2260).
+    source_locale_codes = {"en-US", "en", "templates"}
+    skipped = sorted(set(locale_map) & source_locale_codes)
+    if skipped:
+        log.warning(
+            f"{log_prefix} Skipping source locale(s) as sync target: {', '.join(skipped)}"
+        )
+        locale_map = {
+            code: locale
+            for code, locale in locale_map.items()
+            if code not in source_locale_codes
+        }
     paths.locales = list(locale_map.keys())
 
     added_entities_count, changed_paths, removed_paths = sync_resources_from_repo(
