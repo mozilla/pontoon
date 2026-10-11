@@ -595,7 +595,6 @@ class UploadPretranslationsResponseSerializer(serializers.Serializer):
 
 class UploadSuggestionsResponseSerializer(serializers.Serializer):
     """Result of a suggestion file upload."""
-
     created = serializers.IntegerField(
         help_text="Number of suggestions added by the upload."
     )
@@ -619,3 +618,24 @@ class UploadSuggestionsResponseSerializer(serializers.Serializer):
     undefined_keys = undefined_keys_field()
     undefined_keys_count = undefined_keys_count_field()
     badge_updates = badge_updates_field()
+
+
+class TranslationCommentRequestSerializer(serializers.Serializer):
+    """Request to post a comment on a translation (e.g. LLM-based LQA)."""
+
+    translation = serializers.IntegerField(
+        help_text="Primary key of the translation to comment on."
+    )
+    content = serializers.CharField(
+        help_text="Comment content (HTML sanitized on save)."
+    )
+
+
+class TranslationCommentResponseSerializer(serializers.Serializer):
+    """Created translation comment."""
+
+    id = serializers.IntegerField(help_text="Primary key of the created comment.")
+    translation = serializers.IntegerField(
+        help_text="Primary key of the commented translation."
+    )
+    content = serializers.CharField(help_text="Sanitized comment content.")
