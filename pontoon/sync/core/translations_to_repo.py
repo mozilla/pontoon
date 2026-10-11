@@ -22,7 +22,7 @@ from moz.l10n.model import (
     SelectMessage,
 )
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
-from moz.l10n.resource import serialize_resource
+from moz.l10n.resource import parse_resource, serialize_resource
 
 from django.conf import settings
 from django.db.models import Q
@@ -251,6 +251,28 @@ def update_changed_resources(
             try:
                 lc_plurals = locale.cldr_plurals_list()
                 tr_res = build_translated_resource(locale, lc_translations, res)
+                # Preserve custom X- headers (e.g. X-WagtailLocalize-TranslationID)
+                # present only in the existing target file. The file is regenerated
+                # from scratch, so without this they would be dropped (see #3596).
+                if tr_res.format == Format.gettext and isfile(target_path):
+                    try:
+                        prev_res = parse_resource(
+                            target_path, gettext_plurals=lc_plurals
+                        )
+                        current_keys = {m.key for m in tr_res.meta}
+                        for m in prev_res.meta:
+                            if (
+                                m.key.startswith("X-")
+                                and m.key not in current_keys
+                                and m.key not in gettext_trim_headers
+                            ):
+                                tr_res.meta.append(Metadata(m.key, m.value))
+                                current_keys.add(m.key)
+                    except Exception as error:
+                        log.warning(
+                            f"[{project.slug}:{path}, {locale.code}] "
+                            f"Preserving custom headers failed: {error}"
+                        )
                 # A symlinked target should not redirect the write out of the checkout
                 if paths.base and not is_inside(paths.base, target_path):
                     log.error(
