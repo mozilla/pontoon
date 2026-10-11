@@ -68,6 +68,8 @@ from .serializers import (
     NestedProjectSerializer,
     PretranslationResponseSerializer,
     TermSerializer,
+    TranslationCommentRequestSerializer,
+    TranslationCommentResponseSerializer,
     TranslationMemorySerializer,
     UploadPretranslationsResponseSerializer,
     UploadSuggestionsResponseSerializer,
@@ -1013,4 +1015,67 @@ class UploadSuggestionsView(UploadView):
                 **self.undefined_keys(result),
                 **self.badge_updates(badges),
             }
+        )
+
+
+class TranslationCommentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=TranslationCommentRequestSerializer,
+        responses={
+            201: TranslationCommentResponseSerializer,
+            400: OpenApiResponse(description="Invalid translation pk or content."),
+            403: OpenApiResponse(description="Authentication required."),
+            404: OpenApiResponse(description="Unknown translation."),
+        },
+        description=(
+            "Post a comment to a translation, e.g. as part of LLM-based LQA. "
+            "Content is HTML-sanitized, an action-log entry is recorded, and "
+            "translation comment notifications are sent, mirroring the UI."
+        ),
+    )
+    def post(self, request):
+        from pontoon.actionlog.utils import log_action
+        from pontoon.base.models import Comment
+        from pontoon.base.utils import sanitize_html
+        from pontoon.base.views import _send_add_comment_notifications
+
+        serializer = TranslationCommentRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        translation = get_object_or_404(
+            Translation.objects.select_related(
+                "entity__resource__project", "locale"
+            ),
+            pk=serializer.validated_data["translation"],
+        )
+        content = sanitize_html(serializer.validated_data["content"])
+        if not content.strip():
+            raise ValidationError({"content": ["This field is required."]})
+
+        with transaction.atomic():
+            comment = Comment.objects.create(
+                author=request.user, translation=translation, content=content
+            )
+            log_action(
+                ActionLog.ActionType.COMMENT_ADDED,
+                request.user,
+                translation=translation,
+            )
+
+        _send_add_comment_notifications(
+            request.user,
+            content,
+            translation.entity,
+            translation.locale,
+            translation,
+        )
+
+        return Response(
+            {
+                "id": comment.pk,
+                "translation": translation.pk,
+                "content": comment.content,
+            },
+            status=status.HTTP_201_CREATED,
         )
