@@ -88,7 +88,7 @@ Optional. Controls if the database needs a secure connection with the
 app. Default value is `True`.
 
 `DEFAULT_FROM_EMAIL`  
-Optional. Default email address to send emails from. Default value: `Pontoon <pontoon@hostname>`.
+Optional. Default email address to send emails from. Default value: `Pontoon <no-reply@pontoon.mozilla.com>`.
 
 `DISABLE_COLLECTSTATIC`  
 Disables running `./manage.py collectstatic` during the build. Should be
