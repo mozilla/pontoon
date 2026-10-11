@@ -70,25 +70,33 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         Return data for the active translation if it exists, or None otherwise.
         """
+        from django.db import transaction
+
         from pontoon.base.models.translation import Translation
 
-        translations = self.translation_set.filter(locale=locale)
-        translations.update(active=False)
+        with transaction.atomic():
+            translations = self.translation_set.select_for_update().filter(
+                locale=locale
+            )
+            translations.update(active=False)
 
-        candidates = translations.filter(rejected=False).order_by(
-            "-approved", "-pretranslated", "-fuzzy", "-date"
-        )
+            candidates = translations.filter(rejected=False).order_by(
+                "-approved", "-pretranslated", "-fuzzy", "-date"
+            )
 
-        if candidates:
-            active_translation = candidates[0]
-            active_translation.active = True
+            if not candidates:
+                return None
 
-            # Do not trigger the overridden Translation.save() method
-            super(Translation, active_translation).save(update_fields=["active"])
-
-            return active_translation.serialize()
-        else:
-            return None
+            active_pk = candidates[0].pk
+            # Belt-and-braces: clear any duplicate active rows activated
+            # concurrently or left over from before the unique constraint
+            # (see #2284), then activate the winner via queryset update to
+            # stay inside the same transaction.
+            translations.exclude(pk=active_pk).filter(active=True).update(
+                active=False
+            )
+            translations.filter(pk=active_pk).update(active=True)
+            return Translation.objects.get(pk=active_pk).serialize()
 
     def reset_term_translation(self, locale):
         """
