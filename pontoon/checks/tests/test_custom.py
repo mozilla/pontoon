@@ -181,6 +181,22 @@ def test_ftl_id_missmatch():
     ) == {"pErrors": ["Translation key needs to match source string key"]}
 
 
+def test_ftl_trailing_junk():
+    """Content after a valid entry (e.g. a line starting with `[`) is an error"""
+    ftl_entity = mock_entity("fluent", string="key = value")
+    assert run_custom_checks(ftl_entity, "key = value\n[foo]") == {
+        "pErrors": ["Expected an entry start"]
+    }
+
+
+def test_ftl_multiple_entries():
+    """More than one entry in a translation is an error"""
+    ftl_entity = mock_entity("fluent", string="key = value")
+    assert run_custom_checks(ftl_entity, "key = value\nkey2 = value2") == {
+        "pErrors": ["Translation needs to be a single localizable entry"]
+    }
+
+
 def test_android_apostrophes():
     original = "Source string"
     translation = "Translation with a straight '"
