@@ -65,7 +65,8 @@
   display: none;
 }
 
-/* Style placeholder color in Chrome */
-.machinery > .search-wrapper input[type='search']::-webkit-input-placeholder {
+/* Placeholder color (opacity: 1 overrides Firefox's default dimming) */
+.machinery > .search-wrapper input[type='search']::placeholder {
   color: var(--light-grey-7);
+  opacity: 1;
 }

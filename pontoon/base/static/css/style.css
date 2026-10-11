@@ -143,7 +143,7 @@ input[type='email'],
 input[type='date'],
 textarea {
   background: var(--input-background-1);
-  border: 1px solid var(--main-border-1);
+  border: 1px solid var(--control-border);
   border-radius: 3px;
   color: var(--input-color-1);
   padding: 4px 3px 3px;
@@ -153,6 +153,13 @@ textarea {
 
 textarea {
   float: none;
+}
+
+/* Readable placeholders (opacity: 1 overrides Firefox's default dimming) */
+input::placeholder,
+textarea::placeholder {
+  color: var(--light-grey-7);
+  opacity: 1;
 }
 
 input:focus,
@@ -528,7 +535,7 @@ time {
 }
 
 .locale .code {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
   text-align: left;
 }
 
@@ -716,7 +723,7 @@ header .right .select .menu {
   background: var(--status-error);
   border: 3px solid var(--black-3);
   border-radius: 12px;
-  color: var(--white-1);
+  color: var(--on-status-error-color);
   display: none;
   font-size: 12px;
   font-style: normal;
@@ -752,6 +759,8 @@ header .right .select .menu {
 }
 
 #notifications .menu li.see-all {
+  background: var(--tooltip-surface-background);
+  border-top: 1px solid var(--main-border-1);
   padding: 0;
   text-align: center;
 }
@@ -1029,7 +1038,7 @@ header .right .select .menu {
 }
 
 #profile .menu li.appearance button:last-child {
-  border-left: 1px solid var(--main-border-1);
+  border-left: 1px solid var(--control-border);
 }
 
 #profile .menu li.appearance button .icon {
@@ -1333,7 +1342,7 @@ body > form,
 
 .controls > .search-wrapper input {
   background: var(--dark-grey-1);
-  border: 1px solid var(--main-border-1);
+  border: 1px solid var(--control-border);
   color: var(--input-color-2);
   font-size: 13px;
   height: 28px;
@@ -1369,7 +1378,7 @@ body > form,
 }
 
 .container .info a {
-  color: var(--status-translated-alt);
+  color: var(--status-translated);
 }
 
 .toggle-button {
@@ -1378,7 +1387,7 @@ body > form,
 
 .toggle-button button {
   background: transparent;
-  border: 1px solid var(--main-border-1);
+  border: 1px solid var(--control-border);
   border-radius: 3px;
   box-sizing: border-box;
   color: var(--toggle-color-1);
@@ -1406,7 +1415,7 @@ body > form,
 
 .toggle-button button.active {
   background: var(--button-background-1);
-  border-color: var(--main-border-1);
+  border-color: var(--control-border);
   color: var(--light-grey-7);
   font-weight: 400;
 }

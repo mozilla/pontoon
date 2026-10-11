@@ -97,7 +97,7 @@
 }
 
 #insights .legend li.disabled .label {
-  color: var(--grey-3);
+  color: var(--chart-label-muted);
 }
 
 #insights .legend li.disabled .label:hover {

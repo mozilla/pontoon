@@ -183,7 +183,7 @@ body.addon-promotion-active #edit-homepage .select {
 
 #edit-homepage .button {
   background: var(--status-translated);
-  color: var(--homepage-tour-button-color);
+  color: var(--translation-main-button-color);
 }
 
 #edit-homepage .fas {
