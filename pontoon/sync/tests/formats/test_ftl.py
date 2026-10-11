@@ -4,7 +4,11 @@ from textwrap import dedent
 from moz.l10n.formats import Format
 from moz.l10n.resource import parse_resource
 
-from pontoon.sync.formats import as_entity, as_repo_translations
+from pontoon.sync.formats import (
+    as_entity,
+    as_repo_translations,
+    fluent_nested_same_selector_keys,
+)
 
 
 def test_fluent():
@@ -136,3 +140,44 @@ def test_fluent():
         -term-key = Term
             .attr = Attribute
         """)
+
+
+def test_fluent_nested_same_selector_keys():
+    """Nested selects sharing a selector must be detected (see #4183)."""
+    assert fluent_nested_same_selector_keys(
+        dedent("""\
+            error-title-429 =
+                { $retryAfter ->
+                    [0] You are going too fast.
+                   *[other] You are going too fast { $retryAfter ->
+                        [one] second
+                       *[other] seconds
+                    }.
+                }
+            """)
+    ) == {"error-title-429"}
+    # Nested selects with different selectors are fine.
+    assert (
+        fluent_nested_same_selector_keys(
+            dedent("""\
+                key =
+                    { $x ->
+                        [a] { $y ->
+                            [c] C
+                           *[d] D
+                        }
+                       *[b] B
+                    }
+                """)
+        )
+        == set()
+    )
+    # Simple selects, plain messages and invalid sources are fine.
+    assert (
+        fluent_nested_same_selector_keys(
+            "key =\n    { $n ->\n        [one] One\n       *[other] Other\n    }\n"
+        )
+        == set()
+    )
+    assert fluent_nested_same_selector_keys("key = value\n") == set()
+    assert fluent_nested_same_selector_keys("[[[") == set()
