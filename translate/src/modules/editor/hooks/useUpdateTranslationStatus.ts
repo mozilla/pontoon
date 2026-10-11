@@ -113,9 +113,16 @@ export function useUpdateTranslationStatus(
       }
 
       // Update entity translation data now that it has changed on the server.
-      dispatch(
-        updateEntityTranslation(entity.pk, results.translation ?? undefined),
-      );
+      // Only update on success: on server errors (e.g. 500 returns {}) the
+      // response has no status, and dispatching undefined would wipe the
+      // current translation (see #3612). Note that success may legitimately
+      // return translation=null (no active translation left), which we map
+      // to undefined to show the entity as missing.
+      if (results.status) {
+        dispatch(
+          updateEntityTranslation(entity.pk, results.translation ?? undefined),
+        );
+      }
     }
 
     NProgress.done();
