@@ -15,12 +15,14 @@ from django.db import transaction
 from django.db.models import Q
 
 from pontoon.base.models import (
+    ChangedEntityLocale,
     Entity,
     Locale,
     Project,
     Resource,
     Section,
     TranslatedResource,
+    Translation,
 )
 from pontoon.sync.core.checkout import Checkout
 from pontoon.sync.formats import as_entity
@@ -264,6 +266,19 @@ def update_resources(
             obsolete_entities.append(prev_ent)
             key_path, key_entity = key
             log_rm[key_path].append("/".join(key_entity))
+    # Guard against mass loss of translation metadata from a bad sync
+    # (e.g. miscomputed paths obsoleting most entities). Aborting rolls back
+    # the surrounding atomic transaction (see #3500).
+    if (
+        len(obsolete_entities) > 100
+        and len(prev_entities) > 0
+        and len(obsolete_entities) / len(prev_entities) > 0.75
+    ):
+        log.error(
+            f"[{project.slug}] Refusing mass-obsolete of "
+            f"{len(obsolete_entities)}/{len(prev_entities)} entities; aborting sync"
+        )
+        raise Exception("mass obsoletion guard triggered")
     Entity.objects.bulk_update(
         obsolete_entities, ["obsolete", "date_obsoleted", "section"]
     )
@@ -320,6 +335,8 @@ def update_resources(
     added_entities = Entity.objects.bulk_create(added_entities)
     add_count = len(added_entities)
 
+    carry_translations_for_moves(project, obsolete_entities, added_entities, now)
+
     if log_rm or log_add or log_mod:
         for path in sorted(list(log_rm.keys() | log_add.keys() | log_mod.keys())):
             for desc, log_data in (
@@ -333,6 +350,54 @@ def update_resources(
                     names = ", ".join(ls).replace("\n", "¶")
                     log.info(f"{scope} {desc} entities ({len(ls)}): {names}")
     return add_count, changed_res_paths
+
+
+def carry_translations_for_moves(
+    project: Project,
+    obsolete_entities: list[Entity],
+    added_entities: list[Entity],
+    now: datetime,
+) -> None:
+    """
+    Preserve translation attributions, timestamps and unreviewed suggestions
+    when strings move between files (see #3500).
+
+    Entities are keyed by (resource path, key), so a move obsoletes the old
+    row and creates a brand-new one, orphaning its translations. When an added
+    entity matches a just-obsoleted one by exact key and string, re-point the
+    old non-rejected translations (and their change markers) at the new row
+    instead of leaving them on the obsolete entity.
+    """
+    if not obsolete_entities or not added_entities:
+        return
+    # Group just-obsoleted entities by key for move detection. Require exact
+    # key + string matches, and skip ambiguous keys (same key obsoleted from
+    # several files) to avoid attributing to the wrong resource.
+    obsolete_by_key: dict[tuple[str, ...], list[Entity]] = defaultdict(list)
+    for ent in obsolete_entities:
+        obsolete_by_key[tuple(ent.key)].append(ent)
+    moves = 0
+    for new_ent in added_entities:
+        candidates = obsolete_by_key.get(tuple(new_ent.key), [])
+        candidates = [e for e in candidates if e.string == new_ent.string]
+        if len(candidates) != 1:
+            continue
+        old_ent = candidates[0]
+        # Move non-rejected translations, preserving user, date, approved
+        # metadata and history (pk unchanged, so comments/checks/TM follow).
+        moved = Translation.objects.filter(
+            entity_id=old_ent.pk, rejected=False
+        ).update(entity_id=new_ent.pk)
+        if not moved:
+            continue
+        # Carry sync change markers so the moved translations commit outward.
+        for cl in ChangedEntityLocale.objects.filter(entity_id=old_ent.pk):
+            ChangedEntityLocale.objects.get_or_create(
+                entity_id=new_ent.pk, locale_id=cl.locale_id
+            )
+        moves += 1
+    if moves:
+        log.info(f"[{project.slug}] Preserved translations for {moves} moved strings")
 
 
 def add_resources(
@@ -394,6 +459,18 @@ def add_resources(
                 new_sections.append(db_section)
     Section.objects.bulk_create(new_sections)
     Entity.objects.bulk_create(new_entities)
+
+    # Preserve translations for strings moved into brand-new files: match new
+    # entities against entities obsoleted in this same sync (see #3500).
+    # Idempotent with the update_resources carry-over above (already-moved
+    # sources have no non-rejected translations left).
+    if new_entities:
+        just_obsoleted = list(
+            Entity.objects.filter(
+                resource__project=project, obsolete=True, date_obsoleted=now
+            ).iterator()
+        )
+        carry_translations_for_moves(project, just_obsoleted, new_entities, now)
 
     ent_count = len(new_entities)
     added_paths = {ar.path for ar in new_resources}
