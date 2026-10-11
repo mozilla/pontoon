@@ -197,17 +197,9 @@ OPENAI_AUTO_SUGGESTION_LOCALES = [
 GOOGLE_ANALYTICS_KEY = os.environ.get("GOOGLE_ANALYTICS_KEY", "")
 
 
-def _get_site_url_netloc():
-    from urllib.parse import urlparse
-
-    from django.conf import settings
-
-    return urlparse(settings.SITE_URL).netloc
-
-
 def _default_from_email():
     return os.environ.get(
-        "DEFAULT_FROM_EMAIL", f"Pontoon <pontoon@{_get_site_url_netloc()}>"
+        "DEFAULT_FROM_EMAIL", "Pontoon <no-reply@pontoon.mozilla.com>"
     )
 
 
