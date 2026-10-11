@@ -21,6 +21,27 @@ def update_terminology_project_stats():
     TranslatedResource.objects.filter(resource=resource).calculate_stats()
 
 
+def notify_new_terminology_entity(entity: Entity) -> None:
+    """
+    Notify users with new_string_notifications about a new Terminology entity.
+
+    The Terminology project is DB-only (sync_disabled), so sync's notify_users()
+    never runs for it. Reuse the same logic here (see #2562).
+    """
+    try:
+        from pontoon.sync.core import notify_users
+
+        entity.refresh_from_db(fields=["date_created"])
+        notify_users(entity.resource.project, entity.date_created)
+    except Exception:
+        # Notifications must never break term creation; sync logs the error.
+        import logging
+
+        logging.getLogger(__name__).exception(
+            "Failed to notify users about new terminology term"
+        )
+
+
 class TermQuerySet(models.QuerySet["Term"]):
     def for_string(self, string):
         terms = []
@@ -146,6 +167,7 @@ class Term(models.Model):
 
         # Using update() to avoid circular Term.save() call
         Term.objects.filter(pk=self.pk).update(entity_id=entity.id)
+        self.entity_id = entity.id
         entity.term = self
 
         if not created:
@@ -160,6 +182,7 @@ class Term(models.Model):
         for index, e in enumerate(entities):
             e.order = index
         Entity.objects.bulk_update(entities, ["order"])
+        return entity, created
 
     def obsolete_entity(self):
         entity = self.entity
@@ -188,14 +211,22 @@ class Term(models.Model):
 
         # If non-localizable term becomes localizable, create a corresponding Entity
         elif not old_term.localizable and term.localizable:
-            term.create_entity()
+            _, created = term.create_entity()
+            if created:
+                notify_new_terminology_entity(
+                    Entity.objects.get(pk=term.entity_id)
+                )
 
         # If relevant changes are made to the localizable term that stays localizable
         else:
             # If Term.text changes, a new Entity instance gets created and the previous one becomes obsolete.
             if old_term.text != term.text:
                 old_term.obsolete_entity()
-                term.create_entity()
+                _, created = term.create_entity()
+                if created:
+                    notify_new_terminology_entity(
+                        Entity.objects.get(pk=term.entity_id)
+                    )
 
             # If Term.part_of_speech, Term.definition or Term.usage change, Entity.comment gets updated.
             elif (
@@ -220,8 +251,10 @@ class Term(models.Model):
         """
         After creating a new localizable Term, create its Entity
         """
-        self.create_entity()
+        entity, created = self.create_entity()
         update_terminology_project_stats()
+        if created:
+            notify_new_terminology_entity(entity)
 
     def save(self, *args, **kwargs):
         created = self.pk is None
