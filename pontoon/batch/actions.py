@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
@@ -12,6 +12,7 @@ from pontoon.base.models import (
     TranslationMemoryEntry,
 )
 from pontoon.base.models.translation import TranslationQuerySet
+from pontoon.base.user_utils import get_pretranslation_authors
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.pretranslation.pretranslate import get_pretranslation
@@ -414,13 +415,12 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
     Enable teams to pretranslate an entire project or a subset of strings on projects
     for which pretranslation is not enabled by the admins.
     """
+    pt_authors = get_pretranslation_authors()
 
-    entity_pks_with_translation = set(
-        Translation.objects.filter(
-            locale=locale,
-            entity__in=entities,
-            approved=True,
-        ).values_list("entity__pk", flat=True)
+    excluded_entity_pks = set(
+        Translation.objects.filter(locale=locale, entity__in=entities)
+        .filter(Q(approved=True) | Q(user__in=pt_authors.values()))
+        .values_list("entity__pk", flat=True)
     )
 
     already_active_entity_pks = set(
@@ -431,9 +431,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
         ).values_list("entity__pk", flat=True)
     )
 
-    eligible_entities = entities.exclude(pk__in=entity_pks_with_translation)
-
-    before_level = badges_translation_level(user)
+    eligible_entities = entities.exclude(pk__in=excluded_entity_pks)
 
     translations_to_create = []
 
@@ -447,7 +445,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
             invalid_entity_pks.append(entity.pk)
             continue
 
-        string, engine = pretranslation
+        string, author_key = pretranslation
 
         try:
             _, value, properties = parse_source_string_to_json(
@@ -470,7 +468,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
                 fuzzy=False,
                 pretranslated=True,
                 active=entity.pk not in already_active_entity_pks,
-                user=user,
+                user=pt_authors[author_key],
                 value=value,
                 properties=properties,
             )
@@ -488,22 +486,13 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
     actions_to_log = [
         ActionLog(
             action_type=ActionLog.ActionType.TRANSLATION_CREATED,
-            performed_by=user,
+            performed_by=t.user,
             translation=t,
         )
         for t in changed_translations
     ]
 
     ActionLog.objects.bulk_create(actions_to_log)
-
-    after_level = badges_translation_level(user)
-
-    badge_update = {}
-
-    if after_level > before_level:
-        badge_update["level"] = after_level
-        badge_update["name"] = "Translation Champion"
-        send_badge_notification(user, badge_update["name"], badge_update["level"])
 
     changed_translation_pks = [t.pk for t in changed_translations]
 
@@ -516,7 +505,6 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
         else None,
         "changed_translation_pks": changed_translation_pks,
         "invalid_translation_pks": invalid_entity_pks,
-        "badge_update": badge_update,
     }
 
 
