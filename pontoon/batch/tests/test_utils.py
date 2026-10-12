@@ -5,6 +5,7 @@ import pytest
 from fluent.syntax import FluentParser, FluentSerializer
 
 from pontoon.base.models import Entity, Locale, Translation
+from pontoon.base.user_utils import get_pretranslation_authors
 from pontoon.batch.actions import (
     copy_translation_from_locale,
     pretranslate_translations,
@@ -245,3 +246,32 @@ def test_pretranslate_translations_skips_approved_includes_suggestions(
     ).exists()
 
     assert result["count"] == 2
+
+
+@pytest.mark.django_db
+@patch("pontoon.batch.actions.get_pretranslation")
+def test_pretranslate_translations_skips_existing_pretranslations(
+    get_pretranslation_mock,
+):
+    get_pretranslation_mock.return_value = ("key = pretranslated value", "gt")
+
+    project = ProjectFactory(slug="project5", name="Project5")
+    resource = ResourceFactory(project=project, path="resource.ftl", format="fluent")
+    entity = EntityFactory(resource=resource, string="key1 = value1")
+    locale = Locale.objects.get(code="en-ZA")
+    gt_user = get_pretranslation_authors()["gt"]
+
+    TranslationFactory(
+        entity=entity,
+        locale=locale,
+        string="existing pretranslation",
+        pretranslated=True,
+        user=gt_user,
+    )
+
+    result = pretranslate_translations(
+        UserFactory(), locale, Entity.objects.filter(pk=entity.pk)
+    )
+
+    assert Translation.objects.filter(entity=entity).count() == 1
+    assert result["count"] == 0
