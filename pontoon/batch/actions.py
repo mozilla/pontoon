@@ -14,6 +14,8 @@ from pontoon.base.models import (
 from pontoon.base.models.translation import TranslationQuerySet
 from pontoon.base.user_utils import get_pretranslation_authors
 from pontoon.batch import utils
+from pontoon.checks.libraries import run_checks
+from pontoon.checks.utils import bulk_run_checks
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.translations.utils import parse_source_string_to_json
@@ -445,6 +447,20 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
             invalid_entity_pks.append(entity.pk)
             continue
 
+        failed_checks = run_checks(
+            entity, locale.code, pretranslation[0], use_tt_checks=False
+        )
+
+        if failed_checks:
+            try:
+                pretranslation = get_pretranslation(
+                    entity, locale, preserve_placeables=True
+                )
+            except ValueError as e:
+                logger.info(f"Pretranslation error for entity {entity.pk}: {e!r}")
+                invalid_entity_pks.append(entity.pk)
+                continue
+
         string, author_key = pretranslation
 
         try:
@@ -475,9 +491,11 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
         )
 
     changed_translations = Translation.objects.bulk_create(translations_to_create)
-    changed_translations_qs = Translation.objects.filter(
-        pk__in=[t.pk for t in changed_translations]
-    )
+
+    translation_pks = {t.pk for t in changed_translations}
+    bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
+
+    changed_translations_qs = Translation.objects.filter(pk__in=translation_pks)
 
     count, translated_resources, changed_entities = utils.get_translations_info(
         changed_translations_qs, locale
@@ -505,6 +523,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
         else None,
         "changed_translation_pks": changed_translation_pks,
         "invalid_translation_pks": invalid_entity_pks,
+        "badge_update": {},
     }
 
 

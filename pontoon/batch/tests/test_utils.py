@@ -275,3 +275,26 @@ def test_pretranslate_translations_skips_existing_pretranslations(
 
     assert Translation.objects.filter(entity=entity).count() == 1
     assert result["count"] == 0
+
+
+@pytest.mark.django_db
+@patch("pontoon.batch.actions.run_checks")
+@patch("pontoon.batch.actions.get_pretranslation")
+def test_pretranslate_translations_retries_on_failed_checks(
+    get_pretranslation_mock,
+    run_checks_mock,
+):
+    get_pretranslation_mock.return_value = ("key = pretranslated value", "gt")
+    run_checks_mock.return_value = {"clWarnings": ["some warning"]}
+
+    project = ProjectFactory(slug="project6", name="Project6")
+    resource = ResourceFactory(project=project, path="resource.ftl", format="fluent")
+    entity = EntityFactory(resource=resource, string="key1 = value1")
+    locale = Locale.objects.get(code="en-ZA")
+
+    pretranslate_translations(
+        UserFactory(), locale, Entity.objects.filter(pk=entity.pk)
+    )
+
+    assert get_pretranslation_mock.call_count == 2
+    get_pretranslation_mock.assert_called_with(entity, locale, preserve_placeables=True)
