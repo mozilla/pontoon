@@ -98,7 +98,7 @@ class Checkout:
                 log.error(f"[{slug}:{co_path}] Skipping path outside the checkout")
         self.changed = inside
 
-    def prev_file(self, co_path: str) -> str | None:
+    def file_at_last_sync(self, co_path: str) -> str | None:
         """The contents of a file at the last synced revision, if available."""
         if not self.prev_commit:
             return None
