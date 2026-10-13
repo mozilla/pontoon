@@ -765,11 +765,12 @@ search-TimeRangeFilter--save-range = SAVE RANGE
 ## Term
 ## Shows term entry with its metadata
 
-term-Term--copy =
+terms-Term--copy =
     .title = Copy Into Translation
 
-term-Term--for-example = E.G.
-
+terms-Term--for-example = E.G.
+terms-Term--translate = Translate
+terms-Term--do-not-translate = Do Not Translate
 
 ## User Avatar
 ## Shows user Avatar with alt text

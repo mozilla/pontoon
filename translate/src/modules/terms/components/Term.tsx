@@ -44,7 +44,7 @@ export function Term({ navigateToPath, term }: Props): React.ReactElement {
   );
 
   return (
-    <Localized id='term-Term--copy' attrs={{ title: true }}>
+    <Localized id='terms-Term--copy' attrs={{ title: true }}>
       <li
         className={cn}
         title='Copy Into Translation'
@@ -53,20 +53,28 @@ export function Term({ navigateToPath, term }: Props): React.ReactElement {
         <header>
           <span className='text'>{term.text}</span>
           <span className='part-of-speech'>{term.partOfSpeech}</span>
-          <a
-            href={`/${code}/terminology/common/?string=${term.entityId}`}
-            onClick={handleLinkClick}
-            className='translate'
-          >
-            Translate
-          </a>
+          {term.doNotTranslate ? (
+            <Localized id='terms-Term--do-not-translate'>
+              <span className='do-not-translate'>Do Not Translate</span>
+            </Localized>
+          ) : (
+            <Localized id='terms-Term--translate'>
+              <a
+                href={`/${code}/terminology/common/?string=${term.entityId}`}
+                onClick={handleLinkClick}
+                className='translate'
+              >
+                Translate
+              </a>
+            </Localized>
+          )}
         </header>
         <p className='translation'>{term.translation}</p>
         <div className='details'>
           <p className='definition'>{term.definition}</p>
           {!term.usage ? null : (
             <p className='usage'>
-              <Localized id='term-Term--for-example'>
+              <Localized id='terms-Term--for-example'>
                 <span className='title'>E.G.</span>
               </Localized>
               <span className='content'>{term.usage}</span>
