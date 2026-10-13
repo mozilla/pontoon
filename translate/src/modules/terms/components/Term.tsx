@@ -54,9 +54,9 @@ export function Term({ navigateToPath, term }: Props): React.ReactElement {
           <span className='text'>{term.text}</span>
           <span className='part-of-speech'>{term.partOfSpeech}</span>
           {term.doNotTranslate ? (
-              <Localized id='terms-Term--do-not-translate'>
-                <span className='do-not-translate'>Do Not Translate</span>
-              </Localized>
+            <Localized id='terms-Term--do-not-translate'>
+              <span className='do-not-translate'>Do Not Translate</span>
+            </Localized>
           ) : (
             <Localized id='terms-Term--translate'>
               <a
