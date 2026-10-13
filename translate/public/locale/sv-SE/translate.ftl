@@ -696,10 +696,10 @@ search-TimeRangeFilter--save-range = SPARA INTERVALL
 ## Term
 ## Shows term entry with its metadata
 
-term-Term--copy =
+terms-Term--copy =
     .title = Kopiera till översättning
 
-term-Term--for-example = T.EX.
+terms-Term--for-example = T.EX.
 
 
 ## User Avatar

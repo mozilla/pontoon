@@ -606,9 +606,9 @@ search-TimeRangeFilter--save-range = SEKLES AZILAL
 ## Term
 ## Shows term entry with its metadata
 
-term-Term--copy =
+terms-Term--copy =
     .title = Nɣel-it ar tsuqilt
-term-Term--for-example = MD.
+terms-Term--for-example = MD.
 
 ## User Avatar
 ## Shows user Avatar with alt text
