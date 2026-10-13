@@ -107,7 +107,7 @@ def test_which_strings_to_pretranslate(
     project_a.refresh_from_db()
 
     assert len(no_translations.translation_set.filter(string="pretranslation")) == 1
-    assert len(non_rejected.translation_set.filter(string="pretranslation")) == 0
+    assert len(non_rejected.translation_set.filter(string="pretranslation")) == 1
     assert len(rejected_by_human.translation_set.filter(string="pretranslation")) == 1
     assert len(rejected_by_machine.translation_set.filter(string="pretranslation")) == 0
 

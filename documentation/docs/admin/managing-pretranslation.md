@@ -10,7 +10,7 @@ Access Pontoon’s [admin console](https://pontoon.mozilla.org/admin/), and sele
 
 **IMPORTANT**: if this is the first project for a locale, the first step is to [train and set up the custom machine translation model](#train-and-set-up-a-custom-machine-translation-model) in Google AutoML Translation.
 
-Use the checkbox `PRETRANSLATION ENABLED` to enable the feature for the project, then move the requested locales from the `Available` list to `Chosen`. Clicking the `PRETRANSLATE` button will pretranslate immediately all missing strings in enabled locales, otherwise pretranslation will run automatically as soon as new strings are added to the project.
+Use the checkbox `PRETRANSLATION ENABLED` to enable the feature for the project, then move the requested locales from the `Available` list to `Chosen`. Clicking the `PRETRANSLATE` button will pretranslate immediately all strings without an approved translation in enabled locales (except strings whose pretranslation was previously rejected), otherwise pretranslation will run automatically as soon as new strings are added to the project.
 
 ## Train and set up a custom machine translation model
 
