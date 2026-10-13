@@ -62,7 +62,7 @@ def find_prev_config_paths(
 
     def load_prev(cfg_path: str) -> dict[str, Any]:
         co_path = relpath(cfg_path, source.path)
-        cfg = source.prev_file(co_path)
+        cfg = source.file_at_last_sync(co_path)
         if cfg is None:
             raise FileNotFoundError(co_path)
         return loads(cfg)
@@ -86,7 +86,7 @@ def add_newly_configured_files(
     project: Project,
     checkouts: Checkouts,
     paths: L10nConfigPaths | L10nDiscoverPaths,
-    current_paths: set[str],
+    config_current_paths: set[str],
 ) -> None:
     if isinstance(paths, L10nDiscoverPaths):
         return
@@ -100,7 +100,7 @@ def add_newly_configured_files(
     for ref_path in paths.ref_paths:
         if not isfile(ref_path) or not is_inside(source.path, ref_path):
             continue
-        tracked = relpath(ref_path, paths.ref_root) in current_paths
+        tracked = relpath(ref_path, paths.ref_root) in config_current_paths
         if not tracked and ref_path not in src_changed:
             source.changed.append(relpath(ref_path, source.path))
         tgt_template, locales = paths.target(ref_path)

@@ -50,7 +50,7 @@ def sync_resources_from_repo(
         )
         for old_path, new_path in checkout.renamed
     }
-    current_paths = (
+    config_current_paths = (
         {
             renamed_db_paths.get(path, path)
             for path in project.resources.current().values_list("path", flat=True)
@@ -58,7 +58,7 @@ def sync_resources_from_repo(
         if isinstance(paths, L10nConfigPaths)
         else set()
     )
-    add_newly_configured_files(project, checkouts, paths, current_paths)
+    add_newly_configured_files(project, checkouts, paths, config_current_paths)
     # db_path -> parsed_resource
     updates: dict[str, L10nResource[Message]] = {}
     source_paths = set(paths.ref_paths)
@@ -94,7 +94,9 @@ def sync_resources_from_repo(
 
     with transaction.atomic():
         renamed_paths = rename_resources(project, renamed_db_paths)
-        removed_paths = remove_resources(project, paths, checkout, current_paths, now)
+        removed_paths = remove_resources(
+            project, paths, checkout, config_current_paths, now
+        )
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
         new_res_added_ent_count, added_paths = add_resources(
             project, updates, changed_paths, now
@@ -124,7 +126,7 @@ def remove_resources(
     project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     checkout: Checkout,
-    current_paths: set[str],
+    config_current_paths: set[str],
     now: datetime,
 ) -> set[str]:
     removed_paths = {
@@ -132,10 +134,10 @@ def remove_resources(
     }
     if isinstance(paths, L10nConfigPaths):
         ref_db_paths = {get_db_path(paths, ref_path) for ref_path in paths.ref_paths}
-        unreferenced_paths = current_paths - ref_db_paths
-        if len(unreferenced_paths) > MASS_REMOVAL_THRESHOLD * len(current_paths):
+        unreferenced_paths = config_current_paths - ref_db_paths
+        if len(unreferenced_paths) > MASS_REMOVAL_THRESHOLD * len(config_current_paths):
             log.warning(
-                f"[{project.slug}] Not removing {len(unreferenced_paths)} of {len(current_paths)} source files missing from the project configuration, check its reference paths"
+                f"[{project.slug}] Not removing {len(unreferenced_paths)} of {len(config_current_paths)} source files missing from the project configuration, check its reference paths"
             )
         else:
             removed_paths.update(unreferenced_paths)

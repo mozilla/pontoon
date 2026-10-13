@@ -1051,7 +1051,7 @@ def test_config_changes(caplog):
         def sync_with_config(config: str) -> dict[str, int]:
             config_path = join(repo.checkout_path, "l10n.toml")
             with open(config_path) as file:
-                mock_vcs.prev_files["l10n.toml"] = file.read()
+                mock_vcs.files_at_last_sync["l10n.toml"] = file.read()
             with open(config_path, "w") as file:
                 file.write(config)
             sync_project_task(project.pk)

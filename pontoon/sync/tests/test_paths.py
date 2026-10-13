@@ -196,7 +196,7 @@ def test_add_newly_configured_files():
             renamed=[(join("en", "old-d.ftl"), join("en", "d.ftl"))],
             prev_commit="1",
         )
-        checkout.prev_file.return_value = prev_config
+        checkout.file_at_last_sync.return_value = prev_config
         checkouts = Checkouts(checkout, checkout)
         paths = find_paths(project, checkouts)
         paths.locales = ["de-Test"]
