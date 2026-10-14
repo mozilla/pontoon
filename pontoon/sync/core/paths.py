@@ -84,7 +84,7 @@ def add_newly_configured_files(
     project: Project,
     checkouts: Checkouts,
     paths: L10nConfigPaths,
-    config_current_paths: set[str],
+    config_db_paths_with_renames: set[str],
 ) -> None:
     source, target = checkouts
     src_changed = {join(source.path, co_path) for co_path in source.changed}
@@ -98,20 +98,21 @@ def add_newly_configured_files(
     for ref_path in paths.ref_paths:
         if not isfile(ref_path) or not is_inside(source.path, ref_path):
             continue
-        has_current_resource = relpath(ref_path, paths.ref_root) in config_current_paths
-        if not has_current_resource and ref_path not in src_changed:
-            source.changed.append(relpath(ref_path, source.path))
-        if has_current_resource and ref_path in renamed_refs:
-            continue
+        is_new = relpath(ref_path, paths.ref_root) not in config_db_paths_with_renames
         tgt_template, locales = paths.target(ref_path)
+        if is_new:
+            if ref_path not in src_changed:
+                source.changed.append(relpath(ref_path, source.path))
+        else:
+            if ref_path in renamed_refs:
+                continue
+            prev_tgt_template, _ = prev_paths.target(ref_path)
+            if prev_tgt_template == tgt_template:
+                continue
         if tgt_template is None:
             continue
         for locale in locales:
             tgt_path = paths.format_target_path(tgt_template, locale)
-            if has_current_resource:
-                prev_tgt_path, _ = prev_paths.target(ref_path, locale=locale)
-                if prev_tgt_path == tgt_path:
-                    continue
             if (
                 tgt_path not in tgt_changed
                 and isfile(tgt_path)
