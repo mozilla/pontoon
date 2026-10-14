@@ -122,6 +122,22 @@ def rename_resources(project: Project, renamed_db_paths: dict[str, str]) -> set[
     return set(renamed_db_paths.values())
 
 
+def add_unreferenced_paths(
+    project: Project,
+    paths: L10nConfigPaths,
+    config_current_paths: set[str],
+    removed_paths: set[str],
+) -> None:
+    ref_db_paths = {get_db_path(paths, ref_path) for ref_path in paths.ref_paths}
+    unreferenced_paths = config_current_paths - ref_db_paths
+    if len(unreferenced_paths) > MASS_REMOVAL_THRESHOLD * len(config_current_paths):
+        log.warning(
+            f"[{project.slug}] Not removing {len(unreferenced_paths)} of {len(config_current_paths)} source files missing from the project configuration, check its reference paths"
+        )
+    else:
+        removed_paths.update(unreferenced_paths)
+
+
 def remove_resources(
     project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
@@ -133,14 +149,7 @@ def remove_resources(
         get_db_path(paths, join(checkout.path, co_path)) for co_path in checkout.removed
     }
     if isinstance(paths, L10nConfigPaths):
-        ref_db_paths = {get_db_path(paths, ref_path) for ref_path in paths.ref_paths}
-        unreferenced_paths = config_current_paths - ref_db_paths
-        if len(unreferenced_paths) > MASS_REMOVAL_THRESHOLD * len(config_current_paths):
-            log.warning(
-                f"[{project.slug}] Not removing {len(unreferenced_paths)} of {len(config_current_paths)} source files missing from the project configuration, check its reference paths"
-            )
-        else:
-            removed_paths.update(unreferenced_paths)
+        add_unreferenced_paths(project, paths, config_current_paths, removed_paths)
     if not removed_paths:
         return set()
     removed_resources = project.resources.filter(path__in=removed_paths)
