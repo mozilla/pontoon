@@ -1065,7 +1065,7 @@ def test_config_changes(caplog):
         # Adding en/b.ftl imports it with its translation, without reading en/c.ftl
         assert sync_with_config(config_all) == {"en/a.ftl": 1, "en/b.ftl": 1}
 
-        # Removing it from configuration obsoletes it
+        # Removing en/b.ftl from configuration obsoletes it
         assert sync_with_config(config_a) == {"en/a.ftl": 1}
         entity_b = Entity.objects.get(
             resource__project=project, resource__path="en/b.ftl"
