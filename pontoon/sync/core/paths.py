@@ -4,7 +4,7 @@ from os.path import isfile, join, normpath, relpath
 from tomllib import loads
 from typing import Any
 
-from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, get_android_locale
+from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
 from pontoon.base.models import Project
 from pontoon.sync.core.checkout import Checkouts, is_inside
@@ -26,7 +26,6 @@ def find_paths(
     if project.configuration_file:
         paths = L10nConfigPaths(
             join(src_root, project.configuration_file),
-            locale_map={"android_locale": get_android_locale},
             force_paths=force_paths,
         )
         if checkouts.target != checkouts.source:
@@ -71,7 +70,6 @@ def find_prev_config_paths(
         prev_paths = L10nConfigPaths(
             next(paths.config_paths()),
             cfg_load=load_prev,
-            locale_map={"android_locale": get_android_locale},
         )
     except Exception as error:
         log.warning(f"[{project.slug}] Previous configuration not available: {error}")
