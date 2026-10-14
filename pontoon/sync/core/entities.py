@@ -50,15 +50,13 @@ def sync_resources_from_repo(
         )
         for old_path, new_path in checkout.renamed
     }
-    config_current_paths = (
-        {
+    config_current_paths: set[str] = set()
+    if isinstance(paths, L10nConfigPaths):
+        config_current_paths = {
             renamed_db_paths.get(path, path)
             for path in project.resources.current().values_list("path", flat=True)
         }
-        if isinstance(paths, L10nConfigPaths)
-        else set()
-    )
-    add_newly_configured_files(project, checkouts, paths, config_current_paths)
+        add_newly_configured_files(project, checkouts, paths, config_current_paths)
     # db_path -> parsed_resource
     updates: dict[str, L10nResource[Message]] = {}
     source_paths = set(paths.ref_paths)
