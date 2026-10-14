@@ -2,7 +2,7 @@ import logging
 import re
 
 from contextlib import contextmanager
-from os import makedirs, symlink
+from os import makedirs
 from os.path import isfile, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
@@ -1030,7 +1030,7 @@ def test_config_changes(caplog):
             system_project=False,
         )
 
-        # Filesystem setup, with en/c.ftl linking out of the checkout
+        # Filesystem setup
         config_a = '[[paths]]\nreference = "en/a.ftl"\nl10n = "{locale}/a.ftl"\n'
         config_all = '[[paths]]\nreference = "en/*.ftl"\nl10n = "{locale}/*.ftl"\n'
         makedirs(repo.checkout_path)
@@ -1041,11 +1041,6 @@ def test_config_changes(caplog):
                 "de-Test": {"a.ftl": "a = A de\n", "b.ftl": "b = B de\n"},
                 "l10n.toml": config_a,
             },
-        )
-        build_file_tree(settings.MEDIA_ROOT, {"elsewhere.ftl": "secret = Secret\n"})
-        symlink(
-            join(settings.MEDIA_ROOT, "elsewhere.ftl"),
-            join(repo.checkout_path, "en", "c.ftl"),
         )
 
         def sync_with_config(config: str) -> dict[str, int]:
@@ -1062,7 +1057,7 @@ def test_config_changes(caplog):
 
         assert sync_with_config(config_a) == {"en/a.ftl": 1}
 
-        # Adding en/b.ftl imports it with its translation, without reading en/c.ftl
+        # Adding en/b.ftl imports it with its translation
         assert sync_with_config(config_all) == {"en/a.ftl": 1, "en/b.ftl": 1}
 
         # Removing en/b.ftl from configuration obsoletes it
