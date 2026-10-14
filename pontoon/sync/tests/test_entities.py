@@ -270,7 +270,11 @@ def test_rename_resource_with_config():
             {
                 "en": {"c.ftl": ""},
                 "src": {"a.ftl": "", "b.ftl": ""},
-                "l10n.toml": '[[paths]]\nreference = "src/*.ftl"\nl10n = "{locale}/*.ftl"\n',
+                "l10n.toml": dedent("""\
+                    [[paths]]
+                    reference = "src/*.ftl"
+                    l10n = "{locale}/*.ftl"
+                    """),
             },
         )
 
