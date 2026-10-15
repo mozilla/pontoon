@@ -21,10 +21,10 @@ from pontoon.base.models import (
     Project,
     TranslatedResource,
     Translation,
-    UserProfile,
+    User,
 )
 from pontoon.base.tasks import PontoonTask
-from pontoon.base.user_utils import get_pretranslation_authors, get_system_user
+from pontoon.base.user_utils import get_pretranslation_authors
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
 from pontoon.translations.utils import parse_source_string_to_json
@@ -44,6 +44,8 @@ class StagedPretranslation:
     """
     A pretranslation decided for one entity, not yet written:
     - `decision`: what to do with the entity's translations
+    - `bot`: the pretranslation author (TM or Google Translate) that produced it,
+      recorded as rejecting the translation it replaces.
     - `new`: the translation to create, if no existing one matches
     - `read_state`: the review state of the entity's translations as read when the
       decision was made, keyed by translation id, to detect concurrent changes
@@ -51,6 +53,7 @@ class StagedPretranslation:
 
     entity: Entity
     decision: "PretranslationDecision"
+    bot: User
     read_state: "dict[int, ReviewState]"
     new: Translation | None = None
 
@@ -112,7 +115,9 @@ def write_pretranslations(
         return []
 
     now = timezone.now()
-    reject_ids = [pk for change in written for pk in change.decision.reject_ids]
+    reject_ids_by_bot: dict[User, list[int]] = defaultdict(list)
+    for change in written:
+        reject_ids_by_bot[change.bot].extend(change.decision.reject_ids)
     deactivate_ids = [pk for change in written for pk in change.decision.deactivate_ids]
     matched = [
         change.decision.match for change in written if change.decision.match is not None
@@ -121,11 +126,10 @@ def write_pretranslations(
 
     # Rejections and deactivations must be written before translations are activated,
     # to keep a single active translation per entity and locale.
-    actions = reject_translations(
-        reject_ids,
-        now=now,
-        user=get_system_user(UserProfile.SystemUserRole.SYNC),
-    )
+    # Each rejection is recorded as performed by the bot whose pretranslation replaces it.
+    actions: list[ActionLog] = []
+    for bot, ids in reject_ids_by_bot.items():
+        actions.extend(reject_translations(ids, now=now, user=bot))
     if deactivate_ids:
         Translation.objects.filter(pk__in=deactivate_ids).update(active=False)
     if matched:
@@ -184,9 +188,18 @@ def update_pretranslated_resources(
 
 def pretranslate(project: Project, paths: set[str] | None):
     """
-    Identifies strings without any translations and any suggestions.
-    Engages TheAlgorithm (bug 1552796) to gather pretranslations.
-    Stores pretranslations as suggestions (approved=False) to DB.
+    Pretranslate the strings of a project with TheAlgorithm (bug 1552796),
+    following the same rules as the pretranslation upload API.
+
+    Strings with an approved translation are skipped, as are strings whose
+    pretranslation was previously rejected. A suggestion or fuzzy translation matching
+    the pretranslation is made the active pretranslation, keeping its author; a
+    previous, different pretranslation or fuzzy translation is rejected, and other
+    suggestions are kept. Pretranslations that still fail checks after a retry are
+    not stored.
+
+    Each locale is written in its own transaction. A string whose translations
+    changed while pretranslating is left out.
 
     :arg project: The project to be pretranslated
     :arg paths: Paths of the project resources to be pretranslated,
@@ -346,7 +359,10 @@ def pretranslate(project: Project, paths: set[str] | None):
                 continue
 
             change = StagedPretranslation(
-                entity=entity, decision=decision, read_state=read_state(rows)
+                entity=entity,
+                decision=decision,
+                bot=pt_authors[author_key],
+                read_state=read_state(rows),
             )
             if decision.match is None:
                 change.new = Translation(
@@ -355,7 +371,7 @@ def pretranslate(project: Project, paths: set[str] | None):
                     string=string,
                     value=value,
                     properties=properties,
-                    user=pt_authors[author_key],
+                    user=change.bot,
                     approved=False,
                     pretranslated=True,
                     active=True,
