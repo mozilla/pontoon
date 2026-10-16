@@ -24,7 +24,7 @@ import { TranslationLength } from './TranslationLength';
  *
  * If the user is not authenticated, shows a login button.
  * If the entity is read-only, shows a read-only notification.
- * Otherise, shows the various tools to control the editor.
+ * Otherwise, shows the various tools to control the editor.
  */
 export function EditorMenu(): React.ReactElement<'menu'> {
   return (
@@ -46,7 +46,6 @@ function MenuContent() {
   const { isAuthenticated, settings, signInURL, username } = useAppSelector(
     (state) => state.user,
   );
-
   if (isAuthenticated === null) {
     // No content while loading user data
     return null;

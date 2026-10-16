@@ -47,6 +47,8 @@ batchactions-BatchActions--replace-with =
 
 
 batchactions-BatchActions--copy-from-locale-heading = COPY FROM ANOTHER LOCALE
+batchactions-BatchActions--pretranslate-heading = PRETRANSLATE
+
 
 ## RejectAll
 ## Renders Reject All batch action button.
@@ -87,6 +89,16 @@ batchactions-CopyFromLocale--success =
 
 batchactions-CopyFromLocale--invalid = {$invalidCount} FAILED
 batchactions-CopyFromLocale--error = OOPS, SOMETHING WENT WRONG
+
+## Pretranslate
+batchactions-Pretranslate--default = PRETRANSLATE
+batchactions-Pretranslate--error = OOPS, SOMETHING WENT WRONG
+batchactions-Pretranslate--success =
+    { $changedCount ->
+        [one] { $changedCount } STRING PRETRANSLATED
+       *[other] { $changedCount } STRINGS PRETRANSLATED
+    }
+batchactions-Pretranslate--invalidCount = { $invalidCount } FAILED
 
 ## ResourceProgress
 ##  Show a panel with progress chart and stats for the current resource.
