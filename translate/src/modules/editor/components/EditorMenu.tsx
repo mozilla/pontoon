@@ -17,6 +17,7 @@ import { FailedChecks } from './FailedChecks';
 import { FtlSwitch } from './FtlSwitch';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
 import { MachinerySourceIndicator } from './MachinerySourceIndicator';
+import { RtlMarkIndicator } from './RtlMarkIndicator';
 import { TranslationLength } from './TranslationLength';
 
 /**
@@ -81,6 +82,7 @@ function MenuContent() {
       <KeyboardShortcuts />
       <TranslationLength />
       <MachinerySourceIndicator />
+      <RtlMarkIndicator />
       <div className='actions'>
         <Localized id='editor-EditorMenu--button-copy' attrs={{ title: true }}>
           <button
