@@ -4,9 +4,9 @@ from datetime import datetime
 from itertools import groupby
 from os.path import basename, join
 from tempfile import TemporaryDirectory
-from typing import NamedTuple
+from typing import Literal, NamedTuple
 
-from moz.l10n.model import Id as L10nId
+from moz.l10n.model import Id as L10nId, Message
 from moz.l10n.resource import parse_resource
 
 from django.core.files import File
@@ -329,15 +329,10 @@ def run_staged_checks(
     pending: list[PendingChange], db_res: DbResource, locale: Locale
 ) -> None:
     """
-    Run the quality checks on each staged translation, recording the results on its
-    `PendingChange` as `check_results`.
-
-    Checks run before anything is written, so that a translation failing them
-    can be left out, keeping in place the translation it would have replaced.
-
-    The results are kept in memory rather than read back from the database
-    after the write, as `run_checks()` also reports checks from libraries that
-    `bulk_run_checks()` does not store.
+    Run the quality checks on each staged translation. Checks run before anything is written,
+    so that a translation failing them can ignored, and keep in place the translation it
+    replaces. The results are kept here (in memory) rather that read back from the database
+    after the write.
     """
     if not pending:
         return
@@ -359,6 +354,36 @@ def run_staged_checks(
         change.check_results = run_checks(
             entity, locale.code, change.translation.string, False
         )
+
+
+def reject_translations(ids: list[int], now: datetime, user: User) -> list[ActionLog]:
+    """
+    Reject the given translations as `user`, and return the action log entries to
+    record for them. They remain unsaved.
+    """
+    actions: list[ActionLog] = []
+    if ids:
+        rejected = Translation.objects.filter(pk__in=ids)
+        actions.extend(
+            ActionLog(
+                action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+                created_at=now,
+                performed_by=user,
+                translation=tx,
+                is_implicit_action=True,
+            )
+            for tx in rejected
+        )
+        # Only approved translations have TM entries, so there are none to remove here.
+        rejected.update(
+            active=False,
+            rejected=True,
+            rejected_user=user,
+            rejected_date=now,
+            pretranslated=False,
+            fuzzy=False,
+        )
+    return actions
 
 
 def write_changes(
@@ -503,6 +528,57 @@ class PretranslationUploadResult:
     undefined_keys: list[L10nId] = field(default_factory=list)
 
 
+@dataclass
+class PretranslationDecision:
+    """
+    How to treat a string's translations, given a pretranslation for it:
+    - `outcome`: "skipped" if the string has an approved translation, "unchanged" if
+      the pretranslation is already its active pretranslation, "change" otherwise
+    - `match`: the translation equal to the pretranslation, if any
+    - `reject_ids`: ids of the other pretranslated or fuzzy translations, to reject
+    - `deactivate_ids`: ids of the other active translations, to deactivate
+    """
+
+    outcome: Literal["skipped", "unchanged", "change"]
+    match: Translation | None = None
+    reject_ids: list[int] = field(default_factory=list)
+    deactivate_ids: list[int] = field(default_factory=list)
+
+
+def decide_pretranslation(
+    translations: list[Translation],
+    value: Message,
+    properties: dict[str, Message] | None,
+) -> PretranslationDecision:
+    """
+    Decide how to treat the unrejected `translations` of a string, given a
+    pretranslation with `value` and `properties`.
+    """
+    if any(tx.approved for tx in translations):
+        return PretranslationDecision(outcome="skipped")
+
+    match = next(
+        (
+            tx
+            for tx in translations
+            if translations_equal(value, properties, tx.value, tx.properties)
+        ),
+        None,
+    )
+    if match is not None and match.pretranslated and match.active:
+        return PretranslationDecision(outcome="unchanged", match=match)
+
+    decision = PretranslationDecision(outcome="change", match=match)
+    for tx in translations:
+        if tx is match:
+            continue
+        if tx.pretranslated or tx.fuzzy:
+            decision.reject_ids.append(tx.pk)
+        elif tx.active:
+            decision.deactivate_ids.append(tx.pk)
+    return decision
+
+
 def import_uploaded_pretranslations(
     project: Project,
     locale: Locale,
@@ -554,34 +630,27 @@ def import_uploaded_pretranslations(
     for key, rt in upload_translations.items():
         entity_id = entities[key]
         translations = current.get(entity_id, [])
-        if rt.fuzzy or any(tx.approved for tx in translations):
+        if rt.fuzzy:
             result.skipped += 1
             continue
 
-        match = next(
-            (
-                tx
-                for tx in translations
-                if translations_equal(rt.value, rt.properties, tx.value, tx.properties)
-            ),
-            None,
-        )
-        if match is not None and match.pretranslated and match.active:
+        decision = decide_pretranslation(translations, rt.value, rt.properties)
+        if decision.outcome == "skipped":
+            result.skipped += 1
+            continue
+        if decision.outcome == "unchanged":
             result.unchanged += 1
             continue
 
         change = PendingChange(
-            key=key, read_state=read_state(translations), match=match
+            key=key,
+            read_state=read_state(translations),
+            match=decision.match,
+            reject_ids=decision.reject_ids,
+            deactivate_ids=decision.deactivate_ids,
         )
-        for tx in translations:
-            if tx is match:
-                continue
-            if tx.pretranslated or tx.fuzzy:
-                change.reject_ids.append(tx.pk)
-            elif tx.active:
-                change.deactivate_ids.append(tx.pk)
 
-        if match is None:
+        if decision.match is None:
             change.new = build_translation(rt, entity_id, locale.pk, user, now)
             change.new.pretranslated = True
             change.new.active = True
@@ -608,7 +677,6 @@ def import_uploaded_pretranslations(
             result.replaced += 1
         else:
             result.created += 1
-
     write_changes(
         project,
         user,
