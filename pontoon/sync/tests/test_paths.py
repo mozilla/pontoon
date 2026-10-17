@@ -3,9 +3,11 @@ from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest.mock import Mock
 
+from moz.l10n.paths import L10nConfigPaths
+
 from pontoon.base.models import Project, Repository
 from pontoon.sync.core.checkout import Checkout, Checkouts
-from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.paths import add_newly_configured_files, find_paths
 from pontoon.sync.tests.utils import FileTree, build_file_tree
 
 
@@ -154,3 +156,64 @@ def test_config_two_repos():
             join(root, "source", "foo", "en", "foo.pot"),
             {"locale": "fr"},
         )
+
+
+def test_add_newly_configured_files():
+    prev_config = dedent(
+        """\
+        [[paths]]
+            reference = "en/a.ftl"
+            l10n = "{locale}/a.ftl"
+        [[paths]]
+            reference = "en/b.ftl"
+            l10n = "{locale}/b.ftl"
+        [[paths]]
+            reference = "en/old-d.ftl"
+            l10n = "{locale}/d.ftl"
+        """
+    )
+
+    config = (
+        prev_config.replace('"{locale}/a.ftl"', '"l10n/{locale}/a.ftl"').replace(
+            '"en/old-d.ftl"', '"en/d.ftl"'
+        )
+        + '[[paths]]\nreference = "en/c.ftl"\nl10n = "{locale}/c.ftl"\n'
+        + '[[paths]]\nreference = "../elsewhere.ftl"\nl10n = "{locale}/e.ftl"\n'
+    )
+    with TemporaryDirectory() as root:
+        build_file_tree(
+            root,
+            {
+                "elsewhere.ftl": "",
+                "repo": {
+                    "en": {"a.ftl": "", "b.ftl": "", "c.ftl": "", "d.ftl": ""},
+                    "de-Test": {"b.ftl": "", "c.ftl": "", "d.ftl": ""},
+                    "l10n": {"de-Test": {"a.ftl": ""}},
+                    "l10n.toml": config,
+                },
+            },
+        )
+        project = Mock(Project, configuration_file="l10n.toml")
+        checkout = Mock(
+            Checkout,
+            path=join(root, "repo"),
+            changed=["l10n.toml"],
+            removed=[],
+            renamed=[(join("en", "old-d.ftl"), join("en", "d.ftl"))],
+            prev_commit="1",
+        )
+        checkout.file_at_last_sync.return_value = prev_config
+        checkouts = Checkouts(checkout, checkout)
+        paths = find_paths(project, checkouts)
+        assert isinstance(paths, L10nConfigPaths)
+        paths.locales = ["de-Test"]
+
+        add_newly_configured_files(
+            project, checkouts, paths, {"en/a.ftl", "en/b.ftl", "en/d.ftl"}
+        )
+        assert set(checkout.changed) == {
+            "l10n.toml",
+            join("l10n", "de-Test", "a.ftl"),
+            join("en", "c.ftl"),
+            join("de-Test", "c.ftl"),
+        }

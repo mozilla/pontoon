@@ -71,3 +71,9 @@ def changed_files(
             elif line.startswith("R"):
                 removed.append(line.split(None, 2)[1])
     return changed, removed, []
+
+
+def show(path: str, revision: str, file_path: str) -> str | None:
+    cmd = ["hg", "cat", "-r", revision.rstrip("+"), file_path]
+    code, output, _ = execute(cmd, path)
+    return output.decode() if code == 0 else None

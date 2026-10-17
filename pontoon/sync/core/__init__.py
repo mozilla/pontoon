@@ -76,7 +76,7 @@ def sync_project(
     paths.locales = list(locale_map.keys())
 
     added_entities_count, changed_paths, removed_paths = sync_resources_from_repo(
-        project, locale_map, checkouts.source, paths, now
+        project, locale_map, checkouts, paths, now
     )
 
     db_changes = ChangedEntityLocale.objects.filter(

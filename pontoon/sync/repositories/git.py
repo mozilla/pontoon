@@ -144,3 +144,9 @@ def changed_files(
             log.warning(f"Git: Failed to parse diff line: {line}")
             return None
     return changed, removed, renamed
+
+
+def show(path: str, revision: str, file_path: str) -> str | None:
+    cmd = ["git", "show", f"{revision}:{file_path}"]
+    code, output, _ = execute(cmd, path)
+    return output.decode() if code == 0 else None

@@ -93,3 +93,21 @@ def test_changed_files_error(mock_popen, repo_type):
     mock_popen.return_value = Mock(**attrs)
     assert get_repo(repo_type).changed_files("path", "1") is None
     assert mock_popen.called
+
+
+@pytest.mark.parametrize(
+    "repo_type, command",
+    [
+        ("git", ["git", "show", "1:dir/file.toml"]),
+        ("hg", ["hg", "cat", "-r", "1", "dir/file.toml"]),
+    ],
+)
+@patch("subprocess.Popen")
+def test_show(mock_popen, repo_type, command):
+    attrs = {"communicate.return_value": (b"content", b""), "returncode": 0}
+    mock_popen.return_value = Mock(**attrs)
+    assert get_repo(repo_type).show("path", "1", "dir/file.toml") == "content"
+    assert mock_popen.call_args[0][0] == command
+
+    mock_popen.return_value.returncode = 128
+    assert get_repo(repo_type).show("path", "1", "dir/file.toml") is None

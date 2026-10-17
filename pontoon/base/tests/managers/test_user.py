@@ -376,7 +376,7 @@ def test_mgr_user_translation_counts_after_resource_removed(
     paths = MagicMock()
     paths.ref_root = "/path_1"
 
-    remove_resources(resource_a.project, paths, checkout, timezone.now())
+    remove_resources(resource_a.project, paths, checkout, set(), timezone.now())
 
     resource_a.refresh_from_db()
     assert resource_a.obsolete is True

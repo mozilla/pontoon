@@ -20,6 +20,8 @@ class MockVersionControl:
         renamed: list[tuple[str, str]] | None = None,
     ):
         self._calls: list[tuple[str, Any]] = []
+        self.files_at_last_sync: dict[str, str] = {}
+        """File contents at the last synced revision, by path."""
         if changed is None and removed is None and renamed is None:
             self._changes = None
         else:
@@ -38,6 +40,10 @@ class MockVersionControl:
     def changed_files(self, *args):
         self._calls.append(("changed_files", args))
         return self._changes
+
+    def show(self, path, revision, file_path):
+        self._calls.append(("show", (path, revision, file_path)))
+        return self.files_at_last_sync.get(file_path)
 
 
 def test_no_changes_with_prev_commit():
