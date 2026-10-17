@@ -7,10 +7,12 @@ import {
   fetchCaighdeanTranslation,
   fetchComposedMachinery,
   fetchGoogleTranslation,
+  fetchOpenAIComposedTranslation,
   fetchOpenAITranslation,
   fetchMicrosoftTranslation,
   fetchTranslationMemory,
   MachineryTranslation,
+  SourceType,
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
@@ -107,6 +109,22 @@ function composedEquals(
   );
 }
 
+/**
+ * Fold a later result's sources into the suggestion already on screen.
+ *
+ * Updated in place rather than replaced: LLM refinement state is held in a
+ * WeakMap keyed by the suggestion object, so a replacement would hide the
+ * spinner of a refinement in flight and file its answer under a key nothing
+ * renders any more. Deduplicated so that merging twice changes nothing.
+ */
+function mergeInto(
+  target: { sources: SourceType[]; quality?: number },
+  extra: { sources: SourceType[]; quality?: number },
+): void {
+  target.sources = [...new Set([...target.sources, ...extra.sources])];
+  target.quality ??= extra.quality;
+}
+
 export function MachineryProvider({
   children,
 }: {
@@ -142,10 +160,7 @@ export function MachineryProvider({
             if (i === -1) {
               translations.push(tx);
             } else {
-              const t0 = translations[i];
-              const sources = t0.sources.concat(tx.sources);
-              const quality = t0.quality ?? tx.quality;
-              translations[i] = { ...t0, sources, quality };
+              mergeInto(translations[i], tx);
             }
           }
           translations.sort(sortByQuality);
@@ -165,10 +180,7 @@ export function MachineryProvider({
             if (i === -1) {
               composed.push(tx);
             } else {
-              const t0 = composed[i];
-              const sources = t0.sources.concat(tx.sources);
-              const quality = t0.quality ?? tx.quality;
-              composed[i] = { ...t0, sources, quality };
+              mergeInto(composed[i], tx);
             }
           }
           composed.sort(sortByQuality);
@@ -222,13 +234,19 @@ export function MachineryProvider({
           root?.dataset.isLlmAutoSuggestionLocale === 'true' &&
           entity.translation?.status !== 'approved';
 
+        // One automatic suggestion per string, composed where the entity has
+        // fields to compose: refining the flattened string would only ever fill
+        // the focused one, so it is the weaker of the two to spend a call on.
+        const wantsComposedLLMSuggestion = wantsLLMSuggestion && wantsComposed;
+        const wantsPlainLLMSuggestion = wantsLLMSuggestion && !wantsComposed;
+
         if (isGoogleTranslateSupported && locale.googleTranslateCode) {
           promises.push(
             fetchGoogleTranslation(plain, locale).then(async (results) => {
               addResults(results);
               // LLM suggestion refines the Google Translate output, so it can
               // only be requested once that has resolved.
-              if (!cancelled && wantsLLMSuggestion && results.length > 0) {
+              if (!cancelled && wantsPlainLLMSuggestion && results.length > 0) {
                 addResults(
                   await fetchOpenAITranslation(
                     plain,
@@ -245,7 +263,30 @@ export function MachineryProvider({
           if (wantsComposed) {
             promises.push(
               fetchComposedMachinery(pk!, locale, 'google-translate').then(
-                addComposed,
+                async (results) => {
+                  addComposed(results);
+                  // As for the single-string suggestion above, the LLM refines
+                  // the composition, so it can only run once that has resolved.
+                  if (
+                    !cancelled &&
+                    wantsComposedLLMSuggestion &&
+                    results.length > 0
+                  ) {
+                    const refined = await fetchOpenAIComposedTranslation(
+                      pk!,
+                      results[0].value,
+                      results[0].properties,
+                      'rephrased',
+                      locale.code,
+                      'auto',
+                    );
+                    if (refined) {
+                      addComposed([
+                        { sources: ['openai-chatgpt'], ...refined },
+                      ]);
+                    }
+                  }
+                },
               ),
             );
           }

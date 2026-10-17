@@ -23,8 +23,10 @@ from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 from django.db.models.functions import JSONObject
+from django.utils.html import strip_tags
 
 from pontoon.base.models import (
+    Comment,
     Entity,
     Locale,
     Project,
@@ -33,6 +35,7 @@ from pontoon.base.models import (
 )
 from pontoon.base.placeables import get_placeables
 from pontoon.base.utils import get_search_phrases
+from pontoon.terminology.models import Term
 
 
 log = logging.getLogger(__name__)
@@ -63,6 +66,42 @@ def get_llm_string_id(entity: Entity) -> str | None:
     # or ids in XLIFF and XCODE files that are set to the source string.
     key = [part for part in key if part != entity.string]
     return ".".join(key) or None
+
+
+def get_llm_entity_context(entity: Entity, locale: Locale, source_text: str) -> dict:
+    """
+    Context passed to the LLM alongside the text to translate.
+
+    Values are `None` rather than empty when absent, because `OpenAIService` omits
+    a section from the prompt entirely unless it has something to say.
+
+    :param source_text: The English text terminology is matched against.
+    """
+    pinned = [
+        stripped
+        for content in Comment.objects.filter(entity=entity, pinned=True).values_list(
+            "content", flat=True
+        )
+        if (stripped := strip_tags(content).strip())
+    ]
+
+    terms = [
+        {
+            "text": term.text,
+            "part_of_speech": term.part_of_speech,
+            "translation": term.translation(locale),
+        }
+        for term in Term.objects.for_string(source_text)
+    ]
+
+    return {
+        "entity_key": get_llm_string_id(entity),
+        "entity_comment": entity.comment or None,
+        "group_comment": (entity.section.comment if entity.section else None) or None,
+        "resource_comment": entity.resource.comment or None,
+        "pinned_comments": pinned or None,
+        "terms": terms or None,
+    }
 
 
 def get_google_translate_data(text, locale, format="text", preserve_placeables=False):
