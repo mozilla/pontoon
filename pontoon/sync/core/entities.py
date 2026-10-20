@@ -351,6 +351,42 @@ def update_resources(
     return add_count, changed_res_paths
 
 
+def restore_obsolete_entities(
+    project: Project,
+    changed_resources: dict[int, Resource],
+    deobsoletion_paths: list[str],
+    prev_entities: dict[tuple[str, L10nId], Entity],
+    next_entities: dict[tuple[str, L10nId], Entity],
+) -> dict[tuple[str, L10nId], Entity]:
+    
+    if not deobsoletion_paths:
+        return {}
+    restored: dict[tuple[str, L10nId], Entity] = {}
+    for ent in (
+        Entity.objects.filter(
+            resource__project=project,
+            resource__path__in=deobsoletion_paths,
+            obsolete=True,
+        )
+        .order_by("-pk")
+        .iterator()
+    ):
+        key = (changed_resources[ent.resource_id].path, tuple(ent.key))
+        next_ent = next_entities.get(key, None)
+        if (
+            next_ent is not None
+            and key not in prev_entities
+            and key not in restored
+            and ent.value == next_ent.value
+            and ent.properties == next_ent.properties
+        ):
+            ent.obsolete = False
+            ent.date_obsoleted = None
+            restored[key] = ent
+    Entity.objects.bulk_update(restored.values(), ["obsolete", "date_obsoleted"])
+    return restored
+
+
 def add_resources(
     project: Project,
     updates: dict[str, L10nResource[Message]],
