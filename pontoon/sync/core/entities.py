@@ -264,6 +264,11 @@ def update_resources(
             elif not db_section.pk:
                 new_sections.pop()
 
+    restored_entities = restore_obsolete_entities(
+        project, changed_resources, deobsoletion_paths, prev_entities, next_entities
+    )
+    prev_entities.update(restored_entities)
+
     obsolete_entities: list[Entity] = []
     log_rm: dict[str, list[str]] = defaultdict(list)
     for key, prev_ent in prev_entities.items():
