@@ -363,8 +363,8 @@ def run_staged_checks(
 
 def reject_translations(ids: list[int], now: datetime, user: User) -> list[ActionLog]:
     """
-    Reject the given translations as `user`, and return the action log entries to
-    record for them. They remain unsaved.
+    Reject the given translations as `user`. Return the action log entries for the
+    rejections, which the caller saves.
     """
     actions: list[ActionLog] = []
     if ids:
@@ -575,11 +575,12 @@ def import_uploaded_pretranslations(
     Store translations from an uploaded file in the database as pretranslations.
 
     Strings with an approved translation are skipped, so that reviewed translations are
-    never replaced. Unlike the built-in pretranslation, strings with unreviewed
-    suggestions are pretranslated: a suggestion matching the uploaded translation is
-    marked as a pretranslation, keeping its original author, while other suggestions are
-    kept as they are. A previous, different pretranslation or fuzzy translation is
-    rejected, and a matching one is made the active pretranslation.
+    never replaced. Strings with unreviewed suggestions are pretranslated: a suggestion
+    matching the uploaded translation is marked as a pretranslation, keeping its
+    original author, while other suggestions are kept as they are. A previous, different
+    pretranslation or fuzzy translation is rejected, and a matching one is made the
+    active pretranslation. The built-in pretranslation makes the same decision through
+    `decide_pretranslation()`, but skips strings that already have a pretranslation.
 
     Translations marked as fuzzy in the uploaded file are skipped.
 
@@ -662,6 +663,7 @@ def import_uploaded_pretranslations(
             result.replaced += 1
         else:
             result.created += 1
+
     write_changes(
         project,
         user,

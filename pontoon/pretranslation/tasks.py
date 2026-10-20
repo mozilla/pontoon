@@ -10,7 +10,7 @@ from moz.l10n.message import message_from_json
 from django.conf import settings
 from django.core.cache import cache
 from django.db import IntegrityError, transaction
-from django.db.models import CharField, Value as V
+from django.db.models import CharField, Q, Value as V
 from django.db.models.functions import Concat
 from django.utils import timezone
 
@@ -125,7 +125,7 @@ def write_pretranslations(
 
     # Rejections and deactivations must be written before translations are activated,
     # to keep a single active translation per entity and locale.
-    # Each rejection is recorded as performed by the bot whose pretranslation replaces it.
+    # Each rejection is recorded as done by the bot whose pretranslation replaces it.
     actions: list[ActionLog] = []
     for bot, ids in reject_ids_by_bot.items():
         actions.extend(reject_translations(ids, now=now, user=bot))
@@ -190,12 +190,12 @@ def pretranslate(project: Project, paths: set[str] | None):
     Pretranslate the strings of a project with TheAlgorithm (bug 1552796),
     following the same rules as the pretranslation upload API.
 
-    Strings with an approved translation are skipped, as are strings whose
-    pretranslation was previously rejected. A suggestion or fuzzy translation matching
-    the pretranslation is made the active pretranslation, keeping its author; a
-    previous, different pretranslation or fuzzy translation is rejected, and other
-    suggestions are kept. Pretranslations that still fail checks after a retry are
-    not stored.
+    Strings with an approved translation or an existing pretranslation are skipped,
+    as are strings whose pretranslation by a bot was previously rejected.
+    A suggestion or fuzzy translation matching the pretranslation becomes the active
+    pretranslation, keeping its author; a different fuzzy translation is rejected,
+    and other suggestions are kept. Pretranslations that still fail checks after a
+    retry are not stored.
 
     Each locale is written in its own transaction. A string whose translations
     changed while pretranslating is left out.
@@ -233,7 +233,6 @@ def pretranslate(project: Project, paths: set[str] | None):
     if paths:
         entities = entities.filter(resource__path__in=paths)
     entities = entities.prefetch_related("resource")
-    entity_ids = [entity.pk for entity in entities]
 
     # Fetch all available locale-resource pairs (TranslatedResource objects)
     tr_pairs = (
@@ -250,16 +249,15 @@ def pretranslate(project: Project, paths: set[str] | None):
         .distinct()
     )
 
-    # Fetch all locale-entity pairs with rejected pretranslation.
-    # These are not pretranslated again.
-
+    # Fetch all locale-entity pairs not to pretranslate: with an approved translation,
+    # an existing pretranslation, or a pretranslation rejected from a bot.
     pt_authors = get_pretranslation_authors()
-    rejected_pretranslations = set(
-        Translation.objects.filter(
-            locale__in=locales,
-            entity__in=entities,
-            rejected=True,
-            user__in=pt_authors.values(),
+    skipped_entities = set(
+        Translation.objects.filter(locale__in=locales, entity__in=entities)
+        .filter(
+            Q(rejected=False, approved=True)
+            | Q(rejected=False, pretranslated=True)
+            | Q(rejected=True, user__in=pt_authors.values())
         )
         .annotate(
             locale_entity=Concat(
@@ -273,25 +271,24 @@ def pretranslate(project: Project, paths: set[str] | None):
     for locale in locales:
         log.info(f"Fetching pretranslations for locale {locale.code} started")
 
-        # Unrejected translations of the entities in this locale, with entity id as key
+        candidates = [
+            entity
+            for entity in entities
+            if f"{locale.id}-{entity.id}" not in skipped_entities
+            and f"{locale.id}-{entity.resource.id}" in tr_pairs
+        ]
+
         rows_by_entity = translations_by_entity(
-            locale, entity_ids, include_rejected=False
+            locale, [entity.pk for entity in candidates], include_rejected=False
         )
+
         staged: list[StagedPretranslation] = []
 
-        for entity in entities:
-            locale_entity = f"{locale.id}-{entity.id}"
-            locale_resource = f"{locale.id}-{entity.resource.id}"
-            if (
-                locale_entity in rejected_pretranslations
-                or locale_resource not in tr_pairs
-            ):
-                continue
-
-            # Skip approved strings before calling MT.
-            # Machine Translation is expensive and approved strings are not pretranslated.
+        for entity in candidates:
+            # Check again: a translation may have been approved or
+            # pretranslated since the skipped entities were fetched.
             rows = rows_by_entity.get(entity.pk, [])
-            if any(tx.approved for tx in rows):
+            if any(tx.approved or tx.pretranslated for tx in rows):
                 continue
 
             entity_desc = (
@@ -383,7 +380,7 @@ def pretranslate(project: Project, paths: set[str] | None):
 
         if not staged:
             log.info(
-                f"Fetching pretranslations for locale {locale.code} done: No pretranslations fetched"
+                f"Fetching pretranslations for locale {locale.code} done: No pretranslation fetched"
             )
             continue
 
@@ -391,7 +388,7 @@ def pretranslate(project: Project, paths: set[str] | None):
             with transaction.atomic():
                 written = write_pretranslations(locale, staged)
         except IntegrityError as e:
-            # A translation activated concurrently, collides with
+            # A translation activated concurrently collides with
             # the one written here. Nothing is written for this locale.
             log.warning(
                 f"Pretranslations for locale {locale.code} not stored, "
