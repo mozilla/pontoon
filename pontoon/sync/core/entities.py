@@ -319,7 +319,8 @@ def update_resources(
             + model_update(prev_ent, "section", next_ent.section)
         ):
             mod_entities.append(prev_ent)
-            log_mod[key_path].append("/".join(key_entity))
+            if key not in restored_entities:
+                log_mod[key_path].append("/".join(key_entity))
     Entity.objects.bulk_update(
         mod_entities, ["value", "properties", "string", "comment", "meta", "section"]
     )
@@ -336,10 +337,16 @@ def update_resources(
     added_entities = Entity.objects.bulk_create(added_entities)
     add_count = len(added_entities)
 
-    if log_rm or log_add or log_mod:
-        for path in sorted(list(log_rm.keys() | log_add.keys() | log_mod.keys())):
+    log_restore: dict[str, list[str]] = defaultdict(list)
+    for key_path, key_entity in restored_entities:
+        log_restore[key_path].append("/".join(key_entity))
+    if log_rm or log_add or log_mod or log_restore:
+        for path in sorted(
+            list(log_rm.keys() | log_add.keys() | log_mod.keys() | log_restore.keys())
+        ):
             for desc, log_data in (
                 ("Obsolete", log_rm),
+                ("Restored", log_restore),
                 ("Changed", log_mod),
                 ("New", log_add),
             ):
@@ -358,7 +365,6 @@ def restore_obsolete_entities(
     prev_entities: dict[tuple[str, L10nId], Entity],
     next_entities: dict[tuple[str, L10nId], Entity],
 ) -> dict[tuple[str, L10nId], Entity]:
-    
     if not deobsoletion_paths:
         return {}
     restored: dict[tuple[str, L10nId], Entity] = {}
