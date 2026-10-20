@@ -329,10 +329,15 @@ def run_staged_checks(
     pending: list[PendingChange], db_res: DbResource, locale: Locale
 ) -> None:
     """
-    Run the quality checks on each staged translation. Checks run before anything is written,
-    so that a translation failing them can ignored, and keep in place the translation it
-    replaces. The results are kept here (in memory) rather that read back from the database
-    after the write.
+    Run the quality checks on each staged translation, recording the results on its
+    `PendingChange` as `check_results`.
+
+    Checks run before anything is written, so that a translation failing them
+    can be left out, keeping in place the translation it would have replaced.
+
+    The results are kept in memory rather than read back from the database
+    after the write, as `run_checks()` also reports checks from libraries that
+    `bulk_run_checks()` does not store.
     """
     if not pending:
         return
@@ -417,27 +422,7 @@ def write_changes(
     actions: list[ActionLog] = []
     # Rejections and deactivations must be written before translations are activated,
     # to keep a single active translation per entity and locale.
-    if reject_ids:
-        rejected = Translation.objects.filter(pk__in=reject_ids)
-        actions.extend(
-            ActionLog(
-                action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
-                created_at=now,
-                performed_by=user,
-                translation=tx,
-                is_implicit_action=True,
-            )
-            for tx in rejected
-        )
-        # Only approved translations have TM entries, so there are none to remove here.
-        rejected.update(
-            active=False,
-            rejected=True,
-            rejected_user=user,
-            rejected_date=now,
-            pretranslated=False,
-            fuzzy=False,
-        )
+    actions.extend(reject_translations(reject_ids, now=now, user=user))
     if deactivate_ids:
         Translation.objects.filter(pk__in=deactivate_ids).update(active=False)
     if matched:

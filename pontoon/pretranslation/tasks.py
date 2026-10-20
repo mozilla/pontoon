@@ -26,7 +26,6 @@ from pontoon.base.models import (
 from pontoon.base.tasks import PontoonTask
 from pontoon.base.user_utils import get_pretranslation_authors
 from pontoon.checks.libraries import run_checks
-from pontoon.checks.utils import are_blocking_checks
 from pontoon.translations.utils import parse_source_string_to_json
 
 from .pretranslate import get_pretranslation
@@ -251,8 +250,8 @@ def pretranslate(project: Project, paths: set[str] | None):
         .distinct()
     )
 
-    # fetch all loclale-entity pairs pairs with rejected pretranslation
-    # these are not pretranslated again.
+    # Fetch all locale-entity pairs with rejected pretranslation.
+    # These are not pretranslated again.
 
     pt_authors = get_pretranslation_authors()
     rejected_pretranslations = set(
@@ -328,7 +327,7 @@ def pretranslate(project: Project, paths: set[str] | None):
                     pretranslation[0],
                     use_tt_checks=False,
                 )
-                if are_blocking_checks(failed_checks, ignore_warnings=False):
+                if failed_checks:
                     log.info(
                         f"Pretranslation failed checks for {entity_desc}: {failed_checks!r}"
                     )
@@ -395,7 +394,7 @@ def pretranslate(project: Project, paths: set[str] | None):
             # A translation activated concurrently, collides with
             # the one written here. Nothing is written for this locale.
             log.warning(
-                f"Pretranslations for locale {locale.code} not stored,"
+                f"Pretranslations for locale {locale.code} not stored, "
                 f"as a translation changed concurrently: {e!r}"
             )
             continue
