@@ -623,14 +623,21 @@ def test_get_pretranslations_fluent_multiline(fluent_resource, entity_b, locale_
     fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
     # 100% TM match exists
-    tm = TranslationMemoryFactory.create(
+    TranslationMemoryFactory.create(
         entity=entity_b,
         source="Multi\nLine\nMessage",
         target="TM: Multi\nLine\nMessage",
         locale=locale_b,
     )
 
-    expected = f"multiline = {tm.target}"
+    expected = dedent(
+        """
+        multiline =
+            TM: Multi
+            Line
+            Message
+    """
+    )
 
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))

@@ -9,7 +9,7 @@ from fluent.syntax.serializer import serialize_expression
 from moz.l10n.formats import Format
 from moz.l10n.formats.fluent import (
     fluent_astify_message,
-    fluent_parse_entry,
+    fluent_parse_message,
 )
 from moz.l10n.message import message_from_json
 from moz.l10n.model import (
@@ -263,9 +263,9 @@ class Pretranslation:
             tm_best = max(set(tm_q100), key=tm_q100.count)
             self.services.append("tm")
             if self.format == Format.fluent:
-                te = fluent_parse_entry(f"key = {tm_best}\n")
-                assert isinstance(te.value, PatternMessage)
-                return te.value.pattern
+                msg = fluent_parse_message(tm_best)
+                assert isinstance(msg, PatternMessage)
+                return msg.pattern
             else:
                 return [tm_best]
 
