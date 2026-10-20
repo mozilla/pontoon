@@ -1277,13 +1277,12 @@ markupsafe==2.0.1 \
     #   -c 1-prod.txt
     #   -r 0-base.in
     #   jinja2
-moz-l10n[xml]==0.14.2 \
-    --hash=sha256:6961af76ed6c8578679cf66662dbdffa5f27f3b16d6c9b18f765eb9a7da04e99 \
-    --hash=sha256:b66a626185a6d2578a51c304725f1b4bc3b4995a06cf28de51fd9f719ff7b6bc
+moz-l10n[xml]==0.15.0 \
+    --hash=sha256:8b396c69c7dd756e726d7cb62a2d68338e6b1ddbdd7e94336734c16fc0ab7732 \
+    --hash=sha256:dafea0ccd5a6d1bb82f4c0103c97e208b3cb43b5bd02a40d19e1ff19933f5b0b
     # via
     #   -c 1-prod.txt
     #   -r 0-base.in
-    #   moz-l10n
 mypy==2.1.0 \
     --hash=sha256:022c771234936ceac541ebaf836fe9e2abeb3f5e09aff21588fe543ff006fe21 \
     --hash=sha256:0b1a5260c95aa443083f9ed3592662941951bca3d4ca224a5dc517c38b7cf666 \
@@ -2529,3 +2528,6 @@ zensical==0.0.34 \
     # via
     #   -c 1-prod.txt
     #   -r 0-base.in
+
+# The following packages were excluded from the output:
+# setuptools
