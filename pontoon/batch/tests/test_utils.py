@@ -181,9 +181,11 @@ def test_copy_from_another_locale_copies_all_strings():
 
 
 @pytest.mark.django_db
+@patch("pontoon.batch.actions.bulk_run_checks")
 @patch("pontoon.batch.actions.get_pretranslation")
 def test_pretranslate_translations_skips_approved_includes_suggestions(
     get_pretranslation_mock,
+    bulk_run_checks_mock,
 ):
     """
     Pretranslation is skipped for entities with an approved translation,

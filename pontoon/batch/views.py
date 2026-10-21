@@ -2,11 +2,13 @@ import logging
 
 from typing import cast
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from pontoon.base.models import (
     Entity,
@@ -23,10 +25,10 @@ from pontoon.batch import forms
 from pontoon.batch.actions import (
     approve_translations,
     copy_translation_from_locale,
-    pretranslate_translations,
     reject_translations,
     replace_translations,
 )
+from pontoon.batch.tasks import batch_pretranslate_task
 
 
 log = logging.getLogger(__name__)
@@ -44,9 +46,9 @@ def update_translation_memory(changed_translation_pks, project, locale):
             project=project,
         )
         for t in (
-            Translation.objects.filter(pk__in=changed_translation_pks).prefetch_related(
-                "entity__resource"
-            )
+            Translation.objects.filter(
+                pk__in=changed_translation_pks, pretranslated=False
+            ).prefetch_related("entity__resource")
         )
     ]
     TranslationMemoryEntry.objects.bulk_create(memory_entries)
@@ -128,7 +130,20 @@ def batch_edit_translations(request):
                     },
                     status=400,
                 )
-            action_status = pretranslate_translations(user, locale, entities)
+            lock_name = f"batch_pretranslate_{locale.pk}"
+            if not cache.add(lock_name, True, timeout=settings.SYNC_TASK_TIMEOUT):
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "Pretranslation is already running for this locale.",
+                    },
+                    status=409,
+                )
+            cache.delete(f"{lock_name}_result")
+            batch_pretranslate_task.delay(
+                user.pk, locale.pk, list(entities.values_list("pk", flat=True))
+            )
+            return JsonResponse({"status": "started"})
         case "reject":
             action_status = reject_translations(user, locale, entities)
         case "replace":
@@ -187,5 +202,20 @@ def batch_edit_translations(request):
             "count": action_status["count"],
             "invalid_translation_count": invalid_translation_count,
             "badge_update": action_status["badge_update"],
+        }
+    )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_GET
+@require_AJAX
+def batch_pretranslate_status(request):
+    """Report whether batch pretranslation is running for a locale."""
+    locale = get_object_or_404(Locale, code=request.GET.get("locale"))
+    lock_name = f"batch_pretranslate_{locale.pk}"
+    return JsonResponse(
+        {
+            "in_progress": cache.get(lock_name) is not None,
+            "result": cache.get(f"{lock_name}_result"),
         }
     )

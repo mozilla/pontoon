@@ -3,6 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.urls import reverse
 
 from pontoon.checks.utils import bulk_run_checks
@@ -259,9 +260,10 @@ def test_batch_pretranslate_forbidden_without_pretranslators_group(
 
 
 @pytest.mark.django_db
-@patch("pontoon.batch.actions.get_pretranslation")
+@pytest.mark.django_db
+@patch("pontoon.batch.views.batch_pretranslate_task")
 def test_batch_pretranslate_allowed_for_pretranslators_group(
-    get_pretranslation_mock,
+    task_mock,
     batch_action,
     member,
     user_a,
@@ -271,11 +273,12 @@ def test_batch_pretranslate_allowed_for_pretranslators_group(
 ):
     """
     A translator who is also in the pretranslators group can pretranslate.
+    The work is handed to a background task.
     """
-    get_pretranslation_mock.return_value = ("key = pretranslated value", "gt")
-
     locale_a.translators_group.user_set.add(user_a)
     group, _ = Group.objects.get_or_create(name="pretranslators")
+    locale_a.google_translate_code = "tlh"
+    locale_a.save()
     user_a.groups.add(group)
 
     response = batch_action(
@@ -284,7 +287,14 @@ def test_batch_pretranslate_allowed_for_pretranslators_group(
         entities=entity_a.id,
     )
 
-    assert response.status_code != 403
+    assert response.status_code == 200
+    assert response.json() == {"status": "started"}
+    task_mock.delay.assert_called_once()
+    _, locale_pk, entity_pks = task_mock.delay.call_args.args
+    assert locale_pk == locale_a.pk
+    assert entity_pks == [entity_a.pk]
+
+    cache.delete(f"batch_pretranslate_{locale_a.pk}")
 
 
 @pytest.mark.django_db
@@ -310,3 +320,61 @@ def test_batch_pretranslate_unsupported_locale(
 
     assert response.status_code == 400
     assert b"not supported" in response.content
+
+
+@pytest.mark.django_db
+@patch("pontoon.batch.views.batch_pretranslate_task")
+def test_batch_pretranslate_rejected_while_already_running(
+    task_mock,
+    batch_action,
+    member,
+    user_a,
+    locale_a,
+    entity_a,
+    project_locale_a,
+):
+    """
+    A second pretranslation for the same locale is refused while one is running.
+    """
+    locale_a.translators_group.user_set.add(user_a)
+    group, _ = Group.objects.get_or_create(name="pretranslators")
+    user_a.groups.add(group)
+    locale_a.google_translate_code = "tlh"
+    locale_a.save()
+
+    lock_name = f"batch_pretranslate_{locale_a.pk}"
+    cache.add(lock_name, True)
+
+    try:
+        response = batch_action(
+            action="pretranslate",
+            locale=locale_a.code,
+            entities=entity_a.id,
+        )
+    finally:
+        cache.delete(lock_name)
+
+    assert response.status_code == 409
+    task_mock.delay.assert_not_called()
+
+
+@pytest.mark.django_db
+def test_batch_pretranslate_status(client, member, locale_a):
+    url = reverse("pontoon.batch.pretranslate.status")
+    lock_name = f"batch_pretranslate_{locale_a.pk}"
+    cache.delete(lock_name)
+    cache.delete(f"{lock_name}_result")
+
+    response = client.get(
+        url, {"locale": locale_a.code}, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+    )
+    assert response.json() == {"in_progress": False, "result": None}
+
+    cache.add(lock_name, True)
+    try:
+        response = client.get(
+            url, {"locale": locale_a.code}, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
+    finally:
+        cache.delete(lock_name)
+    assert response.json()["in_progress"] is True

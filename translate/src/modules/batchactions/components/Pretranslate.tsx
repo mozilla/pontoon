@@ -11,10 +11,22 @@ export function Pretranslate({
   pretranslate,
   batchactions: { response, requestInProgress },
 }: Props): React.ReactElement<'button'> {
+  const inProgress = requestInProgress === 'pretranslate';
+
   return (
-    <button className='pretranslate-btn' onClick={pretranslate}>
-      <Title {...response} />
-      {requestInProgress === 'pretranslate' ? (
+    <button
+      className='pretranslate-btn'
+      onClick={pretranslate}
+      disabled={inProgress}
+    >
+      {inProgress ? (
+        <Localized id='batchactions-Pretranslate--in-progress'>
+          PRETRANSLATING…
+        </Localized>
+      ) : (
+        <Title {...response} />
+      )}
+      {inProgress ? (
         <i className='fas fa-2x fa-circle-notch fa-spin'></i>
       ) : null}
     </button>

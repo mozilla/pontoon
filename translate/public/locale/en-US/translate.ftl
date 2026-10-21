@@ -92,6 +92,7 @@ batchactions-CopyFromLocale--error = OOPS, SOMETHING WENT WRONG
 
 ## Pretranslate
 batchactions-Pretranslate--default = PRETRANSLATE
+batchactions-Pretranslate--in-progress = PRETRANSLATING…
 batchactions-Pretranslate--error = OOPS, SOMETHING WENT WRONG
 batchactions-Pretranslate--success =
     { $changedCount ->

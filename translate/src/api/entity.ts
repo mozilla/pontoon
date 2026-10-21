@@ -51,7 +51,23 @@ type BatchEditResponse =
       invalid_translation_count?: number;
       badge_update?: BatchBadgeUpdate;
     }
+  | { status: 'started' }
   | { error: true };
+
+export type PretranslateStatus = {
+  in_progress: boolean;
+  result:
+    | { count: number; invalid_translation_count: number }
+    | { error: true }
+    | null;
+};
+
+export async function fetchPretranslateStatus(
+  locale: string,
+): Promise<PretranslateStatus> {
+  const search = new URLSearchParams({ locale });
+  return GET('/batch-pretranslate-status/', search);
+}
 
 export async function batchEditEntities(
   action:

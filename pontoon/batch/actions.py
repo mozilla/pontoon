@@ -495,7 +495,9 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
     translation_pks = {t.pk for t in changed_translations}
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
 
-    changed_translations_qs = Translation.objects.filter(pk__in=translation_pks)
+    changed_translations_qs = Translation.objects.filter(
+        pk__in=translation_pks, errors__isnull=True, warnings__isnull=True
+    )
 
     count, translated_resources, changed_entities = utils.get_translations_info(
         changed_translations_qs, locale
@@ -512,7 +514,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
 
     ActionLog.objects.bulk_create(actions_to_log)
 
-    changed_translation_pks = [t.pk for t in changed_translations]
+    changed_translation_pks = list(changed_translations_qs.values_list("pk", flat=True))
 
     return {
         "count": count,
