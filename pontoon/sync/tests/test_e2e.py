@@ -2,7 +2,7 @@ import logging
 import re
 
 from contextlib import contextmanager
-from os import makedirs
+from os import makedirs, remove
 from os.path import isfile, join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
@@ -15,6 +15,7 @@ from django.conf import settings
 
 from pontoon.base.models import (
     ChangedEntityLocale,
+    Comment,
     Entity,
     Locale,
     ProjectLocale,
@@ -36,6 +37,7 @@ from pontoon.test.factories import (
     SectionFactory,
     TranslatedResourceFactory,
     TranslationFactory,
+    UserFactory,
 )
 
 
@@ -1090,3 +1092,96 @@ def test_config_changes(caplog):
         sync_with_config(config_all.replace('"en/*.ftl"', '"en/*.flt"'))
         assert not project.resources.filter(obsolete=True).exists()
         assert "Not removing 2 of 2 source files" in caplog.text
+
+
+@pytest.mark.parametrize("removal", ["config", "repo"])
+@pytest.mark.django_db
+def test_restore_entities(removal):
+    mock_vcs = MockVersionControl(changed=[])
+    with mock_setup(mock_vcs) as (repo, locale):
+        # Database setup
+        project = ProjectFactory.create(
+            name=f"test-restore-{removal}",
+            configuration_file="l10n.toml",
+            locales=[locale],
+            repositories=[repo],
+            system_project=False,
+        )
+
+        # Filesystem setup
+        root = repo.checkout_path
+        config_a = '[[paths]]\nreference = "en/a.ftl"\nl10n = "{locale}/a.ftl"\n'
+        config_ab = (
+            config_a + '[[paths]]\nreference = "en/b.ftl"\nl10n = "{locale}/b.ftl"\n'
+        )
+        makedirs(root)
+        build_file_tree(
+            root,
+            {
+                "en": {"a.ftl": "a = A\n", "b.ftl": "b = B\nc = C\n"},
+                "de-Test": {"a.ftl": "a = A de\n", "b.ftl": "b = B de\n"},
+                "l10n.toml": config_ab,
+            },
+        )
+        sync_project_task(project.pk)
+
+        translator = UserFactory.create()
+        entity_b = Entity.objects.get(resource__project=project, key=["b"])
+        entity_c = Entity.objects.get(resource__project=project, key=["c"])
+        Translation.objects.filter(entity=entity_b).update(user=translator)
+        suggestion = TranslationFactory.create(
+            entity=entity_b, locale=locale, user=translator, string="b = Suggestion\n"
+        )
+        comment = Comment.objects.create(
+            author=translator, entity=entity_b, locale=locale, content="Note"
+        )
+
+        # Remove en/b.ftl
+        if removal == "config":
+            mock_vcs.files_at_last_sync["l10n.toml"] = config_ab
+            with open(join(root, "l10n.toml"), "w") as file:
+                file.write(config_a)
+            mock_vcs.set_changes(changed=["l10n.toml"])
+        else:
+            remove(join(root, "en", "b.ftl"))
+            mock_vcs.set_changes(removed=[join("en", "b.ftl")])
+        sync_project_task(project.pk)
+        entity_b.refresh_from_db()
+        assert entity_b.obsolete
+        assert isfile(join(root, "de-Test", "b.ftl")) == (removal == "config")
+
+        # Bring en/b.ftl back
+        if removal == "config":
+            mock_vcs.files_at_last_sync["l10n.toml"] = config_a
+            with open(join(root, "l10n.toml"), "w") as file:
+                file.write(config_ab)
+            changed = ["l10n.toml"]
+        else:
+            changed = [join("en", "b.ftl")]
+        with open(join(root, "en", "b.ftl"), "w") as file:
+            file.write("b = B\nc = C\nd = D\n")
+        mock_vcs.set_changes(changed=changed)
+        sync_project_task(project.pk)
+
+        # Check that d is new
+        assert sorted(
+            (ent.key[0], ent.pk in (entity_b.pk, entity_c.pk))
+            for ent in Entity.objects.filter(
+                resource__project=project, resource__path="en/b.ftl", obsolete=False
+            )
+        ) == [("b", True), ("c", True), ("d", False)]
+        approved_b = Translation.objects.get(entity=entity_b, approved=True)
+        assert approved_b.user == translator
+        suggestion.refresh_from_db()
+        assert not suggestion.rejected
+        comment.refresh_from_db()
+        assert comment.entity_id == entity_b.pk
+
+        tr_b = TranslatedResource.objects.get(resource__path="en/b.ftl")
+        assert (tr_b.total_strings, tr_b.approved_strings) == (3, 1)
+        assert list(translator.notifications.values_list("verb", flat=True)) == [
+            "updated with 1 new string"
+        ]
+
+        with open(join(root, "de-Test", "b.ftl")) as file:
+            assert file.read() == "b = B de\n"
