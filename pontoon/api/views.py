@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from types import SimpleNamespace
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,9 +13,10 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.uploadedfile import UploadedFile
 from django.db import IntegrityError, transaction
 from django.db.models import Prefetch, Q
+from django.db.models.functions import Greatest
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
-from django.utils.timezone import make_aware
+from django.utils.timezone import localdate, make_aware
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.authentication import (
@@ -28,6 +29,7 @@ from pontoon.base import forms
 from pontoon.base.badge_utils import badge_levels, new_badge_levels
 from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
+    Comment,
     Entity,
     Locale,
     LocaleCodeHistory,
@@ -38,6 +40,7 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
+    User,
 )
 from pontoon.base.services import readonly_exists
 from pontoon.base.user_utils import can_translate
@@ -73,6 +76,7 @@ from .serializers import (
     UploadSuggestionsResponseSerializer,
     UploadTranslationsResponseSerializer,
     UserActionsResponseSerializer,
+    UserTranslationSerializer,
 )
 
 
@@ -169,6 +173,107 @@ class UserActionsView(APIView):
                     "name": project.name,
                 },
             }
+        )
+
+
+USER_TRANSLATIONS_DEFAULT_DAYS = 14
+USER_TRANSLATIONS_MAX_DAYS = 30
+
+
+@extend_schema(
+    description=(
+        "List translations submitted by a user, and created, approved or rejected "
+        "within the date range, most recently changed first. Defaults to the last "
+        f"{USER_TRANSLATIONS_DEFAULT_DAYS} days; the date range can span at most "
+        f"{USER_TRANSLATIONS_MAX_DAYS} days."
+    ),
+    parameters=[
+        OpenApiParameter(
+            "start_date",
+            str,
+            description=(
+                "First day of the range (YYYY-MM-DD). Defaults to "
+                f"{USER_TRANSLATIONS_DEFAULT_DAYS} days before end_date."
+            ),
+        ),
+        OpenApiParameter(
+            "end_date",
+            str,
+            description="Last day of the range, inclusive (YYYY-MM-DD). Defaults to today.",
+        ),
+        OpenApiParameter("project", str, description="Project slug"),
+        OpenApiParameter("locale", str, description="Locale code"),
+    ],
+)
+class UserTranslationListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserTranslationSerializer
+
+    def parse_date(self, name):
+        value = self.request.query_params.get(name)
+        if not value:
+            return None
+        try:
+            return datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            raise ValidationError({name: ["Invalid date, use the YYYY-MM-DD format."]})
+
+    def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Translation.objects.none()
+
+        user = get_object_or_404(User, username=self.kwargs["username"])
+
+        end_date = self.parse_date("end_date") or localdate()
+        try:
+            start_date = self.parse_date("start_date") or end_date - timedelta(
+                days=USER_TRANSLATIONS_DEFAULT_DAYS
+            )
+            start = make_aware(datetime.combine(start_date, time.min))
+            end = make_aware(datetime.combine(end_date + timedelta(days=1), time.min))
+        except OverflowError:
+            raise ValidationError({"end_date": ["Date out of range."]})
+        if start_date > end_date:
+            raise ValidationError(
+                {"start_date": ["start_date must not be later than end_date."]}
+            )
+        if (end_date - start_date).days > USER_TRANSLATIONS_MAX_DAYS:
+            raise ValidationError(
+                {
+                    "end_date": [
+                        f"The date range can span at most {USER_TRANSLATIONS_MAX_DAYS} days."
+                    ]
+                }
+            )
+
+        visible_projects = Project.objects.visible_for(self.request.user)
+        qs = Translation.objects.filter(
+            Q(date__gte=start, date__lt=end)
+            | Q(approved_date__gte=start, approved_date__lt=end)
+            | Q(rejected_date__gte=start, rejected_date__lt=end),
+            user=user,
+            entity__resource__project__in=visible_projects,
+        )
+
+        if slug := self.request.query_params.get("project"):
+            project = get_object_or_404(visible_projects, slug=slug)
+            qs = qs.filter(entity__resource__project=project)
+        if code := self.request.query_params.get("locale"):
+            locale = get_object_or_404(Locale, code=code)
+            qs = qs.filter(locale=locale)
+
+        return (
+            qs.select_related("locale", "entity__resource__project")
+            .prefetch_related(
+                Prefetch(
+                    "comments",
+                    queryset=Comment.objects.select_related("author").order_by(
+                        "timestamp"
+                    ),
+                )
+            )
+            .annotate(last_change=Greatest("date", "approved_date", "rejected_date"))
+            .order_by("-last_change", "-pk")
         )
 
 

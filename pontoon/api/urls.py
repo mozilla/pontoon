@@ -90,6 +90,12 @@ api_v2_patterns = [
         name="entity-translation-search",
     ),
     path(
+        # User Translations
+        "users/<str:username>/translations/",
+        views.UserTranslationListView.as_view(),
+        name="user-translation-list",
+    ),
+    path(
         # ProjectLocale
         "<str:code>/<str:slug>/",
         views.ProjectLocaleIndividualView.as_view(),
