@@ -22,10 +22,19 @@ class MockVersionControl:
         self._calls: list[tuple[str, Any]] = []
         self.files_at_last_sync: dict[str, str] = {}
         """File contents at the last synced revision, by path."""
-        if changed is None and removed is None and renamed is None:
-            self._changes = None
-        else:
-            self._changes = (changed or [], removed or [], renamed or [])
+        self._changes: tuple[list[str], list[str], list[tuple[str, str]]] | None = None
+        if changed is not None or removed is not None or renamed is not None:
+            self.set_changes(changed=changed, removed=removed, renamed=renamed)
+
+    def set_changes(
+        self,
+        *,
+        changed: list[str] | None = None,
+        removed: list[str] | None = None,
+        renamed: list[tuple[str, str]] | None = None,
+    ):
+        """Set the files reported as changed since the last synced revision."""
+        self._changes = (changed or [], removed or [], renamed or [])
 
     def commit(self, *args):
         self._calls.append(("commit", args))

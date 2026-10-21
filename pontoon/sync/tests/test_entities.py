@@ -137,22 +137,32 @@ def test_resource_deobsoletion():
         res_c = ResourceFactory.create(
             project=project, path="c.ftl", format="fluent", obsolete=True
         )
-        EntityFactory.create(
-            resource=res_c, key=["key-4"], string="key-4 = Message 4", obsolete=True
-        )
-        EntityFactory.create(
-            resource=res_c, key=["key-5"], string="key-5 = Message 5", obsolete=True
-        )
-        EntityFactory.create(
-            resource=res_c, key=["key-6"], string="key-6 = Message 6", obsolete=True
-        )
+
+        def obsolete_entity(string, **kwargs):
+            return EntityFactory.create(
+                resource=res_c,
+                string=string,
+                obsolete=True,
+                date_obsoleted=now,
+                section=None,
+                **kwargs,
+            )
+
+        obsolete_entity("key-1 = Message 1\n")
+        newest_key_1 = obsolete_entity("key-1 = Message 1\n", comment="Old comment")
+        obsolete_entity("key-2 = Old message 2\n")
+        obsolete_entity("key-3 = Message 3\n    .attr = Old attribute\n")
+        obsolete_entity("key-4 = Message 4\n")
 
         # Filesystem setup
         c_ftl = dedent(
             """
+            # New comment
             key-1 = Message 1
             key-2 = Message 2
             key-3 = Message 3
+                .attr = New attribute
+            key-5 = Message 5
             """
         )
         makedirs(repo.checkout_path)
@@ -184,18 +194,25 @@ def test_resource_deobsoletion():
         # resource de-obsoleted
         assert not res_c.obsolete
 
-        # TODO Entities should also be de-obsoleted
-        assert {
-            (tuple(ent.key), ent.obsolete)
-            for ent in Entity.objects.filter(resource=res_c)
-        } == {
-            (("key-1",), False),
-            (("key-2",), False),
-            (("key-3",), False),
-            (("key-4",), True),
-            (("key-5",), True),
-            (("key-6",), True),
-        }
+        # Entities with unchanged content are restored, others are created anew
+        assert sorted(
+            (ent.key[0], ent.obsolete) for ent in Entity.objects.filter(resource=res_c)
+        ) == [
+            ("key-1", False),
+            ("key-1", True),
+            ("key-2", False),
+            ("key-2", True),
+            ("key-3", False),
+            ("key-3", True),
+            ("key-4", True),
+            ("key-5", False),
+        ]
+
+        newest_key_1.refresh_from_db()
+        assert not newest_key_1.obsolete
+        assert newest_key_1.date_obsoleted is None
+        assert newest_key_1.section is not None
+        assert newest_key_1.comment == "New comment"
 
 
 @pytest.mark.django_db
