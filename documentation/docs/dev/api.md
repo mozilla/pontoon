@@ -139,6 +139,75 @@ on rejected calls. For example, 60 accepted calls followed by 540 rejected ones 
 the hourly quota, locking the client out for one hour. This quota is separate from the one
 used by the write endpoints.
 
+## User Translations
+
+### `GET /api/v2/users/{username}/translations/`
+
+List translations submitted by the user with the given username, most recently changed
+first.
+
+Optional query parameters:
+
+| Parameter    | Description                                                                  |
+| ------------ | ---------------------------------------------------------------------------- |
+| `start_date` | First day of the range (`YYYY-MM-DD`). Defaults to 14 days before `end_date` |
+| `end_date`   | Last day of the range, inclusive (`YYYY-MM-DD`). Defaults to today           |
+| `project`    | Project slug                                                                 |
+| `locale`     | Locale code                                                                  |
+
+The date range can span at most 30 days. A translation is included if it was created,
+approved or rejected within the range, and results are sorted by the most recent of these
+dates.
+
+An example may look like this:
+
+```bash
+$ curl -H "Authorization: Bearer <token>" \
+  "https://example.com/api/v2/users/lqa-bot/translations/?locale=it&start_date=2026-10-01"
+```
+
+```json
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "translation_pk": 1234,
+      "string": "Apri una nuova scheda",
+      "status": "rejected",
+      "date": "2026-10-02T09:12:44.123456Z",
+      "approved_date": null,
+      "rejected_date": "2026-10-03T15:01:02.654321Z",
+      "entity": "new-tab",
+      "resource": "browser/tabs.ftl",
+      "project": "firefox",
+      "locale": "it",
+      "url": "https://example.com/it/firefox/browser/tabs.ftl/?string=567",
+      "comments": [
+        {
+          "author": { "username": "reviewer", "name": "Reviewer" },
+          "date": "2026-10-03T15:00:40.000000Z",
+          "content": "Use “scheda” consistently."
+        }
+      ]
+    }
+  ]
+}
+```
+
+`status` is one of `approved`, `rejected`, `pretranslated`, `fuzzy` or `unreviewed`.
+`entity` is the string identifier as shown in the context of the translate view (e.g. the
+Fluent message ID). Multi-part identifiers, such as nested keys, are shown from the
+innermost part, separated by `•`. It's `null` for gettext strings without a context. `url` links to
+the string in the translate view. `comments` only includes comments on the
+translation itself, not team comments. `author` is `null` if the comment author's account
+was deleted.
+
+Authentication is required. Translations in private projects are only included for
+administrators. Invalid dates or ranges return `400`. An unknown user, project or locale
+returns `404`, as does a private project for non-administrators.
+
 ## Write Endpoints
 
 The following endpoints can write data and always require authentication, with a Personal

@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from django.urls import reverse
+
 from pontoon.base.models import (
     Locale,
     Project,
@@ -370,6 +372,59 @@ class UserActionsResponseSerializer(serializers.Serializer):
 
     actions = UserActionSerializer(many=True)
     project = UserActionsProjectSerializer()
+
+
+class UserTranslationCommentAuthorSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    name = serializers.CharField(source="display_name")
+
+
+class UserTranslationCommentSerializer(serializers.Serializer):
+    author = UserTranslationCommentAuthorSerializer(allow_null=True)
+    date = serializers.DateTimeField(source="timestamp")
+    content = serializers.CharField()
+
+
+class UserTranslationSerializer(serializers.Serializer):
+    """Translation returned by the user translations endpoint."""
+
+    translation_pk = serializers.IntegerField(source="pk")
+    string = serializers.CharField()
+    status = serializers.ChoiceField(
+        choices=["approved", "fuzzy", "pretranslated", "rejected", "unreviewed"]
+    )
+    date = serializers.DateTimeField()
+    approved_date = serializers.DateTimeField(allow_null=True)
+    rejected_date = serializers.DateTimeField(allow_null=True)
+    entity = serializers.SerializerMethodField()
+    resource = serializers.CharField(source="entity.resource.path")
+    project = serializers.CharField(source="entity.resource.project.slug")
+    locale = serializers.CharField(source="locale.code")
+    url = serializers.SerializerMethodField()
+    comments = UserTranslationCommentSerializer(many=True)
+
+    def get_entity(self, obj) -> str | None:
+        # Same as the context shown in the translate view, where the first part
+        # of gettext keys is skipped, as it's the source string.
+        entity = obj.entity
+        key = entity.key
+        if entity.resource.format == Resource.Format.GETTEXT:
+            key = key[1:]
+        return " • ".join(reversed(key)) or None
+
+    def get_url(self, obj) -> str:
+        resource = obj.entity.resource
+        path = reverse(
+            "pontoon.translate",
+            kwargs={
+                "locale": obj.locale.code,
+                "project": resource.project.slug,
+                "resource": resource.path,
+            },
+        )
+        return self.context["request"].build_absolute_uri(
+            f"{path}?string={obj.entity.pk}"
+        )
 
 
 class ResourceSerializer(serializers.ModelSerializer):

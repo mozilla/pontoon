@@ -29,6 +29,7 @@ from pontoon.test.factories import (
     ProjectFactory,
     ResourceFactory,
     TranslatedResourceFactory,
+    TranslationCommentFactory,
     TranslationFactory,
 )
 
@@ -118,6 +119,284 @@ def test_schema_documents_user_actions_and_entity_lookups():
         paths["/api/v2/entities/{project}/{resource}/{entity}/"]["get"]["operationId"]
         == "entities_retrieve_by_path"
     )
+
+
+@pytest.fixture
+def user_translations_url(user_b):
+    return f"/api/v2/users/{user_b.username}/translations/"
+
+
+@pytest.mark.django_db
+def test_user_translations_requires_authentication(user_translations_url):
+    response = APIClient().get(user_translations_url, HTTP_ACCEPT="application/json")
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_user_translations_unknown_user(member):
+    response = member.client.get(
+        "/api/v2/users/unknown-user/translations/", HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_user_translations_output(member, user_b, user_c, user_translations_url):
+    project = ProjectFactory(slug="public-project", name="Public Project")
+    resource = ResourceFactory(
+        project=project, path="main.properties", format="properties"
+    )
+    entity = EntityFactory(resource=resource, key=["key"])
+    locale = LocaleFactory(code="xx-test", name="Test Locale")
+    translation = TranslationFactory(
+        entity=entity,
+        locale=locale,
+        user=user_b,
+        string="Traduzione",
+        rejected=True,
+        rejected_date=now(),
+    )
+    TranslationCommentFactory(translation=translation, author=user_c, content="No")
+    # Translations by other users are excluded
+    TranslationFactory(entity=entity, locale=locale, user=user_c)
+
+    response = member.client.get(user_translations_url, HTTP_ACCEPT="application/json")
+
+    assert response.status_code == 200
+    assert response.data["count"] == 1
+    result = response.data["results"][0]
+    assert result["translation_pk"] == translation.pk
+    assert result["string"] == "Traduzione"
+    assert result["status"] == "rejected"
+    assert result["approved_date"] is None
+    assert result["rejected_date"] is not None
+    assert result["entity"] == "key"
+    assert result["resource"] == "main.properties"
+    assert result["project"] == "public-project"
+    assert result["locale"] == "xx-test"
+    assert result["url"] == (
+        f"http://testserver/xx-test/public-project/main.properties/?string={entity.pk}"
+    )
+    assert len(result["comments"]) == 1
+    assert result["comments"][0]["author"] == {
+        "username": user_c.username,
+        "name": user_c.display_name,
+    }
+    assert result["comments"][0]["content"] == "No"
+
+
+@pytest.mark.django_db
+def test_user_translations_comment_without_author(
+    member, user_b, user_translations_url
+):
+    translation = TranslationFactory(user=user_b)
+    TranslationCommentFactory(translation=translation, author=None)
+
+    response = member.client.get(user_translations_url, HTTP_ACCEPT="application/json")
+
+    assert response.data["results"][0]["comments"][0]["author"] is None
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "format, key, expected",
+    [
+        ("properties", ["menu", "file", "open"], "open • file • menu"),
+        ("gettext", ["Source string", "context"], "context"),
+        ("gettext", ["Source string"], None),
+    ],
+)
+def test_user_translations_entity(
+    member, user_b, user_translations_url, format, key, expected
+):
+    resource = ResourceFactory(format=format)
+    TranslationFactory(user=user_b, entity=EntityFactory(resource=resource, key=key))
+
+    response = member.client.get(user_translations_url, HTTP_ACCEPT="application/json")
+
+    assert response.data["results"][0]["entity"] == expected
+
+
+@pytest.mark.django_db
+def test_user_translations_date_range(member, user_b, user_translations_url):
+    today = now()
+    recent = TranslationFactory(user=user_b, date=today - timedelta(days=3))
+    old = TranslationFactory(user=user_b, date=today - timedelta(days=20))
+    TranslationFactory(user=user_b, date=today - timedelta(days=40))
+
+    def get_pks(**params):
+        response = member.client.get(
+            user_translations_url, params, HTTP_ACCEPT="application/json"
+        )
+        assert response.status_code == 200
+        return [t["translation_pk"] for t in response.data["results"]]
+
+    # Default: last 14 days
+    assert get_pks() == [recent.pk]
+
+    # end_date is inclusive, results are sorted by most recent first
+    start = (today - timedelta(days=25)).strftime("%Y-%m-%d")
+    end = today.strftime("%Y-%m-%d")
+    assert get_pks(start_date=start, end_date=end) == [recent.pk, old.pk]
+
+    old_day = (today - timedelta(days=20)).strftime("%Y-%m-%d")
+    assert get_pks(start_date=old_day, end_date=old_day) == [old.pk]
+
+
+@pytest.mark.django_db
+def test_user_translations_change_date(member, user_b, user_translations_url):
+    today = now()
+    old = today - timedelta(days=40)
+    created = TranslationFactory(user=user_b, date=today - timedelta(days=2))
+    approved = TranslationFactory(
+        user=user_b, date=old, approved=True, approved_date=today
+    )
+    rejected = TranslationFactory(
+        user=user_b,
+        date=old,
+        rejected=True,
+        rejected_date=today - timedelta(days=1),
+    )
+    # Reviewed outside the date range
+    TranslationFactory(user=user_b, date=old, approved=True, approved_date=old)
+
+    response = member.client.get(user_translations_url, HTTP_ACCEPT="application/json")
+
+    # Sorted by most recent change
+    assert [t["translation_pk"] for t in response.data["results"]] == [
+        approved.pk,
+        rejected.pk,
+        created.pk,
+    ]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "params",
+    [
+        {"start_date": "2026/01/01"},
+        {"end_date": "not-a-date"},
+        {"start_date": "2026-02-10", "end_date": "2026-02-01"},
+        {"start_date": "2026-01-01", "end_date": "2026-02-01"},
+        {"end_date": "0001-01-01"},
+        {"start_date": "9999-12-31", "end_date": "9999-12-31"},
+    ],
+)
+def test_user_translations_invalid_dates(member, user_translations_url, params):
+    response = member.client.get(
+        user_translations_url, params, HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_user_translations_max_range(member, user_translations_url):
+    response = member.client.get(
+        user_translations_url,
+        {"start_date": "2026-01-01", "end_date": "2026-01-31"},
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_user_translations_project_and_locale_filters(
+    member, user_b, user_translations_url
+):
+    project_a = ProjectFactory(slug="project-a")
+    project_b = ProjectFactory(slug="project-b")
+    locale_a = LocaleFactory(code="aa")
+    locale_b = LocaleFactory(code="bb")
+    entity_a = EntityFactory(resource=ResourceFactory(project=project_a))
+    entity_b = EntityFactory(resource=ResourceFactory(project=project_b))
+    t_a_a = TranslationFactory(user=user_b, entity=entity_a, locale=locale_a)
+    t_a_b = TranslationFactory(user=user_b, entity=entity_a, locale=locale_b)
+    t_b_a = TranslationFactory(user=user_b, entity=entity_b, locale=locale_a)
+
+    def get_pks(**params):
+        response = member.client.get(
+            user_translations_url, params, HTTP_ACCEPT="application/json"
+        )
+        assert response.status_code == 200
+        return {t["translation_pk"] for t in response.data["results"]}
+
+    assert get_pks(project="project-a") == {t_a_a.pk, t_a_b.pk}
+    assert get_pks(locale="aa") == {t_a_a.pk, t_b_a.pk}
+    assert get_pks(project="project-a", locale="aa") == {t_a_a.pk}
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "params", [{"project": "unknown-project"}, {"locale": "unknown-locale"}]
+)
+def test_user_translations_unknown_project_or_locale(
+    member, user_translations_url, params
+):
+    response = member.client.get(
+        user_translations_url, params, HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_user_translations_private_projects(
+    member, admin, user_b, user_translations_url
+):
+    private_project = ProjectFactory(visibility="private")
+    entity = EntityFactory(resource=ResourceFactory(project=private_project))
+    translation = TranslationFactory(user=user_b, entity=entity)
+
+    response = member.client.get(user_translations_url, HTTP_ACCEPT="application/json")
+    assert response.data["count"] == 0
+
+    # Same response as for a project that doesn't exist
+    response = member.client.get(
+        user_translations_url,
+        {"project": private_project.slug},
+        HTTP_ACCEPT="application/json",
+    )
+    assert response.status_code == 404
+
+    client = APIClient()
+    client.force_authenticate(user=admin)
+    response = client.get(user_translations_url, HTTP_ACCEPT="application/json")
+    assert [t["translation_pk"] for t in response.data["results"]] == [translation.pk]
+
+
+@pytest.mark.django_db
+def test_user_translations_num_queries(
+    member, user_b, user_c, user_translations_url, django_assert_num_queries
+):
+    for _ in range(3):
+        translation = TranslationFactory(user=user_b)
+        TranslationCommentFactory(translation=translation, author=user_c)
+
+    # session, request user, target user, count, translations, comments
+    with django_assert_num_queries(6):
+        response = member.client.get(
+            user_translations_url, HTTP_ACCEPT="application/json"
+        )
+
+    assert response.data["count"] == 3
+
+
+def test_schema_documents_user_translations():
+    response = APIClient().get("/api/v2/schema/", HTTP_ACCEPT="application/json")
+
+    operation = response.data["paths"]["/api/v2/users/{username}/translations/"]["get"]
+    assert {p["name"] for p in operation["parameters"]} >= {
+        "start_date",
+        "end_date",
+        "project",
+        "locale",
+        "page",
+        "page_size",
+    }
 
 
 @pytest.mark.django_db
