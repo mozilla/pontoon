@@ -182,7 +182,6 @@ def update_resources(
         return 0, set()
 
     # De-obsolete any resources that were previously marked obsolete
-    # TODO: Entity de-obsoletion needs to accompany Resource de-obsoletion
     deobsoletion_paths = [
         res.path for res in changed_resources.values() if res.obsolete
     ]
