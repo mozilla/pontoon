@@ -39,9 +39,9 @@ celery==5.4.0 \
     --hash=sha256:369631eb580cf8c51a82721ec538684994f8277637edde2dfc0dacd73ed97f64 \
     --hash=sha256:504a19140e8d3029d5acad88330c541d4c3f64c789d85f94756762d8bca7e706
     # via -r 0-base.in
-certifi==2026.2.25 \
-    --hash=sha256:027692e4402ad994f1c42e52a4997a9763c646b73e4096e4d5d6db8af1d6f0fa \
-    --hash=sha256:e887ab5cee78ea814d3472169153c2d12cd43b14bd03329a39a9c6e2e80bfba7
+certifi==2026.10.19 \
+    --hash=sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae \
+    --hash=sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b
     # via requests
 cffi==2.0.0 \
     --hash=sha256:00bdf7acc5f795150faa6957054fbbca2439db2f775ce831222b66f192f03beb \
@@ -980,7 +980,9 @@ markupsafe==2.0.1 \
 moz-l10n[xml]==0.15.0 \
     --hash=sha256:8b396c69c7dd756e726d7cb62a2d68338e6b1ddbdd7e94336734c16fc0ab7732 \
     --hash=sha256:dafea0ccd5a6d1bb82f4c0103c97e208b3cb43b5bd02a40d19e1ff19933f5b0b
-    # via -r 0-base.in
+    # via
+    #   -r 0-base.in
+    #   moz-l10n
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -1964,6 +1966,3 @@ zensical==0.0.34 \
     --hash=sha256:eb9d880ccb25edba332e1f310b40e65afb0e1072c69530ec02afc6179b33c5ec \
     --hash=sha256:f77cb1152b51ccc5bf0c1055ac06802a6eeeff9cb8b4293919300c0becbd26bd
     # via -r 0-base.in
-
-# The following packages were excluded from the output:
-# setuptools
