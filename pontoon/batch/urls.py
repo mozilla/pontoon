@@ -9,4 +9,9 @@ urlpatterns = [
         views.batch_edit_translations,
         name="pontoon.batch.edit.translations",
     ),
+    path(
+        "batch-pretranslate-status/",
+        views.batch_pretranslate_status,
+        name="pontoon.batch.pretranslate.status",
+    ),
 ]

@@ -1,5 +1,9 @@
+from unittest.mock import patch
+
 import pytest
 
+from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.urls import reverse
 
 from pontoon.checks.utils import bulk_run_checks
@@ -234,3 +238,143 @@ def test_batch_find_and_replace_invalid_translations(
 
     assert translation.string == "Test Translation"
     assert not translation.approved
+
+
+@pytest.mark.django_db
+def test_batch_pretranslate_forbidden_without_pretranslators_group(
+    batch_action, member, user_a, locale_a, entity_a, project_locale_a
+):
+    """
+    A translator who is not in the pretranslators group cannot pretranslate.
+    """
+    locale_a.translators_group.user_set.add(user_a)
+
+    response = batch_action(
+        action="pretranslate",
+        locale=locale_a.code,
+        entities=entity_a.id,
+    )
+
+    assert response.status_code == 403
+    assert b"pretranslation" in response.content
+
+
+@pytest.mark.django_db
+@pytest.mark.django_db
+@patch("pontoon.batch.views.batch_pretranslate_task")
+def test_batch_pretranslate_allowed_for_pretranslators_group(
+    task_mock,
+    batch_action,
+    member,
+    user_a,
+    locale_a,
+    entity_a,
+    project_locale_a,
+):
+    """
+    A translator who is also in the pretranslators group can pretranslate.
+    The work is handed to a background task.
+    """
+    locale_a.translators_group.user_set.add(user_a)
+    group, _ = Group.objects.get_or_create(name="pretranslators")
+    locale_a.google_translate_code = "tlh"
+    locale_a.save()
+    user_a.groups.add(group)
+
+    response = batch_action(
+        action="pretranslate",
+        locale=locale_a.code,
+        entities=entity_a.id,
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "started"}
+    task_mock.delay.assert_called_once()
+    _, locale_pk, entity_pks = task_mock.delay.call_args.args
+    assert locale_pk == locale_a.pk
+    assert entity_pks == [entity_a.pk]
+
+    cache.delete(f"batch_pretranslate_{locale_a.pk}")
+
+
+@pytest.mark.django_db
+def test_batch_pretranslate_unsupported_locale(
+    batch_action, member, user_a, locale_a, entity_a, project_locale_a
+):
+    """
+    Pretranslation is rejected for a locale with no Google Translate support,
+    even for a pretranslators-group member.
+    """
+    locale_a.translators_group.user_set.add(user_a)
+    locale_a.google_translate_code = ""
+    locale_a.save()
+
+    group, _ = Group.objects.get_or_create(name="pretranslators")
+    user_a.groups.add(group)
+
+    response = batch_action(
+        action="pretranslate",
+        locale=locale_a.code,
+        entities=entity_a.id,
+    )
+
+    assert response.status_code == 400
+    assert b"not supported" in response.content
+
+
+@pytest.mark.django_db
+@patch("pontoon.batch.views.batch_pretranslate_task")
+def test_batch_pretranslate_rejected_while_already_running(
+    task_mock,
+    batch_action,
+    member,
+    user_a,
+    locale_a,
+    entity_a,
+    project_locale_a,
+):
+    """
+    A second pretranslation for the same locale is refused while one is running.
+    """
+    locale_a.translators_group.user_set.add(user_a)
+    group, _ = Group.objects.get_or_create(name="pretranslators")
+    user_a.groups.add(group)
+    locale_a.google_translate_code = "tlh"
+    locale_a.save()
+
+    lock_name = f"batch_pretranslate_{locale_a.pk}"
+    cache.add(lock_name, True)
+
+    try:
+        response = batch_action(
+            action="pretranslate",
+            locale=locale_a.code,
+            entities=entity_a.id,
+        )
+    finally:
+        cache.delete(lock_name)
+
+    assert response.status_code == 409
+    task_mock.delay.assert_not_called()
+
+
+@pytest.mark.django_db
+def test_batch_pretranslate_status(client, member, locale_a):
+    url = reverse("pontoon.batch.pretranslate.status")
+    lock_name = f"batch_pretranslate_{locale_a.pk}"
+    cache.delete(lock_name)
+    cache.delete(f"{lock_name}_result")
+
+    response = client.get(
+        url, {"locale": locale_a.code}, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+    )
+    assert response.json() == {"in_progress": False, "result": None}
+
+    cache.add(lock_name, True)
+    try:
+        response = client.get(
+            url, {"locale": locale_a.code}, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
+    finally:
+        cache.delete(lock_name)
+    assert response.json()["in_progress"] is True

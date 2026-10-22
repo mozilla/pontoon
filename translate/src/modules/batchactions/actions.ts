@@ -1,4 +1,9 @@
-import { batchEditEntities, fetchEntities, fetchEntityIds } from '~/api/entity';
+import {
+  batchEditEntities,
+  fetchEntities,
+  fetchEntityIds,
+  fetchPretranslateStatus,
+} from '~/api/entity';
 import type { Location } from '~/context/Location';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { updateResource } from '~/modules/resource/actions';
@@ -114,10 +119,35 @@ const updateUI =
     }
   };
 
+const POLL_INTERVAL_MS = 3000;
+const MAX_POLLS = 200;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function waitForPretranslation(locale: string) {
+  for (let i = 0; i < MAX_POLLS; i++) {
+    await sleep(POLL_INTERVAL_MS);
+    try {
+      const status = await fetchPretranslateStatus(locale);
+      if (!status.in_progress) {
+        return status.result;
+      }
+    } catch {
+      return { error: true } as const;
+    }
+  }
+  return { error: true } as const;
+}
+
 export const performAction =
   (
     location: Location,
-    action: 'approve' | 'reject' | 'replace' | 'copy_from_locale',
+    action:
+      | 'approve'
+      | 'reject'
+      | 'replace'
+      | 'copy_from_locale'
+      | 'pretranslate',
     entityIds: number[],
     showBadgeTooltip: (tooltip: {
       badgeName: string | null;
@@ -126,18 +156,36 @@ export const performAction =
     find?: string,
     replace?: string,
     otherLocale?: string,
+    pretranslate?: string,
   ) =>
   async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_BATCHACTIONS, source: action });
 
-    const data = await batchEditEntities(
+    let data = await batchEditEntities(
       action,
       location.locale,
       entityIds,
       find,
       replace,
       otherLocale,
+      pretranslate,
     );
+
+    if (
+      action === 'pretranslate' &&
+      'status' in data &&
+      data.status === 'started'
+    ) {
+      const result = await waitForPretranslation(location.locale);
+      data =
+        result && !('error' in result)
+          ? {
+              count: result.count,
+              invalid_translation_count: result.invalid_translation_count,
+              badge_update: { name: null, level: null },
+            }
+          : { error: true };
+    }
 
     const response: ResponseType = {
       changedCount: 0,
