@@ -1,5 +1,6 @@
 import logging
 
+from django.db import transaction
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 
@@ -425,14 +426,6 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
         .values_list("entity__pk", flat=True)
     )
 
-    already_active_entity_pks = set(
-        Translation.objects.filter(
-            locale=locale,
-            entity__in=entities,
-            active=True,
-        ).values_list("entity__pk", flat=True)
-    )
-
     eligible_entities = entities.exclude(pk__in=excluded_entity_pks)
 
     translations_to_create = []
@@ -483,25 +476,48 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
                 rejected=False,
                 fuzzy=False,
                 pretranslated=True,
-                active=entity.pk not in already_active_entity_pks,
+                active=False,
                 user=pt_authors[author_key],
                 value=value,
                 properties=properties,
             )
         )
 
-    changed_translations = Translation.objects.bulk_create(translations_to_create)
+    with transaction.atomic():
+        changed_translations = Translation.objects.bulk_create(translations_to_create)
+        entity_pks = sorted({t.entity_id for t in changed_translations})
+        list(
+            Entity.objects.select_for_update()
+            .filter(pk__in=entity_pks)
+            .order_by("pk")
+            .values_list("pk", flat=True)
+        )
+
+        has_active = set(
+            Translation.objects.filter(
+                locale=locale, entity_id__in=entity_pks, active=True
+            ).values_list("entity_id", flat=True)
+        )
+
+        Translation.objects.filter(
+            pk__in=[t.pk for t in changed_translations if t.entity_id not in has_active]
+        ).update(active=True)
 
     translation_pks = {t.pk for t in changed_translations}
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
 
-    changed_translations_qs = Translation.objects.filter(
-        pk__in=translation_pks, errors__isnull=True, warnings__isnull=True
+    all_created_qs = Translation.objects.filter(pk__in=translation_pks)
+    syncable_qs = all_created_qs.filter(errors__isnull=True, warnings__isnull=True)
+
+    failed_translation_pks = list(
+        all_created_qs.exclude(pk__in=syncable_qs).values_list("pk", flat=True)
     )
 
-    count, translated_resources, changed_entities = utils.get_translations_info(
-        changed_translations_qs, locale
+    _, translated_resources, changed_entities = utils.get_translations_info(
+        all_created_qs, locale
     )
+
+    count, _, _ = utils.get_translations_info(syncable_qs, locale)
 
     actions_to_log = [
         ActionLog(
@@ -514,7 +530,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
 
     ActionLog.objects.bulk_create(actions_to_log)
 
-    changed_translation_pks = list(changed_translations_qs.values_list("pk", flat=True))
+    changed_translation_pks = list(syncable_qs.values_list("pk", flat=True))
 
     return {
         "count": count,
@@ -524,7 +540,7 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
         if changed_translation_pks
         else None,
         "changed_translation_pks": changed_translation_pks,
-        "invalid_translation_pks": invalid_entity_pks,
+        "invalid_translation_pks": invalid_entity_pks + failed_translation_pks,
         "badge_update": {},
     }
 
