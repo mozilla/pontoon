@@ -250,7 +250,7 @@ def pretranslate(project: Project, paths: set[str] | None):
     )
 
     # Fetch all locale-entity pairs not to pretranslate: with an approved translation,
-    # an existing pretranslation, or a pretranslation rejected from a bot.
+    # an existing pretranslation, or a bot's pretranslation that was rejected.
     pt_authors = get_pretranslation_authors()
     skipped_entities = set(
         Translation.objects.filter(locale__in=locales, entity__in=entities)
