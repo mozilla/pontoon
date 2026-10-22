@@ -40,3 +40,12 @@ def test_tt_correct_translation(mock_locale):
     Quality check should return empty dictionary if everything is okay (no warnings).
     """
     assert run_checks("Original string", "Translation string", mock_locale) == {}
+
+
+@pytest.mark.parametrize("mark", ["\u200e", "\u200f", "\u061c"])
+def test_tt_bidi_marks(mark):
+    """
+    Leading and trailing implicit directional marks are not punctuation.
+    """
+    assert run_checks("Original string", f"{mark}Translation string", "fa") == {}
+    assert run_checks("Original string", f"Translation string{mark}", "fa") == {}

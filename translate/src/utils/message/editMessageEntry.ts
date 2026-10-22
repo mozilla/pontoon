@@ -1,8 +1,14 @@
-import { isSelectMessage, type CatchallKey, type Message } from '@mozilla/l10n';
+import {
+  isSelectMessage,
+  type CatchallKey,
+  type Message,
+  type Pattern,
+} from '@mozilla/l10n';
 import type { EditorField } from '~/context/Editor';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
 import { editablePattern } from './editablePattern';
+import { removeRtlMark } from './rtlMark';
 import { serializeEntry } from './serializeEntry';
 
 const emptyHandleRef = (value: string) => ({
@@ -30,10 +36,14 @@ export function editSource(source: string | MessageEntry): EditorField[] {
  * while the set of attributes may also be extended by `target`.
  * The message values are determined by the `target` entry.
  * If `target` is not set, `source` message values are used.
+ *
+ * With `rtl` set, a leading RLM that `buildMessageEntry()` would add back
+ * is not included in the editable values.
  */
 export function editMessageEntry(
   source: MessageEntry,
   target?: MessageEntry,
+  { rtl = false }: { rtl?: boolean } = {},
 ): EditorField[] {
   const { format } = source;
 
@@ -58,7 +68,11 @@ export function editMessageEntry(
   const res: EditorField[] = [];
   if (source.value) {
     const hasAttributes = !!attributes?.size;
-    for (const [keys, labels, editable] of genPatterns(format, value ?? [])) {
+    for (const [keys, labels, editable] of genPatterns(
+      format,
+      value ?? [],
+      rtl,
+    )) {
       if (hasAttributes) {
         labels.unshift({ label: 'Value', plural: false });
       }
@@ -70,7 +84,7 @@ export function editMessageEntry(
   if (attributes) {
     const hasMultiple = attributes.size > 1 || !!source.value;
     for (const [name, msg] of attributes) {
-      for (const [keys, labels, value] of genPatterns(format, msg)) {
+      for (const [keys, labels, value] of genPatterns(format, msg, rtl)) {
         if (hasMultiple) {
           labels.unshift({ label: name, plural: false });
         }
@@ -86,6 +100,7 @@ export function editMessageEntry(
 function* genPatterns(
   format: MessageEntry['format'],
   msg: Message,
+  rtl: boolean,
 ): Generator<
   [(string | CatchallKey)[], Array<{ label: string; plural: boolean }>, string]
 > {
@@ -96,11 +111,20 @@ function* genPatterns(
         label: (typeof key === 'string' ? key : key['*']) || 'other',
         plural: plurals.has(i),
       }));
-      yield [keys, labels, editablePattern(format, pat)];
+      yield [keys, labels, editable(format, pat, rtl)];
     }
   } else {
-    yield [[], [], editablePattern(format, Array.isArray(msg) ? msg : msg.msg)];
+    yield [[], [], editable(format, Array.isArray(msg) ? msg : msg.msg, rtl)];
   }
+}
+
+function editable(
+  format: MessageEntry['format'],
+  pattern: Pattern,
+  rtl: boolean,
+): string {
+  const str = editablePattern(format, pattern);
+  return rtl ? removeRtlMark(str) : str;
 }
 
 function getId(name: string, keys: (string | CatchallKey)[]) {
