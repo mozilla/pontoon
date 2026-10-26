@@ -264,7 +264,7 @@ def update_resources(
                 new_sections.pop()
 
     restored_entities = restore_obsolete_entities(
-        project, changed_resources, deobsoletion_paths, prev_entities, next_entities
+        changed_resources, prev_entities, next_entities
     )
     prev_entities.update(restored_entities)
 
@@ -358,19 +358,18 @@ def update_resources(
 
 
 def restore_obsolete_entities(
-    project: Project,
     changed_resources: dict[int, Resource],
-    deobsoletion_paths: list[str],
     prev_entities: dict[tuple[str, L10nId], Entity],
     next_entities: dict[tuple[str, L10nId], Entity],
 ) -> dict[tuple[str, L10nId], Entity]:
-    if not deobsoletion_paths:
+    new_keys = next_entities.keys() - prev_entities.keys()
+    if not new_keys:
         return {}
     restored: dict[tuple[str, L10nId], Entity] = {}
     for ent in (
         Entity.objects.filter(
-            resource__project=project,
-            resource__path__in=deobsoletion_paths,
+            resource_id__in={next_entities[key].resource_id for key in new_keys},
+            key__in=[list(entity_key) for entity_key in {key for _, key in new_keys}],
             obsolete=True,
         )
         .order_by("-pk")
