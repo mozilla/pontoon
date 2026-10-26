@@ -374,6 +374,15 @@
               title='Save suggestions instead of translations')
             }}
           {% endif %}
+
+          {{
+            Checkbox.checkbox(
+            'Autocomplete from Machinery',
+            class='machinery-autocomplete',
+            attribute='machinery_autocomplete',
+            is_enabled=user.profile.machinery_autocomplete,
+            title='Complete words from Machinery translations as you type')
+          }}
         </div>
       </section>
 
