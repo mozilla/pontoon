@@ -216,6 +216,104 @@ def test_resource_deobsoletion():
 
 
 @pytest.mark.django_db
+def test_entity_deobsoletion():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-restore", locales=[locale], repositories=[repo]
+        )
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="fluent")
+        current_key_1 = EntityFactory.create(
+            resource=res_a,
+            section=SectionFactory(resource=res_a, key=[]),
+            string="key-1 = Message 1\n",
+        )
+
+        def obsolete_entity(resource, string, **kwargs):
+            return EntityFactory.create(
+                resource=resource,
+                string=string,
+                obsolete=True,
+                date_obsoleted=now,
+                section=None,
+                **kwargs,
+            )
+
+        obsolete_entity(res_a, "key-1 = Message 1\n")
+        obsolete_entity(res_a, "key-2 = Message 2\n")
+        newest_key_2 = obsolete_entity(res_a, "key-2 = Message 2\n")
+        obsolete_entity(res_a, "key-3 = Old message 3\n")
+        obsolete_entity(res_a, "key-4 = Message 4\n")
+        obsolete_entity(res_c, "key-5 = Message 5\n")
+
+        # Filesystem setup
+        a_ftl = dedent(
+            """
+            key-2 = Message 2
+            key-1 = Message 1
+            key-3 = Message 3
+            key-5 = Message 5
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {
+                    "a.ftl": a_ftl,
+                    "c.ftl": "key-1 = Message 1\nkey-6 = Message 6\n",
+                },
+                "fr-Test": {"a.ftl": "", "c.ftl": ""},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("en-US", "a.ftl"), join("en-US", "c.ftl")],
+            removed=[],
+            renamed=[],
+        )
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
+
+        # Test
+        assert sync_resources_from_repo(
+            project, locale_map, Checkouts(mock_checkout, mock_checkout), paths, now
+        ) == (4, {"a.ftl", "c.ftl"}, set())
+
+        assert sorted(
+            (ent.resource.path, ent.key[0], ent.obsolete)
+            for ent in Entity.objects.filter(resource__project=project)
+        ) == [
+            ("a.ftl", "key-1", False),
+            ("a.ftl", "key-1", True),
+            ("a.ftl", "key-2", False),
+            ("a.ftl", "key-2", True),
+            ("a.ftl", "key-3", False),
+            ("a.ftl", "key-3", True),
+            ("a.ftl", "key-4", True),
+            ("a.ftl", "key-5", False),
+            ("c.ftl", "key-1", False),
+            ("c.ftl", "key-5", True),
+            ("c.ftl", "key-6", False),
+        ]
+        current = Entity.objects.get(resource=res_a, key=["key-1"], obsolete=False)
+        assert current.pk == current_key_1.pk
+
+        newest_key_2.refresh_from_db()
+        assert not newest_key_2.obsolete
+        assert newest_key_2.date_obsoleted is None
+        assert newest_key_2.section is not None
+        assert newest_key_2.order == 0
+
+
+@pytest.mark.django_db
 def test_rename_resource():
     with TemporaryDirectory() as root:
         # Database setup
