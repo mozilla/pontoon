@@ -608,9 +608,9 @@ django-stubs-ext==6.0.3 \
     --hash=sha256:3307d42132bc295d5744de6276bc5fdf6896efc70f891e21c0ae8bdf529d2762 \
     --hash=sha256:9e4105955419ae310d7da9cfd808e039d4dae3092c628f021057bb4f2c237f8f
     # via django-stubs
-djangorestframework==3.17.1 \
-    --hash=sha256:a6def5f447fe78ff853bff1d47a3c59bf38f5434b031780b351b0c73a62db1a5 \
-    --hash=sha256:c3c74dd3e83a5a3efc37b3c18d92bd6f86a6791c7b7d4dff62bb068500e76457
+djangorestframework==3.18.2 \
+    --hash=sha256:8249bad7715eb37274ce5820fc5d9fd786b7579806589565f52a71c02b35f54b \
+    --hash=sha256:a92d6a4e128a2550bd2fe2e02008a9e47fe52c180e130bb438f5ba70ee933a3f
     # via
     #   -c 1-prod.txt
     #   -r 0-base.in

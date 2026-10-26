@@ -20,7 +20,7 @@ celery==5.4.0
 compare-locales==9.0.4
 dj-database-url==3.1.2
 Django==5.2.18
-djangorestframework==3.17.1
+djangorestframework==3.18.2
 django-ace==1.43.5
 django-allauth[socialaccount]==65.16.1
 django-bmemcached==0.3.0
