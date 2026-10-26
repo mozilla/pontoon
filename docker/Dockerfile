@@ -25,7 +25,7 @@ RUN apt-get update \
     && apt-get autoremove -y
 
 # Install uv (version should match the one used in Python GitHub workflows)
-COPY --from=ghcr.io/astral-sh/uv:0.11.32 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /bin/uv
 
 WORKDIR /app
 
