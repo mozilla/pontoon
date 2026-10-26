@@ -165,6 +165,24 @@ export const SUGGESTIONS_DISABLED: NotificationMessage = {
   type: 'info',
 };
 
+export const AUTOCOMPLETE_ENABLED: NotificationMessage = {
+  content: (
+    <Localized id='notification--machinery-autocomplete-enabled'>
+      Autocomplete from Machinery enabled
+    </Localized>
+  ),
+  type: 'info',
+};
+
+export const AUTOCOMPLETE_DISABLED: NotificationMessage = {
+  content: (
+    <Localized id='notification--machinery-autocomplete-disabled'>
+      Autocomplete from Machinery disabled
+    </Localized>
+  ),
+  type: 'info',
+};
+
 export const FTL_NOT_SUPPORTED_RICH_EDITOR: NotificationMessage = {
   content: (
     <Localized id='notification--ftl-not-supported-rich-editor'>
