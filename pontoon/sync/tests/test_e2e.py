@@ -1094,7 +1094,7 @@ def test_config_changes(caplog):
         assert "Not removing 2 of 2 source files" in caplog.text
 
 
-@pytest.mark.parametrize("removal", ["config", "repo"])
+@pytest.mark.parametrize("removal", ["config", "repo", "strings"])
 @pytest.mark.django_db
 def test_restore_entities(removal):
     mock_vcs = MockVersionControl(changed=[])
@@ -1136,19 +1136,31 @@ def test_restore_entities(removal):
             author=translator, entity=entity_b, locale=locale, content="Note"
         )
 
-        # Remove en/b.ftl
+        # Remove en/b.ftl, or only its strings
         if removal == "config":
             mock_vcs.files_at_last_sync["l10n.toml"] = config_ab
             with open(join(root, "l10n.toml"), "w") as file:
                 file.write(config_a)
             mock_vcs.set_changes(changed=["l10n.toml"])
-        else:
+        elif removal == "repo":
             remove(join(root, "en", "b.ftl"))
             mock_vcs.set_changes(removed=[join("en", "b.ftl")])
+        else:
+            with open(join(root, "en", "b.ftl"), "w") as file:
+                file.write("")
+            mock_vcs.set_changes(changed=[join("en", "b.ftl")])
         sync_project_task(project.pk)
         entity_b.refresh_from_db()
         assert entity_b.obsolete
-        assert isfile(join(root, "de-Test", "b.ftl")) == (removal == "config")
+        res_b = project.resources.get(path="en/b.ftl")
+        assert res_b.obsolete == (removal != "strings")
+
+        de_b_ftl = join(root, "de-Test", "b.ftl")
+        if removal == "repo":
+            assert not isfile(de_b_ftl)
+        else:
+            with open(de_b_ftl) as file:
+                assert file.read() == ("b = B de\n" if removal == "config" else "")
 
         # Bring en/b.ftl back
         if removal == "config":
