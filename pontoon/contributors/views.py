@@ -298,6 +298,7 @@ def toggle_user_profile_attribute(request):
         # Editor settings
         "quality_checks",
         "force_suggestions",
+        "machinery_autocomplete",
         # Search settings
         "search_exclude_source_strings",
         "search_identifiers",
