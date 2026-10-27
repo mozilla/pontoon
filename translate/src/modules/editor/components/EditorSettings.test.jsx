@@ -129,6 +129,42 @@ describe('<EditorSettingsDialog>', () => {
     expect(toggleSettingMock).toHaveBeenCalledTimes(2);
     expect(toggleSettingMock).toHaveBeenCalledWith('forceSuggestions');
   });
+
+  it('toggles the machineryAutocomplete setting', () => {
+    const [{ getAllByRole, rerender }, toggleSettingMock] =
+      createEditorSettingsDialog();
+
+    const item = () => getAllByRole('listitem')[2];
+    expect(item().textContent).toContain('Autocomplete from Machinery');
+    expect(item()).not.toHaveClass('enabled');
+
+    fireEvent.click(item());
+    expect(toggleSettingMock.mock.calls).toMatchObject([
+      ['machineryAutocomplete'],
+    ]);
+
+    rerender(
+      <MockLocalizationProvider>
+        <EditorSettingsDialog
+          settings={{
+            runQualityChecks: false,
+            forceSuggestions: false,
+            machineryAutocomplete: true,
+          }}
+          toggleSetting={toggleSettingMock}
+        />
+      </MockLocalizationProvider>,
+    );
+    expect(item()).toHaveClass('enabled');
+  });
+
+  it('shows the machineryAutocomplete setting to non-translators', () => {
+    isTranslator = false;
+    const [{ getAllByRole }] = createEditorSettingsDialog();
+    expect(getAllByRole('listitem')[1].textContent).toContain(
+      'Autocomplete from Machinery',
+    );
+  });
 });
 
 describe('<EditorSettings>', () => {

@@ -100,6 +100,22 @@ export function EditorSettingsDialog({
         </Localized>
       ) : null}
 
+      <Localized
+        id='editor-EditorSettings--machinery-autocomplete'
+        attrs={{ title: true }}
+        elems={{ glyph: <i className='fas fa-fw' /> }}
+      >
+        <li
+          className={
+            'check-box' + (settings.machineryAutocomplete ? ' enabled' : '')
+          }
+          title='Complete words from Machinery translations as you type'
+          onClick={() => toggleSetting('machineryAutocomplete')}
+        >
+          {'<glyph></glyph>Autocomplete from Machinery'}
+        </li>
+      </Localized>
+
       <li className='horizontal-separator'></li>
       <div className='appearance'>
         <Localized id='editor-EditorSettings--theme-title'>
