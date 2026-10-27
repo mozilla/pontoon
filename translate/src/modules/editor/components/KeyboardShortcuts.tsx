@@ -60,6 +60,19 @@ function KeyboardShortcutsDialog({ onDiscard }: KeyboardShortcutsProps) {
             </Localized>
           </tr>
           <tr>
+            <Localized id='editor-KeyboardShortcuts--accept-autocompletion'>
+              <td>Accept Autocompletion</td>
+            </Localized>
+            <Localized
+              id='editor-KeyboardShortcuts--accept-autocompletion-shortcut'
+              elems={{
+                accel: <span />,
+              }}
+            >
+              <td>{'<accel>Tab</accel>'}</td>
+            </Localized>
+          </tr>
+          <tr>
             <Localized id='editor-KeyboardShortcuts--go-to-previous-string'>
               <td>Go To Previous String</td>
             </Localized>
