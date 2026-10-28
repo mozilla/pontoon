@@ -19,17 +19,22 @@ import {
 import { Extension } from '@codemirror/state';
 import { EditorView, keymap, tooltips } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useMemo, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
 import { editorThemeClass } from '~/context/Theme';
+import { useAppSelector } from '~/hooks';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
+import { USER } from '~/modules/user';
 import type { MessageEntry } from '~/utils/message';
 import { editablePattern } from '~/utils/message/editablePattern';
 import { entryPatterns } from '~/utils/message/entryPatterns';
 import { emptyEditorCaret } from './editFieldCaret';
 import { decoratorPlugin } from './decoratorPlugin';
+import { ghostTextKeymap } from './ghostText';
 import {
   useHandleCtrlShiftArrow,
   useHandleEnter,
@@ -68,6 +73,18 @@ export function useKeyHandlers() {
     ref.current = handlers;
   });
   return ref;
+}
+
+export function useGhostTextCandidates(): readonly string[] {
+  const enabled = useAppSelector(
+    (state) => state[USER].settings.machineryAutocomplete,
+  );
+  const { translations } = useContext(MachineryTranslations);
+  const { query } = useContext(SearchData);
+  return useMemo(
+    () => (enabled && !query ? translations.map((tx) => tx.translation) : []),
+    [enabled, query, translations],
+  );
 }
 
 const style = HighlightStyle.define([
@@ -113,6 +130,7 @@ export const getExtensions = (
     { key: 'Mod-Enter', run: insertNewlineAndIndent },
     { key: 'Escape', run: () => ref.current.onEscape() },
     { key: 'Tab', run: acceptCompletion },
+    ...ghostTextKeymap,
     {
       key: 'Shift-Ctrl-ArrowDown',
       run: () => ref.current.onCtrlShiftArrow('ArrowDown'),
