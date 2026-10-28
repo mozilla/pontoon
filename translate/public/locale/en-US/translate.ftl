@@ -211,9 +211,6 @@ editor-KeyboardShortcuts--cancel-translation-shortcut = <accel>Esc</accel>
 editor-KeyboardShortcuts--insert-a-new-line = Insert A New Line
 editor-KeyboardShortcuts--insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
 
-editor-KeyboardShortcuts--accept-autocompletion = Accept Autocompletion
-editor-KeyboardShortcuts--accept-autocompletion-shortcut = <accel>Tab</accel>
-
 editor-KeyboardShortcuts--go-to-previous-string = Go To Previous String
 editor-KeyboardShortcuts--go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Up</accel>
 
