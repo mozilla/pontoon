@@ -12,6 +12,32 @@ import {
 } from '@codemirror/view';
 
 import { placeholder } from '~/modules/placeable/placeholder';
+
+function getWordSegmenter(locale: string) {
+  if (typeof Intl.Segmenter !== 'function') {
+    return null;
+  }
+  try {
+    return new Intl.Segmenter(locale, { granularity: 'word' });
+  } catch {
+    return new Intl.Segmenter(undefined, { granularity: 'word' });
+  }
+}
+
+export const acceptGhostText: Command = (view) => {
+  const ghost = getGhostText(view);
+  if (!ghost) {
+    return false;
+  }
+  const { pos, text } = ghost;
+  view.dispatch({
+    changes: { from: pos, insert: text },
+    selection: { anchor: pos + text.length },
+    scrollIntoView: true,
+    userEvent: 'input.complete',
+  });
+  return true;
+};
 function getMatchLength(before: string, candidate: string): number {
   let min = 0;
   let max = Math.min(before.length, candidate.length);
@@ -44,7 +70,6 @@ function tokenize(text: string, segmenter: Intl.Segmenter): Token[] {
 
   let pos = 0;
   for (const match of text.matchAll(placeholder)) {
-    // Spaces and punctuation are also matched, but the segmenter handles those.
     if (hasWordChar.test(match[0])) {
       addSegments(pos, match.index);
       pos = match.index + match[0].length;
