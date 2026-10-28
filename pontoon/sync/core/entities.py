@@ -366,7 +366,7 @@ def restore_obsolete_entities(
     if not new_keys:
         return {}
     resource_ids = {next_entities[key].resource_id for key in new_keys}
-    entity_keys = [list(entity_key) for _, entity_key in new_keys]
+    entity_keys = [list(k) for k in {entity_key for _, entity_key in new_keys}]
     restored: dict[tuple[str, L10nId], Entity] = {}
     for ent in (
         Entity.objects.filter(
