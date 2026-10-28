@@ -56,7 +56,7 @@ jobs:
           cache-dependency-glob: |
             **/requirements/*.txt
           # Version should match the one used in docker/Dockerfile*
-          version: "0.11.32"
+          version: "0.13.5"
       - name: Install requirements
         run: uv pip install -r requirements/2-dev.txt
       - name: Install pip-licenses
