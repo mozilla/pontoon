@@ -365,22 +365,20 @@ def restore_obsolete_entities(
     new_keys = next_entities.keys() - prev_entities.keys()
     if not new_keys:
         return {}
-    resource_ids = {next_entities[key].resource_id for key in new_keys}
-    entity_keys = [list(k) for k in {entity_key for _, entity_key in new_keys}]
+    keys_by_resource: dict[int, list[list[str]]] = defaultdict(list)
+    for key in new_keys:
+        keys_by_resource[next_entities[key].resource_id].append(list(key[1]))
+    new_keys_q = Q()
+    for resource_id, entity_keys in keys_by_resource.items():
+        new_keys_q |= Q(resource_id=resource_id, key__in=entity_keys)
     restored: dict[tuple[str, L10nId], Entity] = {}
     for ent in (
-        Entity.objects.filter(
-            resource_id__in=resource_ids, key__in=entity_keys, obsolete=True
-        )
-        .order_by("-pk")
-        .iterator()
+        Entity.objects.filter(new_keys_q, obsolete=True).order_by("-pk").iterator()
     ):
         key = (changed_resources[ent.resource_id].path, tuple(ent.key))
-        next_ent = next_entities.get(key, None)
+        next_ent = next_entities[key]
         if (
-            next_ent is not None
-            and key not in prev_entities
-            and key not in restored
+            key not in restored
             and ent.value == next_ent.value
             and ent.properties == next_ent.properties
         ):
