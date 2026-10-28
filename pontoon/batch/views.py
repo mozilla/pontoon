@@ -46,9 +46,9 @@ def update_translation_memory(changed_translation_pks, project, locale):
             project=project,
         )
         for t in (
-            Translation.objects.filter(
-                pk__in=changed_translation_pks, pretranslated=False
-            ).prefetch_related("entity__resource")
+            Translation.objects.filter(pk__in=changed_translation_pks).prefetch_related(
+                "entity__resource"
+            )
         )
     ]
     TranslationMemoryEntry.objects.bulk_create(memory_entries)

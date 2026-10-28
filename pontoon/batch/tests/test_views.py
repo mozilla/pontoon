@@ -260,7 +260,6 @@ def test_batch_pretranslate_forbidden_without_pretranslators_group(
 
 
 @pytest.mark.django_db
-@pytest.mark.django_db
 @patch("pontoon.batch.views.batch_pretranslate_task")
 def test_batch_pretranslate_allowed_for_pretranslators_group(
     task_mock,

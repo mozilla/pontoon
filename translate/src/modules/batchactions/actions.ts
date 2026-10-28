@@ -120,22 +120,27 @@ const updateUI =
   };
 
 const POLL_INTERVAL_MS = 3000;
-const MAX_POLLS = 200;
+// Keep in sync with the SYNC_TASK_TIMEOUT default (1 hour) in settings/base.py
+const POLL_TIMEOUT_MS = 60 * 60 * 1000;
+const MAX_POLLS = POLL_TIMEOUT_MS / POLL_INTERVAL_MS;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function waitForPretranslation(locale: string) {
   for (let i = 0; i < MAX_POLLS; i++) {
-    await sleep(POLL_INTERVAL_MS);
     try {
       const status = await fetchPretranslateStatus(locale);
+
       if (!status.in_progress) {
         return status.result;
       }
     } catch {
       return { error: true } as const;
     }
+
+    await sleep(POLL_INTERVAL_MS);
   }
+
   return { error: true } as const;
 }
 

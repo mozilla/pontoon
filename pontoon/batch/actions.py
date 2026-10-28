@@ -1,6 +1,6 @@
 import logging
 
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 
@@ -499,9 +499,20 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
             ).values_list("entity_id", flat=True)
         )
 
-        Translation.objects.filter(
-            pk__in=[t.pk for t in changed_translations if t.entity_id not in has_active]
-        ).update(active=True)
+        to_activate = [
+            t.pk for t in changed_translations if t.entity_id not in has_active
+        ]
+
+        try:
+            with transaction.atomic():
+                Translation.objects.filter(pk__in=to_activate).update(active=True)
+        except IntegrityError:
+            for pk in to_activate:
+                try:
+                    with transaction.atomic():
+                        Translation.objects.filter(pk=pk).update(active=True)
+                except IntegrityError:
+                    continue
 
     translation_pks = {t.pk for t in changed_translations}
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
@@ -540,7 +551,8 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
         if changed_translation_pks
         else None,
         "changed_translation_pks": changed_translation_pks,
-        "invalid_translation_pks": invalid_entity_pks + failed_translation_pks,
+        "invalid_translation_pks": failed_translation_pks,
+        "invalid_entity_pks": invalid_entity_pks,
         "badge_update": {},
     }
 
