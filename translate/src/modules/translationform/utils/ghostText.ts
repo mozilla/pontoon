@@ -13,6 +13,64 @@ import {
 
 import { placeholder } from '~/modules/placeable/placeholder';
 
+class GhostTextWidget extends WidgetType {
+  constructor(readonly text: string) {
+    super();
+  }
+
+  eq(other: GhostTextWidget) {
+    return other.text === this.text;
+  }
+
+  toDOM() {
+    const span = document.createElement('span');
+    span.className = 'ghost-text';
+    span.setAttribute('aria-hidden', 'true');
+    span.textContent = this.text;
+    return span;
+  }
+}
+
+function ghostTextDecorations(view: EditorView): DecorationSet {
+  const ghost = getGhostText(view);
+  if (!ghost) {
+    return Decoration.none;
+  }
+  const widget = new GhostTextWidget(ghost.text);
+  return Decoration.set(
+    Decoration.widget({ widget, side: 1 }).range(ghost.pos),
+  );
+}
+
+const ghostTextPlugin = ViewPlugin.fromClass(
+  class {
+    decorations: DecorationSet;
+
+    constructor(view: EditorView) {
+      this.decorations = ghostTextDecorations(view);
+    }
+
+    update(update: ViewUpdate) {
+      this.decorations = ghostTextDecorations(update.view);
+    }
+  },
+  { decorations: (plugin) => plugin.decorations },
+);
+
+export function ghostText(locale: string): Extension {
+  const segmenter = getWordSegmenter(locale);
+  return segmenter
+    ? [
+        ghostTextState.init(() => ({
+          segmenter,
+          candidates: [],
+          dismissed: false,
+        })),
+        ghostTextPlugin,
+      ]
+    : [];
+}
+
 function getWordSegmenter(locale: string) {
   if (typeof Intl.Segmenter !== 'function') {
     return null;
