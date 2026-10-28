@@ -13,6 +13,67 @@ import {
 
 import { placeholder } from '~/modules/placeable/placeholder';
 
+export const MIN_MATCH_TO_COMPLETE_WORD = 4;
+
+export const MIN_MATCH_TO_SUGGEST_NEXT_WORD = 8;
+
+export const setGhostTextCandidates = StateEffect.define<readonly string[]>();
+
+const dismissGhostTextEffect = StateEffect.define<null>();
+
+type GhostTextState = {
+  segmenter: Intl.Segmenter;
+  candidates: readonly string[];
+  dismissed: boolean;
+};
+
+const ghostTextState = StateField.define<GhostTextState | null>({
+  create: () => null,
+  update(value, tr) {
+    if (!value) {
+      return value;
+    }
+    let next = value;
+    if (next.dismissed && (tr.docChanged || tr.selection)) {
+      next = { ...next, dismissed: false };
+    }
+    for (const effect of tr.effects) {
+      if (effect.is(setGhostTextCandidates)) {
+        next = { ...next, candidates: effect.value };
+      } else if (effect.is(dismissGhostTextEffect)) {
+        next = { ...next, dismissed: true };
+      }
+    }
+    return next;
+  },
+});
+
+function getGhostText(view: EditorView): { pos: number; text: string } | null {
+  const { state } = view;
+  const ghost = state.field(ghostTextState, false);
+  const { main, ranges } = state.selection;
+  if (
+    !ghost ||
+    ghost.dismissed ||
+    ghost.candidates.length === 0 ||
+    ranges.length > 1 ||
+    !main.empty ||
+    view.composing ||
+    currentCompletions(state).length > 0
+  ) {
+    return null;
+  }
+  const pos = main.head;
+  const line = state.doc.lineAt(pos);
+  const text = findGhostText(
+    state.doc.sliceString(0, pos),
+    line.text.slice(pos - line.from),
+    ghost.candidates,
+    ghost.segmenter,
+  );
+  return text ? { pos, text } : null;
+}
+
 class GhostTextWidget extends WidgetType {
   constructor(readonly text: string) {
     super();
