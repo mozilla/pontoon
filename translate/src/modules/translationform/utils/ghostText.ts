@@ -157,6 +157,76 @@ export const acceptGhostText: Command = (view) => {
   });
   return true;
 };
+export const dismissGhostText: Command = (view) => {
+  if (!getGhostText(view)) {
+    return false;
+  }
+  view.dispatch({ effects: dismissGhostTextEffect.of(null) });
+  return true;
+};
+
+export const ghostTextKeymap: readonly KeyBinding[] = [
+  { key: 'Tab', run: acceptGhostText },
+  { key: 'Escape', run: dismissGhostText },
+];
+
+const wordChar = /[\p{L}\p{M}\p{N}]/u;
+const hasWordChar = /[\p{L}\p{N}]/u;
+
+export function findGhostText(
+  before: string,
+  after: string,
+  candidates: readonly string[],
+  segmenter: Intl.Segmenter,
+): string {
+  if (wordChar.test(after.charAt(0))) {
+    return '';
+  }
+
+  let best = { length: 0, text: '' };
+  for (const candidate of candidates) {
+    const length = getMatchLength(before, candidate);
+    if (length >= MIN_MATCH_TO_COMPLETE_WORD && length > best.length) {
+      const start = candidate.indexOf(before.slice(before.length - length));
+      const text = getContinuation(
+        candidate,
+        start,
+        start + length,
+        wordChar.test(before.charAt(before.length - length - 1)),
+        segmenter,
+      );
+      const line = text.split(/[\r\n]/, 1)[0];
+      if (line.trim() && !after.startsWith(line)) {
+        best = { length, text: line };
+      }
+    }
+  }
+  return best.text;
+}
+
+function getContinuation(
+  candidate: string,
+  start: number,
+  end: number,
+  midWord: boolean,
+  segmenter: Intl.Segmenter,
+): string {
+  const tokens = tokenize(candidate, segmenter);
+  const current = tokens.find((t) => t.start < end && end < t.end);
+  if (current?.isWord) {
+    const aligned =
+      start < current.start || (start === current.start && !midWord);
+    return aligned ? candidate.slice(end, current.end) : '';
+  }
+
+  if (end - start < MIN_MATCH_TO_SUGGEST_NEXT_WORD) {
+    return '';
+  }
+  // With no further words, suggest any remaining punctuation.
+  const next = tokens.find((t) => t.isWord && t.start >= end);
+  return candidate.slice(end, next?.end).trimEnd();
+}
+
 function getMatchLength(before: string, candidate: string): number {
   let min = 0;
   let max = Math.min(before.length, candidate.length);
