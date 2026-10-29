@@ -1,5 +1,12 @@
+/* Overrides the default color scheme set in light-theme.css */
+:root:has(> body.dark-theme) {
+  color-scheme: only dark;
+}
+
 /* Dark Theme Variables */
 .dark-theme {
+  color-scheme: dark;
+
   /* Main */
   --main-border-1: #4d5967;
   --moz-logo: url(../img/moz-logo-light.svg);

@@ -1,5 +1,14 @@
+/*
+ * Opt out of browser-forced dark modes (e.g. Chrome Auto Dark Theme).
+ */
+:root {
+  color-scheme: only light;
+}
+
 /* Light Theme Variables */
 .light-theme {
+  color-scheme: light;
+
   /* Main */
   --main-border-1: #d8d8d8;
   --moz-logo: url(../img/moz-logo.svg);
