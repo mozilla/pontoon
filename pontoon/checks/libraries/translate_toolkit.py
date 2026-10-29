@@ -3,10 +3,16 @@ from translate.lang import data as lang_data
 from translate.storage import base as storage_base
 
 
+# Implicit directional marks (LRM, RLM, ALM) are invisible, and RTL translations
+# may start with an RLM to set their base direction (GitHub issue #3236).
+# They are not punctuation, so ignore them at the start and end of strings.
+BIDI_MARKS = "\u200e\u200f\u061c"
+
+
 def run_checks(original, string, locale_code, disabled_checks=None):
     """Check for obvious errors like blanks and missing interpunction."""
-    original = lang_data.normalize(original)
-    string = lang_data.normalize(string)
+    original = lang_data.normalize(original).strip(BIDI_MARKS)
+    string = lang_data.normalize(string).strip(BIDI_MARKS)
     disabled_checks = disabled_checks or []
 
     unit = storage_base.TranslationUnit(original)

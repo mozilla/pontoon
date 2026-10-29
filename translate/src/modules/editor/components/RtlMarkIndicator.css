@@ -1,0 +1,12 @@
+.rtl-mark {
+  background-color: var(--background-1);
+  border: 1px solid var(--main-border-1);
+  border-radius: 3px;
+  color: var(--editor-menu-color);
+  cursor: help;
+  float: left;
+  font-size: 11px;
+  line-height: 20px;
+  margin-left: 5px;
+  padding: 9px;
+}
