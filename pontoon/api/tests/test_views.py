@@ -143,13 +143,15 @@ def test_user_translations_unknown_user(member):
 
 
 @pytest.mark.django_db
-def test_user_translations_by_profile_username(member, user_b):
-    user_b.profile.username = "custom-username"
-    user_b.profile.save()
-    translation = TranslationFactory(user=user_b)
+def test_user_translations_profile_username_takes_precedence(member, user_b, user_c):
+    user_c.profile.username = user_b.username
+    user_c.profile.save()
+    TranslationFactory(user=user_b)
+    translation = TranslationFactory(user=user_c)
 
     response = member.client.get(
-        "/api/v2/users/custom-username/translations/", HTTP_ACCEPT="application/json"
+        f"/api/v2/users/{user_b.username}/translations/",
+        HTTP_ACCEPT="application/json",
     )
 
     assert response.status_code == 200

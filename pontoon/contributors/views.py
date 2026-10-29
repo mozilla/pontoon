@@ -40,10 +40,10 @@ from pontoon.base.badge_utils import (
     badges_review_count,
     badges_translation_count,
 )
-from pontoon.base.models import Locale, Project, UserBanLog, UserProfile
+from pontoon.base.models import Locale, Project, UserBanLog
 from pontoon.base.models.user import User
 from pontoon.base.services import anonymize_user, get_locale_or_redirect
-from pontoon.base.user_utils import is_system_user
+from pontoon.base.user_utils import get_user_by_username, is_system_user
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors import utils
 from pontoon.messaging.emails import send_verification_email
@@ -79,15 +79,14 @@ def get_badge_level(thresholds, count):
 
 
 def contributor_username(request, username):
-    try:
-        user = User.objects.get(username=username)
-        if user.profile.username:
-            return redirect(
-                "pontoon.contributors.contributor.username",
-                username=user.profile.username,
-            )
-    except User.DoesNotExist:
-        user = get_object_or_404(UserProfile, username=username).user
+    user = get_user_by_username(username)
+    if user is None:
+        raise Http404
+    if user.profile.username and user.profile.username != username:
+        return redirect(
+            "pontoon.contributors.contributor.username",
+            username=user.profile.username,
+        )
 
     return contributor(request, user)
 

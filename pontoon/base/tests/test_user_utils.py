@@ -12,12 +12,26 @@ from pontoon.base.user_utils import (
     fxa_avatar_url,
     get_pretranslation_authors,
     get_system_user,
+    get_user_by_username,
     human_users,
     system_users,
     user_banner,
     user_locale_role,
     user_role,
 )
+
+
+@pytest.mark.django_db
+def test_get_user_by_username(user_a, user_b, user_c):
+    user_b.profile.username = "custom"
+    user_b.profile.save()
+    user_c.profile.username = user_a.username
+    user_c.profile.save()
+
+    assert get_user_by_username(user_b.username) == user_b
+    assert get_user_by_username("custom") == user_b
+    assert get_user_by_username(user_a.username) == user_c
+    assert get_user_by_username("unknown") is None
 
 
 @pytest.mark.django_db

@@ -6,7 +6,7 @@ from urllib.parse import quote, urlencode
 from dateutil.relativedelta import relativedelta
 from guardian.shortcuts import get_objects_for_user
 
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.urls import reverse
 from django.utils import timezone
 
@@ -22,6 +22,19 @@ else:
 
 def is_system_user(user: User) -> bool:
     return user.pk is None or user.profile.system_user
+
+
+def get_user_by_username(username: str) -> User | None:
+    """The user with the given profile username, or else the given User.username."""
+    # A custom profile username takes precedence over another user's
+    # generated User.username.
+    users = User.objects.filter(
+        Q(profile__username=username) | Q(username=username)
+    ).select_related("profile")
+    return next(
+        (u for u in users if u.profile.username == username),
+        None,
+    ) or next(iter(users), None)
 
 
 def human_users() -> QuerySet[Any]:
