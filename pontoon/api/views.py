@@ -41,6 +41,7 @@ from pontoon.base.models import (
     Translation,
     TranslationMemoryEntry,
     User,
+    UserProfile,
 )
 from pontoon.base.services import readonly_exists
 from pontoon.base.user_utils import can_translate
@@ -222,7 +223,11 @@ class UserTranslationListView(generics.ListAPIView):
         if getattr(self, "swagger_fake_view", False):
             return Translation.objects.none()
 
-        user = get_object_or_404(User, username=self.kwargs["username"])
+        username = self.kwargs["username"]
+        user = (
+            User.objects.filter(username=username).first()
+            or get_object_or_404(UserProfile, username=username).user
+        )
 
         end_date = self.parse_date("end_date") or localdate()
         try:

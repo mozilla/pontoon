@@ -143,6 +143,21 @@ def test_user_translations_unknown_user(member):
 
 
 @pytest.mark.django_db
+def test_user_translations_by_profile_username(member, user_b):
+    user_b.profile.username = "custom-username"
+    user_b.profile.save()
+    translation = TranslationFactory(user=user_b)
+
+    response = member.client.get(
+        "/api/v2/users/custom-username/translations/", HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 200
+    assert response.data["count"] == 1
+    assert response.data["results"][0]["translation_pk"] == translation.pk
+
+
+@pytest.mark.django_db
 def test_user_translations_output(member, user_b, user_c, user_translations_url):
     project = ProjectFactory(slug="public-project", name="Public Project")
     resource = ResourceFactory(
