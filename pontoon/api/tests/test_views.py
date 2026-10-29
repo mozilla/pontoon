@@ -143,6 +143,23 @@ def test_user_translations_unknown_user(member):
 
 
 @pytest.mark.django_db
+def test_user_translations_profile_username_takes_precedence(member, user_b, user_c):
+    user_c.profile.username = user_b.username
+    user_c.profile.save()
+    TranslationFactory(user=user_b)
+    translation = TranslationFactory(user=user_c)
+
+    response = member.client.get(
+        f"/api/v2/users/{user_b.username}/translations/",
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.data["count"] == 1
+    assert response.data["results"][0]["translation_pk"] == translation.pk
+
+
+@pytest.mark.django_db
 def test_user_translations_output(member, user_b, user_c, user_translations_url):
     project = ProjectFactory(slug="public-project", name="Public Project")
     resource = ResourceFactory(

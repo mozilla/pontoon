@@ -142,6 +142,29 @@ def test_profile_view_contributor_profile_by_username(member, mock_profile_rende
 
 
 @pytest.mark.django_db
+def test_profile_view_redirects_to_profile_username(member):
+    member.user.profile.username = "custom"
+    member.user.profile.save()
+
+    response = member.client.get(f"/contributors/{member.user.username}/")
+
+    assert response.status_code == 302
+    assert response.url == "/contributors/custom/"
+
+
+@pytest.mark.django_db
+def test_profile_view_profile_username_takes_precedence(
+    member, user_a, mock_profile_render
+):
+    member.user.profile.username = user_a.username
+    member.user.profile.save()
+
+    member.client.get(f"/contributors/{user_a.username}/")
+
+    assert mock_profile_render.call_args[0][2]["contributor"] == member.user
+
+
+@pytest.mark.django_db
 def test_profile_view_logged_user_profile(member, mock_profile_render):
     """Logged users should be able view their profiles"""
     member.client.get("/profile/")

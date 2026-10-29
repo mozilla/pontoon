@@ -40,10 +40,9 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
-    User,
 )
 from pontoon.base.services import readonly_exists
-from pontoon.base.user_utils import can_translate
+from pontoon.base.user_utils import can_translate, get_user_by_username
 from pontoon.messaging.notifications import send_badge_notification
 from pontoon.pretranslation.pretranslate import get_pretranslation
 from pontoon.settings.base import (
@@ -222,7 +221,9 @@ class UserTranslationListView(generics.ListAPIView):
         if getattr(self, "swagger_fake_view", False):
             return Translation.objects.none()
 
-        user = get_object_or_404(User, username=self.kwargs["username"])
+        user = get_user_by_username(self.kwargs["username"])
+        if user is None:
+            raise Http404
 
         end_date = self.parse_date("end_date") or localdate()
         try:
