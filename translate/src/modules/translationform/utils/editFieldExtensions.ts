@@ -30,6 +30,7 @@ import { editablePattern } from '~/utils/message/editablePattern';
 import { entryPatterns } from '~/utils/message/entryPatterns';
 import { emptyEditorCaret } from './editFieldCaret';
 import { decoratorPlugin } from './decoratorPlugin';
+import { bidiTyping } from './bidiTyping';
 import {
   useHandleCtrlShiftArrow,
   useHandleEnter,
@@ -104,6 +105,7 @@ export const getExtensions = (
   ),
   syntaxHighlighting(style),
   decoratorPlugin,
+  bidiTyping,
   keymap.of([
     {
       key: 'Enter',
