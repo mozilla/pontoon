@@ -1,11 +1,6 @@
-/* Overrides the default color scheme set in light-theme.css */
-:root:has(> body.dark-theme) {
-  color-scheme: only dark;
-}
-
 /* Dark Theme Variables */
 .dark-theme {
-  color-scheme: dark;
+  color-scheme: only dark;
 
   /* Main */
   --main-border-1: #4d5967;

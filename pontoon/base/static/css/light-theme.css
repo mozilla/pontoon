@@ -1,13 +1,13 @@
 /*
  * Opt out of browser-forced dark modes (e.g. Chrome Auto Dark Theme).
  */
-:root {
+html {
   color-scheme: only light;
 }
 
 /* Light Theme Variables */
 .light-theme {
-  color-scheme: light;
+  color-scheme: only light;
 
   /* Main */
   --main-border-1: #d8d8d8;

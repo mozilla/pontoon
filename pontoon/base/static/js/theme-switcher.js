@@ -15,7 +15,7 @@ $(function () {
       newTheme = getSystemTheme();
       storeSystemTheme(newTheme);
     }
-    $('body')
+    $('html')
       .removeClass('dark-theme light-theme system-theme')
       .addClass(`${newTheme}-theme`);
 

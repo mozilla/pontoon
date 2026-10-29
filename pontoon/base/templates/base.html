@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" class="{{ theme_class(request) }}">
   <head>
     <meta charset="utf-8" />
 
@@ -34,7 +34,7 @@
   </head>
 
   <body
-    class="{% block class %}{% endblock %} {{ theme_class(request) }}"
+    class="{% block class %}{% endblock %}"
     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
     data-theme="{{ user_theme(request.user) }}"
     data-editor-theme="{{ user_editor_theme(request.user) }}"
