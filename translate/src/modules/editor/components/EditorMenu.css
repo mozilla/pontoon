@@ -9,8 +9,8 @@
   background: var(--editor-form-background);
 }
 
-.dark-theme[data-editor-theme='dark'] .singlefield ~ .editor-menu,
-.light-theme[data-editor-theme='light'] .singlefield ~ .editor-menu,
+.dark-theme > [data-editor-theme='dark'] .singlefield ~ .editor-menu,
+.light-theme > [data-editor-theme='light'] .singlefield ~ .editor-menu,
 [data-editor-theme='match'] .singlefield ~ .editor-menu {
   background: var(--editor-background);
 }

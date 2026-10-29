@@ -3,7 +3,7 @@
 {% load helpers %}
 {% load django_helpers %}
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" class="{{ request|theme_class }}">
   <head>
     <meta charset="utf-8" />
 
@@ -13,7 +13,6 @@
     <title>{% block title %}Pontoon{% endblock %}</title>
     <meta name="description" content="Mozilla’s Localization Platform" />
     <meta name="author" content="Mozilla" />
-    <meta name="color-scheme" content="only light" />
 
     <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="32x32" />
     <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml" />
@@ -71,7 +70,7 @@
   </head>
 
   <body
-    class="{% block class %}{% endblock %} {{ request|theme_class }}"
+    class="{% block class %}{% endblock %}"
     data-theme="{{ user|user_theme }}"
     data-editor-theme="{{ user|user_editor_theme }}"
   >
