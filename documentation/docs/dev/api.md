@@ -359,7 +359,7 @@ A successful request returns a summary of the import:
 - `badge_updates`: badges whose level the upload raised, each with its `name` and new
   `level`. The user is also notified of each. Empty when no level changed.
 
-Unlike the built-in pretranslation, strings with unreviewed suggestions are
+As with the built-in pretranslation, strings with unreviewed suggestions are
 pretranslated. Suggestions that don't match the uploaded translation are kept as
 unreviewed suggestions. Fuzzy translations already in Pontoon are rejected and replaced
 by the pretranslation, while approved translations are never replaced. An uploaded
