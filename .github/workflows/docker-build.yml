@@ -66,7 +66,7 @@ jobs:
           GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
       - name: Push Docker image to GAR
         if: env.DEPLOY == 'true'
-        uses: mozilla-it/deploy-actions/docker-push@ef0f037316873ff408a598f1cd98876dd7851e53 # v6.7.0
+        uses: mozilla-it/deploy-actions/docker-push@d8b3b34029e5952a43b3ad6cd6b2036cb30fa003 # v6.7.1
         with:
           image_tags: ${{ steps.tag.outputs.image_tags }}
           project_id: ${{ vars.GCP_PROJECT_ID }}
