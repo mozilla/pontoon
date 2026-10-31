@@ -157,6 +157,7 @@ export const acceptGhostText: Command = (view) => {
   });
   return true;
 };
+
 export const dismissGhostText: Command = (view) => {
   if (!getGhostText(view)) {
     return false;
@@ -183,25 +184,28 @@ export function findGhostText(
     return '';
   }
 
-  let best = { length: 0, text: '' };
+  let best = { candidate: '', length: 0 };
   for (const candidate of candidates) {
     const length = getMatchLength(before, candidate);
-    if (length >= MIN_MATCH_TO_COMPLETE_WORD && length > best.length) {
-      const start = candidate.indexOf(before.slice(before.length - length));
-      const text = getContinuation(
-        candidate,
-        start,
-        start + length,
-        wordChar.test(before.charAt(before.length - length - 1)),
-        segmenter,
-      );
-      const line = text.split(/[\r\n]/, 1)[0];
-      if (line.trim() && !after.startsWith(line)) {
-        best = { length, text: line };
-      }
+    if (length > best.length) {
+      best = { candidate, length };
     }
   }
-  return best.text;
+
+  const { candidate, length } = best;
+  if (length < MIN_MATCH_TO_COMPLETE_WORD) {
+    return '';
+  }
+  const start = candidate.indexOf(before.slice(before.length - length));
+  const text = getContinuation(
+    candidate,
+    start,
+    start + length,
+    wordChar.test(before.charAt(before.length - length - 1)),
+    segmenter,
+  );
+  const line = text.split(/[\r\n]/, 1)[0];
+  return line.trim() && !after.startsWith(line) ? line : '';
 }
 
 function getContinuation(

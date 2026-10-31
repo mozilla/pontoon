@@ -71,9 +71,16 @@ describe('findGhostText', () => {
     expect(find('Salva il ', candidates)).toBe('file');
   });
 
-  test('falls back to a shorter match with something to suggest', () => {
-    const candidates = ['Elimina tutto', 'Eliminare tutto'];
-    expect(find('Elimina', candidates)).toBe('re');
+  test('uses the earlier candidate on a tie, even with nothing to suggest', () => {
+    expect(find('Elimina', ['Elimina tutto', 'Eliminare tutto'])).toBe('');
+    expect(find('Elimina', ['Eliminare tutto', 'Elimina tutto'])).toBe('re');
+  });
+
+  test('does not fall back to a shorter match', () => {
+    const before = 'Hai { $count } nuovi messaggi';
+    const shorter = 'Hai { $count } messaggi nuovi';
+    expect(find(before, [shorter])).toBe(' nuovi');
+    expect(find(before, ['Hai { $count } nuovi messaggi', shorter])).toBe('');
   });
 
   test('keeps placeholders and tags together', () => {
@@ -100,6 +107,8 @@ describe('findGhostText', () => {
   test('does not repeat what is already after the cursor', () => {
     expect(find('Salva il', ['Salva il file'], ' file')).toBe('');
     expect(find('Salva il', ['Salva il file'], ' documento')).toBe(' file');
+    const candidates = ['Salva il file', 'Salva il documento'];
+    expect(find('Salva il', candidates, ' file')).toBe('');
   });
 
   test('uses word segmentation for languages without spaces', () => {
