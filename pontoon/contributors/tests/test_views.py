@@ -270,6 +270,27 @@ def test_toggle_user_profile_attribute(member):
 
 
 @pytest.mark.django_db
+def test_toggle_machinery_autocomplete(member):
+    """The machinery_autocomplete setting is off by default and can be toggled."""
+
+    def get_settings():
+        response = member.client.get(
+            "/user-data/", HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
+        return response.json()["settings"]
+
+    assert get_settings()["machinery_autocomplete"] is False
+
+    params = {"attribute": "machinery_autocomplete", "value": "true"}
+    response = member.client.post("/user/attributes/toggle/", params)
+    assert response.status_code == 200
+    member.user.profile.refresh_from_db()
+    assert member.user.profile.machinery_autocomplete is True
+
+    assert get_settings()["machinery_autocomplete"] is True
+
+
+@pytest.mark.django_db
 def test_toggle_editor_theme(member):
     """toggle_editor_theme accepts valid choices and rejects invalid ones."""
     url = "/user/editor-theme/"
