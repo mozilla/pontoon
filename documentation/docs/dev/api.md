@@ -300,7 +300,7 @@ Status codes:
 ### `POST /api/v2/upload/pretranslations/`
 
 Store translations from an uploaded translation file as pretranslations.
-This API requires the user to be a member of the `pretranslators` group,
+This API requires the user to be a superuser or a member of the `pretranslators` group,
 in addition to have translator rights for the target locale and project.
 
 The request body is the same `multipart/form-data` as
@@ -369,8 +369,8 @@ good one.
 
 The requirements, limits and status codes of
 [`POST /api/v2/upload/translations/`](#post-apiv2uploadtranslations) also apply here,
-with one difference: the request is rejected with `403` unless the user is a member of
-the `pretranslators` group.
+with one difference: the request is rejected with `403` unless the user is a superuser
+or a member of the `pretranslators` group.
 
 ### `POST /api/v2/upload/suggestions/`
 

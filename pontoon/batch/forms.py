@@ -15,6 +15,7 @@ class BatchActionsForm(forms.Form):
             ("reject", "reject"),
             ("replace", "replace"),
             ("copy_from_locale", "copy_from_locale"),
+            ("pretranslate", "pretranslate"),
         ]
     )
     entities = forms.CharField(required=False)
