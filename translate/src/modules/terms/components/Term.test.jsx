@@ -25,14 +25,19 @@ const TERM = {
   doNotTranslate: false,
 };
 
-function MockTerm({ isAuthenticated, setEditorSelection, term }) {
+function MockTerm({
+  isAuthenticated,
+  setEditorSelection,
+  navigateToPath,
+  term,
+}) {
   const store = createReduxStore({ user: { isAuthenticated } });
   return (
     <MockStore store={store}>
       <Locale.Provider value={{ code: 'kg' }}>
         <EntityView.Provider value={{ entity: {} }}>
           <EditorActions.Provider value={{ setEditorSelection }}>
-            <Term term={term ?? TERM} />
+            <Term term={term ?? TERM} navigateToPath={navigateToPath} />
           </EditorActions.Provider>
         </EntityView.Provider>
       </Locale.Provider>
@@ -122,5 +127,20 @@ describe('<Term>', () => {
     );
     await userEvent.click(container.querySelector('li'));
     expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('navigates to the term entity, including the string query', async () => {
+    const navigateToPath = vi.fn();
+    const { container } = render(
+      <MockTerm
+        isAuthenticated
+        setEditorSelection={vi.fn()}
+        navigateToPath={navigateToPath}
+      />,
+    );
+    await userEvent.click(container.querySelector('a.translate'));
+    expect(navigateToPath).toHaveBeenCalledWith(
+      '/kg/terminology/common/?string=1',
+    );
   });
 });
