@@ -33,9 +33,11 @@ export function Term({ navigateToPath, term }: Props): React.ReactElement {
   };
 
   const handleLinkClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const { pathname, search } = ev.currentTarget;
+
     ev.preventDefault();
     ev.stopPropagation();
-    navigateToPath(ev.currentTarget.pathname);
+    navigateToPath(pathname + search);
   };
 
   const cn = classNames(
