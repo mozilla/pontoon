@@ -174,13 +174,16 @@ $ curl -H "Authorization: Bearer <token>" \
   "results": [
     {
       "translation_pk": 1234,
-      "string": "Apri una nuova scheda",
+      "preview": "Apri una nuova scheda",
+      "value": ["Apri una nuova scheda"],
+      "properties": { "title": ["Nuova scheda"] },
       "status": "rejected",
       "date": "2026-10-02T09:12:44.123456Z",
       "approved_date": null,
       "rejected_date": "2026-10-03T15:01:02.654321Z",
       "entity": "new-tab",
       "resource": "browser/tabs.ftl",
+      "format": "fluent",
       "project": "firefox",
       "locale": "it",
       "url": "https://example.com/it/firefox/browser/tabs.ftl/?string=567",
@@ -196,6 +199,13 @@ $ curl -H "Authorization: Bearer <token>" \
 }
 ```
 
+`preview` is a simplified version of the translation, consistent with other endpoints:
+for messages with plural or other variants, only the default variant is
+shown; for Fluent messages, the value is shown, or the first non-empty attribute if the
+value is empty. `value` and `properties` hold the complete message content, using the
+[JSON data model](https://github.com/mozilla/moz-l10n/blob/main/schemas/message.json)
+defined by moz-l10n. `properties` contains message properties such as Fluent attributes,
+and is `null` if there are none. `format` is the format of the resource.
 `status` is one of `approved`, `rejected`, `pretranslated`, `fuzzy` or `unreviewed`.
 `entity` is the string identifier as shown in the context of the translate view (e.g. the
 Fluent message ID). Multi-part identifiers, such as nested keys, are shown from the
