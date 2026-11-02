@@ -512,7 +512,12 @@ def pretranslate_translations(user, locale: Locale, entities: QuerySet[Entity]):
                     with transaction.atomic():
                         Translation.objects.filter(pk=pk).update(active=True)
                 except IntegrityError:
-                    continue
+                    logger.warning(
+                        "Could not activate pretranslation %s for locale %s",
+                        pk,
+                        locale.code,
+                        exc_info=True,
+                    )
 
     translation_pks = {t.pk for t in changed_translations}
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))

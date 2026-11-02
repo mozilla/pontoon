@@ -91,6 +91,7 @@ def translate(request, locale, project, resource):
         "locale": get_preferred_locale(request),
         "notifications": [],
         "can_pretranslate": can_pretranslate(request.user),
+        "sync_task_timeout": settings.SYNC_TASK_TIMEOUT,
     }
 
     # Get system notifications and pass them down. We need to transform the

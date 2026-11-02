@@ -81,7 +81,6 @@ export async function batchEditEntities(
   find: string | undefined,
   replace: string | undefined,
   otherLocale?: string,
-  pretranslate?: string,
 ): Promise<BatchEditResponse> {
   const csrfToken = getCSRFToken();
   const payload = new FormData();
@@ -97,8 +96,6 @@ export async function batchEditEntities(
   }
 
   payload.append('other_locale', otherLocale ?? '');
-
-  payload.append('pretranslate', pretranslate ?? '');
 
   return await POST('/batch-edit-translations/', payload);
 }
