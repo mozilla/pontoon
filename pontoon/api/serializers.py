@@ -389,7 +389,9 @@ class UserTranslationSerializer(serializers.Serializer):
     """Translation returned by the user translations endpoint."""
 
     translation_pk = serializers.IntegerField(source="pk")
-    string = serializers.CharField()
+    preview = serializers.SerializerMethodField()
+    value = serializers.JSONField()
+    properties = serializers.JSONField(allow_null=True)
     status = serializers.ChoiceField(
         choices=["approved", "fuzzy", "pretranslated", "rejected", "unreviewed"]
     )
@@ -398,10 +400,16 @@ class UserTranslationSerializer(serializers.Serializer):
     rejected_date = serializers.DateTimeField(allow_null=True)
     entity = serializers.SerializerMethodField()
     resource = serializers.CharField(source="entity.resource.path")
+    format = serializers.ChoiceField(
+        source="entity.resource.format", choices=Resource.Format.values
+    )
     project = serializers.CharField(source="entity.resource.project.slug")
     locale = serializers.CharField(source="locale.code")
     url = serializers.SerializerMethodField()
     comments = UserTranslationCommentSerializer(many=True)
+
+    def get_preview(self, obj) -> str:
+        return get_simple_preview(obj.entity.resource.format, obj.string)
 
     def get_entity(self, obj) -> str | None:
         # Same as the context shown in the translate view, where the first part

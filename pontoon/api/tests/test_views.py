@@ -2,6 +2,9 @@ from types import SimpleNamespace
 
 import pytest
 
+from moz.l10n.formats.fluent import fluent_parse_entry
+from moz.l10n.formats.mf2 import mf2_parse_message
+from moz.l10n.message import message_to_json
 from rest_framework.test import APIClient
 from rest_framework.throttling import SimpleRateThrottle
 
@@ -172,6 +175,7 @@ def test_user_translations_output(member, user_b, user_c, user_translations_url)
         locale=locale,
         user=user_b,
         string="Traduzione",
+        value=["Traduzione"],
         rejected=True,
         rejected_date=now(),
     )
@@ -185,7 +189,10 @@ def test_user_translations_output(member, user_b, user_c, user_translations_url)
     assert response.data["count"] == 1
     result = response.data["results"][0]
     assert result["translation_pk"] == translation.pk
-    assert result["string"] == "Traduzione"
+    assert result["preview"] == "Traduzione"
+    assert result["value"] == ["Traduzione"]
+    assert result["properties"] is None
+    assert result["format"] == "properties"
     assert result["status"] == "rejected"
     assert result["approved_date"] is None
     assert result["rejected_date"] is not None
@@ -202,6 +209,46 @@ def test_user_translations_output(member, user_b, user_c, user_translations_url)
         "name": user_c.display_name,
     }
     assert result["comments"][0]["content"] == "No"
+
+
+@pytest.mark.django_db
+def test_user_translations_message_content(member, user_b, user_translations_url):
+    xliff_resource = ResourceFactory(path="app.xliff", format="xliff")
+    xliff_string = "Accept {$arg @source=|%@|} terms"
+    xliff = TranslationFactory(
+        entity=EntityFactory(resource=xliff_resource),
+        user=user_b,
+        string=xliff_string,
+        value=message_to_json(mf2_parse_message(xliff_string)),
+    )
+
+    ftl_resource = ResourceFactory(path="app.ftl", format="fluent")
+    ftl_string = "msg = Value\n    .title = Title\n"
+    ftl_entry = fluent_parse_entry(ftl_string)
+    ftl = TranslationFactory(
+        entity=EntityFactory(resource=ftl_resource, string=ftl_string),
+        user=user_b,
+        string=ftl_string,
+        value=message_to_json(ftl_entry.value),
+        properties={
+            name: message_to_json(msg) for name, msg in ftl_entry.properties.items()
+        },
+    )
+
+    response = member.client.get(user_translations_url, HTTP_ACCEPT="application/json")
+
+    assert response.status_code == 200
+    results = {t["translation_pk"]: t for t in response.data["results"]}
+
+    assert results[xliff.pk]["preview"] == "Accept %@ terms"
+    assert results[xliff.pk]["value"] == xliff.value
+    assert results[xliff.pk]["properties"] is None
+    assert results[xliff.pk]["format"] == "xliff"
+
+    assert results[ftl.pk]["preview"] == "Value"
+    assert results[ftl.pk]["value"] == ["Value"]
+    assert results[ftl.pk]["properties"] == {"title": ["Title"]}
+    assert results[ftl.pk]["format"] == "fluent"
 
 
 @pytest.mark.django_db
