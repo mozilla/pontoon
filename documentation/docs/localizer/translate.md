@@ -83,6 +83,8 @@ In the `FIND & REPLACE IN TRANSLATIONS` section, the user can input the text to 
 
 In the COPY FROM ANOTHER LOCALE section, the user can select a locale and click COPY AS SUGGESTIONS. Approved translations from the selected locale will be added as suggestions in the current locale for all selected strings.
 
+In the `PRETRANSLATE` section, the user can pretranslate all selected strings using machine translation. Note that this feature is only available to users with pretranslation permissions (superusers and members of the `pretranslators` group), in addition to translator rights for the locale and project. It is also only available for locales supported by Google Translate.
+
 ## Downloading and uploading translations
 
 Pontoon provides the ability to download and upload translations, including [terminology](glossary.md#terminology) and [translation memories](glossary.md#translation-memory). To access these features, click on the profile icon in the top-right corner of any page. Note that the user must be in the translation workspace for the download/upload options to be displayed in the dropdown menu. Translations can’t be downloaded or uploaded for projects that are stored only in Pontoon’s database, like Terminology.
