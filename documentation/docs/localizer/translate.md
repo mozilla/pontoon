@@ -81,9 +81,9 @@ Note that `APPROVE ALL` accepts the latest suggestion, but doesn’t reject othe
 
 In the `FIND & REPLACE IN TRANSLATIONS` section, the user can input the text to search for, and the text to replace it with. This is a basic find and replace feature that will work only on the selected strings.
 
-In the COPY FROM ANOTHER LOCALE section, the user can select a locale and click COPY AS SUGGESTIONS. Approved translations from the selected locale will be added as suggestions in the current locale for all selected strings.
+In the `COPY FROM ANOTHER LOCALE` section, the user can select a locale and click `COPY AS SUGGESTIONS`. Approved translations from the selected locale will be added as suggestions in the current locale for all selected strings.
 
-In the `PRETRANSLATE` section, the user can pretranslate all selected strings using machine translation. Note that this feature is only available to users with pretranslation permissions (superusers and members of the `pretranslators` group), in addition to translator rights for the locale and project. It is also only available for locales supported by Google Translate.
+In the `PRETRANSLATE` section, the user can pretranslate selected strings using translation memory and machine translation. This feature requires translator rights for the locale and project, plus superuser status or membership in the `pretranslators` group. It is only available when Google Translate is configured and supports the selected locale.
 
 ## Downloading and uploading translations
 
