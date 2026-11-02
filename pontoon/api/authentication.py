@@ -7,11 +7,12 @@ from django.contrib.auth.hashers import check_password
 from django.utils import timezone
 
 from pontoon.api.models import PersonalAccessToken
+from pontoon.base.user_utils import can_pretranslate
 
 
 class IsPretranslator(BasePermission):
     def has_permission(self, request, view):
-        return request.user.groups.filter(name="pretranslators").exists()
+        return can_pretranslate(request.user)
 
 
 class PersonalAccessTokenAuthentication(BaseAuthentication):

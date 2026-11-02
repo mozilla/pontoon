@@ -1,4 +1,9 @@
-import { batchEditEntities, fetchEntities, fetchEntityIds } from '~/api/entity';
+import {
+  batchEditEntities,
+  fetchEntities,
+  fetchEntityIds,
+  fetchPretranslateStatus,
+} from '~/api/entity';
 import type { Location } from '~/context/Location';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { updateResource } from '~/modules/resource/actions';
@@ -114,10 +119,44 @@ const updateUI =
     }
   };
 
+const POLL_INTERVAL_MS = 3000;
+const DEFAULT_POLL_TIMEOUT_S = 60 * 60;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function waitForPretranslation(locale: string) {
+  const root = document.getElementById('root');
+  const seconds = Number(root?.dataset.syncTaskTimeout);
+  const timeoutS =
+    Number.isFinite(seconds) && seconds > 0 ? seconds : DEFAULT_POLL_TIMEOUT_S;
+  const maxPolls = Math.ceil((timeoutS * 1000) / POLL_INTERVAL_MS);
+
+  for (let i = 0; i < maxPolls; i++) {
+    try {
+      const status = await fetchPretranslateStatus(locale);
+
+      if (!status.in_progress) {
+        return status.result;
+      }
+    } catch {
+      return { error: true } as const;
+    }
+
+    await sleep(POLL_INTERVAL_MS);
+  }
+
+  return { error: true } as const;
+}
+
 export const performAction =
   (
     location: Location,
-    action: 'approve' | 'reject' | 'replace' | 'copy_from_locale',
+    action:
+      | 'approve'
+      | 'reject'
+      | 'replace'
+      | 'copy_from_locale'
+      | 'pretranslate',
     entityIds: number[],
     showBadgeTooltip: (tooltip: {
       badgeName: string | null;
@@ -130,7 +169,7 @@ export const performAction =
   async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_BATCHACTIONS, source: action });
 
-    const data = await batchEditEntities(
+    let data = await batchEditEntities(
       action,
       location.locale,
       entityIds,
@@ -138,6 +177,22 @@ export const performAction =
       replace,
       otherLocale,
     );
+
+    if (
+      action === 'pretranslate' &&
+      'status' in data &&
+      data.status === 'started'
+    ) {
+      const result = await waitForPretranslation(location.locale);
+      data =
+        result && !('error' in result)
+          ? {
+              count: result.count,
+              invalid_translation_count: result.invalid_translation_count,
+              badge_update: { name: null, level: null },
+            }
+          : { error: true };
+    }
 
     const response: ResponseType = {
       changedCount: 0,
