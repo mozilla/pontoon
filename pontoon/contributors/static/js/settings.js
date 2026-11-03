@@ -112,8 +112,8 @@ $(function () {
 
     const self = $(this);
 
-    // Theme toggle is handled separately
-    if (self.parents('.appearance').length) {
+    // Theme and autocomplete toggles are handled separately
+    if (self.parents('.appearance, .machinery-autocomplete-field').length) {
       return;
     }
 
@@ -150,6 +150,33 @@ $(function () {
         } else {
           Pontoon.endLoader(request.responseText, 'error');
         }
+      },
+    });
+  });
+
+  $('.machinery-autocomplete-field .toggle-button button').click(function (e) {
+    e.preventDefault();
+
+    const self = $(this);
+
+    if (self.is('.active')) {
+      return;
+    }
+
+    $.ajax({
+      url: '/user/machinery-autocomplete/',
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('body').data('csrf'),
+        machinery_autocomplete: self.val(),
+      },
+      success() {
+        self.addClass('active');
+        self.siblings().removeClass('active');
+        Pontoon.endLoader('Settings saved.');
+      },
+      error() {
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
       },
     });
   });

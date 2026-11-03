@@ -3,9 +3,13 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
+import type { MachineryTranslation } from '~/api/machinery';
+import type { MachineryAutocomplete } from '~/api/user';
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
 // @ts-expect-error
 import { createReduxStore, MockStore } from '~/test/store';
 
@@ -18,6 +22,9 @@ function MockEditField({
   fieldRef,
   isAuthenticated = true,
   setResultFromInput = vi.fn(),
+  machinery = [],
+  machineryAutocomplete = 'word',
+  query = '',
 }: {
   defaultValue: string;
   singleField?: boolean;
@@ -25,8 +32,21 @@ function MockEditField({
   fieldRef?: React.RefObject<EditFieldHandle>;
   isAuthenticated?: boolean;
   setResultFromInput?: EditorActions['setResultFromInput'];
+  machinery?: string[];
+  machineryAutocomplete?: MachineryAutocomplete;
+  query?: string;
 }) {
-  const store = createReduxStore({ user: { isAuthenticated, settings: {} } });
+  const store = createReduxStore({
+    user: { isAuthenticated, settings: { machineryAutocomplete } },
+  });
+  const translations = machinery.map(
+    (translation) =>
+      ({
+        sources: ['translation-memory'],
+        original: '',
+        translation,
+      }) as MachineryTranslation,
+  );
   return (
     <Fluent.LocalizationProvider
       l10n={{ getString: (id) => id } as Fluent.ReactLocalization}
@@ -45,15 +65,26 @@ function MockEditField({
               } as EntityView
             }
           >
-            <EditorActions.Provider
-              value={{ setResultFromInput } as EditorActions}
-            >
-              <EditField
-                ref={fieldRef}
-                defaultValue={defaultValue}
-                singleField={singleField}
-              />
-            </EditorActions.Provider>
+            <SearchData.Provider value={{ query } as SearchData}>
+              <MachineryTranslations.Provider
+                value={{
+                  fetching: false,
+                  source: '',
+                  composed: [],
+                  translations,
+                }}
+              >
+                <EditorActions.Provider
+                  value={{ setResultFromInput } as EditorActions}
+                >
+                  <EditField
+                    ref={fieldRef}
+                    defaultValue={defaultValue}
+                    singleField={singleField}
+                  />
+                </EditorActions.Provider>
+              </MachineryTranslations.Provider>
+            </SearchData.Provider>
           </EntityView.Provider>
         </Locale.Provider>
       </MockStore>
@@ -143,6 +174,65 @@ describe('<EditField>', () => {
       ref.current!.setSelection('bar');
     });
     expect(res).toEqual(['foobar']);
+  });
+
+  describe('ghost text', () => {
+    const firefox = 'Firefox non riesce a trovare il server';
+    const ghost = (container: HTMLElement) =>
+      container.querySelector('.ghost-text')?.textContent ?? null;
+
+    function renderField(props: Partial<Parameters<typeof MockEditField>[0]>) {
+      const ref = React.createRef<EditFieldHandle>();
+      const { container } = render(
+        <MockEditField
+          defaultValue='Firefox non'
+          format='plain'
+          fieldRef={ref}
+          machinery={[firefox]}
+          {...props}
+        />,
+      );
+      act(() => ref.current!.focus());
+      return { container, ref };
+    }
+
+    it('is shown from Machinery suggestions and accepted with Tab', async () => {
+      const { container, ref } = renderField({});
+      expect(ghost(container)).toBe(' riesce ');
+
+      await userEvent.keyboard(' r');
+      expect(ghost(container)).toBe('iesce ');
+
+      await userEvent.keyboard('{Tab}');
+      expect(ref.current!.value).toBe('Firefox non riesce ');
+      expect(ghost(container)).toBe('a ');
+    });
+
+    it('is not shown when turned off in the settings', async () => {
+      const { container } = renderField({ machineryAutocomplete: 'off' });
+      await userEvent.keyboard(' r');
+      expect(ghost(container)).toBeNull();
+    });
+
+    it('shows the full continuation when set to full', async () => {
+      const { container, ref } = renderField({ machineryAutocomplete: 'full' });
+      await userEvent.keyboard(' r');
+      expect(ghost(container)).toBe('iesce a trovare il server');
+
+      await userEvent.keyboard('{Tab}');
+      expect(ref.current!.value).toBe(firefox);
+    });
+
+    it('is not shown during a Concordance search', async () => {
+      const { container } = renderField({ query: 'server' });
+      await userEvent.keyboard(' r');
+      expect(ghost(container)).toBeNull();
+    });
+
+    it('is not shown when readonly', () => {
+      const { container } = renderField({ isAuthenticated: false });
+      expect(ghost(container)).toBeNull();
+    });
   });
 
   it('does not highlight `% d` as code (#2988)', () => {

@@ -270,6 +270,42 @@ def test_toggle_user_profile_attribute(member):
 
 
 @pytest.mark.django_db
+def test_toggle_machinery_autocomplete(member):
+    """toggle_machinery_autocomplete accepts valid choices and rejects invalid ones."""
+    url = "/user/machinery-autocomplete/"
+
+    def get_setting():
+        response = member.client.get(
+            "/user-data/", HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
+        return response.json()["settings"]["machinery_autocomplete"]
+
+    assert member.user.profile.machinery_autocomplete is None
+    assert get_setting() == "word"
+
+    for value in ("off", "full", "word"):
+        response = member.client.post(url, {"machinery_autocomplete": value})
+        assert response.status_code == 200
+        assert response.json() == {"status": True}
+        member.user.profile.refresh_from_db()
+        assert member.user.profile.machinery_autocomplete == value
+        assert get_setting() == value
+
+    # reject invalid choice and unchange stored value
+    response = member.client.post(url, {"machinery_autocomplete": "true"})
+    assert response.status_code == 400
+    member.user.profile.refresh_from_db()
+    assert member.user.profile.machinery_autocomplete == "word"
+
+    response = member.client.post(url, {})
+    assert response.status_code == 400
+
+    params = {"attribute": "machinery_autocomplete", "value": "true"}
+    response = member.client.post("/user/attributes/toggle/", params)
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
 def test_toggle_editor_theme(member):
     """toggle_editor_theme accepts valid choices and rejects invalid ones."""
     url = "/user/editor-theme/"
