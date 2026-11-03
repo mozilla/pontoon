@@ -167,7 +167,7 @@ In the lower-right side of the editing space, it’s possible to `COPY` the sour
 
 In the lower-left side:
 
-* Clicking the gear icon allows users to toggle `Translation Toolkit checks`, `Make suggestions` and [`Autocomplete from Machinery`](#autocomplete-from-machinery), select their editor theme, and navigate to the user settings. Note that access to some settings is restricted by [user permissions](users.md#user-roles).
+* Clicking the gear icon allows users to toggle `Translation Toolkit checks` and `Make suggestions`, choose how to [autocomplete from Machinery](#autocomplete-from-machinery), select their editor theme, and navigate to the user settings. Note that access to some settings is restricted by [user permissions](users.md#user-roles).
 * Clicking the keyboard icon displays a list of available shortcuts.
 * The numbers displayed to the right of the keyboard icon (e.g. `50|59`) are the number of characters in the target and source string.
 
@@ -302,17 +302,21 @@ Be careful when using the machinery tab as suggestions may not match the source 
 
 #### Autocomplete from Machinery
 
-When `Autocomplete from Machinery` is enabled in the [Editor's gear icon](#editor) (or in the [settings page](users.md#editor)), the editor offers to complete what you type using the Machinery suggestions for the current string: translation memory, machine translation, and automatic LLM suggestions.
+As you type a translation, the editor can complete it from the current string's Machinery suggestions (translation memory, machine translation, and LLM suggestions). The completion appears in gray after the cursor. Press `Tab` to accept it or `Esc` to hide it.
 
-As you type, the end of the text before the cursor is compared with each suggestion, and the suggestion with the longest match is used. Depending on how long the matching part is, the editor shows in gray after the cursor:
+Set how much is offered with the `AUTOCOMPLETE` option in the [Editor's gear icon](#editor) or the [settings page](users.md#editor):
 
-* Nothing, if the match is short.
-* The rest of the word being typed, if the match is longer.
-* The next word, if the match is long and the word being typed is already complete.
+* `Off`: no completions.
+* `Word` (default): one word at a time.
+* `Full`: the rest of the suggestion.
 
-Press `Tab` to accept the gray text, or `Esc` to hide it. Once accepted, the following word is offered, so pressing `Tab` repeatedly follows a suggestion word by word, and typing something else at any point simply continues with your own translation. Placeholders and tags are always completed as a whole.
+The editor uses the suggestion that best matches what you've typed so far. Nothing is offered until the match is long enough.
 
-While the list of placeholder completions is open, `Tab` selects from that list instead. Nothing is offered during a Concordance search, since its results are not translations of the current string.
+With `Word`, each `Tab` accepts the next word, along with its punctuation and trailing space. Placeholders and tags are completed as a whole. In languages without spaces, `Tab` accepts one word at a time.
+
+With `Full`, the whole remainder is offered only when the cursor is at the end of the translation. Elsewhere, completion goes word by word so the text after the cursor isn't duplicated.
+
+Autocomplete steps aside in two cases. While the placeholder list is open, `Tab` picks from that list. During a Concordance search, no completions are offered.
 
 #### Large language model (LLM) integration
 

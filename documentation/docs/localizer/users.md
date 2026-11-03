@@ -86,7 +86,7 @@ To change a theme, select the button corresponding to your preferred option. The
 
 `Make suggestions` allows a translator or a team manager to submit suggestions instead of translations. This setting is also displayed to users with translator permissions.
 
-`Autocomplete from Machinery` completes words in the editor as the user types, using the Machinery suggestions for the current string. It is disabled by default. For more information, see [this document](translation-workspace.md#autocomplete-from-machinery).
+`Autocomplete from Machinery` sets how the editor completes translations as the user types, using the Machinery suggestions for the current string: `Off`, `Word by word` (the default), or `Full continuation`. For more information, see [this document](translation-workspace.md#autocomplete-from-machinery).
 
 ### Default search options
 

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
+import type { MachineryAutocomplete } from '~/api/user';
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
@@ -22,7 +23,7 @@ function MockEditField({
   isAuthenticated = true,
   setResultFromInput = vi.fn(),
   machinery = [],
-  machineryAutocomplete = false,
+  machineryAutocomplete = 'word',
   query = '',
 }: {
   defaultValue: string;
@@ -32,7 +33,7 @@ function MockEditField({
   isAuthenticated?: boolean;
   setResultFromInput?: EditorActions['setResultFromInput'];
   machinery?: string[];
-  machineryAutocomplete?: boolean;
+  machineryAutocomplete?: MachineryAutocomplete;
   query?: string;
 }) {
   const store = createReduxStore({
@@ -188,7 +189,6 @@ describe('<EditField>', () => {
           format='plain'
           fieldRef={ref}
           machinery={[firefox]}
-          machineryAutocomplete
           {...props}
         />,
       );
@@ -198,20 +198,29 @@ describe('<EditField>', () => {
 
     it('is shown from Machinery suggestions and accepted with Tab', async () => {
       const { container, ref } = renderField({});
-      expect(ghost(container)).toBe(' riesce');
+      expect(ghost(container)).toBe(' riesce ');
 
       await userEvent.keyboard(' r');
-      expect(ghost(container)).toBe('iesce');
+      expect(ghost(container)).toBe('iesce ');
 
       await userEvent.keyboard('{Tab}');
-      expect(ref.current!.value).toBe('Firefox non riesce');
-      expect(ghost(container)).toBe(' a');
+      expect(ref.current!.value).toBe('Firefox non riesce ');
+      expect(ghost(container)).toBe('a ');
     });
 
-    it('is not shown unless enabled in the settings', async () => {
-      const { container } = renderField({ machineryAutocomplete: false });
+    it('is not shown when turned off in the settings', async () => {
+      const { container } = renderField({ machineryAutocomplete: 'off' });
       await userEvent.keyboard(' r');
       expect(ghost(container)).toBeNull();
+    });
+
+    it('shows the full continuation when set to full', async () => {
+      const { container, ref } = renderField({ machineryAutocomplete: 'full' });
+      await userEvent.keyboard(' r');
+      expect(ghost(container)).toBe('iesce a trovare il server');
+
+      await userEvent.keyboard('{Tab}');
+      expect(ref.current!.value).toBe(firefox);
     });
 
     it('is not shown during a Concordance search', async () => {

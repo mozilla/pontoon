@@ -130,40 +130,30 @@ describe('<EditorSettingsDialog>', () => {
     expect(toggleSettingMock).toHaveBeenCalledWith('forceSuggestions');
   });
 
-  it('toggles the machineryAutocomplete setting', () => {
-    const [{ getAllByRole, rerender }, toggleSettingMock] =
-      createEditorSettingsDialog();
-
-    const item = () => getAllByRole('listitem')[2];
-    expect(item().textContent).toContain('Autocomplete from Machinery');
-    expect(item()).not.toHaveClass('enabled');
-
-    fireEvent.click(item());
-    expect(toggleSettingMock.mock.calls).toMatchObject([
-      ['machineryAutocomplete'],
-    ]);
-
-    rerender(
+  it('selects an autocomplete mode', () => {
+    const updateMock = vi.fn();
+    const { getByRole } = render(
       <MockLocalizationProvider>
         <EditorSettingsDialog
-          settings={{
-            runQualityChecks: false,
-            forceSuggestions: false,
-            machineryAutocomplete: true,
-          }}
-          toggleSetting={toggleSettingMock}
+          settings={{ machineryAutocomplete: 'word' }}
+          toggleSetting={vi.fn()}
+          updateMachineryAutocomplete={updateMock}
         />
       </MockLocalizationProvider>,
     );
-    expect(item()).toHaveClass('enabled');
+
+    expect(getByRole('button', { name: /Word/ })).toHaveClass('active');
+    expect(getByRole('button', { name: /Off/ })).not.toHaveClass('active');
+    expect(getByRole('button', { name: /Full/ })).not.toHaveClass('active');
+
+    fireEvent.click(getByRole('button', { name: /Full/ }));
+    expect(updateMock).toHaveBeenCalledWith('full');
   });
 
-  it('shows the machineryAutocomplete setting to non-translators', () => {
+  it('shows the autocomplete modes to non-translators', () => {
     isTranslator = false;
-    const [{ getAllByRole }] = createEditorSettingsDialog();
-    expect(getAllByRole('listitem')[1].textContent).toContain(
-      'Autocomplete from Machinery',
-    );
+    const [{ getByRole }] = createEditorSettingsDialog();
+    expect(getByRole('button', { name: /Off/ })).toBeInTheDocument();
   });
 });
 
