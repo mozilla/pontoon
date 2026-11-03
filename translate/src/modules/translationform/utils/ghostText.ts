@@ -11,6 +11,7 @@ import {
   WidgetType,
 } from '@codemirror/view';
 
+import type { MachineryAutocomplete } from '~/api/user';
 import { placeholder } from '~/modules/placeable/placeholder';
 
 export const MIN_MATCH_TO_COMPLETE_WORD = 4;
@@ -19,11 +20,14 @@ export const MIN_MATCH_TO_SUGGEST_NEXT_WORD = 8;
 
 export const setGhostTextCandidates = StateEffect.define<readonly string[]>();
 
+export const setGhostTextMode = StateEffect.define<MachineryAutocomplete>();
+
 const dismissGhostTextEffect = StateEffect.define<null>();
 
 type GhostTextState = {
   segmenter: Intl.Segmenter;
   candidates: readonly string[];
+  mode: MachineryAutocomplete;
   dismissed: boolean;
 };
 
@@ -40,6 +44,8 @@ const ghostTextState = StateField.define<GhostTextState | null>({
     for (const effect of tr.effects) {
       if (effect.is(setGhostTextCandidates)) {
         next = { ...next, candidates: effect.value };
+      } else if (effect.is(setGhostTextMode)) {
+        next = { ...next, mode: effect.value };
       } else if (effect.is(dismissGhostTextEffect)) {
         next = { ...next, dismissed: true };
       }
@@ -54,6 +60,7 @@ function getGhostText(view: EditorView): { pos: number; text: string } | null {
   const { main, ranges } = state.selection;
   if (
     !ghost ||
+    ghost.mode === 'off' ||
     ghost.dismissed ||
     ghost.candidates.length === 0 ||
     ranges.length > 1 ||
@@ -65,11 +72,13 @@ function getGhostText(view: EditorView): { pos: number; text: string } | null {
   }
   const pos = main.head;
   const line = state.doc.lineAt(pos);
+  const full = ghost.mode === 'full' && pos === state.doc.length;
   const text = findGhostText(
     state.doc.sliceString(0, pos),
     line.text.slice(pos - line.from),
     ghost.candidates,
     ghost.segmenter,
+    full,
   );
   return text ? { pos, text } : null;
 }
@@ -125,6 +134,7 @@ export function ghostText(locale: string): Extension {
         ghostTextState.init(() => ({
           segmenter,
           candidates: [],
+          mode: 'word',
           dismissed: false,
         })),
         ghostTextPlugin,
@@ -179,6 +189,7 @@ export function findGhostText(
   after: string,
   candidates: readonly string[],
   segmenter: Intl.Segmenter,
+  full = false,
 ): string {
   if (wordChar.test(after.charAt(0))) {
     return '';
@@ -197,38 +208,100 @@ export function findGhostText(
     return '';
   }
   const start = candidate.indexOf(before.slice(before.length - length));
-  const text = getContinuation(
+  const end = start + length;
+  const unit = getUnitToComplete(
     candidate,
     start,
-    start + length,
+    end,
     wordChar.test(before.charAt(before.length - length - 1)),
     segmenter,
   );
-  const line = text.split(/[\r\n]/, 1)[0];
-  return line.trim() && !after.startsWith(line) ? line : '';
+  if (!unit) {
+    return '';
+  }
+  if (full) {
+    return candidate.slice(end).replace(/\r\n?/g, '\n');
+  }
+  const text = candidate
+    .slice(end, after ? unit.wordEnd : unit.end)
+    .split(/[\r\n]/, 1)[0];
+  return text.trim() && !after.startsWith(text) ? text : '';
 }
 
-function getContinuation(
+function getUnitToComplete(
   candidate: string,
   start: number,
   end: number,
   midWord: boolean,
   segmenter: Intl.Segmenter,
-): string {
-  const tokens = tokenize(candidate, segmenter);
-  const current = tokens.find((t) => t.start < end && end < t.end);
-  if (current?.isWord) {
+): Unit | null {
+  const units = getUnits(candidate, segmenter);
+  const current = units.find((u) => u.start < end && end < u.end);
+  if (current && candidate.slice(end, current.end).trim()) {
     const aligned =
       start < current.start || (start === current.start && !midWord);
-    return aligned ? candidate.slice(end, current.end) : '';
+    return aligned ? current : null;
   }
 
   if (end - start < MIN_MATCH_TO_SUGGEST_NEXT_WORD) {
-    return '';
+    return null;
   }
-  // With no further words, suggest any remaining punctuation.
-  const next = tokens.find((t) => t.isWord && t.start >= end);
-  return candidate.slice(end, next?.end).trimEnd();
+  return units.find((u) => u.start >= end) ?? null;
+}
+
+/**
+ * What Tab accepts in word-by-word mode: a word with any punctuation,
+ * placeholders or tags attached to it, and the space after it.
+ * `wordEnd` is where its last word or placeholder ends.
+ */
+type Unit = { start: number; wordEnd: number; end: number };
+
+const breakingSpace = /[^\S\u00a0\u2007\u202f]/;
+const joiner = /^[-\u2010\u2011/\u00a0\u2007\u202f]+$/;
+
+function getUnits(text: string, segmenter: Intl.Segmenter): Unit[] {
+  const units: Unit[] = [];
+  let unit: Unit | null = null;
+  let hasWord = false;
+  let joined: boolean | null = null;
+
+  for (const token of tokenize(text, segmenter)) {
+    const str = text.slice(token.start, token.end);
+    if (!token.isWord && breakingSpace.test(str)) {
+      if (unit) {
+        const newline = str.search(/[\r\n]/);
+        unit.end = newline === -1 ? token.end : token.start + newline;
+        units.push(unit);
+        unit = null;
+      }
+      continue;
+    }
+
+    const isText = token.isWord && !token.isPlaceholder;
+    if (unit && isText && hasWord && !joined) {
+      units.push(unit);
+      unit = null;
+    }
+    if (!unit) {
+      unit = { start: token.start, wordEnd: token.start, end: token.end };
+      hasWord = false;
+      joined = null;
+    }
+    unit.end = token.end;
+    if (token.isWord) {
+      unit.wordEnd = token.end;
+    }
+    if (isText) {
+      hasWord = true;
+      joined = null;
+    } else {
+      joined = (joined ?? true) && joiner.test(str);
+    }
+  }
+  if (unit) {
+    units.push(unit);
+  }
+  return units;
 }
 
 function getMatchLength(before: string, candidate: string): number {
@@ -245,7 +318,12 @@ function getMatchLength(before: string, candidate: string): number {
   return min;
 }
 
-type Token = { start: number; end: number; isWord: boolean };
+type Token = {
+  start: number;
+  end: number;
+  isWord: boolean;
+  isPlaceholder?: true;
+};
 
 function tokenize(text: string, segmenter: Intl.Segmenter): Token[] {
   const tokens: Token[] = [];
@@ -266,7 +344,12 @@ function tokenize(text: string, segmenter: Intl.Segmenter): Token[] {
     if (hasWordChar.test(match[0])) {
       addSegments(pos, match.index);
       pos = match.index + match[0].length;
-      tokens.push({ start: match.index, end: pos, isWord: true });
+      tokens.push({
+        start: match.index,
+        end: pos,
+        isWord: true,
+        isPlaceholder: true,
+      });
     }
   }
   addSegments(pos, text.length);
