@@ -127,7 +127,22 @@ class UserProfile(models.Model):
     # Translation settings
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
-    machinery_autocomplete = models.BooleanField(default=False)
+
+    class MachineryAutocomplete(models.TextChoices):
+        OFF = "off", "Off"
+        WORD = "word", "Word by word"
+        FULL = "full", "Full continuation"
+
+    DEFAULT_MACHINERY_AUTOCOMPLETE = MachineryAutocomplete.WORD
+
+    # Null default like the editor theme, useful for later migrations while keeping user preferences.
+    machinery_autocomplete = models.CharField(
+        choices=MachineryAutocomplete.choices,
+        max_length=20,
+        null=True,
+        blank=True,
+        default=None,
+    )
 
     # Search settings
     search_exclude_source_strings = models.BooleanField(default=False)
@@ -190,6 +205,10 @@ class UserProfile(models.Model):
     @property
     def preferred_locales(self):
         return Locale.objects.filter(pk__in=self.locales_order)
+
+    @property
+    def machinery_autocomplete_mode(self):
+        return self.machinery_autocomplete or self.DEFAULT_MACHINERY_AUTOCOMPLETE
 
     class Meta:
         constraints = [

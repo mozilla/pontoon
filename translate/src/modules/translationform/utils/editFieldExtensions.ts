@@ -25,10 +25,8 @@ import { EditorActions } from '~/context/Editor';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { editorThemeClass } from '~/context/Theme';
-import { useAppSelector } from '~/hooks';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
-import { USER } from '~/modules/user';
 import type { MessageEntry } from '~/utils/message';
 import { editablePattern } from '~/utils/message/editablePattern';
 import { entryPatterns } from '~/utils/message/entryPatterns';
@@ -76,14 +74,11 @@ export function useKeyHandlers() {
 }
 
 export function useGhostTextCandidates(): readonly string[] {
-  const enabled = useAppSelector(
-    (state) => state[USER].settings.machineryAutocomplete,
-  );
   const { translations } = useContext(MachineryTranslations);
   const { query } = useContext(SearchData);
   return useMemo(
-    () => (enabled && !query ? translations.map((tx) => tx.translation) : []),
-    [enabled, query, translations],
+    () => (query ? [] : translations.map((tx) => tx.translation)),
+    [query, translations],
   );
 }
 

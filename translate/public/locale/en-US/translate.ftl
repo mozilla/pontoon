@@ -156,8 +156,16 @@ editor-EditorSettings--toolkit-checks = <glyph></glyph>Translate Toolkit checks
 editor-EditorSettings--force-suggestions = <glyph></glyph>Make suggestions
     .title = Save suggestions instead of translations
 
-editor-EditorSettings--machinery-autocomplete = <glyph></glyph>Autocomplete from Machinery
-    .title = Complete words from Machinery translations as you type
+editor-EditorSettings--autocomplete-title = Autocomplete
+
+editor-EditorSettings--autocomplete-off = Off
+    .title = Do not autocomplete from Machinery
+
+editor-EditorSettings--autocomplete-word = Word
+    .title = Autocomplete from Machinery one word at a time
+
+editor-EditorSettings--autocomplete-full = Full
+    .title = Autocomplete the rest of a Machinery translation
 
 editor-EditorSettings--theme-title = Editor theme
 
@@ -639,8 +647,6 @@ notification--tt-checks-enabled = Translate Toolkit Checks enabled
 notification--tt-checks-disabled = Translate Toolkit Checks disabled
 notification--make-suggestions-enabled = Make Suggestions enabled
 notification--make-suggestions-disabled = Make Suggestions disabled
-notification--machinery-autocomplete-enabled = Autocomplete from Machinery enabled
-notification--machinery-autocomplete-disabled = Autocomplete from Machinery disabled
 notification--ftl-not-supported-rich-editor = Translation not supported in rich editor
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
