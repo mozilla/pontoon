@@ -2,10 +2,12 @@ from unittest.mock import patch
 
 import pytest
 
+from django.db import IntegrityError
+
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import ChangedEntityLocale, Translation
 from pontoon.checks.models import Error, Warning
-from pontoon.pretranslation.tasks import pretranslate_task
+from pontoon.pretranslation.tasks import pretranslate_task, write_pretranslations
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
@@ -382,3 +384,63 @@ def test_pretranslate_skips_strings_changed_concurrently(
     suggestion.refresh_from_db()
     assert suggestion.approved
     assert suggestion.active
+
+
+@patch("pontoon.pretranslation.tasks.write_pretranslations")
+@patch("pontoon.pretranslation.tasks.run_checks", return_value={})
+@patch("pontoon.pretranslation.tasks.get_pretranslation")
+@pytest.mark.django_db
+def test_pretranslate_rolls_back_locale_on_integrity_error(
+    gt_mock, checks_mock, write_mock, project_a, locale_a, locale_b, po_resource
+):
+    """
+    If writing the pretranslations of a locale collides with a concurrent change,
+    all writes of that locale are rolled back, and the next locale is still
+    pretranslated.
+    """
+    ProjectLocaleFactory.create(
+        project=project_a, locale=locale_b, pretranslation_enabled=True
+    )
+    TranslatedResourceFactory.create(resource=po_resource, locale=locale_b)
+
+    entity = EntityFactory.create(resource=po_resource)
+    fuzzy_a = TranslationFactory.create(
+        entity=entity, locale=locale_a, fuzzy=True, active=True
+    )
+    fuzzy_b = TranslationFactory.create(
+        entity=entity, locale=locale_b, fuzzy=True, active=True
+    )
+    gt_mock.return_value = ("pretranslation", "gt")
+
+    def write_then_collide(locale, staged):
+        # Make all the writes of locale_b, then fail like a concurrent change would.
+        written = write_pretranslations(locale, staged)
+        if locale == locale_b:
+            raise IntegrityError("duplicate key value violates unique constraint")
+        return written
+
+    write_mock.side_effect = write_then_collide
+
+    pretranslate_task(project_a.pk)
+
+    assert [call.args[0] for call in write_mock.call_args_list] == [locale_b, locale_a]
+
+    # Nothing written for locale_b is kept.
+    fuzzy_b.refresh_from_db()
+    assert fuzzy_b.fuzzy
+    assert fuzzy_b.active
+    assert not fuzzy_b.rejected
+    assert not Translation.objects.filter(
+        locale=locale_b, string="pretranslation"
+    ).exists()
+    assert not ActionLog.objects.filter(translation__locale=locale_b).exists()
+    assert not ChangedEntityLocale.objects.filter(locale=locale_b).exists()
+
+    # locale_a is pretranslated as usual.
+    fuzzy_a.refresh_from_db()
+    assert fuzzy_a.rejected
+    assert Translation.objects.filter(
+        locale=locale_a, string="pretranslation", active=True
+    ).exists()
+    assert ActionLog.objects.filter(translation__locale=locale_a).exists()
+    assert ChangedEntityLocale.objects.filter(locale=locale_a).exists()
