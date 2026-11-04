@@ -32,8 +32,10 @@ def find_paths(
             paths.base = checkouts.target.path
         name = f"cfg={project.configuration_file}"
     else:
+        # Search only the current checkouts, so that a stale clone
+        # left in project.checkout_path is never considered.
         paths = L10nDiscoverPaths(
-            project.checkout_path,
+            checkouts.target.path,
             ref_root=src_root,
             force_paths=force_paths,
             source_locale=["templates", "en-US", "en"],

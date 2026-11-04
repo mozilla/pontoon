@@ -47,6 +47,23 @@ def test_no_config_one_repo():
         assert paths.find_reference("fr/.other.ftl") is None
 
 
+def test_no_config_stale_checkout():
+    # A checkout left behind after a repository URL change
+    # must not be considered, even if it has more locales.
+    tree: FileTree = {
+        "old": {"en-US": {"a.ftl": ""}, "de": {"a.ftl": ""}, "fr": {"a.ftl": ""}},
+        "new": {"en-US": {"a.ftl": ""}, "it": {"a.ftl": ""}},
+    }
+    with TemporaryDirectory() as root:
+        build_file_tree(root, tree)
+        mock_project = Mock(Project, checkout_path=root, configuration_file=None)
+        mock_checkout = Mock(Checkout, path=join(root, "new"), removed=[])
+        paths = find_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
+        assert paths.ref_root == join(root, "new", "en-US")
+        assert paths.base == join(root, "new")
+        assert paths.locales == ["it"]
+
+
 def test_no_config_two_repos():
     tree: FileTree = {
         "source": {"bar.ftl": "", "foo.pot": "", ".other.ftl": ""},
