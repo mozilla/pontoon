@@ -248,6 +248,20 @@ class UserProfileForm(forms.ModelForm):
             "bugzilla",
         )
 
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+
+        if not username:
+            return username
+
+        # A custom username takes precedence over a generated User.username
+        # when resolving profile URLs, so it must not match another user's.
+        other_users = User.objects.exclude(pk=self.instance.pk)
+        if other_users.filter(username__iexact=username).exists():
+            raise ValidationError("This username is already taken.")
+
+        return username
+
     def clean_github(self):
         github_username = self.cleaned_data.get("github")
 
