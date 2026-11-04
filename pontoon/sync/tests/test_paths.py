@@ -3,17 +3,11 @@ from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest.mock import Mock
 
-import pytest
-
 from moz.l10n.paths import L10nConfigPaths
 
 from pontoon.base.models import Project, Repository
 from pontoon.sync.core.checkout import Checkout, Checkouts
-from pontoon.sync.core.paths import (
-    MissingLocaleDirectoryError,
-    add_newly_configured_files,
-    find_paths,
-)
+from pontoon.sync.core.paths import add_newly_configured_files, find_paths
 from pontoon.sync.tests.utils import FileTree, build_file_tree
 
 
@@ -55,17 +49,19 @@ def test_no_config_one_repo():
 
 def test_no_config_stale_checkout():
     # A checkout left behind after a repository URL change
-    # must not be selected as the base directory.
+    # must not be considered, even if it has more locales.
     tree: FileTree = {
-        "old": {"en-US": {"a.ftl": ""}, "fr": {"a.ftl": ""}},
-        "new": {"en-US": {"a.ftl": ""}},
+        "old": {"en-US": {"a.ftl": ""}, "de": {"a.ftl": ""}, "fr": {"a.ftl": ""}},
+        "new": {"en-US": {"a.ftl": ""}, "it": {"a.ftl": ""}},
     }
     with TemporaryDirectory() as root:
         build_file_tree(root, tree)
         mock_project = Mock(Project, checkout_path=root, configuration_file=None)
         mock_checkout = Mock(Checkout, path=join(root, "new"), removed=[])
-        with pytest.raises(MissingLocaleDirectoryError):
-            find_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
+        paths = find_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
+        assert paths.ref_root == join(root, "new", "en-US")
+        assert paths.base == join(root, "new")
+        assert paths.locales == ["it"]
 
 
 def test_no_config_two_repos():
