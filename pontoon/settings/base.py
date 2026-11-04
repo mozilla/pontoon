@@ -44,9 +44,6 @@ ADMINS = MANAGERS = (
     (os.environ.get("ADMIN_NAME", ""), os.environ.get("ADMIN_EMAIL", "")),
 )
 
-# A list of project manager email addresses to send project requests to
-PROJECT_MANAGERS = os.environ.get("PROJECT_MANAGERS", "").split(",")
-
 # VCS identity to be used when committing translations.
 VCS_SYNC_NAME = os.environ.get("VCS_SYNC_NAME", "Pontoon")
 VCS_SYNC_EMAIL = os.environ.get("VCS_SYNC_EMAIL", "pontoon@example.com")
@@ -197,22 +194,30 @@ OPENAI_AUTO_SUGGESTION_LOCALES = [
 GOOGLE_ANALYTICS_KEY = os.environ.get("GOOGLE_ANALYTICS_KEY", "")
 
 
-def _get_site_url_netloc():
+def _get_site_hostname():
     from urllib.parse import urlparse
 
     from django.conf import settings
 
-    return urlparse(settings.SITE_URL).netloc
+    return urlparse(settings.SITE_URL).hostname
 
 
 def _default_from_email():
     return os.environ.get(
-        "DEFAULT_FROM_EMAIL", f"Pontoon <pontoon@{_get_site_url_netloc()}>"
+        "DEFAULT_FROM_EMAIL", f"Pontoon <pontoon@{_get_site_hostname()}>"
     )
 
 
+def _contact_email():
+    return os.environ.get("CONTACT_EMAIL") or f"pontoon@{_get_site_hostname()}"
+
+
 # Email settings
+# Sender for outgoing emails; may be a no-reply address.
 DEFAULT_FROM_EMAIL = lazy(_default_from_email, str)()
+# Monitored address for support links and user requests.
+CONTACT_EMAIL = lazy(_contact_email, str)()
+
 EMAIL_HOST_USER = os.environ.get(
     "EMAIL_HOST_USER", os.environ.get("SENDGRID_USERNAME", "apikey")
 )

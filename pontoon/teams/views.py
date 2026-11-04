@@ -652,27 +652,20 @@ def request_item(request, locale=None):
             "user_url": request.build_absolute_uri(profile_url(user)),
         }
 
-    if settings.PROJECT_MANAGERS[0] != "":
-        template = get_template("teams/email_request_item.jinja")
-        mail_body = template.render(payload)
-        cc = {user.contact_email}
-        if locale:
-            cc.update(
-                set(locale.managers_group.user_set.values_list("email", flat=True))
-            )
+    template = get_template("teams/email_request_item.jinja")
+    mail_body = template.render(payload)
+    cc = {user.contact_email}
+    if locale:
+        cc.update(set(locale.managers_group.user_set.values_list("email", flat=True)))
 
-        EmailMessage(
-            subject=mail_subject,
-            body=mail_body,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=settings.PROJECT_MANAGERS,
-            cc=cc,
-            reply_to=[user.contact_email],
-        ).send()
-    else:
-        raise ImproperlyConfigured(
-            "PROJECT_MANAGERS not defined in settings. Email recipient unknown."
-        )
+    EmailMessage(
+        subject=mail_subject,
+        body=mail_body,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[settings.CONTACT_EMAIL],
+        cc=cc,
+        reply_to=[user.contact_email],
+    ).send()
 
     return HttpResponse("ok")
 
@@ -714,24 +707,19 @@ def request_pretranslation(request, locale):
         "user_url": request.build_absolute_uri(profile_url(user)),
     }
 
-    if settings.PROJECT_MANAGERS[0] != "":
-        template = get_template("teams/email_request_pretranslation.jinja")
-        mail_body = template.render(payload)
-        cc = {user.contact_email}
-        cc.update(set(locale.managers_group.user_set.values_list("email", flat=True)))
+    template = get_template("teams/email_request_pretranslation.jinja")
+    mail_body = template.render(payload)
+    cc = {user.contact_email}
+    cc.update(set(locale.managers_group.user_set.values_list("email", flat=True)))
 
-        EmailMessage(
-            subject=mail_subject,
-            body=mail_body,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=settings.PROJECT_MANAGERS,
-            cc=cc,
-            reply_to=[user.contact_email],
-        ).send()
-    else:
-        raise ImproperlyConfigured(
-            "PROJECT_MANAGERS not defined in settings. Email recipient unknown."
-        )
+    EmailMessage(
+        subject=mail_subject,
+        body=mail_body,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[settings.CONTACT_EMAIL],
+        cc=cc,
+        reply_to=[user.contact_email],
+    ).send()
 
     return HttpResponse("ok")
 

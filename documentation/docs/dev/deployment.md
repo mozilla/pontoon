@@ -83,6 +83,10 @@ on production.
 Maximum number of tasks a Celery worker process can execute before it’s
 replaced with a new one. Defaults to 20 tasks.
 
+`CONTACT_EMAIL`
+Optional. Monitored email address for support links and user requests.
+Defaults to `pontoon@hostname`.
+
 `DATABASE_SSLMODE`  
 Optional. Controls if the database needs a secure connection with the
 app. Default value is `True`.
@@ -258,10 +262,6 @@ create. The default value is 10.
 `PRETRANSLATION_API_MAX_CHARS`  
 Optional. Specifies the maximum length of input text allowed for
 pretranslation API. The default value is 2048.
-
-`PROJECT_MANAGERS`  
-Optional. A list of project manager email addresses to send project
-requests to
 
 `PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION`  
 Required. Must be set to `python`. Needed for Google AutoML Translation.
