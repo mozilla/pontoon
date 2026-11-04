@@ -42,6 +42,11 @@ def find_paths(
             raise MissingLocaleDirectoryError(
                 "Base localization directory not found. At least one localized file (which may be empty) is required for automatic path discovery."
             )
+        if not is_inside(checkouts.target.path, paths.base):
+            raise MissingLocaleDirectoryError(
+                f"Base localization directory {paths.base} is not inside the current target checkout {checkouts.target.path}. "
+                "It may be a stale checkout left behind by a repository URL change."
+            )
         name = "auto"
 
     rel_root = relpath(paths.ref_root, src_root)
