@@ -83,7 +83,7 @@ on production.
 Maximum number of tasks a Celery worker process can execute before it’s
 replaced with a new one. Defaults to 20 tasks.
 
-`CONTACT_EMAIL`
+`CONTACT_EMAIL`  
 Optional. Monitored email address for support links and user requests.
 Defaults to `pontoon@hostname`.
 
