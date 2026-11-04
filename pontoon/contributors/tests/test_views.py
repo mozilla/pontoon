@@ -125,6 +125,39 @@ def test_profileform_contact_email_verified(member):
     assert User.objects.get(pk=member.user.pk).profile.contact_email_verified is False
 
 
+@pytest.mark.django_db
+def test_profileform_username_of_another_user(member, user_b):
+    """A custom username can't match another user's username, ignoring case."""
+    params = {"username": user_b.username.upper()}
+
+    response = member.client.post("/user/attributes/field/", params)
+    assert response.status_code == 400
+    assert b"This username is already taken." in response.content
+    assert User.objects.get(pk=member.user.pk).profile.username != params["username"]
+
+
+@pytest.mark.django_db
+def test_profileform_username_own_username(member):
+    """Users can pick their own generated username as a custom username."""
+    params = {"username": member.user.username}
+
+    response = member.client.post("/user/attributes/field/", params)
+    assert response.status_code == 200
+    assert User.objects.get(pk=member.user.pk).profile.username == member.user.username
+
+
+@pytest.mark.django_db
+def test_profileform_empty_username(member):
+    """An empty username is still accepted."""
+    profile = User.objects.get(pk=member.user.pk).profile
+    profile.username = "custom"
+    profile.save()
+
+    response = member.client.post("/user/attributes/field/", {"username": ""})
+    assert response.status_code == 200
+    assert not User.objects.get(pk=member.user.pk).profile.username
+
+
 @pytest.fixture
 def mock_profile_render():
     with patch(
