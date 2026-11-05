@@ -37,6 +37,7 @@ export type EditFieldProps = {
   onFocus?: () => void;
   singleField?: boolean;
   defaultValue: string;
+  fieldId?: string;
 };
 
 /**
@@ -48,7 +49,7 @@ export type EditFieldProps = {
  */
 export const EditField = memo(
   forwardRef<EditFieldHandle, EditFieldProps>(
-    ({ defaultValue, onFocus, singleField }, ref) => {
+    ({ defaultValue, onFocus, singleField, fieldId }, ref) => {
       const { l10n } = useLocalization();
       const locale = useContext(Locale);
       const { editorTheme } = useContext(ThemeContext);
@@ -56,7 +57,7 @@ export const EditField = memo(
       const { entity } = useContext(EntityView);
       const { setResultFromInput } = useContext(EditorActions);
       const keyHandlers = useKeyHandlers();
-      const ghostTextCandidates = useGhostTextCandidates();
+      const ghostTextCandidates = useGhostTextCandidates(fieldId);
       const ghostTextMode = useAppSelector(
         (state) => state[USER].settings.machineryAutocomplete,
       );
