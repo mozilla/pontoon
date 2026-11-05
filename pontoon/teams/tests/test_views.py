@@ -1,5 +1,6 @@
 import warnings
 
+from functools import partial
 from unittest.mock import patch
 
 import pytest
@@ -13,7 +14,7 @@ from django.test import Client
 from django.utils.functional import lazy
 
 from pontoon.base.models import TranslationMemoryEntry
-from pontoon.settings.base import _contact_email
+from pontoon.settings.base import _site_email
 from pontoon.teams.views import request_item, request_pretranslation
 from pontoon.test.factories import (
     EntityFactory,
@@ -691,7 +692,7 @@ def test_requests_use_contact_email(
         monkeypatch.delenv("CONTACT_EMAIL", raising=False)
     else:
         monkeypatch.setenv("CONTACT_EMAIL", configured)
-    settings.CONTACT_EMAIL = lazy(_contact_email, str)()
+    settings.CONTACT_EMAIL = lazy(partial(_site_email, "CONTACT_EMAIL"), str)()
     settings.GOOGLE_AUTOML_SUPPORTED_LOCALES = [locale_a.code]
     locale_a.translators_group.user_set.add(user_a)
     ResourceFactory(project=project_a)

@@ -7,6 +7,7 @@ import socket
 import sys
 
 from datetime import UTC, datetime
+from functools import partial
 from ipaddress import ip_address, ip_network
 
 import dj_database_url
@@ -194,29 +195,23 @@ OPENAI_AUTO_SUGGESTION_LOCALES = [
 GOOGLE_ANALYTICS_KEY = os.environ.get("GOOGLE_ANALYTICS_KEY", "")
 
 
-def _get_site_hostname():
+def _site_email(env_var, display_name=None):
+    """Email address from `env_var`, or `pontoon@` the site hostname if unset or empty."""
     from urllib.parse import urlparse
 
     from django.conf import settings
 
-    return urlparse(settings.SITE_URL).hostname
-
-
-def _default_from_email():
-    return os.environ.get(
-        "DEFAULT_FROM_EMAIL", f"Pontoon <pontoon@{_get_site_hostname()}>"
-    )
-
-
-def _contact_email():
-    return os.environ.get("CONTACT_EMAIL") or f"pontoon@{_get_site_hostname()}"
+    if email := os.environ.get(env_var):
+        return email
+    email = f"pontoon@{urlparse(settings.SITE_URL).hostname}"
+    return f"{display_name} <{email}>" if display_name else email
 
 
 # Email settings
 # Sender for outgoing emails; may be a no-reply address.
-DEFAULT_FROM_EMAIL = lazy(_default_from_email, str)()
+DEFAULT_FROM_EMAIL = lazy(partial(_site_email, "DEFAULT_FROM_EMAIL", "Pontoon"), str)()
 # Monitored address for support links and user requests.
-CONTACT_EMAIL = lazy(_contact_email, str)()
+CONTACT_EMAIL = lazy(partial(_site_email, "CONTACT_EMAIL"), str)()
 
 EMAIL_HOST_USER = os.environ.get(
     "EMAIL_HOST_USER", os.environ.get("SENDGRID_USERNAME", "apikey")
