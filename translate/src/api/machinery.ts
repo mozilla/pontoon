@@ -271,6 +271,46 @@ export async function fetchOpenAITranslation(
 }
 
 /**
+ * Return a composed multi-value translation refined by OpenAI ChatGPT.
+ *
+ * `null` when the suggestion has nothing refinable, or the request fails.
+ */
+export async function fetchOpenAIComposedTranslation(
+  entityPk: number,
+  value: Message,
+  properties: Record<string, Message> | undefined,
+  characteristic: string,
+  localeCode: string,
+  trigger: 'auto' | 'manual' = 'manual',
+): Promise<Pick<ComposedMachineryTranslation, 'value' | 'properties'> | null> {
+  const url = '/openai-chatgpt-composed/';
+  const payload = new URLSearchParams({
+    csrfmiddlewaretoken: getCSRFToken(),
+    entity_pk: String(entityPk),
+    value: JSON.stringify(value),
+    properties: JSON.stringify(properties ?? {}),
+    characteristic: characteristic,
+    locale: localeCode,
+    trigger: trigger,
+  });
+
+  try {
+    const result = (await POST(url, payload, {
+      signal: abortController.signal,
+    })) as {
+      value?: Message;
+      properties?: Record<string, Message>;
+    };
+    return result?.value
+      ? { value: result.value, properties: result.properties }
+      : null;
+  } catch (error) {
+    console.error('Error fetching OpenAI ChatGPT composed translation:', error);
+    return null;
+  }
+}
+
+/**
  * Return translation by Microsoft Translator.
  */
 export async function fetchMicrosoftTranslation(
