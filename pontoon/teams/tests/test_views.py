@@ -1,6 +1,5 @@
 import warnings
 
-from functools import partial
 from unittest.mock import patch
 
 import pytest
@@ -692,7 +691,7 @@ def test_requests_use_contact_email(
         monkeypatch.delenv("CONTACT_EMAIL", raising=False)
     else:
         monkeypatch.setenv("CONTACT_EMAIL", configured)
-    settings.CONTACT_EMAIL = lazy(partial(_site_email, "CONTACT_EMAIL"), str)()
+    settings.CONTACT_EMAIL = lazy(_site_email, str)("CONTACT_EMAIL")
     settings.GOOGLE_AUTOML_SUPPORTED_LOCALES = [locale_a.code]
     locale_a.translators_group.user_set.add(user_a)
     ResourceFactory(project=project_a)

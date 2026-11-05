@@ -7,7 +7,6 @@ import socket
 import sys
 
 from datetime import UTC, datetime
-from functools import partial
 from ipaddress import ip_address, ip_network
 
 import dj_database_url
@@ -209,9 +208,9 @@ def _site_email(env_var, display_name=None):
 
 # Email settings
 # Sender for outgoing emails; may be a no-reply address.
-DEFAULT_FROM_EMAIL = lazy(partial(_site_email, "DEFAULT_FROM_EMAIL", "Pontoon"), str)()
+DEFAULT_FROM_EMAIL = lazy(_site_email, str)("DEFAULT_FROM_EMAIL", "Pontoon")
 # Monitored address for support links and user requests.
-CONTACT_EMAIL = lazy(partial(_site_email, "CONTACT_EMAIL"), str)()
+CONTACT_EMAIL = lazy(_site_email, str)("CONTACT_EMAIL")
 
 EMAIL_HOST_USER = os.environ.get(
     "EMAIL_HOST_USER", os.environ.get("SENDGRID_USERNAME", "apikey")
