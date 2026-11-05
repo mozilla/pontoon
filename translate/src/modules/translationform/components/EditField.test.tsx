@@ -3,7 +3,12 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-import type { MachineryTranslation } from '~/api/machinery';
+import type { Message } from '@mozilla/l10n';
+
+import type {
+  ComposedMachineryTranslation,
+  MachineryTranslation,
+} from '~/api/machinery';
 import type { MachineryAutocomplete } from '~/api/user';
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
@@ -25,6 +30,10 @@ function MockEditField({
   machinery = [],
   machineryAutocomplete = 'word',
   query = '',
+  value,
+  properties,
+  composed = [],
+  fieldId,
 }: {
   defaultValue: string;
   singleField?: boolean;
@@ -35,6 +44,10 @@ function MockEditField({
   machinery?: string[];
   machineryAutocomplete?: MachineryAutocomplete;
   query?: string;
+  value?: Message;
+  properties?: Record<string, Message>;
+  composed?: ComposedMachineryTranslation[];
+  fieldId?: string;
 }) {
   const store = createReduxStore({
     user: { isAuthenticated, settings: { machineryAutocomplete } },
@@ -60,6 +73,8 @@ function MockEditField({
                   key: ['key'],
                   format,
                   original: `key = ${defaultValue}`,
+                  value,
+                  properties,
                   translation: {},
                 },
               } as EntityView
@@ -70,7 +85,7 @@ function MockEditField({
                 value={{
                   fetching: false,
                   source: '',
-                  composed: [],
+                  composed,
                   translations,
                 }}
               >
@@ -81,6 +96,7 @@ function MockEditField({
                     ref={fieldRef}
                     defaultValue={defaultValue}
                     singleField={singleField}
+                    fieldId={fieldId}
                   />
                 </EditorActions.Provider>
               </MachineryTranslations.Provider>
@@ -221,6 +237,57 @@ describe('<EditField>', () => {
 
       await userEvent.keyboard('{Tab}');
       expect(ref.current!.value).toBe(firefox);
+    });
+
+    describe('composed suggestions', () => {
+      const composed = (
+        value: Message,
+        properties?: Record<string, Message>,
+      ): ComposedMachineryTranslation => ({
+        sources: ['translation-memory'],
+        value,
+        properties,
+      });
+
+      it('uses the part for an attribute field', () => {
+        const props = {
+          format: 'fluent' as const,
+          value: ['Search'],
+          properties: { placeholder: ['Search your bookmarks'] },
+          composed: [
+            composed(['Cerca'], { placeholder: ['Cerca nei segnalibri'] }),
+          ],
+          machinery: ['Cerca'],
+          defaultValue: 'Cerca nei',
+        };
+        const { container } = renderField({ ...props, fieldId: 'placeholder' });
+        expect(ghost(container)).toBe(' segnalibri');
+
+        const single = renderField(props);
+        expect(ghost(single.container)).toBeNull();
+      });
+
+      it('uses the part for a plural variant', () => {
+        const plural = (one: string, other: string): Message => ({
+          decl: {},
+          sel: ['n'],
+          alt: [
+            { keys: ['one'], pat: [one] },
+            { keys: [{ '*': 'other' }], pat: [other] },
+          ],
+        });
+        const props = {
+          format: 'fluent' as const,
+          value: plural('One file', 'Many files'),
+          composed: [composed(plural('Un solo file', 'Molti file'))],
+          defaultValue: 'Un so',
+        };
+        const one = renderField({ ...props, fieldId: '|one' });
+        expect(ghost(one.container)).toBe('lo ');
+
+        const other = renderField({ ...props, fieldId: '|*' });
+        expect(ghost(other.container)).toBeNull();
+      });
     });
 
     it('is not shown during a Concordance search', async () => {

@@ -24,10 +24,12 @@ import { useContext, useEffect, useMemo, useRef } from 'react';
 import { EditorActions } from '~/context/Editor';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
+import { useEntityEntry } from '~/context/EntityView';
 import { editorThemeClass } from '~/context/Theme';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
-import type { MessageEntry } from '~/utils/message';
+import { editMessageEntry, type MessageEntry } from '~/utils/message';
+import { createMessageEntry } from '~/utils/message/createMessageEntry';
 import { editablePattern } from '~/utils/message/editablePattern';
 import { entryPatterns } from '~/utils/message/entryPatterns';
 import { emptyEditorCaret } from './editFieldCaret';
@@ -73,13 +75,28 @@ export function useKeyHandlers() {
   return ref;
 }
 
-export function useGhostTextCandidates(): readonly string[] {
-  const { translations } = useContext(MachineryTranslations);
+export function useGhostTextCandidates(fieldId?: string): readonly string[] {
+  const { composed, translations } = useContext(MachineryTranslations);
   const { query } = useContext(SearchData);
-  return useMemo(
-    () => (query ? [] : translations.map((tx) => tx.translation)),
-    [query, translations],
-  );
+  const sourceEntry = useEntityEntry();
+  return useMemo(() => {
+    if (query) {
+      return [];
+    }
+    const candidates = translations.map((tx) => tx.translation);
+    if (fieldId === undefined) {
+      return candidates;
+    }
+    const fieldCandidates = composed.flatMap(({ value, properties }) => {
+      const { format, id } = sourceEntry;
+      const entry = createMessageEntry(format, id, value, properties);
+      const field = editMessageEntry(sourceEntry, entry).find(
+        (field) => field.id === fieldId,
+      );
+      return field?.handle.current.value ? [field.handle.current.value] : [];
+    });
+    return [...fieldCandidates, ...candidates];
+  }, [composed, fieldId, query, sourceEntry, translations]);
 }
 
 const style = HighlightStyle.define([
