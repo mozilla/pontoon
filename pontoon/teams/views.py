@@ -656,7 +656,10 @@ def request_item(request, locale=None):
     mail_body = template.render(payload)
     cc = {user.contact_email}
     if locale:
-        cc.update(set(locale.managers_group.user_set.values_list("email", flat=True)))
+        cc.update(
+            u.contact_email
+            for u in locale.managers_group.user_set.select_related("profile")
+        )
 
     EmailMessage(
         subject=mail_subject,
@@ -710,7 +713,10 @@ def request_pretranslation(request, locale):
     template = get_template("teams/email_request_pretranslation.jinja")
     mail_body = template.render(payload)
     cc = {user.contact_email}
-    cc.update(set(locale.managers_group.user_set.values_list("email", flat=True)))
+    cc.update(
+        u.contact_email
+        for u in locale.managers_group.user_set.select_related("profile")
+    )
 
     EmailMessage(
         subject=mail_subject,
