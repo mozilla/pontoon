@@ -4,13 +4,17 @@ from unittest.mock import patch
 
 import pytest
 
+from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.paginator import UnorderedObjectListWarning
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.test import Client
+from django.utils.functional import lazy
 
 from pontoon.base.models import TranslationMemoryEntry
+from pontoon.settings.base import _site_email
+from pontoon.teams.views import request_item, request_pretranslation
 from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
@@ -673,3 +677,45 @@ def test_ajax_translation_memory_upload_skips_duplicates(member, locale_a):
     assert body["imported"] == 1
     assert body["duplicates"] == 1
     assert TranslationMemoryEntry.objects.filter(locale=locale_a).count() == 2
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("kind", ["locale", "projects", "pretranslation"])
+@pytest.mark.parametrize("configured", [None, "team@example.org"])
+def test_requests_use_contact_email(
+    settings, monkeypatch, rf, user_a, locale_a, project_a, kind, configured
+):
+    settings.SITE_URL = "https://translations.example.org/"
+    settings.DEFAULT_FROM_EMAIL = "Pontoon <no-reply@example.org>"
+    if configured is None:
+        monkeypatch.delenv("CONTACT_EMAIL", raising=False)
+    else:
+        monkeypatch.setenv("CONTACT_EMAIL", configured)
+    settings.CONTACT_EMAIL = lazy(_site_email, str)("CONTACT_EMAIL")
+    settings.GOOGLE_AUTOML_SUPPORTED_LOCALES = [locale_a.code]
+    locale_a.translators_group.user_set.add(user_a)
+    ResourceFactory(project=project_a)
+    mail.outbox.clear()
+
+    if kind == "locale":
+        request = rf.post("/teams/request/", {"code": "x-test", "name": "Test"})
+    else:
+        request = rf.post("/request/", {"projects[]": [project_a.slug]})
+    request.user = user_a
+
+    if kind == "pretranslation":
+        response = request_pretranslation(request, locale_a.code)
+    elif kind == "projects":
+        response = request_item(request, locale_a.code)
+    else:
+        response = request_item(request)
+
+    assert response.status_code == 200
+    assert len(mail.outbox) == 1
+    message = mail.outbox[0]
+    assert message.to == [configured or "pontoon@translations.example.org"]
+    assert message.from_email == settings.DEFAULT_FROM_EMAIL
+    assert message.reply_to == [user_a.contact_email]
+    assert user_a.contact_email in message.cc
+    # Exercise header serialization with a lazily resolved recipient.
+    assert str(message.message()["To"]) == message.to[0]
