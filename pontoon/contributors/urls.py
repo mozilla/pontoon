@@ -73,6 +73,11 @@ urlpatterns = [
         name="pontoon.contributors.toggle_editor_theme",
     ),
     path(
+        "user/machinery-autocomplete/",
+        views.toggle_machinery_autocomplete,
+        name="pontoon.contributors.toggle_machinery_autocomplete",
+    ),
+    path(
         "user/attributes/field/",
         views.edit_user_profile_fields,
         name="pontoon.contributors.edit_field",

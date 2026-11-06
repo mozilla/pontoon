@@ -1,3 +1,4 @@
+import type { MachineryAutocomplete } from '~/api/user';
 import { DEFAULT_SEARCH_OPTIONS } from '~/modules/search/constants';
 
 import {
@@ -15,6 +16,7 @@ export const USER = 'user';
 export type SettingsState = {
   readonly runQualityChecks: boolean;
   readonly forceSuggestions: boolean;
+  readonly machineryAutocomplete: MachineryAutocomplete;
   readonly searchExcludeSourceStrings: boolean;
   readonly searchIdentifiers: boolean;
   readonly searchMatchCase: boolean;
@@ -25,6 +27,7 @@ export type SettingsState = {
 const initialSettings: SettingsState = {
   runQualityChecks: true,
   forceSuggestions: true,
+  machineryAutocomplete: 'word',
   searchExcludeSourceStrings:
     DEFAULT_SEARCH_OPTIONS.search_exclude_source_strings,
   searchIdentifiers: DEFAULT_SEARCH_OPTIONS.search_identifiers,
@@ -46,6 +49,8 @@ function settings(
       return {
         runQualityChecks: action.data.settings.quality_checks,
         forceSuggestions: action.data.settings.force_suggestions,
+        machineryAutocomplete:
+          action.data.settings.machinery_autocomplete ?? 'word',
         searchExcludeSourceStrings:
           action.data.settings.search_exclude_source_strings ??
           DEFAULT_SEARCH_OPTIONS.search_exclude_source_strings,
