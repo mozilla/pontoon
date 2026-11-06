@@ -204,15 +204,18 @@ export function findGhostText(
   }
 
   const { candidate, length } = best;
-  if (length < MIN_MATCH_TO_COMPLETE_WORD) {
+  const match = before.slice(before.length - length);
+  const weight = getMatchWeight(match);
+  if (weight < MIN_MATCH_TO_COMPLETE_WORD) {
     return '';
   }
-  const start = candidate.indexOf(before.slice(before.length - length));
+  const start = candidate.indexOf(match);
   const end = start + length;
   const unit = getUnitToComplete(
     candidate,
     start,
     end,
+    weight,
     wordChar.test(before.charAt(before.length - length - 1)),
     segmenter,
   );
@@ -232,6 +235,7 @@ function getUnitToComplete(
   candidate: string,
   start: number,
   end: number,
+  weight: number,
   midWord: boolean,
   segmenter: Intl.Segmenter,
 ): Unit | null {
@@ -243,10 +247,27 @@ function getUnitToComplete(
     return aligned ? current : null;
   }
 
-  if (end - start < MIN_MATCH_TO_SUGGEST_NEXT_WORD) {
+  if (weight < MIN_MATCH_TO_SUGGEST_NEXT_WORD) {
     return null;
   }
   return units.find((u) => u.start >= end) ?? null;
+}
+
+/**
+ * Letters of the scripts where one character is a whole syllable or
+ * morpheme, so a 2-character word like 接続 or 연결 says about as much as
+ * a 4-character word in Latin script.
+ */
+const denseScript =
+  /[\p{scx=Han}\p{scx=Hiragana}\p{scx=Katakana}\p{scx=Hangul}\p{scx=Bopomofo}\p{scx=Yi}]/u;
+
+function getMatchWeight(text: string): number {
+  let weight = 0;
+  for (const char of text) {
+    weight +=
+      hasWordChar.test(char) && denseScript.test(char) ? 2 : char.length;
+  }
+  return weight;
 }
 
 /**
