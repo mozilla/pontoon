@@ -2,6 +2,8 @@ from types import SimpleNamespace
 
 import pytest
 
+from drf_spectacular.drainage import GENERATOR_STATS
+from drf_spectacular.generators import SchemaGenerator
 from moz.l10n.formats.fluent import fluent_parse_entry
 from moz.l10n.formats.mf2 import mf2_parse_message
 from moz.l10n.message import message_to_json
@@ -447,6 +449,14 @@ def test_user_translations_num_queries(
         )
 
     assert response.data["count"] == 3
+
+
+def test_schema_has_no_unresolved_type_hints():
+    GENERATOR_STATS.reset()
+    SchemaGenerator().get_schema(request=None, public=True)
+
+    unresolved = [w for w in GENERATOR_STATS._warn_cache if "type hint" in w]
+    assert unresolved == []
 
 
 def test_schema_documents_user_translations():
