@@ -1064,7 +1064,7 @@ def test_upload_suggestions_updates_latest_translation(
 def test_upload_suggestions_restores_rejected_translation(
     project_locale_a, resource, po_translation, uploader, admin
 ):
-    """A rejected translation matching the upload is un-rejected, not duplicated."""
+    """A rejected translation matching the upload is unrejected, not duplicated."""
     author = po_translation.user
     date = po_translation.date
     po_translation.string = "new translation"
@@ -1300,7 +1300,7 @@ def test_upload_suggestions_conflicts_with_concurrent_rejection_of_approved(
 def test_upload_suggestions_conflicts_with_concurrent_unrejection(
     monkeypatch, project_locale_a, resource, po_translation, uploader, admin
 ):
-    """A rejected translation un-rejected mid-import is not restored a second time."""
+    """A rejected translation unrejected mid-import is not restored a second time."""
     po_translation.string = "new translation"
     po_translation.value = ["new translation"]
     po_translation.save()
@@ -1309,7 +1309,7 @@ def test_upload_suggestions_conflicts_with_concurrent_unrejection(
     _review_during_import(monkeypatch, lambda: po_translation.unreject(admin))
     _import_conflicts(import_uploaded_suggestions, project_locale_a, resource, uploader)
 
-    # The import is rolled back, which also undoes the un-rejection made inside it.
+    # The import is rolled back, which also undoes the unrejection made inside it.
     po_translation.refresh_from_db()
 
     assert po_translation.rejected

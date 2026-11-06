@@ -154,10 +154,16 @@ Optional query parameters:
 | `end_date`   | Last day of the range, inclusive (`YYYY-MM-DD`). Defaults to today           |
 | `project`    | Project slug                                                                 |
 | `locale`     | Locale code                                                                  |
+| `include`    | Use `restored` to also list translations the user restored (see below)       |
 
 The date range can span at most 30 days. A translation is included if it was created,
-approved or rejected within the range, and results are sorted by the most recent of these
-dates.
+approved, unapproved, rejected or unrejected within the range, and results are sorted by
+the most recent of these dates.
+
+With `include=restored`, the list also includes translations by other users that the user
+unrejected, for example by uploading a matching suggestion through
+[`POST /api/v2/upload/suggestions/`](#post-apiv2uploadsuggestions). This lets a client
+follow the review status of suggestions it restored, as well as those it created.
 
 An example may look like this:
 
@@ -180,7 +186,10 @@ $ curl -H "Authorization: Bearer <token>" \
       "status": "rejected",
       "date": "2026-10-02T09:12:44.123456Z",
       "approved_date": null,
+      "unapproved_date": null,
       "rejected_date": "2026-10-03T15:01:02.654321Z",
+      "unrejected_date": null,
+      "restored": false,
       "entity": "new-tab",
       "resource": "browser/tabs.ftl",
       "format": "fluent",
@@ -207,6 +216,13 @@ value is empty. `value` and `properties` hold the complete message content, usin
 defined by moz-l10n. `properties` contains message properties such as Fluent attributes,
 and is `null` if there are none. `format` is the format of the resource.
 `status` is one of `approved`, `rejected`, `pretranslated`, `fuzzy` or `unreviewed`.
+`approved_date`, `unapproved_date`, `rejected_date` and `unrejected_date` are the dates of
+the latest action of each kind, and can be set regardless of the current status: for
+example, an unrejected translation keeps its `rejected_date`. The most recent of the four
+is the latest review action: a translation with status `unreviewed` and both dates set
+was rejected on `rejected_date`, then unrejected on `unrejected_date`. Use `status` for
+the current state.
+`restored` is `true` if the user unrejected the translation.
 `entity` is the string identifier as shown in the context of the translate view (e.g. the
 Fluent message ID). Multi-part identifiers, such as nested keys, are shown from the
 innermost part, separated by `•`. It's `null` for gettext strings without a context. `url` links to
@@ -423,7 +439,7 @@ A successful request returns a summary of the import:
 
 - `created`: number of suggestions added.
 - `restored`: number of rejected translations matching the upload that were
-  un-rejected, becoming pending suggestions again.
+  unrejected, becoming pending suggestions again.
 - `unchanged`: number of uploaded translations that match existing unrejected
   translations, in any review state, ignored.
 - `failed_checks`: strings left untouched, because the uploaded translation has errors.
@@ -445,7 +461,7 @@ as a suggestion, unless the string already has an unrejected translation with th
 value, whether approved, pretranslated or unreviewed. The fuzzy flag of the uploaded
 file is ignored: the translation is stored as a plain suggestion.
 
-A rejected translation matching the upload is un-rejected instead of being suggested
+A rejected translation matching the upload is unrejected instead of being suggested
 again, so a translation rejected by mistake can be re-proposed. Its original author and
 date are kept, and it becomes a pending suggestion, awaiting review like any other.
 
