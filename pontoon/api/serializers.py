@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from django.urls import reverse
@@ -43,31 +44,31 @@ class TranslationStatsMixin(metaclass=serializers.SerializerMetaclass):
     completed_strings = serializers.SerializerMethodField()
     complete = serializers.SerializerMethodField()
 
-    def get_total_strings(self, obj):
+    def get_total_strings(self, obj) -> int:
         return obj.total
 
-    def get_approved_strings(self, obj):
+    def get_approved_strings(self, obj) -> int:
         return obj.approved
 
-    def get_pretranslated_strings(self, obj):
+    def get_pretranslated_strings(self, obj) -> int:
         return obj.pretranslated
 
-    def get_strings_with_warnings(self, obj):
+    def get_strings_with_warnings(self, obj) -> int:
         return obj.warnings
 
-    def get_strings_with_errors(self, obj):
+    def get_strings_with_errors(self, obj) -> int:
         return obj.errors
 
-    def get_missing_strings(self, obj):
+    def get_missing_strings(self, obj) -> int:
         return obj.missing
 
-    def get_unreviewed_strings(self, obj):
+    def get_unreviewed_strings(self, obj) -> int:
         return obj.unreviewed
 
-    def get_completed_strings(self, obj):
+    def get_completed_strings(self, obj) -> int:
         return obj.completed
 
-    def get_complete(self, obj):
+    def get_complete(self, obj) -> bool:
         return obj.is_complete
 
 
@@ -146,7 +147,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             "is_db_project",
         ] + TRANSLATION_STATS_FIELDS
 
-    def get_contact(self, obj):
+    def get_contact(self, obj) -> str | None:
         if obj.contact:
             return obj.contact.username
         return None
@@ -189,7 +190,7 @@ class NestedProjectSerializer(TranslationStatsMixin, ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + ["tags", "locales"]
 
-    def get_locales(self, obj):
+    def get_locales(self, obj) -> list[str]:
         return [pl.locale.code for pl in getattr(obj, "fetched_project_locales", [])]
 
 
@@ -201,10 +202,10 @@ class NestedIndividualProjectSerializer(TranslationStatsMixin, ProjectSerializer
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + ["tags", "locales", "localizations"]
 
-    def get_locales(self, obj):
+    def get_locales(self, obj) -> list[str]:
         return [pl.locale.code for pl in getattr(obj, "fetched_project_locales", [])]
 
-    def get_localizations(self, obj):
+    def get_localizations(self, obj) -> list[dict]:
         project_locales = obj.project_locale.stats_data(project=obj)
         serialized = ProjectLocaleSerializer(project_locales, many=True).data
         return [
@@ -218,7 +219,7 @@ class NestedLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
     class Meta(LocaleSerializer.Meta):
         fields = LocaleSerializer.Meta.fields + ["projects"]
 
-    def get_projects(self, obj):
+    def get_projects(self, obj) -> list[str]:
         return [pl.project.slug for pl in getattr(obj, "fetched_project_locales", [])]
 
 
@@ -229,10 +230,10 @@ class NestedIndividualLocaleSerializer(TranslationStatsMixin, LocaleSerializer):
     class Meta(LocaleSerializer.Meta):
         fields = LocaleSerializer.Meta.fields + ["projects", "localizations"]
 
-    def get_projects(self, obj):
+    def get_projects(self, obj) -> list[str]:
         return [pl.project.slug for pl in getattr(obj, "fetched_project_locales", [])]
 
-    def get_localizations(self, obj):
+    def get_localizations(self, obj) -> list[dict]:
         project_locales = obj.project_locale.stats_data(locale=obj)
         serialized = ProjectLocaleSerializer(project_locales, many=True).data
         return [{k: v for k, v in item.items() if k != "locale"} for item in serialized]
@@ -260,7 +261,7 @@ class TermSerializer(DynamicFieldsModelSerializer):
             "notes",
         ]
 
-    def get_translation_text(self, obj):
+    def get_translation_text(self, obj) -> str | None:
         if obj.do_not_translate:
             return obj.text
 
@@ -284,10 +285,10 @@ class TranslationMemorySerializer(DynamicFieldsModelSerializer):
             "target",
         ]
 
-    def get_locale(self, obj):
+    def get_locale(self, obj) -> str:
         return obj.locale.code
 
-    def get_project(self, obj):
+    def get_project(self, obj) -> str | None:
         if obj.project:
             return obj.project.slug
         return None
@@ -304,6 +305,13 @@ class TranslationSerializer(serializers.ModelSerializer):
             "string",
         ]
 
+    @extend_schema_field(
+        {
+            "type": "object",
+            "nullable": True,
+            "properties": {"code": {"type": "string"}, "name": {"type": "string"}},
+        }
+    )
     def get_locale(self, obj):
         if not obj.locale:
             return None
@@ -313,7 +321,7 @@ class TranslationSerializer(serializers.ModelSerializer):
             "name": obj.locale.name,
         }
 
-    def get_string(self, obj):
+    def get_string(self, obj) -> str:
         return get_simple_preview(obj.entity.resource.format, obj.string)
 
 
@@ -456,9 +464,16 @@ class EntitySerializer(DynamicFieldsModelSerializer):
             "resource",
         ]
 
-    def get_string(self, obj):
+    def get_string(self, obj) -> str:
         return get_simple_preview(obj.resource.format, obj.string)
 
+    @extend_schema_field(
+        {
+            "type": "object",
+            "nullable": True,
+            "properties": {"slug": {"type": "string"}, "name": {"type": "string"}},
+        }
+    )
     def get_project(self, obj):
         if not obj.resource.project:
             return None
@@ -501,6 +516,7 @@ class EntitySearchSerializer(EntitySerializer):
     class Meta(EntitySerializer.Meta):
         fields = EntitySerializer.Meta.fields + ["translation"]
 
+    @extend_schema_field(TranslationSerializer(allow_null=True))
     def get_translation(self, obj):
         request = self.context.get("request")
 
