@@ -129,6 +129,32 @@ describe('<EditorSettingsDialog>', () => {
     expect(toggleSettingMock).toHaveBeenCalledTimes(2);
     expect(toggleSettingMock).toHaveBeenCalledWith('forceSuggestions');
   });
+
+  it('selects an autocomplete mode', () => {
+    const updateMock = vi.fn();
+    const { getByRole } = render(
+      <MockLocalizationProvider>
+        <EditorSettingsDialog
+          settings={{ machineryAutocomplete: 'word' }}
+          toggleSetting={vi.fn()}
+          updateMachineryAutocomplete={updateMock}
+        />
+      </MockLocalizationProvider>,
+    );
+
+    expect(getByRole('button', { name: /Word/ })).toHaveClass('active');
+    expect(getByRole('button', { name: /Off/ })).not.toHaveClass('active');
+    expect(getByRole('button', { name: /Full/ })).not.toHaveClass('active');
+
+    fireEvent.click(getByRole('button', { name: /Full/ }));
+    expect(updateMock).toHaveBeenCalledWith('full');
+  });
+
+  it('shows the autocomplete modes to non-translators', () => {
+    isTranslator = false;
+    const [{ getByRole }] = createEditorSettingsDialog();
+    expect(getByRole('button', { name: /Off/ })).toBeInTheDocument();
+  });
 });
 
 describe('<EditorSettings>', () => {

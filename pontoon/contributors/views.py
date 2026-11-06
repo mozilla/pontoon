@@ -425,6 +425,36 @@ def toggle_editor_theme(request):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
+def toggle_machinery_autocomplete(request):
+    machinery_autocomplete = request.POST.get("machinery_autocomplete", None)
+
+    if not machinery_autocomplete:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Bad Request: machinery_autocomplete is required",
+            },
+            status=400,
+        )
+
+    try:
+        profile = request.user.profile
+        profile.machinery_autocomplete = machinery_autocomplete
+        profile.full_clean()
+        profile.save()
+    except ValidationError as e:
+        log.error(f"User profile validation error: {e}")
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: User profile validation failed"},
+            status=400,
+        )
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
 def save_custom_homepage(request):
     """Save custom homepage."""
     form = forms.UserCustomHomepageForm(request.POST, instance=request.user.profile)

@@ -1,11 +1,12 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
+import type { MachineryAutocomplete } from '~/api/user';
 import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { ShowNotification } from '~/context/Notification';
 import * as user from '~/modules/user';
-import { saveSetting } from '~/modules/user/actions';
+import { saveMachineryAutocomplete, saveSetting } from '~/modules/user/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { UnsavedChangesPopup } from '~/modules/unsavedchanges/components/UnsavedChangesPopup';
 
@@ -75,9 +76,17 @@ function MenuContent() {
     dispatch(saveSetting(setting, value, username, showNotification));
   }
 
+  function updateMachineryAutocomplete(value: MachineryAutocomplete) {
+    dispatch(saveMachineryAutocomplete(value));
+  }
+
   return (
     <>
-      <EditorSettings settings={settings} updateSetting={updateSetting} />
+      <EditorSettings
+        settings={settings}
+        updateSetting={updateSetting}
+        updateMachineryAutocomplete={updateMachineryAutocomplete}
+      />
       <KeyboardShortcuts />
       <TranslationLength />
       <MachinerySourceIndicator />
