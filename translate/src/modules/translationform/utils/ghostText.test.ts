@@ -127,6 +127,55 @@ describe('findGhostText', () => {
     );
   });
 
+  describe('counts a CJK letter as two characters', () => {
+    test('in Japanese', () => {
+      const ja = new Intl.Segmenter('ja', { granularity: 'word' });
+      const jaFind = (before: string) =>
+        findGhostText(before, '', [jaFailed], ja);
+      // サーバー | へ | の | 接続 | に | 失敗 | しま | した | 。 | ネットワーク | 設定 | を | 確認 | …
+      const jaFailed =
+        'サーバーへの接続に失敗しました。ネットワーク設定を確認してください。';
+      expect(jaFind('への接続')).toBe('に');
+      expect(jaFind('接続に失敗')).toBe('しま');
+      expect(jaFind('ネットワーク')).toBe('設定');
+      expect(jaFind('接続')).toBe('');
+      expect(jaFind('設定を')).toBe('');
+      expect(jaFind('を確認')).toBe('');
+      expect(jaFind('定を確認')).toBe('し');
+      expect(jaFind('ました。')).toBe('');
+      expect(jaFind('しました。')).toBe('ネットワーク');
+    });
+
+    test('in Chinese', () => {
+      const zh = new Intl.Segmenter('zh', { granularity: 'word' });
+      const zhFind = (before: string) =>
+        findGhostText(before, '', ['无法连接到服务器'], zh);
+      // 无法 | 连接 | 到 | 服务器
+      expect(zhFind('无法连接')).toBe('到');
+      expect(zhFind('连接')).toBe('');
+      expect(zhFind('无法连')).toBe('接');
+      expect(zhFind('无连')).toBe('');
+    });
+
+    test('in Korean', () => {
+      const ko = new Intl.Segmenter('ko', { granularity: 'word' });
+      const koFind = (before: string) =>
+        findGhostText(before, '', ['서버에 연결할 수 없습니다'], ko);
+      expect(koFind('연결할 수')).toBe(' 없습니다');
+      expect(koFind('에 연')).toBe('결할 ');
+      expect(koFind('결할 ')).toBe('');
+    });
+
+    test('but not a Thai letter', () => {
+      const th = new Intl.Segmenter('th', { granularity: 'word' });
+      // เปิด | ไฟล์ | ␣ | แล้ว | ปิด
+      const thFind = (before: string) =>
+        findGhostText(before, '', ['เปิดไฟล์ แล้วปิด'], th);
+      expect(thFind('ไฟล์ ')).toBe('');
+      expect(thFind('เปิดไฟล์ ')).toBe('แล้ว');
+    });
+  });
+
   describe('accepts a word with the space after it', () => {
     test('so that the next word can be typed', () => {
       expect(find('Firefox non r', [firefox])).toBe('iesce ');
