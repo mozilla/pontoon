@@ -439,7 +439,7 @@ A successful request returns a summary of the import:
 
 - `created`: number of suggestions added.
 - `restored`: number of rejected translations matching the upload that were
-  un-rejected, becoming pending suggestions again.
+  unrejected, becoming pending suggestions again.
 - `unchanged`: number of uploaded translations that match existing unrejected
   translations, in any review state, ignored.
 - `failed_checks`: strings left untouched, because the uploaded translation has errors.
@@ -461,7 +461,7 @@ as a suggestion, unless the string already has an unrejected translation with th
 value, whether approved, pretranslated or unreviewed. The fuzzy flag of the uploaded
 file is ignored: the translation is stored as a plain suggestion.
 
-A rejected translation matching the upload is un-rejected instead of being suggested
+A rejected translation matching the upload is unrejected instead of being suggested
 again, so a translation rejected by mistake can be re-proposed. Its original author and
 date are kept, and it becomes a pending suggestion, awaiting review like any other.
 

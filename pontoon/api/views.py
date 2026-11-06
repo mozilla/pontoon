@@ -1127,7 +1127,7 @@ class UploadSuggestionsView(UploadView):
             "replaced or rejected: every uploaded translation is stored as a "
             "suggestion, unless the string already has an unrejected translation "
             "with the same value, in any review state. A rejected translation "
-            "matching the upload is un-rejected instead, becoming a pending "
+            "matching the upload is unrejected instead, becoming a pending "
             "suggestion again. "
             "Keys not found in Pontoon are ignored, and the fuzzy flag of the "
             "uploaded file is ignored as well, as a suggestion is unreviewed by "

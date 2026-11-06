@@ -681,7 +681,7 @@ class SuggestionUploadResult:
     Summary of an uploaded suggestion file import:
     - `created`: number of suggestions added
     - `restored`: number of rejected translations matching the upload that were
-      un-rejected, becoming pending suggestions again
+      unrejected, becoming pending suggestions again
     - `unchanged`: number of uploaded translations that the string already has as an
       unrejected translation, in any review state
     - `failed_checks`: keys of the strings left untouched because the uploaded
@@ -711,7 +711,7 @@ def import_uploaded_suggestions(
     with the same value, whether approved, pretranslated or unreviewed. The fuzzy flag
     of the uploaded file is ignored: the translation is stored as a plain suggestion.
 
-    A rejected translation matching the upload is un-rejected instead of suggested
+    A rejected translation matching the upload is unrejected instead of suggested
     again, so that a translation rejected by mistake can be re-proposed.
 
     Uploaded translations reported with errors are left out, as the editor rejects them

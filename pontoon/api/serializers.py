@@ -677,7 +677,7 @@ class UploadSuggestionsResponseSerializer(serializers.Serializer):
     )
     restored = serializers.IntegerField(
         help_text="Number of rejected translations matching the upload that were "
-        "un-rejected, becoming pending suggestions again."
+        "unrejected, becoming pending suggestions again."
     )
     unchanged = serializers.IntegerField(
         help_text="Number of uploaded translations that the string already has as an "
