@@ -107,7 +107,7 @@ def write_db_updates(
     updated_translations, new_translations = update_db_translations(
         project, updates, user, now
     )
-    add_failed_checks(new_translations)
+    add_failed_checks(new_translations + updated_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
 
 
@@ -475,7 +475,7 @@ def update_db_translations(
     if actions:
         ActionLog.objects.bulk_create(actions)
 
-    return created, list(suggestions.values())
+    return list(suggestions.values()), created
 
 
 def str_n_translations(n: int | Sized) -> str:

@@ -156,6 +156,58 @@ def test_update_ftl_translations():
 
 
 @pytest.mark.django_db
+def test_ftl_translations_failed_checks():
+    """A translation imported from the repository keeps its warnings."""
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-checks",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
+        )
+        res = ResourceFactory.create(project=project, path="a.ftl", format="fluent")
+        TranslatedResourceFactory.create(locale=locale, resource=res)
+        entity = EntityFactory.create(
+            resource=res, string="about = About { -brand-name }\n", key=["about"]
+        )
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"a.ftl": ""},
+                "fr-Test": {"a.ftl": "about = À propos\n"},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("fr-Test", "a.ftl")],
+            removed=[],
+        )
+        checkouts = Checkouts(mock_checkout, mock_checkout)
+        paths = find_paths(project, checkouts)
+
+        # Test sync
+        sync_translations_from_repo(
+            project, {locale.code: locale}, checkouts, paths, cast(Any, []), now
+        )
+        translation = Translation.objects.get(entity=entity, locale=locale)
+
+        assert translation.approved
+        assert [w.message for w in translation.warnings.all()] == [
+            "Missing term reference: -brand-name"
+        ]
+
+
+@pytest.mark.django_db
 def test_android_translation_changes():
     with TemporaryDirectory() as root:
         # Database setup
