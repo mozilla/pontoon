@@ -1039,7 +1039,7 @@ def test_upload_translations_approved_suggestion_stores_warning(
     assert result.updated == 1
 
     translation = Translation.objects.get(entity=android_entity, approved=True)
-    
+
     assert translation.pk == suggestion.pk
     assert [w.message for w in translation.warnings.all()] == [
         "Placeholder {$arg1} not found in translation"
