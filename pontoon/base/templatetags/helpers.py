@@ -344,10 +344,12 @@ def highlight_matches(
     else:
         pattern = re.escape(escape(search_query))
 
-    # Then apply highlighting to the escaped text
+    # Then apply highlighting to the escaped text. Tags (e.g. from
+    # highlight_placeables) and character references are matched as a whole
+    # and kept as they are, so that a match can't start inside them.
     highlighted_text = re.sub(
-        f"({pattern})",
-        r"<mark>\1</mark>",
+        rf"({pattern})|<[^>]*>|&#?\w+;",
+        lambda match: match[0] if match[1] is None else f"<mark>{match[1]}</mark>",
         escaped_text,
         flags=flags,
     )
