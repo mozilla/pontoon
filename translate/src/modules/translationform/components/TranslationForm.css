@@ -160,6 +160,11 @@
   color: var(--white-1) !important;
 }
 
+.cm-tooltip-autocomplete ul li .cm-completionDetail {
+  margin-inline-start: auto;
+  margin-inline-end: 0.5em;
+}
+
 .singlefield .cm-content,
 .singlefield .cm-gutter {
   min-height: calc(100px - 12px);

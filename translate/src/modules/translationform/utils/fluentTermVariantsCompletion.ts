@@ -97,8 +97,9 @@ export function fluentTermVariantsCompletion(
       to: context.pos,
       validFor: /^[A-Za-z][\w-]*$/,
       options: variants.flatMap(({ selector, keys }, groupIndex) =>
-        keys.map(({ key }, keyIndex) => ({
+        keys.map(({ key, isDefault }, keyIndex) => ({
           label: `${selector}: "${key}"`,
+          detail: isDefault ? 'default' : undefined,
           type: 'keyword',
           // Keep each group sorted the same way they are defined.
           // Note the default comes last as per `getTermVariants()` sorting.
