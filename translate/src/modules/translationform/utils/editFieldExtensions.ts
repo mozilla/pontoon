@@ -19,17 +19,22 @@ import {
 import { Extension } from '@codemirror/state';
 import { EditorView, keymap, tooltips } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useMemo, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
+import { useEntityEntry } from '~/context/EntityView';
 import { editorThemeClass } from '~/context/Theme';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
-import type { MessageEntry } from '~/utils/message';
+import { editMessageEntry, type MessageEntry } from '~/utils/message';
+import { createMessageEntry } from '~/utils/message/createMessageEntry';
 import { editablePattern } from '~/utils/message/editablePattern';
 import { entryPatterns } from '~/utils/message/entryPatterns';
 import { emptyEditorCaret } from './editFieldCaret';
 import { decoratorPlugin } from './decoratorPlugin';
+import { ghostTextKeymap } from './ghostText';
 import {
   useHandleCtrlShiftArrow,
   useHandleEnter,
@@ -68,6 +73,30 @@ export function useKeyHandlers() {
     ref.current = handlers;
   });
   return ref;
+}
+
+export function useGhostTextCandidates(fieldId?: string): readonly string[] {
+  const { composed, translations } = useContext(MachineryTranslations);
+  const { query } = useContext(SearchData);
+  const sourceEntry = useEntityEntry();
+  return useMemo(() => {
+    if (query) {
+      return [];
+    }
+    const candidates = translations.map((tx) => tx.translation);
+    if (fieldId === undefined) {
+      return candidates;
+    }
+    const fieldCandidates = composed.flatMap(({ value, properties }) => {
+      const { format, id } = sourceEntry;
+      const entry = createMessageEntry(format, id, value, properties);
+      const field = editMessageEntry(sourceEntry, entry).find(
+        (field) => field.id === fieldId,
+      );
+      return field?.handle.current.value ? [field.handle.current.value] : [];
+    });
+    return [...fieldCandidates, ...candidates];
+  }, [composed, fieldId, query, sourceEntry, translations]);
 }
 
 const style = HighlightStyle.define([
@@ -113,6 +142,7 @@ export const getExtensions = (
     { key: 'Mod-Enter', run: insertNewlineAndIndent },
     { key: 'Escape', run: () => ref.current.onEscape() },
     { key: 'Tab', run: acceptCompletion },
+    ...ghostTextKeymap,
     {
       key: 'Shift-Ctrl-ArrowDown',
       run: () => ref.current.onCtrlShiftArrow('ArrowDown'),

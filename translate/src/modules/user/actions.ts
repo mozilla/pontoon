@@ -1,7 +1,9 @@
 import {
   dismissAddonPromotion,
   fetchUserData,
+  type MachineryAutocomplete,
   markAllNotificationsAsRead,
+  updateUserMachineryAutocomplete,
   updateUserSetting,
   updateUserTheme,
 } from '~/api/user';
@@ -47,7 +49,9 @@ export type Settings = {
  */
 export type UpdateSettingsAction = {
   readonly type: typeof UPDATE_SETTINGS;
-  readonly settings: Settings;
+  readonly settings: Settings & {
+    machineryAutocomplete?: MachineryAutocomplete;
+  };
 };
 
 /**
@@ -81,6 +85,15 @@ export function saveSetting(
 
     const notif = getNotification(setting, value);
     showNotification(notif);
+  };
+}
+
+export function saveMachineryAutocomplete(
+  machineryAutocomplete: MachineryAutocomplete,
+): AppThunk {
+  return async (dispatch) => {
+    dispatch({ type: UPDATE_SETTINGS, settings: { machineryAutocomplete } });
+    await updateUserMachineryAutocomplete(machineryAutocomplete);
   };
 }
 

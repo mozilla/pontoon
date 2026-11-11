@@ -169,6 +169,17 @@ editor-EditorSettings--toolkit-checks = <glyph></glyph>Translate Toolkit checks
 editor-EditorSettings--force-suggestions = <glyph></glyph>Make suggestions
     .title = Save suggestions instead of translations
 
+editor-EditorSettings--autocomplete-title = Autocomplete
+
+editor-EditorSettings--autocomplete-off = Off
+    .title = Do not autocomplete from Machinery
+
+editor-EditorSettings--autocomplete-word = Word
+    .title = Autocomplete from Machinery one word at a time
+
+editor-EditorSettings--autocomplete-full = Full
+    .title = Autocomplete the rest of a Machinery translation
+
 editor-EditorSettings--theme-title = Editor theme
 
 editor-EditorSettings--theme-dark = <glyph></glyph> Dark
