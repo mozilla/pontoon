@@ -104,11 +104,9 @@ def build_translation(
 def write_db_updates(
     project: Project, updates: Updates, user: User | None, now: datetime
 ) -> None:
-    updated_translations, new_translations = update_db_translations(
-        project, updates, user, now
-    )
-    add_failed_checks(new_translations + updated_translations)
-    add_translation_memory_entries(project, new_translations + updated_translations)
+    updated_and_new_translations = update_db_translations(project, updates, user, now)
+    add_failed_checks(updated_and_new_translations)
+    add_translation_memory_entries(project, updated_and_new_translations)
 
 
 def delete_removed_resources(
@@ -315,9 +313,9 @@ def update_db_translations(
     repo_translations: Updates,
     user: User | None,
     now: datetime,
-) -> tuple[list[Translation], list[Translation]]:
+) -> list[Translation]:
     if not repo_translations:
-        return [], []
+        return []
     scope = f"[{project.slug}]"
     log.debug(f"{scope} Syncing translations from repo...")
 
@@ -475,7 +473,7 @@ def update_db_translations(
     if actions:
         ActionLog.objects.bulk_create(actions)
 
-    return list(suggestions.values()), created
+    return list(suggestions.values()) + created
 
 
 def str_n_translations(n: int | Sized) -> str:
