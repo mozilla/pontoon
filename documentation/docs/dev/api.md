@@ -216,13 +216,14 @@ value is empty. `value` and `properties` hold the complete message content, usin
 defined by moz-l10n. `properties` contains message properties such as Fluent attributes,
 and is `null` if there are none. `format` is the format of the resource.
 `status` is one of `approved`, `rejected`, `pretranslated`, `fuzzy` or `unreviewed`.
-`approved_date`, `unapproved_date`, `rejected_date` and `unrejected_date` are the dates of
-the latest action of each kind, and can be set regardless of the current status: for
-example, an unrejected translation keeps its `rejected_date`. The most recent of the four
-is the latest review action: a translation with status `unreviewed` and both dates set
-was rejected on `rejected_date`, then unrejected on `unrejected_date`. Use `status` for
-the current state.
-`restored` is `true` if the user unrejected the translation.
+`approved_date`, `unapproved_date`, `rejected_date` and `unrejected_date` record review
+actions. Approving a translation clears `unapproved_date` and `rejected_date`, and
+rejecting it clears `approved_date`. Other dates are kept regardless of the current
+status: for example, an unrejected translation keeps its `rejected_date`. The most recent
+of the four is the latest review action: a translation with status `unreviewed` and both
+dates set was rejected on `rejected_date`, then unrejected on `unrejected_date`. Use
+`status` for the current state.
+`restored` is `true` if the translation is by another user and the user unrejected it.
 `entity` is the string identifier as shown in the context of the translate view (e.g. the
 Fluent message ID). Multi-part identifiers, such as nested keys, are shown from the
 innermost part, separated by `•`. It's `null` for gettext strings without a context. `url` links to

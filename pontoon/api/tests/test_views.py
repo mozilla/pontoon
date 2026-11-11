@@ -375,18 +375,20 @@ def test_user_translations_include_restored(
     today = now()
     old = today - timedelta(days=400)
 
-    def unrejected_by(user, date, **kwargs):
+    def unrejected_by(performer, date, **kwargs):
+        kwargs = {"user": user_c, "date": old, **kwargs}
         translation = TranslationFactory(
-            user=user_c, date=old, unrejected_user=user, unrejected_date=date, **kwargs
+            unrejected_user=performer, unrejected_date=date, **kwargs
         )
         ActionLog.objects.create(
             action_type=ActionLog.ActionType.TRANSLATION_UNREJECTED,
-            performed_by=user,
+            performed_by=performer,
             translation=translation,
         )
         return translation
 
     own = TranslationFactory(user=user_b, date=today - timedelta(days=2))
+    own_unrejected = unrejected_by(user_b, today - timedelta(days=5), user=user_b)
     restored = unrejected_by(user_b, today - timedelta(days=1))
     rejected_again = unrejected_by(
         user_b,
@@ -416,7 +418,9 @@ def test_user_translations_include_restored(
         assert response.status_code == 200
         return response.data["results"]
 
-    assert [t["translation_pk"] for t in get_results()] == [own.pk]
+    results = get_results()
+    assert [t["translation_pk"] for t in results] == [own.pk, own_unrejected.pk]
+    assert [t["restored"] for t in results] == [False, False]
 
     results = get_results(include="restored")
     assert [t["translation_pk"] for t in results] == [
@@ -424,8 +428,9 @@ def test_user_translations_include_restored(
         restored.pk,
         own.pk,
         restored_twice.pk,
+        own_unrejected.pk,
     ]
-    assert [t["restored"] for t in results] == [True, True, False, True]
+    assert [t["restored"] for t in results] == [True, True, False, True, False]
     assert results[0]["status"] == "rejected"
 
 

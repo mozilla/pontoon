@@ -12,7 +12,14 @@ from rest_framework.views import APIView
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.uploadedfile import UploadedFile
 from django.db import IntegrityError, transaction
-from django.db.models import Exists, OuterRef, Prefetch, Q
+from django.db.models import (
+    BooleanField,
+    Exists,
+    ExpressionWrapper,
+    OuterRef,
+    Prefetch,
+    Q,
+)
 from django.db.models.functions import Greatest
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
@@ -311,7 +318,11 @@ class UserTranslationListView(generics.ListAPIView):
                     "rejected_date",
                     "unrejected_date",
                 ),
-                restored=Exists(unrejected_by_user.filter(translation=OuterRef("pk"))),
+                restored=ExpressionWrapper(
+                    Exists(unrejected_by_user.filter(translation=OuterRef("pk")))
+                    & ~Q(user=user),
+                    output_field=BooleanField(),
+                ),
             )
             .order_by("-last_change", "-pk")
         )

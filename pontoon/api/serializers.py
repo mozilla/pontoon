@@ -397,19 +397,20 @@ class UserTranslationSerializer(serializers.Serializer):
     )
     date = serializers.DateTimeField()
     approved_date = serializers.DateTimeField(
-        allow_null=True, help_text="Date of the latest approval."
+        allow_null=True, help_text="Date of the approval, cleared on rejection."
     )
     unapproved_date = serializers.DateTimeField(
-        allow_null=True, help_text="Date of the latest unapproval."
+        allow_null=True, help_text="Date of the unapproval, cleared on approval."
     )
     rejected_date = serializers.DateTimeField(
-        allow_null=True, help_text="Date of the latest rejection."
+        allow_null=True, help_text="Date of the rejection, cleared on approval."
     )
     unrejected_date = serializers.DateTimeField(
         allow_null=True, help_text="Date of the latest unrejection."
     )
     restored = serializers.BooleanField(
-        help_text="Whether the user unrejected the translation."
+        help_text="Whether the translation is by another user and the user "
+        "unrejected it."
     )
     entity = serializers.SerializerMethodField()
     resource = serializers.CharField(source="entity.resource.path")
