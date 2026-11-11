@@ -1,11 +1,13 @@
 import { currentCompletions, startCompletion } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
-import { EditorState } from '@codemirror/state';
+import { EditorState, type Extension } from '@codemirror/state';
 
 import { getExtensions } from './editFieldExtensions';
 import { parseEntry } from '~/utils/message';
 
 import type { FluentTerms } from '~/api/fluentTerms';
+import { fluentLanguageMode } from './editFieldModes';
+import { fluentTermVariantsCompletion } from './fluentTermVariantsCompletion';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -15,11 +17,7 @@ let currentTempView: EditorView | null = null;
 // Create a hidden view with the given document and extensions that
 // lives until the next call to `tempView`.
 // From: https://github.com/codemirror/view/blob/main/test/tempview.ts
-function tempView(
-  format: string,
-  doc = '',
-  getTerms?: (project: string, locale: string) => Promise<FluentTerms>,
-): EditorView {
+function tempView(format: string, doc = '', extra: Extension = []): EditorView {
   if (currentTempView) {
     currentTempView.destroy();
     currentTempView = null;
@@ -38,7 +36,7 @@ function tempView(
     getTerms,
   );
   currentTempView = new EditorView({
-    state: EditorState.create({ doc, extensions }),
+    state: EditorState.create({ doc, extensions: [extensions, extra] }),
   });
   div.appendChild(currentTempView.dom);
   return currentTempView;
@@ -62,8 +60,11 @@ describe('term variants autocomplete', () => {
   };
 
   async function completeInto(doc: string, insert: string) {
-    const getTerms = vi.fn(async () => terms);
-    const view = tempView('fluent', doc, getTerms);
+    const view = tempView('fluent', doc, [
+      fluentLanguageMode.data.of({
+        autocomplete: fluentTermVariantsCompletion(async () => terms),
+      }),
+    ]);
 
     view.dispatch({
       changes: { from: doc.length, insert },
@@ -74,7 +75,7 @@ describe('term variants autocomplete', () => {
     await vi.waitFor(() => {
       expect(currentCompletions(view.state).length).toBeGreaterThan(0);
     });
-    return { view, getTerms, options: currentCompletions(view.state) };
+    return { view, options: currentCompletions(view.state) };
   }
 
   it('offers term variants with the default variant last', async () => {

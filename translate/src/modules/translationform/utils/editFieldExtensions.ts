@@ -11,17 +11,12 @@ import {
   insertNewlineAndIndent,
   standardKeymap,
 } from '@codemirror/commands';
-import {
-  HighlightStyle,
-  syntaxHighlighting,
-} from '@codemirror/language';
-import { Extension } from '@codemirror/state';
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { EditorState, Extension } from '@codemirror/state';
 import { EditorView, keymap, tooltips } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useMemo, useRef } from 'react';
 
-import { getFluentTerms } from '~/api/fluentTermsCache';
-import type { FluentTerms } from '~/api/fluentTerms';
 import { EditorActions, EditorData } from '~/context/Editor';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
@@ -43,8 +38,12 @@ import {
   useHandleEnter,
   useHandleEscape,
 } from './editFieldShortcuts';
+import {
+  fluentLanguageMode,
+  commonLanguageMode,
+  webextLanguageMode,
+} from './editFieldModes';
 import './editFieldExtensions.css';
-import { fluentTermVariantsCompletion } from './fluentTermVariantsCompletion';
 
 /**
  * Key handlers depend on application state,
@@ -137,12 +136,6 @@ export const getExtensions = (
   entry: MessageEntry,
   ref: ReturnType<typeof useKeyHandlers>,
   initialDoc = '',
-  project = '',
-  locale = '',
-  getTerms: (
-    project: string,
-    locale: string,
-  ) => Promise<FluentTerms> = getFluentTerms,
 ): Extension[] => [
   history(),
   emptyEditorCaret(initialDoc.length === 0),
@@ -151,7 +144,11 @@ export const getExtensions = (
   // horizontal scrolling if it overflows the right edge of .main-column.
   // We avoid this by placing tooltips in its parent container.
   tooltips({ parent: document.querySelector('.panel-content') as HTMLElement }),
-  autocompletePlaceholders(entry, project, locale, getTerms) ?? closeBrackets(),
+  autocompletion({
+    tooltipClass: () =>
+      editorThemeClass(document.body.getAttribute('data-editor-theme')),
+  }),
+  placeholderCompletions(entry),
   EditorView.lineWrapping,
   entry.format === 'fluent'
     ? fluentLanguageMode
@@ -189,6 +186,15 @@ export const getExtensions = (
   ]),
 ];
 
+function placeholderCompletions(entry: MessageEntry) {
+  const sources = autocompletePlaceholders(entry);
+  return sources.length
+    ? EditorState.languageData.of(() =>
+        sources.map((autocomplete) => ({ autocomplete })),
+      )
+    : closeBrackets();
+}
+
 /**
  * Autocomplete placeholders, and sequences of placeholders.
  *
@@ -206,17 +212,8 @@ export const getExtensions = (
  *
  * If no autocompletions are found, bracket auto-closing is enabled.
  */
-function autocompletePlaceholders(
-  entry: MessageEntry,
-  project: string,
-  locale: string,
-  getTerms: (project: string, locale: string) => Promise<FluentTerms>,
-) {
+export function autocompletePlaceholders(entry: MessageEntry) {
   const override: CompletionSource[] = [];
-  if (entry.format === 'fluent') {
-    override.push(fluentTermVariantsCompletion(getTerms, project, locale));
-  }
-
   for (const pattern of entryPatterns(entry)) {
     const edit = editablePattern(entry.format, pattern);
     const highlights: [start: number, ends: number[]][] = [];
@@ -237,13 +234,7 @@ function autocompletePlaceholders(
       override.push(completePlaceholder(edit, ...hl));
     }
   }
-  return override.length
-    ? autocompletion({
-        override,
-        tooltipClass: () =>
-          editorThemeClass(document.body.getAttribute('data-editor-theme')),
-      })
-    : null;
+  return override;
 }
 
 function completePlaceholder(

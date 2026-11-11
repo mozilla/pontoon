@@ -27,6 +27,9 @@ import {
 import { ghostText, setGhostTextCandidates } from '../utils/ghostText';
 import { EntityView } from '~/context/EntityView';
 import { messageEntryFromEntity } from '~/utils/message/fromEntity';
+import { fluentLanguageMode } from '../utils/editFieldModes';
+import { fluentTermVariantsCompletion } from '../utils/fluentTermVariantsCompletion';
+import { getFluentTerms } from '~/api/fluentTermsCache';
 
 export type EditFieldProps = {
   onFocus?: () => void;
@@ -68,8 +71,6 @@ export const EditField = memo(
               messageEntryFromEntity(entity),
               keyHandlers,
               defaultValue,
-              location.project,
-              location.locale,
             );
             if (readOnly) {
               extensions.push(
@@ -91,6 +92,15 @@ export const EditField = memo(
                   if (update.docChanged) {
                     setResultFromInput();
                   }
+                }),
+              );
+              extensions.push(
+                fluentLanguageMode.data.of({
+                  autocomplete: fluentTermVariantsCompletion(
+                    getFluentTerms,
+                    location.project,
+                    location.locale,
+                  ),
                 }),
               );
             }
