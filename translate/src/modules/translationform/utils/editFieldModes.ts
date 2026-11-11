@@ -1,4 +1,4 @@
-import { StreamParser } from '@codemirror/language';
+import { StreamLanguage, StreamParser } from '@codemirror/language';
 
 export const fluentMode: StreamParser<Array<'expression' | 'literal' | 'tag'>> =
   {
@@ -81,6 +81,8 @@ export const fluentMode: StreamParser<Array<'expression' | 'literal' | 'tag'>> =
     },
   };
 
+export const fluentLanguageMode = StreamLanguage.define(fluentMode);
+
 // Excludes ` ` even if it's a valid Python conversion flag,
 // due to false positives.
 // https://github.com/mozilla/pontoon/issues/2988
@@ -144,6 +146,8 @@ export const commonMode: StreamParser<Array<'literal' | 'tag'>> = {
   },
 };
 
+export const commonLanguageMode = StreamLanguage.define(commonMode);
+
 export const webextMode: StreamParser<[]> = {
   name: 'webext',
   languageData: { closeBrackets: { brackets: ['<'] } },
@@ -157,3 +161,5 @@ export const webextMode: StreamParser<[]> = {
     }
   },
 };
+
+export const webextLanguageMode = StreamLanguage.define(webextMode);
