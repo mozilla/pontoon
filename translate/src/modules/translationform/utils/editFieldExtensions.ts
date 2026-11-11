@@ -13,7 +13,6 @@ import {
 } from '@codemirror/commands';
 import {
   HighlightStyle,
-  StreamLanguage,
   syntaxHighlighting,
 } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
@@ -44,7 +43,6 @@ import {
   useHandleEnter,
   useHandleEscape,
 } from './editFieldShortcuts';
-import { fluentMode, commonMode, webextMode } from './editFieldModes';
 import './editFieldExtensions.css';
 import { fluentTermVariantsCompletion } from './fluentTermVariantsCompletion';
 
@@ -155,13 +153,11 @@ export const getExtensions = (
   tooltips({ parent: document.querySelector('.panel-content') as HTMLElement }),
   autocompletePlaceholders(entry, project, locale, getTerms) ?? closeBrackets(),
   EditorView.lineWrapping,
-  StreamLanguage.define<any>(
-    entry.format === 'fluent'
-      ? fluentMode
-      : entry.format === 'webext'
-        ? webextMode
-        : commonMode,
-  ),
+  entry.format === 'fluent'
+    ? fluentLanguageMode
+    : entry.format === 'webext'
+      ? webextLanguageMode
+      : commonLanguageMode,
   syntaxHighlighting(style),
   decoratorPlugin,
   keymap.of([
