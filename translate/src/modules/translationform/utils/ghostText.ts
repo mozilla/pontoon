@@ -65,7 +65,6 @@ function getGhostText(view: EditorView): { pos: number; text: string } | null {
     ghost.candidates.length === 0 ||
     ranges.length > 1 ||
     !main.empty ||
-    view.composing ||
     currentCompletions(state).length > 0
   ) {
     return null;
@@ -154,7 +153,7 @@ function getWordSegmenter(locale: string) {
 }
 
 export const acceptGhostText: Command = (view) => {
-  const ghost = getGhostText(view);
+  const ghost = view.composing ? null : getGhostText(view);
   if (!ghost) {
     return false;
   }
@@ -169,7 +168,7 @@ export const acceptGhostText: Command = (view) => {
 };
 
 export const dismissGhostText: Command = (view) => {
-  if (!getGhostText(view)) {
+  if (view.composing || !getGhostText(view)) {
     return false;
   }
   view.dispatch({ effects: dismissGhostTextEffect.of(null) });
