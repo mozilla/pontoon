@@ -396,8 +396,22 @@ class UserTranslationSerializer(serializers.Serializer):
         choices=["approved", "fuzzy", "pretranslated", "rejected", "unreviewed"]
     )
     date = serializers.DateTimeField()
-    approved_date = serializers.DateTimeField(allow_null=True)
-    rejected_date = serializers.DateTimeField(allow_null=True)
+    approved_date = serializers.DateTimeField(
+        allow_null=True, help_text="Date of the approval, cleared on rejection."
+    )
+    unapproved_date = serializers.DateTimeField(
+        allow_null=True, help_text="Date of the unapproval, cleared on approval."
+    )
+    rejected_date = serializers.DateTimeField(
+        allow_null=True, help_text="Date of the rejection, cleared on approval."
+    )
+    unrejected_date = serializers.DateTimeField(
+        allow_null=True, help_text="Date of the latest unrejection."
+    )
+    restored = serializers.BooleanField(
+        help_text="Whether the translation is by another user and the user "
+        "unrejected it."
+    )
     entity = serializers.SerializerMethodField()
     resource = serializers.CharField(source="entity.resource.path")
     format = serializers.ChoiceField(
@@ -664,7 +678,7 @@ class UploadSuggestionsResponseSerializer(serializers.Serializer):
     )
     restored = serializers.IntegerField(
         help_text="Number of rejected translations matching the upload that were "
-        "un-rejected, becoming pending suggestions again."
+        "unrejected, becoming pending suggestions again."
     )
     unchanged = serializers.IntegerField(
         help_text="Number of uploaded translations that the string already has as an "

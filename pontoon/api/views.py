@@ -12,7 +12,14 @@ from rest_framework.views import APIView
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.uploadedfile import UploadedFile
 from django.db import IntegrityError, transaction
-from django.db.models import Prefetch, Q
+from django.db.models import (
+    BooleanField,
+    Exists,
+    ExpressionWrapper,
+    OuterRef,
+    Prefetch,
+    Q,
+)
 from django.db.models.functions import Greatest
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
@@ -181,10 +188,10 @@ USER_TRANSLATIONS_MAX_DAYS = 30
 
 @extend_schema(
     description=(
-        "List translations submitted by a user, and created, approved or rejected "
-        "within the date range, most recently changed first. Defaults to the last "
-        f"{USER_TRANSLATIONS_DEFAULT_DAYS} days; the date range can span at most "
-        f"{USER_TRANSLATIONS_MAX_DAYS} days."
+        "List translations submitted by a user, and created, approved, unapproved, "
+        "rejected or unrejected within the date range, most recently changed "
+        f"first. Defaults to the last {USER_TRANSLATIONS_DEFAULT_DAYS} days; the date "
+        f"range can span at most {USER_TRANSLATIONS_MAX_DAYS} days."
     ),
     parameters=[
         OpenApiParameter(
@@ -202,6 +209,15 @@ USER_TRANSLATIONS_MAX_DAYS = 30
         ),
         OpenApiParameter("project", str, description="Project slug"),
         OpenApiParameter("locale", str, description="Locale code"),
+        OpenApiParameter(
+            "include",
+            str,
+            enum=["restored"],
+            description=(
+                "Use `restored` to also list translations by other users that the "
+                "user unrejected, e.g. by uploading a matching suggestion."
+            ),
+        ),
     ],
 )
 class UserTranslationListView(generics.ListAPIView):
@@ -247,12 +263,33 @@ class UserTranslationListView(generics.ListAPIView):
                 }
             )
 
+        include = self.request.query_params.get("include")
+        if include not in (None, "", "restored"):
+            raise ValidationError(
+                {"include": ["The only supported value is restored."]}
+            )
+        # ActionLog keeps every unrejection, while unrejected_user only tracks the
+        # latest one.
+        unrejected_by_user = ActionLog.objects.filter(
+            performed_by=user,
+            action_type=ActionLog.ActionType.TRANSLATION_UNREJECTED,
+        )
+        users = Q(user=user)
+        if include == "restored":
+            # A subquery here would make Postgres scan the whole translation table.
+            restored_ids = list(
+                unrejected_by_user.values_list("translation_id", flat=True)
+            )
+            users |= Q(pk__in=restored_ids)
+
         visible_projects = Project.objects.visible_for(self.request.user)
         qs = Translation.objects.filter(
+            users,
             Q(date__gte=start, date__lt=end)
             | Q(approved_date__gte=start, approved_date__lt=end)
-            | Q(rejected_date__gte=start, rejected_date__lt=end),
-            user=user,
+            | Q(unapproved_date__gte=start, unapproved_date__lt=end)
+            | Q(rejected_date__gte=start, rejected_date__lt=end)
+            | Q(unrejected_date__gte=start, unrejected_date__lt=end),
             entity__resource__project__in=visible_projects,
         )
 
@@ -273,7 +310,20 @@ class UserTranslationListView(generics.ListAPIView):
                     ),
                 )
             )
-            .annotate(last_change=Greatest("date", "approved_date", "rejected_date"))
+            .annotate(
+                last_change=Greatest(
+                    "date",
+                    "approved_date",
+                    "unapproved_date",
+                    "rejected_date",
+                    "unrejected_date",
+                ),
+                restored=ExpressionWrapper(
+                    Exists(unrejected_by_user.filter(translation=OuterRef("pk")))
+                    & ~Q(user=user),
+                    output_field=BooleanField(),
+                ),
+            )
             .order_by("-last_change", "-pk")
         )
 
@@ -1088,7 +1138,7 @@ class UploadSuggestionsView(UploadView):
             "replaced or rejected: every uploaded translation is stored as a "
             "suggestion, unless the string already has an unrejected translation "
             "with the same value, in any review state. A rejected translation "
-            "matching the upload is un-rejected instead, becoming a pending "
+            "matching the upload is unrejected instead, becoming a pending "
             "suggestion again. "
             "Keys not found in Pontoon are ignored, and the fuzzy flag of the "
             "uploaded file is ignored as well, as a suggestion is unreviewed by "

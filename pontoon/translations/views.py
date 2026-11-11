@@ -387,7 +387,7 @@ def unapprove_translation(request):
     project = resource.project
     locale = translation.locale
 
-    # Read-only translations cannot be un-approved
+    # Read-only translations cannot be unapproved
     if readonly_exists(project, locale):
         return JsonResponse(
             {
@@ -397,7 +397,7 @@ def unapprove_translation(request):
             status=403,
         )
 
-    # Only privileged users or authors can un-approve translations
+    # Only privileged users or authors can unapprove translations
     if not translation.approved or not (
         can_translate(request.user, project, locale) or request.user == translation.user
     ):
@@ -514,7 +514,7 @@ def unreject_translation(request):
     project = resource.project
     locale = translation.locale
 
-    # Read-only translations cannot be un-rejected
+    # Read-only translations cannot be unrejected
     if readonly_exists(project, locale):
         return JsonResponse(
             {
@@ -524,7 +524,7 @@ def unreject_translation(request):
             status=403,
         )
 
-    # Only privileged users or authors can un-reject translations
+    # Only privileged users or authors can unreject translations
     if not translation.rejected or not (
         can_translate(request.user, project, locale) or request.user == translation.user
     ):

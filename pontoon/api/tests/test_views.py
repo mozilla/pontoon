@@ -337,6 +337,114 @@ def test_user_translations_change_date(member, user_b, user_translations_url):
 
 
 @pytest.mark.django_db
+def test_user_translations_unreviewed_change_date(
+    member, user_b, user_translations_url
+):
+    today = now()
+    old = today - timedelta(days=400)
+    unrejected = TranslationFactory(
+        user=user_b,
+        date=old,
+        rejected_date=old,
+        unrejected_date=today - timedelta(days=1),
+    )
+    unapproved = TranslationFactory(
+        user=user_b,
+        date=old,
+        approved_date=old,
+        unapproved_date=today,
+    )
+
+    response = member.client.get(user_translations_url, HTTP_ACCEPT="application/json")
+
+    results = response.data["results"]
+    assert [t["translation_pk"] for t in results] == [unapproved.pk, unrejected.pk]
+    assert results[0]["status"] == "unreviewed"
+    assert results[0]["approved_date"] is not None
+    assert results[0]["unapproved_date"] is not None
+    assert results[1]["status"] == "unreviewed"
+    assert results[1]["rejected_date"] is not None
+    assert results[1]["unrejected_date"] is not None
+    assert [t["restored"] for t in results] == [False, False]
+
+
+@pytest.mark.django_db
+def test_user_translations_include_restored(
+    member, user_b, user_c, user_translations_url
+):
+    today = now()
+    old = today - timedelta(days=400)
+
+    def unrejected_by(performer, date, **kwargs):
+        kwargs = {"user": user_c, "date": old, **kwargs}
+        translation = TranslationFactory(
+            unrejected_user=performer, unrejected_date=date, **kwargs
+        )
+        ActionLog.objects.create(
+            action_type=ActionLog.ActionType.TRANSLATION_UNREJECTED,
+            performed_by=performer,
+            translation=translation,
+        )
+        return translation
+
+    own = TranslationFactory(user=user_b, date=today - timedelta(days=2))
+    own_unrejected = unrejected_by(user_b, today - timedelta(days=5), user=user_b)
+    restored = unrejected_by(user_b, today - timedelta(days=1))
+    rejected_again = unrejected_by(
+        user_b,
+        today - timedelta(days=3),
+        rejected=True,
+        rejected_user=user_c,
+        rejected_date=today,
+    )
+    # Restored outside the date range
+    unrejected_by(user_b, old)
+    # Restored by another user
+    unrejected_by(member.user, today)
+    # Restored by the user, then rejected and restored again by another user
+    restored_twice = unrejected_by(user_b, today - timedelta(days=4))
+    restored_twice.unrejected_user = member.user
+    restored_twice.save()
+    ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_UNREJECTED,
+        performed_by=member.user,
+        translation=restored_twice,
+    )
+
+    def get_results(**params):
+        response = member.client.get(
+            user_translations_url, params, HTTP_ACCEPT="application/json"
+        )
+        assert response.status_code == 200
+        return response.data["results"]
+
+    results = get_results()
+    assert [t["translation_pk"] for t in results] == [own.pk, own_unrejected.pk]
+    assert [t["restored"] for t in results] == [False, False]
+
+    results = get_results(include="restored")
+    assert [t["translation_pk"] for t in results] == [
+        rejected_again.pk,
+        restored.pk,
+        own.pk,
+        restored_twice.pk,
+        own_unrejected.pk,
+    ]
+    assert [t["restored"] for t in results] == [True, True, False, True, False]
+    assert results[0]["status"] == "rejected"
+
+
+@pytest.mark.django_db
+def test_user_translations_invalid_include(member, user_translations_url):
+    response = member.client.get(
+        user_translations_url, {"include": "other"}, HTTP_ACCEPT="application/json"
+    )
+
+    assert response.status_code == 400
+    assert "include" in response.data
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "params",
     [
@@ -458,6 +566,7 @@ def test_schema_documents_user_translations():
         "end_date",
         "project",
         "locale",
+        "include",
         "page",
         "page_size",
     }
