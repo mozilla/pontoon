@@ -10,6 +10,7 @@ from pontoon.base.templatetags.helpers import (
     full_static,
     full_url,
     highlight_matches,
+    highlight_placeables,
     linkify,
     metric_prefix,
     nospam,
@@ -149,3 +150,32 @@ def test_helper_linkify(source, expected):
 )
 def test_helper_highlight_matches_escaped_query(search_query, expected):
     assert highlight_matches("Don't & stop", search_query) == expected
+
+
+@pytest.mark.parametrize("advanced", (False, True))
+@pytest.mark.parametrize("search_query", ("amp", "x27"))
+def test_helper_highlight_matches_character_references(search_query, advanced):
+    """Matches inside the character references of the escaped text are ignored."""
+    assert (
+        highlight_matches("Don't & stop", search_query, advanced=advanced)
+        == "Don&#x27;t &amp; stop"
+    )
+
+
+@pytest.mark.parametrize(
+    "search_query,expected",
+    (
+        (
+            "at",
+            'Upd<mark>at</mark>e <mark class="placeable" data-match="%S">%S</mark> now',
+        ),
+        (
+            "%S",
+            'Update <mark class="placeable" data-match="%S"><mark>%S</mark></mark> now',
+        ),
+    ),
+)
+def test_helper_highlight_matches_placeables(search_query, expected):
+    """Matches inside the tags added by highlight_placeables are ignored."""
+    text = highlight_placeables("Update %S now")
+    assert highlight_matches(text, search_query) == expected
