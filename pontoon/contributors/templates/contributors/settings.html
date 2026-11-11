@@ -375,6 +375,36 @@
             }}
           {% endif %}
         </div>
+        <div class="field machinery-autocomplete-field">
+          {% set autocomplete = user.profile.machinery_autocomplete_mode %}
+          <p class="theme-label">Autocomplete from Machinery</p>
+          <span class="toggle-button">
+            <button
+              type="button"
+              value="off"
+              class="off {% if autocomplete == 'off' %}active{% endif %}"
+              title="Do not autocomplete from Machinery"
+            >
+              Off
+            </button>
+            <button
+              type="button"
+              value="word"
+              class="word {% if autocomplete == 'word' %}active{% endif %}"
+              title="Autocomplete from Machinery one word at a time"
+            >
+              Word by word
+            </button>
+            <button
+              type="button"
+              value="full"
+              class="full {% if autocomplete == 'full' %}active{% endif %}"
+              title="Autocomplete the rest of a Machinery translation"
+            >
+              Full continuation
+            </button>
+          </span>
+        </div>
       </section>
 
       <section id="default-search-options">
