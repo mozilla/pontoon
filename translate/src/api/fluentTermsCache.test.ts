@@ -1,5 +1,5 @@
 import { fetchFluentTerms } from './fluentTerms';
-import { getFluentTerms, termsCache } from './fluentTermsCache';
+import { createGetFluentTerms, termsCache } from './fluentTermsCache';
 
 import type { FluentTerms } from './fluentTerms';
 
@@ -7,7 +7,7 @@ vi.mock('./fluentTerms', () => ({
   fetchFluentTerms: vi.fn(),
 }));
 
-describe('getFluentTerms', () => {
+describe('createGetFluentTerms', () => {
   const project = 'acme';
   const locale = 'ab';
   const sample: FluentTerms = {
@@ -29,10 +29,8 @@ describe('getFluentTerms', () => {
   });
 
   it('should fetch terms only once', async () => {
-    const [a, b] = await Promise.all([
-      getFluentTerms(project, locale),
-      getFluentTerms(project, locale),
-    ]);
+    const getFluentTerms = createGetFluentTerms(project, locale);
+    const [a, b] = await Promise.all([getFluentTerms(), getFluentTerms()]);
 
     expect(fetchFluentTerms).toHaveBeenCalledTimes(1);
     expect(a).toBe(b);
@@ -40,15 +38,15 @@ describe('getFluentTerms', () => {
 
   it('should always fetch when distinct project/locales are provided', async () => {
     await Promise.all([
-      getFluentTerms(project, locale),
-      getFluentTerms('something', 'else'),
+      createGetFluentTerms(project, locale)(),
+      createGetFluentTerms('something', 'else')(),
     ]);
 
     expect(fetchFluentTerms).toHaveBeenCalledTimes(2);
   });
 
   it('should return the fetched value', async () => {
-    const terms = await getFluentTerms(project, locale);
+    const terms = await createGetFluentTerms(project, locale)();
 
     expect(terms).toBe(sample);
   });

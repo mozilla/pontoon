@@ -2,17 +2,22 @@ import { fetchFluentTerms } from './fluentTerms';
 
 import type { FluentTerms } from './fluentTerms';
 
+export type GetFluentTerms = () => Promise<FluentTerms>;
+
 export const termsCache = new Map<string, Promise<FluentTerms>>();
 
-export async function getFluentTerms(
+export function createGetFluentTerms(
   project: string,
   locale: string,
-): Promise<FluentTerms> {
+): GetFluentTerms {
   const key = `${project}/${locale}`;
-  if (!termsCache.has(key)) {
-    const terms = fetchFluentTerms(project, locale);
-    termsCache.set(key, terms);
-  }
 
-  return termsCache.get(key)!;
+  return () => {
+    if (!termsCache.has(key)) {
+      const terms = fetchFluentTerms(project, locale);
+      termsCache.set(key, terms);
+    }
+
+    return termsCache.get(key)!;
+  }
 }

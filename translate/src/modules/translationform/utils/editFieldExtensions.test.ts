@@ -27,14 +27,7 @@ function tempView(format: string, doc = '', extra: Extension = []): EditorView {
   // fall back to a minimal valid entry, as only the format is needed then.
   const entry =
     parseEntry(format, `key = ${doc}`) ?? parseEntry(format, 'key = x')!;
-  const extensions = getExtensions(
-    entry,
-    {} as any,
-    doc,
-    'acme',
-    'ab',
-    getTerms,
-  );
+  const extensions = getExtensions(entry, {} as any, doc);
   currentTempView = new EditorView({
     state: EditorState.create({ doc, extensions: [extensions, extra] }),
   });

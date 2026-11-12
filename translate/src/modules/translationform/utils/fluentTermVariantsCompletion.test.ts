@@ -129,7 +129,7 @@ describe('getTermVariants', () => {
 
 describe('fluentTermVariantsCompletion', () => {
   const getTerms = vi.fn(async () => terms);
-  const source = fluentTermVariantsCompletion(getTerms, 'acme', 'ab');
+  const source = fluentTermVariantsCompletion(getTerms);
 
   function complete(doc: string, pos: number = doc.length) {
     const state = EditorState.create({ doc });

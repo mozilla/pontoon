@@ -3,7 +3,8 @@ import type {
   CompletionSource,
 } from '@codemirror/autocomplete';
 
-import type { FluentTerms, FluentTermType } from '~/api/fluentTerms';
+import type { FluentTermType } from '~/api/fluentTerms';
+import type { GetFluentTerms } from '~/api/fluentTermsCache';
 
 const MATCH_TERM_RE =
   /\{[ \t\n]*-([A-Za-z][\w-]*)\((?:[^),]*,)*[ \t\n]*([A-Za-z][\w-]*)?$/;
@@ -61,9 +62,7 @@ export function getTermVariants(
 }
 
 export function fluentTermVariantsCompletion(
-  getTerms: (project: string, locale: string) => Promise<FluentTerms>,
-  project: string,
-  locale: string,
+  getTerms: GetFluentTerms,
 ): CompletionSource {
   return async (context: CompletionContext) => {
     const textBefore = context.state.doc.sliceString(0, context.pos);
@@ -72,11 +71,11 @@ export function fluentTermVariantsCompletion(
       return null;
     }
 
-    let terms: FluentTerms;
+    let terms: Awaited<ReturnType<GetFluentTerms>>;
     try {
-      terms = await getTerms(project, locale);
+      terms = await getTerms();
     } catch (err) {
-      console.warn(`Cannot retrieve terms for ${project}/${locale}: ${err}`);
+      console.warn(`Cannot retrieve terms: ${err}`);
       return null;
     }
 
