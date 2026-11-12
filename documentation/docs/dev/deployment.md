@@ -415,8 +415,8 @@ login through the provider, so there is no admin account to start with. To
 make your own account an admin:
 
 1. Log in to Pontoon once with the provider, so that your account exists.
-2. Open a shell on the server (`make shell` if you're using the Docker setup)
-   and run, using the email address your provider account logs in with:
+2. Open a shell on the server and run the following command using the email
+   address your provider account logs in with:
 
    ```sh
    ./manage.py shell -c "from django.contrib.auth.models import User; print(User.objects.filter(email='you@example.com').update(is_superuser=True, is_staff=True))"
@@ -424,15 +424,10 @@ make your own account an admin:
 
    It should print `1`. If it prints `0`, no account with that email exists
    yet.
-3. Log out and log back in.
 
 `is_superuser` grants all permissions in Pontoon, including the admin pages
 under `/admin/`, and `is_staff` is what grants access to the Django admin at
 `/a/`.
-
-Note that `./manage.py createsuperuser` doesn't help here: it creates a
-separate account with a password, which can only log in when
-`AUTHENTICATION_METHOD=django`.
 
 ## Scheduled Jobs
 
