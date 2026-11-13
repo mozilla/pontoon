@@ -178,7 +178,7 @@ $(function () {
 
     const setLocalesFromRepo = setLocalesCheckbox.prop('checked');
     const trDiv = $('#translated_resources_from_repo');
-    const locales = $('.locales, .locales-toolbar');
+    const locales = $('.locales, .copy-locales');
     if (setLocalesFromRepo) {
       trDiv.toggle(!configFile);
       locales.hide();
