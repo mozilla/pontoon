@@ -481,9 +481,6 @@ describe('ghostText extension', () => {
       return textNode;
     }
 
-    const endComposition = () =>
-      view!.contentDOM.dispatchEvent(new CompositionEvent('compositionend'));
-
     test('shows ghost text while composing', async () => {
       createView('エラー：', [jaFailed], { locale: 'ja' });
       expect(ghost()).toBeNull();
