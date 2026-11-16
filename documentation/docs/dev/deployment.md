@@ -42,7 +42,7 @@ applied per authenticated user. Uses the Django REST Framework format
 `day` (default: `180/hour`).
 
 `AUTHENTICATION_METHOD`  
-The default value is `django`, which allows you to log in via accounts created using `manage.py shell`.
+The default value is `django`, which allows you to log in via accounts created using `manage.py createsuperuser`.
 See [Authentication provider configuration](#authentication-provider-configuration) 
 for more information about third-party authentication methods.
 
@@ -407,6 +407,27 @@ To use Keycloak authentication (`AUTHENTICATION_METHOD=keycloak`):
 - `KEYCLOAK_CLIENT_ID`
 - `KEYCLOAK_CLIENT_SECRET`
 - `KEYCLOAK_CLIENT_URL`
+
+### Creating the first admin account
+
+With a third-party authentication method, every account is created on first
+login through the provider, so there is no admin account to start with. To
+make your own account an admin:
+
+1. Log in to Pontoon once with the provider, so that your account exists.
+2. Open a shell on the server and run the following command using the email
+   address your provider account logs in with:
+
+   ```sh
+   ./manage.py shell -c "from django.contrib.auth.models import User; print(User.objects.filter(email='you@example.com').update(is_superuser=True, is_staff=True))"
+   ```
+
+   It should print `1`. If it prints `0`, no account with that email exists
+   yet.
+
+`is_superuser` grants all permissions in Pontoon, including the admin pages
+under `/admin/`, and `is_staff` is what grants access to the Django admin at
+`/a/`.
 
 ## Scheduled Jobs
 
