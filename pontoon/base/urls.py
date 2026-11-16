@@ -61,7 +61,6 @@ urlpatterns = [
     # AJAX
     path("get-entities/", views.entities, name="pontoon.entities"),
     path("get-users/", views.get_users, name="pontoon.get_users"),
-    path("perform-checks/", views.perform_checks, name="pontoon.perform.checks"),
     path("get-history/", views.get_translation_history, name="pontoon.get_history"),
     path(
         "get-team-comments/",

@@ -64,8 +64,6 @@ from pontoon.base.user_utils import (
     translator_for_locales,
     user_banner,
 )
-from pontoon.checks.libraries import run_checks
-from pontoon.checks.utils import are_blocking_checks
 from pontoon.contributors.utils import users_with_translations_counts
 from pontoon.messaging.notifications import send_notification
 
@@ -1021,41 +1019,6 @@ def get_users(request):
         )
 
     return JsonResponse(payload, safe=False)
-
-
-@utils.require_AJAX
-def perform_checks(request):
-    """Perform quality checks and return a list of any failed ones."""
-    try:
-        entity_id = request.POST["entity"]
-        locale_code = request.POST["locale_code"]
-        string = request.POST["string"]
-        ignore_warnings = request.POST.get("ignore_warnings", "false") == "true"
-    except MultiValueDictKeyError as e:
-        return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"},
-            status=400,
-        )
-
-    try:
-        entity = Entity.objects.get(pk=entity_id)
-    except Entity.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"},
-            status=400,
-        )
-
-    failed_checks = run_checks(
-        entity,
-        locale_code,
-        string,
-        request.user.profile.quality_checks,
-    )
-
-    if are_blocking_checks(failed_checks, ignore_warnings):
-        return JsonResponse({"failedChecks": failed_checks})
-    else:
-        return JsonResponse({"status": True})
 
 
 @transaction.atomic
