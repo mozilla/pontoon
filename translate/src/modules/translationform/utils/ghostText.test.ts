@@ -283,15 +283,20 @@ describe('ghostText extension', () => {
       source = doc,
       onEscape = () => false,
       mode,
+      locale = 'it',
     }: {
       source?: string;
       onEscape?: () => boolean;
       mode?: MachineryAutocomplete;
+      locale?: string;
     } = {},
   ) {
     const entry = parseEntry('fluent', `key = ${source}`)!;
     const ref = { current: { onEscape } };
-    const extensions = [getExtensions(entry, ref as any, doc), ghostText('it')];
+    const extensions = [
+      getExtensions(entry, ref as any, doc),
+      ghostText(locale),
+    ];
     const state = EditorState.create({
       doc,
       extensions,
@@ -450,5 +455,55 @@ describe('ghostText extension', () => {
       expect(parent.querySelector('.cm-tooltip-autocomplete')).not.toBeNull();
     });
     expect(ghost()).toBeNull();
+  });
+
+  describe('with an IME', () => {
+    // サーバー | へ | の | 接続 | に | 失敗 | しま | した | 。 | …
+    const jaFailed =
+      'サーバーへの接続に失敗しました。ネットワーク設定を確認してください。';
+
+    beforeAll(() => {
+      Range.prototype.getClientRects = () => [] as unknown as DOMRectList;
+    });
+    afterAll(() => {
+      delete (Range.prototype as Partial<Range>).getClientRects;
+    });
+
+    async function compose(text: string) {
+      const { contentDOM, state } = view!;
+      view!.focus();
+      contentDOM.dispatchEvent(new CompositionEvent('compositionstart'));
+      const { node } = view!.domAtPos(state.selection.main.head);
+      const textNode = node as Text;
+      textNode.data += text;
+      document.getSelection()!.collapse(textNode, textNode.length);
+      await vi.waitFor(() => expect(view!.composing).toBe(true));
+      return textNode;
+    }
+
+    const endComposition = () =>
+      view!.contentDOM.dispatchEvent(new CompositionEvent('compositionend'));
+
+    test('shows ghost text while composing', async () => {
+      createView('エラー：', [jaFailed], { locale: 'ja' });
+      expect(ghost()).toBeNull();
+
+      const composed = await compose('への接続');
+      expect(view!.state.doc.toString()).toBe('エラー：への接続');
+      expect(ghost()).toBe('に');
+
+      expect(composed.isConnected).toBe(true);
+      expect(composed.data).toBe('エラー：への接続');
+    });
+
+    test('leaves Tab and Escape to the IME while composing', async () => {
+      createView('エラー：', [jaFailed], { locale: 'ja' });
+      await compose('への接続');
+
+      expect(press('Tab')).toBe(false);
+      expect(press('Escape')).toBe(false);
+      expect(view!.state.doc.toString()).toBe('エラー：への接続');
+      expect(ghost()).toBe('に');
+    });
   });
 });
