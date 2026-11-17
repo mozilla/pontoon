@@ -5,7 +5,8 @@ from typing import cast
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import F, JSONField, Lookup, Q, QuerySet
+from django.db.models import F, Q, QuerySet
+from django.db.models.expressions import RawSQL
 from django.utils.timezone import make_aware
 
 from pontoon.base.models import Entity, Locale, Project, Resource, Translation, User
@@ -239,28 +240,10 @@ def _is_email(email: str) -> bool:
         return False
 
 
-@JSONField.register_lookup
-class AllValuesEmpty(Lookup):
-    """Match a JSON object whose every value is an empty message pattern.
+class _ConditionalRawSQL(RawSQL):
+    """A RawSQL expression usable directly as a filter condition."""
 
-    An empty pattern is `[]`, `[""]` or the `{ "" }` expression (`[{"_": ""}]`).
-    A null value matches as well, since `jsonb_each(NULL)` returns no rows.
-    """
-
-    lookup_name = "all_values_empty"
-
-    def as_sql(self, compiler, connection):
-        lhs, lhs_params = self.process_lhs(compiler, connection)
-        sql = (
-            f"NOT EXISTS ("
-            f"SELECT FROM jsonb_each({lhs}) AS each_(key, value) "
-            f"WHERE value <> '[]' AND value <> '[\"\"]' "
-            f'AND value <> \'[{{"_": ""}}]\''
-            f")"
-        )
-        if self.rhs is False:
-            sql = f"NOT ({sql})"
-        return sql, lhs_params
+    conditional = True
 
 
 def _status_filter(project: Project, locale: Locale, status: str) -> Q:
@@ -308,9 +291,17 @@ def _extra_filter(locale: Locale, extra: str) -> Q:
                 # an empty pattern (`[]`, `[""]` or the `{ "" }` expression)
                 # and no non-empty properties. Messages with emptied
                 # attributes, e.g. `key =\n    .attr = { "" }`, count as empty.
+                properties_all_empty = _ConditionalRawSQL(
+                    "NOT EXISTS ("
+                    "SELECT FROM jsonb_each(properties) AS each_(key, value) "
+                    "WHERE value <> '[]' AND value <> '[\"\"]' "
+                    'AND value <> \'[{"_": ""}]\''
+                    ")",
+                    (),
+                )
                 q = Q(string="") | (
                     (Q(value=[]) | Q(value=[""]) | Q(value=[{"_": ""}]))
-                    & Q(properties__all_values_empty=True)
+                    & Q(properties_all_empty)
                 )
             case "fuzzy":
                 q = Q(fuzzy=True, warnings__isnull=True, errors__isnull=True)
