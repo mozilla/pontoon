@@ -7,10 +7,8 @@ import React, {
   useState,
 } from 'react';
 
-import type { MachineryAutocomplete } from '~/api/user';
 import { ThemeContext } from '~/context/Theme';
 import type { Settings } from '~/modules/user';
-import type { SettingsState } from '~/modules/user/reducer';
 import { useOnDiscard } from '~/utils';
 import { scrollIntoView } from '~/utils/scrollIntoView';
 import { useTranslator } from '~/hooks/useTranslator';
@@ -18,38 +16,15 @@ import { useTranslator } from '~/hooks/useTranslator';
 import './EditorSettings.css';
 
 type Props = {
-  settings: SettingsState;
+  settings: Settings;
   updateSetting: (name: keyof Settings, value: boolean) => void;
-  updateMachineryAutocomplete: (value: MachineryAutocomplete) => void;
 };
 
 type EditorSettingsProps = {
-  settings: SettingsState;
+  settings: Settings;
   toggleSetting: (name: keyof Settings) => void;
-  updateMachineryAutocomplete: (value: MachineryAutocomplete) => void;
   onDiscard: () => void;
 };
-
-const AUTOCOMPLETE_OPTIONS = [
-  {
-    value: 'off',
-    id: 'editor-EditorSettings--autocomplete-off',
-    label: 'Off',
-    title: 'Do not autocomplete from Machinery',
-  },
-  {
-    value: 'word',
-    id: 'editor-EditorSettings--autocomplete-word',
-    label: 'Word',
-    title: 'Autocomplete from Machinery one word at a time',
-  },
-  {
-    value: 'full',
-    id: 'editor-EditorSettings--autocomplete-full',
-    label: 'Full',
-    title: 'Autocomplete the rest of a Machinery translation',
-  },
-] as const;
 
 const EDITOR_THEME_OPTIONS = [
   {
@@ -78,7 +53,6 @@ const EDITOR_THEME_OPTIONS = [
 export function EditorSettingsDialog({
   settings,
   toggleSetting,
-  updateMachineryAutocomplete,
   onDiscard,
 }: EditorSettingsProps): React.ReactElement<'ul'> {
   const ref = useRef<HTMLUListElement>(null);
@@ -126,27 +100,21 @@ export function EditorSettingsDialog({
         </Localized>
       ) : null}
 
-      <li className='horizontal-separator'></li>
-      <div className='appearance'>
-        <Localized id='editor-EditorSettings--autocomplete-title'>
-          <p className='help'>{'Autocomplete'}</p>
-        </Localized>
-        <span className='toggle-button'>
-          {AUTOCOMPLETE_OPTIONS.map(({ value, id, label, title }) => (
-            <Localized key={value} id={id} attrs={{ title: true }}>
-              <button
-                type='button'
-                value={value}
-                className={`${value} ${settings.machineryAutocomplete === value ? 'active' : ''}`}
-                title={title}
-                onClick={() => updateMachineryAutocomplete(value)}
-              >
-                {label}
-              </button>
-            </Localized>
-          ))}
-        </span>
-      </div>
+      <Localized
+        id='editor-EditorSettings--autocomplete'
+        attrs={{ title: true }}
+        elems={{ glyph: <i className='fas fa-fw' /> }}
+      >
+        <li
+          className={
+            'check-box' + (settings.machineryAutocomplete ? ' enabled' : '')
+          }
+          title='Complete translations from Machinery as you type'
+          onClick={() => toggleSetting('machineryAutocomplete')}
+        >
+          {'<glyph></glyph>Autocomplete'}
+        </li>
+      </Localized>
 
       <li className='horizontal-separator'></li>
       <div className='appearance'>
@@ -191,7 +159,6 @@ export function EditorSettingsDialog({
 export function EditorSettings({
   settings,
   updateSetting,
-  updateMachineryAutocomplete,
 }: Props): React.ReactElement<'div'> {
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
@@ -218,7 +185,6 @@ export function EditorSettings({
         <EditorSettingsDialog
           settings={settings}
           toggleSetting={toggleSetting}
-          updateMachineryAutocomplete={updateMachineryAutocomplete}
           onDiscard={handleDiscard}
         />
       )}

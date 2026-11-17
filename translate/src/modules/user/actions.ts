@@ -1,14 +1,14 @@
 import {
   dismissAddonPromotion,
   fetchUserData,
-  type MachineryAutocomplete,
   markAllNotificationsAsRead,
-  updateUserMachineryAutocomplete,
   updateUserSetting,
   updateUserTheme,
 } from '~/api/user';
 import { NotificationMessage } from '~/context/Notification';
 import {
+  AUTOCOMPLETE_DISABLED,
+  AUTOCOMPLETE_ENABLED,
   CHECKS_DISABLED,
   CHECKS_ENABLED,
   SUGGESTIONS_DISABLED,
@@ -42,6 +42,7 @@ export type UpdateAction = {
 export type Settings = {
   runQualityChecks?: boolean;
   forceSuggestions?: boolean;
+  machineryAutocomplete?: boolean;
 };
 
 /**
@@ -49,9 +50,7 @@ export type Settings = {
  */
 export type UpdateSettingsAction = {
   readonly type: typeof UPDATE_SETTINGS;
-  readonly settings: Settings & {
-    machineryAutocomplete?: MachineryAutocomplete;
-  };
+  readonly settings: Settings;
 };
 
 /**
@@ -68,6 +67,8 @@ function getNotification(setting: keyof Settings, value: boolean) {
       return value ? CHECKS_ENABLED : CHECKS_DISABLED;
     case 'forceSuggestions':
       return value ? SUGGESTIONS_ENABLED : SUGGESTIONS_DISABLED;
+    case 'machineryAutocomplete':
+      return value ? AUTOCOMPLETE_ENABLED : AUTOCOMPLETE_DISABLED;
     default:
       throw new Error('Unsupported operation on setting: ' + setting);
   }
@@ -85,15 +86,6 @@ export function saveSetting(
 
     const notif = getNotification(setting, value);
     showNotification(notif);
-  };
-}
-
-export function saveMachineryAutocomplete(
-  machineryAutocomplete: MachineryAutocomplete,
-): AppThunk {
-  return async (dispatch) => {
-    dispatch({ type: UPDATE_SETTINGS, settings: { machineryAutocomplete } });
-    await updateUserMachineryAutocomplete(machineryAutocomplete);
   };
 }
 

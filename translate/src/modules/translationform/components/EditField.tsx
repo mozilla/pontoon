@@ -16,20 +16,14 @@ import React, {
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
 import { editorThemeClass, ThemeContext } from '~/context/Theme';
-import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { USER } from '~/modules/user';
 
 import {
   getExtensions,
   useGhostTextCandidates,
   useKeyHandlers,
 } from '../utils/editFieldExtensions';
-import {
-  ghostText,
-  setGhostTextCandidates,
-  setGhostTextMode,
-} from '../utils/ghostText';
+import { ghostText, setGhostTextCandidates } from '../utils/ghostText';
 import { EntityView } from '~/context/EntityView';
 import { messageEntryFromEntity } from '~/utils/message/fromEntity';
 
@@ -58,9 +52,6 @@ export const EditField = memo(
       const { setResultFromInput } = useContext(EditorActions);
       const keyHandlers = useKeyHandlers();
       const ghostTextCandidates = useGhostTextCandidates(fieldId);
-      const ghostTextMode = useAppSelector(
-        (state) => state[USER].settings.machineryAutocomplete,
-      );
       const [view, setView] = useState<EditorView | null>(null);
 
       const callbacks = useRef({ onFocus, setResultFromInput });
@@ -127,12 +118,9 @@ export const EditField = memo(
 
       useEffect(() => {
         view?.dispatch({
-          effects: [
-            setGhostTextCandidates.of(ghostTextCandidates),
-            setGhostTextMode.of(ghostTextMode),
-          ],
+          effects: setGhostTextCandidates.of(ghostTextCandidates),
         });
-      }, [view, ghostTextCandidates, ghostTextMode]);
+      }, [view, ghostTextCandidates]);
 
       useImperativeHandle<EditFieldHandle, EditFieldHandle>(
         ref,

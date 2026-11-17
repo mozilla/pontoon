@@ -11,7 +11,6 @@ import {
   WidgetType,
 } from '@codemirror/view';
 
-import type { MachineryAutocomplete } from '~/api/user';
 import { placeholder } from '~/modules/placeable/placeholder';
 
 export const MIN_MATCH_TO_COMPLETE_WORD = 4;
@@ -20,15 +19,12 @@ export const MIN_MATCH_TO_SUGGEST_NEXT_WORD = 8;
 
 export const setGhostTextCandidates = StateEffect.define<readonly string[]>();
 
-export const setGhostTextMode = StateEffect.define<MachineryAutocomplete>();
-
 const dismissGhostTextEffect = StateEffect.define<null>();
 
 type GhostTextState = {
   segmenter: Intl.Segmenter;
   candidates: readonly string[];
-  mode: MachineryAutocomplete;
-  dismissed: boolean;
+  hidden: boolean;
 };
 
 const ghostTextState = StateField.define<GhostTextState | null>({
@@ -38,16 +34,17 @@ const ghostTextState = StateField.define<GhostTextState | null>({
       return value;
     }
     let next = value;
-    if (next.dismissed && (tr.docChanged || tr.selection)) {
-      next = { ...next, dismissed: false };
+    if (tr.docChanged || tr.selection) {
+      const hidden = tr.isUserEvent('delete');
+      if (hidden !== next.hidden) {
+        next = { ...next, hidden };
+      }
     }
     for (const effect of tr.effects) {
       if (effect.is(setGhostTextCandidates)) {
         next = { ...next, candidates: effect.value };
-      } else if (effect.is(setGhostTextMode)) {
-        next = { ...next, mode: effect.value };
       } else if (effect.is(dismissGhostTextEffect)) {
-        next = { ...next, dismissed: true };
+        next = { ...next, hidden: true };
       }
     }
     return next;
@@ -58,26 +55,22 @@ function getGhostText(view: EditorView): { pos: number; text: string } | null {
   const { state } = view;
   const ghost = state.field(ghostTextState, false);
   const { main, ranges } = state.selection;
+  const pos = state.doc.length;
   if (
     !ghost ||
-    ghost.mode === 'off' ||
-    ghost.dismissed ||
+    ghost.hidden ||
     ghost.candidates.length === 0 ||
     ranges.length > 1 ||
     !main.empty ||
+    main.head !== pos ||
     currentCompletions(state).length > 0
   ) {
     return null;
   }
-  const pos = main.head;
-  const line = state.doc.lineAt(pos);
-  const full = ghost.mode === 'full' && pos === state.doc.length;
   const text = findGhostText(
-    state.doc.sliceString(0, pos),
-    line.text.slice(pos - line.from),
+    state.doc.toString(),
     ghost.candidates,
     ghost.segmenter,
-    full,
   );
   return text ? { pos, text } : null;
 }
@@ -133,8 +126,7 @@ export function ghostText(locale: string): Extension {
         ghostTextState.init(() => ({
           segmenter,
           candidates: [],
-          mode: 'word',
-          dismissed: false,
+          hidden: false,
         })),
         ghostTextPlugin,
       ]
@@ -185,15 +177,9 @@ const hasWordChar = /[\p{L}\p{N}]/u;
 
 export function findGhostText(
   before: string,
-  after: string,
   candidates: readonly string[],
   segmenter: Intl.Segmenter,
-  full = false,
 ): string {
-  if (wordChar.test(after.charAt(0))) {
-    return '';
-  }
-
   let best = { candidate: '', length: 0 };
   for (const candidate of candidates) {
     const length = getMatchLength(before, candidate);
@@ -221,13 +207,8 @@ export function findGhostText(
   if (!unit) {
     return '';
   }
-  if (full) {
-    return candidate.slice(end).replace(/\r\n?/g, '\n');
-  }
-  const text = candidate
-    .slice(end, after ? unit.wordEnd : unit.end)
-    .split(/[\r\n]/, 1)[0];
-  return text.trim() && !after.startsWith(text) ? text : '';
+  const text = candidate.slice(end, unit.end).split(/[\r\n]/, 1)[0];
+  return text.trim() ? text : '';
 }
 
 function getUnitToComplete(
@@ -270,11 +251,10 @@ function getMatchWeight(text: string): number {
 }
 
 /**
- * What Tab accepts in word-by-word mode: a word with any punctuation,
- * placeholders or tags attached to it, and the space after it.
- * `wordEnd` is where its last word or placeholder ends.
+ * What Tab accepts: a word with any punctuation, placeholders or tags
+ * attached to it.
  */
-type Unit = { start: number; wordEnd: number; end: number };
+type Unit = { start: number; end: number };
 
 const breakingSpace = /[^\S\u00a0\u2007\u202f]/;
 const joiner = /^[-\u2010\u2011/\u00a0\u2007\u202f]+$/;
@@ -289,8 +269,6 @@ function getUnits(text: string, segmenter: Intl.Segmenter): Unit[] {
     const str = text.slice(token.start, token.end);
     if (!token.isWord && breakingSpace.test(str)) {
       if (unit) {
-        const newline = str.search(/[\r\n]/);
-        unit.end = newline === -1 ? token.end : token.start + newline;
         units.push(unit);
         unit = null;
       }
@@ -303,14 +281,11 @@ function getUnits(text: string, segmenter: Intl.Segmenter): Unit[] {
       unit = null;
     }
     if (!unit) {
-      unit = { start: token.start, wordEnd: token.start, end: token.end };
+      unit = { start: token.start, end: token.end };
       hasWord = false;
       joined = null;
     }
     unit.end = token.end;
-    if (token.isWord) {
-      unit.wordEnd = token.end;
-    }
     if (isText) {
       hasWord = true;
       joined = null;

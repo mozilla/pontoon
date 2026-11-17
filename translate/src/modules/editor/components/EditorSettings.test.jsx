@@ -130,30 +130,38 @@ describe('<EditorSettingsDialog>', () => {
     expect(toggleSettingMock).toHaveBeenCalledWith('forceSuggestions');
   });
 
-  it('selects an autocomplete mode', () => {
-    const updateMock = vi.fn();
-    const { getByRole } = render(
+  it('toggles the machineryAutocomplete setting', () => {
+    const [{ getAllByRole, rerender }, toggleSettingMock] =
+      createEditorSettingsDialog();
+
+    const item = () => getAllByRole('listitem')[2];
+    expect(item().textContent).toContain('Autocomplete');
+    expect(item()).not.toHaveClass('enabled');
+
+    fireEvent.click(item());
+    expect(toggleSettingMock.mock.calls).toMatchObject([
+      ['machineryAutocomplete'],
+    ]);
+
+    rerender(
       <MockLocalizationProvider>
         <EditorSettingsDialog
-          settings={{ machineryAutocomplete: 'word' }}
-          toggleSetting={vi.fn()}
-          updateMachineryAutocomplete={updateMock}
+          settings={{
+            runQualityChecks: false,
+            forceSuggestions: false,
+            machineryAutocomplete: true,
+          }}
+          toggleSetting={toggleSettingMock}
         />
       </MockLocalizationProvider>,
     );
-
-    expect(getByRole('button', { name: /Word/ })).toHaveClass('active');
-    expect(getByRole('button', { name: /Off/ })).not.toHaveClass('active');
-    expect(getByRole('button', { name: /Full/ })).not.toHaveClass('active');
-
-    fireEvent.click(getByRole('button', { name: /Full/ }));
-    expect(updateMock).toHaveBeenCalledWith('full');
+    expect(item()).toHaveClass('enabled');
   });
 
-  it('shows the autocomplete modes to non-translators', () => {
+  it('shows the machineryAutocomplete setting to non-translators', () => {
     isTranslator = false;
-    const [{ getByRole }] = createEditorSettingsDialog();
-    expect(getByRole('button', { name: /Off/ })).toBeInTheDocument();
+    const [{ getAllByRole }] = createEditorSettingsDialog();
+    expect(getAllByRole('listitem')[1].textContent).toContain('Autocomplete');
   });
 });
 

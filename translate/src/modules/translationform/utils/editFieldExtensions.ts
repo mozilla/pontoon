@@ -26,8 +26,10 @@ import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { useEntityEntry } from '~/context/EntityView';
 import { editorThemeClass } from '~/context/Theme';
+import { useAppSelector } from '~/hooks';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
 import { placeholder } from '~/modules/placeable/placeholder';
+import { USER } from '~/modules/user';
 import { editMessageEntry, type MessageEntry } from '~/utils/message';
 import { createMessageEntry } from '~/utils/message/createMessageEntry';
 import { editablePattern } from '~/utils/message/editablePattern';
@@ -76,11 +78,14 @@ export function useKeyHandlers() {
 }
 
 export function useGhostTextCandidates(fieldId?: string): readonly string[] {
+  const enabled = useAppSelector(
+    (state) => state[USER].settings.machineryAutocomplete,
+  );
   const { composed, translations } = useContext(MachineryTranslations);
   const { query } = useContext(SearchData);
   const sourceEntry = useEntityEntry();
   return useMemo(() => {
-    if (query) {
+    if (!enabled || query) {
       return [];
     }
     const candidates = translations.map((tx) => tx.translation);
@@ -96,7 +101,7 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
       return field?.handle.current.value ? [field.handle.current.value] : [];
     });
     return [...fieldCandidates, ...candidates];
-  }, [composed, fieldId, query, sourceEntry, translations]);
+  }, [composed, enabled, fieldId, query, sourceEntry, translations]);
 }
 
 const style = HighlightStyle.define([

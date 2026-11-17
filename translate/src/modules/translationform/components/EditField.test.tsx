@@ -9,7 +9,6 @@ import type {
   ComposedMachineryTranslation,
   MachineryTranslation,
 } from '~/api/machinery';
-import type { MachineryAutocomplete } from '~/api/user';
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
@@ -28,7 +27,7 @@ function MockEditField({
   isAuthenticated = true,
   setResultFromInput = vi.fn(),
   machinery = [],
-  machineryAutocomplete = 'word',
+  machineryAutocomplete = true,
   query = '',
   value,
   properties,
@@ -42,7 +41,7 @@ function MockEditField({
   isAuthenticated?: boolean;
   setResultFromInput?: EditorActions['setResultFromInput'];
   machinery?: string[];
-  machineryAutocomplete?: MachineryAutocomplete;
+  machineryAutocomplete?: boolean;
   query?: string;
   value?: Message;
   properties?: Record<string, Message>;
@@ -214,29 +213,29 @@ describe('<EditField>', () => {
 
     it('is shown from Machinery suggestions and accepted with Tab', async () => {
       const { container, ref } = renderField({});
-      expect(ghost(container)).toBe(' riesce ');
+      expect(ghost(container)).toBe(' riesce');
 
       await userEvent.keyboard(' r');
-      expect(ghost(container)).toBe('iesce ');
+      expect(ghost(container)).toBe('iesce');
 
       await userEvent.keyboard('{Tab}');
-      expect(ref.current!.value).toBe('Firefox non riesce ');
-      expect(ghost(container)).toBe('a ');
+      expect(ref.current!.value).toBe('Firefox non riesce');
+      expect(ghost(container)).toBe(' a');
+    });
+
+    it('is hidden after Backspace', async () => {
+      const { container } = renderField({});
+      await userEvent.keyboard(' ri{Backspace}');
+      expect(ghost(container)).toBeNull();
+
+      await userEvent.keyboard('i');
+      expect(ghost(container)).toBe('esce');
     });
 
     it('is not shown when turned off in the settings', async () => {
-      const { container } = renderField({ machineryAutocomplete: 'off' });
+      const { container } = renderField({ machineryAutocomplete: false });
       await userEvent.keyboard(' r');
       expect(ghost(container)).toBeNull();
-    });
-
-    it('shows the full continuation when set to full', async () => {
-      const { container, ref } = renderField({ machineryAutocomplete: 'full' });
-      await userEvent.keyboard(' r');
-      expect(ghost(container)).toBe('iesce a trovare il server');
-
-      await userEvent.keyboard('{Tab}');
-      expect(ref.current!.value).toBe(firefox);
     });
 
     describe('composed suggestions', () => {
@@ -283,7 +282,7 @@ describe('<EditField>', () => {
           defaultValue: 'Un so',
         };
         const one = renderField({ ...props, fieldId: '|one' });
-        expect(ghost(one.container)).toBe('lo ');
+        expect(ghost(one.container)).toBe('lo');
 
         const other = renderField({ ...props, fieldId: '|*' });
         expect(ghost(other.container)).toBeNull();

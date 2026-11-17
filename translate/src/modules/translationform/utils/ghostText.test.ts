@@ -3,23 +3,15 @@ import { undo } from '@codemirror/commands';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 
-import type { MachineryAutocomplete } from '~/api/user';
 import { parseEntry } from '~/utils/message';
 
 import { getExtensions } from './editFieldExtensions';
-import {
-  findGhostText,
-  ghostText,
-  setGhostTextCandidates,
-  setGhostTextMode,
-} from './ghostText';
+import { findGhostText, ghostText, setGhostTextCandidates } from './ghostText';
 
 describe('findGhostText', () => {
   const segmenter = new Intl.Segmenter('it', { granularity: 'word' });
-  const find = (before: string, candidates: string[], after = '') =>
-    findGhostText(before, after, candidates, segmenter);
-  const findFull = (before: string, candidates: string[]) =>
-    findGhostText(before, '', candidates, segmenter, true);
+  const find = (before: string, candidates: string[]) =>
+    findGhostText(before, candidates, segmenter);
 
   const firefox = 'Firefox non riesce a trovare il server';
 
@@ -34,16 +26,16 @@ describe('findGhostText', () => {
   });
 
   test('completes the current word', () => {
-    expect(find('Firefox non r', [firefox])).toBe('iesce ');
-    expect(find('Impossibile trov', [firefox])).toBe('are ');
+    expect(find('Firefox non r', [firefox])).toBe('iesce');
+    expect(find('Impossibile trov', [firefox])).toBe('are');
   });
 
   test('completes a word at the start of the content', () => {
-    expect(find('Salv', ['Salva il file'])).toBe('a ');
+    expect(find('Salv', ['Salva il file'])).toBe('a');
   });
 
   test('completes a word at the start of the candidate', () => {
-    expect(find('Apri salv', ['salva il file'])).toBe('a ');
+    expect(find('Apri salv', ['salva il file'])).toBe('a');
   });
 
   test('does not complete a word from its middle', () => {
@@ -54,8 +46,8 @@ describe('findGhostText', () => {
   });
 
   test('suggests the next word for a good match', () => {
-    expect(find('Firefox non riesce', [firefox])).toBe(' a ');
-    expect(find('Firefox non riesce ', [firefox])).toBe('a ');
+    expect(find('Firefox non riesce', [firefox])).toBe(' a');
+    expect(find('Firefox non riesce ', [firefox])).toBe('a');
     expect(find('Impossibile trovare il ', [firefox])).toBe('server');
   });
 
@@ -81,7 +73,7 @@ describe('findGhostText', () => {
 
   test('uses the earlier candidate on a tie, even with nothing to suggest', () => {
     expect(find('Elimina', ['Elimina tutto', 'Eliminare tutto'])).toBe('');
-    expect(find('Elimina', ['Eliminare tutto', 'Elimina tutto'])).toBe('re ');
+    expect(find('Elimina', ['Eliminare tutto', 'Elimina tutto'])).toBe('re');
   });
 
   test('does not fall back to a shorter match', () => {
@@ -93,45 +85,31 @@ describe('findGhostText', () => {
 
   test('keeps placeholders and tags together', () => {
     const fluent = 'Elimina { $count } file';
-    expect(find('Elimina ', [fluent])).toBe('{ $count } ');
-    expect(find('Elimina { $co', [fluent])).toBe('unt } ');
+    expect(find('Elimina ', [fluent])).toBe('{ $count }');
+    expect(find('Elimina { $co', [fluent])).toBe('unt }');
     expect(find('Elimina { $count } ', [fluent])).toBe('file');
 
     const html = 'Fai clic su <strong>Salva</strong> per continuare';
-    expect(find('Fai clic su ', [html])).toBe('<strong>Salva</strong> ');
-    expect(find('Fai clic su <strong>', [html])).toBe('Salva</strong> ');
+    expect(find('Fai clic su ', [html])).toBe('<strong>Salva</strong>');
+    expect(find('Fai clic su <strong>', [html])).toBe('Salva</strong>');
   });
 
   test('does not continue past the end of the line', () => {
     const multiline = 'Prima riga \nSeconda riga';
     expect(find('Prima riga', [multiline])).toBe('');
-    expect(find('Prima riga \nSec', [multiline])).toBe('onda ');
-  });
-
-  test('does not suggest anything in the middle of a word', () => {
-    expect(find('Salva il ', ['Salva il file'], 'file')).toBe('');
-  });
-
-  test('does not repeat what is already after the cursor', () => {
-    expect(find('Salva il', ['Salva il file'], ' file')).toBe('');
-    expect(find('Salva il', ['Salva il file'], ' documento')).toBe(' file');
-    const candidates = ['Salva il file', 'Salva il documento'];
-    expect(find('Salva il', candidates, ' file')).toBe('');
+    expect(find('Prima riga \nSec', [multiline])).toBe('onda');
   });
 
   test('uses word segmentation for languages without spaces', () => {
     const ja = new Intl.Segmenter('ja', { granularity: 'word' });
     // この | ファイル | を | 開く
-    expect(findGhostText('このファイ', '', ['このファイルを開く'], ja)).toBe(
-      'ル',
-    );
+    expect(findGhostText('このファイ', ['このファイルを開く'], ja)).toBe('ル');
   });
 
   describe('counts a CJK letter as two characters', () => {
     test('in Japanese', () => {
       const ja = new Intl.Segmenter('ja', { granularity: 'word' });
-      const jaFind = (before: string) =>
-        findGhostText(before, '', [jaFailed], ja);
+      const jaFind = (before: string) => findGhostText(before, [jaFailed], ja);
       // サーバー | へ | の | 接続 | に | 失敗 | しま | した | 。 | ネットワーク | 設定 | を | 確認 | …
       const jaFailed =
         'サーバーへの接続に失敗しました。ネットワーク設定を確認してください。';
@@ -149,7 +127,7 @@ describe('findGhostText', () => {
     test('in Chinese', () => {
       const zh = new Intl.Segmenter('zh', { granularity: 'word' });
       const zhFind = (before: string) =>
-        findGhostText(before, '', ['无法连接到服务器'], zh);
+        findGhostText(before, ['无法连接到服务器'], zh);
       // 无法 | 连接 | 到 | 服务器
       expect(zhFind('无法连接')).toBe('到');
       expect(zhFind('连接')).toBe('');
@@ -160,9 +138,9 @@ describe('findGhostText', () => {
     test('in Korean', () => {
       const ko = new Intl.Segmenter('ko', { granularity: 'word' });
       const koFind = (before: string) =>
-        findGhostText(before, '', ['서버에 연결할 수 없습니다'], ko);
+        findGhostText(before, ['서버에 연결할 수 없습니다'], ko);
       expect(koFind('연결할 수')).toBe(' 없습니다');
-      expect(koFind('에 연')).toBe('결할 ');
+      expect(koFind('에 연')).toBe('결할');
       expect(koFind('결할 ')).toBe('');
     });
 
@@ -170,34 +148,32 @@ describe('findGhostText', () => {
       const th = new Intl.Segmenter('th', { granularity: 'word' });
       // เปิด | ไฟล์ | ␣ | แล้ว | ปิด
       const thFind = (before: string) =>
-        findGhostText(before, '', ['เปิดไฟล์ แล้วปิด'], th);
+        findGhostText(before, ['เปิดไฟล์ แล้วปิด'], th);
       expect(thFind('ไฟล์ ')).toBe('');
       expect(thFind('เปิดไฟล์ ')).toBe('แล้ว');
     });
   });
 
-  describe('accepts a word with the space after it', () => {
-    test('so that the next word can be typed', () => {
-      expect(find('Firefox non r', [firefox])).toBe('iesce ');
-      expect(find('Firefox non riesce ', [firefox])).toBe('a ');
+  describe('accepts a word with the punctuation attached to it', () => {
+    test('leaving the space for the next word', () => {
+      const candidate = 'Open the advanced reader';
+      expect(find('Open the adv', [candidate])).toBe('anced');
+      expect(find('Open the advanced', [candidate])).toBe(' reader');
+      expect(find('Open the advanced ', [candidate])).toBe('reader');
     });
 
-    test('but adds no space that the candidate does not have', () => {
-      expect(find('Firefox non riesce a trovare il ser', [firefox])).toBe(
-        'ver',
-      );
-    });
-
-    test('with the punctuation attached to the word', () => {
+    test('with closing punctuation', () => {
       const candidate = 'Salva il file, poi chiudi.';
-      expect(find('Salva il fi', [candidate])).toBe('le, ');
-      expect(find('Salva il file', [candidate])).toBe(', ');
+      expect(find('Salva il fi', [candidate])).toBe('le,');
+      expect(find('Salva il file', [candidate])).toBe(',');
+      expect(find('Salva il file,', [candidate])).toBe(' poi');
       expect(find('Salva il file, poi chiu', [candidate])).toBe('di.');
     });
 
-    test('with opening punctuation before the next word', () => {
+    test('with opening punctuation', () => {
       const candidate = 'Fai clic su «Salva» per continuare';
-      expect(find('Fai clic su ', [candidate])).toBe('«Salva» ');
+      expect(find('Fai clic su', [candidate])).toBe(' «Salva»');
+      expect(find('Fai clic su ', [candidate])).toBe('«Salva»');
       expect(find('¿Quieres ', ['¿Quieres continuar?'])).toBe('continuar?');
     });
 
@@ -205,63 +181,33 @@ describe('findGhostText', () => {
       const fr = 'Voulez-vous continuer\u202f?';
       expect(find('Voulez-vous contin', [fr])).toBe('uer\u202f?');
       const quote = 'Il dit «\u00a0Bonjour\u00a0» à tous';
-      expect(find('Il dit «\u00a0Bon', [quote])).toBe('jour\u00a0» ');
+      expect(find('Il dit «\u00a0Bon', [quote])).toBe('jour\u00a0»');
       const km = 'Distanza di 100\u00a0km circa';
-      expect(find('Distanza di 1', [km])).toBe('00\u00a0km ');
+      expect(find('Distanza di 1', [km])).toBe('00\u00a0km');
     });
 
     test('with hyphenated words as one word', () => {
-      expect(find('Voul', ['Voulez-vous continuer\u202f?'])).toBe('ez-vous ');
+      expect(find('Voul', ['Voulez-vous continuer\u202f?'])).toBe('ez-vous');
       expect(find('Invia una e', ['Invia una e-mail'])).toBe('-mail');
     });
 
     test('one word at a time in languages without spaces', () => {
       const ja = new Intl.Segmenter('ja', { granularity: 'word' });
       const jaFind = (before: string) =>
-        findGhostText(before, '', ['ファイル、フォルダを開く。'], ja);
+        findGhostText(before, ['ファイル、フォルダを開く。'], ja);
       // ファイル | 、 | フォルダ | を | 開く | 。
       expect(jaFind('ファイル、フォ')).toBe('ルダ');
       expect(jaFind('ファイル、フォルダを開')).toBe('く。');
 
       const zh = new Intl.Segmenter('zh', { granularity: 'word' });
       // 打开 | 文件 | ， | 然后 | 关闭 | 。
-      expect(
-        findGhostText('打开文件，然', '', ['打开文件，然后关闭。'], zh),
-      ).toBe('后');
+      expect(findGhostText('打开文件，然', ['打开文件，然后关闭。'], zh)).toBe(
+        '后',
+      );
 
       const th = new Intl.Segmenter('th', { granularity: 'word' });
       // เปิด | ไฟล์ | ␣ | แล้ว | ปิด
-      expect(findGhostText('เปิดไฟ', '', ['เปิดไฟล์ แล้วปิด'], th)).toBe('ล์ ');
-    });
-
-    test('keeping the spacing and punctuation already after the cursor', () => {
-      expect(find('Firefox non r', [firefox], ' a trovare')).toBe('iesce');
-      expect(find('Firefox non', [firefox], ' a trovare')).toBe(' riesce');
-      expect(find('Salva il fi', ['Salva il file, poi'], ', poi')).toBe('le');
-      expect(find('Salva il file', ['Salva il file, poi'], ' poi')).toBe('');
-    });
-  });
-
-  describe('full continuation', () => {
-    test('suggests the rest of the candidate', () => {
-      expect(findFull('Firefox non r', [firefox])).toBe(
-        'iesce a trovare il server',
-      );
-      expect(findFull('Firefox non riesce ', [firefox])).toBe(
-        'a trovare il server',
-      );
-    });
-
-    test('only when word by word would suggest something', () => {
-      expect(findFull('Un fi', ['Il file'])).toBe('');
-      expect(findFull('Apri il', ['Apri il file'])).toBe('');
-      expect(findFull('Una pericon', ["Fai clic sull'icona"])).toBe('');
-      expect(findFull('Salva il file.', ['Salva il file.'])).toBe('');
-    });
-
-    test('continues onto further lines', () => {
-      const multiline = 'Prima riga \r\nSeconda riga';
-      expect(findFull('Prima riga', [multiline])).toBe(' \nSeconda riga');
+      expect(findGhostText('เปิดไฟ', ['เปิดไฟล์ แล้วปิด'], th)).toBe('ล์');
     });
   });
 });
@@ -282,12 +228,10 @@ describe('ghostText extension', () => {
     {
       source = doc,
       onEscape = () => false,
-      mode,
       locale = 'it',
     }: {
       source?: string;
       onEscape?: () => boolean;
-      mode?: MachineryAutocomplete;
       locale?: string;
     } = {},
   ) {
@@ -304,9 +248,6 @@ describe('ghostText extension', () => {
     });
     view = new EditorView({ state, parent });
     view.dispatch({ effects: setGhostTextCandidates.of(candidates) });
-    if (mode) {
-      view.dispatch({ effects: setGhostTextMode.of(mode) });
-    }
     return view;
   }
 
@@ -326,7 +267,7 @@ describe('ghostText extension', () => {
 
   test('shows ghost text after the cursor', () => {
     createView('Firefox non r', [firefox]);
-    expect(ghost()).toBe('iesce ');
+    expect(ghost()).toBe('iesce');
     expect(view!.state.doc.toString()).toBe('Firefox non r');
     expect(parent.querySelector('.ghost-text')?.ariaHidden).toBe('true');
   });
@@ -336,7 +277,7 @@ describe('ghostText extension', () => {
     expect(ghost()).toBeNull();
 
     view!.dispatch({ effects: setGhostTextCandidates.of([firefox]) });
-    expect(ghost()).toBe('iesce ');
+    expect(ghost()).toBe('iesce');
 
     view!.dispatch({ effects: setGhostTextCandidates.of([]) });
     expect(ghost()).toBeNull();
@@ -346,20 +287,20 @@ describe('ghostText extension', () => {
     createView('Firefox non r', [firefox]);
 
     expect(press('Tab')).toBe(true);
-    expect(view!.state.doc.toString()).toBe('Firefox non riesce ');
-    expect(view!.state.selection.main.head).toBe(19);
-    expect(ghost()).toBe('a ');
+    expect(view!.state.doc.toString()).toBe('Firefox non riesce');
+    expect(view!.state.selection.main.head).toBe(18);
+    expect(ghost()).toBe(' a');
 
     press('Tab');
     press('Tab');
-    expect(view!.state.doc.toString()).toBe('Firefox non riesce a trovare ');
-    expect(ghost()).toBe('il ');
+    expect(view!.state.doc.toString()).toBe('Firefox non riesce a trovare');
+    expect(ghost()).toBe(' il');
   });
 
   test('accepting ghost text can be undone', () => {
     createView('Firefox non r', [firefox]);
     press('Tab');
-    expect(view!.state.doc.toString()).toBe('Firefox non riesce ');
+    expect(view!.state.doc.toString()).toBe('Firefox non riesce');
 
     undo(view!);
     expect(view!.state.doc.toString()).toBe('Firefox non r');
@@ -384,7 +325,7 @@ describe('ghostText extension', () => {
       changes: { from: 13, insert: 'i' },
       selection: { anchor: 14 },
     });
-    expect(ghost()).toBe('esce ');
+    expect(ghost()).toBe('esce');
   });
 
   test('closes the editor popups with Escape before hiding ghost text', () => {
@@ -393,7 +334,7 @@ describe('ghostText extension', () => {
 
     press('Escape');
     expect(onEscape).toHaveBeenCalledTimes(1);
-    expect(ghost()).toBe('iesce ');
+    expect(ghost()).toBe('iesce');
   });
 
   test('is not shown with a selection', () => {
@@ -403,52 +344,66 @@ describe('ghostText extension', () => {
     expect(press('Tab')).toBe(false);
   });
 
-  test('is shown at the cursor, not only at the end', () => {
+  test('is only shown at the end of the content', () => {
     createView('Firefox non r!', [firefox]);
     view!.dispatch({ selection: { anchor: 13 } });
-    expect(ghost()).toBe('iesce');
-    press('Tab');
-    expect(view!.state.doc.toString()).toBe('Firefox non riesce!');
-  });
-
-  test('is not shown when off', () => {
-    createView('Firefox non r', [firefox], { mode: 'off' });
     expect(ghost()).toBeNull();
     expect(press('Tab')).toBe(false);
 
-    view!.dispatch({ effects: setGhostTextMode.of('word') });
-    expect(ghost()).toBe('iesce ');
-  });
-
-  test('accepts the full continuation at the end of the content', () => {
-    createView('Firefox non r', [firefox], { mode: 'full' });
-    expect(ghost()).toBe('iesce a trovare il server');
-
-    press('Tab');
-    expect(view!.state.doc.toString()).toBe(firefox);
+    createView('Firefox non riesce il server', [firefox]);
+    view!.dispatch({ selection: { anchor: 18 } });
     expect(ghost()).toBeNull();
   });
 
-  test('accepts a full continuation over several lines', () => {
-    const candidate = 'Prima riga\nSeconda riga';
-    createView('Prima r', [candidate], { mode: 'full' });
-    expect(ghost()).toBe('iga\nSeconda riga');
+  test('is not shown at the end of a line with text below it', () => {
+    const candidate = 'Prima riga completa\nSeconda riga';
+    createView('Prima riga\nSeconda', [candidate], { source: 'Prima riga' });
+    expect(ghost()).toBe(' riga');
 
-    press('Tab');
-    expect(view!.state.doc.toString()).toBe(candidate);
-    expect(view!.state.doc.lines).toBe(2);
+    view!.dispatch({ selection: { anchor: 10 } });
+    expect(ghost()).toBeNull();
   });
 
-  test('completes word by word before other text, even in full mode', () => {
-    createView('Firefox non r!', [firefox], { mode: 'full' });
-    view!.dispatch({ selection: { anchor: 13 } });
-    expect(ghost()).toBe('iesce');
+  test('is hidden after Backspace until the next change', () => {
+    createView('Firefox non ri', [firefox]);
+    expect(ghost()).toBe('esce');
+
+    press('Backspace');
+    expect(view!.state.doc.toString()).toBe('Firefox non r');
+    expect(ghost()).toBeNull();
+    expect(press('Tab')).toBe(false);
+
+    view!.dispatch({ effects: setGhostTextCandidates.of([firefox]) });
+    expect(ghost()).toBeNull();
+
+    view!.dispatch({
+      changes: { from: 13, insert: 'i' },
+      selection: { anchor: 14 },
+      userEvent: 'input.type',
+    });
+    expect(ghost()).toBe('esce');
+  });
+
+  test('is hidden after Delete until the next change', () => {
+    createView('Firefox non rix', [firefox]);
+    view!.dispatch({ selection: { anchor: 14 } });
+
+    press('Delete');
+    expect(view!.state.doc.toString()).toBe('Firefox non ri');
+    expect(ghost()).toBeNull();
+
+    view!.dispatch({
+      changes: { from: 14, insert: 'e' },
+      selection: { anchor: 15 },
+      userEvent: 'input.type',
+    });
+    expect(ghost()).toBe('sce');
   });
 
   test('gives way to the placeholder autocomplete', async () => {
     const source = 'Elimina { $count } file';
     createView('Elimina {', [source], { source });
-    expect(ghost()).toBe(' $count } ');
+    expect(ghost()).toBe(' $count }');
 
     startCompletion(view!);
     await vi.waitFor(() => {

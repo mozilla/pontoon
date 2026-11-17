@@ -248,8 +248,7 @@ def test_toggle_user_profile_attribute(member):
 
 @pytest.mark.django_db
 def test_toggle_machinery_autocomplete(member):
-    """toggle_machinery_autocomplete accepts valid choices and rejects invalid ones."""
-    url = "/user/machinery-autocomplete/"
+    """The machinery_autocomplete setting is on by default and can be toggled."""
 
     def get_setting():
         response = member.client.get(
@@ -257,29 +256,14 @@ def test_toggle_machinery_autocomplete(member):
         )
         return response.json()["settings"]["machinery_autocomplete"]
 
-    assert member.user.profile.machinery_autocomplete is None
-    assert get_setting() == "word"
+    assert get_setting() is True
 
-    for value in ("off", "full", "word"):
-        response = member.client.post(url, {"machinery_autocomplete": value})
-        assert response.status_code == 200
-        assert response.json() == {"status": True}
-        member.user.profile.refresh_from_db()
-        assert member.user.profile.machinery_autocomplete == value
-        assert get_setting() == value
-
-    # reject invalid choice and unchange stored value
-    response = member.client.post(url, {"machinery_autocomplete": "true"})
-    assert response.status_code == 400
-    member.user.profile.refresh_from_db()
-    assert member.user.profile.machinery_autocomplete == "word"
-
-    response = member.client.post(url, {})
-    assert response.status_code == 400
-
-    params = {"attribute": "machinery_autocomplete", "value": "true"}
+    params = {"attribute": "machinery_autocomplete", "value": "false"}
     response = member.client.post("/user/attributes/toggle/", params)
-    assert response.status_code == 403
+    assert response.status_code == 200
+    member.user.profile.refresh_from_db()
+    assert member.user.profile.machinery_autocomplete is False
+    assert get_setting() is False
 
 
 @pytest.mark.django_db
