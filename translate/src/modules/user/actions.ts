@@ -7,6 +7,8 @@ import {
 } from '~/api/user';
 import { NotificationMessage } from '~/context/Notification';
 import {
+  AUTOCOMPLETE_DISABLED,
+  AUTOCOMPLETE_ENABLED,
   CHECKS_DISABLED,
   CHECKS_ENABLED,
   SUGGESTIONS_DISABLED,
@@ -40,6 +42,7 @@ export type UpdateAction = {
 export type Settings = {
   runQualityChecks?: boolean;
   forceSuggestions?: boolean;
+  machineryAutocomplete?: boolean;
 };
 
 /**
@@ -64,6 +67,8 @@ function getNotification(setting: keyof Settings, value: boolean) {
       return value ? CHECKS_ENABLED : CHECKS_DISABLED;
     case 'forceSuggestions':
       return value ? SUGGESTIONS_ENABLED : SUGGESTIONS_DISABLED;
+    case 'machineryAutocomplete':
+      return value ? AUTOCOMPLETE_ENABLED : AUTOCOMPLETE_DISABLED;
     default:
       throw new Error('Unsupported operation on setting: ' + setting);
   }
