@@ -278,7 +278,15 @@ def _extra_filter(locale: Locale, extra: str) -> Q:
             case "unchanged":
                 q = Q(active=True, string=F("entity__string"))
             case "empty":
-                q = Q(string="")
+                # Plain formats store an empty translation as an empty string,
+                # but Fluent serializes even an empty entry with its key,
+                # e.g. `key = { "" }`. Match those on the parsed value instead:
+                # an empty pattern (`[]`, `[""]` or the `{ "" }` expression)
+                # and no non-empty properties.
+                q = Q(string="") | (
+                    (Q(value=[]) | Q(value=[""]) | Q(value=[{"_": ""}]))
+                    & (Q(properties__isnull=True) | Q(properties={}))
+                )
             case "fuzzy":
                 q = Q(fuzzy=True, warnings__isnull=True, errors__isnull=True)
             case "missing-without-unreviewed":
