@@ -257,6 +257,12 @@ def test_mgr_entity_filter_empty(admin, resource_a, locale_a):
     ftl_empty_with_attr = EntityFactory.create(
         resource=ftl_resource, string="key-d = Source\n    .attr = Attr"
     )
+    ftl_emptied_attr = EntityFactory.create(
+        resource=ftl_resource, string="key-e = Source\n    .attr = Attr"
+    )
+    ftl_emptied_and_filled_attr = EntityFactory.create(
+        resource=ftl_resource, string="key-f = Source\n    .attr = Attr\n    .b = B"
+    )
 
     # Plain format: an empty translation is stored as an empty string
     TranslationFactory.create(locale=locale_a, entity=po_entity, string="", value=[])
@@ -283,6 +289,22 @@ def test_mgr_entity_filter_empty(admin, resource_a, locale_a):
         value=[],
         properties={"attr": ["Hi"]},
     )
+    # An emptied attribute still means the translation has no content
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=ftl_emptied_attr,
+        string='key-e =\n    .attr = { "" }\n',
+        value=[],
+        properties={"attr": [{"_": ""}]},
+    )
+    # An emptied attribute next to a translated one keeps the content
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=ftl_emptied_and_filled_attr,
+        string='key-f =\n    .attr = { "" }\n    .b = Hi\n',
+        value=[],
+        properties={"attr": [{"_": ""}], "b": ["Hi"]},
+    )
 
     assert set(
         get_entities_for_project_locale(
@@ -295,6 +317,7 @@ def test_mgr_entity_filter_empty(admin, resource_a, locale_a):
         po_entity,
         ftl_empty,
         ftl_empty_expr,
+        ftl_emptied_attr,
     }
 
 
