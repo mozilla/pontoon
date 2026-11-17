@@ -106,9 +106,11 @@ issues](https://github.com/mozilla/pontoon/issues?q=is%3Aopen+is%3Aissue+label%3
 
 Look through that list for unassigned issues, choose one that is
 appealing to you and seems appropriate for your skill set, then comment
-on that issue asking to be assigned to it. Feel free to start working on
-it right away — even if you end up not being assigned for some reason,
-it will still be a good experience for you.
+on that issue asking to be assigned to it. Feel free to explore the code
+while you wait, but only open a pull request once the issue is assigned
+to you. Pull requests for issues assigned to someone else, or to no one,
+won't be reviewed. See the [Feature development
+process](feature-development-process.md#implementation) for details.
 
 ## 6. Read the contributing rules
 
