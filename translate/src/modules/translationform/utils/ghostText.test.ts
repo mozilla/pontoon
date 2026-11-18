@@ -45,6 +45,26 @@ describe('findGhostText', () => {
     expect(find('Aprisalv', ['salva il file'])).toBe('');
   });
 
+  test('does not suggest the next word after the middle of a word', () => {
+    // 'icona' is within 'pericona' and 'sull'icona'
+    expect(find('Una pericona di ', ["Fai clic sull'icona di sistema"])).toBe(
+      '',
+    );
+    // 'salva' is within 'Aprisalva'
+    expect(find('Aprisalva il ', ['salva il file'])).toBe('');
+  });
+
+  test('suggests the next word after enough whole words', () => {
+    const candidate = "Fai clic sull'icona di sistema e poi chiudi";
+    expect(find('Una pericona di sistema e ', [candidate])).toBe('poi');
+  });
+
+  test('uses the first aligned occurrence of the match', () => {
+    expect(find('cerc', ['Ricerca o cerca nel web'])).toBe('a');
+    const candidate = 'Riapri la scheda o apri la finestra';
+    expect(find('apri la ', [candidate])).toBe('finestra');
+  });
+
   test('suggests the next word for a good match', () => {
     expect(find('Firefox non riesce', [firefox])).toBe(' a');
     expect(find('Firefox non riesce ', [firefox])).toBe('a');
@@ -119,7 +139,8 @@ describe('findGhostText', () => {
       expect(jaFind('接続')).toBe('');
       expect(jaFind('設定を')).toBe('');
       expect(jaFind('を確認')).toBe('');
-      expect(jaFind('定を確認')).toBe('し');
+      expect(jaFind('設定を確認')).toBe('し');
+      expect(jaFind('定を確認')).toBe('');
       expect(jaFind('ました。')).toBe('');
       expect(jaFind('しました。')).toBe('ネットワーク');
     });

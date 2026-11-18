@@ -190,44 +190,46 @@ export function findGhostText(
 
   const { candidate, length } = best;
   const match = before.slice(before.length - length);
-  const weight = getMatchWeight(match);
-  if (weight < MIN_MATCH_TO_COMPLETE_WORD) {
+  if (getMatchWeight(match) < MIN_MATCH_TO_COMPLETE_WORD) {
     return '';
   }
-  const start = candidate.indexOf(match);
-  const end = start + length;
-  const unit = getUnitToComplete(
-    candidate,
-    start,
-    end,
-    weight,
-    wordChar.test(before.charAt(before.length - length - 1)),
-    segmenter,
-  );
-  if (!unit) {
-    return '';
+  const midWord = wordChar.test(before.charAt(before.length - length - 1));
+  const units = getUnits(candidate, segmenter);
+  for (
+    let start = candidate.indexOf(match);
+    start !== -1;
+    start = candidate.indexOf(match, start + 1)
+  ) {
+    const end = start + length;
+    const unit = getUnitToComplete(candidate, units, start, end, midWord);
+    if (unit) {
+      const text = candidate.slice(end, unit.end).split(/[\r\n]/, 1)[0];
+      return text.trim() ? text : '';
+    }
   }
-  const text = candidate.slice(end, unit.end).split(/[\r\n]/, 1)[0];
-  return text.trim() ? text : '';
+  return '';
 }
 
 function getUnitToComplete(
   candidate: string,
+  units: readonly Unit[],
   start: number,
   end: number,
-  weight: number,
   midWord: boolean,
-  segmenter: Intl.Segmenter,
 ): Unit | null {
-  const units = getUnits(candidate, segmenter);
+  const first = units.find((u) => start < u.end);
+  const alignedStart =
+    first && (first.start < start || (first.start === start && midWord))
+      ? first.end
+      : start;
+
   const current = units.find((u) => u.start < end && end < u.end);
   if (current && candidate.slice(end, current.end).trim()) {
-    const aligned =
-      start < current.start || (start === current.start && !midWord);
-    return aligned ? current : null;
+    return alignedStart <= current.start ? current : null;
   }
 
-  if (weight < MIN_MATCH_TO_SUGGEST_NEXT_WORD) {
+  const aligned = candidate.slice(alignedStart, end);
+  if (getMatchWeight(aligned) < MIN_MATCH_TO_SUGGEST_NEXT_WORD) {
     return null;
   }
   return units.find((u) => u.start >= end) ?? null;
