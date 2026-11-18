@@ -994,6 +994,59 @@ def test_upload_suggestions_stores_missing_placeholder_warning(
 
 
 @pytest.mark.django_db
+def test_upload_translations_stores_missing_placeholder_warning(
+    project_locale_a, android_entity, uploader
+):
+    """A new translation imported from an uploaded file keeps its warnings."""
+    result = _import(
+        import_uploaded_file,
+        project_locale_a,
+        android_entity.resource,
+        uploader,
+        upload=_android_upload_without_placeholder(),
+    )
+
+    assert result.updated == 1
+
+    translation = Translation.objects.get(entity=android_entity)
+
+    assert translation.approved
+    assert [w.message for w in translation.warnings.all()] == [
+        "Placeholder {$arg1} not found in translation"
+    ]
+
+
+@pytest.mark.django_db
+def test_upload_translations_approved_suggestion_stores_warning(
+    project_locale_a, android_entity, uploader
+):
+    """An uploaded translation matching a suggestion approves it, with its warnings."""
+    suggestion = TranslationFactory.create(
+        entity=android_entity,
+        locale=project_locale_a.locale,
+        string="La pagina sul server riporta:",
+        value=["La pagina sul server riporta:"],
+    )
+
+    result = _import(
+        import_uploaded_file,
+        project_locale_a,
+        android_entity.resource,
+        uploader,
+        upload=_android_upload_without_placeholder(),
+    )
+
+    assert result.updated == 1
+
+    translation = Translation.objects.get(entity=android_entity, approved=True)
+
+    assert translation.pk == suggestion.pk
+    assert [w.message for w in translation.warnings.all()] == [
+        "Placeholder {$arg1} not found in translation"
+    ]
+
+
+@pytest.mark.django_db
 def test_upload_suggestions_unknown_keys_ignored(
     project_locale_a, resource, po_translation, uploader
 ):
