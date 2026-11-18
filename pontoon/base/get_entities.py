@@ -5,7 +5,7 @@ from typing import cast
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import F, Q, QuerySet
+from django.db.models import BooleanField, F, Q, QuerySet
 from django.db.models.expressions import RawSQL
 from django.utils.timezone import make_aware
 
@@ -240,12 +240,6 @@ def _is_email(email: str) -> bool:
         return False
 
 
-class _ConditionalRawSQL(RawSQL):
-    """A RawSQL expression usable directly as a filter condition."""
-
-    conditional = True
-
-
 def _status_filter(project: Project, locale: Locale, status: str) -> Q:
     """Apply a combination of filters based on the list of statuses the user sent."""
     query = Q()
@@ -291,13 +285,14 @@ def _extra_filter(locale: Locale, extra: str) -> Q:
                 # an empty pattern (`[]`, `[""]` or the `{ "" }` expression)
                 # and no non-empty properties. Messages with emptied
                 # attributes, e.g. `key =\n    .attr = { "" }`, count as empty.
-                properties_all_empty = _ConditionalRawSQL(
+                properties_all_empty = RawSQL(
                     "NOT EXISTS ("
                     "SELECT FROM jsonb_each(properties) AS each_(key, value) "
                     "WHERE value <> '[]' AND value <> '[\"\"]' "
                     'AND value <> \'[{"_": ""}]\''
                     ")",
                     (),
+                    output_field=BooleanField(),
                 )
                 q = Q(string="") | (
                     (Q(value=[]) | Q(value=[""]) | Q(value=[{"_": ""}]))
