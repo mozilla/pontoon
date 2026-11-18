@@ -31,13 +31,20 @@ import { SearchPanel } from './SearchPanel';
 
 import './SearchBox.css';
 
-/** Returns search option overrides to encode in the URL, omitting values that match the global default. */
-function getSearchUpdates(searchOptions: SearchState): Partial<Location> {
+/** Returns search options to encode in the URL, omitting values that match the fallback used by updateOptionsFromURL. */
+function getSearchUpdates(
+  searchOptions: SearchState,
+  searchDefaults: Partial<SearchState>,
+  search: string | null,
+): Partial<Location> {
   return Object.fromEntries(
-    SEARCH_OPTIONS.map(({ slug, default: def }) => [
-      slug,
-      searchOptions[slug] !== def ? searchOptions[slug] : undefined,
-    ]),
+    SEARCH_OPTIONS.map(({ slug, default: def }) => {
+      const fallback = search ? def : (searchDefaults[slug] ?? def);
+      return [
+        slug,
+        searchOptions[slug] !== fallback ? searchOptions[slug] : undefined,
+      ];
+    }),
   ) as Partial<Location>;
 }
 
@@ -226,16 +233,15 @@ export function SearchBoxBase({
     () =>
       checkUnsavedChanges(() => {
         dispatch(resetEntities());
-        // Only encode values that differ from the default. The goal is to
-        // keep URLs shareable regardless of individual profile settings.
+        // Only encode values that would not be restored if omitted (see `getSearchUpdates`).
         parameters.push({
           ...parameters, // Persist all other variables to next state
           search,
-          ...getSearchUpdates(searchOptions),
+          ...getSearchUpdates(searchOptions, searchDefaults, search),
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),
-    [dispatch, parameters, search, searchOptions],
+    [dispatch, parameters, search, searchOptions, searchDefaults],
   );
 
   const toggleOption = useCallback(
@@ -310,10 +316,10 @@ export function SearchBoxBase({
           review_time: null,
           entity: 0, // With the new results, the current entity might not be available anymore.
           list: parameters.list ?? null,
-          ...getSearchUpdates(searchOptions),
+          ...getSearchUpdates(searchOptions, searchDefaults, search),
         });
       }),
-    [dispatch, parameters, search, filters, searchOptions],
+    [dispatch, parameters, search, filters, searchOptions, searchDefaults],
   );
 
   useEffect(() => {
