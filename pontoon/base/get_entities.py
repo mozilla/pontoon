@@ -5,7 +5,8 @@ from typing import cast
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import F, Q, QuerySet
+from django.db.models import BooleanField, F, Q, QuerySet
+from django.db.models.expressions import RawSQL
 from django.utils.timezone import make_aware
 
 from pontoon.base.models import Entity, Locale, Project, Resource, Translation, User
@@ -278,7 +279,25 @@ def _extra_filter(locale: Locale, extra: str) -> Q:
             case "unchanged":
                 q = Q(active=True, string=F("entity__string"))
             case "empty":
-                q = Q(string="")
+                # Plain formats store an empty translation as an empty string,
+                # but Fluent serializes even an empty entry with its key,
+                # e.g. `key = { "" }`. Match those on the parsed value instead:
+                # an empty pattern (`[]`, `[""]` or the `{ "" }` expression)
+                # and no non-empty properties. Messages with emptied
+                # attributes, e.g. `key =\n    .attr = { "" }`, count as empty.
+                properties_all_empty = RawSQL(
+                    "NOT EXISTS ("
+                    "SELECT FROM jsonb_each(properties) AS each_(key, value) "
+                    "WHERE value <> '[]' AND value <> '[\"\"]' "
+                    'AND value <> \'[{"_": ""}]\''
+                    ")",
+                    (),
+                    output_field=BooleanField(),
+                )
+                q = Q(string="") | (
+                    (Q(value=[]) | Q(value=[""]) | Q(value=[{"_": ""}]))
+                    & Q(properties_all_empty)
+                )
             case "fuzzy":
                 q = Q(fuzzy=True, warnings__isnull=True, errors__isnull=True)
             case "missing-without-unreviewed":

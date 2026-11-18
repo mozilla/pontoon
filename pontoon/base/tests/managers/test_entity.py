@@ -5,12 +5,14 @@ import pytest
 from pontoon.base.get_entities import get_entities_for_project_locale
 from pontoon.base.models import (
     Entity,
+    Resource,
     TranslatedResource,
     Translation,
 )
 from pontoon.test.factories import (
     EntityFactory,
     ErrorFactory,
+    ResourceFactory,
     TranslatedResourceFactory,
     TranslationFactory,
     WarningFactory,
@@ -231,6 +233,91 @@ def test_mgr_entity_filter_fuzzy(admin, resource_a, locale_a):
     ) == {
         entities[0],
         entities[2],
+    }
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_empty(admin, resource_a, locale_a):
+    # Fluent entries are stored serialized with their key, so an empty Fluent
+    # translation is matched on its parsed value rather than an empty string.
+    ftl_resource = ResourceFactory.create(
+        project=resource_a.project,
+        path="resource_a.ftl",
+        format=Resource.Format.FLUENT,
+    )
+
+    po_entity = EntityFactory.create(resource=resource_a, string="po entity")
+    ftl_empty = EntityFactory.create(resource=ftl_resource, string="key-a = Source")
+    ftl_empty_expr = EntityFactory.create(
+        resource=ftl_resource, string="key-b = Source"
+    )
+    ftl_translated = EntityFactory.create(
+        resource=ftl_resource, string="key-c = Source"
+    )
+    ftl_empty_with_attr = EntityFactory.create(
+        resource=ftl_resource, string="key-d = Source\n    .attr = Attr"
+    )
+    ftl_emptied_attr = EntityFactory.create(
+        resource=ftl_resource, string="key-e = Source\n    .attr = Attr"
+    )
+    ftl_emptied_and_filled_attr = EntityFactory.create(
+        resource=ftl_resource, string="key-f = Source\n    .attr = Attr\n    .b = B"
+    )
+
+    # Plain format: an empty translation is stored as an empty string
+    TranslationFactory.create(locale=locale_a, entity=po_entity, string="", value=[])
+    # Fluent: an empty pattern is serialized with the message key
+    TranslationFactory.create(
+        locale=locale_a, entity=ftl_empty, string='key-a = { "" }\n', value=[]
+    )
+    # An empty pattern may also be stored as the `{ "" }` expression
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=ftl_empty_expr,
+        string='key-b = { "" }\n',
+        value=[{"_": ""}],
+    )
+    # Fluent entry with actual content
+    TranslationFactory.create(
+        locale=locale_a, entity=ftl_translated, string="key-c = Hi\n", value=["Hi"]
+    )
+    # Empty value, but the non-empty attribute means there is content
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=ftl_empty_with_attr,
+        string="key-d =\n    .attr = Hi\n",
+        value=[],
+        properties={"attr": ["Hi"]},
+    )
+    # An emptied attribute still means the translation has no content
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=ftl_emptied_attr,
+        string='key-e =\n    .attr = { "" }\n',
+        value=[],
+        properties={"attr": [{"_": ""}]},
+    )
+    # An emptied attribute next to a translated one keeps the content
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=ftl_emptied_and_filled_attr,
+        string='key-f =\n    .attr = { "" }\n    .b = Hi\n',
+        value=[],
+        properties={"attr": [{"_": ""}], "b": ["Hi"]},
+    )
+
+    assert set(
+        get_entities_for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            extra="empty",
+        )
+    ) == {
+        po_entity,
+        ftl_empty,
+        ftl_empty_expr,
+        ftl_emptied_attr,
     }
 
 
