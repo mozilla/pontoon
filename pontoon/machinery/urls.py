@@ -27,6 +27,11 @@ urlpatterns = [
         name="pontoon.openai_chatgpt",
     ),
     path(
+        "openai-chatgpt-composed/",
+        views.openai_chatgpt_composed,
+        name="pontoon.openai_chatgpt_composed",
+    ),
+    path(
         "microsoft-translator/",
         views.microsoft_translator,
         name="pontoon.microsoft_translator",

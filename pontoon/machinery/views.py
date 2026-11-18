@@ -7,7 +7,8 @@ from urllib.parse import quote
 
 import requests
 
-from moz.l10n.message import message_to_json
+from moz.l10n.message import message_from_json, message_to_json
+from moz.l10n.model import Entry
 from sacremoses import MosesDetokenizer
 
 from django.conf import settings
@@ -16,24 +17,41 @@ from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
-from django.utils.html import strip_tags
 from django.views.decorators.http import require_POST
 
-from pontoon.base.models import Comment, Entity, Locale, Project, Translation
+from pontoon.base.models import Entity, Locale, Project, Translation
+from pontoon.machinery.composed_refine import (
+    has_translatable_text,
+    is_accesskey,
+    iter_leaves,
+    placeables_survived,
+)
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
-    get_llm_string_id,
+    get_llm_entity_context,
     get_microsoft_translator_data,
     get_translation_memory_data,
 )
-from pontoon.pretranslation.pretranslate import MTEngine, Pretranslation
-from pontoon.terminology.models import Term
+from pontoon.pretranslation.pretranslate import (
+    MTEngine,
+    Pretranslation,
+    message_format,
+    pattern_as_context,
+    pattern_as_text,
+    pattern_from_text,
+    set_accesskey,
+)
 
 from .openai_service import OpenAIService
 
 
 log = logging.getLogger(__name__)
+
+# One prompt holds every part of an entity, so an entity with an implausible
+# number of variants would otherwise turn one request into an arbitrarily
+# large one.
+MAX_COMPOSED_LEAVES = 50
 
 
 def _machinery_error_response(service_name, e):
@@ -278,6 +296,42 @@ def _parse_references(raw):
     return references
 
 
+def _llm_trigger_error(trigger, locale_code):
+    """Automatic requests are restricted to
+    `settings.OPENAI_AUTO_SUGGESTION_LOCALES`, so spend stays bounded by the
+    locales they were enabled for."""
+    if trigger not in ("auto", "manual"):
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: unknown trigger `{trigger}`"},
+            status=400,
+        )
+    if trigger == "auto" and locale_code not in settings.OPENAI_AUTO_SUGGESTION_LOCALES:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Automatic LLM suggestions are not enabled for this locale",
+            },
+            status=403,
+        )
+    return None
+
+
+def _log_llm_suggestion(trigger, locale, characteristic, started, result, **extra):
+    """A flat line rather than `extra`, which the console handler's default
+    formatter would drop, and `key=value` because Cloud Logging parses it into a
+    metric. One line per suggestion, so the metric counts suggestions, not calls.
+    """
+    duration_ms = round((time.monotonic() - started) * 1000)
+    fields = "".join(f" {key}={value}" for key, value in extra.items())
+    log.info(
+        f"llm_suggestion trigger={trigger} locale={locale.code} "
+        f"characteristic={characteristic} "
+        f"cache_hit={'true' if result.cache_hit else 'false'} "
+        f"duration_ms={duration_ms} prompt_tokens={result.prompt_tokens or ''} "
+        f"completion_tokens={result.completion_tokens or ''}{fields}"
+    )
+
+
 @require_POST
 @login_required(redirect_field_name="", login_url="/403")
 def openai_chatgpt(request):
@@ -292,9 +346,7 @@ def openai_chatgpt(request):
     reference dropped entirely, without changing the request shape.
 
     `trigger` is `auto` for suggestions generated automatically by the Machinery
-    panel, and `manual` for those requested from the AI dropdown. Automatic
-    requests are restricted to `settings.OPENAI_AUTO_SUGGESTION_LOCALES`, so that
-    spend stays bounded by the locales they were enabled for.
+    panel, and `manual` for those requested from the AI dropdown.
     """
     try:
         english_text = request.POST.get("english_text")
@@ -310,63 +362,18 @@ def openai_chatgpt(request):
                 {"status": False, "message": f"Bad Request: {e}"}, status=400
             )
 
-        if trigger not in ("auto", "manual"):
-            return JsonResponse(
-                {
-                    "status": False,
-                    "message": f"Bad Request: unknown trigger `{trigger}`",
-                },
-                status=400,
-            )
-
-        if (
-            trigger == "auto"
-            and locale_code not in settings.OPENAI_AUTO_SUGGESTION_LOCALES
-        ):
-            return JsonResponse(
-                {
-                    "status": False,
-                    "message": "Automatic LLM suggestions are not enabled for this locale",
-                },
-                status=403,
-            )
+        error = _llm_trigger_error(trigger, locale_code)
+        if error is not None:
+            return error
 
         locale = Locale.objects.get(code=locale_code)
 
-        entity_key = None
-        entity_comment = None
-        group_comment = None
-        resource_comment = None
-        pinned_comments = None
-        terms = None
-
+        context = {}
         if entity_pk:
             entity = Entity.objects.select_related("resource", "section").get(
                 pk=entity_pk
             )
-            entity_key = get_llm_string_id(entity)
-            entity_comment = entity.comment or None
-            group_comment = (entity.section.comment if entity.section else None) or None
-            resource_comment = entity.resource.comment or None
-
-            pinned = [
-                stripped
-                for content in Comment.objects.filter(
-                    entity=entity, pinned=True
-                ).values_list("content", flat=True)
-                if (stripped := strip_tags(content).strip())
-            ]
-            pinned_comments = pinned if pinned else None
-
-            terms_list = [
-                {
-                    "text": term.text,
-                    "part_of_speech": term.part_of_speech,
-                    "translation": term.translation(locale),
-                }
-                for term in Term.objects.for_string(english_text)
-            ]
-            terms = terms_list if terms_list else None
+            context = get_llm_entity_context(entity, locale, english_text)
 
         service = OpenAIService()
         started = time.monotonic()
@@ -375,31 +382,163 @@ def openai_chatgpt(request):
             references,
             characteristic,
             locale,
-            entity_key=entity_key,
-            entity_comment=entity_comment,
-            group_comment=group_comment,
-            resource_comment=resource_comment,
-            pinned_comments=pinned_comments,
-            terms=terms,
+            **context,
         )
-        duration_ms = round((time.monotonic() - started) * 1000)
-        cache_hit = "true" if result.cache_hit else "false"
-        prompt_tokens = result.prompt_tokens or ""
-        completion_tokens = result.completion_tokens or ""
-        # Logged as a single flat line rather than through `extra`, because the
-        # console handler uses the default formatter, which would drop the extra
-        # fields. Parsed into a log-based metric in Cloud Logging, so the
-        # `key=value` shape matters.
-        log.info(
-            f"llm_suggestion trigger={trigger} locale={locale.code} "
-            f"characteristic={characteristic} cache_hit={cache_hit} "
-            f"duration_ms={duration_ms} prompt_tokens={prompt_tokens} "
-            f"completion_tokens={completion_tokens}"
-        )
+        _log_llm_suggestion(trigger, locale, characteristic, started, result)
         return JsonResponse({"translation": result.text})
 
     except Exception as e:
         return _machinery_error_response("OpenAI ChatGPT", e)
+
+
+@require_POST
+@login_required(redirect_field_name="", login_url="/403")
+def openai_chatgpt_composed(request):
+    """
+    Refine a composed multi-value translation using GPT.
+
+    Each leaf is refined against the English it came from, all in one request.
+
+    POST params:
+        entity_pk: Entity pk
+        locale: Locale code
+        characteristic: `rephrased`, `formal` or `informal`
+        value, properties: The composed translation to refine, as the
+            `(value, properties)` data model that `machinery-composed/` returned.
+        trigger: `auto` for suggestions generated automatically by the Machinery
+            panel, `manual` for those requested from the AI dropdown.
+
+    Returns the refined `(value, properties)`, or `{}` when the suggestion has no
+    refinable text.
+    """
+    try:
+        characteristic = request.POST.get("characteristic")
+        locale_code = request.POST.get("locale")
+        trigger = request.POST.get("trigger", "manual")
+
+        try:
+            entity_pk = int(request.POST["entity_pk"])
+            target_value = message_from_json(json.loads(request.POST["value"]))
+            target_properties = {
+                key: message_from_json(prop)
+                for key, prop in json.loads(
+                    request.POST.get("properties") or "{}"
+                ).items()
+            }
+        except (KeyError, TypeError, ValueError) as e:
+            return JsonResponse(
+                {"status": False, "message": f"Bad Request: {e}"}, status=400
+            )
+
+        error = _llm_trigger_error(trigger, locale_code)
+        if error is not None:
+            return error
+
+        locale = Locale.objects.get(code=locale_code)
+        entity = Entity.objects.select_related("resource", "section").get(pk=entity_pk)
+
+        source_value = message_from_json(entity.value)
+        source_properties = {
+            key: message_from_json(prop)
+            for key, prop in (entity.properties or {}).items()
+        }
+
+        # A leaf is sent as the format's own syntax, the same text a translator
+        # reads, and the reply is parsed back the way a Translation Memory match
+        # is. A leaf whose format cannot express its placeholders as text is left
+        # alone rather than sent as something that cannot be read back.
+        fmt = message_format(entity.resource.format)
+        payload = []
+        leaves = {}
+        for leaf in iter_leaves(
+            source_value, source_properties, target_value, target_properties
+        ):
+            if not has_translatable_text(leaf.target):
+                continue
+            current = pattern_as_text(leaf.target, fmt)
+            # Fluent's inline form cannot express a line break, so a leaf
+            # carrying one could not be read back and is left alone.
+            if current is None or "\n" in current:
+                continue
+            # The English is only shown, so it does not have to be readable back.
+            source_text = pattern_as_context(leaf.source, fmt)
+            payload.append({"id": leaf.id, "source": source_text, "current": current})
+            leaves[leaf.id] = leaf
+
+        if not payload:
+            return JsonResponse({})
+        if len(payload) > MAX_COMPOSED_LEAVES:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": f"Bad Request: more than {MAX_COMPOSED_LEAVES} parts",
+                },
+                status=400,
+            )
+
+        # Terminology is matched against the leaf sources rather than
+        # `entity.string`, whose serialization would match terms against the
+        # message id and property names too.
+        source_texts = "\n".join(part["source"] for part in payload)
+        context = get_llm_entity_context(entity, locale, source_texts)
+
+        service = OpenAIService()
+        started = time.monotonic()
+        result = service.get_composed_translation(
+            payload,
+            characteristic,
+            locale,
+            **context,
+        )
+
+        applied = 0
+        for part in payload:
+            text = result.leaves.get(part["id"])
+            if text is None or "\n" in text:
+                continue
+            leaf = leaves[part["id"]]
+            try:
+                pattern = pattern_from_text(text, fmt)
+            except Exception:
+                # A reply that does not parse leaves its leaf as it was.
+                continue
+            if not placeables_survived(pattern, leaf.target, fmt):
+                continue
+            leaf.target[:] = pattern
+            applied += 1
+
+        # Derived rather than translated, so they were left out of the request.
+        entry = Entry(
+            id=tuple(entity.key), value=target_value, properties=target_properties
+        )
+        for key, prop in target_properties.items():
+            if is_accesskey(key):
+                set_accesskey(entry, key, prop)
+
+        _log_llm_suggestion(
+            trigger,
+            locale,
+            characteristic,
+            started,
+            result,
+            composed="true",
+            leaves=len(payload),
+            refined=applied,
+            rejected=len(result.leaves) - applied,
+        )
+
+        return JsonResponse(
+            {
+                "value": message_to_json(target_value),
+                "properties": {
+                    key: message_to_json(prop)
+                    for key, prop in target_properties.items()
+                },
+            }
+        )
+
+    except Exception as e:
+        return _machinery_error_response("OpenAI ChatGPT (composed)", e)
 
 
 def caighdean(request):

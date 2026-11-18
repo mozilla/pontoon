@@ -184,21 +184,37 @@ export function ComposedTranslationComponent({
   const isSelected = element === index;
   const locale = useContext(Locale);
 
+  const getLLMTranslationState = useLLMTranslation();
+  const { llmComposed } = getLLMTranslationState(translation);
+
   const copyIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      setEditorFromComposed(
-        translation.value,
-        translation.properties,
-        translation.sources,
-        true,
-      );
-      logUXAction('Machinery Translation Copied', 'Machinery Adoption', {
-        sources: translation.sources.join(','),
-        localeCode: locale.code,
-      });
+      const refined = llmComposed ?? translation;
+      const sources: SourceType[] = llmComposed
+        ? ['openai-chatgpt']
+        : translation.sources;
+      setEditorFromComposed(refined.value, refined.properties, sources, true);
+      if (llmComposed) {
+        logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
+          action: 'Copy LLM Translation',
+          localeCode: locale.code,
+        });
+      } else {
+        logUXAction('Machinery Translation Copied', 'Machinery Adoption', {
+          sources: sources.join(','),
+          localeCode: locale.code,
+        });
+      }
     }
-  }, [index, locale, setEditorFromComposed, setElement, translation]);
+  }, [
+    index,
+    llmComposed,
+    locale,
+    setEditorFromComposed,
+    setElement,
+    translation,
+  ]);
 
   const className = classNames(
     'translation',
@@ -230,11 +246,16 @@ function ComposedSuggestion({
 }) {
   const { code, direction, script } = useContext(Locale);
   const machineryEntry = useMachineryEntry();
+
+  const getLLMTranslationState = useLLMTranslation();
+  const { llmComposed, loading } = getLLMTranslationState(translation);
+
+  const suggestion = llmComposed ?? translation;
   const suggestionEntry = createMessageEntry(
     machineryEntry.format,
     machineryEntry.id,
-    translation.value,
-    translation.properties,
+    suggestion.value,
+    suggestion.properties,
   );
 
   const originalFields = richFields(machineryEntry);
@@ -256,7 +277,11 @@ function ComposedSuggestion({
           <GenericTranslation content={serializeEntry(machineryEntry)} />
         </p>
       )}
-      {suggestionFields ? (
+      {loading ? (
+        <p className='suggestion'>
+          <i className='fas fa-circle-notch fa-spin' />
+        </p>
+      ) : suggestionFields ? (
         <RichMessage
           className='suggestion'
           fields={suggestionFields}

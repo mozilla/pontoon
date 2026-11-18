@@ -1,6 +1,10 @@
 import React from 'react';
+import { act, fireEvent, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
+import * as machineryApi from '~/api/machinery';
 import { EntityView } from '~/context/EntityView';
+import { LLMTranslationProvider } from '~/context/TranslationContext';
 import {
   createDefaultUser,
   createReduxStore,
@@ -157,5 +161,153 @@ describe('<MachineryTranslationComponent>', () => {
     expect(suggestion.querySelectorAll('tr')).toHaveLength(2);
     expect(suggestion.textContent).toContain('Un popup');
     expect(suggestion.textContent).toContain('Des popups');
+  });
+  describe('AI refinement', () => {
+    const ENTITY = {
+      pk: 42,
+      format: 'fluent',
+      key: ['button'],
+      value: ['Click Me'],
+      properties: { title: ['Tooltip'] },
+    };
+    const COMPOSED = {
+      sources: ['translation-memory', 'google-translate'],
+      value: ['Cliquez'],
+      properties: { title: ['Infobulle'] },
+    };
+
+    let root;
+
+    beforeEach(() => {
+      root = document.createElement('div');
+      root.id = 'root';
+      root.dataset.isOpenaiChatgptSupported = 'true';
+      document.body.appendChild(root);
+    });
+
+    afterEach(() => {
+      root.remove();
+      vi.restoreAllMocks();
+    });
+
+    function mountComposed(translation = COMPOSED, entity = ENTITY) {
+      const store = createReduxStore();
+      const Wrapped = (props) => (
+        <EntityView.Provider value={{ entity }}>
+          <LLMTranslationProvider>
+            <ComposedTranslationComponent {...props} />
+          </LLMTranslationProvider>
+        </EntityView.Provider>
+      );
+      const result = mountComponentWithStore(Wrapped, store, {
+        index: 0,
+        translation,
+      });
+      createDefaultUser(store);
+      return result;
+    }
+
+    it('offers the AI dropdown on a composed suggestion', () => {
+      const { container } = mountComposed();
+      const sources = container.querySelector('ul.sources');
+      expect(sources.lastElementChild).toHaveClass('ai-refine');
+    });
+
+    it('does not offer to refine a suggestion that is already LLM output', () => {
+      const { container } = mountComposed({
+        ...COMPOSED,
+        sources: ['openai-chatgpt'],
+      });
+      expect(container.querySelector('li.ai-refine')).not.toBeInTheDocument();
+    });
+
+    it('hides the dropdown when OpenAI is not supported', () => {
+      root.dataset.isOpenaiChatgptSupported = 'false';
+      const { container } = mountComposed();
+      expect(container.querySelector('li.ai-refine')).not.toBeInTheDocument();
+    });
+
+    it('replaces every field with the refined translation', async () => {
+      const fetchRefined = vi
+        .spyOn(machineryApi, 'fetchOpenAIComposedTranslation')
+        .mockResolvedValue({
+          value: ['Veuillez cliquer'],
+          properties: { title: ['Infobulle raffinée'] },
+        });
+
+      const { container } = mountComposed();
+
+      fireEvent.click(container.querySelector('li.ai-refine .selector'));
+      await act(async () => {
+        fireEvent.click(screen.getByText('MAKE FORMAL'));
+      });
+
+      expect(fetchRefined).toHaveBeenCalledWith(
+        42,
+        COMPOSED.value,
+        COMPOSED.properties,
+        'formal',
+        expect.anything(),
+      );
+
+      const suggestion = container.querySelector(
+        '.fluent-rich-string.suggestion',
+      );
+      expect(suggestion.textContent).toContain('Veuillez cliquer');
+      expect(suggestion.textContent).toContain('Infobulle raffinée');
+      expect(suggestion.textContent).not.toContain('Cliquez');
+
+      expect(
+        container.querySelector('.fluent-rich-string.original').textContent,
+      ).toContain('Click Me');
+      expect(container.querySelector('.selected-option').textContent).toContain(
+        'formal',
+      );
+    });
+
+    it('restores the unrefined suggestion', async () => {
+      vi.spyOn(
+        machineryApi,
+        'fetchOpenAIComposedTranslation',
+      ).mockResolvedValue({
+        value: ['Veuillez cliquer'],
+        properties: { title: ['Raffiné'] },
+      });
+
+      const { container } = mountComposed();
+
+      fireEvent.click(container.querySelector('li.ai-refine .selector'));
+      await act(async () => {
+        fireEvent.click(screen.getByText('MAKE FORMAL'));
+      });
+
+      fireEvent.click(container.querySelector('li.ai-refine .selector'));
+      await act(async () => {
+        fireEvent.click(screen.getByText('SHOW ORIGINAL'));
+      });
+
+      expect(
+        container.querySelector('.fluent-rich-string.suggestion').textContent,
+      ).toContain('Cliquez');
+    });
+
+    it('keeps the suggestion when refinement fails', async () => {
+      vi.spyOn(
+        machineryApi,
+        'fetchOpenAIComposedTranslation',
+      ).mockResolvedValue(null);
+
+      const { container } = mountComposed();
+
+      fireEvent.click(container.querySelector('li.ai-refine .selector'));
+      await act(async () => {
+        fireEvent.click(screen.getByText('REPHRASE'));
+      });
+
+      expect(
+        container.querySelector('.fluent-rich-string.suggestion').textContent,
+      ).toContain('Cliquez');
+      expect(container.querySelector('.selected-option').textContent).toBe('');
+    });
   });
 });

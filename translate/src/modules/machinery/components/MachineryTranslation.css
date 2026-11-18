@@ -57,25 +57,31 @@
   cursor: default;
 }
 
-.machinery .translation > header li.google-translation {
+.machinery .translation > header li.ai-refine {
   position: relative;
 }
 
+/* The AI badge reads as a button rather than as another source, so it gets no
+   separator; `.selected-option` supplies the gap that sets it apart instead. */
 .machinery
   .translation
   > header
-  li.google-translation:hover
-  .translation-source {
-  color: var(--status-translated);
+  .sources:not(.projects)
+  > li.ai-refine::before {
+  content: none;
 }
 
-.machinery .translation > header li.google-translation .selected-option {
+.machinery .translation > header ul li.ai-refine {
+  padding-left: 0;
+}
+
+.machinery .translation > header li.ai-refine .selected-option {
   margin-left: 3px;
   margin-right: 3px;
   color: var(--status-translated);
 }
 
-.machinery .translation > header li.google-translation .dropdown-toggle {
+.machinery .translation > header li.ai-refine .dropdown-toggle {
   background: var(--status-translated);
   border: none;
   border-radius: 2px;
@@ -83,15 +89,19 @@
   padding: 0 2px;
 }
 
-.machinery .translation > header li.google-translation .dropdown-title {
+.machinery .translation > header li.ai-refine .dropdown-title {
   padding-right: 2px;
 }
 
-.machinery .translation > header li.google-translation .dropdown-menu {
+/* Sized by its own content, not by the badge: the badge is only as wide as its
+   button, which would clip every option. Anchored right because the sources are
+   right-aligned, so the menu opens inward instead of off the panel edge. */
+.machinery .translation > header li.ai-refine .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  left: auto;
   right: 0;
+  width: max-content;
   padding: 10px 12px;
   background-color: var(--black-3);
   border: 1px solid var(--main-border-1);
@@ -100,14 +110,14 @@
   list-style: none;
 }
 
-.machinery .translation > header li.google-translation .dropdown-menu li {
+.machinery .translation > header li.ai-refine .dropdown-menu li {
   padding: 2px 4px;
   text-align: left;
   display: block;
   white-space: nowrap;
 }
 
-.machinery .translation > header li.google-translation .dropdown-menu li:hover {
+.machinery .translation > header li.ai-refine .dropdown-menu li:hover {
   background: var(--dark-grey-2);
   color: var(--white-1);
 }
@@ -115,7 +125,7 @@
 .machinery
   .translation
   > header
-  li.google-translation
+  li.ai-refine
   .dropdown-menu
   li.horizontal-separator {
   border-top: 1px solid var(--main-border-1);
