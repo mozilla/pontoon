@@ -83,3 +83,72 @@ describe('keyword', () => {
     });
   });
 });
+
+describe('quoted literal direction', () => {
+  // Returns the bidi level of each text span, in visual order
+  function bidiLevels(view: EditorView) {
+    const doc = view.state.doc.toString();
+    return view
+      .bidiSpans(view.state.doc.line(1))
+      .map((span) => [doc.slice(span.from, span.to), span.level]);
+  }
+
+  test('RTL literal starting with a placeholder', () => {
+    const view = tempView('fluent', '<a title="{ $name } سلام">متن</a>');
+
+    const literal = getAncestorWith(view.domAtPos(21).node, 'dir');
+    expect(literal?.textContent).toBe('{ $name } سلام');
+    expect(literal?.getAttribute('dir')).toBe('rtl');
+
+    expect(bidiLevels(view)).toEqual([
+      ['<a title="', 0],
+      [' سلام', 1],
+      ['{ $name }', 2],
+      ['">', 0],
+      ['متن', 1],
+      ['</a>', 0],
+    ]);
+  });
+
+  test('LTR literal with RTL text after a placeholder', () => {
+    const view = tempView('fluent', '<a title="{ $name } hello سلام">x</a>');
+
+    const literal = getAncestorWith(view.domAtPos(21).node, 'dir');
+    expect(literal?.getAttribute('dir')).toBe('ltr');
+  });
+
+  test('literal without strong characters', () => {
+    const view = tempView('fluent', '<a title="{ $name } 123">x</a>');
+
+    const literal = getAncestorWith(view.domAtPos(21).node, 'dir');
+    expect(literal?.getAttribute('dir')).toBe('ltr');
+  });
+});
+
+describe('quoted literal direction while editing', () => {
+  const literalDir = (view: EditorView) =>
+    getAncestorWith(view.domAtPos(11).node, 'dir')?.getAttribute('dir');
+
+  test('does not flip when typing text in the other direction', () => {
+    const view = tempView('fluent', '<a title="سلام">x</a>');
+    expect(literalDir(view)).toBe('rtl');
+
+    // '<a title="' is 10 characters, so the literal starts at 10.
+    // On its own, the new content would be shown LTR.
+    view.dispatch({ changes: { from: 10, insert: 'Firefox ' } });
+    expect(view.state.doc.toString()).toBe('<a title="Firefox سلام">x</a>');
+    expect(literalDir(view)).toBe('rtl');
+  });
+
+  test('is detected again for new content', () => {
+    const view = tempView('fluent', '<a title="سلام">x</a>');
+    view.dispatch({
+      changes: {
+        from: 0,
+        to: view.state.doc.length,
+        insert: '<a title="Firefox سلام">x</a>',
+      },
+    });
+    expect(literalDir(view)).toBe('ltr');
+  });
+});
