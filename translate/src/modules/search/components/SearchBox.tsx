@@ -35,7 +35,7 @@ import './SearchBox.css';
 function getSearchUpdates(
   searchOptions: SearchState,
   searchDefaults: Partial<SearchState>,
-  search: string | null,
+  search: string,
 ): Partial<Location> {
   return Object.fromEntries(
     SEARCH_OPTIONS.map(({ slug, default: def }) => {
