@@ -21,7 +21,7 @@ import { EditorView, keymap, tooltips } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useMemo, useRef } from 'react';
 
-import { EditorActions } from '~/context/Editor';
+import { EditorActions, EditorData } from '~/context/Editor';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { useEntityEntry, useMachineryEntry } from '~/context/EntityView';
@@ -83,10 +83,11 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
   );
   const { composed, source, translations } = useContext(MachineryTranslations);
   const { query } = useContext(SearchData);
+  const { sourceView } = useContext(EditorData);
   const sourceEntry = useEntityEntry();
   const machineryEntry = useMachineryEntry();
   return useMemo(() => {
-    if (!enabled || query) {
+    if (!enabled || query || sourceView) {
       return [];
     }
     const candidates = translations.map((tx) => tx.translation);
@@ -115,6 +116,7 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
     query,
     source,
     sourceEntry,
+    sourceView,
     translations,
   ]);
 }
