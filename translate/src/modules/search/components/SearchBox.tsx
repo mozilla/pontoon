@@ -38,7 +38,7 @@ function getSearchUpdates(
   search: string,
 ): Partial<Location> {
   return Object.fromEntries(
-    SEARCH_OPTIONS.map(({ slug, default: def }) => {
+    SEARCH_OPTIONS.map(({ slug, default: globalDefault }) => {
       const effectiveDefault = search ? globalDefault : (searchDefaults[slug] ?? globalDefault);
       return [
         slug,
