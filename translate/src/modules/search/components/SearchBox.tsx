@@ -39,7 +39,7 @@ function getSearchUpdates(
 ): Partial<Location> {
   return Object.fromEntries(
     SEARCH_OPTIONS.map(({ slug, default: def }) => {
-      const fallback = search ? def : (searchDefaults[slug] ?? def);
+      const effectiveDefault = search ? globalDefault : (searchDefaults[slug] ?? globalDefault);
       return [
         slug,
         searchOptions[slug] !== fallback ? searchOptions[slug] : undefined,
