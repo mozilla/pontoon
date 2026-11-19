@@ -413,7 +413,7 @@ describe('<SearchBoxBase>', () => {
     expect(pushed.search_exclude_source_strings).toBeUndefined();
   });
 
-  it('writes an option to the URL when it differs from the profile default and there is no search', () => {
+  it('writes an option to the URL when it differs from the profile default and the search box is empty', () => {
     const push = vi.fn();
     const wrapper = mount(
       <WrapSearchBoxBase
