@@ -27,6 +27,7 @@ function MockEditField({
   isAuthenticated = true,
   setResultFromInput = vi.fn(),
   machinery = [],
+  machinerySource = '',
   machineryAutocomplete = true,
   query = '',
   value,
@@ -41,6 +42,7 @@ function MockEditField({
   isAuthenticated?: boolean;
   setResultFromInput?: EditorActions['setResultFromInput'];
   machinery?: string[];
+  machinerySource?: string;
   machineryAutocomplete?: boolean;
   query?: string;
   value?: Message;
@@ -83,7 +85,7 @@ function MockEditField({
               <MachineryTranslations.Provider
                 value={{
                   fetching: false,
-                  source: '',
+                  source: machinerySource,
                   composed,
                   translations,
                 }}
@@ -248,6 +250,15 @@ describe('<EditField>', () => {
         properties,
       });
 
+      const plural = (one: string, other: string): Message => ({
+        decl: {},
+        sel: ['n'],
+        alt: [
+          { keys: ['one'], pat: [one] },
+          { keys: [{ '*': 'other' }], pat: [other] },
+        ],
+      });
+
       it('uses the part for an attribute field', () => {
         const props = {
           format: 'fluent' as const,
@@ -267,14 +278,6 @@ describe('<EditField>', () => {
       });
 
       it('uses the part for a plural variant', () => {
-        const plural = (one: string, other: string): Message => ({
-          decl: {},
-          sel: ['n'],
-          alt: [
-            { keys: ['one'], pat: [one] },
-            { keys: [{ '*': 'other' }], pat: [other] },
-          ],
-        });
         const props = {
           format: 'fluent' as const,
           value: plural('One file', 'Many files'),
@@ -286,6 +289,37 @@ describe('<EditField>', () => {
 
         const other = renderField({ ...props, fieldId: '|*' });
         expect(ghost(other.container)).toBeNull();
+      });
+
+      it('uses other suggestions only for the field they translate', () => {
+        const props = {
+          format: 'fluent' as const,
+          value: ['Search the web'],
+          properties: { placeholder: ['Search your bookmarks'] },
+          machinery: ['Cerca nel web'],
+          machinerySource: 'Search the web',
+          defaultValue: 'Cerca n',
+        };
+        const value = renderField({ ...props, fieldId: '' });
+        expect(ghost(value.container)).toBe('el');
+
+        const attribute = renderField({ ...props, fieldId: 'placeholder' });
+        expect(ghost(attribute.container)).toBeNull();
+      });
+
+      it('uses other suggestions only for the plural variant they translate', () => {
+        const props = {
+          format: 'fluent' as const,
+          value: plural('One file', 'Many files'),
+          machinery: ['Molti file'],
+          machinerySource: 'Many files',
+          defaultValue: 'Molti f',
+        };
+        const other = renderField({ ...props, fieldId: '|*' });
+        expect(ghost(other.container)).toBe('ile');
+
+        const one = renderField({ ...props, fieldId: '|one' });
+        expect(ghost(one.container)).toBeNull();
       });
     });
 
