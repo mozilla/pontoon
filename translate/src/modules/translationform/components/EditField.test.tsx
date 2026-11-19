@@ -9,7 +9,7 @@ import type {
   ComposedMachineryTranslation,
   MachineryTranslation,
 } from '~/api/machinery';
-import { EditFieldHandle, EditorActions } from '~/context/Editor';
+import { EditFieldHandle, EditorActions, EditorData } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
@@ -29,6 +29,7 @@ function MockEditField({
   machinery = [],
   machineryAutocomplete = true,
   query = '',
+  sourceView = false,
   value,
   properties,
   composed = [],
@@ -43,6 +44,7 @@ function MockEditField({
   machinery?: string[];
   machineryAutocomplete?: boolean;
   query?: string;
+  sourceView?: boolean;
   value?: Message;
   properties?: Record<string, Message>;
   composed?: ComposedMachineryTranslation[];
@@ -88,16 +90,18 @@ function MockEditField({
                   translations,
                 }}
               >
-                <EditorActions.Provider
-                  value={{ setResultFromInput } as EditorActions}
-                >
-                  <EditField
-                    ref={fieldRef}
-                    defaultValue={defaultValue}
-                    singleField={singleField}
-                    fieldId={fieldId}
-                  />
-                </EditorActions.Provider>
+                <EditorData.Provider value={{ sourceView } as EditorData}>
+                  <EditorActions.Provider
+                    value={{ setResultFromInput } as EditorActions}
+                  >
+                    <EditField
+                      ref={fieldRef}
+                      defaultValue={defaultValue}
+                      singleField={singleField}
+                      fieldId={fieldId}
+                    />
+                  </EditorActions.Provider>
+                </EditorData.Provider>
               </MachineryTranslations.Provider>
             </SearchData.Provider>
           </EntityView.Provider>
@@ -324,6 +328,16 @@ describe('<EditField>', () => {
 
     it('is not shown during a Concordance search', async () => {
       const { container } = renderField({ query: 'server' });
+      await userEvent.keyboard(' r');
+      expect(ghost(container)).toBeNull();
+    });
+
+    it('is not shown in the Fluent source view', async () => {
+      const { container } = renderField({
+        defaultValue: 'key = Firefox non',
+        format: 'fluent',
+        sourceView: true,
+      });
       await userEvent.keyboard(' r');
       expect(ghost(container)).toBeNull();
     });

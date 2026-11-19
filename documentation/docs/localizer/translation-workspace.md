@@ -308,6 +308,8 @@ The editor uses the suggestion that best matches what you've typed so far. Nothi
 
 Completions are only shown when the cursor is at the end of the translation, so they never move existing text. They're also not shown right after you delete text (for example with `Backspace` or `Delete`), while the placeholder list is open (`Tab` picks from that list), or during a Concordance search.
 
+Autocomplete is not available in [*Advanced FTL mode*](#fluent-ftl-files), where you edit the Fluent syntax directly.
+
 #### Large language model (LLM) integration
 
 Pontoon will show a dropdown labeled `AI` for all locales that have Google Translate available as a translation source. This feature refines the Google Translate output using an LLM. Opening this dropdown will reveal three options:
