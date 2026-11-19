@@ -31,7 +31,7 @@ import { SearchPanel } from './SearchPanel';
 
 import './SearchBox.css';
 
-/** Returns search options to encode in the URL, omitting values that match the fallback used by updateOptionsFromURL. */
+/** Returns search options to encode in the URL, omitting values that match the effective default used by updateOptionsFromURL. */
 function getSearchUpdates(
   searchOptions: SearchState,
   searchDefaults: Partial<SearchState>,
