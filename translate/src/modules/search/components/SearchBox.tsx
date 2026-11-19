@@ -42,7 +42,7 @@ function getSearchUpdates(
       const effectiveDefault = search ? globalDefault : (searchDefaults[slug] ?? globalDefault);
       return [
         slug,
-        searchOptions[slug] !== fallback ? searchOptions[slug] : undefined,
+        searchOptions[slug] !== effectiveDefault ? searchOptions[slug] : undefined,
       ];
     }),
   ) as Partial<Location>;
