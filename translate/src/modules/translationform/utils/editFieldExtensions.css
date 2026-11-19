@@ -41,3 +41,12 @@
   color: var(--tags-string-color);
   white-space: pre-wrap;
 }
+
+.ghost-text {
+  color: var(--editor-placeholder-color);
+  pointer-events: none;
+}
+
+.cm-editor:not(.cm-focused) .ghost-text {
+  display: none;
+}

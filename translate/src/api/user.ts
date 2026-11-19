@@ -42,6 +42,7 @@ export type ApiUserData = {
   settings?: {
     quality_checks: boolean;
     force_suggestions: boolean;
+    machinery_autocomplete: boolean;
     search_exclude_source_strings: boolean;
     search_identifiers: boolean;
     search_match_case: boolean;
@@ -99,13 +100,16 @@ export const markAllNotificationsAsRead = (): Promise<void> =>
 
 export function updateUserSetting(
   username: string,
-  setting: 'forceSuggestions' | 'runQualityChecks',
+  setting: 'forceSuggestions' | 'machineryAutocomplete' | 'runQualityChecks',
   value: boolean,
 ): Promise<string> {
   let attribute: string;
   switch (setting) {
     case 'forceSuggestions':
       attribute = 'force_suggestions';
+      break;
+    case 'machineryAutocomplete':
+      attribute = 'machinery_autocomplete';
       break;
     case 'runQualityChecks':
       attribute = 'quality_checks';

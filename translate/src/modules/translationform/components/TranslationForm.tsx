@@ -131,6 +131,7 @@ export function TranslationForm(): React.ReactElement<'div'> | null {
                     key={pk + id}
                     ref={ref}
                     defaultValue={value}
+                    fieldId={id}
                     name={name}
                     onFocus={onFocus}
                   />

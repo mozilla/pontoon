@@ -18,7 +18,12 @@ import { Locale } from '~/context/Locale';
 import { editorThemeClass, ThemeContext } from '~/context/Theme';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
-import { getExtensions, useKeyHandlers } from '../utils/editFieldExtensions';
+import {
+  getExtensions,
+  useGhostTextCandidates,
+  useKeyHandlers,
+} from '../utils/editFieldExtensions';
+import { ghostText, setGhostTextCandidates } from '../utils/ghostText';
 import { EntityView } from '~/context/EntityView';
 import { messageEntryFromEntity } from '~/utils/message/fromEntity';
 
@@ -26,6 +31,7 @@ export type EditFieldProps = {
   onFocus?: () => void;
   singleField?: boolean;
   defaultValue: string;
+  fieldId?: string;
 };
 
 /**
@@ -37,7 +43,7 @@ export type EditFieldProps = {
  */
 export const EditField = memo(
   forwardRef<EditFieldHandle, EditFieldProps>(
-    ({ defaultValue, onFocus, singleField }, ref) => {
+    ({ defaultValue, onFocus, singleField, fieldId }, ref) => {
       const { l10n } = useLocalization();
       const locale = useContext(Locale);
       const { editorTheme } = useContext(ThemeContext);
@@ -45,6 +51,7 @@ export const EditField = memo(
       const { entity } = useContext(EntityView);
       const { setResultFromInput } = useContext(EditorActions);
       const keyHandlers = useKeyHandlers();
+      const ghostTextCandidates = useGhostTextCandidates(fieldId);
       const [view, setView] = useState<EditorView | null>(null);
 
       const callbacks = useRef({ onFocus, setResultFromInput });
@@ -66,6 +73,7 @@ export const EditField = memo(
                 EditorView.editable.of(false),
               );
             } else {
+              extensions.push(ghostText(locale.code));
               if (singleField) {
                 const l10nId = 'translationform--single-field-placeholder';
                 extensions.push(placeholder(l10n.getString(l10nId)));
@@ -107,6 +115,12 @@ export const EditField = memo(
         [view],
       );
       useEffect(() => setValue(defaultValue), [defaultValue]);
+
+      useEffect(() => {
+        view?.dispatch({
+          effects: setGhostTextCandidates.of(ghostTextCandidates),
+        });
+      }, [view, ghostTextCandidates]);
 
       useImperativeHandle<EditFieldHandle, EditFieldHandle>(
         ref,

@@ -167,7 +167,7 @@ In the lower-right side of the editing space, it’s possible to `COPY` the sour
 
 In the lower-left side:
 
-* Clicking the gear icon allows users to toggle `Translation Toolkit checks` and `Make suggestions`, select their editor theme, and navigate to the user settings. Note that access to some settings is restricted by [user permissions](users.md#user-roles).
+* Clicking the gear icon allows users to toggle `Translation Toolkit checks`, `Make suggestions`, [`Autocomplete`](#autocomplete), select their editor theme, and navigate to the user settings. Note that access to some settings is restricted by [user permissions](users.md#user-roles).
 * Clicking the keyboard icon displays a list of available shortcuts.
 * The numbers displayed to the right of the keyboard icon (e.g. `50|59`) are the number of characters in the target and source string.
 
@@ -284,6 +284,8 @@ Machinery shows possible translations from a variety of sources. These sources i
 * [Caighdean](https://github.com/kscanne/caighdean).
 * [Bing Translator](https://www.bing.com/translator) (not currently enabled on pontoon.mozilla.org).
 
+Machinery suggestions can be used to [complete translations as you type](#autocomplete) in the editor.
+
 In addition, the user has the ability to search for translations containing words via [`Concordance search`](#concordance-search).
 
 In the tab, the number of entries is visible alongside the `MACHINERY` title in white. If any of the machinery matches are from translation memory, the number of matches will appear separately in green. For example, the screenshot below shows `2+1`, where the green `2` represents the two matches from translation memory and the `1` represents a machinery entry from Google Translate.
@@ -297,6 +299,14 @@ To the right of the entry, the number in green shows the percent match between t
 The origin of the machinery entry is listed in gray above the source string. Clicking the gray text will open the origin in a new window. The green superscript to the right indicates the number of matches for the entry in the translation memory.
 
 Be careful when using the machinery tab as suggestions may not match the source string for the project being translated. Even if the source strings match, the context in which strings are used may not be the same. This could lead to incorrect or unnatural translations. Always keep the meaning and purpose of the string being translated in mind when using the machinery tab.
+
+#### Autocomplete
+
+When `Autocomplete` is enabled in the [Editor's gear icon](#editor) or the [settings page](users.md#editor), the editor completes the translation as you type, using the Machinery suggestions for the current string (translation memory, machine translation, and LLM suggestions). The completion appears in gray after the cursor. Press `Tab` to accept it or `Esc` to hide it.
+
+The editor uses the suggestion that best matches what you've typed so far. Nothing is offered until the match is long enough. Each `Tab` accepts the rest of the current word, or the next word, along with its punctuation. Placeholders and tags are completed as a whole. In languages without spaces, `Tab` accepts one word at a time.
+
+Completions are only shown when the cursor is at the end of the translation, so they never move existing text. They're also not shown right after you delete text (for example with `Backspace` or `Delete`), while the placeholder list is open (`Tab` picks from that list), or during a Concordance search.
 
 #### Large language model (LLM) integration
 
