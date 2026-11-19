@@ -233,7 +233,7 @@ export function SearchBoxBase({
     () =>
       checkUnsavedChanges(() => {
         dispatch(resetEntities());
-        // Only encode values that would not be restored if omitted (see `getSearchUpdates`).
+        // Only encode values that differ from the effective default to keep search links shareable regardless of individual profile settings.
         parameters.push({
           ...parameters, // Persist all other variables to next state
           search,
