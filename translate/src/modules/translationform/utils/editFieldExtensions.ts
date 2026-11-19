@@ -24,7 +24,7 @@ import { useContext, useEffect, useMemo, useRef } from 'react';
 import { EditorActions } from '~/context/Editor';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
-import { useEntityEntry, useMachineryEntry } from '~/context/EntityView';
+import { useEntityEntry } from '~/context/EntityView';
 import { editorThemeClass } from '~/context/Theme';
 import { useAppSelector } from '~/hooks';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
@@ -81,19 +81,17 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
   const enabled = useAppSelector(
     (state) => state[USER].settings.machineryAutocomplete,
   );
-  const { composed, source, translations } = useContext(MachineryTranslations);
+  const { composed, translations } = useContext(MachineryTranslations);
   const { query } = useContext(SearchData);
   const sourceEntry = useEntityEntry();
-  const machineryEntry = useMachineryEntry();
   return useMemo(() => {
     if (!enabled || query) {
       return [];
     }
-    const candidates = translations.map((tx) => tx.translation);
     if (fieldId === undefined) {
-      return candidates;
+      return translations.map((tx) => tx.translation);
     }
-    const fieldCandidates = composed.flatMap(({ value, properties }) => {
+    return composed.flatMap(({ value, properties }) => {
       const { format, id } = sourceEntry;
       const entry = createMessageEntry(format, id, value, properties);
       const field = editMessageEntry(sourceEntry, entry).find(
@@ -101,22 +99,7 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
       );
       return field?.handle.current.value ? [field.handle.current.value] : [];
     });
-    const isSourceField = editMessageEntry(machineryEntry).some(
-      (field) => field.id === fieldId && field.handle.current.value === source,
-    );
-    return isSourceField
-      ? [...fieldCandidates, ...candidates]
-      : fieldCandidates;
-  }, [
-    composed,
-    enabled,
-    fieldId,
-    machineryEntry,
-    query,
-    source,
-    sourceEntry,
-    translations,
-  ]);
+  }, [composed, enabled, fieldId, query, sourceEntry, translations]);
 }
 
 const style = HighlightStyle.define([

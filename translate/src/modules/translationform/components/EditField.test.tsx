@@ -27,7 +27,6 @@ function MockEditField({
   isAuthenticated = true,
   setResultFromInput = vi.fn(),
   machinery = [],
-  machinerySource = '',
   machineryAutocomplete = true,
   query = '',
   value,
@@ -42,7 +41,6 @@ function MockEditField({
   isAuthenticated?: boolean;
   setResultFromInput?: EditorActions['setResultFromInput'];
   machinery?: string[];
-  machinerySource?: string;
   machineryAutocomplete?: boolean;
   query?: string;
   value?: Message;
@@ -85,7 +83,7 @@ function MockEditField({
               <MachineryTranslations.Provider
                 value={{
                   fetching: false,
-                  source: machinerySource,
+                  source: '',
                   composed,
                   translations,
                 }}
@@ -291,32 +289,33 @@ describe('<EditField>', () => {
         expect(ghost(other.container)).toBeNull();
       });
 
-      it('uses other suggestions only for the field they translate', () => {
+      it('does not use other suggestions for any field', () => {
         const props = {
           format: 'fluent' as const,
           value: ['Search the web'],
           properties: { placeholder: ['Search your bookmarks'] },
           machinery: ['Cerca nel web'],
-          machinerySource: 'Search the web',
           defaultValue: 'Cerca n',
         };
         const value = renderField({ ...props, fieldId: '' });
-        expect(ghost(value.container)).toBe('el');
+        expect(ghost(value.container)).toBeNull();
 
         const attribute = renderField({ ...props, fieldId: 'placeholder' });
         expect(ghost(attribute.container)).toBeNull();
+
+        const single = renderField(props);
+        expect(ghost(single.container)).toBe('el');
       });
 
-      it('uses other suggestions only for the plural variant they translate', () => {
+      it('does not use other suggestions for any plural variant', () => {
         const props = {
           format: 'fluent' as const,
           value: plural('One file', 'Many files'),
           machinery: ['Molti file'],
-          machinerySource: 'Many files',
           defaultValue: 'Molti f',
         };
         const other = renderField({ ...props, fieldId: '|*' });
-        expect(ghost(other.container)).toBe('ile');
+        expect(ghost(other.container)).toBeNull();
 
         const one = renderField({ ...props, fieldId: '|one' });
         expect(ghost(one.container)).toBeNull();
