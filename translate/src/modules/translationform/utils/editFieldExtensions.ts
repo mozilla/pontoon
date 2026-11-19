@@ -21,7 +21,7 @@ import { EditorView, keymap, tooltips } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useMemo, useRef } from 'react';
 
-import { EditorActions } from '~/context/Editor';
+import { EditorActions, EditorData } from '~/context/Editor';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { useEntityEntry } from '~/context/EntityView';
@@ -83,9 +83,10 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
   );
   const { composed, translations } = useContext(MachineryTranslations);
   const { query } = useContext(SearchData);
+  const { sourceView } = useContext(EditorData);
   const sourceEntry = useEntityEntry();
   return useMemo(() => {
-    if (!enabled || query) {
+    if (!enabled || query || sourceView) {
       return [];
     }
     if (fieldId === undefined) {
@@ -99,7 +100,15 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
       );
       return field?.handle.current.value ? [field.handle.current.value] : [];
     });
-  }, [composed, enabled, fieldId, query, sourceEntry, translations]);
+  }, [
+    composed,
+    enabled,
+    fieldId,
+    query,
+    sourceEntry,
+    sourceView,
+    translations,
+  ]);
 }
 
 const style = HighlightStyle.define([
