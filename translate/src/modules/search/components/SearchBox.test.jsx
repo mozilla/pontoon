@@ -413,7 +413,7 @@ describe('<SearchBoxBase>', () => {
     expect(pushed.search_exclude_source_strings).toBeUndefined();
   });
 
-  it('omits a search option from URL when user unchecks a profile-default-true option', () => {
+  it('writes an option to the URL when it differs from the profile default and the search box is empty', () => {
     const push = vi.fn();
     const wrapper = mount(
       <WrapSearchBoxBase
@@ -438,7 +438,7 @@ describe('<SearchBoxBase>', () => {
     wrapper.update();
 
     const pushed = push.mock.calls[0][0];
-    expect(pushed.search_identifiers).toBeUndefined();
+    expect(pushed.search_identifiers).toBe(false);
   });
 });
 
