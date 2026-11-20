@@ -24,7 +24,7 @@ import { useContext, useEffect, useMemo, useRef } from 'react';
 import { EditorActions, EditorData } from '~/context/Editor';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
-import { useEntityEntry } from '~/context/EntityView';
+import { useEntityEntry, useMachineryEntry } from '~/context/EntityView';
 import { editorThemeClass } from '~/context/Theme';
 import { useAppSelector } from '~/hooks';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
@@ -81,18 +81,20 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
   const enabled = useAppSelector(
     (state) => state[USER].settings.machineryAutocomplete,
   );
-  const { composed, translations } = useContext(MachineryTranslations);
+  const { composed, source, translations } = useContext(MachineryTranslations);
   const { query } = useContext(SearchData);
   const { sourceView } = useContext(EditorData);
   const sourceEntry = useEntityEntry();
+  const machineryEntry = useMachineryEntry();
   return useMemo(() => {
     if (!enabled || query || sourceView) {
       return [];
     }
+    const candidates = translations.map((tx) => tx.translation);
     if (fieldId === undefined) {
-      return translations.map((tx) => tx.translation);
+      return candidates;
     }
-    return composed.flatMap(({ value, properties }) => {
+    const fieldCandidates = composed.flatMap(({ value, properties }) => {
       const { format, id } = sourceEntry;
       const entry = createMessageEntry(format, id, value, properties);
       const field = editMessageEntry(sourceEntry, entry).find(
@@ -100,11 +102,19 @@ export function useGhostTextCandidates(fieldId?: string): readonly string[] {
       );
       return field?.handle.current.value ? [field.handle.current.value] : [];
     });
+    const isSourceField = editMessageEntry(machineryEntry).some(
+      (field) => field.id === fieldId && field.handle.current.value === source,
+    );
+    return isSourceField
+      ? [...fieldCandidates, ...candidates]
+      : fieldCandidates;
   }, [
     composed,
     enabled,
     fieldId,
+    machineryEntry,
     query,
+    source,
     sourceEntry,
     sourceView,
     translations,
