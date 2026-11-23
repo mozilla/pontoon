@@ -71,7 +71,9 @@ def project(request, slug):
         request,
         "projects/project.html",
         {
-            "project_stats": project_tr.string_stats(count_system_projects=True),
+            "project_stats": project_tr.string_stats(
+                request.user, count_system_projects=True
+            ),
             "count": project_locales.count(),
             "project": project,
             "tags_count": (
