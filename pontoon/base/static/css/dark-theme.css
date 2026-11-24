@@ -39,11 +39,15 @@
   --popup-background-2: #272a2f;
   --icon-background-2: #4d5967;
 
-  /* Tooltip */
-  --tooltip-background: #000000dd;
-  --tooltip-color: #ffffff;
-  --tooltip-color-2: #aaaaaa;
-  --tooltip-border: #4d5967;
+  /* Popups */
+  --popup-shadow: #000000dd;
+  --popup-secondary-color: #aaaaaa;
+
+  /* Overlays (tooltips, banners, sticky toolbars and the lightbox) */
+  --overlay-background: #000000dd;
+  --overlay-color: #ffffff;
+  --overlay-secondary-color: #aaaaaa;
+  --overlay-border: #4d5967;
 
   /* Homepage */
   --homepage-background-image: url(../img/background.svg);

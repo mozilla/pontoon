@@ -533,7 +533,7 @@ time {
 }
 
 body > header > .notification {
-  background: var(--tooltip-background);
+  background: var(--overlay-background);
   color: var(--status-translated);
   cursor: pointer;
   font-style: italic;

@@ -41,8 +41,8 @@
 }
 
 #insights h3 .tooltip {
-  background: var(--tooltip-background);
-  color: var(--tooltip-color);
+  background: var(--overlay-background);
+  color: var(--overlay-color);
   position: absolute;
   display: none;
   margin-top: 10px;

@@ -182,10 +182,10 @@ table.table.project-list.hidden {
 
 .table .latest-activity .tooltip {
   display: block;
-  background: var(--tooltip-background);
+  background: var(--overlay-background);
   border-radius: 10px;
   bottom: 30px;
-  color: var(--tooltip-color);
+  color: var(--overlay-color);
   left: -100px;
   padding: 10px;
   position: absolute;
@@ -198,7 +198,7 @@ table.table.project-list.hidden {
   content: '';
   position: absolute;
   border: 10px solid;
-  border-color: var(--tooltip-background) transparent transparent transparent;
+  border-color: var(--overlay-background) transparent transparent transparent;
   bottom: -20px;
   left: 160px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
   clip: rect(0 20px 10px 0);
@@ -219,7 +219,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer {
-  color: var(--tooltip-color-2);
+  color: var(--overlay-secondary-color);
   font-style: italic;
   height: 48px;
   margin-top: 10px;
@@ -250,7 +250,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer img {
-  border-color: var(--tooltip-border);
+  border-color: var(--overlay-border);
   display: inline-block;
   margin-left: 8px;
 }

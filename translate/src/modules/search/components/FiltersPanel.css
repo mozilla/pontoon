@@ -237,7 +237,7 @@
 .filters-panel .toolbar {
   position: sticky;
   bottom: 0;
-  background: var(--tooltip-background);
+  background: var(--overlay-background);
   border-top: 1px solid var(--light-grey-1);
   box-sizing: border-box;
   line-height: 23px;
@@ -248,7 +248,7 @@
 .filters-panel .toolbar button {
   background: none;
   border: none;
-  color: var(--tooltip-color-2);
+  color: var(--overlay-secondary-color);
   font-weight: 300;
 }
 
