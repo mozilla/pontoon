@@ -6,6 +6,7 @@ import pytest
 from django.template.loader import render_to_string
 from django.utils import timezone
 
+from pontoon.base.models import Project, TranslatedResource
 from pontoon.base.templatetags.helpers import full_url
 from pontoon.messaging.management.commands.send_deadline_notifications import (
     Command as DeadlineCommand,
@@ -200,6 +201,28 @@ def test_send_deadline_notifications_excludes_system_users(
 
     recipients = {call.kwargs["recipient"] for call in mock_notify.call_args_list}
     assert tm_user not in recipients
+
+
+@patch("pontoon.messaging.notifications.notify.send")
+@pytest.mark.django_db
+def test_send_deadline_notifications_include_private_project_stats(
+    mock_notify, admin, project_a, locale_a, resource_a
+):
+    """Private project stats are counted for deadline notifications."""
+    project_a.visibility = Project.Visibility.PRIVATE
+    project_a.deadline = (timezone.now() + timedelta(days=7)).date()
+    project_a.save()
+    ProjectLocaleFactory.create(project=project_a, locale=locale_a)
+    entity = EntityFactory.create(resource=resource_a)
+    TranslationFactory.create(locale=locale_a, entity=entity, user=admin)
+    TranslatedResource.objects.filter(resource=resource_a, locale=locale_a).update(
+        total_strings=1, approved_strings=0
+    )
+
+    DeadlineCommand().handle()
+
+    recipients = {call.kwargs["recipient"] for call in mock_notify.call_args_list}
+    assert admin in recipients
 
 
 @patch("pontoon.messaging.notifications.notify.send")

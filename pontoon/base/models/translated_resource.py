@@ -7,7 +7,6 @@ from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation import Translation
-from pontoon.base.models.user import User
 
 
 log = logging.getLogger(__name__)
@@ -16,17 +15,18 @@ log = logging.getLogger(__name__)
 class TranslatedResourceQuerySet(models.QuerySet["TranslatedResource"]):
     def string_stats(
         self,
-        user: User | None = None,
         *,
         count_disabled: bool = False,
         count_system_projects: bool = False,
+        only_public: bool = False,
     ) -> dict[str, int]:
+        """Return aggregate string counts, optionally only for public projects."""
         query = self
         if not count_disabled:
             query = query.filter(resource__project__disabled=False)
         if not count_system_projects:
             query = query.filter(resource__project__system_project=False)
-        if user is None or not user.is_superuser:
+        if only_public:
             query = query.filter(resource__project__visibility="public")
         return query.aggregate(
             total=Sum("total_strings", default=0),
@@ -43,7 +43,7 @@ class TranslatedResourceQuerySet(models.QuerySet["TranslatedResource"]):
         """
         query = self.filter(locale=locale)
         if project.slug == "all-projects":
-            return query.string_stats()
+            return query.string_stats(only_public=True)
         else:
             query = query.filter(resource__project=project)
             if paths:
