@@ -50,7 +50,7 @@
 }
 
 #string-not-found .actions a.primary {
-  background-color: var(--status-translated);
+  background-color: var(--accent-background);
 }
 
 #string-not-found .actions a:first-child {
@@ -95,5 +95,5 @@
 }
 
 #string-not-found .detail .value .accent {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

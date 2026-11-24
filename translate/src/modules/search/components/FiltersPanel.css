@@ -101,7 +101,7 @@
 .filters-panel .menu li.horizontal-separator {
   background: transparent;
   border-top: none;
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   cursor: default;
   font-size: 13px;
   height: auto;
@@ -154,7 +154,7 @@
 }
 
 .filters-panel .menu li .priority .fa-star.active {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .filters-panel
@@ -268,5 +268,5 @@
 .filters-panel .toolbar .clear-selection:hover,
 .filters-panel .toolbar .apply-selected:hover,
 .filters-panel .toolbar .apply-selected .applied-count {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

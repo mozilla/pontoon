@@ -25,7 +25,7 @@
 }
 
 .resource-menu .selector .icon {
-  color: var(--status-translated);
+  color: var(--accent-color);
   padding-left: 7px;
 }
 
@@ -99,7 +99,7 @@
 }
 
 .resource-menu .menu .current a {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
 }
 
 .resource-menu .menu .header {

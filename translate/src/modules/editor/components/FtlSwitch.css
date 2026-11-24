@@ -13,7 +13,7 @@
 
 .editor .ftl.active,
 .editor .ftl:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .editor .ftl.error {

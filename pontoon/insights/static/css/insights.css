@@ -6,7 +6,7 @@
       background-color: var(--button-background-2);
 
       &:hover {
-        background-color: var(--status-translated);
+        background-color: var(--accent-background);
       }
     }
 
@@ -101,7 +101,7 @@
         height: 44px;
 
         a {
-          color: var(--status-translated-alt);
+          color: var(--accent-color-alt);
         }
 
         div {
@@ -179,7 +179,7 @@
       margin-top: 24px;
       text-align: center;
       a {
-        color: var(--status-translated);
+        color: var(--accent-color);
       }
     }
   }

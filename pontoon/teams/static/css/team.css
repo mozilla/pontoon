@@ -32,7 +32,7 @@
 }
 
 .buglist tbody .id a {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .buglist th {

@@ -118,5 +118,5 @@
 }
 
 .entity .sibling-entities-icon:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

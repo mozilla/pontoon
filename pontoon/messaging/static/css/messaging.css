@@ -136,7 +136,7 @@
           padding-bottom: 20px;
 
           .check-box-wrapper {
-            color: var(--status-translated);
+            color: var(--accent-color);
             font-size: 26px;
             font-weight: 300;
             font-style: italic;
@@ -338,7 +338,7 @@
             font-size: 14px;
 
             .sender {
-              color: var(--status-translated-alt);
+              color: var(--accent-color-alt);
               width: 50%;
             }
 
@@ -348,7 +348,7 @@
               width: 50%;
 
               i {
-                color: var(--status-translated);
+                color: var(--accent-color);
                 font-size: 18px;
                 margin-left: 5px;
               }
@@ -378,7 +378,7 @@
             text-transform: uppercase;
 
             .fas {
-              color: var(--status-translated);
+              color: var(--accent-color);
               margin-right: 5px;
             }
           }
@@ -447,7 +447,7 @@
       }
 
       a {
-        color: var(--status-translated);
+        color: var(--accent-color);
         font-weight: inherit;
       }
 

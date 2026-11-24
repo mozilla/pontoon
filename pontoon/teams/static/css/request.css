@@ -81,12 +81,12 @@
 }
 
 #request-item-note p a {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .request-item {
   display: none;
-  background: var(--status-translated);
+  background: var(--accent-background);
   border: none;
   border-radius: 3px;
   margin-top: 15px;
@@ -186,7 +186,7 @@
 .item-list td.check:hover:before,
 .item-list td.check.enabled:before {
   content: '';
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .item-list td.check.enabled:before {
@@ -200,7 +200,7 @@
 
 .item-list td.radio:hover:before,
 .item-list td.radio.enabled:before {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .items.requesting-pretranslation .item-list .deadline,

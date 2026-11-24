@@ -29,7 +29,7 @@
 
 #insights .controls .period-selector li .selector.active,
 #insights .controls .period-selector li .selector:hover {
-  background: var(--status-translated);
+  background: var(--accent-background);
   color: var(--black-3);
 }
 

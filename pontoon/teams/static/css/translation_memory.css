@@ -146,10 +146,10 @@
           }
 
           a:hover {
-            color: var(--status-translated);
+            color: var(--accent-color);
 
             .empty {
-              color: var(--status-translated);
+              color: var(--accent-color);
             }
           }
         }
@@ -179,7 +179,7 @@
           }
 
           .button.edit:hover {
-            background: var(--status-translated);
+            background: var(--accent-background);
           }
 
           .button.save {
@@ -187,7 +187,7 @@
           }
 
           .button.save:hover {
-            background: var(--status-translated);
+            background: var(--accent-background);
           }
 
           .button.delete {

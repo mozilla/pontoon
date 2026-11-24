@@ -12,7 +12,7 @@
 }
 
 .editor-settings .selector:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .editor-settings .menu {
@@ -65,6 +65,6 @@
 }
 
 .editor-settings .menu .check-box.enabled .fas:before {
-  color: var(--status-translated);
+  color: var(--accent-color);
   content: '';
 }

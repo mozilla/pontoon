@@ -12,7 +12,7 @@ form.user-locales-settings .search-wrapper {
 
 form a:link,
 form a:visited {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   float: right;
   text-transform: uppercase;
 }
@@ -271,7 +271,7 @@ form a:visited {
 }
 
 #main .field .verify {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-style: italic;
 }
 
@@ -447,7 +447,7 @@ form a:visited {
     }
 
     .generate-token-btn {
-      background: var(--status-translated);
+      background: var(--accent-background);
       border: none;
       border-radius: 3px;
       font-weight: 400;

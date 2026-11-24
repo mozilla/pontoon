@@ -66,7 +66,7 @@
 }
 
 .failed-checks .anyway {
-  background: var(--status-translated);
+  background: var(--accent-background);
   border: none;
   border-radius: 3px;
   bottom: 10px;

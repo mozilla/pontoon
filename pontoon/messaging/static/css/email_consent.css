@@ -55,7 +55,7 @@ body > header.menu-opened {
 }
 
 #main .buttons button.enable {
-  background-color: var(--status-translated);
+  background-color: var(--accent-background);
   color: var(--homepage-tour-button-color);
   margin-right: 30px;
 }
@@ -81,5 +81,5 @@ body > header.menu-opened {
 }
 
 #main p.privacy-notice a {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

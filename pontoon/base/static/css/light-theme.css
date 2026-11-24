@@ -73,6 +73,12 @@ html {
   --status-unreviewed: #4fc4f6;
   --status-fuzzy: #fed271;
 
+  /* Accent (Pontoon green) */
+  --accent-color: #7bc876;
+  --accent-color-alt: #49a643;
+  --accent-background: #7bc876;
+  --accent-border: #7bc876;
+
   /* Translation workspace */
   --translation-background: #f6f6f6;
   --translation-border: #bbbbbb;

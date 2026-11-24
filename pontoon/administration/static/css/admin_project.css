@@ -31,7 +31,7 @@ h1 aside {
 }
 
 h1 a {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 14px;
   font-weight: 300;
   letter-spacing: 0;
@@ -156,7 +156,7 @@ form .controls .button.manage-resources[disabled]:hover {
 
 form a:link,
 form a:visited {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   float: right;
   text-transform: uppercase;
 }

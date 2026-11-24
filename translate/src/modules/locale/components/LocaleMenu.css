@@ -51,7 +51,7 @@
 }
 
 .locale-menu-trigger .locale-code {
-  color: var(--status-translated);
+  color: var(--accent-color);
   flex-shrink: 0;
 }
 

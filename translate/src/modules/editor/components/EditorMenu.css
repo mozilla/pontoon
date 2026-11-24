@@ -29,7 +29,7 @@
 }
 
 .editor-menu .actions button:not(.has-error):hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .editor-menu .actions button .fas {
@@ -39,7 +39,7 @@
 .editor-menu .actions .action-approve,
 .editor-menu .actions .action-save,
 .editor-menu .actions .action-suggest {
-  background: var(--status-translated);
+  background: var(--accent-background);
   border-radius: 3px;
   color: var(--translation-main-button-color);
   font-weight: 600;
@@ -73,7 +73,7 @@
 .editor-menu .banner button {
   background: none;
   border: none;
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-style: inherit;
   padding: 0;
 }

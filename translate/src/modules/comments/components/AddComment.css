@@ -24,7 +24,7 @@
 }
 
 .comments-list .add-comment .comment-editor .mention-element {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .comments-mention-list {
@@ -78,5 +78,5 @@
 
 .comments-list .add-comment .submit-button:hover {
   color: var(--black-3);
-  background: var(--status-translated);
+  background: var(--accent-background);
 }

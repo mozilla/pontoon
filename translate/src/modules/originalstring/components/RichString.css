@@ -26,7 +26,7 @@
 
 .fluent-rich-string label > :not(:last-child)::after {
   content: '·';
-  color: var(--status-translated);
+  color: var(--accent-color);
   padding: 0 3px;
 }
 

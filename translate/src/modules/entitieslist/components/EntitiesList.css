@@ -36,7 +36,7 @@
 }
 
 .entities .no-results div {
-  color: var(--status-translated);
+  color: var(--accent-color);
   display: block;
   font-size: 128px;
   margin-bottom: 20px;
@@ -81,5 +81,5 @@
 .entities .toolbar .clear-selected:hover,
 .entities .toolbar .edit-selected:hover,
 .entities .toolbar .edit-selected .selected-count {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

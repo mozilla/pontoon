@@ -128,7 +128,7 @@ table.table.project-list.hidden {
 }
 
 .table a:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 /* Selector must also match heading-info */
@@ -149,7 +149,7 @@ table.table.project-list.hidden {
 }
 
 .table td.code a {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   line-height: 47px;
   padding: 15px 5px 14px;
 }
@@ -207,7 +207,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip .quote {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 30px;
 }
 
@@ -246,7 +246,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer .translation-action a {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .table .latest-activity .tooltip footer img {

@@ -29,7 +29,7 @@
         }
 
         .search.button {
-          background: var(--status-translated);
+          background: var(--accent-background);
           color: var(--black-3);
           font-size: 16px;
           height: 32px;
@@ -178,12 +178,12 @@
 }
 
 .entity-info-container a {
-  color: var(--status-translated);
+  color: var(--accent-color);
   text-decoration: none;
 }
 
 .entity-info-container a:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .utility-container {
@@ -198,7 +198,7 @@
 .utility-container.controls button.copy:hover,
 .utility-container.controls a.edit:hover,
 .utility-container.controls a.all-locales:hover {
-  background: var(--status-translated);
+  background: var(--accent-background);
 }
 
 #initial-section-container {
@@ -223,7 +223,7 @@
   }
 
   .button:hover {
-    background: var(--status-translated);
+    background: var(--accent-background);
   }
 }
 
@@ -276,7 +276,7 @@
 
         .translation-locale-code {
           font-style: italic;
-          color: var(--status-translated-alt);
+          color: var(--accent-color-alt);
           vertical-align: sub;
         }
       }
@@ -322,7 +322,7 @@
   }
 
   .chip {
-    background: var(--status-translated);
+    background: var(--accent-background);
     border-radius: 3px;
     color: var(--translation-main-button-color);
     padding: 4px;
@@ -333,6 +333,6 @@
   }
 
   a {
-    color: var(--status-translated);
+    color: var(--accent-color);
   }
 }

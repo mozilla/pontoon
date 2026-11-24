@@ -57,7 +57,7 @@
 }
 
 .log-list .sync-now .button:hover {
-  background: var(--status-translated);
+  background: var(--accent-background);
   color: var(--black-3);
   cursor: pointer;
 }
@@ -115,5 +115,5 @@
 }
 
 .pagination .page .current {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

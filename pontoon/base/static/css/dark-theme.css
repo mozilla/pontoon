@@ -66,6 +66,12 @@
   --status-unreviewed: #4fc4f6;
   --status-fuzzy: #fed271;
 
+  /* Accent (Pontoon green) */
+  --accent-color: #7bc876;
+  --accent-color-alt: #7bc876;
+  --accent-background: #7bc876;
+  --accent-border: #7bc876;
+
   /* Translation workspace */
   --translation-background: #3f4752;
   --translation-border: #5e6475;

@@ -38,5 +38,5 @@
 }
 
 .project-info .panel a {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

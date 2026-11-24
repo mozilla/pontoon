@@ -43,7 +43,7 @@
     }
 
     & .title {
-      color: var(--status-translated-alt);
+      color: var(--accent-color-alt);
       cursor: default;
       font-size: 13px;
       font-weight: 300;
@@ -108,7 +108,7 @@
         }
 
         &.enabled .fas::before {
-          color: var(--status-translated);
+          color: var(--accent-color);
           content: '';
         }
 
@@ -135,7 +135,7 @@
     margin-top: 8px;
 
     &:hover {
-      color: var(--status-translated);
+      color: var(--accent-color);
     }
   }
 }
