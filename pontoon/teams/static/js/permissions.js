@@ -33,7 +33,7 @@ $(function () {
     const config = {
       disableForReducedMotion: true,
       colors: [
-        style.getPropertyValue('--status-error'),
+        style.getPropertyValue('--badge-community-builder'),
         style.getPropertyValue('--white-1'),
       ],
       particleCount: 2,

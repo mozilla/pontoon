@@ -20,6 +20,12 @@ html {
   --user-translator: #7bc876;
   --user-new: #fed271;
 
+  /* Badges */
+  --badge-review-master: #4fc4f6;
+  --badge-translation-champion: #7bc876;
+  --badge-community-builder: #ff3366;
+  --confetti-dark: #000000dd;
+
   /* Primary (darker) background */
   --background-1: #f6f6f6;
   --background-hover-1: #ffffff;
