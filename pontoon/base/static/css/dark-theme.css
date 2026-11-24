@@ -89,6 +89,8 @@
   --editor-selection-background: #2c4a66;
   --editor-placeholder-color: #888c92;
   --time-range-handles: #272a2f;
+  --time-range-series: #7bc876;
+  --time-range-navigator: #4d5967;
 
   /* Highlights */
   --diff-del-background: #5e3b46;

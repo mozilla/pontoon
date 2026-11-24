@@ -96,6 +96,8 @@ html {
   --editor-selection-background: #bee2f8;
   --editor-placeholder-color: #6f7479;
   --time-range-handles: #888888;
+  --time-range-series: #7bc876;
+  --time-range-navigator: #bbbbbb;
 
   /* Highlights */
   --diff-del-background: #ffebe9;

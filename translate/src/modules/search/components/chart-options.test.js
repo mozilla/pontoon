@@ -2,16 +2,16 @@ import { getChartOptions } from './chart-options';
 
 describe('getChartOptions', () => {
   afterEach(() => {
-    document.body.style.removeProperty('--status-translated');
+    document.body.style.removeProperty('--time-range-series');
   });
 
   it('reads the current value of theme CSS variables', () => {
-    document.body.style.setProperty('--status-translated', '#111111');
+    document.body.style.setProperty('--time-range-series', '#111111');
     expect(getChartOptions([], () => {}).navigator.series.color).toBe(
       '#111111',
     );
 
-    document.body.style.setProperty('--status-translated', '#222222');
+    document.body.style.setProperty('--time-range-series', '#222222');
     expect(getChartOptions([], () => {}).navigator.series.color).toBe(
       '#222222',
     );
