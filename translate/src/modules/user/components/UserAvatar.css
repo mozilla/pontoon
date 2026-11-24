@@ -25,7 +25,6 @@
   transform: translate(-50%, 20%);
   background-color: var(--background-1);
   opacity: 0.8;
-  color: var(--tooltip-color);
   font-size: 9px;
   line-height: 2;
   font-weight: bold;
