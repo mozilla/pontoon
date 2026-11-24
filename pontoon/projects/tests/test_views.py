@@ -63,8 +63,11 @@ def test_project_view_private_stats(client_superuser, project_a, locale_a, resou
 
 
 @pytest.mark.django_db
-def test_project_view_private_stats_anonymous(client, project_a):
+def test_project_view_private_stats_anonymous(client, project_a, resource_a):
     """Private project stats are hidden from anonymous users."""
+    # The project is accessible while public; the 404 below is caused by visibility.
+    assert client.get(f"/projects/{project_a.slug}/").status_code == 200
+
     project_a.visibility = Project.Visibility.PRIVATE
     project_a.save()
 
@@ -72,8 +75,11 @@ def test_project_view_private_stats_anonymous(client, project_a):
 
 
 @pytest.mark.django_db
-def test_project_view_private_stats_non_superuser(member, project_a):
+def test_project_view_private_stats_non_superuser(member, project_a, resource_a):
     """Private project stats are hidden from non-superusers."""
+    # The project is accessible while public; the 404 below is caused by visibility.
+    assert member.client.get(f"/projects/{project_a.slug}/").status_code == 200
+
     project_a.visibility = Project.Visibility.PRIVATE
     project_a.save()
 

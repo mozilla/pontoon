@@ -86,13 +86,23 @@ def test_localization_view_private_stats(
     assert response.status_code == 200
     stats = mock_render.call_args[0][2]["project_locale_stats"]
     assert stats["total"] > 0
+    assert stats["approved"] > 0
 
 
 @pytest.mark.django_db
 def test_localization_view_private_stats_anonymous(
-    client, project_a, locale_a, project_locale_a
+    client, project_a, locale_a, project_locale_a, resource_a
 ):
     """Private project locale stats are hidden from anonymous users."""
+    # The page is accessible while public; the 404 below is caused by visibility.
+    response = client.get(
+        reverse(
+            "pontoon.localizations.localization",
+            args=[locale_a.code, project_a.slug],
+        )
+    )
+    assert response.status_code == 200
+
     project_a.visibility = Project.Visibility.PRIVATE
     project_a.save()
 
@@ -107,9 +117,18 @@ def test_localization_view_private_stats_anonymous(
 
 @pytest.mark.django_db
 def test_localization_view_private_stats_non_superuser(
-    member, project_a, locale_a, project_locale_a
+    member, project_a, locale_a, project_locale_a, resource_a
 ):
     """Private project locale stats are hidden from non-superusers."""
+    # The page is accessible while public; the 404 below is caused by visibility.
+    response = member.client.get(
+        reverse(
+            "pontoon.localizations.localization",
+            args=[locale_a.code, project_a.slug],
+        )
+    )
+    assert response.status_code == 200
+
     project_a.visibility = Project.Visibility.PRIVATE
     project_a.save()
 
