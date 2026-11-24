@@ -6,7 +6,7 @@ import pytest
 
 from django.http import Http404
 
-from pontoon.base.models import Resource
+from pontoon.base.models import Project, Resource
 from pontoon.base.views import (
     AjaxFormPostView,
     AjaxFormView,
@@ -676,3 +676,51 @@ def test_translate_view_endpoints_reach_system_projects(rf, user_a, view):
     request.user = user_a
 
     assert view(request).status_code == 200
+
+
+@pytest.mark.django_db
+def test_locale_stats_exclude_private_projects(
+    client, locale_a, project_a, project_b, resource_a, resource_b
+):
+    """Locale stats exclude private projects for regular users."""
+    project_b.visibility = Project.Visibility.PRIVATE
+    project_b.save()
+    TranslatedResourceFactory.create(
+        resource=resource_a, locale=locale_a, total_strings=2, approved_strings=1
+    )
+    TranslatedResourceFactory.create(
+        resource=resource_b, locale=locale_a, total_strings=3, approved_strings=2
+    )
+
+    response = client.get(
+        f"/teams/{locale_a.code}/stats/", HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+    )
+
+    assert response.status_code == 200
+    stats = response.json()[0]
+    assert stats["total"] == 2
+    assert stats["approved"] == 1
+
+
+@pytest.mark.django_db
+def test_locale_stats_include_private_projects_for_superuser(
+    client_superuser, locale_a, project_a, project_b, resource_a, resource_b
+):
+    """Locale stats include private projects for superusers."""
+    project_b.visibility = Project.Visibility.PRIVATE
+    project_b.save()
+    TranslatedResourceFactory.create(
+        resource=resource_a, locale=locale_a, total_strings=2, approved_strings=1
+    )
+    TranslatedResourceFactory.create(
+        resource=resource_b, locale=locale_a, total_strings=3, approved_strings=2
+    )
+
+    response = client_superuser.get(
+        f"/teams/{locale_a.code}/stats/", HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+    )
+
+    assert response.status_code == 200
+    stats = response.json()[0]
+    assert stats["total"] == 5
+    assert stats["approved"] == 3

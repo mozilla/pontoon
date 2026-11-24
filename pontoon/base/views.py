@@ -121,7 +121,9 @@ def locale_projects(request, locale):
 def locale_stats(request, locale):
     """Get locale stats used in All Resources part."""
     locale = get_object_or_404(Locale, code=locale)
-    stats = TranslatedResource.objects.filter(locale=locale).string_stats(request.user)
+    stats = TranslatedResource.objects.filter(locale=locale).string_stats(
+        only_public=not request.user.is_superuser
+    )
     stats["title"] = "all-resources"
     return JsonResponse([stats], safe=False)
 
@@ -157,7 +159,7 @@ def locale_project_parts(request, locale, slug):
                 "approved",
             )
         )
-        all_res_stats = tr.string_stats(request.user, count_system_projects=True)
+        all_res_stats = tr.string_stats(count_system_projects=True)
         all_res_stats["title"] = "all-resources"
         details.append(all_res_stats)
         return JsonResponse(details, safe=False)

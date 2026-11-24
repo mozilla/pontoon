@@ -82,7 +82,9 @@ def teams(request):
         "teams/teams.html",
         {
             "locales": locales,
-            "all_locales_stats": TranslatedResource.objects.string_stats(),
+            "all_locales_stats": TranslatedResource.objects.string_stats(
+                only_public=True
+            ),
             "locale_stats": locale_stats,
             "form": form,
             "top_instances": get_top_instances(locales, locale_stats),
@@ -101,7 +103,7 @@ def team(request, locale):
         raise Http404
 
     locale_stats = TranslatedResource.objects.filter(locale=locale).string_stats(
-        request.user
+        only_public=not request.user.is_superuser
     )
 
     return render(

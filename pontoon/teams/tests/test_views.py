@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.test import Client
 from django.utils.functional import lazy
 
-from pontoon.base.models import TranslationMemoryEntry
+from pontoon.base.models import Project, TranslationMemoryEntry
 from pontoon.settings.base import _site_email
 from pontoon.teams.views import request_item, request_pretranslation
 from pontoon.test.factories import (
@@ -21,6 +21,7 @@ from pontoon.test.factories import (
     ProjectFactory,
     ProjectLocaleFactory,
     ResourceFactory,
+    TranslatedResourceFactory,
     TranslationFactory,
     UserFactory,
 )
@@ -90,6 +91,94 @@ def test_locale_view(mock_render, translation_a, client):
     client.get(f"/{translation_a.locale.code}/")
 
     assert mock_render.call_args[0][2]["locale"] == translation_a.locale
+
+
+@pytest.mark.django_db
+@patch("pontoon.teams.views.render", wraps=render)
+def test_team_stats_exclude_private_projects(
+    mock_render,
+    client,
+    locale_a,
+    project_a,
+    project_b,
+    project_locale_a,
+    resource_a,
+    resource_b,
+):
+    """Team stats exclude private projects for regular users."""
+    project_b.visibility = Project.Visibility.PRIVATE
+    project_b.save()
+    ProjectLocaleFactory.create(project=project_b, locale=locale_a)
+    TranslatedResourceFactory.create(
+        resource=resource_a, locale=locale_a, total_strings=2, approved_strings=1
+    )
+    TranslatedResourceFactory.create(
+        resource=resource_b, locale=locale_a, total_strings=3, approved_strings=2
+    )
+
+    client.get(f"/{locale_a.code}/")
+
+    stats = mock_render.call_args[0][2]["locale_stats"]
+    assert stats["total"] == 2
+    assert stats["approved"] == 1
+
+
+@pytest.mark.django_db
+@patch("pontoon.teams.views.render", wraps=render)
+def test_team_stats_include_private_projects_for_superuser(
+    mock_render,
+    client_superuser,
+    locale_a,
+    project_a,
+    project_b,
+    project_locale_a,
+    resource_a,
+    resource_b,
+):
+    """Team stats include private projects for superusers."""
+    project_b.visibility = Project.Visibility.PRIVATE
+    project_b.save()
+    ProjectLocaleFactory.create(project=project_b, locale=locale_a)
+    TranslatedResourceFactory.create(
+        resource=resource_a, locale=locale_a, total_strings=2, approved_strings=1
+    )
+    TranslatedResourceFactory.create(
+        resource=resource_b, locale=locale_a, total_strings=3, approved_strings=2
+    )
+
+    client_superuser.get(f"/{locale_a.code}/")
+
+    stats = mock_render.call_args[0][2]["locale_stats"]
+    assert stats["total"] == 5
+    assert stats["approved"] == 3
+
+
+@pytest.mark.django_db
+@patch("pontoon.teams.views.render", wraps=render)
+def test_teams_list_stats_exclude_private_projects(
+    mock_render,
+    client_superuser,
+    locale_a,
+    project_a,
+    project_b,
+    resource_a,
+    resource_b,
+):
+    """Global team totals never include private projects."""
+    project_b.visibility = Project.Visibility.PRIVATE
+    project_b.save()
+    TranslatedResourceFactory.create(
+        resource=resource_a, locale=locale_a, total_strings=2, approved_strings=1
+    )
+    TranslatedResourceFactory.create(
+        resource=resource_b, locale=locale_a, total_strings=3, approved_strings=2
+    )
+
+    client_superuser.get("/teams/")
+
+    stats = mock_render.call_args[0][2]["all_locales_stats"]
+    assert stats["total"] == 2
+    assert stats["approved"] == 1
 
 
 @pytest.mark.django_db
