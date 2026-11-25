@@ -83,7 +83,7 @@
 
         .skeleton {
           animation: fading 1.5s infinite;
-          background-color: var(--translation-secondary-color);
+          background-color: var(--skeleton-loader-background);
           font-size: 15px;
           height: 28px;
           width: 80%;

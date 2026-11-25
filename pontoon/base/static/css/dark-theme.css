@@ -49,13 +49,14 @@
   --popup-secondary-color: #aaaaaa;
   --popup-link-color: #ff3366;
 
-  /* Icons and inactive controls */
+  /* Icons, inactive controls and placeholders */
   --inactive-icon-color: #3f4752;
   --inactive-icon-color-2: #4d5967;
   --muted-icon-color: #4d5967;
   --priority-star-hover-color: #333941;
   --check-box-off-color: #ff3366;
   --messaging-empty-icon-color: #3f4752;
+  --skeleton-loader-background: #aaaaaa;
 
   /* Overlays (tooltips, banners, sticky toolbars and the lightbox) */
   --overlay-background: #000000dd;
