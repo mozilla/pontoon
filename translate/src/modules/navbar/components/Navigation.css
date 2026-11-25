@@ -9,7 +9,7 @@
 }
 
 .navigation > ul > li + li::before {
-  color: var(--icon-border-1);
+  color: var(--muted-icon-color);
   content: '/';
   font-size: 28px;
   font-weight: 100;

@@ -162,7 +162,7 @@
 
 .item-list td.check,
 .item-list td.radio {
-  color: var(--icon-background-1);
+  color: var(--inactive-icon-color);
   float: right;
   font-size: 16px;
   height: 47px;

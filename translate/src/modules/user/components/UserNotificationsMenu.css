@@ -12,7 +12,7 @@
 }
 
 .user-notifications-menu .selector .icon {
-  color: var(--icon-border-1);
+  color: var(--muted-icon-color);
   font-size: 26px;
   margin-top: 17px;
 }

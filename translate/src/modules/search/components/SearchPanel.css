@@ -103,7 +103,7 @@
         }
 
         .fas::before {
-          color: var(--status-error);
+          color: var(--check-box-off-color);
           content: '';
         }
 

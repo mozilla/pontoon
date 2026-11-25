@@ -145,12 +145,12 @@
 }
 
 .filters-panel .menu li .priority .fa-star {
-  color: var(--icon-background-1);
+  color: var(--inactive-icon-color);
   float: left;
 }
 
 .filters-panel .menu li:hover .priority .fa-star {
-  color: var(--button-background-1);
+  color: var(--priority-star-hover-color);
 }
 
 .filters-panel .menu li .priority .fa-star.active {

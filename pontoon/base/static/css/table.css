@@ -280,7 +280,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .chart-wrapper .unreviewed-status {
-  color: var(--icon-background-1);
+  color: var(--inactive-icon-color);
   font-size: 18px;
   position: absolute;
   right: 0.5px;

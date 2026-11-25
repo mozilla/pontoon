@@ -707,7 +707,7 @@ header .right .select .menu {
 }
 
 #notifications .button .icon {
-  color: var(--icon-border-1);
+  color: var(--muted-icon-color);
   font-size: 26px;
   margin-top: 17px;
 }
@@ -1342,12 +1342,12 @@ body > form,
 }
 
 .priority .fa-star {
-  color: var(--icon-background-1);
+  color: var(--inactive-icon-color);
   float: left;
 }
 
 .priority .value .fa-star {
-  color: var(--icon-background-2);
+  color: var(--inactive-icon-color-2);
 }
 
 .priority .fa-star.active {
