@@ -79,7 +79,7 @@
   background: var(--accent-background);
   border: none;
   border-radius: 2px;
-  color: var(--translation-main-button-color);
+  color: var(--fill-text-color);
   padding: 0 2px;
 }
 

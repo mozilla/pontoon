@@ -83,7 +83,7 @@
 
 .translationform .accesskeys .key.active {
   background: var(--accent-background);
-  color: var(--translation-main-button-color);
+  color: var(--fill-text-color);
 }
 
 .translationform .accesskeys .key:disabled {

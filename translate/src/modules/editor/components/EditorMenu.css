@@ -41,7 +41,7 @@
 .editor-menu .actions .action-suggest {
   background: var(--accent-background);
   border-radius: 3px;
-  color: var(--translation-main-button-color);
+  color: var(--fill-text-color);
   font-weight: 600;
   margin-left: 10px;
   padding: 10px;
@@ -52,7 +52,7 @@
 }
 
 .editor-menu .actions .has-error {
-  background: var(--status-missing);
+  background: var(--translation-main-button-error-background);
 }
 
 .editor-menu .actions .action-approve:not(.has-error):hover,

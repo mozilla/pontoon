@@ -11,6 +11,7 @@ html {
 
   /* Main */
   --main-border-1: #d8d8d8;
+  --fill-text-color: #2a2a2a;
   --moz-logo: url(../img/moz-logo.svg);
 
   /* User banner and details */
@@ -113,7 +114,7 @@ html {
   --translation-border: #bbbbbb;
   --translation-color: #2a2a2a;
   --translation-secondary-color: #707070;
-  --translation-main-button-color: #2a2a2a;
+  --translation-main-button-error-background: #bec7d1;
   --translation-subtitle-color: #555555;
   --editor-background: #ffffff;
   --editor-color: #2a2a2a;
@@ -145,6 +146,7 @@ html {
   --tags-string-color: #2a2a2a;
 
   /* Chart colors */
+  --chart-primary: #7bc876;
   --green-blue: #4fc4f666;
   --grey-9: #5f7285;
   --dark-purple: #f148fb33;

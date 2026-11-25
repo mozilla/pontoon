@@ -324,7 +324,7 @@
   .chip {
     background: var(--accent-background);
     border-radius: 3px;
-    color: var(--translation-main-button-color);
+    color: var(--fill-text-color);
     padding: 4px;
   }
 

@@ -45,7 +45,7 @@
     .button.fetch-again {
       display: none;
       background-color: var(--danger-background);
-      color: var(--translation-main-button-color);
+      color: var(--fill-text-color);
     }
 
     .button.active {
