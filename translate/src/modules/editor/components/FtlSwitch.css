@@ -17,5 +17,5 @@
 }
 
 .editor .ftl.error {
-  color: var(--status-error);
+  color: var(--danger-color);
 }

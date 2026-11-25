@@ -534,7 +534,7 @@ time {
 
 body > header > .notification {
   background: var(--overlay-background);
-  color: var(--status-translated);
+  color: var(--success-color);
   cursor: pointer;
   font-style: italic;
   left: 0;
@@ -553,7 +553,7 @@ body > header > .notification li {
 }
 
 body > header > .notification li.error {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 img.rounded {
@@ -819,11 +819,11 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item .message .positive {
-  color: var(--status-translated);
+  color: var(--success-color);
 }
 
 .notifications .menu li.notification-item .message .negative {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 /* Notifications can include HTML tags in their body */
@@ -1260,7 +1260,7 @@ body > form,
 }
 
 #standalone-sign-in ul.errorlist {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .controls {

@@ -163,7 +163,7 @@
 }
 
 #permissions-form h3 .remove-project:hover {
-  background: var(--status-error);
+  background: var(--danger-background);
 }
 
 #permissions-form h3 .remove-project .fas {

@@ -44,7 +44,7 @@
 
     .button.fetch-again {
       display: none;
-      background-color: var(--status-error);
+      background-color: var(--danger-background);
       color: var(--translation-main-button-color);
     }
 
@@ -98,7 +98,7 @@
       visibility: hidden;
 
       p {
-        color: var(--status-error);
+        color: var(--danger-color);
         font-size: 13px;
         padding-top: 5px;
         text-transform: uppercase;
@@ -238,7 +238,7 @@
       font-style: italic;
 
       i {
-        color: var(--status-error);
+        color: var(--danger-color);
       }
     }
 

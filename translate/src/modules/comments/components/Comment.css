@@ -90,7 +90,7 @@
 }
 
 .comments-list .comment .info .delete-button:hover {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .comments-list .comment .info .pin-button:hover {

@@ -75,7 +75,7 @@
 }
 
 .filters-panel .menu li.time-range input.error {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .filters-panel .menu li.time-range .to input {

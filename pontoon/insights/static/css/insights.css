@@ -129,7 +129,7 @@
           align-self: center;
 
           &.met {
-            color: var(--status-translated);
+            color: var(--success-color);
             font-weight: bold;
           }
         }
@@ -150,11 +150,11 @@
           height: 20px;
 
           &.up {
-            color: var(--status-translated);
+            color: var(--success-color);
           }
 
           &.down {
-            color: var(--status-error);
+            color: var(--danger-color);
           }
 
           .fa-caret-up,

@@ -195,12 +195,12 @@
           }
 
           .button.delete:hover {
-            background: var(--status-error);
+            background: var(--danger-background);
           }
 
           .button.are-you-sure {
             display: none;
-            background: var(--status-error);
+            background: var(--danger-background);
             color: var(--black-3);
           }
 

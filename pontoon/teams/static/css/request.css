@@ -96,7 +96,7 @@
 }
 
 .request-item.confirmed {
-  background: var(--status-warning);
+  background: var(--warning-background);
 }
 
 #team-form {

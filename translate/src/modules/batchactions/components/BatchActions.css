@@ -76,7 +76,7 @@
 }
 
 .batch-actions .actions-panel .intro p .stress {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .batch-actions .actions-panel button,
@@ -107,7 +107,7 @@
 }
 
 .batch-actions .actions-panel button.reject-all {
-  background: var(--status-error);
+  background: var(--danger-background);
 }
 
 .batch-actions .actions-panel input {

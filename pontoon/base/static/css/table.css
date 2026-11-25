@@ -133,12 +133,12 @@ table.table.project-list.hidden {
 
 /* Selector must also match heading-info */
 .deadline time.approaching {
-  color: var(--status-warning);
+  color: var(--warning-color);
 }
 
 /* Selector must also match heading-info */
 .deadline time.overdue {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .table td.code div {

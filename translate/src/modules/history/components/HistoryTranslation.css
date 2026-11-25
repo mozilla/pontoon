@@ -167,7 +167,7 @@
 
 .history .translation.can-reject .content > header button.reject:hover:before,
 .history .translation .content > header button.unreject:before {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .history .translation:not(.can-reject) .content > header button.reject:before,
@@ -196,7 +196,7 @@
 }
 
 .translation .content > header button.delete:hover:before {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .machinery-sources {

@@ -67,19 +67,19 @@
 }
 
 .sync-status-success {
-  color: var(--status-translated);
+  color: var(--success-color);
 }
 
 .sync-status-warn {
-  color: var(--status-warning);
+  color: var(--warning-color);
 }
 
 .sync-status-fail {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .sync-error-message td {
-  color: var(--input-color-2);
+  color: var(--sync-error-message-color);
   font-size: 14px;
   padding: 0 0.4em 0.4em 1.2em;
 }

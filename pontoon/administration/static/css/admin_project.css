@@ -454,7 +454,7 @@ textarea {
 }
 
 .errorlist {
-  color: var(--status-error);
+  color: var(--danger-color);
   display: inline-block;
   font-size: 12px;
   line-height: 14px; /* Strange, but needed to keep controls in line when error occurs */

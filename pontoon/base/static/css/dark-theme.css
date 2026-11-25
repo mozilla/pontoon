@@ -28,6 +28,7 @@
   --input-background-1: #333941;
   --input-color-1: #aaaaaa;
   --input-color-2: #ffffff;
+  --sync-error-message-color: #ffffff;
   --toggle-color-1: #666666;
   --toggle-color-2: #333941;
   --icon-background-1: #3f4752;
@@ -86,6 +87,13 @@
   --accent-color-alt: #7bc876;
   --accent-background: #7bc876;
   --accent-border: #7bc876;
+
+  /* Success, warning and danger */
+  --success-color: #7bc876;
+  --warning-color: #ffa10f;
+  --warning-background: #ffa10f;
+  --danger-color: #ff3366;
+  --danger-background: #ff3366;
 
   /* Translation workspace */
   --translation-background: #3f4752;
