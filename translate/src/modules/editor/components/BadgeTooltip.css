@@ -51,7 +51,7 @@
   }
 
   .notice a {
-    color: var(--status-error);
+    color: var(--popup-link-color);
   }
   .continue {
     background: var(--button-background-1);

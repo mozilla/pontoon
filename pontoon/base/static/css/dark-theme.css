@@ -48,6 +48,7 @@
   /* Popups */
   --popup-shadow: #000000dd;
   --popup-secondary-color: #aaaaaa;
+  --popup-link-color: #ff3366;
 
   /* Overlays (tooltips, banners, sticky toolbars and the lightbox) */
   --overlay-background: #000000dd;

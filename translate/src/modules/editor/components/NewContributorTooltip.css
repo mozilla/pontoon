@@ -31,5 +31,5 @@
 }
 
 .new-contributor-tooltip p a {
-  color: var(--status-error);
+  color: var(--popup-link-color);
 }
