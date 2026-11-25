@@ -95,6 +95,12 @@
   --danger-color: #ff3366;
   --danger-background: #ff3366;
 
+  /* Notifications */
+  --notification-badge-background: #ff3366;
+  --notification-link-color: #ff3366;
+  --notification-unread-background: #333941;
+  --addon-promotion-background: #ff3366;
+
   /* Translation workspace */
   --translation-background: #3f4752;
   --translation-border: #5e6475;

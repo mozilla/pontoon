@@ -102,6 +102,12 @@ html {
   --danger-color: #ff3366;
   --danger-background: #ff3366;
 
+  /* Notifications */
+  --notification-badge-background: #ff3366;
+  --notification-link-color: #ff3366;
+  --notification-unread-background: #ffffff;
+  --addon-promotion-background: #ff3366;
+
   /* Translation workspace */
   --translation-background: #f6f6f6;
   --translation-border: #bbbbbb;

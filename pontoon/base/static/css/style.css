@@ -582,7 +582,7 @@ img.rounded {
 }
 
 #addon-promotion {
-  background: var(--status-error);
+  background: var(--addon-promotion-background);
   border-bottom: 1px solid var(--dark-grey-1);
   height: 44px;
   position: fixed;
@@ -713,7 +713,7 @@ header .right .select .menu {
 }
 
 #notifications .button .badge {
-  background: var(--status-error);
+  background: var(--notification-badge-background);
   border: 3px solid var(--black-3);
   border-radius: 12px;
   color: var(--white-1);
@@ -770,7 +770,7 @@ header .right .select .menu {
   .menu
   ul.notification-list
   li.notification-item[data-unread='true'] {
-  background: var(--background-hover-1);
+  background: var(--notification-unread-background);
 }
 
 .notifications .menu li.notification-item span {
@@ -779,7 +779,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item a {
-  color: var(--status-error);
+  color: var(--notification-link-color);
   display: inline;
 }
 
