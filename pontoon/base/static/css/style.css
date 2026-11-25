@@ -248,7 +248,7 @@ time {
 }
 
 .count {
-  background: var(--button-background-2);
+  background: var(--count-background);
   border-radius: 3px;
   color: var(--light-grey-7);
   margin-left: 5px;

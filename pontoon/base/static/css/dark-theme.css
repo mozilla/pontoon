@@ -40,6 +40,11 @@
   --popup-background-2: #272a2f;
   --icon-background-2: #4d5967;
 
+  /* Count chips */
+  --count-background: #3f4752;
+  --count-background-highlight: #333941;
+  --count-background-tab: #3f4752;
+
   /* Popups */
   --popup-shadow: #000000dd;
   --popup-secondary-color: #aaaaaa;

@@ -61,7 +61,7 @@
 
 /* Other tools styles */
 .react-tabs span.count {
-  background: var(--translation-background);
+  background: var(--count-background-tab);
   border-radius: 3px;
   color: var(--light-grey-6);
   font-weight: 300;
