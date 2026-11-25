@@ -463,7 +463,7 @@ time {
 }
 
 .menu:not(.permanent) li.hover {
-  background: var(--background-hover-2);
+  background: var(--background-highlight-2);
 }
 
 .menu li.hover a {
@@ -558,7 +558,7 @@ body > header > .notification li.error {
 
 img.rounded {
   border-radius: 6px;
-  border: 2px solid var(--icon-border-1);
+  border: 2px solid var(--avatar-border);
 }
 
 #error {
@@ -774,7 +774,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item span {
-  color: var(--translation-color);
+  color: var(--white-1);
   float: none;
 }
 
@@ -797,7 +797,7 @@ header .right .select .menu {
 
 .notifications .menu li.notification-item .message.trim,
 .notifications .menu li.notification-item .message.trim > p {
-  color: var(--translation-secondary-color);
+  color: var(--light-grey-7);
   pointer-events: none;
   overflow: hidden;
   text-overflow: ellipsis;

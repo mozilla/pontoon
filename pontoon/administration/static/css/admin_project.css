@@ -132,7 +132,7 @@ form .controls .button.delete-inline {
 }
 
 form .controls .button.manage-resources[disabled] {
-  color: var(--toggle-color-1);
+  color: var(--disabled-button-color);
   cursor: auto;
 }
 

@@ -37,7 +37,7 @@
 
 #insights h3 .fas.active,
 #insights h3 .fas:hover {
-  background: var(--button-background-hover-2);
+  background: var(--button-background-highlight-2);
 }
 
 #insights h3 .tooltip {

@@ -165,7 +165,7 @@
       }
 
       .no-snapshot {
-        color: var(--translation-secondary-color);
+        color: var(--light-grey-7);
         font-style: italic;
       }
     }

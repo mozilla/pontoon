@@ -23,7 +23,7 @@ body > header.menu-opened {
   flex-direction: column;
   height: 100vh;
 
-  background-image: var(--homepage-background-image);
+  background-image: var(--hero-background-image);
   background-attachment: fixed;
   background-size: cover;
 }

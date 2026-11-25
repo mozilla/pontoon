@@ -23,8 +23,8 @@
 }
 
 .entity mark.search {
-  background: var(--search-background);
-  color: var(--search-color);
+  background: var(--match-background);
+  color: var(--match-color);
   font-weight: normal;
   font-style: inherit;
   border-radius: 2px;

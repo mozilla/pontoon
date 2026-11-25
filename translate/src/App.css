@@ -56,8 +56,8 @@
   width: 100px;
   height: 100%;
   box-shadow:
-    0 0 10px var(--accent-border),
-    0 0 5px var(--accent-border);
+    0 0 10px var(--accent-background),
+    0 0 5px var(--accent-background);
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }
@@ -121,7 +121,7 @@
 
   /* History */
   #app .entity-details .history {
-    background: var(--editor-menu-background);
+    background: var(--history-background);
   }
 
   /* Helpers */

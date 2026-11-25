@@ -36,7 +36,7 @@ body > header.menu-opened {
   width: 100vw;
 
   background-color: var(--background-1);
-  background-image: var(--homepage-background-image);
+  background-image: var(--hero-background-image);
   background-attachment: fixed;
   background-size: cover;
 }
@@ -68,8 +68,8 @@ h2 {
 }
 
 #main .button {
-  background-color: var(--homepage-tour-button-background);
-  color: var(--homepage-tour-button-color);
+  background-color: var(--hero-button-background);
+  color: var(--hero-button-color);
   display: flex;
   border-radius: 3px;
   width: 240px;
@@ -183,7 +183,7 @@ body.addon-promotion-active #edit-homepage .select {
 
 #edit-homepage .button {
   background: var(--accent-background);
-  color: var(--homepage-tour-button-color);
+  color: var(--hero-button-color);
 }
 
 #edit-homepage .fas {

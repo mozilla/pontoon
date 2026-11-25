@@ -400,7 +400,7 @@ h4.superuser {
 
 #contributions .year-selector .year:hover,
 #contributions .year-selector .year.active {
-  background: var(--background-hover-2);
+  background: var(--background-highlight-2);
   color: var(--white-1);
 }
 

@@ -116,8 +116,8 @@
           line-height: 1.8em;
 
           mark {
-            background: var(--search-background);
-            color: var(--search-color);
+            background: var(--match-background);
+            color: var(--match-color);
             font-weight: inherit;
             font-style: inherit;
             border-radius: 3px;

@@ -6,7 +6,7 @@
 
 .history .translation .user-avatar img {
   border-radius: 6px;
-  border: 2px solid var(--icon-border-1);
+  border: 2px solid var(--avatar-border);
 }
 
 .history .translation:hover .user-avatar img {

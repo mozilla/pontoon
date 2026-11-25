@@ -33,12 +33,12 @@
   --toggle-color-1: #666666;
   --toggle-color-2: #333941;
   --icon-background-1: #3f4752;
-  --icon-border-1: #4d5967;
+  --avatar-border: #4d5967;
 
   /* Secondary (lighter) background */
-  --background-hover-2: #3f4752;
+  --background-highlight-2: #3f4752;
   --button-background-2: #3f4752;
-  --button-background-hover-2: #272a2f;
+  --button-background-highlight-2: #272a2f;
   --popup-background-2: #272a2f;
 
   /* Count chips */
@@ -57,6 +57,7 @@
   --muted-icon-color: #4d5967;
   --priority-star-hover-color: #333941;
   --check-box-off-color: #ff3366;
+  --disabled-button-color: #666666;
   --messaging-empty-icon-color: #3f4752;
   --skeleton-loader-background: #aaaaaa;
 
@@ -66,10 +67,10 @@
   --overlay-secondary-color: #aaaaaa;
   --overlay-border: #4d5967;
 
-  /* Homepage */
-  --homepage-background-image: url(../img/background.svg);
-  --homepage-tour-button-background: #ffffff;
-  --homepage-tour-button-color: #000000;
+  /* Hero sections */
+  --hero-background-image: url(../img/background.svg);
+  --hero-button-background: #ffffff;
+  --hero-button-color: #000000;
 
   /* Translation status */
   --status-translated: #7bc876;
@@ -118,6 +119,8 @@
   --editor-readonly-background: #2a2e35;
   --editor-selection-background: #2c4a66;
   --editor-placeholder-color: #888c92;
+  --editor-ghost-text-color: #888c92;
+  --history-background: #272a2f;
   --time-range-handles: #272a2f;
   --time-range-series: #7bc876;
   --time-range-navigator: #4d5967;
@@ -127,8 +130,8 @@
   --diff-del-color: #ff9d9d;
   --diff-ins-background: #3f5b50;
   --diff-ins-color: #9cd699;
-  --search-color: #ffa10f;
-  --search-background: #5a4d33;
+  --match-color: #ffa10f;
+  --match-background: #5a4d33;
   --tags-brace-color: #c79bff;
   --tags-bracket-color: #5fc7a8;
   --tags-keyword-color: #c79bff;

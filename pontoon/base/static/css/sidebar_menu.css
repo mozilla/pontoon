@@ -12,7 +12,7 @@
 }
 
 .menu.left-column li.selected {
-  background: var(--background-hover-2);
+  background: var(--background-highlight-2);
   border-radius: 6px;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .menu.right-column li.hover {
-  background: var(--background-hover-2);
+  background: var(--background-highlight-2);
 }
 
 .menu.right-column li.no .title {
