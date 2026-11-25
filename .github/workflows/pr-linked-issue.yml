@@ -86,18 +86,17 @@ jobs:
             }
 
             core.info(`No linked issue assigned to ${author}, closing PR #${pr.number}.`);
-            const body = `
-              Hi @${author}, thanks for your interest in contributing to Pontoon!
+            const body = `\
+            Hi @${author}, thanks for your interest in contributing to Pontoon!
 
-              This pull request is being closed automatically because it is not linked to an issue assigned to you. To avoid duplicated or unwanted work, all external contributions need to be tied to an issue that a maintainer has assigned to you.
+            This pull request is being closed automatically because it is not linked to an issue assigned to you. To avoid duplicated or unwanted work, all external contributions need to be tied to an issue that a maintainer has assigned to you.
 
-              To contribute:
+            To contribute:
 
-              1. Find an existing issue (or file a new one) and ask in a comment to be assigned to it.
-              2. Once you've been assigned, open a pull request that includes a closing keyword referencing the issue in its description, e.g. \`Fixes #123\`.
+            1. Find an existing issue (or file a new one) and ask in a comment to be assigned to it.
+            2. Once you've been assigned, open a pull request that includes a closing keyword referencing the issue in its description, e.g. \`Fixes #123\`.
 
-              See the [guide to your first contribution](https://pontoon.mozilla.org/docs/dev/first-contribution/) for more information.
-            `.replace(/^ +/gm, "").trim();
+            See the [guide to your first contribution](https://pontoon.mozilla.org/docs/dev/first-contribution/) for more information.`;
             await github.rest.issues.createComment({
               owner,
               repo,
