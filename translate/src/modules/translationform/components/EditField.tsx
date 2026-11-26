@@ -29,7 +29,7 @@ import { EntityView } from '~/context/EntityView';
 import { messageEntryFromEntity } from '~/utils/message/fromEntity';
 import { fluentLanguageMode } from '../utils/editFieldModes';
 import { fluentTermVariantsCompletion } from '../utils/fluentTermVariantsCompletion';
-import { createGetFluentTerms } from '~/api/fluentTermsCache';
+import { createGetFluentTerms } from '~/api/fluentTerms';
 
 export type EditFieldProps = {
   onFocus?: () => void;

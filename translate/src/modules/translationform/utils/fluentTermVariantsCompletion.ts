@@ -3,8 +3,7 @@ import type {
   CompletionSource,
 } from '@codemirror/autocomplete';
 
-import type { FluentTermType } from '~/api/fluentTerms';
-import type { GetFluentTerms } from '~/api/fluentTermsCache';
+import type { FluentTermType, GetFluentTerms } from '~/api/fluentTerms';
 
 const MAX_LOOKBEHIND = 500;
 
@@ -102,9 +101,9 @@ export function fluentTermVariantsCompletion(
       return null;
     }
 
-    const variants = getTermVariants(term.translation_value ?? term.value).filter(
-      ({ selector }) => !usedSelectors.has(selector),
-    );
+    const variants = getTermVariants(
+      term.translation_value ?? term.value,
+    ).filter(({ selector }) => !usedSelectors.has(selector));
     if (!variants.length) {
       return null;
     }
