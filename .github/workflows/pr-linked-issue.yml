@@ -6,17 +6,19 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: pr-linked-issue-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
-
 jobs:
   check:
     name: Require a linked, assigned issue
     if: >-
       github.repository == 'mozilla/pontoon' &&
       github.event.pull_request.state == 'open' &&
-      github.event.pull_request.user.type != 'Bot''
+      github.event.pull_request.user.type != 'Bot' &&
+      (github.event.action == 'opened' ||
+        github.event.sender.login == github.event.pull_request.user.login)
+    # Job-level, so runs skipped by the condition above don't cancel an in-progress check.
+    concurrency:
+      group: pr-linked-issue-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
       issues: read
