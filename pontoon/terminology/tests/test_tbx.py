@@ -7,28 +7,42 @@ import pytest
 from pontoon.terminology.utils import build_tbx_v2_file, build_tbx_v3_file
 
 
+def find_all(root, tag):
+    """Find all elements with the given local name, ignoring any namespace."""
+    return [node for node in root.iter() if node.tag.rsplit("}", 1)[-1] == tag]
+
+
+def make_term(pk, text, translation, **kwargs):
+    term = MagicMock()
+    term.pk = pk
+    term.text = text
+    term.part_of_speech = "noun"
+    term.definition = "Sample Definition"
+    term.usage = "Sample Usage"
+    term.forbidden = False
+    term.do_not_translate = False
+
+    term_translation = MagicMock()
+    term_translation.text = translation
+    term.filtered_translations = [term_translation]
+
+    for name, value in kwargs.items():
+        setattr(term, name, value)
+
+    return term
+
+
 @pytest.fixture
-def mock_term_translations():
-    term_mock = MagicMock()
-    term_mock.pk = 1
-    term_mock.text = "Sample Term"
-    term_mock.part_of_speech = "noun"
-    term_mock.definition = "Sample Definition"
-    term_mock.usage = "Sample Usage"
-
-    translation_mock = MagicMock()
-    translation_mock.term = term_mock
-    translation_mock.text = "Translation"
-
-    return [translation_mock]
+def mock_terms():
+    return [make_term(1, "Sample Term", "Translation")]
 
 
-def test_build_tbx_v2_file(settings, mock_term_translations):
+def test_build_tbx_v2_file(settings, mock_terms):
     settings.TBX_TITLE = "Sample Title"
     settings.TBX_DESCRIPTION = "Sample Description"
     locale = "fr-FR"
 
-    result = "".join(build_tbx_v2_file(mock_term_translations, locale))
+    result = "".join(build_tbx_v2_file(mock_terms, locale))
 
     # Fail if the result is not a valid XML
     ET.fromstring(result)
@@ -81,12 +95,12 @@ def test_build_tbx_v2_file(settings, mock_term_translations):
     assert result.strip() == expected.strip()
 
 
-def test_build_tbx_v3_file(settings, mock_term_translations):
+def test_build_tbx_v3_file(settings, mock_terms):
     settings.TBX_TITLE = "Sample Title"
     settings.TBX_DESCRIPTION = "Sample Description"
     locale = "fr-FR"
 
-    result = "".join(build_tbx_v3_file(mock_term_translations, locale))
+    result = "".join(build_tbx_v3_file(mock_terms, locale))
 
     # Fail if the result is not a valid XML
     ET.fromstring(result)
@@ -134,3 +148,58 @@ def test_build_tbx_v3_file(settings, mock_term_translations):
 
     # Assert that the generated result matches the expected XML
     assert result.strip() == expected.strip()
+
+
+@pytest.mark.parametrize(
+    "build_tbx_file", [build_tbx_v2_file, build_tbx_v3_file], ids=["v2", "v3"]
+)
+def test_build_tbx_file_do_not_translate(settings, build_tbx_file):
+    # A do-not-translate term has no translation in the locale, and is exported
+    # with the source text as its translation.
+    settings.TBX_TITLE = "Sample Title"
+    settings.TBX_DESCRIPTION = "Sample Description"
+    term = make_term(1, "Firefox", None, do_not_translate=True)
+    term.filtered_translations = []
+
+    result = "".join(build_tbx_file([term], "fr-FR"))
+
+    root = ET.fromstring(result)
+    terms = [node.text for node in find_all(root, "term")]
+    assert terms == ["Firefox", "Firefox"]
+
+
+@pytest.mark.parametrize(
+    "build_tbx_file", [build_tbx_v2_file, build_tbx_v3_file], ids=["v2", "v3"]
+)
+def test_build_tbx_file_forbidden(settings, build_tbx_file):
+    # A forbidden term is exported as deprecated, so that it can be flagged as
+    # such by translation tools.
+    settings.TBX_TITLE = "Sample Title"
+    settings.TBX_DESCRIPTION = "Sample Description"
+    term = make_term(1, "abort", "annullare", forbidden=True)
+
+    result = "".join(build_tbx_file([term], "it"))
+
+    root = ET.fromstring(result)
+    notes = {node.get("type"): node.text for node in find_all(root, "termNote")}
+    assert notes == {
+        "partOfSpeech": "noun",
+        "administrativeStatus": "deprecatedTerm-admn-sts",
+    }
+
+
+@pytest.mark.parametrize(
+    "build_tbx_file", [build_tbx_v2_file, build_tbx_v3_file], ids=["v2", "v3"]
+)
+def test_build_tbx_file_skips_untranslated(settings, build_tbx_file):
+    # A term that is neither translated in the locale nor do-not-translate has
+    # nothing to export for that locale.
+    settings.TBX_TITLE = "Sample Title"
+    settings.TBX_DESCRIPTION = "Sample Description"
+    term = make_term(1, "Sample Term", None)
+    term.filtered_translations = []
+
+    result = "".join(build_tbx_file([term], "fr-FR"))
+
+    root = ET.fromstring(result)
+    assert find_all(root, "term") == []

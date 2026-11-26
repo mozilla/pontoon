@@ -8,6 +8,7 @@ from pontoon.test.factories import (
     ProjectFactory,
     ResourceFactory,
     TermFactory,
+    TermTranslationFactory,
 )
 
 
@@ -98,3 +99,22 @@ def test_get_terms_respects_project_visibility(client, admin, locale_a):
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+@patch("pontoon.terminology.models.update_terminology_project_stats")
+@pytest.mark.parametrize("path", ["{code}.tbx", "{code}.v2.tbx"])
+def test_download_terminology(_, client, locale_a, path):
+    term = TermFactory(text="Download", definition="")
+    TermTranslationFactory(term=term, locale=locale_a, text="Télécharger")
+    TermFactory(text="Firefox", do_not_translate=True)
+    # A term without a translation in the locale is left out of the export.
+    TermFactory(text="Untranslated")
+
+    response = client.get("/terminology/" + path.format(code=locale_a.code))
+
+    assert response.status_code == 200
+    content = b"".join(response.streaming_content).decode()
+    assert "<term>Télécharger</term>" in content
+    assert "<term>Firefox</term>" in content
+    assert "<term>Untranslated</term>" not in content

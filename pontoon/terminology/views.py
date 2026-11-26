@@ -10,7 +10,7 @@ from django.views.generic import ListView
 from pontoon.base.models import Entity, Locale, Project
 from pontoon.base.utils import require_AJAX
 from pontoon.terminology import utils
-from pontoon.terminology.models import Term, TermTranslation
+from pontoon.terminology.models import Term
 
 
 @require_AJAX
@@ -52,15 +52,13 @@ def get_terms(request):
 
 @method_decorator(condition(etag_func=None), name="dispatch")
 class DownloadTerminologyViewV2(ListView):
-    def get_tbx_file_content(self, term_translations, locale_code):
-        return utils.build_tbx_v2_file(term_translations, locale_code)
+    def get_tbx_file_content(self, terms, locale_code):
+        return utils.build_tbx_v2_file(terms, locale_code)
 
     def dispatch(self, request, locale, *args, **kwargs):
         locale = get_object_or_404(Locale, code=locale)
-        term_translations = TermTranslation.objects.filter(
-            locale=locale
-        ).prefetch_related("term")
-        content = self.get_tbx_file_content(term_translations, locale.code)
+        terms = utils.get_terms_for_tbx(locale)
+        content = self.get_tbx_file_content(terms, locale.code)
 
         response = StreamingHttpResponse(content, content_type="text/xml")
         response["Content-Disposition"] = f'attachment; filename="{locale.code}.tbx"'
@@ -68,5 +66,5 @@ class DownloadTerminologyViewV2(ListView):
 
 
 class DownloadTerminologyViewV3(DownloadTerminologyViewV2):
-    def get_tbx_file_content(self, term_translations, locale_code):
-        return utils.build_tbx_v3_file(term_translations, locale_code)
+    def get_tbx_file_content(self, terms, locale_code):
+        return utils.build_tbx_v3_file(terms, locale_code)

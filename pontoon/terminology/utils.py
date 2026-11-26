@@ -54,7 +54,56 @@ def get_terms_for_text(locale: Locale, text: str) -> list[Term]:
     return terms
 
 
-def build_tbx_v2_file(term_translations, locale):
+def get_terms_for_tbx(locale: Locale) -> list[Term]:
+    """
+    Get the terms to export to TBX for a locale, with their translation in the
+    locale prefetched as `filtered_translations`.
+
+    Terms without a translation are only included if they are marked as
+    do-not-translate, as they still need to be listed in the export.
+    """
+    terms = Term.objects.order_by("text", "id").prefetch_related(
+        Prefetch(
+            "translations",
+            queryset=TermTranslation.objects.filter(locale=locale),
+            to_attr="filtered_translations",
+        ),
+    )
+    return [
+        term for term in terms if term.do_not_translate or term.filtered_translations
+    ]
+
+
+def get_tbx_entry(term: Term) -> tuple[Term, str] | None:
+    """
+    Return the term and the text to export as its translation, or None if the
+    term is left out of the export.
+
+    TBX-Basic has no way to mark a term as do-not-translate, so the source text
+    is exported as the translation of the locale.
+    """
+    if term.do_not_translate:
+        return term, term.text
+
+    if term.filtered_translations:
+        return term, term.filtered_translations[0].text
+
+    return None
+
+
+def get_tbx_administrative_status(term: Term) -> str | None:
+    """
+    Return the TBX administrative status of the term, or None if it has none.
+
+    Forbidden terms are deprecated, which TBX marks with `deprecatedTerm-admn-sts`.
+    """
+    if term.forbidden:
+        return "deprecatedTerm-admn-sts"
+
+    return None
+
+
+def build_tbx_v2_file(terms, locale):
     """
     Generates contents of the TBX 2008 (v2) file (TBX-Default dialect):
 
@@ -82,8 +131,17 @@ def build_tbx_v2_file(term_translations, locale):
         <body>"""
 
     # Body
-    for translation in term_translations:
-        term = translation.term
+    for term in terms:
+        entry = get_tbx_entry(term)
+        if entry is None:
+            continue
+        term, translation_text = entry
+        status = get_tbx_administrative_status(term)
+        note = (
+            f'\n                            <termNote type="administrativeStatus">{status}</termNote>'
+            if status
+            else ""
+        )
         yield f"""
             <termEntry id="c{term.pk}">
                 <descrip type="context">{escape(term.usage)}</descrip>
@@ -91,7 +149,7 @@ def build_tbx_v2_file(term_translations, locale):
                     <ntig>
                         <termGrp>
                             <term>{escape(term.text)}</term>
-                            <termNote type="partOfSpeech">{escape(term.part_of_speech)}</termNote>
+                            <termNote type="partOfSpeech">{escape(term.part_of_speech)}</termNote>{note}
                         </termGrp>
                     </ntig>
                     <descripGrp>
@@ -101,7 +159,7 @@ def build_tbx_v2_file(term_translations, locale):
                 <langSet xml:lang={quoteattr(locale)}>
                     <ntig>
                         <termGrp>
-                            <term>{escape(translation.text)}</term>
+                            <term>{escape(translation_text)}</term>
                         </termGrp>
                     </ntig>
                 </langSet>
@@ -115,7 +173,7 @@ def build_tbx_v2_file(term_translations, locale):
 """
 
 
-def build_tbx_v3_file(term_translations, locale):
+def build_tbx_v3_file(terms, locale):
     """
     Generates contents of the TBX v3 file (TBX-Basic dialect, DCT style):
 
@@ -144,14 +202,23 @@ def build_tbx_v3_file(term_translations, locale):
         <body>"""
 
     # Body
-    for translation in term_translations:
-        term = translation.term
+    for term in terms:
+        entry = get_tbx_entry(term)
+        if entry is None:
+            continue
+        term, translation_text = entry
+        status = get_tbx_administrative_status(term)
+        note = (
+            f'\n                        <termNote type="administrativeStatus">{status}</termNote>'
+            if status
+            else ""
+        )
         yield f"""
             <conceptEntry id="c{term.pk}">
                 <langSec xml:lang="en-US">
                     <termSec>
                         <term>{escape(term.text)}</term>
-                        <termNote type="partOfSpeech">{escape(term.part_of_speech)}</termNote>
+                        <termNote type="partOfSpeech">{escape(term.part_of_speech)}</termNote>{note}
                         <descripGrp>
                             <descrip type="definition">{escape(term.definition)}</descrip>
                             <descrip type="context">{escape(term.usage)}</descrip>
@@ -160,7 +227,7 @@ def build_tbx_v3_file(term_translations, locale):
                 </langSec>
                 <langSec xml:lang={quoteattr(locale)}>
                     <termSec>
-                        <term>{escape(translation.text)}</term>
+                        <term>{escape(translation_text)}</term>
                     </termSec>
                 </langSec>
             </conceptEntry>"""
