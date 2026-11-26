@@ -6,6 +6,8 @@ import type {
 import type { FluentTermType } from '~/api/fluentTerms';
 import type { GetFluentTerms } from '~/api/fluentTermsCache';
 
+const MAX_LOOKBEHIND = 500;
+
 const MATCH_TERM_RE =
   /\{[ \t\n]*-([A-Za-z][\w-]*)\((?:[^),]*,)*[ \t\n]*([A-Za-z][\w-]*)?$/;
 
@@ -65,7 +67,10 @@ export function fluentTermVariantsCompletion(
   getTerms: GetFluentTerms,
 ): CompletionSource {
   return async (context: CompletionContext) => {
-    const textBefore = context.state.doc.sliceString(0, context.pos);
+    const textBefore = context.state.doc.sliceString(
+      Math.max(0, context.pos - MAX_LOOKBEHIND),
+      context.pos,
+    );
     const match = MATCH_TERM_RE.exec(textBefore);
     if (!match) {
       return null;
