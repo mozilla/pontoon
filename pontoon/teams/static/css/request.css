@@ -89,6 +89,7 @@
   background: var(--accent-background);
   border: none;
   border-radius: 3px;
+  color: var(--fill-text-color);
   margin-top: 15px;
   padding: 10px;
   text-transform: uppercase;
