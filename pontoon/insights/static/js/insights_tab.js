@@ -54,7 +54,7 @@ var Pontoon = (function (my) {
           plot(
             activeStart,
             activeEnd,
-            style.getPropertyValue('--status-translated'),
+            style.getPropertyValue('--chart-primary'),
           );
 
           let inactiveLength = 2;
@@ -1015,7 +1015,7 @@ var Pontoon = (function (my) {
         const ctx = chart[0].getContext('2d');
 
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        const green = style.getPropertyValue('--status-translated');
+        const green = style.getPropertyValue('--chart-primary');
         gradient.addColorStop(0, green);
         gradient.addColorStop(1, 'transparent');
 
@@ -1028,17 +1028,14 @@ var Pontoon = (function (my) {
                 label: 'Community Health Score',
                 data: chart.data('community-health-scores'),
                 backgroundColor: gradient,
-                borderColor: [style.getPropertyValue('--status-translated')],
+                borderColor: [style.getPropertyValue('--chart-primary')],
                 borderWidth: 2,
-                pointBackgroundColor: style.getPropertyValue(
-                  '--status-translated',
-                ),
+                pointBackgroundColor: style.getPropertyValue('--chart-primary'),
                 pointHitRadius: 10,
                 pointRadius: 3.25,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: style.getPropertyValue(
-                  '--status-translated',
-                ),
+                pointHoverBackgroundColor:
+                  style.getPropertyValue('--chart-primary'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 fill: true,
                 tension: 0.4,
@@ -1048,7 +1045,7 @@ var Pontoon = (function (my) {
           options: {
             plugins: {
               tooltip: {
-                borderColor: style.getPropertyValue('--status-translated'),
+                borderColor: style.getPropertyValue('--chart-primary'),
                 borderWidth: 1,
                 caretPadding: 5,
                 padding: {

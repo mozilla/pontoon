@@ -66,20 +66,20 @@
   > header
   li.google-translation:hover
   .translation-source {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .machinery .translation > header li.google-translation .selected-option {
   margin-left: 3px;
   margin-right: 3px;
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .machinery .translation > header li.google-translation .dropdown-toggle {
-  background: var(--status-translated);
+  background: var(--accent-background);
   border: none;
   border-radius: 2px;
-  color: var(--translation-main-button-color);
+  color: var(--fill-text-color);
   padding: 0 2px;
 }
 
@@ -132,7 +132,7 @@
 
 .machinery .translation > header .quality,
 .machinery .translation > header sup {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
 }
 
 .machinery .translation > header .projects {

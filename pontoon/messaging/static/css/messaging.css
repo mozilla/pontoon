@@ -44,8 +44,8 @@
 
     .button.fetch-again {
       display: none;
-      background-color: var(--status-error);
-      color: var(--translation-main-button-color);
+      background-color: var(--danger-background);
+      color: var(--fill-text-color);
     }
 
     .button.active {
@@ -98,7 +98,7 @@
       visibility: hidden;
 
       p {
-        color: var(--status-error);
+        color: var(--danger-color);
         font-size: 13px;
         padding-top: 5px;
         text-transform: uppercase;
@@ -136,7 +136,7 @@
           padding-bottom: 20px;
 
           .check-box-wrapper {
-            color: var(--status-translated);
+            color: var(--accent-color);
             font-size: 26px;
             font-weight: 300;
             font-style: italic;
@@ -238,7 +238,7 @@
       font-style: italic;
 
       i {
-        color: var(--status-error);
+        color: var(--danger-color);
       }
     }
 
@@ -297,7 +297,7 @@
       text-align: center;
 
       .icon {
-        color: var(--background-hover-2);
+        color: var(--messaging-empty-icon-color);
         font-size: 100px;
       }
 
@@ -338,7 +338,7 @@
             font-size: 14px;
 
             .sender {
-              color: var(--status-translated-alt);
+              color: var(--accent-color-alt);
               width: 50%;
             }
 
@@ -348,7 +348,7 @@
               width: 50%;
 
               i {
-                color: var(--status-translated);
+                color: var(--accent-color);
                 font-size: 18px;
                 margin-left: 5px;
               }
@@ -378,7 +378,7 @@
             text-transform: uppercase;
 
             .fas {
-              color: var(--status-translated);
+              color: var(--accent-color);
               margin-right: 5px;
             }
           }
@@ -447,7 +447,7 @@
       }
 
       a {
-        color: var(--status-translated);
+        color: var(--accent-color);
         font-weight: inherit;
       }
 

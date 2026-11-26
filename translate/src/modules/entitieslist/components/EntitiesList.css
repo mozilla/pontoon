@@ -36,7 +36,7 @@
 }
 
 .entities .no-results div {
-  color: var(--status-translated);
+  color: var(--accent-color);
   display: block;
   font-size: 128px;
   margin-bottom: 20px;
@@ -45,7 +45,7 @@
 .entities .toolbar {
   position: sticky;
   bottom: 0;
-  background: var(--tooltip-background);
+  background: var(--overlay-background);
   border-top: 1px solid var(--light-grey-1);
   box-sizing: border-box;
   line-height: 23px;
@@ -57,7 +57,7 @@
 .entities .toolbar button {
   background: none;
   border: none;
-  color: var(--tooltip-color-2);
+  color: var(--overlay-secondary-color);
   font-weight: 300;
 }
 
@@ -81,5 +81,5 @@
 .entities .toolbar .clear-selected:hover,
 .entities .toolbar .edit-selected:hover,
 .entities .toolbar .edit-selected .selected-count {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

@@ -101,13 +101,13 @@ export function getChartOptions(
           hover: {
             fill: 'none',
             style: {
-              color: style.getPropertyValue('--status-translated'),
+              color: style.getPropertyValue('--accent-color'),
             },
           },
           select: {
             fill: 'none',
             style: {
-              color: style.getPropertyValue('--status-translated-alt'),
+              color: style.getPropertyValue('--accent-color-alt'),
               fontWeight: 300,
             },
           },
@@ -124,18 +124,18 @@ export function getChartOptions(
     navigator: {
       height: 80,
       maskFill: 'rgba(77, 89, 103, 0.2)',
-      outlineColor: style.getPropertyValue('--icon-border-1'),
+      outlineColor: style.getPropertyValue('--time-range-navigator'),
       handles: {
-        backgroundColor: style.getPropertyValue('--icon-border-1'),
+        backgroundColor: style.getPropertyValue('--time-range-navigator'),
         borderColor: style.getPropertyValue('--time-range-handles'),
       },
       series: {
         type: 'column',
-        color: style.getPropertyValue('--status-translated'),
+        color: style.getPropertyValue('--time-range-series'),
       },
       xAxis: {
         lineWidth: 1,
-        lineColor: style.getPropertyValue('--icon-border-1'),
+        lineColor: style.getPropertyValue('--time-range-navigator'),
         gridLineWidth: 0,
         labels: {
           enabled: false,

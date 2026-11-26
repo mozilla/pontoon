@@ -28,7 +28,7 @@
 }
 
 .entity-navigation button:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .entity-navigation button:disabled {

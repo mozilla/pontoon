@@ -101,7 +101,7 @@
 .filters-panel .menu li.horizontal-separator {
   background: transparent;
   border-top: none;
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   cursor: default;
   font-size: 13px;
   height: auto;
@@ -135,7 +135,7 @@
 }
 
 .filters-panel .menu li:hover .count {
-  background: var(--button-background-1);
+  background: var(--count-background-highlight);
   color: var(--light-grey-6);
 }
 
@@ -145,16 +145,16 @@
 }
 
 .filters-panel .menu li .priority .fa-star {
-  color: var(--icon-background-1);
+  color: var(--inactive-icon-color);
   float: left;
 }
 
 .filters-panel .menu li:hover .priority .fa-star {
-  color: var(--button-background-1);
+  color: var(--priority-star-hover-color);
 }
 
 .filters-panel .menu li .priority .fa-star.active {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .filters-panel
@@ -237,7 +237,7 @@
 .filters-panel .toolbar {
   position: sticky;
   bottom: 0;
-  background: var(--tooltip-background);
+  background: var(--overlay-background);
   border-top: 1px solid var(--light-grey-1);
   box-sizing: border-box;
   line-height: 23px;
@@ -248,7 +248,7 @@
 .filters-panel .toolbar button {
   background: none;
   border: none;
-  color: var(--tooltip-color-2);
+  color: var(--overlay-secondary-color);
   font-weight: 300;
 }
 
@@ -268,5 +268,5 @@
 .filters-panel .toolbar .clear-selection:hover,
 .filters-panel .toolbar .apply-selected:hover,
 .filters-panel .toolbar .apply-selected .applied-count {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

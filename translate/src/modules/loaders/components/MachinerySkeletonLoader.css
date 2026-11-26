@@ -14,7 +14,7 @@
 
 .machinery-skeleton-loader p {
   height: 0.8125rem;
-  background-color: var(--translation-secondary-color);
+  background-color: var(--skeleton-loader-background);
   padding-bottom: 3px;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .machinery-skeleton-loader .machinery-item-skeleton p {
-  background-color: var(--translation-secondary-color);
+  background-color: var(--skeleton-loader-background);
   margin-bottom: 8px;
 }
 
@@ -40,7 +40,7 @@
 }
 
 .machinery-skeleton-loader .machinery-item-skeleton header .skeleton-bar {
-  background-color: var(--translation-secondary-color);
+  background-color: var(--skeleton-loader-background);
   display: inline-block;
   height: 0.6875rem;
   width: 40%;

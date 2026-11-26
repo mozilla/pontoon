@@ -21,11 +21,11 @@
 }
 
 .download-selector .selector .fas:hover {
-  background: var(--button-background-hover-2);
+  background: var(--button-background-highlight-2);
 }
 
 .download-selector.opened .selector .fas {
-  background: var(--button-background-hover-2);
+  background: var(--button-background-highlight-2);
   border-radius: 3px 3px 0 0;
 }
 

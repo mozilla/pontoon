@@ -14,7 +14,7 @@
 
 .original-string-panel .original .term {
   background: inherit;
-  border-bottom: 1px solid var(--status-translated);
+  border-bottom: 1px solid var(--accent-border);
   color: inherit;
   cursor: pointer;
   font-weight: normal;

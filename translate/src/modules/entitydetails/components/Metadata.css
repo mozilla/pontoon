@@ -20,7 +20,7 @@
 }
 
 .metadata div a {
-  color: var(--status-translated);
+  color: var(--accent-color);
   text-decoration: none;
 }
 
@@ -43,7 +43,7 @@
 .metadata button {
   background: none;
   border: none;
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-style: italic;
   padding: 0 0 0 2px;
 }
@@ -71,5 +71,5 @@
 }
 
 .metadata .context a:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

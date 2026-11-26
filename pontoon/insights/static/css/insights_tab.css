@@ -29,7 +29,7 @@
 
 #insights .controls .period-selector li .selector.active,
 #insights .controls .period-selector li .selector:hover {
-  background: var(--status-translated);
+  background: var(--accent-background);
   color: var(--black-3);
 }
 
@@ -84,7 +84,7 @@
 /* Active users info tooltip */
 
 #insights h3 .tooltip li::marker {
-  color: var(--status-translated);
+  color: var(--chart-primary);
 }
 
 /* Time to review suggestions and Age of unreviewed info tooltip */
@@ -176,5 +176,5 @@
 /* Community Health info tooltip */
 
 #insights .community-health-activity h3 .tooltip li.current-month::marker {
-  color: var(--status-translated);
+  color: var(--chart-primary);
 }

@@ -31,7 +31,7 @@ h1 aside {
 }
 
 h1 a {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 14px;
   font-weight: 300;
   letter-spacing: 0;
@@ -132,7 +132,7 @@ form .controls .button.delete-inline {
 }
 
 form .controls .button.manage-resources[disabled] {
-  color: var(--toggle-color-1);
+  color: var(--disabled-button-color);
   cursor: auto;
 }
 
@@ -156,7 +156,7 @@ form .controls .button.manage-resources[disabled]:hover {
 
 form a:link,
 form a:visited {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   float: right;
   text-transform: uppercase;
 }
@@ -412,7 +412,7 @@ label[for='id_configuration_file'] a {
 
 .externalresource .arrow::after {
   content: '▾';
-  color: var(var(--light-grey-7));
+  color: var(--light-grey-7);
   float: left;
   margin: 6px 0 0 -20px;
   pointer-events: none;
@@ -454,7 +454,7 @@ textarea {
 }
 
 .errorlist {
-  color: var(--status-error);
+  color: var(--danger-color);
   display: inline-block;
   font-size: 12px;
   line-height: 14px; /* Strange, but needed to keep controls in line when error occurs */

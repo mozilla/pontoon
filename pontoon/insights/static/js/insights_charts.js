@@ -48,7 +48,7 @@ var Pontoon = (function (my) {
       setLabelColor: function (context) {
         const style = getComputedStyle(document.body);
         return {
-          borderColor: style.getPropertyValue('--tooltip-color'),
+          borderColor: style.getPropertyValue('--overlay-color'),
           backgroundColor:
             context.dataset.pointBackgroundColor ||
             context.dataset.backgroundColor,

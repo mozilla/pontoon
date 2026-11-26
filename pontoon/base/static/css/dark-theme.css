@@ -4,6 +4,7 @@
 
   /* Main */
   --main-border-1: #4d5967;
+  --fill-text-color: #272a2f;
   --moz-logo: url(../img/moz-logo-light.svg);
 
   /* User banner and details */
@@ -13,36 +14,63 @@
   --user-translator: #7bc876;
   --user-new: #fed271;
 
+  /* Badges */
+  --badge-review-master: #4fc4f6;
+  --badge-translation-champion: #7bc876;
+  --badge-community-builder: #ff3366;
+  --confetti-dark: #000000dd;
+
   /* Primary (darker) background */
   --background-1: #272a2f;
   --background-hover-1: #333941;
   --button-background-1: #333941;
   --popup-background-1: #333941;
+  --card-background: #333941;
   --input-background-1: #333941;
   --input-color-1: #aaaaaa;
   --input-color-2: #ffffff;
+  --sync-error-message-color: #ffffff;
   --toggle-color-1: #666666;
   --toggle-color-2: #333941;
   --icon-background-1: #3f4752;
-  --icon-border-1: #4d5967;
+  --avatar-border: #4d5967;
 
   /* Secondary (lighter) background */
-  --background-hover-2: #3f4752;
+  --background-highlight-2: #3f4752;
   --button-background-2: #3f4752;
-  --button-background-hover-2: #272a2f;
+  --button-background-highlight-2: #272a2f;
   --popup-background-2: #272a2f;
-  --icon-background-2: #4d5967;
 
-  /* Tooltip */
-  --tooltip-background: #000000dd;
-  --tooltip-color: #ffffff;
-  --tooltip-color-2: #aaaaaa;
-  --tooltip-border: #4d5967;
+  /* Count chips */
+  --count-background: #3f4752;
+  --count-background-highlight: #333941;
+  --count-background-tab: #3f4752;
 
-  /* Homepage */
-  --homepage-background-image: url(../img/background.svg);
-  --homepage-tour-button-background: #ffffff;
-  --homepage-tour-button-color: #000000;
+  /* Popups */
+  --popup-shadow: #000000dd;
+  --popup-secondary-color: #aaaaaa;
+  --popup-link-color: #ff3366;
+
+  /* Icons, inactive controls and placeholders */
+  --inactive-icon-color: #3f4752;
+  --inactive-icon-color-2: #4d5967;
+  --muted-icon-color: #4d5967;
+  --priority-star-hover-color: #333941;
+  --check-box-off-color: #ff3366;
+  --disabled-button-color: #666666;
+  --messaging-empty-icon-color: #3f4752;
+  --skeleton-loader-background: #aaaaaa;
+
+  /* Overlays (tooltips, banners, sticky toolbars and the lightbox) */
+  --overlay-background: #000000dd;
+  --overlay-color: #ffffff;
+  --overlay-secondary-color: #aaaaaa;
+  --overlay-border: #4d5967;
+
+  /* Hero sections */
+  --hero-background-image: url(../img/background.svg);
+  --hero-button-background: #ffffff;
+  --hero-button-color: #000000;
 
   /* Translation status */
   --status-translated: #7bc876;
@@ -56,12 +84,31 @@
   --status-unreviewed: #4fc4f6;
   --status-fuzzy: #fed271;
 
+  /* Accent (Pontoon green) */
+  --accent-color: #7bc876;
+  --accent-color-alt: #7bc876;
+  --accent-background: #7bc876;
+  --accent-border: #7bc876;
+
+  /* Success, warning and danger */
+  --success-color: #7bc876;
+  --warning-color: #ffa10f;
+  --warning-background: #ffa10f;
+  --danger-color: #ff3366;
+  --danger-background: #ff3366;
+
+  /* Notifications */
+  --notification-badge-background: #ff3366;
+  --notification-link-color: #ff3366;
+  --notification-unread-background: #333941;
+  --addon-promotion-background: #ff3366;
+
   /* Translation workspace */
   --translation-background: #3f4752;
   --translation-border: #5e6475;
   --translation-color: #ffffff;
   --translation-secondary-color: #aaaaaa;
-  --translation-main-button-color: #272a2f;
+  --translation-main-button-error-background: #5f7285;
   --translation-subtitle-color: #888888;
   --editor-background: #333941;
   --editor-color: #e6e6e6;
@@ -72,15 +119,19 @@
   --editor-readonly-background: #2a2e35;
   --editor-selection-background: #2c4a66;
   --editor-placeholder-color: #888c92;
+  --editor-ghost-text-color: #888c92;
+  --history-background: #272a2f;
   --time-range-handles: #272a2f;
+  --time-range-series: #7bc876;
+  --time-range-navigator: #4d5967;
 
   /* Highlights */
   --diff-del-background: #5e3b46;
   --diff-del-color: #ff9d9d;
   --diff-ins-background: #3f5b50;
   --diff-ins-color: #9cd699;
-  --search-color: #ffa10f;
-  --search-background: #5a4d33;
+  --match-color: #ffa10f;
+  --match-background: #5a4d33;
   --tags-brace-color: #c79bff;
   --tags-bracket-color: #5fc7a8;
   --tags-keyword-color: #c79bff;
@@ -91,6 +142,7 @@
   --tags-string-color: #e6e6e6;
 
   /* Chart colors */
+  --chart-primary: #7bc876;
   --green-blue: #4fc4f666;
   --grey-9: #5f7285;
   --dark-purple: #f148fb33;
@@ -100,7 +152,6 @@
   --dark-green: #3b3d3b;
   --forest-green-1: #41554c;
   --green: #4f7256;
-  --green-2: #64906d;
   --dark-green: #7bc87633;
   --magenta: #843650;
   --blue-1: #3e7089;

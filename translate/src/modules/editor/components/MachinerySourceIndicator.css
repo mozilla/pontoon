@@ -11,5 +11,5 @@
 }
 
 .tm-source .stress {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }

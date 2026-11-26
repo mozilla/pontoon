@@ -12,13 +12,13 @@
 }
 
 .user-notifications-menu .selector .icon {
-  color: var(--icon-border-1);
+  color: var(--muted-icon-color);
   font-size: 26px;
   margin-top: 17px;
 }
 
 .user-notifications-menu .selector .badge {
-  background: var(--status-error);
+  background: var(--notification-badge-background);
   border: 3px solid var(--black-3);
   border-radius: 12px;
   color: var(--white-1);
@@ -60,7 +60,7 @@
 }
 
 .user-notifications-menu .menu li:hover {
-  background: var(--background-hover-2);
+  background: var(--background-highlight-2);
 }
 
 .user-notifications-menu .menu li.no {

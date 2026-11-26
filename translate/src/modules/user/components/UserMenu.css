@@ -11,7 +11,7 @@
 .user-menu .selector img,
 .user-menu .selector .menu-icon,
 .user-menu .menu li.details img {
-  border: 2px solid var(--icon-border-1);
+  border: 2px solid var(--avatar-border);
   border-radius: 6px;
 }
 

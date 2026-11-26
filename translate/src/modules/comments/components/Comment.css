@@ -3,7 +3,7 @@
 }
 
 .comments-list .comment a {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-weight: 400;
 }
 
@@ -90,15 +90,15 @@
 }
 
 .comments-list .comment .info .delete-button:hover {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .comments-list .comment .info .pin-button:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .comments-list .comment .comment-pin {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 9px;
   position: absolute;
   right: 4px;

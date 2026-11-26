@@ -18,7 +18,7 @@ ul {
 }
 
 #heading h1 .small {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-weight: 300;
   padding-left: 5px;
 }
@@ -60,7 +60,7 @@ ul {
 }
 
 #heading .details .value a:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 #heading .details .priority .value {
@@ -127,7 +127,7 @@ ul {
 }
 
 #heading .legend li:hover a {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 #heading .legend li .status.fas {
@@ -145,7 +145,7 @@ ul {
 }
 
 #heading .legend li:hover a span.value {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 #heading .non-plottable {
@@ -165,7 +165,7 @@ ul {
 }
 
 #heading .non-plottable a:hover p {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 #heading .non-plottable p.value {
@@ -184,7 +184,7 @@ ul {
 }
 
 #heading .non-plottable .unreviewed .status.fas:before {
-  color: var(--icon-background-2);
+  color: var(--inactive-icon-color-2);
   font-size: 18px;
 }
 

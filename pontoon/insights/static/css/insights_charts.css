@@ -37,12 +37,12 @@
 
 #insights h3 .fas.active,
 #insights h3 .fas:hover {
-  background: var(--button-background-hover-2);
+  background: var(--button-background-highlight-2);
 }
 
 #insights h3 .tooltip {
-  background: var(--tooltip-background);
-  color: var(--tooltip-color);
+  background: var(--overlay-background);
+  color: var(--overlay-color);
   position: absolute;
   display: none;
   margin-top: 10px;

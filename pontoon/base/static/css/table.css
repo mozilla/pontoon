@@ -128,17 +128,17 @@ table.table.project-list.hidden {
 }
 
 .table a:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 /* Selector must also match heading-info */
 .deadline time.approaching {
-  color: var(--status-warning);
+  color: var(--warning-color);
 }
 
 /* Selector must also match heading-info */
 .deadline time.overdue {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .table td.code div {
@@ -149,7 +149,7 @@ table.table.project-list.hidden {
 }
 
 .table td.code a {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   line-height: 47px;
   padding: 15px 5px 14px;
 }
@@ -182,10 +182,10 @@ table.table.project-list.hidden {
 
 .table .latest-activity .tooltip {
   display: block;
-  background: var(--tooltip-background);
+  background: var(--overlay-background);
   border-radius: 10px;
   bottom: 30px;
-  color: var(--tooltip-color);
+  color: var(--overlay-color);
   left: -100px;
   padding: 10px;
   position: absolute;
@@ -198,7 +198,7 @@ table.table.project-list.hidden {
   content: '';
   position: absolute;
   border: 10px solid;
-  border-color: var(--tooltip-background) transparent transparent transparent;
+  border-color: var(--overlay-background) transparent transparent transparent;
   bottom: -20px;
   left: 160px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
   clip: rect(0 20px 10px 0);
@@ -207,7 +207,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip .quote {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 30px;
 }
 
@@ -219,7 +219,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer {
-  color: var(--tooltip-color-2);
+  color: var(--overlay-secondary-color);
   font-style: italic;
   height: 48px;
   margin-top: 10px;
@@ -246,11 +246,11 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer .translation-action a {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .table .latest-activity .tooltip footer img {
-  border-color: var(--tooltip-border);
+  border-color: var(--overlay-border);
   display: inline-block;
   margin-left: 8px;
 }
@@ -280,7 +280,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .chart-wrapper .unreviewed-status {
-  color: var(--icon-background-1);
+  color: var(--inactive-icon-color);
   font-size: 18px;
   position: absolute;
   right: 0.5px;

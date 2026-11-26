@@ -43,7 +43,7 @@
 }
 
 .ghost-text {
-  color: var(--editor-placeholder-color);
+  color: var(--editor-ghost-text-color);
   pointer-events: none;
 }
 

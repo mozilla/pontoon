@@ -34,11 +34,11 @@ export function BadgeTooltip(): React.ReactElement<'div'> | null {
   switch (badgeName) {
     case 'Review Master':
       imagePath = '/static/img/review_master_badge.svg';
-      confettiColor = style.getPropertyValue('--status-unreviewed');
+      confettiColor = style.getPropertyValue('--badge-review-master');
       break;
     case 'Translation Champion':
       imagePath = '/static/img/translation_champion_badge.svg';
-      confettiColor = style.getPropertyValue('--status-translated');
+      confettiColor = style.getPropertyValue('--badge-translation-champion');
       break;
     default:
       return null;
@@ -48,7 +48,7 @@ export function BadgeTooltip(): React.ReactElement<'div'> | null {
     return {
       ...defaultOptions,
       disableForReducedMotion: true,
-      colors: [confettiColor, style.getPropertyValue('--tooltip-background')],
+      colors: [confettiColor, style.getPropertyValue('--confetti-dark')],
       particleCount: 10,
       spread: 55,
       zIndex: 100,

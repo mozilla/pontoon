@@ -40,7 +40,7 @@
 }
 
 #nprogress .bar {
-  background: var(--status-translated);
+  background: var(--accent-background);
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -56,8 +56,8 @@
   width: 100px;
   height: 100%;
   box-shadow:
-    0 0 10px var(--status-translated),
-    0 0 5px var(--status-translated);
+    0 0 10px var(--accent-background),
+    0 0 5px var(--accent-background);
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }
@@ -121,7 +121,7 @@
 
   /* History */
   #app .entity-details .history {
-    background: var(--editor-menu-background);
+    background: var(--history-background);
   }
 
   /* Helpers */
@@ -202,7 +202,7 @@
 
   #app > .main-content .third-column .react-tabs span.count:has(.preferred),
   #app > .main-content .third-column .react-tabs span.count:has(.pinned) {
-    background: var(--status-translated-alt);
-    color: var(--status-translated-alt); /* used as box-shadow color */
+    background: var(--accent-color-alt);
+    color: var(--accent-color-alt); /* used as box-shadow color */
   }
 }

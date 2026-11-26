@@ -9,11 +9,11 @@
 }
 
 .filters-panel .menu .for-time-range button.save-range {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
 }
 
 .filters-panel .menu li.for-time-range button:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .filters-panel .menu li.for-time-range button .fas {
@@ -75,7 +75,7 @@
 }
 
 .filters-panel .menu li.time-range input.error {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .filters-panel .menu li.time-range .to input {

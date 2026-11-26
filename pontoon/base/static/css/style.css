@@ -100,7 +100,7 @@ h2 {
 }
 
 h3 {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 26px;
   font-weight: 300;
   font-style: italic;
@@ -125,13 +125,13 @@ a:visited {
 
 a:hover,
 a:active {
-  color: var(--status-translated);
+  color: var(--accent-color);
   text-decoration: none;
 }
 
 sup a:link,
 sup a:visited {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 input[type='text'],
@@ -248,7 +248,7 @@ time {
 }
 
 .count {
-  background: var(--button-background-2);
+  background: var(--count-background);
   border-radius: 3px;
   color: var(--light-grey-7);
   margin-left: 5px;
@@ -429,7 +429,7 @@ time {
 }
 
 .select .menu ul li .latest a {
-  color: var(--status-translated);
+  color: var(--accent-color);
   display: inline-block;
 }
 
@@ -463,7 +463,7 @@ time {
 }
 
 .menu:not(.permanent) li.hover {
-  background: var(--background-hover-2);
+  background: var(--background-highlight-2);
 }
 
 .menu li.hover a {
@@ -528,13 +528,13 @@ time {
 }
 
 .locale .code {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   text-align: left;
 }
 
 body > header > .notification {
-  background: var(--tooltip-background);
-  color: var(--status-translated);
+  background: var(--overlay-background);
+  color: var(--success-color);
   cursor: pointer;
   font-style: italic;
   left: 0;
@@ -553,12 +553,12 @@ body > header > .notification li {
 }
 
 body > header > .notification li.error {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 img.rounded {
   border-radius: 6px;
-  border: 2px solid var(--icon-border-1);
+  border: 2px solid var(--avatar-border);
 }
 
 #error {
@@ -582,7 +582,7 @@ img.rounded {
 }
 
 #addon-promotion {
-  background: var(--status-error);
+  background: var(--addon-promotion-background);
   border-bottom: 1px solid var(--dark-grey-1);
   height: 44px;
   position: fixed;
@@ -670,7 +670,7 @@ header nav .right .sign-in-header {
 
 header nav .right .sign-in-header button {
   background: transparent;
-  border: 1.5px solid var(--status-translated);
+  border: 1.5px solid var(--accent-border);
   border-radius: 3px;
   color: var(--white-1);
   font-size: 14px;
@@ -683,7 +683,7 @@ header nav .right .sign-in-header button {
 }
 
 header nav .right .sign-in-header button:hover {
-  background-color: var(--status-translated);
+  background-color: var(--accent-background);
 }
 
 header .select .menu {
@@ -707,13 +707,13 @@ header .right .select .menu {
 }
 
 #notifications .button .icon {
-  color: var(--icon-border-1);
+  color: var(--muted-icon-color);
   font-size: 26px;
   margin-top: 17px;
 }
 
 #notifications .button .badge {
-  background: var(--status-error);
+  background: var(--notification-badge-background);
   border: 3px solid var(--black-3);
   border-radius: 12px;
   color: var(--white-1);
@@ -770,16 +770,16 @@ header .right .select .menu {
   .menu
   ul.notification-list
   li.notification-item[data-unread='true'] {
-  background: var(--background-hover-1);
+  background: var(--notification-unread-background);
 }
 
 .notifications .menu li.notification-item span {
-  color: var(--translation-color);
+  color: var(--white-1);
   float: none;
 }
 
 .notifications .menu li.notification-item a {
-  color: var(--status-error);
+  color: var(--notification-link-color);
   display: inline;
 }
 
@@ -797,7 +797,7 @@ header .right .select .menu {
 
 .notifications .menu li.notification-item .message.trim,
 .notifications .menu li.notification-item .message.trim > p {
-  color: var(--translation-secondary-color);
+  color: var(--light-grey-7);
   pointer-events: none;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -819,11 +819,11 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item .message .positive {
-  color: var(--status-translated);
+  color: var(--success-color);
 }
 
 .notifications .menu li.notification-item .message .negative {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 /* Notifications can include HTML tags in their body */
@@ -1060,7 +1060,7 @@ nav .links li {
 
 .links li a:hover,
 .links li a:active {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .submenu.tabs {
@@ -1079,7 +1079,7 @@ nav .links li {
 .submenu .links li.active a,
 .submenu .links a:hover,
 .submenu .links a:active {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .submenu.tabs .links {
@@ -1147,7 +1147,7 @@ noscript p {
 }
 
 #error #box a {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 108px;
 }
 
@@ -1159,7 +1159,7 @@ noscript p {
 
 #subtitle,
 #subtitle a {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 32px;
   font-style: italic;
   text-transform: none;
@@ -1174,7 +1174,7 @@ noscript p {
 }
 
 #action #link {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 body > form,
@@ -1202,7 +1202,7 @@ body > form,
 }
 
 .check-box.enabled .fas:before {
-  color: var(--status-translated);
+  color: var(--accent-color);
   content: '';
   font-weight: bold;
 }
@@ -1260,7 +1260,7 @@ body > form,
 }
 
 #standalone-sign-in ul.errorlist {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .controls {
@@ -1295,7 +1295,7 @@ body > form,
 .controls a.button:hover,
 .controls li.active a.button,
 .controls .button.active {
-  background: var(--status-translated);
+  background: var(--accent-background);
   color: var(--black-3);
 }
 
@@ -1342,16 +1342,16 @@ body > form,
 }
 
 .priority .fa-star {
-  color: var(--icon-background-1);
+  color: var(--inactive-icon-color);
   float: left;
 }
 
 .priority .value .fa-star {
-  color: var(--icon-background-2);
+  color: var(--inactive-icon-color-2);
 }
 
 .priority .fa-star.active {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .container .info {
@@ -1369,7 +1369,7 @@ body > form,
 }
 
 .container .info a {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
 }
 
 .toggle-button {

@@ -83,7 +83,7 @@
 
         .skeleton {
           animation: fading 1.5s infinite;
-          background-color: var(--translation-secondary-color);
+          background-color: var(--skeleton-loader-background);
           font-size: 15px;
           height: 28px;
           width: 80%;
@@ -116,8 +116,8 @@
           line-height: 1.8em;
 
           mark {
-            background: var(--search-background);
-            color: var(--search-color);
+            background: var(--match-background);
+            color: var(--match-color);
             font-weight: inherit;
             font-style: inherit;
             border-radius: 3px;
@@ -146,10 +146,10 @@
           }
 
           a:hover {
-            color: var(--status-translated);
+            color: var(--accent-color);
 
             .empty {
-              color: var(--status-translated);
+              color: var(--accent-color);
             }
           }
         }
@@ -179,7 +179,7 @@
           }
 
           .button.edit:hover {
-            background: var(--status-translated);
+            background: var(--accent-background);
           }
 
           .button.save {
@@ -187,7 +187,7 @@
           }
 
           .button.save:hover {
-            background: var(--status-translated);
+            background: var(--accent-background);
           }
 
           .button.delete {
@@ -195,12 +195,12 @@
           }
 
           .button.delete:hover {
-            background: var(--status-error);
+            background: var(--danger-background);
           }
 
           .button.are-you-sure {
             display: none;
-            background: var(--status-error);
+            background: var(--danger-background);
             color: var(--black-3);
           }
 

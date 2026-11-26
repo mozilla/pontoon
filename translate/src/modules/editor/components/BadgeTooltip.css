@@ -2,7 +2,7 @@
   background: var(--black-3);
   border: 1px solid var(--dark-grey-1);
   border-radius: 10px;
-  box-shadow: 0 0 20px -2px var(--tooltip-background);
+  box-shadow: 0 0 20px -2px var(--popup-shadow);
   box-sizing: border-box;
   text-align: center;
   margin: auto;
@@ -17,7 +17,7 @@
   z-index: 100;
 
   .title {
-    color: var(--tooltip-color-2);
+    color: var(--popup-secondary-color);
     font-weight: 100;
     font-size: 20px;
     text-transform: uppercase;
@@ -38,20 +38,20 @@
   }
 
   .badge-level {
-    color: var(--tooltip-color-2);
+    color: var(--popup-secondary-color);
     font-weight: 100;
     font-size: 20px;
     margin-bottom: 45px;
   }
 
   .notice {
-    color: var(--tooltip-color-2);
+    color: var(--popup-secondary-color);
     font-size: 16px;
     font-weight: 100;
   }
 
   .notice a {
-    color: var(--status-error);
+    color: var(--popup-link-color);
   }
   .continue {
     background: var(--button-background-1);

@@ -42,7 +42,7 @@
 }
 
 .user-notification a {
-  color: var(--status-error);
+  color: var(--notification-link-color);
   display: inline;
 }
 
@@ -52,11 +52,11 @@
 }
 
 .user-notification .message .positive {
-  color: var(--status-translated);
+  color: var(--success-color);
 }
 
 .user-notification .message .negative {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .user-notification table {

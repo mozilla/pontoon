@@ -1,5 +1,5 @@
 .menu.left-column {
-  background: var(--background-hover-1);
+  background: var(--dark-grey-1);
   border-radius: 6px;
   box-sizing: border-box;
   float: left;
@@ -12,7 +12,7 @@
 }
 
 .menu.left-column li.selected {
-  background: var(--background-hover-2);
+  background: var(--background-highlight-2);
   border-radius: 6px;
 }
 
@@ -31,12 +31,12 @@
 }
 
 .menu.left-column .count {
-  background: var(--button-background-2);
+  background: var(--count-background);
   float: right;
 }
 
 .menu.left-column li.selected .count {
-  background: var(--button-background-1);
+  background: var(--count-background-highlight);
   float: right;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .menu.right-column li.hover {
-  background: var(--background-hover-2);
+  background: var(--background-highlight-2);
 }
 
 .menu.right-column li.no .title {

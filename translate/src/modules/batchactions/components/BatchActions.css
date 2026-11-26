@@ -24,7 +24,7 @@
 }
 
 .batch-actions .topbar button:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .batch-actions .topbar button.select-all {
@@ -36,7 +36,7 @@
 }
 
 .batch-actions .topbar button.selected-count .stress {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
 }
 
 .batch-actions .topbar button .fas {
@@ -76,7 +76,7 @@
 }
 
 .batch-actions .actions-panel .intro p .stress {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .batch-actions .actions-panel button,
@@ -86,10 +86,10 @@
 }
 
 .batch-actions .actions-panel button {
-  background: var(--status-translated);
+  background: var(--accent-background);
   border: none;
   border-radius: 3px;
-  color: var(--translation-main-button-color);
+  color: var(--fill-text-color);
   font-weight: 600;
   padding: 15px 5px;
   position: relative;
@@ -107,7 +107,7 @@
 }
 
 .batch-actions .actions-panel button.reject-all {
-  background: var(--status-error);
+  background: var(--danger-background);
 }
 
 .batch-actions .actions-panel input {

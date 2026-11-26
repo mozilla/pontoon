@@ -34,7 +34,7 @@ a:visited {
 
 a:hover,
 a:active {
-  color: var(--status-translated);
+  color: var(--accent-color);
   text-decoration: none;
 }
 

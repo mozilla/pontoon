@@ -14,7 +14,7 @@
 
 .skeleton-loader p {
   height: 0.8125rem;
-  background-color: var(--translation-secondary-color);
+  background-color: var(--skeleton-loader-background);
   padding-bottom: 3px;
 }
 

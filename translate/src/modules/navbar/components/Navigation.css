@@ -9,7 +9,7 @@
 }
 
 .navigation > ul > li + li::before {
-  color: var(--icon-border-1);
+  color: var(--muted-icon-color);
   content: '/';
   font-size: 28px;
   font-weight: 100;
@@ -23,7 +23,7 @@
 }
 
 .navigation > ul > li > a:hover {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .navigation img {
@@ -32,6 +32,6 @@
 }
 
 .navigation .locale-code {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   padding-left: 7px;
 }

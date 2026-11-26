@@ -30,7 +30,7 @@
 }
 
 .failed-checks .title {
-  color: var(--status-error);
+  color: var(--danger-color);
   font-size: 14px;
   font-weight: 300;
   padding-bottom: 5px;
@@ -58,7 +58,7 @@
 }
 
 .failed-checks .error:before {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .failed-checks .warning:before {
@@ -66,7 +66,7 @@
 }
 
 .failed-checks .anyway {
-  background: var(--status-translated);
+  background: var(--accent-background);
   border: none;
   border-radius: 3px;
   bottom: 10px;

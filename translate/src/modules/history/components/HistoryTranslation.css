@@ -53,7 +53,7 @@
 }
 
 .history .translation .content > header .info a {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
 }
 
 .history .translation .content > header .toggle {
@@ -68,7 +68,7 @@
 }
 
 .history .translation .content > header .toggle.on {
-  color: var(--status-translated);
+  color: var(--accent-color);
 }
 
 .history .translation:hover .content > header .toggle {
@@ -80,7 +80,7 @@
 }
 
 .history .translation .content > header .toggle.active .stress {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
 }
 
 .history .translation .content > header button {
@@ -133,7 +133,14 @@
   content: '';
 }
 
-.history .translation.can-approve .content > header button.approve:hover:before,
+.history
+  .translation.can-approve
+  .content
+  > header
+  button.approve:hover:before {
+  color: var(--accent-color);
+}
+
 .history .translation .content > header button.unapprove:before {
   color: var(--status-translated);
 }
@@ -160,7 +167,7 @@
 
 .history .translation.can-reject .content > header button.reject:hover:before,
 .history .translation .content > header button.unreject:before {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .history .translation:not(.can-reject) .content > header button.reject:before,
@@ -189,14 +196,14 @@
 }
 
 .translation .content > header button.delete:hover:before {
-  color: var(--status-error);
+  color: var(--danger-color);
 }
 
 .machinery-sources {
   position: absolute;
   top: 0;
   left: -2px;
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-size: 14px;
 }
 

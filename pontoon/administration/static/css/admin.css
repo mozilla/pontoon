@@ -39,5 +39,5 @@ menu.controls #toggle-projects {
 }
 
 #recalculate-stats:hover {
-  background: var(--button-background-hover-2);
+  background: var(--button-background-highlight-2);
 }

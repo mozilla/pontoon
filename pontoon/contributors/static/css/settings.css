@@ -12,7 +12,7 @@ form.user-locales-settings .search-wrapper {
 
 form a:link,
 form a:visited {
-  color: var(--status-translated-alt);
+  color: var(--accent-color-alt);
   float: right;
   text-transform: uppercase;
 }
@@ -72,7 +72,7 @@ form a:visited {
 }
 
 #account-settings .delete-user-btn {
-  background: var(--status-error);
+  background: var(--danger-background);
   border: none;
   border-radius: 3px;
   font-size: 14px;
@@ -271,7 +271,7 @@ form a:visited {
 }
 
 #main .field .verify {
-  color: var(--status-translated);
+  color: var(--accent-color);
   font-style: italic;
 }
 
@@ -280,13 +280,13 @@ form a:visited {
 }
 
 .errorlist {
-  color: var(--status-error);
+  color: var(--danger-color);
   font-style: italic;
   list-style: none;
 }
 
 .error-message {
-  color: var(--status-error);
+  color: var(--danger-color);
   font-style: italic;
 }
 
@@ -301,7 +301,7 @@ form a:visited {
     padding: 0;
 
     .token-card {
-      background-color: var(--input-background-1);
+      background-color: var(--card-background);
       padding: 15px;
       border-radius: 3px;
       max-width: 620px;
@@ -340,21 +340,21 @@ form a:visited {
           .status.active {
             .icon,
             .value {
-              color: var(--status-translated);
+              color: var(--success-color);
             }
           }
 
           .status.expired {
             .icon,
             .value {
-              color: var(--status-warning);
+              color: var(--warning-color);
             }
           }
 
           .status.revoked {
             .icon,
             .value {
-              color: var(--status-error);
+              color: var(--danger-color);
             }
           }
 
@@ -366,7 +366,7 @@ form a:visited {
           }
 
           .delete-btn:hover {
-            background: var(--status-error);
+            background: var(--danger-background);
           }
         }
       }
@@ -447,7 +447,7 @@ form a:visited {
     }
 
     .generate-token-btn {
-      background: var(--status-translated);
+      background: var(--accent-background);
       border: none;
       border-radius: 3px;
       font-weight: 400;
