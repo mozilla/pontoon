@@ -1,0 +1,108 @@
+name: Autoclose PRs without linked issue
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened]
+
+permissions: {}
+
+jobs:
+  check:
+    name: Require a linked, assigned issue
+    if: >-
+      !github.event.repository.fork &&
+      github.event.pull_request.state == 'open' &&
+      github.event.pull_request.user.type != 'Bot' &&
+      (github.event.action == 'opened' ||
+        github.event.sender.login == github.event.pull_request.user.login)
+    # Job-level, so runs skipped by the condition above don't cancel an in-progress check.
+    concurrency:
+      group: pr-linked-issue-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      pull-requests: write
+    steps:
+      - name: Check for a linked issue assigned to the PR author
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          retries: 3
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const author = pr.user.login;
+
+            // The permission endpoint reports "read" for anyone on a public repo,
+            // so check collaborator status directly (204 if collaborator, 404 if not).
+            try {
+              await github.rest.repos.checkCollaborator({ owner, repo, username: author });
+              core.info(`${author} is a collaborator, skipping check.`);
+              return;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+
+            // closingIssuesReferences covers closing keywords in the description and
+            // issues linked manually from the PR sidebar.
+            const query = `
+              query($owner: String!, $repo: String!, $number: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $number) {
+                    closingIssuesReferences(first: 25) {
+                      nodes {
+                        number
+                        repository { nameWithOwner }
+                        assignees(first: 25) { nodes { login } }
+                      }
+                    }
+                  }
+                }
+              }`;
+            const fullName = `${owner}/${repo}`.toLowerCase();
+            const attempts = 3;
+
+            // Linked issues may not be available immediately after a PR is opened or
+            // edited, so retry before closing.
+            for (let attempt = 1; attempt <= attempts; attempt++) {
+              const result = await github.graphql(query, { owner, repo, number: pr.number });
+              const issues = result.repository.pullRequest.closingIssuesReferences.nodes;
+              core.info(
+                `Linked issues: ${JSON.stringify(issues.map((i) => `${i.repository.nameWithOwner}#${i.number}`))}`,
+              );
+
+              const match = issues.find(
+                (issue) =>
+                  issue.repository.nameWithOwner.toLowerCase() === fullName &&
+                  issue.assignees.nodes.some((a) => a.login === author),
+              );
+              if (match) {
+                core.info(`Found issue #${match.number} assigned to ${author}.`);
+                return;
+              }
+
+              if (attempt < attempts) {
+                core.info(`No match on attempt ${attempt}, retrying in 15 seconds.`);
+                await new Promise((resolve) => setTimeout(resolve, 15000));
+              }
+            }
+
+            core.info(`No linked issue assigned to ${author}, closing PR #${pr.number}.`);
+            const body = `\
+            Hi @${author}, thanks for your interest in contributing to Pontoon!
+
+            This pull request is being closed automatically because it is not linked to an issue assigned to you. To avoid duplicated or unwanted work, all external contributions need to be tied to an issue that a maintainer has assigned to you.
+
+            To contribute:
+
+            1. Find an existing issue (or file a new one) and ask in a comment to be assigned to it.
+            2. Once you've been assigned, open a pull request that includes a closing keyword referencing the issue in its description, e.g. \`Fixes #123\`.
+
+            See the [guide to your first contribution](https://pontoon.mozilla.org/docs/dev/first-contribution/) for more information.`;
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pr.number,
+              body,
+            });
+            await github.rest.pulls.update({ owner, repo, pull_number: pr.number, state: "closed" });
