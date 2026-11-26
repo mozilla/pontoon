@@ -16,7 +16,7 @@ jobs:
     if: >-
       github.repository == 'mozilla/pontoon' &&
       github.event.pull_request.state == 'open' &&
-      github.event.pull_request.user.login != 'dependabot[bot]'
+      github.event.pull_request.user.type != 'Bot''
     runs-on: ubuntu-latest
     permissions:
       issues: read
