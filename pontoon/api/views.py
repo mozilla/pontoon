@@ -721,6 +721,7 @@ class TranslationMemorySearchListView(generics.ListAPIView):
 
 class TranslationSearchListView(RequestFieldsMixin, generics.ListAPIView):
     serializer_class = EntitySearchSerializer
+    queryset = Entity.objects.none()
 
     def get_queryset(self):
         query_params = self.request.query_params.copy()

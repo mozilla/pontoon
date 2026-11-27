@@ -1,21 +1,26 @@
+from io import StringIO
 from types import SimpleNamespace
 
 import pytest
 
+from drf_spectacular.drainage import reset_generator_stats
 from moz.l10n.formats.fluent import fluent_parse_entry
 from moz.l10n.formats.mf2 import mf2_parse_message
 from moz.l10n.message import message_to_json
+from rest_framework.request import Request
 from rest_framework.test import APIClient
 from rest_framework.throttling import SimpleRateThrottle
 
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.core.cache import cache
+from django.core.management import call_command
 from django.db.models import Prefetch
 from django.utils.timezone import now, timedelta
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.models import PersonalAccessToken
+from pontoon.api.serializers import EntitySearchSerializer
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
@@ -569,6 +574,67 @@ def test_schema_documents_user_translations():
         "include",
         "page",
         "page_size",
+    }
+
+
+def test_schema_generation_has_no_warnings():
+    reset_generator_stats()
+    # Raises SchemaGenerationError if any warning is logged.
+    call_command("spectacular", "--fail-on-warn", stdout=StringIO())
+
+
+def test_schema_documents_method_field_types():
+    response = APIClient().get("/api/v2/schema/", HTTP_ACCEPT="application/json")
+    schemas = response.data["components"]["schemas"]
+
+    project = schemas["NestedIndividualProject"]["properties"]
+    assert project["total_strings"]["type"] == "integer"
+    assert project["complete"]["type"] == "boolean"
+    assert project["contact"]["type"] == "string"
+    assert project["contact"]["nullable"] is True
+    assert project["locales"]["type"] == "array"
+    assert project["locales"]["items"] == {"type": "string"}
+    assert project["localizations"]["items"] == {
+        "$ref": "#/components/schemas/ProjectLocalization"
+    }
+    assert "project" not in schemas["ProjectLocalization"]["properties"]
+
+    locale = schemas["NestedIndividualLocale"]["properties"]
+    assert locale["projects"]["items"] == {"type": "string"}
+    assert locale["localizations"]["items"] == {
+        "$ref": "#/components/schemas/LocaleLocalization"
+    }
+    assert "locale" not in schemas["LocaleLocalization"]["properties"]
+
+    entity = schemas["EntitySearch"]["properties"]
+    assert entity["project"]["allOf"] == [
+        {"$ref": "#/components/schemas/CompactProject"}
+    ]
+    assert entity["project"]["readOnly"] is True
+    assert "nullable" not in entity["project"]
+    assert entity["translation"]["allOf"] == [
+        {"$ref": "#/components/schemas/Translation"}
+    ]
+    assert entity["translation"]["nullable"] is True
+    translation_locale = schemas["Translation"]["properties"]["locale"]
+    assert translation_locale["allOf"] == [
+        {"$ref": "#/components/schemas/CompactLocale"}
+    ]
+    assert "nullable" not in translation_locale
+
+
+@pytest.mark.django_db
+def test_entity_search_translation_is_null_without_active_translation(rf):
+    entity = EntityFactory.create()
+    entity.active_translations = []
+    request = Request(rf.get("/api/v2/search/translations/"))
+
+    data = EntitySearchSerializer(entity, context={"request": request}).data
+
+    assert data["translation"] is None
+    assert data["project"] == {
+        "slug": entity.resource.project.slug,
+        "name": entity.resource.project.name,
     }
 
 
