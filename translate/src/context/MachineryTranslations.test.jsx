@@ -17,7 +17,6 @@ vi.mock('~/api/machinery', () => ({
   fetchCaighdeanTranslation: vi.fn(() => Promise.resolve([])),
   fetchComposedMachinery: vi.fn(() => Promise.resolve([])),
   fetchGoogleTranslation: vi.fn(() => Promise.resolve([])),
-  fetchOpenAIComposedTranslation: vi.fn(() => Promise.resolve(null)),
   fetchOpenAITranslation: vi.fn(() => Promise.resolve([])),
   fetchMicrosoftTranslation: vi.fn(() => Promise.resolve([])),
   fetchTranslationMemory: vi.fn(() => Promise.resolve([])),

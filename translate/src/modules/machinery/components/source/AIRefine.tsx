@@ -49,7 +49,7 @@ export function AIRefine({
 
   return (
     <li className='ai-refine'>
-      <Localized id='machinery-AIRefine--selector'>
+      <Localized id='machinery-AIRefine--selector' attrs={{ title: true }}>
         <span
           className='selector'
           onClick={toggleDropdown}
