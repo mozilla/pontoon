@@ -48,6 +48,7 @@ function mountForm(
   const entity = {
     pk: 1,
     format: 'fluent',
+    project: { slug: 'project' },
     key: [id],
     original: source,
     value: sourceEntry['='] ?? [],

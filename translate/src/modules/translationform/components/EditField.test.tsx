@@ -75,6 +75,7 @@ function MockEditField({
                 entity: {
                   key: ['key'],
                   format,
+                  project: { slug: 'project' } as Record<string, any>,
                   original: `key = ${defaultValue}`,
                   value,
                   properties,

@@ -29,6 +29,7 @@ function mountForm(string) {
   const entity = {
     pk: 0,
     key: ['key'],
+    project: { slug: 'project' },
     original: 'Hello',
     value: ['Hello'],
     translation: { string, value: [string] },

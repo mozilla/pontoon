@@ -42,6 +42,7 @@ const ENTITIES = [
   {
     pk: 1,
     format: 'fluent',
+    project: { slug: 'project' },
     key: ['my-message'],
     original: 'my-message = Hello',
     value: ['Hello'],
@@ -50,6 +51,7 @@ const ENTITIES = [
   {
     pk: 2,
     format: 'fluent',
+    project: { slug: 'project' },
     key: ['my-message'],
     original: 'my-message =\n    .my-attr = Something guud',
     value: [],
@@ -63,6 +65,7 @@ const ENTITIES = [
   {
     pk: 3,
     format: 'fluent',
+    project: { slug: 'project' },
     key: ['my-message'],
     original: RICH_MESSAGE_STRING,
     value: rich_message_entry['='],
@@ -72,6 +75,7 @@ const ENTITIES = [
   {
     pk: 4,
     format: 'fluent',
+    project: { slug: 'project' },
     key: ['my-message'],
     original: 'my-message = Hello\n',
     value: ['Hello'],
@@ -80,6 +84,7 @@ const ENTITIES = [
   {
     pk: 5,
     format: 'fluent',
+    project: { slug: 'project' },
     key: ['my-message'],
     original: NESTED_SELECTORS_STRING,
     value: nested_selectors_entry['='],
@@ -91,6 +96,7 @@ const ENTITIES = [
   {
     pk: 6,
     format: 'fluent',
+    project: { slug: 'project' },
     key: ['-my-term'],
     original: '-my-term = Hello',
     value: ['Hello'],

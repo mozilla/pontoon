@@ -15,7 +15,6 @@ import React, {
 
 import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
-import { Location } from '~/context/Location';
 import { editorThemeClass, ThemeContext } from '~/context/Theme';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
@@ -50,7 +49,6 @@ export const EditField = memo(
     ({ defaultValue, onFocus, singleField, fieldId }, ref) => {
       const { l10n } = useLocalization();
       const locale = useContext(Locale);
-      const location = useContext(Location);
       const { editorTheme } = useContext(ThemeContext);
       const readOnly = useReadonlyEditor();
       const { entity } = useContext(EntityView);
@@ -97,7 +95,7 @@ export const EditField = memo(
               extensions.push(
                 fluentLanguageMode.data.of({
                   autocomplete: fluentTermVariantsCompletion(
-                    createGetFluentTerms(location.project, location.locale),
+                    createGetFluentTerms(entity.project.slug, locale.code),
                   ),
                 }),
               );
