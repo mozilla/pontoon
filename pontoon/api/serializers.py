@@ -307,7 +307,7 @@ class TranslationMemorySerializer(DynamicFieldsModelSerializer):
 
 
 class TranslationSerializer(serializers.ModelSerializer):
-    locale = serializers.SerializerMethodField()
+    locale = CompactLocaleSerializer(read_only=True)
     string = serializers.SerializerMethodField()
 
     class Meta:
@@ -316,16 +316,6 @@ class TranslationSerializer(serializers.ModelSerializer):
             "locale",
             "string",
         ]
-
-    @extend_schema_field(CompactLocaleSerializer(allow_null=True))
-    def get_locale(self, obj):
-        if not obj.locale:
-            return None
-
-        return {
-            "code": obj.locale.code,
-            "name": obj.locale.name,
-        }
 
     def get_string(self, obj) -> str:
         return get_simple_preview(obj.entity.resource.format, obj.string)
@@ -471,7 +461,7 @@ class ResourceSerializer(serializers.ModelSerializer):
 
 class EntitySerializer(DynamicFieldsModelSerializer):
     string = serializers.SerializerMethodField()
-    project = serializers.SerializerMethodField()
+    project = CompactProjectSerializer(source="resource.project", read_only=True)
     resource = ResourceSerializer(read_only=True)
 
     class Meta:
@@ -486,16 +476,6 @@ class EntitySerializer(DynamicFieldsModelSerializer):
 
     def get_string(self, obj) -> str:
         return get_simple_preview(obj.resource.format, obj.string)
-
-    @extend_schema_field(CompactProjectSerializer(allow_null=True))
-    def get_project(self, obj):
-        if not obj.resource.project:
-            return None
-
-        return {
-            "slug": obj.resource.project.slug,
-            "name": obj.resource.project.name,
-        }
 
 
 class NestedEntitySerializer(EntitySerializer):
@@ -518,6 +498,7 @@ class NestedEntitySerializer(EntitySerializer):
                 if include_translations != "true":
                     self.fields.pop("translations", None)
 
+    @extend_schema_field(TranslationSerializer(many=True))
     def get_translations(self, obj):
         return TranslationSerializer(
             obj.filtered_translations, many=True, context=self.context
@@ -537,9 +518,12 @@ class EntitySearchSerializer(EntitySerializer):
         if not request:
             return None
 
-        translation = obj.active_translations[0] if obj.active_translations else None
+        if not obj.active_translations:
+            return None
 
-        return TranslationSerializer(translation, context=self.context).data
+        return TranslationSerializer(
+            obj.active_translations[0], context=self.context
+        ).data
 
 
 class PretranslationResponseSerializer(serializers.Serializer):

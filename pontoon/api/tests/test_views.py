@@ -7,6 +7,7 @@ from drf_spectacular.drainage import reset_generator_stats
 from moz.l10n.formats.fluent import fluent_parse_entry
 from moz.l10n.formats.mf2 import mf2_parse_message
 from moz.l10n.message import message_to_json
+from rest_framework.request import Request
 from rest_framework.test import APIClient
 from rest_framework.throttling import SimpleRateThrottle
 
@@ -19,6 +20,7 @@ from django.utils.timezone import now, timedelta
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.api.models import PersonalAccessToken
+from pontoon.api.serializers import EntitySearchSerializer
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
@@ -608,13 +610,32 @@ def test_schema_documents_method_field_types():
     assert entity["project"]["allOf"] == [
         {"$ref": "#/components/schemas/CompactProject"}
     ]
-    assert entity["project"]["nullable"] is True
+    assert entity["project"]["readOnly"] is True
+    assert "nullable" not in entity["project"]
     assert entity["translation"]["allOf"] == [
         {"$ref": "#/components/schemas/Translation"}
     ]
-    assert schemas["Translation"]["properties"]["locale"]["allOf"] == [
+    assert entity["translation"]["nullable"] is True
+    translation_locale = schemas["Translation"]["properties"]["locale"]
+    assert translation_locale["allOf"] == [
         {"$ref": "#/components/schemas/CompactLocale"}
     ]
+    assert "nullable" not in translation_locale
+
+
+@pytest.mark.django_db
+def test_entity_search_translation_is_null_without_active_translation(rf):
+    entity = EntityFactory.create()
+    entity.active_translations = []
+    request = Request(rf.get("/api/v2/search/translations/"))
+
+    data = EntitySearchSerializer(entity, context={"request": request}).data
+
+    assert data["translation"] is None
+    assert data["project"] == {
+        "slug": entity.resource.project.slug,
+        "name": entity.resource.project.name,
+    }
 
 
 @pytest.mark.django_db
