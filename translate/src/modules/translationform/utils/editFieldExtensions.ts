@@ -11,12 +11,8 @@ import {
   insertNewlineAndIndent,
   standardKeymap,
 } from '@codemirror/commands';
-import {
-  HighlightStyle,
-  StreamLanguage,
-  syntaxHighlighting,
-} from '@codemirror/language';
-import { Extension } from '@codemirror/state';
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { EditorState, Extension } from '@codemirror/state';
 import { EditorView, keymap, tooltips } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useMemo, useRef } from 'react';
@@ -42,7 +38,11 @@ import {
   useHandleEnter,
   useHandleEscape,
 } from './editFieldShortcuts';
-import { fluentMode, commonMode, webextMode } from './editFieldModes';
+import {
+  fluentLanguageMode,
+  commonLanguageMode,
+  webextLanguageMode,
+} from './editFieldModes';
 import './editFieldExtensions.css';
 
 /**
@@ -144,15 +144,17 @@ export const getExtensions = (
   // horizontal scrolling if it overflows the right edge of .main-column.
   // We avoid this by placing tooltips in its parent container.
   tooltips({ parent: document.querySelector('.panel-content') as HTMLElement }),
-  autocompletePlaceholders(entry) ?? closeBrackets(),
+  autocompletion({
+    tooltipClass: () =>
+      editorThemeClass(document.body.getAttribute('data-editor-theme')),
+  }),
+  placeholderCompletions(entry),
   EditorView.lineWrapping,
-  StreamLanguage.define<any>(
-    entry.format === 'fluent'
-      ? fluentMode
-      : entry.format === 'webext'
-        ? webextMode
-        : commonMode,
-  ),
+  entry.format === 'fluent'
+    ? fluentLanguageMode
+    : entry.format === 'webext'
+      ? webextLanguageMode
+      : commonLanguageMode,
   syntaxHighlighting(style),
   decoratorPlugin,
   keymap.of([
@@ -184,6 +186,15 @@ export const getExtensions = (
   ]),
 ];
 
+function placeholderCompletions(entry: MessageEntry) {
+  const sources = autocompletePlaceholders(entry);
+  return sources.length
+    ? EditorState.languageData.of(() =>
+        sources.map((autocomplete) => ({ autocomplete })),
+      )
+    : closeBrackets();
+}
+
 /**
  * Autocomplete placeholders, and sequences of placeholders.
  *
@@ -201,7 +212,7 @@ export const getExtensions = (
  *
  * If no autocompletions are found, bracket auto-closing is enabled.
  */
-function autocompletePlaceholders(entry: MessageEntry) {
+export function autocompletePlaceholders(entry: MessageEntry) {
   const override: CompletionSource[] = [];
   for (const pattern of entryPatterns(entry)) {
     const edit = editablePattern(entry.format, pattern);
@@ -223,13 +234,7 @@ function autocompletePlaceholders(entry: MessageEntry) {
       override.push(completePlaceholder(edit, ...hl));
     }
   }
-  return override.length
-    ? autocompletion({
-        override,
-        tooltipClass: () =>
-          editorThemeClass(document.body.getAttribute('data-editor-theme')),
-      })
-    : null;
+  return override;
 }
 
 function completePlaceholder(

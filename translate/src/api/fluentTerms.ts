@@ -1,0 +1,40 @@
+import type { Message } from '@mozilla/l10n';
+
+import { GET } from './utils/base';
+
+export type FluentTermType = {
+  readonly value: Message;
+  readonly properties: Record<string, Message> | null;
+  readonly translation_value: Message | null;
+  readonly translation_properties: Record<string, Message> | null;
+};
+
+export type FluentTerms = Record<string, FluentTermType>;
+
+export async function fetchFluentTerms(
+  project: string,
+  locale: string,
+): Promise<FluentTerms> {
+  const search = new URLSearchParams({ project, locale });
+  return await GET('/get-fluent-terms/', search);
+}
+
+export type GetFluentTerms = () => Promise<FluentTerms>;
+
+export const termsCache = new Map<string, Promise<FluentTerms>>();
+
+export function createGetFluentTerms(
+  project: string,
+  locale: string,
+): GetFluentTerms {
+  const key = `${project}/${locale}`;
+
+  return () => {
+    if (!termsCache.has(key)) {
+      const terms = fetchFluentTerms(project, locale);
+      termsCache.set(key, terms);
+    }
+
+    return termsCache.get(key)!;
+  };
+}
