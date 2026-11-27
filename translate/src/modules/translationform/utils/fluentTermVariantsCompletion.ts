@@ -83,6 +83,13 @@ export function fluentTermVariantsCompletion(
       return null;
     }
 
+    const requestedTerm = `-${match[1]}`;
+    const term = terms[requestedTerm];
+
+    if (!term) {
+      return null;
+    }
+
     const partial = match[2] ?? '';
     const from = context.pos - partial.length;
     const args = match[0].slice(
@@ -94,12 +101,6 @@ export function fluentTermVariantsCompletion(
         ([, selector]) => selector,
       ),
     );
-    const requestedTerm = `-${match[1]}`;
-    const term = terms[requestedTerm];
-
-    if (!term) {
-      return null;
-    }
 
     const variants = getTermVariants(
       term.translation_value ?? term.value,
