@@ -26,6 +26,7 @@ html {
   --badge-translation-champion: #7bc876;
   --badge-community-builder: #ff3366;
   --confetti-dark: #000000dd;
+  --confetti-contrast: #2a2a2a;
 
   /* Primary (darker) background */
   --background-1: #f6f6f6;

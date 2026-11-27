@@ -34,7 +34,7 @@ $(function () {
       disableForReducedMotion: true,
       colors: [
         style.getPropertyValue('--badge-community-builder'),
-        style.getPropertyValue('--white-1'),
+        style.getPropertyValue('--confetti-contrast'),
       ],
       particleCount: 2,
       spread: 55,
