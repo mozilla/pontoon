@@ -3,6 +3,7 @@ import { EditorState } from '@codemirror/state';
 
 import {
   fluentTermVariantsCompletion,
+  formatArgumentValue,
   getTermVariants,
 } from './fluentTermVariantsCompletion';
 
@@ -33,6 +34,20 @@ const terms: FluentTerms = {
     },
     translation_properties: null,
   },
+  '-numeric-keys': {
+    value: {
+      decl: {},
+      sel: ['kasua'],
+      alt: [
+        { keys: ['0'], pat: ['Firefox kontu'] },
+        { keys: ['k'], pat: ['Firefox kontuak'] },
+        { keys: [{ '*': 'a' }], pat: ['Firefox kontua'] },
+      ],
+    },
+    properties: null,
+    translation_value: null,
+    translation_properties: null,
+  },
   '-plain-term': {
     value: ['Just a pattern'],
     properties: null,
@@ -40,6 +55,18 @@ const terms: FluentTerms = {
     translation_properties: null,
   },
 };
+
+describe('formatArgumentValue', () => {
+  it.each([
+    ['0', '0'],
+    ['-1', '-1'],
+    ['1.5', '1.5'],
+    ['01', '01'],
+    ['k', '"k"'],
+  ])('formats %j as %s', (key, expected) => {
+    expect(formatArgumentValue(key)).toBe(expected);
+  });
+});
 
 describe('getTermVariants', () => {
   const select = (
@@ -234,6 +261,17 @@ describe('fluentTermVariantsCompletion', () => {
     expect(result!.options.map((option) => option.label)).toEqual([
       'case: "nominative"',
       'case: "accusative"',
+    ]);
+  });
+
+  it('does not quote numeric variant keys', async () => {
+    const result = await complete('{ -numeric-keys(');
+
+    expect(result).not.toBeNull();
+    expect(result!.options.map((option) => option.label)).toEqual([
+      'kasua: 0',
+      'kasua: "k"',
+      'kasua: "a"',
     ]);
   });
 

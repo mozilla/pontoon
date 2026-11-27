@@ -10,6 +10,12 @@ const MAX_LOOKBEHIND = 500;
 const MATCH_TERM_RE =
   /\{[ \t\n]*-([A-Za-z][\w-]*)\((?:[^),]*,)*[ \t\n]*([A-Za-z][\w-]*)?$/;
 
+const NUMBER_LITERAL_RE = /^-?[0-9]+(?:\.[0-9]+)?$/;
+
+export function formatArgumentValue(key: string): string {
+  return NUMBER_LITERAL_RE.test(key) ? key : `"${key}"`;
+}
+
 export type VariantOptions = Array<{
   selector: string;
   keys: Array<{ key: string; isDefault: boolean }>;
@@ -115,7 +121,7 @@ export function fluentTermVariantsCompletion(
       validFor: /^[A-Za-z][\w-]*$/,
       options: variants.flatMap(({ selector, keys }, groupIndex) =>
         keys.map(({ key, isDefault }, keyIndex) => ({
-          label: `${selector}: "${key}"`,
+          label: `${selector}: ${formatArgumentValue(key)}`,
           detail: isDefault ? 'default' : undefined,
           type: 'keyword',
           // Keep each group sorted the same way they are defined.
