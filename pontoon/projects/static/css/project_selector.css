@@ -42,7 +42,7 @@
 }
 
 .project-selector .project.select .menu li {
-  color: var(--light-grey-6);
+  color: var(--text-soft-color);
   cursor: pointer;
   text-align: left;
 }

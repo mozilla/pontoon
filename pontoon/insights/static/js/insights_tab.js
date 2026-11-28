@@ -494,7 +494,7 @@ var Pontoon = (function (my) {
                 title: {
                   display: true,
                   text: 'COMPLETION',
-                  color: style.getPropertyValue('--white-1'),
+                  color: style.getPropertyValue('--text-color'),
                   fontStyle: 100,
                 },
                 grid: {
@@ -515,7 +515,7 @@ var Pontoon = (function (my) {
                 title: {
                   display: true,
                   text: 'STRINGS',
-                  color: style.getPropertyValue('--white-1'),
+                  color: style.getPropertyValue('--text-color'),
                   fontStyle: 100,
                 },
                 grid: {
@@ -779,7 +779,7 @@ var Pontoon = (function (my) {
                 title: {
                   display: true,
                   text: 'STRINGS',
-                  color: style.getPropertyValue('--white-1'),
+                  color: style.getPropertyValue('--text-color'),
                   fontStyle: 100,
                 },
                 grid: {
@@ -967,7 +967,7 @@ var Pontoon = (function (my) {
                 title: {
                   display: true,
                   text: 'APPROVAL RATE',
-                  color: style.getPropertyValue('--white-1'),
+                  color: style.getPropertyValue('--text-color'),
                   fontStyle: 100,
                 },
                 grid: {
@@ -988,7 +988,7 @@ var Pontoon = (function (my) {
                 title: {
                   display: true,
                   text: 'STRINGS',
-                  color: style.getPropertyValue('--white-1'),
+                  color: style.getPropertyValue('--text-color'),
                   fontStyle: 100,
                 },
                 grid: {

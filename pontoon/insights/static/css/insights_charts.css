@@ -6,7 +6,7 @@
 }
 
 #insights h3 {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 20px;
   font-style: normal;
   font-weight: bold;
@@ -19,7 +19,7 @@
 
 #insights .controls .selector {
   background: var(--button-background-2);
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   cursor: pointer;
   width: 24px;
   height: 24px;
@@ -101,5 +101,5 @@
 }
 
 #insights .legend li.disabled .label:hover {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
 }

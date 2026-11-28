@@ -99,7 +99,7 @@
 }
 
 #no-results {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-style: italic;
   padding: 10px 16px;
   display: none;
@@ -111,7 +111,7 @@
 
   span {
     box-sizing: border-box;
-    color: var(--light-grey-7);
+    color: var(--text-secondary-color);
     display: inline-block;
     font-weight: bold;
     padding: 10px 16px;
@@ -164,7 +164,7 @@
 }
 
 .entity-info-container {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-style: italic;
   line-height: 22px;
   margin-top: 8px;
@@ -234,7 +234,7 @@
 
   span {
     box-sizing: border-box;
-    color: var(--light-grey-7);
+    color: var(--text-secondary-color);
     font-weight: bold;
     min-width: 0;
     padding: 10px 16px;
@@ -253,7 +253,7 @@
 }
 
 #translation-list {
-  color: var(--white-1);
+  color: var(--text-color);
   line-height: 1.5;
   font-size: 14px;
 
@@ -329,7 +329,7 @@
   }
 
   .api-text {
-    color: var(--light-grey-7);
+    color: var(--text-secondary-color);
   }
 
   a {

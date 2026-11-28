@@ -7,6 +7,12 @@
   --fill-text-color: #272a2f;
   --moz-logo: url(../img/moz-logo-light.svg);
 
+  /* Text */
+  --text-color: #ffffff;
+  --text-soft-color: #cccccc;
+  --text-secondary-color: #aaaaaa;
+  --text-tertiary-color: #999999;
+
   /* User banner and details */
   --user-admin: #ff3366;
   --user-pm: #ffa10f;

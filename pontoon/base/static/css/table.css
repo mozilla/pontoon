@@ -124,7 +124,7 @@ table.table.project-list.hidden {
 }
 
 .table a {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .table a:hover {
@@ -177,7 +177,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity time:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .table .latest-activity .tooltip {
@@ -349,7 +349,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li a {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   display: block;
   margin-top: -5px;
 }
@@ -386,7 +386,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.all .title {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
 }
 
 .table .progress .legend li .value {
@@ -395,10 +395,10 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li a:hover .title {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .table .progress .legend li a:hover .value {
-  color: var(--white-1);
+  color: var(--text-color);
   font-weight: 700;
 }

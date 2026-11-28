@@ -17,7 +17,7 @@
 }
 
 .menu.left-column li.selected a {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .menu.left-column li {

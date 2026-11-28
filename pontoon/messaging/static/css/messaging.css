@@ -153,7 +153,7 @@
     }
 
     .field {
-      color: var(--light-grey-7);
+      color: var(--text-secondary-color);
       font-size: 16px;
       margin-bottom: 10px;
       text-align: left;
@@ -198,7 +198,7 @@
     }
 
     .message-content .subtitle {
-      color: var(--light-grey-7);
+      color: var(--text-secondary-color);
       float: right;
       font-size: 13px;
       padding-top: 5px;
@@ -228,7 +228,7 @@
     display: none;
 
     p {
-      color: var(--light-grey-6);
+      color: var(--text-soft-color);
       font-size: 16px;
       line-height: 1.5;
     }
@@ -254,7 +254,7 @@
 
     .subject {
       .value {
-        color: var(--white-1);
+        color: var(--text-color);
         font-size: 20px;
         font-weight: bold;
         margin-bottom: 14px;
@@ -267,7 +267,7 @@
       }
 
       h5 {
-        color: var(--light-grey-6);
+        color: var(--text-soft-color);
         font-size: 16px;
       }
 
@@ -302,7 +302,7 @@
       }
 
       .title {
-        color: var(--light-grey-7);
+        color: var(--text-secondary-color);
         font-size: 18px;
         font-weight: bold;
       }
@@ -314,7 +314,7 @@
       .message {
         background: var(--dark-grey-1);
         border-radius: 6px;
-        color: var(--light-grey-6);
+        color: var(--text-soft-color);
         margin-bottom: 60px;
         padding: 20px;
         position: relative;
@@ -356,7 +356,7 @@
           }
 
           .subject {
-            color: var(--white-1);
+            color: var(--text-color);
             font-size: 20px;
             font-weight: bold;
             margin-bottom: 14px;
@@ -384,7 +384,7 @@
           }
 
           .use-as-template:hover {
-            color: var(--white-1);
+            color: var(--text-color);
           }
 
           time {
@@ -464,7 +464,7 @@
       }
 
       li {
-        color: var(--light-grey-6);
+        color: var(--text-soft-color);
         font-weight: normal;
       }
 

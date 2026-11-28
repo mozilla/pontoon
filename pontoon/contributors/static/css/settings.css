@@ -33,7 +33,7 @@ form a:visited {
 #account-settings .label,
 .double-check-box > .label,
 .toggle-label {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   float: left;
   font-size: 16px;
   font-weight: 300;
@@ -51,7 +51,7 @@ form a:visited {
 }
 
 #locale-settings .locale-selector .locale.select .button {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 16px;
   font-weight: 400;
   height: 32px;
@@ -60,7 +60,7 @@ form a:visited {
 }
 
 #locale-settings .locale-selector .locale.select .button:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 #locale-settings .locale-selector .locale.select .menu {
@@ -82,7 +82,7 @@ form a:visited {
 }
 
 #display-name {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 48px;
   letter-spacing: normal;
   padding: 10px 0 0;
@@ -107,7 +107,7 @@ form a:visited {
 }
 
 #main .field {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 16px;
   margin-bottom: 20px;
   text-align: left;
@@ -132,7 +132,7 @@ form a:visited {
 }
 
 #main .field label:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 #main .field input,
@@ -155,7 +155,7 @@ form a:visited {
 }
 
 #main .field .help {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   font-style: italic;
 }
 
@@ -164,7 +164,7 @@ form a:visited {
 }
 
 #main .check-list .header .title {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   display: inline-block;
   font-size: 16px;
   font-weight: 300;
@@ -234,7 +234,7 @@ form a:visited {
 }
 
 #main .appearance .theme-field .theme-label {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   font-size: 14px;
   font-style: italic;
   font-weight: 400;
@@ -376,14 +376,14 @@ form a:visited {
         justify-content: space-between;
 
         .token-info {
-          color: var(--light-grey-7);
+          color: var(--text-secondary-color);
 
           .icon {
             padding-right: 2px;
           }
 
           .date {
-            color: var(--white-1);
+            color: var(--text-color);
           }
         }
       }
@@ -394,7 +394,7 @@ form a:visited {
         margin-top: 15px;
 
         .token-value {
-          color: var(--white-1);
+          color: var(--text-color);
           font-size: 16px;
           text-align: left;
           height: 33px;
@@ -421,7 +421,7 @@ form a:visited {
 
       .copy-message {
         font-size: 14px;
-        color: var(--light-grey-2);
+        color: var(--text-tertiary-color);
         font-style: italic;
         text-align: left;
         margin: 5px 0 0 0px;
@@ -461,7 +461,7 @@ form a:visited {
 
     .generate-token-btn:disabled {
       background: var(--button-background-1);
-      color: var(--light-grey-7);
+      color: var(--text-secondary-color);
       cursor: not-allowed;
     }
   }

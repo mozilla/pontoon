@@ -60,7 +60,7 @@ button {
 
 body {
   background: var(--black-3);
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 #heading {
@@ -92,7 +92,7 @@ button {
 }
 
 h2 {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   font-size: 14px;
   font-weight: 300;
   text-transform: uppercase;
@@ -108,7 +108,7 @@ h3 {
 }
 
 h3 .stress {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 h3 .small {
@@ -118,7 +118,7 @@ h3 .small {
 
 a:link,
 a:visited {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-weight: 300;
   text-decoration: none;
 }
@@ -170,7 +170,7 @@ label {
 }
 
 table {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 13px;
   text-align: left;
   width: 100%;
@@ -185,7 +185,7 @@ thead tr {
 }
 
 th {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   padding: 10px;
   text-transform: uppercase;
 }
@@ -195,7 +195,7 @@ th {
 }
 
 .table-sort th:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .table-sort th.no-sort {
@@ -250,13 +250,13 @@ time {
 .count {
   background: var(--count-background);
   border-radius: 3px;
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   margin-left: 5px;
   padding: 0 5px;
 }
 
 .button {
-  color: var(--white-1);
+  color: var(--text-color);
   cursor: pointer;
   display: inline-block;
   font-weight: 300;
@@ -289,7 +289,7 @@ time {
 .select .menu {
   background: var(--popup-background-2);
   bottom: 50px;
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   display: none;
   list-style: none;
   margin-left: 0;
@@ -452,13 +452,13 @@ time {
 }
 
 .menu li {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-weight: 300;
   padding: 2px 4px;
 }
 
 .menu li.hover {
-  color: var(--white-1);
+  color: var(--text-color);
   background: var(--background-hover-1);
 }
 
@@ -467,12 +467,12 @@ time {
 }
 
 .menu li.hover a {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .menu li a:hover,
 .menu li a:active {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .menu li.horizontal-separator {
@@ -505,7 +505,7 @@ time {
 }
 
 .search-wrapper .icon {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 1.2em;
   position: absolute;
   left: 6px;
@@ -605,7 +605,7 @@ body.addon-promotion-active #addon-promotion {
 #addon-promotion .dismiss {
   background: transparent;
   border: none;
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 28px;
   padding: 0;
 }
@@ -621,7 +621,7 @@ body.addon-promotion-active #addon-promotion {
 #addon-promotion .get {
   background: var(--black-3);
   border-radius: 3px;
-  color: var(--white-1);
+  color: var(--text-color);
   font-weight: normal;
   margin-left: auto;
   padding: 7px 12px;
@@ -672,7 +672,7 @@ header nav .right .sign-in-header button {
   background: transparent;
   border: 1.5px solid var(--accent-border);
   border-radius: 3px;
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 14px;
   font-weight: 300;
   height: 40px;
@@ -716,7 +716,7 @@ header .right .select .menu {
   background: var(--notification-badge-background);
   border: 3px solid var(--black-3);
   border-radius: 12px;
-  color: var(--white-1);
+  color: var(--text-color);
   display: none;
   font-size: 12px;
   font-style: normal;
@@ -761,7 +761,7 @@ header .right .select .menu {
 }
 
 .notifications .menu ul.notification-list li.notification-item {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   cursor: default;
   padding: 0;
 }
@@ -774,7 +774,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item span {
-  color: var(--white-1);
+  color: var(--text-color);
   float: none;
 }
 
@@ -784,7 +784,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item .verb {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .notifications .menu li.notification-item .message {
@@ -797,7 +797,7 @@ header .right .select .menu {
 
 .notifications .menu li.notification-item .message.trim,
 .notifications .menu li.notification-item .message.trim > p {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   pointer-events: none;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -805,13 +805,13 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item .message.trim a {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
 }
 
 .notifications .menu li.notification-item.hover .message.trim,
 .notifications .menu li.notification-item.hover .message.trim > p,
 .notifications .menu li.notification-item.hover .message.trim a {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .notifications .menu li.notification-item .message.trim p {
@@ -833,7 +833,7 @@ header .right .select .menu {
 .notifications .menu li.notification-item .message h4,
 .notifications .menu li.notification-item .message h5,
 .notifications .menu li.notification-item .message h6 {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 14px;
   font-style: normal;
   font-weight: bold;
@@ -868,7 +868,7 @@ header .right .select .menu {
 
 .notifications .menu li.notification-item .timeago,
 .notifications .menu li.notification-item .old-notification {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   font-size: 11px;
   font-weight: normal;
   margin-top: 8px;
@@ -877,7 +877,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item .deleted {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
 }
 
 #notifications .menu li.horizontal-separator {
@@ -905,13 +905,13 @@ header .right .select .menu {
 
 .notifications .menu li.no .title,
 #profile .menu li.details .name {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 16px;
 }
 
 .notifications .menu li.no .description,
 #profile .menu li.details .email {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 12px;
 }
 
@@ -1055,7 +1055,7 @@ nav .links li {
 
 .links li a:link,
 .links li a:visited {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .links li a:hover,
@@ -1070,7 +1070,7 @@ nav .links li {
 
 .submenu .links a:link,
 .submenu .links a:visited {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   display: inline-block;
   padding: 6px;
   text-transform: uppercase;
@@ -1110,12 +1110,12 @@ nav .links li {
 }
 
 .submenu.tabs .links a:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .submenu.tabs .links li.active a {
   background-color: transparent;
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .submenu.tabs .links a .fas {
@@ -1128,7 +1128,7 @@ noscript p {
 
 #title,
 #title a {
-  color: var(--white-1);
+  color: var(--text-color);
   display: inline-block;
   font-size: 48px;
   font-weight: bold;
@@ -1166,7 +1166,7 @@ noscript p {
 }
 
 #action {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 14px;
   font-weight: 300;
   height: 40px;
@@ -1229,7 +1229,7 @@ body > form,
 }
 
 .no-results {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-style: italic;
   text-align: center;
 }
@@ -1272,7 +1272,7 @@ body > form,
   background: var(--button-background-1);
   border: none;
   border-radius: 3px;
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-weight: 400;
   height: auto;
   padding: 6px;
@@ -1401,12 +1401,12 @@ body > form,
 }
 
 .toggle-button button:hover {
-  color: var(--light-grey-6);
+  color: var(--text-soft-color);
 }
 
 .toggle-button button.active {
   background: var(--button-background-1);
   border-color: var(--main-border-1);
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-weight: 400;
 }

@@ -35,7 +35,7 @@ menu.controls #toggle-projects {
   float: right;
   width: 200px;
   background: var(--button-background-2);
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
 }
 
 #recalculate-stats:hover {

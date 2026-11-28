@@ -40,7 +40,7 @@
 }
 
 .buglist th:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 .buglist th i {
@@ -132,7 +132,7 @@
     background: var(--button-background-1);
     border: none;
     border-radius: 3px;
-    color: var(--light-grey-7);
+    color: var(--text-secondary-color);
     font-size: 15px;
     font-weight: 400;
     margin-top: 10px;
@@ -141,7 +141,7 @@
   }
 
   .continue:hover {
-    color: var(--white-1);
+    color: var(--text-color);
   }
 }
 
@@ -202,7 +202,7 @@
 
 #permissions-form .user.select label,
 #permissions-form .user.select label a {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 13px;
   font-weight: bold;
   text-align: center;
@@ -217,7 +217,7 @@
 #permissions-form .user.select.managers label:hover,
 #permissions-form .user.select label a.active,
 #permissions-form .user.select label a:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 #permissions-form .user.select .menu {
@@ -255,7 +255,7 @@
 }
 
 #permissions-form .user.select .intro {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 13px;
   font-style: italic;
   font-weight: 300;
@@ -293,7 +293,7 @@
 }
 
 #permissions-form #project-selector .menu li {
-  color: var(--light-grey-6);
+  color: var(--text-soft-color);
   cursor: pointer;
 }
 

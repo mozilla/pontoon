@@ -47,7 +47,7 @@
 }
 
 .locale-selector .locale.select .menu li {
-  color: var(--light-grey-6);
+  color: var(--text-soft-color);
   cursor: pointer;
   display: flex;
   text-align: left;
