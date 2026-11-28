@@ -32,7 +32,7 @@ h2 {
 }
 
 .avatar img.rounded {
-  border-color: var(--dark-grey-1);
+  border-color: var(--panel-background);
 }
 
 .avatar .status {
@@ -47,7 +47,7 @@ h2 {
   bottom: 3px;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   color: var(--danger-color);
 }
 
@@ -120,7 +120,7 @@ h2 {
 }
 
 .personal-information .button {
-  background: var(--dark-grey-1);
+  background: var(--button-background-1);
   border-radius: 3px;
   box-sizing: border-box;
   font-size: 16px;
@@ -247,7 +247,7 @@ h4.superuser {
 
 #stats {
   border-radius: 6px;
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   box-sizing: border-box;
   float: right;
   padding: 20px;
@@ -332,7 +332,7 @@ h4.superuser {
 }
 
 #contributions .type-selector .menu {
-  background: var(--dark-grey-1);
+  background: var(--popup-background-1);
   bottom: auto;
   box-sizing: border-box;
   width: 100%;
@@ -449,7 +449,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .contribution-group {
-  border-left: 2px solid var(--dark-grey-1);
+  border-left: 2px solid var(--panel-background);
   margin-left: 20px;
   padding: 15px 0 5px 30px;
 }
@@ -467,7 +467,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .heading {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   border-radius: 6px 6px 0 0;
   color: var(--text-soft-color);
   padding: 20px 20px 0;
@@ -480,11 +480,11 @@ svg.js-calendar-graph-svg {
   bottom: 2px;
   content: ' ';
   border: 7px solid transparent;
-  border-right-color: var(--dark-grey-1);
+  border-right-color: var(--panel-background);
 }
 
 #timeline .heading .icon {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   border: 2px solid var(--black-3);
   box-sizing: border-box;
   display: block;
@@ -515,7 +515,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   border-radius: 0 0 6px 6px;
   list-style: none;
   margin: 0;
@@ -527,7 +527,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li a:hover {
-  background: var(--black-3);
+  background: var(--panel-hover-background);
 }
 
 #timeline .localizations li a,
@@ -561,7 +561,7 @@ svg.js-calendar-graph-svg {
 }
 
 #show-more {
-  background: var(--dark-grey-1);
+  background: var(--button-background-1);
   font-size: 16px;
   font-weight: normal;
   height: 32px;

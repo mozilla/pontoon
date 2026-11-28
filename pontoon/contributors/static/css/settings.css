@@ -301,7 +301,7 @@ form a:visited {
     padding: 0;
 
     .token-card {
-      background-color: var(--card-background);
+      background-color: var(--panel-background);
       padding: 15px;
       border-radius: 3px;
       max-width: 620px;
@@ -399,7 +399,7 @@ form a:visited {
           text-align: left;
           height: 33px;
           width: 100%;
-          background-color: var(--black-3);
+          background-color: var(--input-background-2);
           border-radius: 3px 0 0 3px;
           box-sizing: border-box;
           margin-bottom: 0px;

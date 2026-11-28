@@ -38,9 +38,13 @@ html {
   --background-1: #f6f6f6;
   --background-hover-1: #ffffff;
   --button-background-1: #ffffff;
+  --button-border: #e8e8e8;
   --popup-background-1: #ffffff;
-  --card-background: #ffffff;
+  --panel-background: #ffffff;
+  --panel-hover-background: #f6f6f6;
   --input-background-1: #ffffff;
+  --input-background-2: #f6f6f6;
+  --input-background-3: #e8e8e8;
   --input-color-1: #2a2a2a;
   --input-color-2: #000000;
   --sync-error-message-color: #000000;

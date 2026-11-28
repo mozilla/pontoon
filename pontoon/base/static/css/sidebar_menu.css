@@ -1,5 +1,5 @@
 .menu.left-column {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   border-radius: 6px;
   box-sizing: border-box;
   float: left;
@@ -41,7 +41,7 @@
 }
 
 .menu.right-column {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   float: right;
   width: 640px;
 }

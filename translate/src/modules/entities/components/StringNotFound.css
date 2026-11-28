@@ -58,7 +58,7 @@
 }
 
 #string-not-found .details .group {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   border-radius: 6px;
   padding: 20px 22px;
 }

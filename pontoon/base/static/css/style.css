@@ -69,7 +69,7 @@ body {
 
 #heading,
 #middle {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
 }
 
 #heading,
@@ -226,7 +226,7 @@ td {
 }
 
 table.striped tr:nth-child(even) {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
 }
 
 tfoot tr {
@@ -304,7 +304,7 @@ time {
 }
 
 .select.opened .menu .search-wrapper {
-  background: var(--black-3);
+  background: var(--input-background-2);
 }
 
 .project.select,
@@ -562,7 +562,7 @@ img.rounded {
 }
 
 #error {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   bottom: 0;
   display: table;
   height: 100%;
@@ -1304,7 +1304,7 @@ body > form,
 }
 
 .controls .button.selector:hover {
-  background: var(--dark-grey-1);
+  background: var(--button-background-1);
   color: inherit;
 }
 
@@ -1332,7 +1332,7 @@ body > form,
 }
 
 .controls > .search-wrapper input {
-  background: var(--dark-grey-1);
+  background: var(--input-background-1);
   border: 1px solid var(--main-border-1);
   color: var(--input-color-2);
   font-size: 13px;

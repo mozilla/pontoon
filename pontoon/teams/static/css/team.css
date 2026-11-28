@@ -231,7 +231,7 @@
 }
 
 #permissions-form .search-wrapper {
-  background: var(--dark-grey-1);
+  background: var(--input-background-1);
 }
 
 #permissions-form .user.select .menu ul {
@@ -302,5 +302,5 @@
 }
 
 #project-selector.select.opened .menu .search-wrapper {
-  background: var(--black-3);
+  background: var(--input-background-2);
 }

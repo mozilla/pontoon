@@ -70,7 +70,7 @@
       display: flex;
 
       .search-wrapper {
-        background-color: var(--black-3);
+        background-color: var(--input-background-2);
       }
       .button-container {
         display: flex;
@@ -93,7 +93,7 @@
       }
 
       tbody tr:hover {
-        background: var(--black-3);
+        background: var(--panel-hover-background);
       }
 
       .cell {

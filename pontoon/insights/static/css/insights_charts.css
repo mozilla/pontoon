@@ -1,6 +1,6 @@
 #insights .block {
   border-radius: 6px;
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   overflow: hidden;
   padding: 30px;
 }

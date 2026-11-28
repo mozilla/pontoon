@@ -202,7 +202,7 @@
 }
 
 #initial-section-container {
-  background-color: var(--dark-grey-1);
+  background-color: var(--panel-background);
   border-radius: 6px;
   font-size: 16px;
   padding: 16px;

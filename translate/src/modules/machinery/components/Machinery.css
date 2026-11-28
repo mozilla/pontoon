@@ -41,7 +41,7 @@
 }
 
 .machinery > .search-wrapper input[type='search'] {
-  background: var(--dark-grey-1);
+  background: var(--input-background-1);
   border: none;
   border-radius: 20px;
   box-sizing: border-box;

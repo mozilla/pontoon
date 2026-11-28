@@ -10,7 +10,7 @@
       padding: 20px;
     }
     .search-wrapper {
-      background: var(--black-3);
+      background: var(--input-background-2);
     }
   }
 
@@ -86,7 +86,7 @@
     box-sizing: border-box;
 
     form {
-      background: var(--dark-grey-1);
+      background: var(--panel-background);
       border-radius: 6px;
     }
 
@@ -179,7 +179,7 @@
     input[type='date'],
     input[type='number'],
     textarea {
-      background: var(--black-3);
+      background: var(--input-background-2);
       float: none;
       font-size: 16px;
       padding: 4px;
@@ -243,7 +243,7 @@
     }
 
     > section {
-      background: var(--dark-grey-1);
+      background: var(--panel-background);
       border-radius: 6px;
       margin-bottom: 40px;
     }
@@ -312,7 +312,7 @@
       max-height: none;
 
       .message {
-        background: var(--dark-grey-1);
+        background: var(--panel-background);
         border-radius: 6px;
         color: var(--text-soft-color);
         margin-bottom: 60px;
