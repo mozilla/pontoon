@@ -429,7 +429,7 @@ form a:visited {
     }
 
     .token-card.created {
-      background: var(--dark-grey-2);
+      background: var(--highlight-background);
 
       .token-header .delete-btn {
         background: var(--button-background-1);

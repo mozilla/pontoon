@@ -39,7 +39,7 @@
 }
 
 .editor-settings .menu li:hover {
-  background: var(--dark-grey-2);
+  background: var(--highlight-background);
 }
 
 .editor-settings .menu li:hover,

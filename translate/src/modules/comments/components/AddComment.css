@@ -44,7 +44,7 @@
 
 .comments-mention-list .mention:hover,
 .comments-mention-list .active-mention {
-  background: var(--dark-grey-2);
+  background: var(--highlight-background);
 }
 
 .comments-mention-list .mention .user-avatar {

@@ -156,7 +156,7 @@
 }
 
 .cm-tooltip-autocomplete ul li[aria-selected] {
-  background: var(--dark-grey-2) !important;
+  background: var(--highlight-background) !important;
   color: var(--white-1) !important;
 }
 

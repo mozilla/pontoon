@@ -8,7 +8,7 @@
 }
 
 .terms-popup .terms-list .term:not(.cannot-copy):hover {
-  background-color: var(--dark-grey-2);
+  background-color: var(--highlight-background);
 }
 
 .terms-popup li.term:last-child {

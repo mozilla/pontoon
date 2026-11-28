@@ -55,6 +55,8 @@ html {
 
   /* Secondary (lighter) background */
   --background-highlight-2: #ededed;
+  --highlight-background: #e8e8e8;
+  --messaging-highlight-background: #bbbbbb;
   --button-background-2: #e8e8e8;
   --button-background-highlight-2: #f6f6f6;
   --popup-background-2: #f6f6f6;

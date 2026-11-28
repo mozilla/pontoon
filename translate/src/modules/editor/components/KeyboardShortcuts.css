@@ -56,7 +56,7 @@
 }
 
 .keyboard-shortcuts .overlay span {
-  background: var(--dark-grey-2);
+  background: var(--highlight-background);
   border: 1px solid var(--main-border-1);
   border-radius: 2px;
   font-weight: 300;

@@ -48,6 +48,8 @@
 
   /* Secondary (lighter) background */
   --background-highlight-2: #3f4752;
+  --highlight-background: #3f4752;
+  --messaging-highlight-background: #5e6475;
   --button-background-2: #3f4752;
   --button-background-highlight-2: #272a2f;
   --popup-background-2: #272a2f;

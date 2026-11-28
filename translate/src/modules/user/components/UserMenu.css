@@ -90,7 +90,7 @@
 }
 
 .user-menu .menu li:hover {
-  background: var(--dark-grey-2);
+  background: var(--highlight-background);
 }
 
 .user-menu .menu li:hover,

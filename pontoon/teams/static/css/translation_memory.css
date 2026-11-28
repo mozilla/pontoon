@@ -124,7 +124,7 @@
           }
 
           mark.placeable {
-            background: var(--dark-grey-2);
+            background: var(--highlight-background);
             border: 1px solid var(--light-grey-1);
             border-radius: 2px;
             color: var(--light-grey-6);

@@ -394,7 +394,7 @@
       }
 
       .message.new {
-        background: var(--light-grey-1);
+        background: var(--messaging-highlight-background);
       }
     }
   }

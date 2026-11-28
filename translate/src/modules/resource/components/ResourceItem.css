@@ -5,7 +5,7 @@
 }
 
 .resource-menu .menu li a:hover {
-  background: var(--dark-grey-2);
+  background: var(--highlight-background);
   color: var(--white-1);
 }
 
