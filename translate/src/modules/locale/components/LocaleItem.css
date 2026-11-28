@@ -10,7 +10,7 @@
 }
 
 .locale-menu-dropdown li:hover {
-  background-color: var(--dark-grey-2);
+  background-color: var(--highlight-background);
 }
 
 .locale-menu-dropdown .locale-name {

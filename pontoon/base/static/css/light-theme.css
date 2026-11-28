@@ -14,6 +14,12 @@ html {
   --fill-text-color: #2a2a2a;
   --moz-logo: url(../img/moz-logo.svg);
 
+  /* Text */
+  --text-color: #2a2a2a;
+  --text-soft-color: #555555;
+  --text-secondary-color: #707070;
+  --text-tertiary-color: #777777;
+
   /* User banner and details */
   --user-admin: #ff3366;
   --user-pm: #ffa10f;
@@ -26,14 +32,19 @@ html {
   --badge-translation-champion: #7bc876;
   --badge-community-builder: #ff3366;
   --confetti-dark: #000000dd;
+  --confetti-contrast: #2a2a2a;
 
   /* Primary (darker) background */
   --background-1: #f6f6f6;
   --background-hover-1: #ffffff;
   --button-background-1: #ffffff;
+  --button-border: #e8e8e8;
   --popup-background-1: #ffffff;
-  --card-background: #ffffff;
+  --panel-background: #ffffff;
+  --panel-hover-background: #f6f6f6;
   --input-background-1: #ffffff;
+  --input-background-2: #f6f6f6;
+  --input-background-3: #e8e8e8;
   --input-color-1: #2a2a2a;
   --input-color-2: #000000;
   --sync-error-message-color: #000000;
@@ -44,6 +55,8 @@ html {
 
   /* Secondary (lighter) background */
   --background-highlight-2: #ededed;
+  --highlight-background: #e8e8e8;
+  --messaging-highlight-background: #bbbbbb;
   --button-background-2: #e8e8e8;
   --button-background-highlight-2: #f6f6f6;
   --popup-background-2: #f6f6f6;

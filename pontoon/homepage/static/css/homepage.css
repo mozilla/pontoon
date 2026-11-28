@@ -58,7 +58,7 @@ body > header.menu-opened {
 }
 
 h2 {
-  color: var(--white-1);
+  color: var(--text-color);
   font-weight: 700;
   font-size: 36px;
   letter-spacing: -1px;
@@ -289,7 +289,7 @@ body.addon-promotion-active #edit-homepage .select {
   background-color: var(--background-1);
   border: 2px solid var(--accent-border);
   border-radius: 100%;
-  color: var(--white-1);
+  color: var(--text-color);
   content: counter(item);
   display: inline-block;
   font-size: 20px;
@@ -398,7 +398,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-6 .footer a {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 #section-6 .footer a:hover {

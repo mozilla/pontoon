@@ -65,7 +65,7 @@
 }
 
 #insights .active-users-chart .active {
-  border-bottom: 2px solid var(--light-grey-2);
+  border-bottom: 2px solid var(--text-tertiary-color);
   display: inline-block;
   font-size: 40px;
   font-weight: bold;
@@ -73,7 +73,7 @@
 }
 
 #insights .active-users-chart .total {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   font-size: 16px;
   left: 0;
   right: 0;

@@ -17,7 +17,7 @@ select {
 }
 
 h1 {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 48px;
   letter-spacing: -1px;
   margin-bottom: 40px;
@@ -39,7 +39,7 @@ h1 a {
 }
 
 body > form {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 14px;
   padding: 40px 20px 100px;
 }
@@ -68,7 +68,7 @@ h3 {
 }
 
 h4 {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 18px;
   font-style: italic;
   font-weight: 300;
@@ -412,7 +412,7 @@ label[for='id_configuration_file'] a {
 
 .externalresource .arrow::after {
   content: '▾';
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   float: left;
   margin: 6px 0 0 -20px;
   pointer-events: none;

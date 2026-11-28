@@ -69,7 +69,7 @@
 
 .filters-panel .menu li:hover {
   color: var(--white-1);
-  background-color: var(--dark-grey-2);
+  background-color: var(--highlight-background);
 }
 
 .filters-panel .menu li .status {

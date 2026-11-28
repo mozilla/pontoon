@@ -3,7 +3,7 @@
 }
 
 #main .container .left-column {
-  color: var(--light-grey-6);
+  color: var(--text-soft-color);
   margin-right: 30px;
   width: 260px;
 }
@@ -24,7 +24,7 @@
 }
 
 h2 {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 18px;
   font-weight: bold;
   line-height: 1.4em;
@@ -32,7 +32,7 @@ h2 {
 }
 
 .avatar img.rounded {
-  border-color: var(--dark-grey-1);
+  border-color: var(--panel-background);
 }
 
 .avatar .status {
@@ -47,7 +47,7 @@ h2 {
   bottom: 3px;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   color: var(--danger-color);
 }
 
@@ -77,7 +77,7 @@ h2 {
 }
 
 .item-with-icon {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   font-size: 14px;
   font-weight: normal;
   line-height: 1.8em;
@@ -97,7 +97,7 @@ h2 {
 }
 
 .item-with-icon a {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   font-weight: normal;
 }
 
@@ -120,7 +120,7 @@ h2 {
 }
 
 .personal-information .button {
-  background: var(--dark-grey-1);
+  background: var(--button-background-1);
   border-radius: 3px;
   box-sizing: border-box;
   font-size: 16px;
@@ -232,7 +232,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li.active .label {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 #insights h3 .tooltip li.current-month::marker {
@@ -247,7 +247,7 @@ h4.superuser {
 
 #stats {
   border-radius: 6px;
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   box-sizing: border-box;
   float: right;
   padding: 20px;
@@ -265,7 +265,7 @@ h4.superuser {
 }
 
 #stats > div span {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   font-size: 14px;
   text-transform: uppercase;
 }
@@ -279,7 +279,7 @@ h4.superuser {
 }
 
 #stats > div p {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 25px;
 }
 
@@ -332,14 +332,14 @@ h4.superuser {
 }
 
 #contributions .type-selector .menu {
-  background: var(--dark-grey-1);
+  background: var(--popup-background-1);
   bottom: auto;
   box-sizing: border-box;
   width: 100%;
 }
 
 #contributions .type-selector .menu li span {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   width: 100%;
 }
 
@@ -350,7 +350,7 @@ h4.superuser {
 
 #contributions h3,
 #timeline h3 {
-  color: var(--white-1);
+  color: var(--text-color);
   font-size: 16px;
   font-weight: 400;
   font-style: normal;
@@ -386,7 +386,7 @@ h4.superuser {
   background: transparent;
   border: none;
   border-radius: 4px;
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   cursor: pointer;
   display: block;
   font-size: 11px;
@@ -401,11 +401,11 @@ h4.superuser {
 #contributions .year-selector .year:hover,
 #contributions .year-selector .year.active {
   background: var(--background-highlight-2);
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 svg.js-calendar-graph-svg {
-  fill: var(--light-grey-7);
+  fill: var(--text-secondary-color);
   font-weight: 100;
   width: 100%;
   height: auto;
@@ -440,7 +440,7 @@ svg.js-calendar-graph-svg {
 /* Contribution Timeline */
 
 #timeline {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   margin-top: 40px;
 }
 
@@ -449,7 +449,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .contribution-group {
-  border-left: 2px solid var(--dark-grey-1);
+  border-left: 2px solid var(--panel-background);
   margin-left: 20px;
   padding: 15px 0 5px 30px;
 }
@@ -467,9 +467,9 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .heading {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   border-radius: 6px 6px 0 0;
-  color: var(--light-grey-6);
+  color: var(--text-soft-color);
   padding: 20px 20px 0;
   position: relative;
 }
@@ -480,11 +480,11 @@ svg.js-calendar-graph-svg {
   bottom: 2px;
   content: ' ';
   border: 7px solid transparent;
-  border-right-color: var(--dark-grey-1);
+  border-right-color: var(--panel-background);
 }
 
 #timeline .heading .icon {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   border: 2px solid var(--black-3);
   box-sizing: border-box;
   display: block;
@@ -498,7 +498,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .heading .icon:before {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   font-size: 16px;
 }
 
@@ -515,7 +515,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations {
-  background: var(--dark-grey-1);
+  background: var(--panel-background);
   border-radius: 0 0 6px 6px;
   list-style: none;
   margin: 0;
@@ -527,7 +527,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li a:hover {
-  background: var(--black-3);
+  background: var(--panel-hover-background);
 }
 
 #timeline .localizations li a,
@@ -538,12 +538,12 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li a {
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
 }
 
 #timeline .localizations li .unlinked,
 #timeline .localizations li .unlinked .stress {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
 }
 
 #timeline .localizations li a .stress {
@@ -552,16 +552,16 @@ svg.js-calendar-graph-svg {
 
 #timeline .localizations li a .contribution-count,
 #timeline .localizations li .unlinked .contribution-count {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   float: right;
 }
 
 #timeline .month-label {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
 }
 
 #show-more {
-  background: var(--dark-grey-1);
+  background: var(--button-background-1);
   font-size: 16px;
   font-weight: normal;
   height: 32px;
@@ -569,12 +569,12 @@ svg.js-calendar-graph-svg {
   width: 100%;
   border: none;
   border-radius: 3px;
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   margin-top: 20px;
 }
 
 #show-more:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }
 
 #account-status-form {
@@ -588,9 +588,9 @@ svg.js-calendar-graph-svg {
   gap: 8px;
   border: none;
   border-radius: 3px;
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
 }
 
 #account-status-form button:hover {
-  color: var(--white-1);
+  color: var(--text-color);
 }

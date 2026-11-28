@@ -20,7 +20,7 @@
 
     .button.cancel:hover {
       .fas {
-        color: var(--white-1);
+        color: var(--text-color);
       }
     }
 
@@ -31,7 +31,7 @@
 
   .upload-terms {
     display: none;
-    color: var(--light-grey-7);
+    color: var(--text-secondary-color);
     font-style: italic;
     line-height: 1.5em;
     padding-top: 10px;
@@ -111,7 +111,7 @@
         }
 
         .text {
-          color: var(--light-grey-7);
+          color: var(--text-secondary-color);
           font-size: 15px;
           line-height: 1.8em;
 
@@ -124,7 +124,7 @@
           }
 
           mark.placeable {
-            background: var(--dark-grey-2);
+            background: var(--highlight-background);
             border: 1px solid var(--light-grey-1);
             border-radius: 2px;
             color: var(--light-grey-6);
@@ -136,12 +136,12 @@
           .empty {
             border: 1px solid var(--main-border-1);
             border-radius: 3px;
-            color: var(--light-grey-7);
+            color: var(--text-secondary-color);
             padding: 0 4px;
           }
 
           a {
-            color: var(--white-1);
+            color: var(--text-color);
             display: inline-block;
           }
 
@@ -158,7 +158,7 @@
           textarea {
             display: none;
             box-sizing: border-box;
-            color: var(--white-1);
+            color: var(--text-color);
             font-size: 15px;
             font-weight: 100;
             height: 100%;
@@ -216,7 +216,7 @@
 
           .button.cancel:hover {
             .fas {
-              color: var(--white-1);
+              color: var(--text-color);
             }
           }
         }

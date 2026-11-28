@@ -64,7 +64,7 @@
 }
 
 .filters-panel .menu li.time-range.editing input {
-  background: var(--dark-grey-1);
+  background: var(--input-background-1);
   border-color: var(--main-border-1);
   border-radius: 3px;
   cursor: auto;

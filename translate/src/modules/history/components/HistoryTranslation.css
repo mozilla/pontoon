@@ -57,8 +57,8 @@
 }
 
 .history .translation .content > header .toggle {
-  background: var(--dark-grey-1);
-  border: 1px solid var(--dark-grey-2);
+  background: var(--button-background-1);
+  border: 1px solid var(--button-border);
   border-radius: 4px;
   font-size: inherit;
   font-weight: 100;

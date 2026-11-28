@@ -12,7 +12,7 @@
   .container
   .content
   a[href^='/contributors/']:not(.comment-author) {
-  background-color: var(--dark-grey-2);
+  background-color: var(--highlight-background);
   padding: 0 2px;
   border-radius: 2px;
   unicode-bidi: isolate;

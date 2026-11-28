@@ -65,7 +65,7 @@
 
 #request-item-note p {
   font-style: italic;
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   text-align: center;
   display: block;
 }
@@ -115,7 +115,7 @@
 }
 
 #team-form .field input {
-  color: var(--white-1);
+  color: var(--text-color);
   background: var(--input-background-1);
   border: 1px solid var(--main-border-1);
   border-radius: 3px;

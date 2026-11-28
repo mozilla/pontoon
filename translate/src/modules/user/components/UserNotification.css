@@ -13,7 +13,7 @@
 }
 
 .user-notification.unread {
-  background: var(--dark-grey-2);
+  background: var(--highlight-background);
 }
 
 .user-notification.read {
@@ -23,7 +23,7 @@
 
 @keyframes fadeout-background {
   0% {
-    background: var(--dark-grey-2);
+    background: var(--highlight-background);
   }
 
   100% {

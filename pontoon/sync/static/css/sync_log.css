@@ -16,7 +16,7 @@
   line-height: 47px;
   font-size: 15px;
   font-weight: 100;
-  color: var(--white-1);
+  color: var(--text-color);
   width: 219px;
 }
 
@@ -52,7 +52,7 @@
   background: var(--button-background-1);
   border: none;
   border-radius: 3px;
-  color: var(--light-grey-7);
+  color: var(--text-secondary-color);
   height: auto;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .pagination .page {
-  color: var(--light-grey-2);
+  color: var(--text-tertiary-color);
   line-height: 28px;
 }
 

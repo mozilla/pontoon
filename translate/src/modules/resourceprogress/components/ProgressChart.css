@@ -3,7 +3,7 @@
 }
 
 .progress-chart:hover .selector canvas {
-  background: var(--dark-grey-2);
+  background: var(--highlight-background);
 }
 
 .progress-chart .menu canvas {
